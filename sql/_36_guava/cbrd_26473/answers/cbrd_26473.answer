@@ -1,0 +1,3149 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+001. NTILE single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+ntile_1    
+1     
+1     
+1     
+1     
+1     
+1     
+1     
+1     
+1     
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select ntile(?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+002. NTILE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    ntile_1    ntile_2    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, ntile(?) over (partition by ? order by ?), ntile(?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+003. NTILE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    ntile_2    ntile_1    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, ntile(?) over (partition by ? order by ?), ntile(?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+004. NTILE conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    ntile_1    ntile_2    
+1     1     5     1     
+2     2     5     1     
+3     3     5     1     
+4     4     5     1     
+5     5     5     1     
+6     6     5     1     
+7     7     5     1     
+8     8     5     1     
+9     9     5     1     
+10     0     5     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, ntile(?) over (partition by ? order by ? desc ), ntile(?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+005. MEDIAN single analytic - OVER(partition by val) covered by midx_01 leading column, sort skipped     
+
+===================================================
+md_1    
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select median([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+006. MEDIAN two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    md_1    md_2    
+1     1     496.0     1.0     
+2     2     497.0     2.0     
+3     3     498.0     3.0     
+4     4     499.0     4.0     
+5     5     500.0     5.0     
+6     6     501.0     6.0     
+7     7     502.0     7.0     
+8     8     503.0     8.0     
+9     9     504.0     9.0     
+10     0     505.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, median([dba.test_table].id) over (partition by ? order by ?), median([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+007. MEDIAN two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    md_2    md_1    
+1     1     1.0     496.0     
+2     2     2.0     497.0     
+3     3     3.0     498.0     
+4     4     4.0     499.0     
+5     5     5.0     500.0     
+6     6     6.0     501.0     
+7     7     7.0     502.0     
+8     8     8.0     503.0     
+9     9     9.0     504.0     
+10     0     0.0     505.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, median([dba.test_table].val) over (partition by ? order by ?), median([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+008. MEDIAN partition column not in the index (val, name) - sort required     
+
+===================================================
+id    val    md_1    md_2    
+1     1     1.0     1.0     
+2     2     2.0     2.0     
+3     3     3.0     3.0     
+4     4     4.0     4.0     
+5     5     5.0     5.0     
+6     6     6.0     6.0     
+7     7     7.0     7.0     
+8     8     8.0     8.0     
+9     9     9.0     9.0     
+10     0     10.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, median([dba.test_table].id) over (partition by ?, ? order by ?), median([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+009. PERCENTILE_CONT single analytic - within group(order by id) over(partition by val) covered by midx_01, sort skipped     
+
+===================================================
+pc_1    
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+505.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+010. PERCENTILE_CONT two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    pc_1    pc_2    
+1     1     496.0     1.0     
+2     2     497.0     2.0     
+3     3     498.0     3.0     
+4     4     499.0     4.0     
+5     5     500.0     5.0     
+6     6     501.0     6.0     
+7     7     502.0     7.0     
+8     8     503.0     8.0     
+9     9     504.0     9.0     
+10     0     505.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?), percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+011. PERCENTILE_CONT two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    pc_2    pc_1    
+1     1     1.0     496.0     
+2     2     2.0     497.0     
+3     3     3.0     498.0     
+4     4     4.0     499.0     
+5     5     5.0     500.0     
+6     6     6.0     501.0     
+7     7     7.0     502.0     
+8     8     8.0     503.0     
+9     9     9.0     504.0     
+10     0     0.0     505.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?), percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+012. PERCENTILE_CONT conflicting DESC order (order by id desc) - sort required     
+
+===================================================
+id    val    pc_1    pc_2    
+1     1     496.0     1.0     
+2     2     497.0     2.0     
+3     3     498.0     3.0     
+4     4     499.0     4.0     
+5     5     500.0     5.0     
+6     6     501.0     6.0     
+7     7     502.0     7.0     
+8     8     503.0     8.0     
+9     9     504.0     9.0     
+10     0     505.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].id desc) over (partition by ?), percentile_cont( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+013. PERCENTILE_DISC single analytic - within group(order by id) over(partition by val) covered by midx_01, sort skipped     
+
+===================================================
+pd_1    
+500     
+500     
+500     
+500     
+500     
+500     
+500     
+500     
+500     
+500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+014. PERCENTILE_DISC two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    pd_1    pd_2    
+1     1     491     1     
+2     2     492     2     
+3     3     493     3     
+4     4     494     4     
+5     5     495     5     
+6     6     496     6     
+7     7     497     7     
+8     8     498     8     
+9     9     499     9     
+10     0     500     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?), percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+015. PERCENTILE_DISC two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    pd_2    pd_1    
+1     1     1     491     
+2     2     2     492     
+3     3     3     493     
+4     4     4     494     
+5     5     5     495     
+6     6     6     496     
+7     7     7     497     
+8     8     8     498     
+9     9     9     499     
+10     0     0     500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?), percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].id) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+016. PERCENTILE_DISC conflicting DESC order (order by id desc) - sort required     
+
+===================================================
+id    val    pd_1    pd_2    
+1     1     501     1     
+2     2     502     2     
+3     3     503     3     
+4     4     504     4     
+5     5     505     5     
+6     6     506     6     
+7     7     507     7     
+8     8     508     8     
+9     9     509     9     
+10     0     510     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].id desc) over (partition by ?), percentile_disc( cast(?.? as double)) within group (order by [dba.test_table].val) over (partition by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+017. ROW_NUMBER single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+rn_1    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select row_number() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+018. ROW_NUMBER two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    rn_1    rn_2    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, row_number() over (partition by ? order by ?), row_number() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+019. ROW_NUMBER two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    rn_2    rn_1    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, row_number() over (partition by ? order by ?), row_number() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+020. ROW_NUMBER conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    rn_1    rn_2    
+1     1     100     1     
+2     2     100     1     
+3     3     100     1     
+4     4     100     1     
+5     5     100     1     
+6     6     100     1     
+7     7     100     1     
+8     8     100     1     
+9     9     100     1     
+10     0     100     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, row_number() over (partition by ? order by ? desc ), row_number() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+021. RANK single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+rk_1    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+022. RANK two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    rk_1    rk_2    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, rank() over (partition by ? order by ?), rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+023. RANK two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    rk_2    rk_1    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, rank() over (partition by ? order by ?), rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+024. RANK conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    rk_1    rk_2    
+1     1     100     1     
+2     2     100     1     
+3     3     100     1     
+4     4     100     1     
+5     5     100     1     
+6     6     100     1     
+7     7     100     1     
+8     8     100     1     
+9     9     100     1     
+10     0     100     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, rank() over (partition by ? order by ? desc ), rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+025. DENSE_RANK single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+dr_1    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select dense_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+026. DENSE_RANK two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    dr_1    dr_2    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, dense_rank() over (partition by ? order by ?), dense_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+027. DENSE_RANK two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    dr_2    dr_1    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, dense_rank() over (partition by ? order by ?), dense_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+028. DENSE_RANK conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    dr_1    dr_2    
+1     1     100     1     
+2     2     100     1     
+3     3     100     1     
+4     4     100     1     
+5     5     100     1     
+6     6     100     1     
+7     7     100     1     
+8     8     100     1     
+9     9     100     1     
+10     0     100     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, dense_rank() over (partition by ? order by ? desc ), dense_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+029. AVG single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+av_1    
+10.0     
+15.0     
+20.0     
+25.0     
+30.0     
+35.0     
+40.0     
+45.0     
+50.0     
+55.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select avg([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+030. AVG two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    av_1    av_2    
+1     1     1.0     1.0     
+2     2     2.0     2.0     
+3     3     3.0     3.0     
+4     4     4.0     4.0     
+5     5     5.0     5.0     
+6     6     6.0     6.0     
+7     7     7.0     7.0     
+8     8     8.0     8.0     
+9     9     9.0     9.0     
+10     0     10.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, avg([dba.test_table].id) over (partition by ? order by ?), avg([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+031. AVG two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    av_2    av_1    
+1     1     1.0     1.0     
+2     2     2.0     2.0     
+3     3     3.0     3.0     
+4     4     4.0     4.0     
+5     5     5.0     5.0     
+6     6     6.0     6.0     
+7     7     7.0     7.0     
+8     8     8.0     8.0     
+9     9     9.0     9.0     
+10     0     0.0     10.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, avg([dba.test_table].val) over (partition by ? order by ?), avg([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+032. AVG conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    av_1    av_2    
+1     1     496.0     1.0     
+2     2     497.0     2.0     
+3     3     498.0     3.0     
+4     4     499.0     4.0     
+5     5     500.0     5.0     
+6     6     501.0     6.0     
+7     7     502.0     7.0     
+8     8     503.0     8.0     
+9     9     504.0     9.0     
+10     0     505.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, avg([dba.test_table].id) over (partition by ? order by ? desc ), avg([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+033. COUNT single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+cnt_1    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select count(*) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+034. COUNT two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    cnt_1    cnt_2    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, count(*) over (partition by ? order by ?), count([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+035. COUNT two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    cnt_2    cnt_1    
+1     1     1     1     
+2     2     1     1     
+3     3     1     1     
+4     4     1     1     
+5     5     1     1     
+6     6     1     1     
+7     7     1     1     
+8     8     1     1     
+9     9     1     1     
+10     0     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, count([dba.test_table].val) over (partition by ? order by ?), count(*) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+036. COUNT conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    cnt_1    cnt_2    
+1     1     100     1     
+2     2     100     1     
+3     3     100     1     
+4     4     100     1     
+5     5     100     1     
+6     6     100     1     
+7     7     100     1     
+8     8     100     1     
+9     9     100     1     
+10     0     100     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, count(*) over (partition by ? order by ? desc ), count([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+037. CUME_DIST single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+cd_1    
+0.01     
+0.02     
+0.03     
+0.04     
+0.05     
+0.06     
+0.07     
+0.08     
+0.09     
+0.1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select cume_dist() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+038. CUME_DIST two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    cd_1    cd_2    
+1     1     0.01     1.0     
+2     2     0.01     1.0     
+3     3     0.01     1.0     
+4     4     0.01     1.0     
+5     5     0.01     1.0     
+6     6     0.01     1.0     
+7     7     0.01     1.0     
+8     8     0.01     1.0     
+9     9     0.01     1.0     
+10     0     0.01     1.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, cume_dist() over (partition by ? order by ?), cume_dist() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+039. CUME_DIST two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    cd_2    cd_1    
+1     1     1.0     0.01     
+2     2     1.0     0.01     
+3     3     1.0     0.01     
+4     4     1.0     0.01     
+5     5     1.0     0.01     
+6     6     1.0     0.01     
+7     7     1.0     0.01     
+8     8     1.0     0.01     
+9     9     1.0     0.01     
+10     0     1.0     0.01     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, cume_dist() over (partition by ? order by ?), cume_dist() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+040. CUME_DIST conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    cd_1    cd_2    
+1     1     1.0     1.0     
+2     2     1.0     1.0     
+3     3     1.0     1.0     
+4     4     1.0     1.0     
+5     5     1.0     1.0     
+6     6     1.0     1.0     
+7     7     1.0     1.0     
+8     8     1.0     1.0     
+9     9     1.0     1.0     
+10     0     1.0     1.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, cume_dist() over (partition by ? order by ? desc ), cume_dist() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+041. FIRST_VALUE single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+fv_1    
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select first_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+042. FIRST_VALUE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    fv_1    fv_2    
+1     1     name_1     name_1     
+2     2     name_2     name_2     
+3     3     name_3     name_3     
+4     4     name_4     name_4     
+5     5     name_5     name_5     
+6     6     name_6     name_6     
+7     7     name_7     name_7     
+8     8     name_8     name_8     
+9     9     name_9     name_9     
+10     0     name_10     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, first_value([dba.test_table].[name]) over (partition by ? order by ?), first_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+043. FIRST_VALUE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    fv_2    fv_1    
+1     1     name_1     name_1     
+2     2     name_2     name_2     
+3     3     name_3     name_3     
+4     4     name_4     name_4     
+5     5     name_5     name_5     
+6     6     name_6     name_6     
+7     7     name_7     name_7     
+8     8     name_8     name_8     
+9     9     name_9     name_9     
+10     0     name_10     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, first_value([dba.test_table].[name]) over (partition by ? order by ?), first_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+044. FIRST_VALUE conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    fv_1    fv_2    
+1     1     name_991     name_1     
+2     2     name_992     name_2     
+3     3     name_993     name_3     
+4     4     name_994     name_4     
+5     5     name_995     name_5     
+6     6     name_996     name_6     
+7     7     name_997     name_7     
+8     8     name_998     name_8     
+9     9     name_999     name_9     
+10     0     name_1000     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, first_value([dba.test_table].[name]) over (partition by ? order by ? desc ), first_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+045. LAG single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+lg_1    
+null     
+name_10     
+name_20     
+name_30     
+name_40     
+name_50     
+name_60     
+name_70     
+name_80     
+name_90     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select lag([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+046. LAG two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    lg_1    lg_2    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lag([dba.test_table].[name], ?, null) over (partition by ? order by ?), lag([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+047. LAG two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    lg_2    lg_1    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lag([dba.test_table].[name], ?, null) over (partition by ? order by ?), lag([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+048. LAG conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    lg_1    lg_2    
+1     1     name_11     null     
+2     2     name_12     null     
+3     3     name_13     null     
+4     4     name_14     null     
+5     5     name_15     null     
+6     6     name_16     null     
+7     7     name_17     null     
+8     8     name_18     null     
+9     9     name_19     null     
+10     0     name_20     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lag([dba.test_table].[name], ?, null) over (partition by ? order by ? desc ), lag([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+049. LAST_VALUE single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+lv_1    
+name_10     
+name_20     
+name_30     
+name_40     
+name_50     
+name_60     
+name_70     
+name_80     
+name_90     
+name_100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select last_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+050. LAST_VALUE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    lv_1    lv_2    
+1     1     name_1     name_1     
+2     2     name_2     name_2     
+3     3     name_3     name_3     
+4     4     name_4     name_4     
+5     5     name_5     name_5     
+6     6     name_6     name_6     
+7     7     name_7     name_7     
+8     8     name_8     name_8     
+9     9     name_9     name_9     
+10     0     name_10     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, last_value([dba.test_table].[name]) over (partition by ? order by ?), last_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+051. LAST_VALUE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    lv_2    lv_1    
+1     1     name_1     name_1     
+2     2     name_2     name_2     
+3     3     name_3     name_3     
+4     4     name_4     name_4     
+5     5     name_5     name_5     
+6     6     name_6     name_6     
+7     7     name_7     name_7     
+8     8     name_8     name_8     
+9     9     name_9     name_9     
+10     0     name_10     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, last_value([dba.test_table].[name]) over (partition by ? order by ?), last_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+052. LAST_VALUE conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    lv_1    lv_2    
+1     1     name_1     name_1     
+2     2     name_2     name_2     
+3     3     name_3     name_3     
+4     4     name_4     name_4     
+5     5     name_5     name_5     
+6     6     name_6     name_6     
+7     7     name_7     name_7     
+8     8     name_8     name_8     
+9     9     name_9     name_9     
+10     0     name_10     name_10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, last_value([dba.test_table].[name]) over (partition by ? order by ? desc ), last_value([dba.test_table].[name]) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+053. LEAD single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+ld_1    
+name_20     
+name_30     
+name_40     
+name_50     
+name_60     
+name_70     
+name_80     
+name_90     
+name_100     
+name_110     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select lead([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+054. LEAD two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    ld_1    ld_2    
+1     1     name_11     null     
+2     2     name_12     null     
+3     3     name_13     null     
+4     4     name_14     null     
+5     5     name_15     null     
+6     6     name_16     null     
+7     7     name_17     null     
+8     8     name_18     null     
+9     9     name_19     null     
+10     0     name_20     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lead([dba.test_table].[name], ?, null) over (partition by ? order by ?), lead([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+055. LEAD two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    ld_2    ld_1    
+1     1     null     name_11     
+2     2     null     name_12     
+3     3     null     name_13     
+4     4     null     name_14     
+5     5     null     name_15     
+6     6     null     name_16     
+7     7     null     name_17     
+8     8     null     name_18     
+9     9     null     name_19     
+10     0     null     name_20     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lead([dba.test_table].[name], ?, null) over (partition by ? order by ?), lead([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+056. LEAD conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    ld_1    ld_2    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, lead([dba.test_table].[name], ?, null) over (partition by ? order by ? desc ), lead([dba.test_table].[name], ?, null) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+057. MAX single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+mx_1    
+10     
+20     
+30     
+40     
+50     
+60     
+70     
+80     
+90     
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select max([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+058. MAX two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    mx_1    mx_2    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     10     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, max([dba.test_table].id) over (partition by ? order by ?), max([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+059. MAX two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    mx_2    mx_1    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, max([dba.test_table].val) over (partition by ? order by ?), max([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+060. MAX conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    mx_1    mx_2    
+1     1     991     1     
+2     2     992     2     
+3     3     993     3     
+4     4     994     4     
+5     5     995     5     
+6     6     996     6     
+7     7     997     7     
+8     8     998     8     
+9     9     999     9     
+10     0     1000     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, max([dba.test_table].id) over (partition by ? order by ? desc ), max([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+061. MIN single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+mn_1    
+10     
+10     
+10     
+10     
+10     
+10     
+10     
+10     
+10     
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select min([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+062. MIN two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    mn_1    mn_2    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     10     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, min([dba.test_table].id) over (partition by ? order by ?), min([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+063. MIN two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    mn_2    mn_1    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, min([dba.test_table].val) over (partition by ? order by ?), min([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+064. MIN conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    mn_1    mn_2    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     10     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, min([dba.test_table].id) over (partition by ? order by ? desc ), min([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+065. NTH_VALUE single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+nv_1    
+null     
+null     
+null     
+null     
+null     
+null     
+null     
+null     
+null     
+name_100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select nth_value([dba.test_table].[name], ?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+066. NTH_VALUE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    nv_1    nv_2    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, nth_value([dba.test_table].[name], ?) over (partition by ? order by ?), nth_value([dba.test_table].[name], ?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+067. NTH_VALUE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    nv_2    nv_1    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, nth_value([dba.test_table].[name], ?) over (partition by ? order by ?), nth_value([dba.test_table].[name], ?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+068. NTH_VALUE conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    nv_1    nv_2    
+1     1     name_901     null     
+2     2     name_902     null     
+3     3     name_903     null     
+4     4     name_904     null     
+5     5     name_905     null     
+6     6     name_906     null     
+7     7     name_907     null     
+8     8     name_908     null     
+9     9     name_909     null     
+10     0     name_910     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ))
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, nth_value([dba.test_table].[name], ?) over (partition by ? order by ? desc ), nth_value([dba.test_table].[name], ?) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+069. PERCENT_RANK single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+pr_1    
+0.0     
+0.010101010101010102     
+0.020202020202020204     
+0.030303030303030304     
+0.04040404040404041     
+0.050505050505050504     
+0.06060606060606061     
+0.0707070707070707     
+0.08080808080808081     
+0.09090909090909091     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select percent_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+070. PERCENT_RANK two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    pr_1    pr_2    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percent_rank() over (partition by ? order by ?), percent_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+071. PERCENT_RANK two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    pr_2    pr_1    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percent_rank() over (partition by ? order by ?), percent_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+072. PERCENT_RANK conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    pr_1    pr_2    
+1     1     1.0     0.0     
+2     2     1.0     0.0     
+3     3     1.0     0.0     
+4     4     1.0     0.0     
+5     5     1.0     0.0     
+6     6     1.0     0.0     
+7     7     1.0     0.0     
+8     8     1.0     0.0     
+9     9     1.0     0.0     
+10     0     1.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, percent_rank() over (partition by ? order by ? desc ), percent_rank() over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+073. STDDEV_POP single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+sp_1    
+0.0     
+5.0     
+8.16496580927726     
+11.180339887498949     
+14.142135623730951     
+17.07825127659933     
+20.0     
+22.9128784747792     
+25.81988897471611     
+28.722813232690143     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select stddev_pop([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+074. STDDEV_POP two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    sp_1    sp_2    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_pop([dba.test_table].id) over (partition by ? order by ?), stddev_pop([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+075. STDDEV_POP two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    sp_2    sp_1    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_pop([dba.test_table].val) over (partition by ? order by ?), stddev_pop([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+076. STDDEV_POP conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    sp_1    sp_2    
+1     1     288.66070047722116     0.0     
+2     2     288.66070047722116     0.0     
+3     3     288.66070047722116     0.0     
+4     4     288.66070047722116     0.0     
+5     5     288.66070047722116     0.0     
+6     6     288.66070047722116     0.0     
+7     7     288.66070047722116     0.0     
+8     8     288.66070047722116     0.0     
+9     9     288.66070047722116     0.0     
+10     0     288.66070047722116     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_pop([dba.test_table].id) over (partition by ? order by ? desc ), stddev_pop([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+077. STDDEV_SAMP single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+ss_1    
+null     
+7.0710678118654755     
+10.0     
+12.909944487358056     
+15.811388300841896     
+18.708286933869708     
+21.602468994692874     
+24.49489742783178     
+27.386127875258307     
+30.276503540974907     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select stddev_samp([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+078. STDDEV_SAMP two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    ss_1    ss_2    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_samp([dba.test_table].id) over (partition by ? order by ?), stddev_samp([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+079. STDDEV_SAMP two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    ss_2    ss_1    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_samp([dba.test_table].val) over (partition by ? order by ?), stddev_samp([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+080. STDDEV_SAMP conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    ss_1    ss_2    
+1     1     290.1149197588202     null     
+2     2     290.1149197588202     null     
+3     3     290.1149197588202     null     
+4     4     290.1149197588202     null     
+5     5     290.1149197588202     null     
+6     6     290.1149197588201     null     
+7     7     290.11491975882024     null     
+8     8     290.1149197588202     null     
+9     9     290.1149197588202     null     
+10     0     290.1149197588202     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, stddev_samp([dba.test_table].id) over (partition by ? order by ? desc ), stddev_samp([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+081. SUM single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+sm_1    
+10     
+30     
+60     
+100     
+150     
+210     
+280     
+360     
+450     
+550     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select sum([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+082. SUM two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    sm_1    sm_2    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     10     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, sum([dba.test_table].id) over (partition by ? order by ?), sum([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+083. SUM two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    sm_2    sm_1    
+1     1     1     1     
+2     2     2     2     
+3     3     3     3     
+4     4     4     4     
+5     5     5     5     
+6     6     6     6     
+7     7     7     7     
+8     8     8     8     
+9     9     9     9     
+10     0     0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, sum([dba.test_table].val) over (partition by ? order by ?), sum([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+084. SUM conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    sm_1    sm_2    
+1     1     49600     1     
+2     2     49700     2     
+3     3     49800     3     
+4     4     49900     4     
+5     5     50000     5     
+6     6     50100     6     
+7     7     50200     7     
+8     8     50300     8     
+9     9     50400     9     
+10     0     50500     0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, sum([dba.test_table].id) over (partition by ? order by ? desc ), sum([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+085. VAR_POP single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+vp_1    
+0.0     
+25.0     
+66.66666666666669     
+125.0     
+200.0     
+291.66666666666674     
+400.0     
+525.0     
+666.6666666666665     
+825.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select var_pop([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+086. VAR_POP two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    vp_1    vp_2    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_pop([dba.test_table].id) over (partition by ? order by ?), var_pop([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+087. VAR_POP two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    vp_2    vp_1    
+1     1     0.0     0.0     
+2     2     0.0     0.0     
+3     3     0.0     0.0     
+4     4     0.0     0.0     
+5     5     0.0     0.0     
+6     6     0.0     0.0     
+7     7     0.0     0.0     
+8     8     0.0     0.0     
+9     9     0.0     0.0     
+10     0     0.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_pop([dba.test_table].val) over (partition by ? order by ?), var_pop([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+088. VAR_POP conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    vp_1    vp_2    
+1     1     83325.0     0.0     
+2     2     83325.0     0.0     
+3     3     83325.0     0.0     
+4     4     83325.0     0.0     
+5     5     83325.0     0.0     
+6     6     83325.0     0.0     
+7     7     83325.0     0.0     
+8     8     83325.0     0.0     
+9     9     83325.0     0.0     
+10     0     83325.0     0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_pop([dba.test_table].id) over (partition by ? order by ? desc ), var_pop([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+089. VAR_SAMP single analytic - OVER matches midx_01(val,id), sort skipped     
+
+===================================================
+vs_1    
+null     
+50.0     
+100.0     
+166.66666666666663     
+250.0     
+350.0     
+466.66666666666697     
+600.0     
+750.0     
+916.6666666666661     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select var_samp([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+090. VAR_SAMP two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required     
+
+===================================================
+id    val    vs_1    vs_2    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_samp([dba.test_table].id) over (partition by ? order by ?), var_samp([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+091. VAR_SAMP two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped     
+
+===================================================
+id    val    vs_2    vs_1    
+1     1     null     null     
+2     2     null     null     
+3     3     null     null     
+4     4     null     null     
+5     5     null     null     
+6     6     null     null     
+7     7     null     null     
+8     8     null     null     
+9     9     null     null     
+10     0     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_samp([dba.test_table].val) over (partition by ? order by ?), var_samp([dba.test_table].id) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+092. VAR_SAMP conflicting DESC order on the ASC index - sort required     
+
+===================================================
+id    val    vs_1    vs_2    
+1     1     84166.66666666669     null     
+2     2     84166.66666666666     null     
+3     3     84166.66666666669     null     
+4     4     84166.66666666666     null     
+5     5     84166.66666666669     null     
+6     6     84166.66666666663     null     
+7     7     84166.66666666672     null     
+8     8     84166.66666666666     null     
+9     9     84166.66666666669     null     
+10     0     84166.66666666669     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].id, [dba.test_table].val, var_samp([dba.test_table].id) over (partition by ? order by ? desc ), var_samp([dba.test_table].val) over (partition by ? order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+093. Two analytics share the sort key (c1,c2,c3,c4) - they merge into a single ANALYTIC # group (sort skipped); the trace prints one line per sort group, not per function     
+
+===================================================
+c1    c2    c3    c4    a1    a2    
+0     0     0     105     1     1     
+0     0     0     210     2     2     
+0     0     0     315     3     3     
+0     0     0     420     4     4     
+0     0     0     525     5     5     
+0     0     0     630     6     6     
+0     0     0     735     7     7     
+0     0     0     840     8     8     
+0     0     0     945     9     9     
+0     0     1     70     1     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_group.gidx) (key range: ([dba.t_group].c?>= ?:? ), covered: true)
+
+  rewritten query: select [dba.t_group].c?, [dba.t_group].c?, [dba.t_group].c?, [dba.t_group].c?, row_number() over (partition by ?, ?, ? order by ?), row_number() over (partition by ?, ? order by ?, ?) from [dba.t_group] [dba.t_group] where ([dba.t_group].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.t_group].gidx(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_group.gidx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+094. Partition on leading index columns (c1, c2, c3), no ORDER BY - sort skipped     
+
+===================================================
+c1    c2    c3    rn    
+0     c2_0     c3_0     1     
+0     c2_0     c3_0     2     
+0     c2_0     c3_0     3     
+0     c2_0     c3_0     4     
+0     c2_0     c3_0     5     
+0     c2_0     c3_0     6     
+0     c2_0     c3_0     7     
+0     c2_0     c3_0     8     
+0     c2_0     c3_0     9     
+0     c2_0     c3_0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ?, ?, ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+095. ORDER BY c4 (not an index column) - sort required     
+
+===================================================
+c1    c2    c3    rn    
+0     c2_0     c3_0     1     
+0     c2_0     c3_0     2     
+0     c2_0     c3_0     3     
+0     c2_0     c3_0     4     
+0     c2_0     c3_0     5     
+0     c2_0     c3_0     6     
+0     c2_0     c3_0     7     
+0     c2_0     c3_0     8     
+0     c2_0     c3_0     9     
+0     c2_0     c3_0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ))
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+096. ORDER BY mod(c1, 10) (the function-based 4th index column) - sort skipped     
+
+===================================================
+c1    c2    c3    rn    
+0     c2_0     c3_0     1     
+0     c2_0     c3_0     2     
+0     c2_0     c3_0     3     
+0     c2_0     c3_0     4     
+0     c2_0     c3_0     5     
+0     c2_0     c3_0     6     
+0     c2_0     c3_0     7     
+0     c2_0     c3_0     8     
+0     c2_0     c3_0     9     
+0     c2_0     c3_0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ))
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+097. use_desc_idx with ascending OVER order - descending scan conflicts, sort required     
+
+===================================================
+c1    c2    c3    rn    
+0     c2_0     c3_0     1     
+0     c2_0     c3_0     2     
+0     c2_0     c3_0     3     
+0     c2_0     c3_0     4     
+0     c2_0     c3_0     5     
+0     c2_0     c3_0     6     
+0     c2_0     c3_0     7     
+0     c2_0     c3_0     8     
+0     c2_0     c3_0     9     
+0     c2_0     c3_0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX */ [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+098. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped     
+
+===================================================
+c1    c2    c3    rn    
+99     c2_9     c3_9     1     
+99     c2_9     c3_9     2     
+99     c2_9     c3_9     3     
+99     c2_9     c3_9     4     
+99     c2_9     c3_9     5     
+99     c2_9     c3_9     6     
+99     c2_9     c3_9     7     
+99     c2_9     c3_9     8     
+99     c2_9     c3_9     9     
+99     c2_9     c3_9     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX */ [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ? desc , ? desc , ? desc  order by ? desc ) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
