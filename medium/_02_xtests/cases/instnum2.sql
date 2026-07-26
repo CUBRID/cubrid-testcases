@@ -15,9 +15,11 @@ insert into state (name, cities)
     to :st_nh;
 select count(*), min(rn), max(rn)
 from (
-  select rownum as rn
+  select rownum as rn, st.name as state_name
   from state st, TABLE (st.cities) as T(ci)
   where rownum in (1, 2, 3)
-) t;
+) t
+group by state_name
+order by count(*) desc;
 
 rollback;
