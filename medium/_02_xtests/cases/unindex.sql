@@ -9,5 +9,5 @@ insert into foo values (5, 15);
 insert into foo values (6, 16);
 insert into foo(b) values(17);
 insert into foo(b) values(18);
-select * from foo;
+select * from foo order by b;
 rollback;
