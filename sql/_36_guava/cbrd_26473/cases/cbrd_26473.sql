@@ -33,6 +33,9 @@
  *    4. Aggregate / navigation / distribution - AVG, COUNT, CUME_DIST,
  *       FIRST_VALUE, LAG, LAST_VALUE, LEAD, MAX, MIN, NTH_VALUE, PERCENT_RANK,
  *       STDDEV_POP, STDDEV_SAMP, SUM, VAR_POP, VAR_SAMP
+ *       plus one case where the index-compatible-but-unskippable (DESC) analytic
+ *       is written SECOND, so the execution-order promotion is observable in the
+ *       final row order rather than being a no-op
  *    5. Sort-group merging - analytics sharing a sort key collapse into a single
  *       ANALYTIC #N group (trace prints per sort group, not per function)
  *    6. Index edge cases - partition on leading index columns, ORDER BY on a
@@ -664,6 +667,12 @@ select /*+ recompile */ id, val,
   var_samp(val) over (partition by id order by val) as vs_2
 from test_table where val >= 0 using index midx_01(+) limit 10;
 show trace;
+evaluate '093. NTILE index-compatible DESC analytic written second - promoted ahead of the incompatible one (final row order reveals the execution order)';
+select /*+ recompile */ id, val,
+  ntile(5) over (partition by id order by val) as n_2,
+  ntile(5) over (partition by val order by id desc) as n_1
+from test_table where val >= 0 using index midx_01(+) limit 10;
+show trace;
 
 set trace off;
 drop table test_table;
@@ -688,7 +697,7 @@ select n % 5, n % 7, n % 3, n from cte;
 
 set trace on;
 
-evaluate '093. Two analytics share the sort key (c1,c2,c3,c4) - they merge into a single ANALYTIC # group (sort skipped); the trace prints one line per sort group, not per function';
+evaluate '094. Two analytics share the sort key (c1,c2,c3,c4) - they merge into a single ANALYTIC # group (sort skipped); the trace prints one line per sort group, not per function';
 select /*+ recompile */ c1, c2, c3, c4,
   row_number() over (partition by c1, c2, c3 order by c4) as a1,
   row_number() over (partition by c1, c2 order by c3, c4) as a2
@@ -721,31 +730,31 @@ select n % 100, 'c2_' || (n % 10), 'c3_' || (n % 10), n from cte;
 
 set trace on;
 
-evaluate '094. Partition on leading index columns (c1, c2, c3), no ORDER BY - sort skipped';
+evaluate '095. Partition on leading index columns (c1, c2, c3), no ORDER BY - sort skipped';
 select /*+ recompile */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 10;
 show trace;
 
-evaluate '095. ORDER BY c4 (not an index column) - sort required';
+evaluate '096. ORDER BY c4 (not an index column) - sort required';
 select /*+ recompile */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by c4) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 10;
 show trace;
 
-evaluate '096. ORDER BY mod(c1, 10) (the function-based 4th index column) - sort skipped';
+evaluate '097. ORDER BY mod(c1, 10) (the function-based 4th index column) - sort skipped';
 select /*+ recompile */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by mod(c1, 10)) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 10;
 show trace;
 
-evaluate '097. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
+evaluate '098. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by mod(c1, 10)) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 10;
 show trace;
 
-evaluate '098. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
+evaluate '099. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1 desc, c2 desc, c3 desc order by mod(c1, 10) desc) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 10;
