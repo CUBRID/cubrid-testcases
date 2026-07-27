@@ -38,6 +38,22 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
 count(*)    
@@ -62,6 +78,22 @@ idx-join (inner join)
     inner: iscan
                class: b node[?]
                index: pk_tbl_col_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -93,6 +125,22 @@ idx-join (inner join)
                sargs: term[?]
                cost:  ? card ?
     sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
@@ -128,7 +176,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e
 ===================================================
 count(*)    
 1     
@@ -155,7 +203,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a
 ===================================================
 count(*)    
 1     
@@ -185,6 +233,6 @@ idx-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
+select /*+ ORDERED NO_USE_HASH */ count(*) from tbl a, tbl b where a.col_a=b.col_a and a.col_e=b.col_e and a.col_b=b.col_b
 ===================================================
 0

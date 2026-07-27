@@ -185,25 +185,28 @@ Q104     39     39     39     39     39     39
 Q104     40     40     40     40     40     40     
 
 Query plan:
-temp
-    order: cola[?]
-    subplan: m-join (inner join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: iscan
-                                         class: a node[?]
-                                         index: idx_cola_colb_colc (covers)
+temp(order by)
+    subplan: temp
+                 order: cola[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: cola[?]
+                                         subplan: iscan
+                                                      class: a node[?]
+                                                      index: idx_cola_colb_colc (covers)
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cold[?]
-                            subplan: sscan
-                                         class: b node[?]
+                              inner: temp
+                                         order: cold[?]
+                                         subplan: sscan
+                                                      class: b node[?]
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc, ? asc
                  cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -211,12 +214,13 @@ select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.
 trace    
 
 Query Plan:
-  SORT (temp)
-    MERGE JOIN (inner join)
-      SORT (temp)
-        INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
-      SORT (temp)
-        TABLE SCAN (b)
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+        SORT (temp)
+          TABLE SCAN (b)
 
   rewritten query: select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -255,25 +259,28 @@ Q105     99952     99952     99952     99952     99952     99952
 Q105     99951     99951     99951     99951     99951     99951     
 
 Query plan:
-temp
-    order: cola[?]
-    subplan: m-join (inner join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: iscan
-                                         class: a node[?]
-                                         index: idx_cola_colb_colc (covers) (desc_index)
+temp(order by)
+    subplan: temp
+                 order: cola[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: cola[?]
+                                         subplan: iscan
+                                                      class: a node[?]
+                                                      index: idx_cola_colb_colc (covers) (desc_index)
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cold[?]
-                            subplan: sscan
-                                         class: b node[?]
+                              inner: temp
+                                         order: cold[?]
+                                         subplan: sscan
+                                                      class: b node[?]
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? desc, ? desc, ? desc
                  cost:  ? card ?
-    sort:  ? desc, ? desc, ? desc
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
@@ -281,12 +288,13 @@ select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.
 trace    
 
 Query Plan:
-  SORT (temp)
-    MERGE JOIN (inner join)
-      SORT (temp)
-        INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
-      SORT (temp)
-        TABLE SCAN (b)
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+        SORT (temp)
+          TABLE SCAN (b)
 
   rewritten query: select /*+ ORDERED USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -325,15 +333,18 @@ Q106     59     59     59     59
 Q106     60     60     60     60     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers)
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -342,9 +353,10 @@ select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
-    INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (inner join)
+      INDEX SCAN (a.idx_cola_colb_colc) (covered: true)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -354,7 +366,7 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
@@ -384,15 +396,18 @@ Q107     99932     99932     99932     99932
 Q107     99931     99931     99931     99931     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb_colc (covers) (desc_index)
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: idx_cola_colb_colc (covers) (desc_index)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? desc
+                 cost:  ? card ?
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
@@ -401,9 +416,10 @@ select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from tbl_a a
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
-    INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (inner join)
+      INDEX SCAN (a.idx_cola_colb_colc) (covered: true, desc_index: true)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ ORDERED USE_HASH */ 'Q?', a.cola, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -413,7 +429,7 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
@@ -662,25 +678,28 @@ Q112     119     119     119     119     119     119
 Q112     120     120     120     120     120     120     
 
 Query plan:
-temp
-    order: cola[?]
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: temp(sort limit)
-                                         subplan: iscan
-                                                      class: a node[?]
-                                                      index: idx_cola_colb 
+temp(order by)
+    subplan: temp
+                 order: cola[?]
+                 subplan: m-join (left outer join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: cola[?]
+                                         subplan: temp(sort limit)
+                                                      subplan: iscan
+                                                                   class: a node[?]
+                                                                   index: idx_cola_colb 
+                                                                   cost:  ? card ?
                                                       cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cold[?]
-                            subplan: sscan
-                                         class: b node[?]
+                              inner: temp
+                                         order: cold[?]
+                                         subplan: sscan
+                                                      class: b node[?]
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -690,13 +709,14 @@ select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf fro
 trace    
 
 Query Plan:
-  SORT (temp)
-    MERGE JOIN (left outer join)
-      SORT (temp)
-        SORT (limit)
-          INDEX SCAN (a.idx_cola_colb) ()
-      SORT (temp)
-        TABLE SCAN (b)
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (left outer join)
+        SORT (temp)
+          SORT (limit)
+            INDEX SCAN (a.idx_cola_colb) ()
+        SORT (temp)
+          TABLE SCAN (b)
 
   rewritten query: select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -737,25 +757,28 @@ Q113     99872     99872     99872     99872     99872     99872
 Q113     99871     99871     99871     99871     99871     99871     
 
 Query plan:
-temp
-    order: cola[?]
-    subplan: m-join (left outer join)
-                 edge:  term[?]
-                 outer: temp
-                            order: cola[?]
-                            subplan: temp(sort limit)
-                                         subplan: iscan
-                                                      class: a node[?]
-                                                      index: idx_cola_colb  (desc_index)
+temp(order by)
+    subplan: temp
+                 order: cola[?]
+                 subplan: m-join (left outer join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: cola[?]
+                                         subplan: temp(sort limit)
+                                                      subplan: iscan
+                                                                   class: a node[?]
+                                                                   index: idx_cola_colb  (desc_index)
+                                                                   cost:  ? card ?
                                                       cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
-                 inner: temp
-                            order: cold[?]
-                            subplan: sscan
-                                         class: b node[?]
+                              inner: temp
+                                         order: cold[?]
+                                         subplan: sscan
+                                                      class: b node[?]
+                                                      cost:  ? card ?
                                          cost:  ? card ?
-                            cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? desc, ? desc
                  cost:  ? card ?
     sort:  ? desc, ? desc
     cost:  ? card ?
@@ -765,13 +788,14 @@ select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf fro
 trace    
 
 Query Plan:
-  SORT (temp)
-    MERGE JOIN (left outer join)
-      SORT (temp)
-        SORT (limit)
-          INDEX SCAN (a.idx_cola_colb) (desc_index: true)
-      SORT (temp)
-        TABLE SCAN (b)
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (left outer join)
+        SORT (temp)
+          SORT (limit)
+            INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+        SORT (temp)
+          TABLE SCAN (b)
 
   rewritten query: select /*+ USE_MERGE */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -812,17 +836,20 @@ Q114     139     139     139     139     139     139
 Q114     140     140     140     140     140     140     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb 
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
@@ -831,10 +858,11 @@ select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.col
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) ()
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) ()
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -843,7 +871,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -874,17 +902,20 @@ Q115     99852     99852     99852     99852     99852     99852
 Q115     99851     99851     99851     99851     99851     99851     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb  (desc_index)
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb  (desc_index)
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
     sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
@@ -893,10 +924,11 @@ select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.col
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -905,7 +937,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -938,17 +970,20 @@ Q116     959     959     959     959     959     959
 Q116     960     960     960     960     960     960     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb 
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
@@ -957,10 +992,11 @@ select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.col
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) ()
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) ()
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -1002,17 +1038,20 @@ Q117     99032     99032     99032     99032     99032     99032
 Q117     99031     99031     99031     99031     99031     99031     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb  (desc_index)
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb  (desc_index)
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
     sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
@@ -1021,10 +1060,11 @@ select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.col
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -1066,17 +1106,20 @@ Q118     979     979     979     979     979     979
 Q118     980     980     980     980     980     980     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb 
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb 
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
@@ -1085,10 +1128,11 @@ select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) ()
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) ()
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
@@ -1131,17 +1175,20 @@ Q119     99012     99012     99012     99012     99012     99012
 Q119     99011     99011     99011     99011     99011     99011     
 
 Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: a node[?]
-                            index: idx_cola_colb  (desc_index)
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: idx_cola_colb  (desc_index)
+                                         cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sort:  ? desc, ? desc
+                 cost:  ? card ?
     sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
@@ -1150,10 +1197,11 @@ select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from
 trace    
 
 Query Plan:
-  HASH JOIN (left outer join)
-    SORT (limit)
-      INDEX SCAN (a.idx_cola_colb) (desc_index: true)
-    TABLE SCAN (b)
+  SORT (order by)
+    HASH JOIN (left outer join)
+      SORT (limit)
+        INDEX SCAN (a.idx_cola_colb) (desc_index: true)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a left outer join [dba.tbl_b] b on a.cola=b.cold order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
