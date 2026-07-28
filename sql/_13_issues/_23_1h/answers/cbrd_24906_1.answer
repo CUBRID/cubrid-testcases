@@ -145,8 +145,8 @@ Trace Statistics:
      
 
 ===================================================
-col_a    c9    
-1000     null     
+valid_col_a    c9    
+TRUE     null     
 
 ===================================================
 trace    
@@ -158,7 +158,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select a.col_a, (select /*+ ORDERED NO_MERGE */ b.col_b from [dba.tbl_b] b where ?=? and (inst_num()<= ?:? ) and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select  if(a.col_a between ? and ?,  cast('TRUE' as varchar),  cast('FALSE' as varchar)), (select /*+ ORDERED NO_MERGE */ b.col_b from [dba.tbl_b] b where ?=? and (inst_num()<= ?:? ) and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -170,8 +170,8 @@ Trace Statistics:
      
 
 ===================================================
-col_a    c9    
-1000     null     
+valid_col_a    c9    
+TRUE     null     
 
 ===================================================
 trace    
@@ -183,7 +183,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select a.col_a, (select /*+ ORDERED NO_MERGE */ b.col_c from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+  rewritten query: select  if(a.col_a between ? and ?,  cast('TRUE' as varchar),  cast('FALSE' as varchar)), (select /*+ ORDERED NO_MERGE */ b.col_c from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
 
 
 Trace Statistics:
