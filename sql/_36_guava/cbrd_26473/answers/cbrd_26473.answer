@@ -5159,3 +5159,188 @@ Trace Statistics:
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+100. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped     
+
+===================================================
+c1    c2    c3    m    rn    
+0     c2_0     c3_0     0     1     
+0     c2_0     c3_0     0     2     
+0     c2_0     c3_0     0     3     
+0     c2_0     c3_0     0     4     
+0     c2_0     c3_0     1     5     
+0     c2_0     c3_0     1     6     
+0     c2_0     c3_0     1     7     
+0     c2_0     c3_0     1     8     
+0     c2_0     c3_0     1     9     
+0     c2_0     c3_0     2     10     
+0     c2_0     c3_0     2     11     
+0     c2_0     c3_0     2     12     
+0     c2_0     c3_0     2     13     
+0     c2_0     c3_0     2     14     
+0     c2_0     c3_0     3     15     
+0     c2_0     c3_0     3     16     
+0     c2_0     c3_0     3     17     
+0     c2_0     c3_0     3     18     
+0     c2_0     c3_0     3     19     
+0     c2_0     c3_0     4     20     
+0     c2_0     c3_0     4     21     
+0     c2_0     c3_0     4     22     
+0     c2_0     c3_0     4     23     
+0     c2_0     c3_0     4     24     
+0     c2_0     c3_0     5     25     
+0     c2_0     c3_0     5     26     
+0     c2_0     c3_0     5     27     
+0     c2_0     c3_0     5     28     
+0     c2_0     c3_0     5     29     
+0     c2_0     c3_0     6     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ))
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?,  mod([dba.test_table_?].c?, ?), row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+101. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one     
+
+===================================================
+c1    c2    c3    m    rn    
+0     c2_0     c3_0     0     1     
+0     c2_0     c3_0     0     2     
+0     c2_0     c3_0     0     3     
+0     c2_0     c3_0     0     4     
+0     c2_0     c3_0     1     5     
+0     c2_0     c3_0     1     6     
+0     c2_0     c3_0     1     7     
+0     c2_0     c3_0     1     8     
+0     c2_0     c3_0     1     9     
+0     c2_0     c3_0     2     10     
+0     c2_0     c3_0     2     11     
+0     c2_0     c3_0     2     12     
+0     c2_0     c3_0     2     13     
+0     c2_0     c3_0     2     14     
+0     c2_0     c3_0     3     15     
+0     c2_0     c3_0     3     16     
+0     c2_0     c3_0     3     17     
+0     c2_0     c3_0     3     18     
+0     c2_0     c3_0     3     19     
+0     c2_0     c3_0     4     20     
+0     c2_0     c3_0     4     21     
+0     c2_0     c3_0     4     22     
+0     c2_0     c3_0     4     23     
+0     c2_0     c3_0     4     24     
+0     c2_0     c3_0     5     25     
+0     c2_0     c3_0     5     26     
+0     c2_0     c3_0     5     27     
+0     c2_0     c3_0     5     28     
+0     c2_0     c3_0     5     29     
+0     c2_0     c3_0     6     30     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.test_table_?)
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?,  mod([dba.test_table_?].c?, ?), row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index none
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.test_table_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+102. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering     
+
+===================================================
+c1    c2    c3    m    rn    
+0     c2_0     c3_0     1     1     
+0     c2_0     c3_0     2     2     
+0     c2_0     c3_0     3     3     
+0     c2_0     c3_0     4     4     
+0     c2_0     c3_0     5     5     
+0     c2_0     c3_0     6     6     
+0     c2_0     c3_0     7     7     
+0     c2_0     c3_0     8     8     
+0     c2_0     c3_0     9     9     
+0     c2_0     c3_0     0     10     
+0     c2_0     c3_0     1     11     
+0     c2_0     c3_0     2     12     
+0     c2_0     c3_0     3     13     
+0     c2_0     c3_0     4     14     
+0     c2_0     c3_0     5     15     
+0     c2_0     c3_0     6     16     
+0     c2_0     c3_0     7     17     
+0     c2_0     c3_0     8     18     
+0     c2_0     c3_0     9     19     
+0     c2_0     c3_0     0     20     
+0     c2_0     c3_0     1     21     
+0     c2_0     c3_0     2     22     
+0     c2_0     c3_0     3     23     
+0     c2_0     c3_0     4     24     
+0     c2_0     c3_0     5     25     
+0     c2_0     c3_0     6     26     
+0     c2_0     c3_0     7     27     
+0     c2_0     c3_0     8     28     
+0     c2_0     c3_0     9     29     
+0     c2_0     c3_0     0     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ))
+
+  rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?,  mod([dba.test_table_?].c?, ?), row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+    
+103. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)     
+
+===================================================
+joined_cnt    bad_a1    bad_a2    
+1000     0     0     
+
+===================================================
+0

@@ -43,11 +43,18 @@
  *       plus one case where the index-compatible-but-unskippable (DESC) analytic
  *       is written SECOND, so the execution-order promotion is observable in the
  *       final row order rather than being a no-op
- *    5. Sort-group merging - analytics sharing a sort key collapse into a single
- *       ANALYTIC #N group (trace prints per sort group, not per function)
+ *    5. Sort-group merging - two analytics whose sort keys normalize to the same
+ *       key collapse into a single ANALYTIC #N group (the trace prints one line
+ *       per sort group, not per function)
  *    6. Index edge cases - partition on leading index columns, ORDER BY on a
- *       non-index column, ORDER BY on a function-based index column, and
- *       descending index scan (use_desc_idx)
+ *       non-index column, ORDER BY on a function-based index column that is
+ *       CONSTANT inside the partition (a degenerate ordering), and descending
+ *       index scan (use_desc_idx)
+ *    7. Function-based index column that VARIES inside the partition, with the
+ *       same query forced onto a sequential scan as the value oracle
+ *    8. Value equivalence - the sort-skip path must return the same analytic
+ *       values as paths where the sort cannot be skipped or the merge cannot
+ *       happen (oracle-independent: it compares the engine against itself)
  */
 
 drop table if exists test_table;
@@ -747,6 +754,16 @@ select /*+ recompile */ c1, c2, c3, c4,
 from t_group where c1 >= 0 using index gidx(+) limit 30;
 show trace;
 
+
+-- todo: a three-analytic merge scenario (three families on one shared key)
+--       and a merge-plus-promotion scenario are still missing here. Both were
+--       drafted and run, and both come back with WRONG analytic values on the
+--       sort-skip path: with three or more analytics in one query the engine
+--       loses one analytic's PARTITION BY (a running sum returns the global
+--       total, and a row_number numbers over a wider group). Two analytics are
+--       unaffected. Add these scenarios once that defect is fixed - recording
+--       the current output would bake the wrong values into the answer.
+
 set trace off;
 drop table t_group;
 
@@ -809,3 +826,103 @@ show trace;
 
 set trace off;
 drop table test_table_2;
+
+--
+-- 7. Function-based index column that VARIES inside the partition.
+--    In section 6 the ordering expression mod(c1,10) is a function of the
+--    partition key, so it is CONSTANT inside a partition: ordering by it is a
+--    no-op and its sort: skip does not prove the function-based index column
+--    was matched. Here mod(c4,10) is independent of the partition key, so the
+--    skipped path must also produce the CORRECT row_number values.
+--    c1 = n%7 and c2/c3 = n%3 are coprime, so a (c1,c2,c3) partition is n mod 21
+--    - 21 partitions of ~47 rows - and limit 30 stays inside the first one.
+--    For n = r + 21k, mod(c4,10) = (r + k) mod 10, which varies with k.
+--    Rows tied on mod(c4,10) print identically (c1,c2,c3 are constant in the
+--    partition, c4 itself is NOT projected, rn is emitted in visit order), so
+--    the block is order-invariant. Do not project c4.
+--
+drop table if exists test_table_3;
+create table test_table_3 (c1 int, c2 varchar, c3 varchar, c4 int);
+create index midx_03 on test_table_3 (c1, c2, c3, mod(c4, 10));
+
+insert into test_table_3
+with recursive cte (n) as (
+  select 1
+  union all
+  select n + 1 from cte where n < 1000
+)
+select n % 7, 'c2_' || (n % 3), 'c3_' || (n % 3), n from cte;
+
+set trace on;
+
+evaluate '100. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped';
+select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
+  row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
+from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
+show trace;
+
+-- Value oracle for the scenario above: the SAME query forced onto a sequential
+-- scan cannot skip the sort, so it must still print an identical result block.
+evaluate '101. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one';
+select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
+  row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
+from test_table_3 where c1 >= 0 using index none limit 30;
+show trace;
+
+evaluate '102. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering';
+select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
+  row_number() over (partition by c1, c2, c3 order by c4) as rn
+from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
+show trace;
+
+set trace off;
+drop table test_table_3;
+
+--
+-- 8. Value equivalence: analytic values produced with the sort skipped must
+--    match the same values produced where merging cannot happen. This is an
+--    oracle-independent check - it compares the engine against itself, so a
+--    wrong value cannot pass merely by having been recorded in the answer.
+--    The merged query computes two analytics with DIFFERENT sort keys in one
+--    statement; each is then recomputed alone, where no merge is possible.
+--    nvl() sentinels are required so a NULL on one side cannot make the
+--    comparison UNKNOWN and silently drop a mismatch, and joined_cnt guards
+--    against rows going missing entirely. The result is a single scalar row,
+--    so it needs no ORDER BY, and no LIMIT is used - a LIMIT would truncate
+--    the comparison.
+-- todo: a differential scenario (the same analytics via an index scan and via
+--       a forced sequential scan, asserting 0 mismatches) was drafted and run,
+--       but reports 900 mismatches out of 1000 today: when two analytics that
+--       SHARE a sort key are merged inside a joined inline view, the two
+--       branches disagree on row_number. The same two analytics are correct as
+--       a top-level query, and analytics with different sort keys are correct
+--       even inside inline views (the scenario below). Add the differential
+--       scenario once that defect is fixed.
+--
+drop table if exists test_table;
+create table test_table (id int auto_increment, name varchar, val int, primary key (id));
+create index midx_01 on test_table (val, id);
+
+insert into test_table (name, val)
+with recursive cte (n) as (
+  select 1
+  union all
+  select n + 1 from cte where n < 1000
+)
+select 'name_' || n, n % 10 from cte;
+
+evaluate '103. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)';
+select count(*) as joined_cnt,
+  sum(case when nvl(m.a1, -1) <> nvl(s1.a1, -1) then 1 else 0 end) as bad_a1,
+  sum(case when nvl(m.a2, -1) <> nvl(s2.a2, -1) then 1 else 0 end) as bad_a2
+from (select id,
+        row_number() over (partition by val order by id) as a1,
+        row_number() over (partition by id order by val) as a2
+      from test_table where val >= 0 using index midx_01(+)) m,
+     (select id, row_number() over (partition by val order by id) as a1
+      from test_table where val >= 0 using index none) s1,
+     (select id, row_number() over (partition by id order by val) as a2
+      from test_table where val >= 0 using index none) s2
+where m.id = s1.id and m.id = s2.id;
+
+drop table test_table;
