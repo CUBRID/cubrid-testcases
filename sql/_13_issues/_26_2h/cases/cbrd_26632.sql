@@ -7,7 +7,7 @@
  *
  * Coverage:
  * 1. login() to an uncommitted user rolls back the CREATE USER and fails gracefully.
- * 2. Failed login() (Case 1) does not change the session's current user.
+ * 2. Failed login() does not change the session's current user (verified via CURRENT_USER).
  * 3. login() into an already-committed user succeeds normally.
  * 4. Pending DDL (CREATE TABLE) is force-rolled-back by login().
  * 5. Pending DML (INSERT) is force-rolled-back by login().
@@ -33,6 +33,9 @@ evaluate 'Case 1. login() into a not-yet-committed user forces a rollback of the
 CREATE USER user1;
 CALL login('user1') ON CLASS db_user;
 -- Expected: ERROR - user1 no longer exists (forced rollback ran first)
+
+SELECT CURRENT_USER;
+-- Expected: 'DBA' (failed login must not change the session user)
 
 SHOW TABLES;
 -- Expected: succeeds immediately after failed login(); no core dump
@@ -171,6 +174,9 @@ GRANT SELECT ON dba.tbl1 TO user9;
 CALL login('user2') ON CLASS db_user;
 -- Expected: succeeds; pending GRANT above is force-rolled-back
 
+SELECT CURRENT_USER;
+-- Expected: 'USER2' (confirms login switch succeeded)
+
 CALL login('user9') ON CLASS db_user;
 SELECT * FROM dba.tbl1;
 -- Expected: ERROR - user9 has no SELECT privilege on tbl1
@@ -191,6 +197,9 @@ REVOKE SELECT ON dba.tbl1 FROM user9;
 CALL login('user2') ON CLASS db_user;
 -- Expected: succeeds; pending REVOKE above is force-rolled-back
 
+SELECT CURRENT_USER;
+-- Expected: 'USER2' (confirms login switch succeeded)
+
 CALL login('user9') ON CLASS db_user;
 SELECT COUNT(*) FROM dba.tbl1;
 -- Expected: Succeeds (user9 still has SELECT privilege because REVOKE was rolled back)
@@ -208,6 +217,10 @@ SELECT COUNT(*) FROM dba.tbl1;
 ROLLBACK;
 SELECT COUNT(*) FROM dba.tbl1;
 -- Expected: COUNT(*) = 0 (INSERT was rolled back, proving autocommit is still OFF)
+
+SHOW TABLES;
+-- Expected: succeeds; exercises the SHOW TABLES -> mq_virtual_queries() -> authenticate_context
+-- path that triggered the original core dump under successful login + rollback
 
 CALL login('dba') ON CLASS db_user;
 
