@@ -1,6 +1,7 @@
 /**
- *  This test case verifies CBRD-24890: min(), max() functions not being optimized for index scans in specific cases.
- *  This test case verifies that min()/max() are executed via index scan instead of full aggregate processing.
+ *  This test case verifies CBRD-24890 (with CBRD-27058):
+ *  - CBRD-24890: min(), max() functions not being optimized for index scans in specific cases
+ *  - CBRD-27058: Fix MIN() returning NULL from index-based MIN/MAX optimization ignoring NULL keys
  */
 
 drop table if exists tbl;
@@ -27,7 +28,7 @@ create index idx_cola_colb_desc_desc on tbl(cola desc, colb desc);
 set trace on;
 
 -- ============================================================================
--- Optimizable MIN/MAX queries (with partkey descending)
+-- Optimizable MIN/MAX queries with different index sort directions
 -- ============================================================================
 
 evaluate 'Case 1: MIN/MAX optimized using cola DESC, colb ASC index';
@@ -54,41 +55,55 @@ select /*+ recompile */ max(colb), min(colb)
  where cola = 1;
 show trace;
 
--- ============================================================================
--- Range filter cases
--- ============================================================================
-
-evaluate 'Case 5: MIN optimized with range condition on colb';
-select /*+ recompile */ min(colb)
-  from tbl
- where cola = 1
-   and colb > 200;
-show trace;
-
-evaluate 'Case 6: MAX optimized with range condition on colb';
-select /*+ recompile */ max(colb)
-  from tbl
- where cola = 1
-   and colb < 500;
-show trace;
-
-evaluate 'Case 7: MIN/MAX optimized using cola ASC, colb DESC index';
+evaluate 'Case 5: MIN/MAX optimized using cola ASC, colb DESC index';
 select /*+ recompile */ min(colb), max(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_desc)
  where cola = 1;
 show trace;
 
 -- ============================================================================
+-- Range filter cases
+-- ============================================================================
+
+evaluate 'Case 6: MIN optimized with range condition on colb';
+select /*+ recompile */ min(colb)
+  from tbl
+ where cola = 1
+   and colb > 200;
+show trace;
+
+evaluate 'Case 7: MAX optimized with range condition on colb';
+select /*+ recompile */ max(colb)
+  from tbl
+ where cola = 1
+   and colb < 500;
+show trace;
+
+evaluate 'Case 8: MIN optimized with range condition on colb using DESC index';
+select /*+ recompile */ min(colb)
+from tbl FORCE INDEX (idx_cola_colb_desc_asc)
+where cola = 1
+and colb > 200;
+show trace;
+
+evaluate 'Case 9: MAX optimized with range condition on colb using DESC index';
+select /*+ recompile */ max(colb)
+from tbl FORCE INDEX (idx_cola_colb_desc_desc)
+where cola = 1
+and colb < 500;
+show trace;
+
+-- ============================================================================
 -- Not optimizable: (unordered, not pure)
 -- ============================================================================
 
-evaluate 'Case 8: not optimized with range condition on cola';
+evaluate 'Case 10: not optimized with range condition on cola';
 select /*+ recompile index(tbl idx_cola_colb_asc_asc) */ min(colb)
   from tbl
  where cola > 1;
 show trace;
 
-evaluate 'Case 9: not optimized with expression on colb';
+evaluate 'Case 11: not optimized with expression on colb';
 select /*+ recompile */ min(colb), max(-colb)
   from tbl FORCE INDEX (idx_cola_colb_desc_asc)
  where cola = 1;
@@ -98,16 +113,16 @@ show trace;
 -- Not optimizable: no cola condition
 -- ============================================================================
 
-evaluate 'Case 10: not optimized without cola condition';
+evaluate 'Case 12: not optimized without cola condition';
 select /*+ recompile */ min(colb)
   from tbl;
 show trace;
 
 -- ============================================================================
--- Additional checks with alternate indexes
+-- Correlated subquery MIN/MAX optimization cases
 -- ============================================================================
 
-evaluate 'Case 11: MIN optimized in correlated subquery';
+evaluate 'Case 13: MIN optimized in correlated subquery';
 select /*+ recompile */
        (select min(colb)
           from tbl
@@ -117,7 +132,7 @@ select /*+ recompile */
  limit 1;
 show trace;
 
-evaluate 'Case 12: MAX optimized in correlated subquery';
+evaluate 'Case 14: MAX optimized in correlated subquery';
 select /*+ recompile */
        (select max(colb)
           from tbl
@@ -127,7 +142,7 @@ select /*+ recompile */
  limit 1;
 show trace;
 
-evaluate 'Case 13: MIN optimized in correlated subquery with filter';
+evaluate 'Case 15: MIN optimized in correlated subquery with filter';
 select /*+ recompile */
        (select min(colb)
           from tbl
@@ -169,7 +184,7 @@ set trace on;
 -- Not optimizable: partition
 -- ============================================================================
 
-evaluate 'Case 14: not optimized with partitioned table';
+evaluate 'Case 16: not optimized with partitioned table';
 select /*+ recompile */ min(colb), max(colb)
   from tbl_part
  where cola = 1;
@@ -179,17 +194,17 @@ show trace;
 -- Not optimizable: MIN/MAX mixed with other aggregate operations
 -- ============================================================================
 
-evaluate 'Case 15: not optimized when MIN is mixed with SUM';
+evaluate 'Case 17: not optimized when MIN is mixed with SUM';
 select /*+ recompile */ min(colb), sum(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola = 1;
 show trace;
 
 -- ============================================================================
--- Not optimizable: GROUP BY and HAVING cases
+-- Not optimizable: GROUP BY cases
 -- ============================================================================
 
-evaluate 'Case 16: not optimized with GROUP BY';
+evaluate 'Case 18: not optimized with GROUP BY';
 select /*+ recompile */ cola, min(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola in (1, 2)
@@ -197,18 +212,29 @@ select /*+ recompile */ cola, min(colb)
  order by cola;
 show trace;
 
-evaluate 'Case 17: not optimized with HAVING';
+-- ============================================================================
+-- HAVING cases
+-- ============================================================================
+
+evaluate 'Case 19: optimized when HAVING references only MIN aggregate';
 select /*+ recompile */ min(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola = 1
 having min(colb) > 0;
 show trace;
 
+evaluate 'Case 20: not optimized when HAVING contains non-MIN/MAX aggregate';
+select /*+ recompile */ min(colb)
+  from tbl FORCE INDEX (idx_cola_colb_asc_asc)
+ where cola = 1
+having count(*) > 0;
+show trace;
+
 -- ============================================================================
--- Optimizable MIN/MAX queries with NULL results and NULL values
+-- MIN/MAX queries with NULL results and NULL values
 -- ============================================================================
 
-evaluate 'Case 18: optimized MIN/MAX returns NULL for no matching key';
+evaluate 'Case 21: MIN/MAX returns NULL for no matching key';
 select /*+ recompile */ min(colb), max(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola = 999;
@@ -221,13 +247,13 @@ insert into tbl values (31, null, 'mix_null_1');
 insert into tbl values (31, -5, 'mix_val');
 insert into tbl values (31, null, 'mix_null_2');
 
-evaluate 'Case 19: optimized MIN/MAX ignores NULL values when non-NULL value exists';
+evaluate 'Case 22: CBRD-27058 optimized MIN/MAX ignores NULL values when non-NULL value exists';
 select /*+ recompile */ min(colb), max(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola = 31;
 show trace;
 
-evaluate 'Case 20: optimized MIN/MAX returns NULL when all target values are NULL';
+evaluate 'Case 23: MIN/MAX returns NULL when all target values are NULL';
 select /*+ recompile */ min(colb), max(colb)
   from tbl FORCE INDEX (idx_cola_colb_asc_asc)
  where cola = 30;
