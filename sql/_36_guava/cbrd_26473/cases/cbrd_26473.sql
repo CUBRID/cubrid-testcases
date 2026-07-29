@@ -47,9 +47,8 @@
  *       key collapse into a single ANALYTIC #N group (the trace prints one line
  *       per sort group, not per function)
  *    6. Index edge cases - partition on leading index columns, ORDER BY on a
- *       non-index column, ORDER BY on a function-based index column that is
- *       CONSTANT inside the partition (a degenerate ordering), and descending
- *       index scan (use_desc_idx)
+ *       non-index column, and descending index scan (use_desc_idx) with an OVER
+ *       order that conflicts with the scan direction and one that matches it
  *    7. Function-based index column that VARIES inside the partition, with the
  *       same query forced onto a sequential scan as the value oracle
  *    8. Value equivalence - the sort-skip path must return the same analytic
@@ -77,31 +76,39 @@ set trace on;
 
 --
 -- 1. NTILE
+--    ntile(50) - not ntile(5) - because a val partition holds 100 rows: 50
+--    buckets put exactly 2 rows in each, so the bucket number VARIES across
+--    the 30 returned rows and therefore pins which partition positions came
+--    back. With ntile(5) the bucket boundaries sit every 20 positions, and
+--    the two-analytic scenarios return partition positions 1-3 only, so the
+--    bucket was a constant 1 that asserted nothing about the value. The
+--    bucket count is an argument, not part of the OVER sort key, so the
+--    sort: skip / sort: true verdicts are unaffected by this choice.
 --
 evaluate '001. NTILE single analytic - OVER matches midx_01(val,id), sort skipped';
 select /*+ recompile */ id, val,
-  ntile(5) over (partition by val order by id) as ntile_1
+  ntile(50) over (partition by val order by id) as ntile_1
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '002. NTILE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required';
 select /*+ recompile */ id, val,
-  ntile(5) over (partition by val order by id) as ntile_1,
-  ntile(5) over (partition by id order by val) as ntile_2
+  ntile(50) over (partition by val order by id) as ntile_1,
+  ntile(50) over (partition by id order by val) as ntile_2
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '003. NTILE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped';
 select /*+ recompile */ id, val,
-  ntile(5) over (partition by id order by val) as ntile_2,
-  ntile(5) over (partition by val order by id) as ntile_1
+  ntile(50) over (partition by id order by val) as ntile_2,
+  ntile(50) over (partition by val order by id) as ntile_1
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '004. NTILE conflicting DESC order on the ASC index - sort required';
 select /*+ recompile */ id, val,
-  ntile(5) over (partition by val order by id desc) as ntile_1,
-  ntile(5) over (partition by id order by val) as ntile_2
+  ntile(50) over (partition by val order by id desc) as ntile_1,
+  ntile(50) over (partition by id order by val) as ntile_2
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
@@ -519,30 +526,37 @@ select /*+ recompile */ id, val,
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
+-- nth_value's default window frame is UNBOUNDED PRECEDING .. CURRENT ROW, so
+-- nth_value(name, N) is NULL until the frame has accumulated N rows. N = 2 is
+-- the smallest N > 1 that becomes non-NULL inside the returned window (the
+-- two-analytic scenarios return partition positions 1-3, so N = 10 was NULL on
+-- every row and asserted nothing). N = 1 is deliberately not used: it would
+-- duplicate FIRST_VALUE and leave no N > 1 positional coverage. Like ntile's
+-- bucket count, N is an argument and not part of the OVER sort key.
 evaluate '065. NTH_VALUE single analytic - OVER matches midx_01(val,id), sort skipped';
 select /*+ recompile */ id, val,
-  nth_value(name, 10) over (partition by val order by id) as nv_1
+  nth_value(name, 2) over (partition by val order by id) as nv_1
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '066. NTH_VALUE two analytics, index-compatible one listed first - #1 sort skipped, #2 sort required';
 select /*+ recompile */ id, val,
-  nth_value(name, 10) over (partition by val order by id) as nv_1,
-  nth_value(name, 10) over (partition by id order by val) as nv_2
+  nth_value(name, 2) over (partition by val order by id) as nv_1,
+  nth_value(name, 2) over (partition by id order by val) as nv_2
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '067. NTH_VALUE two analytics, index-compatible one listed second - reordered to run first, #1 sort skipped';
 select /*+ recompile */ id, val,
-  nth_value(name, 10) over (partition by id order by val) as nv_2,
-  nth_value(name, 10) over (partition by val order by id) as nv_1
+  nth_value(name, 2) over (partition by id order by val) as nv_2,
+  nth_value(name, 2) over (partition by val order by id) as nv_1
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
 evaluate '068. NTH_VALUE conflicting DESC order on the ASC index - sort required';
 select /*+ recompile */ id, val,
-  nth_value(name, 10) over (partition by val order by id desc) as nv_1,
-  nth_value(name, 10) over (partition by id order by val) as nv_2
+  nth_value(name, 2) over (partition by val order by id desc) as nv_1,
+  nth_value(name, 2) over (partition by id order by val) as nv_2
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
@@ -722,8 +736,8 @@ show trace;
 --
 evaluate '093. NTILE index-compatible DESC analytic written second - promoted ahead of the incompatible one (final row order reveals the execution order)';
 select /*+ recompile */ id, val,
-  ntile(5) over (partition by id order by val) as n_2,
-  ntile(5) over (partition by val order by id desc) as n_1
+  ntile(50) over (partition by id order by val) as n_2,
+  ntile(50) over (partition by val order by id desc) as n_1
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
@@ -782,6 +796,17 @@ drop table t_group;
 --    the block is identical however the tied rows are visited. limit 30
 --    spans three partitions, so rn resetting at each boundary is what
 --    proves the analytic partitions at all.
+--    There is deliberately NO standalone ascending "order by mod(c1, 10)"
+--    scenario here. mod(c1,10) is a function of the partition key c1, so it is
+--    CONSTANT inside every partition and ordering by it is a no-op: such a
+--    scenario printed a data block byte-identical to the partition-only one
+--    below and reported the same sort: skip, so it asserted nothing that the
+--    partition-only scenario did not already assert. The matching of a
+--    function-based index column is still covered - by the descending pair at
+--    the end of this section (which orders by mod(c1,10) and mod(c1,10) desc,
+--    one requiring a sort and one skipping it), and, with an ordering value
+--    that actually VARIES inside the partition plus a value oracle, by
+--    section 7.
 --
 drop table if exists test_table_2;
 create table test_table_2 (c1 int, c2 varchar, c3 varchar, c4 int);
@@ -809,19 +834,13 @@ select /*+ recompile */ c1, c2, c3,
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
 show trace;
 
-evaluate '097. ORDER BY mod(c1, 10) (the function-based 4th index column) - sort skipped';
-select /*+ recompile */ c1, c2, c3,
-  row_number() over (partition by c1, c2, c3 order by mod(c1, 10)) as rn
-from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
-show trace;
-
-evaluate '098. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
+evaluate '097. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by mod(c1, 10)) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
 show trace;
 
-evaluate '099. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
+evaluate '098. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1 desc, c2 desc, c3 desc order by mod(c1, 10) desc) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
@@ -834,9 +853,11 @@ drop table test_table_2;
 -- 7. Function-based index column that VARIES inside the partition.
 --    In section 6 the ordering expression mod(c1,10) is a function of the
 --    partition key, so it is CONSTANT inside a partition: ordering by it is a
---    no-op and its sort: skip does not prove the function-based index column
---    was matched. Here mod(c4,10) is independent of the partition key, so the
---    skipped path must also produce the CORRECT row_number values.
+--    no-op, and a sort: skip on a no-op ordering does not prove the
+--    function-based index column was matched (which is why section 6 carries
+--    no standalone ascending case for it - it printed byte-identically to its
+--    partition-only scenario). Here mod(c4,10) is independent of the partition
+--    key, so the skipped path must also produce the CORRECT row_number values.
 --    c1 = n%7 and c2/c3 = n%3 are coprime, so a (c1,c2,c3) partition is n mod 21
 --    - 21 partitions of ~47 rows - and limit 30 stays inside the first one.
 --    For n = r + 21k, mod(c4,10) = (r + k) mod 10, which varies with k.
@@ -858,7 +879,7 @@ select n % 7, 'c2_' || (n % 3), 'c3_' || (n % 3), n from cte;
 
 set trace on;
 
-evaluate '100. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped';
+evaluate '099. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
 from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
@@ -866,13 +887,13 @@ show trace;
 
 -- Value oracle for the scenario above: the SAME query forced onto a sequential
 -- scan cannot skip the sort, so it must still print an identical result block.
-evaluate '101. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one';
+evaluate '100. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
 from test_table_3 where c1 >= 0 using index none limit 30;
 show trace;
 
-evaluate '102. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering';
+evaluate '101. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by c4) as rn
 from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
@@ -910,7 +931,7 @@ with recursive cte (n) as (
 )
 select 'name_' || n, n % 10 from cte;
 
-evaluate '103. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)';
+evaluate '102. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)';
 select count(*) as joined_cnt,
   sum(case when nvl(m.a1, -1) <> nvl(s1.a1, -1) then 1 else 0 end) as bad_a1,
   sum(case when nvl(m.a2, -1) <> nvl(s2.a2, -1) then 1 else 0 end) as bad_a2
@@ -964,19 +985,19 @@ select n, case when n % 10 = 0 then null else n % 10 end from cte;
 
 set trace on;
 
-evaluate '104. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped';
+evaluate '103. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped';
 select /*+ recompile */ val,
   row_number() over (order by val) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
-evaluate '105. ORDER BY only, order key is the full index key (val, id) - sort skipped';
+evaluate '104. ORDER BY only, order key is the full index key (val, id) - sort skipped';
 select /*+ recompile */ val, id,
   row_number() over (order by val, id) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
-evaluate '106. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required';
+evaluate '105. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required';
 select /*+ recompile */ val, id,
   row_number() over (order by val, id desc) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
@@ -988,7 +1009,7 @@ show trace;
 -- UNKNOWN), and a forced index hint without an indexable predicate falls
 -- back to a table scan (verified). An index skip scan driven by a predicate
 -- on the SECOND index column delivers full index order including NULL keys.
-evaluate '107. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped';
+evaluate '106. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped';
 select /*+ recompile index_ss */ val,
   row_number() over (order by val nulls first) as rn
 from test_table_null where id >= 1 using index nidx_01(+) limit 30;
