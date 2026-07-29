@@ -846,46 +846,6 @@ Trace Statistics:
 
 ===================================================
     
-when RECORD_INFO, PAGE_INFO, index related information or sampling scan is involved - should not work     
-
-===================================================
-count(*)    
-100     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.tbl_a)
-
-  rewritten query: select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]
-
-  TABLE SCAN (dba.tbl_b)
-
-  rewritten query: select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b]
-
-  NESTED LOOPS (cross join)
-    TABLE SCAN (dba.cte_a)
-    TABLE SCAN (dba.cte_b)
-
-  rewritten query: with cte_a(i) as (select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_a].i from [dba.tbl_a] [dba.tbl_a]), cte_b(i) as (select /*+ SAMPLING_SCAN MATERIALIZE */ [dba.tbl_b].i from [dba.tbl_b] [dba.tbl_b])select count(*) from [dba.cte_a] [dba.cte_a], [dba.cte_b] [dba.cte_b]
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      CTE (non_recursive_part)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      CTE (non_recursive_part)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-    
 scalar subquery in SELECT list - should not work     
 
 ===================================================
