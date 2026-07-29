@@ -758,14 +758,14 @@ from t_group where c1 >= 0 using index gidx(+) limit 30;
 show trace;
 
 
--- todo: a three-analytic merge scenario (three families on one shared key)
---       and a merge-plus-promotion scenario are still missing here. Both were
---       drafted and run, and both come back with WRONG analytic values on the
---       sort-skip path: with three or more analytics in one query the engine
---       loses one analytic's PARTITION BY (a running sum returns the global
---       total, and a row_number numbers over a wider group). Two analytics are
---       unaffected. Add these scenarios once that defect is fixed - recording
---       the current output would bake the wrong values into the answer.
+-- todo: three scenarios are missing here because the sort-skip path
+--       returns WRONG analytic values for them - recording the current
+--       output would bake wrong values into the answer. Add each once its
+--       issue is fixed; details and repros are in the issues:
+--         three families on one shared sort key, and merge-plus-promotion
+--           -> CBRD-27125
+--         sort keys using the same columns in a DIFFERENT order
+--           -> CBRD-27123
 
 set trace off;
 drop table t_group;
@@ -893,14 +893,10 @@ drop table test_table_3;
 --    against rows going missing entirely. The result is a single scalar row,
 --    so it needs no ORDER BY, and no LIMIT is used - a LIMIT would truncate
 --    the comparison.
--- todo: a differential scenario (the same analytics via an index scan and via
---       a forced sequential scan, asserting 0 mismatches) was drafted and run,
---       but reports 900 mismatches out of 1000 today: when two analytics that
---       SHARE a sort key are merged inside a joined inline view, the two
---       branches disagree on row_number. The same two analytics are correct as
---       a top-level query, and analytics with different sort keys are correct
---       even inside inline views (the scenario below). Add the differential
---       scenario once that defect is fixed.
+-- todo: the differential half of this check is missing - the same
+--       analytics via an index scan vs a forced sequential scan, expecting
+--       0 mismatches. Merged analytics inside a joined inline view disagree
+--       today (900 of 1000 rows) -> CBRD-27125. Add once fixed.
 --
 drop table if exists test_table;
 create table test_table (id int auto_increment, name varchar, val int, primary key (id));
@@ -998,14 +994,10 @@ select /*+ recompile index_ss */ val,
 from test_table_null where id >= 1 using index nidx_01(+) limit 30;
 show trace;
 
--- todo: the NULLS LAST counterpart is missing. It was drafted and run, and
---       the sort-skip path returns WRONG ROW ORDER: with NULLS LAST the
---       engine treats the index NULLs-first order as compatible, reports
---       sort: skip and returns the NULL rows FIRST. The same analytic is
---       correct on a table scan and under using index none, and plain
---       (non-analytic) ORDER BY ... NULLS LAST is correct too. Add the
---       scenario once that defect is fixed - recording the current output
---       would bake a wrong ordering into the answer.
+-- todo: the NULLS LAST counterpart is missing - the sort-skip path
+--       reports sort: skip and returns the NULL rows FIRST, so the current
+--       output would bake a wrong ordering into the answer
+--       -> CBRD-27145. Add once fixed.
 
 set trace off;
 drop table test_table_null;
