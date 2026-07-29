@@ -55,6 +55,9 @@
  *    8. Value equivalence - the sort-skip path must return the same analytic
  *       values as paths where the sort cannot be skipped or the merge cannot
  *       happen (oracle-independent: it compares the engine against itself)
+ *    9. OVER (ORDER BY ...) with no PARTITION BY - order key as an index prefix,
+ *       as the full index key, a mixed ASC/DESC key, and NULLS FIRST/LAST both
+ *       matching and opposing the index default
  */
 
 drop table if exists test_table;
@@ -925,4 +928,85 @@ from (select id,
       from test_table where val >= 0 using index none) s2
 where m.id = s1.id and m.id = s2.id;
 
+drop table test_table;
+
+--
+-- 9. OVER (ORDER BY ...) with NO PARTITION BY - the whole result is one
+--    partition, a separate path from the partitioned scenarios above.
+--    Covers an order key that is a prefix of the index, one that is the full
+--    index key, a mixed ASC/DESC key the ASC index cannot supply, and NULLS
+--    ordering both matching and opposing the index default (a CUBRID ASC
+--    index stores NULLs first).
+--    Rows tied on the order key print identically - the order column is
+--    constant inside a tie group and rn is emitted in assignment order - so
+--    each block is invariant under any permutation of tied rows.
+--
+drop table if exists test_table;
+create table test_table (id int auto_increment, name varchar, val int, primary key (id));
+create index midx_01 on test_table (val, id);
+
+insert into test_table (name, val)
+with recursive cte (n) as (
+  select 1
+  union all
+  select n + 1 from cte where n < 1000
+)
+select 'name_' || n, n % 10 from cte;
+
+drop table if exists test_table_null;
+create table test_table_null (id int, val int);
+create index nidx_01 on test_table_null (val, id);
+
+-- val is NULL on every 10th row (100 NULLs), otherwise n % 10.
+insert into test_table_null (id, val)
+with recursive cte (n) as (
+  select 1
+  union all
+  select n + 1 from cte where n < 1000
+)
+select n, case when n % 10 = 0 then null else n % 10 end from cte;
+
+set trace on;
+
+evaluate '104. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped';
+select /*+ recompile */ val,
+  row_number() over (order by val) as rn
+from test_table where val >= 0 using index midx_01(+) limit 30;
+show trace;
+
+evaluate '105. ORDER BY only, order key is the full index key (val, id) - sort skipped';
+select /*+ recompile */ val, id,
+  row_number() over (order by val, id) as rn
+from test_table where val >= 0 using index midx_01(+) limit 30;
+show trace;
+
+evaluate '106. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required';
+select /*+ recompile */ val, id,
+  row_number() over (order by val, id desc) as rn
+from test_table where val >= 0 using index midx_01(+) limit 30;
+show trace;
+
+-- The NULLS cases need a scan that starts at the very beginning of the
+-- index, where NULLs are stored. A range predicate on val cannot get there
+-- (val >= 0 and val < 100 both DROP the NULL rows - the comparison is
+-- UNKNOWN), and a forced index hint without an indexable predicate falls
+-- back to a table scan (verified). An index skip scan driven by a predicate
+-- on the SECOND index column delivers full index order including NULL keys.
+evaluate '107. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped';
+select /*+ recompile index_ss */ val,
+  row_number() over (order by val nulls first) as rn
+from test_table_null where id >= 1 using index nidx_01(+) limit 30;
+show trace;
+
+-- todo: the NULLS LAST counterpart is missing. It was drafted and run, and
+--       the sort-skip path returns WRONG ROW ORDER: with NULLS LAST the
+--       engine treats the index NULLs-first order as compatible, reports
+--       sort: skip and returns the NULL rows FIRST. The same analytic is
+--       correct on a table scan and under using index none, and plain
+--       (non-analytic) ORDER BY ... NULLS LAST is correct too. Add the
+--       scenario once that defect is fixed - recording the current output
+--       would bake a wrong ordering into the answer.
+
+set trace off;
+drop table test_table_null;
 drop table test_table;

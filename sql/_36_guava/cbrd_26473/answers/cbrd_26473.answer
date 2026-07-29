@@ -5344,3 +5344,231 @@ joined_cnt    bad_a1    bad_a2
 
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+104. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped     
+
+===================================================
+val    rn    
+0     1     
+0     2     
+0     3     
+0     4     
+0     5     
+0     6     
+0     7     
+0     8     
+0     9     
+0     10     
+0     11     
+0     12     
+0     13     
+0     14     
+0     15     
+0     16     
+0     17     
+0     18     
+0     19     
+0     20     
+0     21     
+0     22     
+0     23     
+0     24     
+0     25     
+0     26     
+0     27     
+0     28     
+0     29     
+0     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].val, row_number() over (order by ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+105. ORDER BY only, order key is the full index key (val, id) - sort skipped     
+
+===================================================
+val    id    rn    
+0     10     1     
+0     20     2     
+0     30     3     
+0     40     4     
+0     50     5     
+0     60     6     
+0     70     7     
+0     80     8     
+0     90     9     
+0     100     10     
+0     110     11     
+0     120     12     
+0     130     13     
+0     140     14     
+0     150     15     
+0     160     16     
+0     170     17     
+0     180     18     
+0     190     19     
+0     200     20     
+0     210     21     
+0     220     22     
+0     230     23     
+0     240     24     
+0     250     25     
+0     260     26     
+0     270     27     
+0     280     28     
+0     290     29     
+0     300     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].val, [dba.test_table].id, row_number() over (order by ?, ?) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+106. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required     
+
+===================================================
+val    id    rn    
+0     1000     1     
+0     990     2     
+0     980     3     
+0     970     4     
+0     960     5     
+0     950     6     
+0     940     7     
+0     930     8     
+0     920     9     
+0     910     10     
+0     900     11     
+0     890     12     
+0     880     13     
+0     870     14     
+0     860     15     
+0     850     16     
+0     840     17     
+0     830     18     
+0     820     19     
+0     810     20     
+0     800     21     
+0     790     22     
+0     780     23     
+0     770     24     
+0     760     25     
+0     750     26     
+0     740     27     
+0     730     28     
+0     720     29     
+0     710     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table.midx_?) (key range: ([dba.test_table].val>= ?:? ), covered: true)
+
+  rewritten query: select [dba.test_table].val, [dba.test_table].id, row_number() over (order by ?, ? desc ) from [dba.test_table] [dba.test_table] where ([dba.test_table].val>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table].midx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+107. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped     
+
+===================================================
+val    rn    
+null     1     
+null     2     
+null     3     
+null     4     
+null     5     
+null     6     
+null     7     
+null     8     
+null     9     
+null     10     
+null     11     
+null     12     
+null     13     
+null     14     
+null     15     
+null     16     
+null     17     
+null     18     
+null     19     
+null     20     
+null     21     
+null     22     
+null     23     
+null     24     
+null     25     
+null     26     
+null     27     
+null     28     
+null     29     
+null     30     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.test_table_null.nidx_?) (key range: ([dba.test_table_null].id>= ?:? ), covered: true)
+
+  rewritten query: select /*+ INDEX_SS */ [dba.test_table_null].val, row_number() over (order by ? nulls first ) from [dba.test_table_null] [dba.test_table_null] where ([dba.test_table_null].id>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_null].nidx_?(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.test_table_null.nidx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: skip, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
