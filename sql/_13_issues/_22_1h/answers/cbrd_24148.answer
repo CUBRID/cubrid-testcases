@@ -8,15 +8,16 @@
 0
 ===================================================
 count(*)    
-830587     
+806650     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tbl_hls)
+  SORT (order by)
+    TABLE SCAN (dba.tbl_hls)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? )
 
   TABLE SCAN (dba.tbl_hls)
 
@@ -26,7 +27,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) a (a, b, c), (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
+  rewritten query: select /*+ ORDERED */ count(*) from (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] order by ?, ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? ) a (a, b, c), (select /*+ NO_PARALLEL_SCAN */ [dba.tbl_hls].a, [dba.tbl_hls].b, [dba.tbl_hls].c from [dba.tbl_hls] [dba.tbl_hls] where (inst_num()> ?:?  and inst_num()<= ?:? )) b (a, b, c) where a.a=b.a and a.b=b.b and a.c=b.c
 
 
 Trace Statistics:
@@ -38,6 +39,7 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
