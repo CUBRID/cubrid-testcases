@@ -13,8 +13,13 @@ insert into state (name, cities)
                    insert into city (name, pop) values ('merrimack', 22)}
        )
     to :st_nh;
-select rownum, st.name
-from state st, TABLE (st.cities) as T(ci)
-where rownum in (1,2, 3)  order by 1,2;
+select count(*), min(rn), max(rn)
+from (
+  select rownum as rn, st.name as state_name
+  from state st, TABLE (st.cities) as T(ci)
+  where rownum in (1, 2, 3)
+) t
+group by state_name
+order by count(*) desc;
 
 rollback;
