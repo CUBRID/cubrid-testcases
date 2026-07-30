@@ -12,7 +12,7 @@ create table hash_test(id int not null ,
 	PARTITION BY HASH(test_string)
         PARTITIONS 2;
 
-select * from db_partition where class_name like 'hash%'  order by 1,2,3;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name like 'hash%'  order by 1,2,3;
 
 
 drop table hash_test;

@@ -124,17 +124,17 @@ insert into t1(a) select  rownum from db_class,db_class b limit 1000;
 
 select a,b,row_number() over(partition by b order by 2) row_num from (select a,b from t1 order by 1,2) t1  order by 1;
 
-select g,row_number() over(partition by g order by 1) row_num from t1  order by 1;
+select g,row_number() over(partition by g order by 1) row_num from t1  order by 1,2;
 
-select l,row_number() over(partition by l ) row_num from t1  order by 1;
+select l,row_number() over(partition by l ) row_num from t1  order by 1,2;
 
-select ml,row_number() over(partition by m ) row_num from t1  order by 1;
+select ml,row_number() over(partition by m ) row_num from t1  order by 1,2;
 
-select q,row_number() over(partition by q ) row_num from t1  order by 1;
+select q,row_number() over(partition by q ) row_num from t1  order by 1,2;
 
-select r,row_number() over(partition by r ) row_num from t1  order by 1;
+select r,row_number() over(partition by r ) row_num from t1  order by 1,2;
 
-select r,row_number() over(partition by b,c,d,e,f,g,h,i,j,k ) row_num from t1  order by 1;
+select r,row_number() over(partition by b,c,d,e,f,g,h,i,j,k ) row_num from t1  order by 1,2;
 
 select b,rownum from t1 where rownum in (  select rownum from ( select rownum,row_number() over (partition by c order by a desc) rn  from t1 ) where rn = 1 );
 
@@ -285,7 +285,7 @@ drop t2;
 
 
 drop table if exists t1;
- create table t1 (a int auto_increment primary key, b int,c CHAR(2048),d short auto_increment(1000,1000),e int  auto_increment(1000,1000)) partition by hash(a) partitions 3;
+ create table t1 (a int auto_increment primary key, b int,c CHAR(2048),d short,e int) partition by hash(a) partitions 3;
 
 insert into t1 select null,rownum,rownum||'                                                                                                                                                                      !!',null,null from db_class limit 10;
 

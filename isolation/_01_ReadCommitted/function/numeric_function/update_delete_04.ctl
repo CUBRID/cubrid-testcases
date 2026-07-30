@@ -42,7 +42,7 @@ C3: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS t1;
 C1: CREATE TABLE t1(id INT, title VARCHAR(10), price DECIMAL);
 C1: CREATE INDEX idx_price on t1(price);
-C1: INSERT INTO t1 VALUES(1,'book1',30.16),(2,'book2',31.23),(3,'book3',30.99),(4,'book4',31.66),(5,'book5',29.87),(6,'book6',29.01),(7,'book7',32.04);
+C1: INSERT INTO t1 VALUES(1,'book1',30.16),(2,'book2',31.23),(3,'book3',31.99),(4,'book4',32.66),(5,'book5',30.87),(6,'book6',29.01),(7,'book7',32.04);
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 

@@ -1,0 +1,298 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+RANGE partition, partition key is INVISIBLE     
+
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+    
+partition pruning check (p0)     
+
+===================================================
+v1    
+100     
+101     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ip_range)
+
+  rewritten query: select [dba.ip_range].v? from [dba.ip_range] [dba.ip_range] where ([dba.ip_range].pkey< ?:? ) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ip_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ip_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+partition pruning check (p1)     
+
+===================================================
+v1    
+200     
+201     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ip_range)
+
+  rewritten query: select [dba.ip_range].v? from [dba.ip_range] [dba.ip_range] where ([dba.ip_range].pkey>= ?:?  and [dba.ip_range].pkey< ?:? ) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ip_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ip_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+partition pruning check (p2)     
+
+===================================================
+v1    
+300     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ip_range)
+
+  rewritten query: select [dba.ip_range].v? from [dba.ip_range] [dba.ip_range] where ([dba.ip_range].pkey>= ?:? ) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ip_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ip_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+err: cannot drop invisible partition key column     
+
+===================================================
+Error:-494
+===================================================
+    
+remove partitioning and ensure structure is preserved     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES     MUL     null     auto_increment invisible     
+pkey     INTEGER     YES          null     invisible     
+v1     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+id    pkey    v1    
+1     5     100     
+2     9     101     
+3     10     200     
+4     15     201     
+5     25     300     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ip_range)
+
+  rewritten query: select [dba.ip_range].id, [dba.ip_range].pkey, [dba.ip_range].v? from [dba.ip_range] [dba.ip_range] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ip_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+LIST partition, partition key is INVISIBLE     
+
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+val    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.ip_list.idx_ip_list_id_region) (key range: ([dba.ip_list].id< ?:? ), key filter: [dba.ip_list].region= ?:? )
+
+  rewritten query: select [dba.ip_list].val from [dba.ip_list] [dba.ip_list] where ([dba.ip_list].id< ?:? ) and [dba.ip_list].region= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ip_list.idx_ip_list_id_region), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.ip_list__p__kr.idx_ip_list_id_region), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+val    
+3     
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ip_list)
+
+  rewritten query: select [dba.ip_list].val from [dba.ip_list] [dba.ip_list] where (([dba.ip_list].region= ?:? ) or ([dba.ip_list].region= ?:? )) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ip_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.ip_list__p__etc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+id     INTEGER     YES          null     auto_increment invisible     
+val     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+initial order check     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+c3     INTEGER     YES          null          
+c4     INTEGER     YES          null     invisible     
+
+===================================================
+    
+add visible column after invisible     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c2     INTEGER     YES          null     invisible     
+c5     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+c4     INTEGER     YES          null     invisible     
+
+===================================================
+    
+move invisible column using CHANGE ... AFTER ...     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null          
+c4     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null     invisible     
+c5     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+
+===================================================
+    
+multi-column ALTER: change visibility and order together     
+
+===================================================
+0
+===================================================
+Field    Type    Null    Key    Default    Extra    
+c1     INTEGER     YES          null     invisible     
+c4     INTEGER     YES          null     invisible     
+c2     INTEGER     YES          null     invisible     
+c5     INTEGER     YES          null          
+c3     INTEGER     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+    
+BEFORE DELETE trigger: prevent delete when invisible counter is 0     
+
+===================================================
+0
+===================================================
+    
+err: first row has mod_count = 0, delete must be rejected     
+
+===================================================
+Error:-517
+===================================================
+    
+rows with mod_count > 0 can be deleted     
+
+===================================================
+0
+===================================================
+id    val    mod_count    
+1     10     0     
+2     20     0     
+3     30     0     
+
+===================================================
+0
+===================================================
+0

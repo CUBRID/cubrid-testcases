@@ -16,7 +16,7 @@ grant alter on test_class to test_user;
 grant index on test_class to test_user;
 grant execute on test_class to test_user;
 
-select * from db_authorization where  owner.name='TEST_USER';
+select * from db_authorization where  owner='TEST_USER';
 
 drop user test_user;
 drop class test_class;

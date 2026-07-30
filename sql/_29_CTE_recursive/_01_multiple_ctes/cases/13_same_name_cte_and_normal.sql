@@ -47,7 +47,7 @@ WITH Employee (ID, Name, MgrID) AS
 )
 SELECT *
 FROM Hierarchy
-ORDER BY Family, nLevel;
+ORDER BY Family, nLevel, ID;
 
 drop table if exists Employee;
 create table Employee(ID int,Name varchar(50),MgrID int);
@@ -74,7 +74,7 @@ with Hierarchy AS
 )
 SELECT *
 FROM Hierarchy
-ORDER BY Family, nLevel;
+ORDER BY Family, nLevel, ID;
 
 drop table if exists Employee;
 create table Employee(ID int,Name varchar(50),MgrID int);
@@ -112,7 +112,7 @@ WITH Employee (ID, Name, MgrID) AS
 )
 SELECT *
 FROM Hierarchy
-ORDER BY Family, nLevel;
+ORDER BY Family, nLevel, ID;
 drop table if exists Employee;
 
 
@@ -148,4 +148,4 @@ WITH recursive Employee (ID, Name, MgrID) AS
 )
 SELECT *
 FROM Hierarchy
-ORDER BY Family, nLevel;
+ORDER BY Family, nLevel, ID;

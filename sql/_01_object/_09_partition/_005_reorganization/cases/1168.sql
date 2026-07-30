@@ -35,7 +35,7 @@ select * from hash_test__p__p3 order by id;
 
 ALTER TABLE hash_test COALESCE PARTITION 3;
 
-select * from db_partition order by 3,4;
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition order by 3,4;
 
 select * from hash_test order by id;
 select * from hash_test__p__p0 order by id;

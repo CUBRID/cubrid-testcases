@@ -8,7 +8,7 @@ create table list_test(id int not null,
 	PARTITION p0 VALUES IN ('2006-01-01 09:00:00','2006-02-01 09:00:00','2006-03-01 09:00:00')
 );
 
-select * from db_partition where class_name like 'list%';
+select class_name, owner_name, partition_name, partition_class_name, partition_type, partition_expr, partition_values, class_partition_type, comment from db_partition where class_name like 'list%';
 
 
 drop table list_test;
