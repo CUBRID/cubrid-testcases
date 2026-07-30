@@ -3,8 +3,9 @@
  *  is rewritten incorrectly, returning 0 instead of the actual count. The bug occurs in CS-mode.
  *
  *  Coverage:
- *    1-3. Ticket repro: three hint combinations (RECOMPILE, RECOMPILE parallel(0),
- *         parallel(0) inside subquery) with trace to confirm parallel path
+ *    1. Ticket repro: RECOMPILE hint - parallel scan triggers, must return correct count
+ *    2-3. Control: parallel(0) disables parallel scan - serial path must also return
+ *         correct count (confirms bug is parallel-scan-specific)
  *    4. Different arithmetic expression (multiplication)
  *    5. Mixed expression and plain column aliases
  *    6. Other aggregates (SUM/AVG) on expression alias
@@ -14,11 +15,12 @@
  */
 
 drop table if exists t1;
-create table t1 (col1 int);
+create table t1 (col1 int, pad varchar(300));
 
--- insert 16696 rows (the threshold where the bug manifests)
+-- insert 16696 rows; pad column inflates row size so heap pages reliably exceed
+-- the parallel scan threshold (32 pages)
 insert into t1
-select rownum
+select rownum, lpad('x', 300, 'x')
 from table({0,1,2,3,4,5,6,7,8,9}) a,
      table({0,1,2,3,4,5,6,7,8,9}) b,
      table({0,1,2,3,4,5,6,7,8,9}) c,
