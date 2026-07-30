@@ -1,0 +1,683 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8000
+===================================================
+5
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: simple NL join (driving heap scan) -> mergeable list     
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 2: outer(left) NL join, count only -> buildvalue     
+
+===================================================
+count(tb.id)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.ta)
+    INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select count([dba.tb].id) from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(tb.id)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.ta)
+    INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count([dba.tb].id) from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 3: cross join -> mergeable list     
+
+===================================================
+id    id    
+1     1     
+1     2     
+1     3     
+1     4     
+1     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ ORDERED */ [dba.ta].id, [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where  cast([dba.ta].cola as integer)<? order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    id    
+1     1     
+1     2     
+1     3     
+1     4     
+1     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.ta].id, [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where  cast([dba.ta].cola as integer)<? order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 4: SP on the 2nd table (cannot parallelize #2) -> row by row     
+
+===================================================
+0
+===================================================
+sp_inc(tb.id)    
+2     
+3     
+4     
+5     
+6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.sp_inc]([dba.tb].id) from [dba.ta] [dba.ta] inner join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+sp_inc(tb.id)    
+2     
+3     
+4     
+5     
+6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.sp_inc]([dba.tb].id) from [dba.ta] [dba.ta] inner join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 5: 2nd table scan spec is set (cannot parallelize #3) -> row by row     
+
+===================================================
+id    v    
+1     1     
+1     2     
+1     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (tset)
+
+  rewritten query: select /*+ ORDERED */ [dba.ta].id, tset.v from [dba.ta] [dba.ta], table({?, ?, ?}) tset (v) where  cast([dba.ta].cola as integer)<? order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1     1     
+1     2     
+1     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (tset)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.ta].id, tset.v from [dba.ta] [dba.ta], table({?, ?, ?}) tset (v) where  cast([dba.ta].cola as integer)<? order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 6: 2nd table JSON_TABLE scan (cannot parallelize #4) -> row by row     
+
+===================================================
+id    col    
+1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (jt)
+
+  rewritten query: select /*+ ORDERED */ [dba.ta].id, jt.col from [dba.ta] [dba.ta], (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt) where  cast([dba.ta].cola as integer)<? and [dba.ta].id=jt.col order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+id    col    
+1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (jt)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.ta].id, jt.col from [dba.ta] [dba.ta], (json_table ('{"a":[?,[?,?]]}', '$."a"[*]' columns (col integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt) where  cast([dba.ta].cola as integer)<? and [dba.ta].id=jt.col order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 7: natural left join, outer heap scan + inner index scan (CBRD-26596 shape) -> mergeable list     
+
+===================================================
+id    cola    id    
+1     00000000000000000001     1     
+2     00000000000000000002     2     
+3     00000000000000000003     3     
+4     00000000000000000004     4     
+5     00000000000000000005     5     
+6     00000000000000000006     null     
+7     00000000000000000007     null     
+8     00000000000000000008     null     
+9     00000000000000000009     null     
+10     00000000000000000010     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] natural  left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    cola    id    
+1     00000000000000000001     1     
+2     00000000000000000002     2     
+3     00000000000000000003     3     
+4     00000000000000000004     4     
+5     00000000000000000005     5     
+6     00000000000000000006     null     
+7     00000000000000000007     null     
+8     00000000000000000008     null     
+9     00000000000000000009     null     
+10     00000000000000000010     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] natural  left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 8: 3-way NL join, driving heap scan parallel + two inner index probes -> mergeable list     
+
+===================================================
+colb    id    id    
+00000000000000000001     1     1     
+00000000000000000002     2     2     
+00000000000000000003     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.ta)
+        INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_id) (key range: [dba.tb].id=[dba.tc].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.ta].colb, [dba.tb].id, [dba.tc].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].id=[dba.tb].id and [dba.tb].id=[dba.tc].id order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tc.pk_tc_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+colb    id    id    
+00000000000000000001     1     1     
+00000000000000000002     2     2     
+00000000000000000003     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.ta)
+        INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_id) (key range: [dba.tb].id=[dba.tc].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.ta].colb, [dba.tb].id, [dba.tc].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].id=[dba.tb].id and [dba.tb].id=[dba.tc].id order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tc.pk_tc_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 9: GROUP BY over NL join -> mergeable list     
+
+===================================================
+colb    count(*)    
+00000000000000000000     1     
+00000000000000000001     1     
+00000000000000000002     1     
+00000000000000000003     1     
+00000000000000000004     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.ta].colb, count(*) from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id group by [dba.ta].colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+colb    count(*)    
+00000000000000000000     1     
+00000000000000000001     1     
+00000000000000000002     1     
+00000000000000000003     1     
+00000000000000000004     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.ta].colb, count(*) from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id group by [dba.ta].colb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: explicit PARALLEL(2) hint on NL join -> mergeable list     
+
+===================================================
+id    colb    
+1     00000000000000000001     
+2     00000000000000000002     
+3     00000000000000000003     
+4     00000000000000000004     
+5     00000000000000000000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ [dba.tb].id, [dba.ta].colb from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    colb    
+1     00000000000000000001     
+2     00000000000000000002     
+3     00000000000000000003     
+4     00000000000000000004     
+5     00000000000000000000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.tb].id, [dba.ta].colb from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 11: first(driving) table is a set collection, not parallel-heap-scannable (cannot parallelize #1) -> not parallelized     
+
+===================================================
+v    id    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (x)
+      INDEX SCAN (dba.ta.pk_ta_id) (key range: [dba.ta].id=x.v, covered: true)
+
+  rewritten query: select /*+ ORDERED */ x.v, [dba.ta].id from table({?, ?, ?}) x (v), [dba.ta] [dba.ta] where [dba.ta].id=x.v order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (set time: ?, fetch: ?, ioread: ?)
+      SCAN (index: dba.ta.pk_ta_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 12: driving heap table below parallel_scan_page_threshold (cannot parallelize #1) -> not parallelized     
+
+===================================================
+val    id    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.tb)
+      INDEX SCAN (dba.ta.pk_ta_id) (key range: [dba.tb].id=[dba.ta].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.tb].val, [dba.ta].id from [dba.tb] [dba.tb], [dba.ta] [dba.ta] where [dba.tb].id=[dba.ta].id order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.pk_ta_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 13: parallel NL join with empty driving result -> no phantom rows     
+
+===================================================
+id    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED */ [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id and  cast([dba.ta].cola as integer)<? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+id    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.ta)
+      INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ [dba.tb].id from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].id=[dba.tb].id and  cast([dba.ta].cola as integer)<? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
