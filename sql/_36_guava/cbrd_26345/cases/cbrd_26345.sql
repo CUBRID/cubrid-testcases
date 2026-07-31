@@ -31,20 +31,28 @@ evaluate 'memoize enabled (memoize_memory_limit=64M)';
 set trace on;
 set system parameters 'memoize_memory_limit=64M';
 
+evaluate 'uniq_int (INT, NDV=100000, unique) - expect: no memoize';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.uniq_int = inner_tbl.join_key;
 show trace;
+evaluate 'low_ndv_int (INT, NDV=10) - expect: memoize enabled';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.low_ndv_int = inner_tbl.join_key;
 show trace;
+evaluate 'mid_ndv_int (INT, NDV=100) - expect: memoize enabled';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.mid_ndv_int = inner_tbl.join_key;
 show trace;
+evaluate 'mid_ndv_varchar (VARCHAR, NDV=1000) - expect: memoize enabled';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.mid_ndv_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'high_ndv_numeric (NUMERIC, NDV=10000) - expect: no memoize';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.high_ndv_numeric = inner_tbl.join_key;
 show trace;
+evaluate 'uniq_varchar (VARCHAR, NDV=100000, unique) - expect: no memoize';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.uniq_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.half_ndv_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.third_ndv_varchar = inner_tbl.join_key;
 show trace;
 
@@ -52,20 +60,28 @@ evaluate 'memoize disabled (memoize_memory_limit=0)';
 
 set system parameters 'memoize_memory_limit=0';
 
+evaluate 'uniq_int (INT, NDV=100000, unique) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.uniq_int = inner_tbl.join_key;
 show trace;
+evaluate 'low_ndv_int (INT, NDV=10) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.low_ndv_int = inner_tbl.join_key;
 show trace;
+evaluate 'mid_ndv_int (INT, NDV=100) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.mid_ndv_int = inner_tbl.join_key;
 show trace;
+evaluate 'mid_ndv_varchar (VARCHAR, NDV=1000) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.mid_ndv_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'high_ndv_numeric (NUMERIC, NDV=10000) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.high_ndv_numeric = inner_tbl.join_key;
 show trace;
+evaluate 'uniq_varchar (VARCHAR, NDV=100000, unique) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.uniq_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.half_ndv_varchar = inner_tbl.join_key;
 show trace;
+evaluate 'third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize (disabled)';
 select /*+ recompile parallel(0) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.third_ndv_varchar = inner_tbl.join_key;
 show trace;
 
