@@ -85,5 +85,5 @@ insert into foo_foo values (1, 10, 11.1, 111.11,'foo string 1', TIME '08:01:00',
 insert into foo_foo values (2, 20, 22.2, 222.22,'foo string 2', TIME '08:02:00', TIMESTAMP '3/2/1993 8:0 am', DATE '2/2/1993', 27000, p2);
 insert into foo_foo values (3, 30, 33.3, 333.33,'foo string 3', TIME '08:03:00', TIMESTAMP '3/3/1993 8:0 am', DATE '3/3/1993', 37000, p3);
 delete from foo where short_attr > 1;
-select fshort_attr, add_short(one_foo, one_foo.short_attr, fshort_attr) from foo_foo;
+select fshort_attr, add_short(one_foo, one_foo.short_attr, fshort_attr) from foo_foo order by fshort_attr;
 rollback;

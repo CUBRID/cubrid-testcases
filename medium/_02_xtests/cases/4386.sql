@@ -29,7 +29,8 @@ select x into :temp_set from fred where jmb = 1;
 select b from table(:temp_set) as t(b);
 select set(select x from ore_sample x) into :temp_set from ore_sample y where y.x_coord = 1;
 select b{o}.x_coord, b{o}.y_coord, b{o}.sample 
-from table(temp_set) as t(b), ore_sample o;       
+from table(temp_set) as t(b), ore_sample o
+order by b{o}.x_coord, b{o}.y_coord, b{o}.sample;
 rollback;
 
 --+ holdcas off;

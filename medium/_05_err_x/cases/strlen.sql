@@ -187,7 +187,7 @@ values('\         1         2         3         4         5         6         7 
 123456789012345678901234567890123456789012345678901234567890123'
 */
 );
-select * from cs;
+select * from cs order by s desc;
 select count(*) from cs;
 
 
@@ -378,9 +378,8 @@ values('\         1         2         3         4         5         6         7 
 123456789012345678901234567890123456789012345678901234567890123'
 */
 );
-select * from cs;
+select * from cs order by s desc;
 select count(*) from cs;
 
 set system parameters 'compat_mode=cubrid';
 rollback;
-
