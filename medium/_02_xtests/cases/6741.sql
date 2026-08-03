@@ -9,15 +9,18 @@ select c.n
   from (select n,d from x) as a(n,d),
        (select n,d from x) as b(n,d),
        (select n,d from x where n = a.n) as c(n,d)
- where a.n = b.n;
+ where a.n = b.n
+ order by c.n;
 select c.n
   from (select n,d from x) as a(n,d),
        (select n,d from x) as b(n,d),
        (select n,d from x where n = a.n
         union all
         select n,d from x where n = b.n) as c(n,c)
- where a.n = b.n;
+ where a.n = b.n
+ order by c.n;
 select a.n + b.n
   from (select n,d from x) as a(n,d),
-       (select n,d from x) as b(n,d);
+       (select n,d from x) as b(n,d)
+ order by a.n + b.n;
 rollback;
