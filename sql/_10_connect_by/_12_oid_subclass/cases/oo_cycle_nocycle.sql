@@ -18,7 +18,7 @@ select id, parentid, text, level
 	from all tree
 	start with parentid is null
 	connect by nocycle prior id=parentid
-	order by id;
+	order by id, level;
 
 
 select id, parentid, text, level
@@ -44,7 +44,7 @@ select id, parentid, text, level
 	from all tree
 	start with parentid is null
 	connect by nocycle prior id=parentid
-	order by id;
+	order by id, level;
 
 select id, parentid, text, level
 	from all tree

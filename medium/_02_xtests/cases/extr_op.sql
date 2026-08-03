@@ -41,7 +41,7 @@ from class db_user;
 select extract(hour from cast('11:12:13' as time))
 from class db_user;
 /* server side calls */
-create class x (x1 string, 
+create class x (x1 string,
 		x2 time, 
 		x3 date, 
 		x4 timestamp);
@@ -56,29 +56,50 @@ insert into x values ('All (x2, x3, x4)',
 		      timestamp '01:02:03 08/01/1996');
 insert into y values (5);
 select x1, x2, extract(hour from x2) from x where x1 = 'Date (x3) only';
-select x1, x2, extract(hour from x2) from x;
-select x1, x2, extract(minute from x2) from x;
-select x1, x2, extract(second from x2) from x;
-select x1, x3, extract(year from x3) from x;
-select x1, x3, extract(month from x3) from x;
-select x1, x3, extract(day from x3) from x;
-select x1, x4, extract(hour from x4) from x;
-select x1, x4, extract(minute from x4) from x;
-select x1, x4, extract(second from x4) from x;
-select x1, x4, extract(year from x4) from x;
-select x1, x4, extract(month from x4) from x;
-select x1, x4, extract(day from x4) from x;
-select x2, y1, extract(second from x2 + y1) from x, y where x2 is not null;
-select x2, y1, extract(minute from x2 - y1) from x, y where x2 is not null;
-select x2, y1, extract(second from x2 - y1) from x, y where x2 is not null;
+select x1, x2, extract(hour from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x2, extract(minute from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x2, extract(second from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(year from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(month from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(day from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(hour from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(minute from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(second from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(year from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(month from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(day from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(second from x2 + y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(minute from x2 - y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(second from x2 - y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 select x3, y1, extract(month from x3 + y1), extract(day from x3 + y1)
-from x, y where x3 is not null;
+from x, y where x3 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 select x3, y1, extract(month from x3 - y1), extract(day from x3 - y1)
-from x, y where x3 is not null;
-select x4, y1, extract(second from x4 + y1) from x, y where x4 is not null;
-select x4, y1, extract(minute from x4 - y1) from x, y where x4 is not null;
-select x4, y1, extract(second from x4 - y1) from x, y where x4 is not null;
-select x3, extract(hour from cast(x3 as timestamp)) from x;
+from x, y where x3 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(second from x4 + y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(minute from x4 - y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(second from x4 - y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x3, extract(hour from cast(x3 as timestamp)) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 rollback;
 
 set system parameters 'compat_mode=mysql';
@@ -126,7 +147,7 @@ from class db_user;
 select extract(hour from cast('11:12:13' as time))
 from class db_user;
 /* server side calls */
-create class x (x1 string, 
+create class x (x1 string,
 		x2 time, 
 		x3 date, 
 		x4 timestamp);
@@ -141,30 +162,50 @@ insert into x values ('All (x2, x3, x4)',
 		      timestamp '01:02:03 08/01/1996');
 insert into y values (5);
 select x1, x2, extract(hour from x2) from x where x1 = 'Date (x3) only';
-select x1, x2, extract(hour from x2) from x;
-select x1, x2, extract(minute from x2) from x;
-select x1, x2, extract(second from x2) from x;
-select x1, x3, extract(year from x3) from x;
-select x1, x3, extract(month from x3) from x;
-select x1, x3, extract(day from x3) from x;
-select x1, x4, extract(hour from x4) from x;
-select x1, x4, extract(minute from x4) from x;
-select x1, x4, extract(second from x4) from x;
-select x1, x4, extract(year from x4) from x;
-select x1, x4, extract(month from x4) from x;
-select x1, x4, extract(day from x4) from x;
-select x2, y1, extract(second from x2 + y1) from x, y where x2 is not null;
-select x2, y1, extract(minute from x2 - y1) from x, y where x2 is not null;
-select x2, y1, extract(second from x2 - y1) from x, y where x2 is not null;
+select x1, x2, extract(hour from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x2, extract(minute from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x2, extract(second from x2) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(year from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(month from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x3, extract(day from x3) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(hour from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(minute from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(second from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(year from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(month from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x1, x4, extract(day from x4) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(second from x2 + y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(minute from x2 - y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x2, y1, extract(second from x2 - y1) from x, y where x2 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 select x3, y1, extract(month from x3 + y1), extract(day from x3 + y1)
-from x, y where x3 is not null;
+from x, y where x3 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 select x3, y1, extract(month from x3 - y1), extract(day from x3 - y1)
-from x, y where x3 is not null;
-select x4, y1, extract(second from x4 + y1) from x, y where x4 is not null;
-select x4, y1, extract(minute from x4 - y1) from x, y where x4 is not null;
-select x4, y1, extract(second from x4 - y1) from x, y where x4 is not null;
-select x3, extract(hour from cast(x3 as timestamp)) from x;
+from x, y where x3 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(second from x4 + y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(minute from x4 - y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x4, y1, extract(second from x4 - y1) from x, y where x4 is not null
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
+select x3, extract(hour from cast(x3 as timestamp)) from x
+order by field(x1, 'Utime (x4) only', 'Date (x3) only', 'Time (x2) only', 'All (x2, x3, x4)');
 rollback;
 
 set system parameters 'compat_mode=cubrid';
-
