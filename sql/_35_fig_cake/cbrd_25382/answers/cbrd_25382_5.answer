@@ -80,16 +80,19 @@ Trace Statistics:
 a_cd    b_cd    
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: i_c (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: i_a term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: i_c (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: i_a term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -98,9 +101,10 @@ select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b w
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
-    INDEX SCAN (a.i_c) (covered: true)
-    INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
+  SORT (order by)
+    HASH JOIN (inner join)
+      INDEX SCAN (a.i_c) (covered: true)
+      INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
   rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
 
@@ -185,8 +189,9 @@ temp(order by)
                             edge:  term[?]
                             outer: hash-join (inner join)
                                        edge:  term[?]
-                                       outer: sscan
+                                       outer: iscan
                                                   class: a node[?]
+                                                  index: i_c 
                                                   sargs: term[?]
                                                   cost:  ? card ?
                                        inner: sscan
@@ -203,6 +208,7 @@ temp(order by)
                             class: d node[?]
                             sargs: term[?]
                             cost:  ? card ?
+                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -216,7 +222,7 @@ Query Plan:
     HASH JOIN (inner join)
       HASH JOIN (inner join)
         HASH JOIN (inner join)
-          TABLE SCAN (a)
+          INDEX SCAN (a.i_c) ()
           TABLE SCAN (b)
         TABLE SCAN (c)
       TABLE SCAN (d)
@@ -247,7 +253,7 @@ Trace Statistics:
                             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                            SCAN (index: dba.ta.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -554,14 +560,16 @@ Query plan:
 temp(order by)
     subplan: hash-join (inner join)
                  edge:  term[?]
-                 outer: sscan
+                 outer: iscan
                             class: a node[?]
+                            index: i_c 
                             sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: b node[?]
                             sargs: term[?]
                             cost:  ? card ?
+                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -574,8 +582,10 @@ trace
     "SORT (order by)": {
       "HASH JOIN (inner join)": [
         {
-          "TABLE SCAN": {
-            "table": "a"
+          "INDEX SCAN": {
+            "table": "a",
+            "index": "i_c",
+            "key range": []
           }
         },
         {
@@ -655,12 +665,17 @@ trace
                   "fetch_time": ?,
                   "ioread": ?,
                   "SCAN": {
-                    "access": "table (dba.ta)",
-                    "heap": {
+                    "access": "index (dba.ta.i_c)",
+                    "btree": {
                       "time": ?,
                       "fetch": ?,
                       "ioread": ?,
-                      "readrows": ?,
+                      "readkeys": ?,
+                      "filteredkeys": ?,
+                      "rows": ?
+                    },
+                    "lookup": {
+                      "time": ?,
                       "rows": ?
                     }
                   }

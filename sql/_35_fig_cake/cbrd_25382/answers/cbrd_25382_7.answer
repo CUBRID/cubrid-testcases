@@ -232,15 +232,15 @@ a_ca    b_ca    c_ca
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: hash-join (inner join)
+    outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: b node[?]
+                          class: ab node[?]
                           sargs: term[?]
                           cost:  ? card ?
                inner: sscan
-                          class: ab node[?]
-                          sargs: term[?]
+                          class: b node[?]
+                          sargs: term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
@@ -264,12 +264,12 @@ a_ca    b_ca    c_ca
 4     4     4     
 
 Query plan:
-hash-join (inner join)
+nl-join (inner join)
     edge:  term[?]
     outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: c node[?]
+                          class: ab node[?]
                           sargs: term[?]
                           cost:  ? card ?
                inner: sscan
@@ -278,8 +278,8 @@ hash-join (inner join)
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: ab node[?]
-               sargs: term[?]
+               class: c node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -298,22 +298,22 @@ a_ca    b_ca    c_ca
 4     4     4     
 
 Query plan:
-hash-join (inner join)
+nl-join (inner join)
     edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: ab node[?]
+                          class: c node[?]
                           sargs: term[?]
                           cost:  ? card ?
                inner: sscan
-                          class: b node[?]
+                          class: ab node[?]
                           sargs: term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: c node[?]
-               sargs: term[?]
+               class: b node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:

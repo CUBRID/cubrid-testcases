@@ -703,8 +703,8 @@ Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
-      INDEX SCAN (c.idx_tp) (key range: a.cola=c.cola, covered: true)
-    INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+      INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tp) (key range: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
 
@@ -1074,9 +1074,9 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
-      TABLE SCAN (c)
-      INDEX SCAN (a.idx_tp) (key range: a.cola=c.cola, covered: true)
-    INDEX SCAN (b.idx_tp) (key range: b.colb=c.colbkey range: a.cola=b.cola, covered: true)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tp) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.colb=c.colb
 
@@ -1104,8 +1104,8 @@ Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
-      INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, key filter: b.colb=c.colb, covered: true)
+      INDEX SCAN (b.idx_ta) (key range: a.colb=b.colbkey range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where a.cola=b.cola and b.cola=c.cola and a.colb=c.colb and b.colb=c.colb
 

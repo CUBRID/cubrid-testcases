@@ -14,15 +14,17 @@
 0
 ===================================================
 count(1)    
-1136384     
+1136000     
 
 Query plan:
-sscan
-    class: tmp? node[?]
-    sargs: term[?]
+temp(order by)
+    subplan: sscan
+                 class: tmp? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
+(select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? order by ?, ? for orderby_num()<= ?:? )
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -34,7 +36,32 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? order by ?, ? for orderby_num()<= ?:? ) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+===================================================
+count(1)    
+1136000     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tmp? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? order by ?, ? for orderby_num()<= ?:? )
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: cubbb term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? order by ?, ? for orderby_num()<= ?:? ) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -78,7 +105,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -106,7 +133,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -134,7 +161,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -162,7 +189,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -190,7 +217,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -208,18 +235,19 @@ sscan
 Query stmt:
 (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
 Query plan:
-nl-join (inner join)
-    edge:  term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: sscan
                class: a node[?]
-               sargs: term[?] AND term[?]
                cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexf term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
@@ -237,18 +265,19 @@ sscan
 Query stmt:
 (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
 Query plan:
-nl-join (inner join)
-    edge:  term[?] AND term[?]
+idx-join (inner join)
     outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: sscan
                class: a node[?]
-               sargs: term[?] AND term[?]
                cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: indexg term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
+select /*+ NO_USE_HASH */ count(*) from (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? )) a (col?, col?), tmp? b where a.col?=b.col? and a.col?=b.col?
 ===================================================
 0
 ===================================================
