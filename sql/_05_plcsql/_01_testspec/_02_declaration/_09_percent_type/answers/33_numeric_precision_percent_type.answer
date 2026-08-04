@@ -1,0 +1,260 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: RETURN NUMERIC(20,15), integer part of 24 digits exceeds the precision 20-15=5     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 2: RETURN NUMERIC(38,15), the 16th fraction digit is 5 so it is rounded half-up     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+0.123456789012346     
+
+
+===================================================
+    
+Case 3: RETURN NUMERIC(5,0), the rounding carry of 99999.5 makes 6 digits and exceeds the precision     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 4: RETURN NUMERIC(5,0), 12.6 is rounded to the scale 0     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+13     
+
+
+===================================================
+    
+Case 5: RETURN NUMERIC(10,2), the precision boundary value is returned as it is     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+99999999.99     
+
+
+===================================================
+    
+Case 6: RETURN NUMERIC(10,2), the value just over the precision boundary raises an error     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 7: OUT NUMERIC(20,15), assigning a 24 digit value exceeds the precision     
+
+
+===================================================
+0
+
+===================================================
+0    
+0     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 14) numeric value does not fit in the target type's precision and scale
+
+===================================================
+:v_NUMERIC    
+0     
+
+
+===================================================
+    
+Case 8: OUT NUMERIC(10,2), assigning 1.239 is rounded to the scale 2     
+
+
+===================================================
+0
+
+===================================================
+0    
+0     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+:v_NUMERIC    
+1.24     
+
+
+===================================================
+    
+Case 9: INOUT NUMERIC(20,15), the copy-in of a 24 digit value exceeds the precision     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 1) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 10: INOUT NUMERIC(20,15), assigning a 24 digit value exceeds the precision     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 14) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 11: IN NUMERIC(20,15), a 24 digit value is accepted because IN parameters have no constraint     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+v_NUMERIC 123456789012345678901234
+===================================================
+0
+
+===================================================
+    
+Case 12: RETURN NUMERIC without precision/scale keeps the float numeric behavior     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+0.1     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+123456789012345678901234     
+
+
+===================================================
+    
+Case 13: RETURN NUMERIC(38,15), a negative fraction is rounded away from zero     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+-0.123456789012346     
+
+
+===================================================
+    
+Case 14: RETURN NUMERIC(5,0), -12.5 is rounded away from zero on the scale 0     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+-13     
+
+
+===================================================
+    
+Case 15: RETURN NUMERIC(20,15), a negative 24 digit value exceeds the precision     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 16: RETURN a bare DECIMAL column %type is float numeric, so the scale is not applied     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+12.6     
+
+
+===================================================
+0
+
+===================================================
+type_support_numeric_return()    
+1234567890123456     
+
+
+===================================================
+0
+
+===================================================
+0
+
