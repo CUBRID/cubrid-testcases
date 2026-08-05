@@ -33,35 +33,29 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 Name    Salary    JobTitle    
 Moy     2000     Developer     
 
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: v node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: e node[?]
-               sargs: term[?] AND term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select v.[Name], e.Salary, e.JobTitle from tbl v, tbl_emp e where (e.Salary> ?:?  and e.Salary< ?:? ) and v.ID=e.EmpID and (e.JobTitle= ?:? )
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: v node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: e node[?]
-               sargs: term[?] AND term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select v.[Name], e.Salary, e.JobTitle from tbl v, tbl_emp e where (e.Salary> ?:?  and e.Salary< ?:? ) and v.ID=e.EmpID and (e.JobTitle= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (v)
+    TABLE SCAN (e)
+
+  rewritten query: select v.[Name], e.Salary, e.JobTitle from [dba.tbl] v, [dba.tbl_emp] e where (e.Salary> ?:?  and e.Salary< ?:? ) and v.ID=e.EmpID and (e.JobTitle= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl_emp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================

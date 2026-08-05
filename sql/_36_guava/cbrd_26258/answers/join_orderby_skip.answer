@@ -1336,7 +1336,7 @@ Trace Statistics:
 
 ===================================================
     
-Q122. When a bind variable is used in LIMIT, the initial plan does not apply skip ORDER BY, but once the plan is recompiled for SORT LIMIT execution, skip ORDER BY is applied.     
+Q122. When a bind variable is used in LIMIT, the plan is compiled at execute time with the bound values, so the SORT LIMIT plan is applied from the first execution; verify it through the trace at EXECUTE time.     
 
 ===================================================
 0
@@ -1353,28 +1353,25 @@ Q122     218     218     218     218     218     218
 Q122     219     219     219     219     219     219     
 Q122     220     220     220     220     220     220     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: idx_cola_colb 
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_cold term[?]
-               cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
-/* ---> skip ORDER BY */
 ===================================================
 trace    
 
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
+    INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
+
+  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================
