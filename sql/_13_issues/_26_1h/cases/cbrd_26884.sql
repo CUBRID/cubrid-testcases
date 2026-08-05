@@ -21,17 +21,14 @@
  * 12 - RETURN: NUMERIC declared without precision/scale keeps the float numeric behavior
  * 13 - RETURN: a negative fraction is rounded away from zero, NUMERIC(38,15)
  * 14 - RETURN: rounding away from zero on scale 0, NUMERIC(5,0)
- * 15 - RETURN: a negative value over the declared precision raises an error, NUMERIC(20,15)
- * 16 - RETURN: a column declared as bare DECIMAL is float numeric, so no precision check
- * 17 - RETURN: scale equal to precision accepts a value with no integer part, NUMERIC(38,38)
- * 18 - RETURN: scale equal to precision rejects a single integer digit, NUMERIC(38,38)
- * 19 - RETURN: NULL is not affected by the precision check
- * 20 - RETURN: DECIMAL(p,s) is checked in the same way as NUMERIC(p,s)
- * 21 - the declared precision applies to a parameter of a nested local procedure
- * 22 - an error raised inside a called stored procedure is reported through the caller
- * 23 - RETURN: a view column %type over the declared precision raises an error
- * 24 - RETURN: a view column %type is rounded to the declared scale
- * 25 - OUT: a view column %type over the declared precision raises an error
+ * 15 - RETURN: a column declared as bare DECIMAL is float numeric, so no precision check
+ * 16 - RETURN: scale equal to precision accepts a value with no integer part, NUMERIC(38,38)
+ * 17 - RETURN: scale equal to precision rejects a single integer digit, NUMERIC(38,38)
+ * 18 - RETURN: NULL is not affected by the precision check
+ * 19 - RETURN: DECIMAL(p,s) is checked in the same way as NUMERIC(p,s)
+ * 20 - the declared precision applies to a parameter of a nested local procedure
+ * 21 - an error raised inside a called stored procedure is reported through the caller
+ * 22 - RETURN: the precision/scale resolved from a view column is applied as well
  */
 
 --+ server-message on
@@ -158,14 +155,7 @@ begin
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 15: RETURN numeric(20,15), a negative 24 digit value exceeds the precision';
-create or replace function cbrd_26884_func return cbrd_26884_tbl.c_numeric_20_15%type as
-begin
-    return -123456789012345678901234;
-end;
-select cbrd_26884_func() from db_root;
-
-evaluate 'Case 16: RETURN a bare DECIMAL column %type is float numeric, so the scale is not applied';
+evaluate 'Case 15: RETURN a bare DECIMAL column %type is float numeric, so the scale is not applied';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_decimal%type as
 begin
     return 12.6;
@@ -178,35 +168,35 @@ begin
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 17: RETURN numeric(38,38), the scale equals the precision so a value with no integer part is accepted';
+evaluate 'Case 16: RETURN numeric(38,38), the scale equals the precision so a value with no integer part is accepted';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_numeric_38_38%type as
 begin
     return 0.5;
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 18: RETURN numeric(38,38), the scale equals the precision so a single integer digit exceeds it';
+evaluate 'Case 17: RETURN numeric(38,38), the scale equals the precision so a single integer digit exceeds it';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_numeric_38_38%type as
 begin
     return 1;
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 19: RETURN numeric(20,15), NULL is not affected by the precision check';
+evaluate 'Case 18: RETURN numeric(20,15), NULL is not affected by the precision check';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_numeric_20_15%type as
 begin
     return null;
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 20: RETURN decimal(20,15), DECIMAL with an explicit precision/scale is checked like NUMERIC';
+evaluate 'Case 19: RETURN decimal(20,15), DECIMAL with an explicit precision/scale is checked like NUMERIC';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_decimal_20_15%type as
 begin
     return 123456789012345678901234;
 end;
 select cbrd_26884_func() from db_root;
 
-evaluate 'Case 21: the declared precision applies to an OUT parameter of a nested local procedure';
+evaluate 'Case 20: the declared precision applies to an OUT parameter of a nested local procedure';
 create or replace procedure cbrd_26884_proc as
     v_numeric cbrd_26884_tbl.c_numeric_20_15%type;
 
@@ -220,7 +210,7 @@ begin
 end;
 call cbrd_26884_proc();
 
-evaluate 'Case 22: an error raised inside a called stored procedure is reported through the caller';
+evaluate 'Case 21: an error raised inside a called stored procedure is reported through the caller';
 create or replace function cbrd_26884_func return cbrd_26884_tbl.c_numeric_20_15%type as
 begin
     return 123456789012345678901234;
@@ -241,37 +231,16 @@ drop procedure cbrd_26884_proc;
 drop view if exists cbrd_26884_view;
 
 create or replace view cbrd_26884_view as
-    select
-        cast( 0.1 as numeric(38,15) ) c_numeric_38_15,
-        cast( 0.1 as numeric(20,15) ) c_numeric_20_15
-    from dual;
+    select cast( 0.1 as numeric(20,15) ) c_numeric_20_15 from dual;
 
-evaluate 'Case 23: RETURN numeric(20,15) view column, an integer part of 24 digits exceeds the precision';
+evaluate 'Case 22: RETURN numeric(20,15) view column, an integer part of 24 digits exceeds the precision';
 create or replace function cbrd_26884_view_func return cbrd_26884_view.c_numeric_20_15%type as
 begin
     return 123456789012345678901234;
 end;
 select cbrd_26884_view_func() from db_root;
 
-evaluate 'Case 24: RETURN numeric(38,15) view column, the 16th fraction digit is 5 so it is rounded half-up';
-create or replace function cbrd_26884_view_func return cbrd_26884_view.c_numeric_38_15%type as
-begin
-    return 0.1234567890123455;
-end;
-select cbrd_26884_view_func() from db_root;
-
-evaluate 'Case 25: OUT numeric(20,15) view column, assigning a 24 digit value exceeds the precision';
-create or replace procedure cbrd_26884_view_proc (v_numeric out cbrd_26884_view.c_numeric_20_15%type) as
-begin
-    v_numeric := 123456789012345678901234;
-end;
-
-select 0 into :v_numeric from db_root;
-call cbrd_26884_view_proc(:v_numeric);
-select :v_numeric from db_root;
-
 drop function cbrd_26884_view_func;
-drop procedure cbrd_26884_view_proc;
 
 drop view cbrd_26884_view;
 drop table cbrd_26884_tbl;

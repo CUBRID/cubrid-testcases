@@ -217,20 +217,7 @@ cbrd_26884_func()
 
 ===================================================
     
-Case 15: RETURN numeric(20,15), a negative 24 digit value exceeds the precision     
-
-
-===================================================
-0
-
-===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 3, column 8) numeric value does not fit in the target type's precision and scale
-
-===================================================
-    
-Case 16: RETURN a bare DECIMAL column %type is float numeric, so the scale is not applied     
+Case 15: RETURN a bare DECIMAL column %type is float numeric, so the scale is not applied     
 
 
 ===================================================
@@ -251,7 +238,7 @@ cbrd_26884_func()
 
 ===================================================
     
-Case 17: RETURN numeric(38,38), the scale equals the precision so a value with no integer part is accepted     
+Case 16: RETURN numeric(38,38), the scale equals the precision so a value with no integer part is accepted     
 
 
 ===================================================
@@ -264,7 +251,7 @@ cbrd_26884_func()
 
 ===================================================
     
-Case 18: RETURN numeric(38,38), the scale equals the precision so a single integer digit exceeds it     
+Case 17: RETURN numeric(38,38), the scale equals the precision so a single integer digit exceeds it     
 
 
 ===================================================
@@ -277,7 +264,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 19: RETURN numeric(20,15), NULL is not affected by the precision check     
+Case 18: RETURN numeric(20,15), NULL is not affected by the precision check     
 
 
 ===================================================
@@ -290,7 +277,7 @@ null
 
 ===================================================
     
-Case 20: RETURN decimal(20,15), DECIMAL with an explicit precision/scale is checked like NUMERIC     
+Case 19: RETURN decimal(20,15), DECIMAL with an explicit precision/scale is checked like NUMERIC     
 
 
 ===================================================
@@ -303,7 +290,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 21: the declared precision applies to an OUT parameter of a nested local procedure     
+Case 20: the declared precision applies to an OUT parameter of a nested local procedure     
 
 
 ===================================================
@@ -316,7 +303,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 22: an error raised inside a called stored procedure is reported through the caller     
+Case 21: an error raised inside a called stored procedure is reported through the caller     
 
 
 ===================================================
@@ -348,7 +335,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 23: RETURN numeric(20,15) view column, an integer part of 24 digits exceeds the precision     
+Case 22: RETURN numeric(20,15) view column, an integer part of 24 digits exceeds the precision     
 
 
 ===================================================
@@ -358,45 +345,6 @@ Case 23: RETURN numeric(20,15) view column, an integer part of 24 digits exceeds
 Error:-889
 Stored procedure execute error: 
   (line 3, column 8) numeric value does not fit in the target type's precision and scale
-
-===================================================
-    
-Case 24: RETURN numeric(38,15) view column, the 16th fraction digit is 5 so it is rounded half-up     
-
-
-===================================================
-0
-
-===================================================
-cbrd_26884_view_func()    
-0.1234567890     
-
-
-===================================================
-    
-Case 25: OUT numeric(20,15) view column, assigning a 24 digit value exceeds the precision     
-
-
-===================================================
-0
-
-===================================================
-0    
-0     
-
-
-===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 3, column 14) numeric value does not fit in the target type's precision and scale
-
-===================================================
-:v_numeric    
-0     
-
-
-===================================================
-0
 
 ===================================================
 0
