@@ -1,0 +1,495 @@
+===================================================
+    
+1. Numeric key limit optimization: rownum with huge NUMERIC values     
+
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+    
+1-1. rownum > -HUGE (one-sided, negative-huge lower; key limit dropped -> return all rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? )
+===================================================
+    
+1-2. rownum >= -HUGE (one-sided, negative-huge lower; key limit dropped -> return all rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? )
+===================================================
+    
+1-3. rownum < -HUGE (one-sided, negative-huge upper -> key_limit_upper = 0 -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? )
+===================================================
+    
+1-4. rownum <= -HUGE (one-sided, negative-huge upper -> key_limit_upper = 0 -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? )
+===================================================
+    
+1-5. rownum > +HUGE (one-sided, positive-huge lower; key limit dropped -> rownum predicate false -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? )
+===================================================
+    
+1-6. rownum >= +HUGE (one-sided, positive-huge lower; key limit dropped -> rownum predicate false -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? )
+===================================================
+    
+1-7. rownum < +HUGE (one-sided, positive-huge upper -> key_limit_upper = -1 -> return all rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? )
+===================================================
+    
+1-8. rownum <= +HUGE (one-sided, positive-huge upper -> key_limit_upper = -1 -> return all rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? )
+===================================================
+    
+1-9. 5 < rownum AND rownum < +HUGE (two-sided, upper overflow -> no upper bound -> all rows after rownum > 5)     
+
+===================================================
+id    a    
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? )
+===================================================
+    
+1-10. -HUGE <= rownum AND rownum <= 5 (two-sided, lower overflow -> key_limit_lower = 0 -> 5 rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and -?<=rownum and (rownum<= ?:? )
+===================================================
+    
+1-11. 5 <= rownum AND rownum <= +HUGE (two-sided, upper overflow -> no upper bound -> all rows from rownum >= 5)     
+
+===================================================
+id    a    
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and ?<=rownum and (rownum<= ?:? )
+===================================================
+    
+1-12. rownum = +HUGE (lower = BIGINT_MAX / upper = -1 -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? )
+===================================================
+    
+1-13. rownum = -HUGE (both lower and upper = 0 -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? )
+===================================================
+    
+1-14. -HUGE < rownum AND rownum < 5 (case1: left=INARITH fetch succeeds -> 4 rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? )
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= cast(? as smallint))
+===================================================
+    
+1-15. rownum BETWEEN -HUGE AND 5 (case2: left=POS_VALUE[int] fetch succeeds -> 5 rows)     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+===================================================
+    
+1-16. (BIGINT or -HUGE) < rownum AND rownum < HUGE (case3: two-sided overflow, positive sign -> 0 rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? )
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? )
+===================================================
+    
+1-17. rownum BETWEEN (BIGINT or -HUGE) AND HUGE (case4: lower overflow -> 0, upper overflow -> -1 -> return all rows)     
+
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+===================================================
+    
+1-18. rownum predicate within BIGINT range (existing behavior preserved)     
+
+===================================================
+id    a    
+4     d     
+5     e     
+6     f     
+7     g     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:?  and rownum<= ?:? )
+===================================================
+    
+1-19. LIMIT clause: negative result preserves error handling     
+
+===================================================
+Error:-493
+===================================================
+    
+1-20. LIMIT clause with NUMERIC values exceeding BIGINT range     
+
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()<= ?:? )
+===================================================
+id    a    
+
+===================================================
+id    a    
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
+===================================================
+id    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
+===================================================
+    
+1-21. Host variable bound to NUMERIC exceeding BIGINT range (handled identically)     
+
+===================================================
+0
+===================================================
+id    a    
+1     a     
+2     b     
+3     c     
+4     d     
+5     e     
+6     f     
+7     g     
+8     h     
+9     i     
+10     j     
+
+===================================================
+0
