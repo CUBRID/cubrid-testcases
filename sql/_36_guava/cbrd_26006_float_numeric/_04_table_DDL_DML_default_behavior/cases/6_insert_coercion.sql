@@ -1,0 +1,128 @@
+/* 6. insert floating into integer/other types */
+
+-- ===========================================================================
+-- Section 1: INSERT 1.1 into various column types
+-- ===========================================================================
+-- Fix verification:
+-- - When inserting 1.1 into INT/BIGINT, the value must be stored as 1 (fractional part truncated),
+--   not 11, and no "Cannot coerce" error should occur.
+evaluate '1-1. INSERT 1.1 into INT';
+DROP TABLE IF EXISTS t1;
+DROP TABLE IF EXISTS t2;
+DROP TABLE IF EXISTS t3;
+DROP TABLE IF EXISTS t4;
+DROP TABLE IF EXISTS t5;
+DROP TABLE IF EXISTS t6;
+DROP TABLE IF EXISTS t7;
+DROP TABLE IF EXISTS t8;
+DROP TABLE IF EXISTS t9;
+DROP TABLE IF EXISTS t10;
+DROP TABLE IF EXISTS t11;
+DROP TABLE IF EXISTS t12;
+DROP TABLE IF EXISTS t13;
+
+CREATE TABLE t1 (col1 INT);
+SHOW CREATE TABLE t1;
+INSERT INTO t1 VALUES (1.1);
+SELECT * FROM t1;
+
+evaluate '1-2. INSERT 1.1 into BIGINT';
+CREATE TABLE t2 (col1 BIGINT);
+SHOW CREATE TABLE t2;
+INSERT INTO t2 VALUES (1.1);
+SELECT * FROM t2;
+
+evaluate '1-3. INSERT 1.1 into DOUBLE';
+CREATE TABLE t3 (col1 DOUBLE);
+SHOW CREATE TABLE t3;
+INSERT INTO t3 VALUES (1.1);
+INSERT INTO t3 VALUES (1);
+SELECT * FROM t3;
+
+evaluate '1-4. INSERT 1.1 into FLOAT';
+CREATE TABLE t4 (col1 FLOAT);
+SHOW CREATE TABLE t4;
+INSERT INTO t4 VALUES (1.1);
+INSERT INTO t4 VALUES (1);
+SELECT * FROM t4;
+
+evaluate '1-5. INSERT 1.1 into MONETARY';
+CREATE TABLE t5 (col1 MONETARY);
+SHOW CREATE TABLE t5;
+INSERT INTO t5 VALUES (1.1);
+INSERT INTO t5 VALUES (1);
+SELECT * FROM t5;
+
+evaluate '1-6. INSERT 1.1 into SHORT';
+CREATE TABLE t6 (col1 SHORT);
+SHOW CREATE TABLE t6;
+INSERT INTO t6 VALUES (1.1);
+INSERT INTO t6 VALUES (1);
+SELECT * FROM t6;
+
+evaluate '1-7. INSERT 1.1 into NUMERIC';
+CREATE TABLE t7 (col1 NUMERIC);
+SHOW CREATE TABLE t7;
+INSERT INTO t7 VALUES (1.1);
+INSERT INTO t7 VALUES (1);
+SELECT * FROM t7;
+
+evaluate '1-8. INSERT 1.1 into CHAR(10)';
+CREATE TABLE t8 (col1 CHAR(10));
+SHOW CREATE TABLE t8;
+INSERT INTO t8 VALUES ('1.1');
+INSERT INTO t8 VALUES ('1');
+SELECT * FROM t8;
+
+evaluate '1-9. INSERT 1.1 into VARCHAR';
+CREATE TABLE t9 (col1 VARCHAR);
+SHOW CREATE TABLE t9;
+INSERT INTO t9 VALUES ('1.1');
+INSERT INTO t9 VALUES ('1');
+SELECT * FROM t9;
+
+evaluate '1-10. INSERT 1.1 into TIME';
+CREATE TABLE t10 (col1 TIME);
+SHOW CREATE TABLE t10;
+-- Expect error: Cannot coerce 1.1 to type time
+INSERT INTO t10 VALUES (1.1);
+-- (Behavior may vary, keep as-is if intentional)
+INSERT INTO t10 VALUES (1);
+SELECT * FROM t10;
+
+evaluate '1-11. INSERT 1.1 into DATE (error)';
+CREATE TABLE t11 (col1 DATE);
+SHOW CREATE TABLE t11;
+-- Expect error: Cannot coerce 1.1 to type date
+INSERT INTO t11 VALUES (1.1);
+-- Expect error: Cannot coerce 1 to type date
+INSERT INTO t11 VALUES (1);
+
+evaluate '1-12. INSERT 1.1 into TIMESTAMP';
+CREATE TABLE t12 (col1 TIMESTAMP);
+SHOW CREATE TABLE t12;
+INSERT INTO t12 VALUES (1.1);
+INSERT INTO t12 VALUES (1);
+SELECT * FROM t12;
+
+evaluate '1-13. INSERT 1.1 into DATETIME (error)';
+CREATE TABLE t13 (col1 DATETIME);
+SHOW CREATE TABLE t13;
+-- Expect error: Cannot coerce 1.1 to type datetime
+INSERT INTO t13 VALUES (1.1);
+-- Expect error: Cannot coerce 1 to type datetime
+INSERT INTO t13 VALUES (1);   
+
+DROP TABLE IF EXISTS t1;
+DROP TABLE IF EXISTS t2;
+DROP TABLE IF EXISTS t3;
+DROP TABLE IF EXISTS t4;
+DROP TABLE IF EXISTS t5;
+DROP TABLE IF EXISTS t6;
+DROP TABLE IF EXISTS t7;
+DROP TABLE IF EXISTS t8;
+DROP TABLE IF EXISTS t9;
+DROP TABLE IF EXISTS t10;
+DROP TABLE IF EXISTS t11;
+DROP TABLE IF EXISTS t12;
+DROP TABLE IF EXISTS t13;

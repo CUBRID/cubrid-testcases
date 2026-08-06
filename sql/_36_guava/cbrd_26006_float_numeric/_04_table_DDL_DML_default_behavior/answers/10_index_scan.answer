@@ -1,0 +1,189 @@
+===================================================
+    
+1. Index scan: Float NUMERIC and Fixed NUMERIC as leading/trailing key     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1-1. int, numeric     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+60     0.1     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: idx_ta term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select ta.cola, ta.colb from ta ta where (ta.cola> ?:? )
+===================================================
+cola    colb    
+60     0.1     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: idx_ta term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select ta.cola, ta.colb from ta ta where (ta.cola> ?:? ) and (ta.colb> ?:? )
+===================================================
+    
+1-2. int, numeric(4,0)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+1     1234     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: idx_tb term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tb.cola, tb.colb from tb tb where (tb.cola> ?:? )
+===================================================
+cola    colb    
+1     1234     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: idx_tb term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tb.cola, tb.colb from tb tb where (tb.cola> ?:? ) and (tb.colb> ?:? )
+===================================================
+    
+1-3. numeric(4,0), int     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+1234     1     
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: idx_tc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tc.cola, tc.colb from tc tc where (tc.cola> ?:? )
+===================================================
+cola    colb    
+1234     1     
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: idx_tc term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select tc.cola, tc.colb from tc tc where (tc.cola> ?:? ) and (tc.colb> ?:? )
+===================================================
+    
+1-4. numeric, int     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+1234     1     
+
+Query plan:
+iscan
+    class: td node[?]
+    index: idx_td term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select td.cola, td.colb from td td where (td.cola> ?:? )
+===================================================
+cola    colb    
+1234     1     
+
+Query plan:
+iscan
+    class: td node[?]
+    index: idx_td term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select td.cola, td.colb from td td where (td.cola> ?:? ) and (td.colb> ?:? )
+===================================================
+    
+1-5. numeric, numeric     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+1     123456789     
+
+Query plan:
+iscan
+    class: te node[?]
+    index: idx_te term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select te.cola, te.colb from te te where (te.cola> ?:? )
+===================================================
+cola    colb    
+1     123456789     
+
+Query plan:
+iscan
+    class: te node[?]
+    index: idx_te term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select te.cola, te.colb from te te where (te.cola> ?:? ) and (te.colb> ?:? )
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
