@@ -70,7 +70,7 @@ INSERT INTO t1 (name) VALUES ('test');
 SELECT * FROM t1;
 
 evaluate '3-2. MODIFY NUMERIC(10) AUTO_INCREMENT(1,1): serial reset -> new id=1 (duplicate)';
--- Explicit AUTO_INCREMENT(1,1) resets serial to 1; existing row keeps id=1 (no UNIQUE)
+-- Explicit AUTO_INCREMENT(1,1) resets serial to 1, existing row keeps id=1 (no UNIQUE)
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC(10) AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
@@ -121,7 +121,7 @@ INSERT INTO t1 (name) VALUES ('test');
 SELECT * FROM t1;
 
 evaluate '4-2. MODIFY NUMERIC(10) AUTO_INCREMENT(1,1): serial reset, index preserved -> new id=1';
--- Explicit (1,1) resets serial; index on id is preserved automatically
+-- Explicit (1,1) resets serial, index on id is preserved automatically
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC(10) AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
@@ -134,7 +134,7 @@ INSERT INTO t1 (name) VALUES ('test');
 SELECT * FROM t1;
 
 evaluate '4-4. DROP + ADD COLUMN + recreate index: existing rows -> NULL, new id=1';
--- DROP COLUMN removes index; ADD COLUMN + CREATE INDEX to restore
+-- DROP COLUMN removes index, ADD COLUMN + CREATE INDEX to restore
 ALTER TABLE t1 DROP COLUMN id;
 ALTER TABLE t1 ADD COLUMN id NUMERIC AUTO_INCREMENT(1, 1);
 CREATE INDEX idx_t1 ON t1(id);
