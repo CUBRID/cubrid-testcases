@@ -9,27 +9,27 @@ insert into t1 values (2, 0, 20), (2, 1, 21), (2, 2, 22), (2, 3, 23), (2, 4, 24)
 insert into t1 values (3, 0, 30), (3, 1, 31), (3, 2, 32), (3, 3, 33), (3, 4, 34);
 insert into t1 values (4, 0, 40), (4, 1, 41), (4, 2, 42), (4, 3, 43), (4, 4, 44);
 
-select /*+ recompile */ * from t1 where i1 in (1,3) order by i2 desc, i1 limit 3;
-select /*+ recompile */ * from t1 where i1 = 1 or i1 = 3 order by i2 desc, i1 limit 3;
+select /*+ recompile */ * from t1 where i1 in (1,3) order by i2 desc limit 3;
+select /*+ recompile */ * from t1 where i1 = 1 or i1 = 3 order by i2 desc limit 3;
 
 -- key filter predicate on second column
-select /*+ recompile */ * from t1 where i1 in (1,3) and i2 != 4 order by i2 desc, i1 limit 3;
+select /*+ recompile */ * from t1 where i1 in (1,3) and i2 != 4 order by i2 desc limit 3;
 
 -- more complex predicate
-select /*+ recompile */ * from t1 where i1 in (1,3) and i1+i2 != 4 order by i2 desc, i1 limit 3;
-select /*+ recompile */ * from t1 where i1 in (1,3) and i1+i2 = 4 order by i2 desc, i1 limit 3;
-select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and concat_ws('.',i1,i2) < '3.3' order by i2 desc, i1 limit 3;
-select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and concat_ws('.',i1,i2) between '1.2' and '3.4' order by i2 desc, i1 limit 5;
+select /*+ recompile */ * from t1 where i1 in (1,3) and i1+i2 != 4 order by i2 desc limit 3;
+select /*+ recompile */ * from t1 where i1 in (1,3) and i1+i2 = 4 order by i2 desc limit 3;
+select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and concat_ws('.',i1,i2) < '3.3' order by i2 desc limit 3;
+select /*+ recompile */ t1.*, concat_ws('.',i1,i2) from t1 where i1 in (1,3) and concat_ws('.',i1,i2) between '1.2' and '3.4' order by i2 desc limit 5;
 
 -- limit with host variables, more complex upper limit
-prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc, i1 limit ?'; execute stmt using 3; execute stmt using 5; deallocate prepare stmt;
-prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc, i1 for orderby_num()<? and orderby_num()<? and orderby_num()<?'; execute stmt using 6,8,4; execute stmt using 7,3,5; execute stmt using 5,6,7; deallocate prepare stmt;
+prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc limit ?'; execute stmt using 3; execute stmt using 5; deallocate prepare stmt;
+prepare stmt from 'select /*+ recompile */ * from t1 where i1 in (1,3) and i2 < 4 order by i2 desc for orderby_num()<? and orderby_num()<? and orderby_num()<?'; execute stmt using 6,8,4; execute stmt using 7,3,5; execute stmt using 5,6,7; deallocate prepare stmt;
 
 -- key filter predicate on i2 and i3
-select /*+ recompile */ t1.*, i3 div 10 from t1 where i1 in (1,2,3) and i2 < 4 and i3 div 10 > 1 order by i2 desc, i1 limit 5;
+select /*+ recompile */ t1.*, i3 div 10 from t1 where i1 in (1,2,3) and i2 < 4 and i3 div 10 > 1 order by i2 desc limit 5;
 
 -- key filter predicate on i3 only
-select /*+ recompile */ t1.*, i3 div 10 from t1 where i1 in (1,2,3) and i3 div 10 > 1 order by i2 desc, i1 limit 5;
+select /*+ recompile */ t1.*, i3 div 10 from t1 where i1 in (1,2,3) and i3 div 10 > 1 order by i2 desc limit 5;
 
 drop table t1;
 
