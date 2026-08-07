@@ -87,7 +87,7 @@ select /*+ recompile */ id, a from t where id > 0 and rownum > 3 and rownum <= 7
 
 evaluate '1-19. LIMIT clause: negative result preserves error handling';
 select id, a from t where id > 0 limit -1;
--- Expected: Error -493 (ER_PT_SYNTAX; negative LIMIT rejected at parse stage)
+-- Expected: Error -493 (ER_PT_SYNTAX, negative LIMIT rejected at parse stage)
 
 evaluate '1-20. LIMIT clause with NUMERIC values exceeding BIGINT range';
 select id, a from t where id > 0 limit 10000000000000000000000000000000000000000000000;

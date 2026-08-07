@@ -169,7 +169,7 @@ CALL plpc_fp_div_ovf_1();
 evaluate '2. Float numeric comparisons (=, <, >)';
 /* ============================================================
  * 2. Float numeric comparisons (=, <, >)
- *  - Plain comparisons do not “fail”; they produce 0/1.
+ *  - Plain comparisons do not “fail”, they produce 0/1.
  *  - If you need a FAIL case, force overflow inside an expression.
  * ============================================================ */
 
@@ -392,18 +392,18 @@ DROP TABLE IF EXISTS t_pl_fn_cmp;
 --  * [AS-IS]
 --  *      아래 조건문 제거 필요!!!
 --  *      if (precision > NumericValue.DB_MAX_NUMERIC_PRECISION) {
---  *          scale -= (precision - NumericValue.DB_MAX_NUMERIC_PRECISION);
---  *          precision = NumericValue.DB_MAX_NUMERIC_PRECISION;
+--  *          scale -= (precision - NumericValue.DB_MAX_NUMERIC_PRECISION),
+--  *          precision = NumericValue.DB_MAX_NUMERIC_PRECISION,
 --  *      }
 --  *      BigDecimal ret =
 --  *              l.multiply(r, new MathContext(precision, RoundingMode.HALF_UP))
---  *                      .setScale(scale, RoundingMode.HALF_UP);
---  *      ret = NumericValue.adjustPrecisionScale(ret);
+--  *                      .setScale(scale, RoundingMode.HALF_UP),
+--  *      ret = NumericValue.adjustPrecisionScale(ret),
 --  * [TO-BE]
 --  *      BigDecimal ret =
 --  *              l.multiply(r, new MathContext(precision, RoundingMode.HALF_UP))
---  *                      .setScale(scale, RoundingMode.HALF_UP);
---  *      ret = NumericValue.adjustPrecisionScale(ret);
+--  *                      .setScale(scale, RoundingMode.HALF_UP),
+--  *      ret = NumericValue.adjustPrecisionScale(ret),
 --  * ============================================================ */
 
 select 

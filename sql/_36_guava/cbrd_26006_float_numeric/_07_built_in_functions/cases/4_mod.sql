@@ -35,7 +35,7 @@ SELECT MOD(
 evaluate '3. 41 significant digits (rounded to 40)';
 -- ------------------------------------------------------------
 -- 41 significant digits -> rounded to 40
--- (These intentionally start with 41 sig digits; engine rounds to 40 and pushes remainder into scale)
+-- (These intentionally start with 41 sig digits, engine rounds to 40 and pushes remainder into scale)
 -- ------------------------------------------------------------
 -- 41-digit integer-like (forces rounding at 41st digit)
 SELECT MOD(10000000000000000000000000000000000000005, 9);      -- 41 sig digits (1 + 40 zeros + 5)
@@ -56,7 +56,7 @@ SELECT MOD(
 -- O  : 4803709.8910177876111242
 -- PG : 4803709.8910177876111241697179812033294743955419
 -- Result differs because the divisor exceeds 40 significant digits and is rounded before MOD.
--- divisor rounded to 40 sig digits (7 int + 33 frac); dividend scale 15
+-- divisor rounded to 40 sig digits (7 int + 33 frac), dividend scale 15
 -- 40 - 7 = 33 - 15 = 18
 -- 99999991239999999999999990000099234999000000000000000000 % 7349900990009991512311230023412999996390
 -- -> 4803709891017787611124171078542269062590
@@ -66,7 +66,7 @@ evaluate '4. positive-scale boundary';
 -- ------------------------------------------------------------
 -- positive-scale boundary-ish (close to +252 region)
 -- ------------------------------------------------------------
--- around 1e-252 magnitude; should still be representable (depends on literal trimming/rounding)
+-- around 1e-252 magnitude, should still be representable (depends on literal trimming/rounding)
 SELECT MOD(1e-252, 9);
 SELECT MOD(-1e-252, 9);
 
@@ -104,10 +104,10 @@ SELECT MOD(
 evaluate '6. near-boundary negative-scale creation';
 -- ------------------------------------------------------------
 -- near-boundary negative-scale creation using /0.1 style magnification inside expression
--- (Still MOD itself, but A is computed; if you want pure literal-only, skip this block)
+-- (Still MOD itself, but A is computed, if you want pure literal-only, skip this block)
 -- ------------------------------------------------------------
 SELECT MOD(
-  (9999999999999999999999999999999999999999e+213) / 0.1,  -- magnify; may push scale more negative after rounding
+  (9999999999999999999999999999999999999999e+213) / 0.1,  -- magnify, may push scale more negative after rounding
   999999
 );
 
@@ -147,7 +147,7 @@ SELECT MOD(COALESCE(NULL, -1e-252), 999999);
 evaluate '9. potential overflow (observation)';
 -- ------------------------------------------------------------
 -- potential overflow via extreme tiny divisor-like behavior
--- (MOD itself may or may not throw; keep as observation tests for scale<-214 paths)
+-- (MOD itself may or may not throw, keep as observation tests for scale<-214 paths)
 -- ------------------------------------------------------------
 SELECT MOD(
   99999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,

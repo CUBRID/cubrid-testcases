@@ -2,8 +2,8 @@
 
 evaluate '1. aggregate form with Float NUMERIC boundary values';
 -- ============================================================
--- NOTE: MIN/MAX are aggregates; a scalar MIN(x) is not standard.
--- If CUBRID supports MIN(expr) as scalar, keep it; otherwise use a derived table.
+-- NOTE: MIN/MAX are aggregates, a scalar MIN(x) is not standard.
+-- If CUBRID supports MIN(expr) as scalar, keep it, otherwise use a derived table.
 -- Recommended: use a VALUES-like derived table to force aggregate semantics.
 -- ============================================================
 

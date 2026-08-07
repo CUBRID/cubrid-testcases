@@ -1,6 +1,6 @@
 /* 12. Verify ELT behavior */
 
--- ELT returns the N-th argument; verify it handles NUMERIC values near boundaries.
+-- ELT returns the N-th argument, verify it handles NUMERIC values near boundaries.
 
 -- ===========================================================================
 -- Section 1: Float NUMERIC and Fixed NUMERIC boundary values
@@ -46,7 +46,7 @@ SELECT ELT(1, col1, col2) FROM t6;
 DROP TABLE IF EXISTS t6;
 
 -- 254+ digit input cases:
--- NOTE: 255-digit integers need scale below -214 (min) -> overflow error (-494);
+-- NOTE: 255-digit integers need scale below -214 (min) -> overflow error (-494),
 -- 255-digit fractions round to 40 sig digits at scale <=252 and insert successfully.
 DROP TABLE IF EXISTS t7;
 CREATE TABLE t7 (col1 NUMERIC, col2 VARCHAR(15));

@@ -77,7 +77,7 @@ SELECT TRUNC(
 );
 
 evaluate '8. division results';
--- trunc on division results (integer division: 10/3=3; decimal division: long/repeating)
+-- trunc on division results (integer division: 10/3=3, decimal division: long/repeating)
 SELECT TRUNC(10 / 3, 40);
 SELECT TRUNC(-10 / 3, 40);
 SELECT TRUNC(10 / 1.000000000000000000000000000000000000001, 40);

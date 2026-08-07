@@ -56,7 +56,7 @@ SELECT CEIL(123.00000000000000000000000000000000000001);
 
 evaluate '7. Mixed large precision and tiny sign checks';
 -- ------------------------------------------------------------
--- Mixed integer+fraction rounded to 40 significant digits then ceil; plus tiny sign checks
+-- Mixed integer+fraction rounded to 40 significant digits then ceil, plus tiny sign checks
 -- ------------------------------------------------------------
 SELECT CEIL(123456789123456789123456789123456789.123456789123456789123456789123456789);
 
