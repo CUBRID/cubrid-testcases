@@ -1,12 +1,34 @@
 -- This testcase verifies CBRD-24896 issue.
+-- Modified to determine that index scan is impossible in the following cases "set = set {col1,col2} = {1,2}"
+-- Forcing the use of an index "USING INDEX"
 
-EVALUATE 'using seteq for search condition on system table';
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
+DROP TABLE IF EXISTS t_tbl;
+CREATE TABLE t_tbl (a INT, b INT, c VARCHAR(32));
+CREATE INDEX i_tbl_ab ON t_tbl (a, b);
+INSERT INTO t_tbl VALUES (1, 2, 'x'), (2, 1, 'x'), (1, 1, 'x'), (3, 4, 'x');
 
-EVALUATE 'using = for search condition on system table';
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
+EVALUATE 'brace set term must not be used as an index key';
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} seteq {1, 2} USING INDEX i_tbl_ab;
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} = {1, 2} USING INDEX i_tbl_ab;
+
+EVALUATE 'rhs longer than lhs must not return a wrong result';
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} = {1, 2, 3} USING INDEX i_tbl_ab;
+
+EVALUATE 'rhs shorter than lhs must not crash';
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} seteq {} USING INDEX i_tbl_ab;
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} = {} USING INDEX i_tbl_ab;
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE {a, b} = {1} USING INDEX i_tbl_ab;
+
+EVALUATE 'paren tuple term is still indexable';
+SELECT /*+ recompile */ a, b, c FROM t_tbl WHERE (a, b) = (1, 2) USING INDEX i_tbl_ab;
+
+EVALUATE 'system table without join';
+SELECT /*+ recompile */ name FROM [_db_user] AS [u] WHERE {[u].[name]} seteq {'PUBLIC'} USING INDEX u__db_user_name;
+SELECT /*+ recompile */ name FROM [_db_user] AS [u] WHERE {[u].[name]} = {'PUBLIC'} USING INDEX u__db_user_name;
+SELECT /*+ recompile */ name FROM [_db_user] AS [u] WHERE {[u].[name]} = {'PUBLIC', 1} USING INDEX u__db_user_name;
+SELECT /*+ recompile */ name FROM [_db_user] AS [u] WHERE {[u].[name]} = {} USING INDEX u__db_user_name;
+
+DROP TABLE t_tbl;
 
 -- create table
 drop table if exists tbl;
