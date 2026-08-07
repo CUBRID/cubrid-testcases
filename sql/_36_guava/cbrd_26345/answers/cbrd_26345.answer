@@ -36,7 +36,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].uniq_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].uniq_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -60,7 +60,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -85,7 +85,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].mid_ndv_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].mid_ndv_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -96,11 +96,11 @@ Trace Statistics:
 
 ===================================================
     
-mid_ndv_varchar (VARCHAR, NDV=1000) - expect: memoize enabled     
+mid_ndv_varchar (VARCHAR, NDV=300) - expect: memoize enabled     
 
 ===================================================
 count(*)    
-1000     
+3340     
 
 ===================================================
 trace    
@@ -110,7 +110,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].mid_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].mid_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -135,7 +135,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].high_ndv_numeric=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].high_ndv_numeric=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -159,7 +159,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].uniq_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].uniq_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -183,7 +183,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].half_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].half_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -207,7 +207,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].third_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].third_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -237,7 +237,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].uniq_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].uniq_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -261,7 +261,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -285,7 +285,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].mid_ndv_int=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].mid_ndv_int=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -295,11 +295,11 @@ Trace Statistics:
 
 ===================================================
     
-mid_ndv_varchar (VARCHAR, NDV=1000) - expect: no memoize (disabled)     
+mid_ndv_varchar (VARCHAR, NDV=300) - expect: no memoize (disabled)     
 
 ===================================================
 count(*)    
-1000     
+3340     
 
 ===================================================
 trace    
@@ -309,7 +309,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].mid_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].mid_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -333,7 +333,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.outer_tbl].high_ndv_numeric=[dba.inner_tbl].join_key
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].high_ndv_numeric=[dba.inner_tbl].join_key
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -357,7 +357,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].uniq_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].uniq_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -381,7 +381,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].half_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].half_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -405,7 +405,7 @@ Query Plan:
     TABLE SCAN (dba.outer_tbl)
     TABLE SCAN (dba.inner_tbl)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl] where [dba.inner_tbl].join_key= cast([dba.outer_tbl].third_ndv_varchar as double)
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.inner_tbl].join_key= cast([dba.outer_tbl].third_ndv_varchar as double)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -413,6 +413,272 @@ Trace Statistics:
       SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+3-way join -> runtime memoize activation on both joins     
+
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.outer_tbl)
+      TABLE SCAN (dba.inner_tbl)
+    TABLE SCAN (dba.extra_join_tbl)
+
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl, extra_join_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key inner join [dba.extra_join_tbl] [dba.extra_join_tbl] on [dba.outer_tbl].mid_ndv_int=[dba.extra_join_tbl].dup_key
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (table: dba.extra_join_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+view-to-table join -> runtime memoize activation (view exposes no NDV stats)     
+
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.low_ndv_view)
+    TABLE SCAN (dba.inner_tbl)
+
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.low_ndv_view] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.low_ndv_view].low_ndv_int=[dba.inner_tbl].join_key
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+constraint#4: cartesian product (no join condition) - expect: no memoize     
+
+===================================================
+count(*)    
+1000000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.inner_tbl)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl], [dba.inner_tbl] [dba.inner_tbl]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+constraint#2: TARGET_SET-derived TABLE() inner - expect: no memoize     
+
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (t)
+
+  rewritten query: select /*+ ORDERED USE_NL(t) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join table({?, ?, ?, ?, ?, ?, ?, ?, ?, ?}) t (x) on [dba.outer_tbl].low_ndv_int=t.x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+    
+constraint#3: SET column real projection - expect: no memoize     
+
+===================================================
+low_ndv_int    s    
+1     1,2,     
+2     3,4,     
+3     5,6,     
+4     7,8,     
+5     9,10,     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.set_col_tbl)
+
+  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.set_col_tbl].s from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.set_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+constraint#3: MULTISET column real projection - expect: no memoize     
+
+===================================================
+low_ndv_int    ms    
+1     1,1,2,     
+2     3,3,4,     
+3     5,5,6,     
+4     7,7,8,     
+5     9,9,10,     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.multiset_col_tbl)
+
+  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.multiset_col_tbl].ms from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.multiset_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+constraint#3: SEQUENCE column real projection - expect: no memoize     
+
+===================================================
+low_ndv_int    sq    
+1     1,2,     
+2     3,4,     
+3     5,6,     
+4     7,8,     
+5     9,10,     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.sequence_col_tbl)
+
+  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.sequence_col_tbl].sq from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.sequence_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+memoize with index scan on inner table     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+90000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.outer_tbl)
+    INDEX SCAN (dba.inner_tbl.idx_inner_tbl_key) (key range: [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL(inner_tbl) PARALLEL(?) */ count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_tbl] [dba.inner_tbl] on [dba.outer_tbl].low_ndv_int=[dba.inner_tbl].join_key
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.inner_tbl.idx_inner_tbl_key), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
