@@ -76,7 +76,7 @@ FROM db_attribute
 WHERE class_name IN ('_db_server', 'db_server') AND attr_name = 'user_name'
 ORDER BY class_name;
 
-/* the 32-char rejection boundary itself is already covered by sql/_13_issues/_12_1h/cases/bug_bts_6633.sql;
+/* the 32-char rejection boundary is already covered by bug_bts_6633.sql (sql/_13_issues/_12_1h/cases) -
    only the 31-char accept side is repeated here, as a fixture for Cases 11-12 below */
 evaluate 'Case 10: a 31-char user name is accepted and round-trips through db_user.name';
 create user cbrd_25471_ok_31_chars_long_xxx;
@@ -97,12 +97,14 @@ create synonym cbrd_25471_syn for cbrd_25471_t;
 create trigger cbrd_25471_trg before insert on cbrd_25471_t execute print 'x';
 grant select on cbrd_25471_t to public;
 
+/* db_serial has no discoverable row for an inline `auto_increment primary key` column in this
+   build (unlike a bare `auto_increment` column, per sql/_01_object/_02_class/_003_auto_increment/
+   cases/cubrid60.sql) -- its declared column size is still checked at the metadata level in Case 7 */
 select 'db_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_class where class_name = 'cbrd_25471_t'
 union all select 'db_vclass', owner_name, char_length(owner_name) from db_vclass where vclass_name = 'cbrd_25471_v'
 union all select 'db_attribute', owner_name, char_length(owner_name) from db_attribute where class_name = 'cbrd_25471_t' and attr_name = 'c1'
 union all select 'db_index', owner_name, char_length(owner_name) from db_index where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
 union all select 'db_index_key', owner_name, char_length(owner_name) from db_index_key where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
-union all select 'db_serial', owner, char_length(owner) from db_serial where class_name = 'cbrd_25471_t'
 union all select 'db_trigger', owner_name, char_length(owner_name) from db_trigger where trigger_name = 'cbrd_25471_trg'
 union all select 'db_synonym', synonym_owner_name, char_length(synonym_owner_name) from db_synonym where synonym_name = 'cbrd_25471_syn'
 union all select 'db_auth', grantor_name, char_length(grantor_name) from db_auth where object_name = 'cbrd_25471_t' and grantee_name = 'PUBLIC'
