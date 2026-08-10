@@ -41,6 +41,10 @@ updated_time     DATETIME     YES          null
 Case 3: class-object owner-name views are varchar(32)     
 
 ===================================================
+    
+db_class     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 class_name     VARCHAR(255)     YES          null          
 owner_name     VARCHAR(32)     YES          null          
@@ -57,11 +61,19 @@ updated_time     DATETIME     YES          null
 checked_time     DATETIME     YES          null          
 
 ===================================================
+    
+db_direct_super_class     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 class_name     VARCHAR(255)     YES          null          
 owner_name     VARCHAR(32)     YES          null          
 super_class_name     VARCHAR(255)     YES          null          
 super_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_vclass     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -72,6 +84,10 @@ comment     VARCHAR(2048)     YES          null
 created_time     DATETIME     YES          null          
 updated_time     DATETIME     YES          null          
 invalidated_time     DATETIME     YES          null          
+
+===================================================
+    
+db_attribute     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -97,6 +113,10 @@ is_invisible     VARCHAR(3)     YES          null
 comment     VARCHAR(1024)     YES          null          
 
 ===================================================
+    
+db_attr_setdomain_elm     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 attr_name     VARCHAR(255)     YES          null          
 class_name     VARCHAR(255)     YES          null          
@@ -114,6 +134,10 @@ domain_owner_name     VARCHAR(32)     YES          null
 Case 4: method-related owner-name views are varchar(32)     
 
 ===================================================
+    
+db_method     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 meth_name     VARCHAR(255)     YES          null          
 class_name     VARCHAR(255)     YES          null          
@@ -125,18 +149,8 @@ from_meth_name     VARCHAR(255)     YES          null
 func_name     VARCHAR(255)     YES          null          
 
 ===================================================
-Field    Type    Null    Key    Default    Extra    
-meth_name     VARCHAR(255)     YES          null          
-class_name     VARCHAR(255)     YES          null          
-owner_name     VARCHAR(32)     YES          null          
-meth_type     VARCHAR(8)     YES          null          
-index_of     INTEGER     YES          null          
-data_type     VARCHAR(9)     YES          null          
-prec     INTEGER     YES          null          
-scale     INTEGER     YES          null          
-code_set     INTEGER     YES          null          
-domain_class_name     VARCHAR(255)     YES          null          
-domain_owner_name     VARCHAR(32)     YES          null          
+    
+db_meth_arg     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -151,6 +165,28 @@ scale     INTEGER     YES          null
 code_set     INTEGER     YES          null          
 domain_class_name     VARCHAR(255)     YES          null          
 domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_meth_arg_setdomain_elm     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+meth_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+meth_type     VARCHAR(8)     YES          null          
+index_of     INTEGER     YES          null          
+data_type     VARCHAR(9)     YES          null          
+prec     INTEGER     YES          null          
+scale     INTEGER     YES          null          
+code_set     INTEGER     YES          null          
+domain_class_name     VARCHAR(255)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_meth_file     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -163,6 +199,10 @@ from_owner_name     VARCHAR(32)     YES          null
 ===================================================
     
 Case 5: index / auth / trigger / partition owner-name views are varchar(32)     
+
+===================================================
+    
+db_index     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -190,6 +230,10 @@ created_time     DATETIME     YES          null
 updated_time     DATETIME     YES          null          
 
 ===================================================
+    
+db_index_key     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 index_name     VARCHAR(255)     YES          null          
 class_name     VARCHAR(255)     YES          null          
@@ -199,6 +243,10 @@ key_order     INTEGER     YES          null
 asc_desc     VARCHAR(4)     YES          null          
 key_prefix_length     INTEGER     YES          null          
 func     VARCHAR(1023)     YES          null          
+
+===================================================
+    
+db_auth     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -213,6 +261,10 @@ created_time     DATETIME     YES          null
 updated_time     DATETIME     YES          null          
 
 ===================================================
+    
+db_trigger     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 trigger_name     VARCHAR(255)     YES          null          
 owner_name     VARCHAR(32)     YES          null          
@@ -225,6 +277,10 @@ action_time     INTEGER     YES          null
 comment     VARCHAR(1024)     YES          null          
 created_time     DATETIME     YES          null          
 updated_time     DATETIME     YES          null          
+
+===================================================
+    
+db_partition     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -245,6 +301,10 @@ updated_time     DATETIME     YES          null
 Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)     
 
 ===================================================
+    
+db_stored_procedure     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 sp_name     VARCHAR(255)     YES          null          
 pkg_name     VARCHAR(255)     YES          null          
@@ -263,6 +323,10 @@ created_time     DATETIME     YES          null
 updated_time     DATETIME     YES          null          
 
 ===================================================
+    
+db_stored_procedure_args     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 sp_name     VARCHAR(255)     YES          null          
 owner_name     VARCHAR(32)     YES          null          
@@ -274,6 +338,10 @@ mode     VARCHAR(6)     YES          null
 is_optional     VARCHAR(3)     YES          null          
 default_value     VARCHAR(2048)     YES          null          
 comment     VARCHAR(1024)     YES          null          
+
+===================================================
+    
+db_serial     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -295,9 +363,17 @@ created_time     DATETIME     YES          null
 updated_time     DATETIME     YES          null          
 
 ===================================================
+    
+db_authorization     
+
+===================================================
 Field    Type    Null    Key    Default    Extra    
 owner     VARCHAR(32)     YES          null          
 grants     null     YES          null          
+
+===================================================
+    
+db_synonym     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
@@ -309,6 +385,10 @@ target_owner_name     VARCHAR(32)     YES          null
 comment     VARCHAR(2048)     YES          null          
 created_time     DATETIME     YES          null          
 updated_time     DATETIME     YES          null          
+
+===================================================
+    
+db_server     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    

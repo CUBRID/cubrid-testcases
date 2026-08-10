@@ -19,31 +19,51 @@ evaluate 'Case 2: db_user view name is varchar(32) (direct_groups/groups element
 desc db_user;
 
 evaluate 'Case 3: class-object owner-name views are varchar(32)';
+evaluate 'db_class';
 desc db_class;
+evaluate 'db_direct_super_class';
 desc db_direct_super_class;
+evaluate 'db_vclass';
 desc db_vclass;
+evaluate 'db_attribute';
 desc db_attribute;
+evaluate 'db_attr_setdomain_elm';
 desc db_attr_setdomain_elm;
 
 evaluate 'Case 4: method-related owner-name views are varchar(32)';
+evaluate 'db_method';
 desc db_method;
+evaluate 'db_meth_arg';
 desc db_meth_arg;
+evaluate 'db_meth_arg_setdomain_elm';
 desc db_meth_arg_setdomain_elm;
+evaluate 'db_meth_file';
 desc db_meth_file;
 
 evaluate 'Case 5: index / auth / trigger / partition owner-name views are varchar(32)';
+evaluate 'db_index';
 desc db_index;
+evaluate 'db_index_key';
 desc db_index_key;
+evaluate 'db_auth';
 desc db_auth;
+evaluate 'db_trigger';
 desc db_trigger;
+evaluate 'db_partition';
 desc db_partition;
 
 evaluate 'Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)';
+evaluate 'db_stored_procedure';
 desc db_stored_procedure;
+evaluate 'db_stored_procedure_args';
 desc db_stored_procedure_args;
+evaluate 'db_serial';
 desc db_serial;
+evaluate 'db_authorization';
 desc db_authorization;
+evaluate 'db_synonym';
 desc db_synonym;
+evaluate 'db_server';
 desc db_server;
 
 evaluate 'Case 7: aggregate check - every owner-name column across all dependent views is varchar(32)';
