@@ -8,9 +8,8 @@
  * 8   - set-element size of db_user.direct_groups / groups
  * 9   - db_server / _db_server.user_name is intentionally left at varchar(255)
  * 10  - a 31-char user name round-trips through db_user.name
- * 11-12 - a 31-char owner name round-trips through the dependent views' data (not just
- *         declared metadata), including after an OWNER TO transfer
- * 13  - a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)
+ * 11-12 - a 31-char owner name round-trips through 15 of the 20 dependent views data
+ *         (not just declared metadata), including after an OWNER TO transfer
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
@@ -131,6 +130,39 @@ order by 1;
 
 call login ('dba', '') on class db_user;
 
+/* created as dba then transferred (ALTER ... OWNER TO), same proven mechanism as Case 12,
+   since these object kinds are simplest to create under a known-privileged session */
+drop table if exists cbrd_25471_sub;
+drop table if exists cbrd_25471_super;
+create table cbrd_25471_super (c1 int primary key);
+create table cbrd_25471_sub under cbrd_25471_super (c2 int);
+alter table cbrd_25471_sub owner to u_______10u_______20u_______30u;
+
+drop table if exists cbrd_25471_part;
+create table cbrd_25471_part (c1 int, c2 int) partition by hash(c1) partitions 2;
+alter table cbrd_25471_part owner to u_______10u_______20u_______30u;
+
+create procedure cbrd_25471_proc(i int) as
+begin
+  dbms_output.put_line('i=' || i);
+end;
+alter procedure cbrd_25471_proc owner to u_______10u_______20u_______30u;
+
+create serial cbrd_25471_ser;
+alter serial cbrd_25471_ser owner to u_______10u_______20u_______30u;
+
+create server cbrd_25471_srv (host='localhost', port=33000, dbname=cbrd_25471_ext, user='cbrd_25471_extuser');
+alter server cbrd_25471_srv owner to u_______10u_______20u_______30u;
+
+select 'db_direct_super_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_direct_super_class where class_name = 'cbrd_25471_sub'
+union all select 'db_partition', owner_name, char_length(owner_name) from db_partition where class_name = 'cbrd_25471_part'
+union all select 'db_stored_procedure', owner, char_length(owner) from db_stored_procedure where sp_name = 'cbrd_25471_proc'
+union all select 'db_stored_procedure_args', owner_name, char_length(owner_name) from db_stored_procedure_args where sp_name = 'cbrd_25471_proc'
+union all select 'db_serial', owner, char_length(owner) from db_serial where name = 'cbrd_25471_ser'
+union all select 'db_server', owner, char_length(owner) from db_server where link_name = 'cbrd_25471_srv'
+union all select 'db_authorization', owner, char_length(owner) from db_authorization where owner = 'U_______10U_______20U_______30U'
+order by 1;
+
 evaluate 'Case 12: ALTER TABLE ... OWNER TO refreshes owner_name to the full 31-char name';
 drop table if exists cbrd_25471_t2;
 create table cbrd_25471_t2 (c1 int);
@@ -142,11 +174,13 @@ drop table u_______10u_______20u_______30u.cbrd_25471_t2;
 drop synonym u_______10u_______20u_______30u.cbrd_25471_syn;
 drop view u_______10u_______20u_______30u.cbrd_25471_v;
 drop table u_______10u_______20u_______30u.cbrd_25471_t;
+drop server u_______10u_______20u_______30u.cbrd_25471_srv;
+drop serial u_______10u_______20u_______30u.cbrd_25471_ser;
+drop procedure u_______10u_______20u_______30u.cbrd_25471_proc;
+drop table u_______10u_______20u_______30u.cbrd_25471_part;
+drop table u_______10u_______20u_______30u.cbrd_25471_sub;
+drop table cbrd_25471_super;
 drop user u_______10u_______20u_______30u;
 
-/* duplicates sql/_13_issues/_12_1h/cases/bug_bts_6633.sql's boundary check -- kept here anyway so
-   this file self-verifies the reject side of the accept/reject pair established in Cases 10-12 */
---+ server-message on
-evaluate 'Case 13: a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)';
-/* err */ create user cbrd_25471_too_long_32_chars_xxx;
---+ server-message off
+/* a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary) -- already covered by
+   sql/_13_issues/_12_1h/cases/bug_bts_6633.sql, not repeated here */
