@@ -169,7 +169,7 @@ Trace Statistics:
 
 ===================================================
     
-half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize     
+half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.50001 duplicate ratio is irrelevant to the current runtime check)     
 
 ===================================================
 count(*)    
@@ -193,7 +193,7 @@ Trace Statistics:
 
 ===================================================
     
-third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize     
+third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.667 duplicate ratio is irrelevant to the current runtime check)     
 
 ===================================================
 count(*)    
@@ -430,6 +430,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+0
+===================================================
 100
 ===================================================
 0
@@ -448,12 +450,18 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+14
+===================================================
+0
+===================================================
+0
+===================================================
 0
 ===================================================
 0
 ===================================================
     
-3-way join -> runtime memoize activation on both joins     
+3-way join - expect: memoize enabled on both joins     
 
 ===================================================
 count(*)    
@@ -482,7 +490,7 @@ Trace Statistics:
 
 ===================================================
     
-view-to-table join -> runtime memoize activation (view exposes no NDV stats)     
+view-to-table join (view exposes no NDV stats) - expect: memoize enabled     
 
 ===================================================
 count(*)    
@@ -508,7 +516,7 @@ Trace Statistics:
 
 ===================================================
     
-constraint#4: cartesian product (no join condition) - expect: no memoize     
+cartesian product (no join condition) - expect: no memoize     
 
 ===================================================
 count(*)    
@@ -532,7 +540,7 @@ Trace Statistics:
 
 ===================================================
     
-constraint#2: TARGET_SET-derived TABLE() inner - expect: no memoize     
+TARGET_SET-derived TABLE() inner - expect: no memoize     
 
 ===================================================
 count(*)    
@@ -556,7 +564,7 @@ Trace Statistics:
 
 ===================================================
     
-constraint#3: SET column real projection - expect: no memoize     
+SET column real projection - expect: no memoize     
 
 ===================================================
 low_ndv_int    s    
@@ -584,7 +592,7 @@ Trace Statistics:
 
 ===================================================
     
-constraint#3: MULTISET column real projection - expect: no memoize     
+MULTISET column real projection - expect: no memoize     
 
 ===================================================
 low_ndv_int    ms    
@@ -612,7 +620,7 @@ Trace Statistics:
 
 ===================================================
     
-constraint#3: SEQUENCE column real projection - expect: no memoize     
+SEQUENCE column real projection - expect: no memoize     
 
 ===================================================
 low_ndv_int    sq    
@@ -640,7 +648,7 @@ Trace Statistics:
 
 ===================================================
     
-memoize with index scan on inner table     
+memoize with index scan on inner table - expect: memoize enabled     
 
 ===================================================
 0
@@ -666,6 +674,74 @@ Trace Statistics:
       SCAN (index: dba.inner_tbl.idx_inner_tbl_key), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
+
+===================================================
+0
+===================================================
+    
+multi-row-per-key cache path: row-level output, memoize enabled (memoize_memory_limit=64M)     
+
+===================================================
+low_ndv_int    payload    count(*)    
+1     a     10000     
+2     a     10000     
+3     a     10000     
+3     b     10000     
+3     c     10000     
+4     a     10000     
+5     a     10000     
+6     a     10000     
+7     a     10000     
+7     b     10000     
+8     a     10000     
+9     a     10000     
+
+===================================================
+low_ndv_int    count(inner_dup.payload)    
+0     0     
+1     10000     
+2     10000     
+3     20000     
+4     10000     
+5     10000     
+6     10000     
+7     10000     
+8     10000     
+9     10000     
+
+===================================================
+0
+===================================================
+    
+multi-row-per-key cache path: same queries, memoize disabled (memoize_memory_limit=0) - row-level output must match the enabled run above exactly     
+
+===================================================
+low_ndv_int    payload    count(*)    
+1     a     10000     
+2     a     10000     
+3     a     10000     
+3     b     10000     
+3     c     10000     
+4     a     10000     
+5     a     10000     
+6     a     10000     
+7     a     10000     
+7     b     10000     
+8     a     10000     
+9     a     10000     
+
+===================================================
+low_ndv_int    count(inner_dup.payload)    
+0     0     
+1     10000     
+2     10000     
+3     20000     
+4     10000     
+5     10000     
+6     10000     
+7     10000     
+8     10000     
+9     10000     
 
 ===================================================
 0
