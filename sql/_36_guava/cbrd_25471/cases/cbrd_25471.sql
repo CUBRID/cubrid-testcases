@@ -10,6 +10,7 @@
  * 10  - a 31-char user name round-trips through db_user.name
  * 11-12 - a 31-char owner name round-trips through the dependent views' data (not just
  *         declared metadata), including after an OWNER TO transfer
+ * 13  - a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
@@ -96,8 +97,6 @@ FROM db_attribute
 WHERE class_name IN ('_db_server', 'db_server') AND attr_name = 'user_name'
 ORDER BY class_name;
 
-/* the 32-char rejection boundary is already covered by bug_bts_6633.sql (sql/_13_issues/_12_1h/cases) -
-   only the 31-char accept side is repeated here, as a fixture for Cases 11-12 below */
 evaluate 'Case 10: a 31-char user name is accepted and round-trips through db_user.name';
 create user cbrd_25471_ok_31_chars_long_xxx;
 SELECT name, CHAR_LENGTH(name) FROM db_user WHERE name = 'CBRD_25471_OK_31_CHARS_LONG_XXX' ORDER BY 1;
@@ -144,3 +143,10 @@ drop synonym u_______10u_______20u_______30u.cbrd_25471_syn;
 drop view u_______10u_______20u_______30u.cbrd_25471_v;
 drop table u_______10u_______20u_______30u.cbrd_25471_t;
 drop user u_______10u_______20u_______30u;
+
+/* duplicates sql/_13_issues/_12_1h/cases/bug_bts_6633.sql's boundary check -- kept here anyway so
+   this file self-verifies the reject side of the accept/reject pair established in Cases 10-12 */
+--+ server-message on
+evaluate 'Case 13: a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)';
+/* err */ create user cbrd_25471_too_long_32_chars_xxx;
+--+ server-message off
