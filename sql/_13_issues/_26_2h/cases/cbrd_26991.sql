@@ -7,16 +7,15 @@
  * with an error ("Methods require an object as their target.").
  *
  * Coverage:
- * 1. add_member with valid user on valid group target - returns result (NULL)
- * 2. add_member with nonexistent user on valid group target - Error:-165
- * 3. call add_member on literal NULL target - parser error (Error:-493)
- * 4. call drop_member on literal NULL target - parser error (Error:-493)
- * 5. find_user for nonexistent group returns NULL, add_member on that - runtime error (Error:-495)
- * 6. add_member with valid user on runtime-NULL target - runtime error (Error:-495)
- * 7. drop_member on runtime-NULL target - runtime error (Error:-495)
+ * 1. add_member with valid user on valid group target
+ * 2. add_member with nonexistent user on valid group target
+ * 3. call add_member on literal NULL target
+ * 4. call drop_member on literal NULL target
+ * 5. find_user for nonexistent group returns NULL, add_member on that
+ * 6. set_password on runtime-NULL target
+ * 7. drop_member on runtime-NULL target
+ * 8. set_password on literal NULL target
  */
-
-autocommit off;
 
 call login('dba','') on class db_user;
 
@@ -41,16 +40,15 @@ evaluate 'Case 5. find_user for nonexistent group returns NULL, add_member on th
 call find_user('no_such_group_26991') on class db_user to nullgrp;
 call add_member('test_user_26991') on nullgrp;
 
-evaluate 'Case 6. add_member with valid user on runtime-NULL target (runtime path)';
-call add_member('test_user_26991') on nullgrp;
+evaluate 'Case 6. set_password on runtime-NULL target (runtime path)';
+call set_password('newpw') on nullgrp;
 
 evaluate 'Case 7. drop_member on runtime-NULL target (runtime path)';
 call drop_member('test_user_26991') on nullgrp;
 
+evaluate 'Case 8. set_password on literal NULL target (parser path)';
+call set_password('newpw') on null;
+
 -- Cleanup
 drop user test_user_26991;
 drop user test_group_26991;
-
-rollback;
-
-autocommit on;
