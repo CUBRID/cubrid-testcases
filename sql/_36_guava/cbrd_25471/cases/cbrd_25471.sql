@@ -7,7 +7,9 @@
  * 7   - aggregate cross-check of every owner-name column's declared size in one query
  * 8   - set-element size of db_user.direct_groups / groups
  * 9   - db_server / _db_server.user_name is intentionally left at varchar(255)
- * 10  - a 31-char user name round-trips through db_user.name; a 32-char name is rejected
+ * 10  - a 31-char user name round-trips through db_user.name
+ * 11-12 - a 31-char owner name round-trips through the dependent views' data (not just
+ *         declared metadata), including after an OWNER TO transfer
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
@@ -74,12 +76,49 @@ FROM db_attribute
 WHERE class_name IN ('_db_server', 'db_server') AND attr_name = 'user_name'
 ORDER BY class_name;
 
-evaluate 'Case 10a: a 31-char user name is accepted and round-trips through db_user.name';
+/* the 32-char rejection boundary itself is already covered by sql/_13_issues/_12_1h/cases/bug_bts_6633.sql;
+   only the 31-char accept side is repeated here, as a fixture for Cases 11-12 below */
+evaluate 'Case 10: a 31-char user name is accepted and round-trips through db_user.name';
 create user cbrd_25471_ok_31_chars_long_xxx;
 SELECT name, CHAR_LENGTH(name) FROM db_user WHERE name = 'CBRD_25471_OK_31_CHARS_LONG_XXX' ORDER BY 1;
 DROP USER cbrd_25471_ok_31_chars_long_xxx;
 
---+ server-message on
-evaluate 'Case 10b: a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)';
-/* err */ create user cbrd_25471_too_long_32_chars_xxx;
---+ server-message off
+evaluate 'Case 11: a 31-char owner name round-trips untruncated through the dependent views';
+create user u_______10u_______20u_______30u;
+call login ('u_______10u_______20u_______30u', '') on class db_user;
+
+drop table if exists cbrd_25471_t;
+create table cbrd_25471_t (c1 int auto_increment primary key, c2 int);
+create index i_cbrd_25471_c2 on cbrd_25471_t (c2);
+drop view if exists cbrd_25471_v;
+create view cbrd_25471_v as select c1 from cbrd_25471_t;
+drop synonym if exists cbrd_25471_syn;
+create synonym cbrd_25471_syn for cbrd_25471_t;
+create trigger cbrd_25471_trg before insert on cbrd_25471_t execute print 'x';
+grant select on cbrd_25471_t to public;
+
+select 'db_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_class where class_name = 'cbrd_25471_t'
+union all select 'db_vclass', owner_name, char_length(owner_name) from db_vclass where vclass_name = 'cbrd_25471_v'
+union all select 'db_attribute', owner_name, char_length(owner_name) from db_attribute where class_name = 'cbrd_25471_t' and attr_name = 'c1'
+union all select 'db_index', owner_name, char_length(owner_name) from db_index where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
+union all select 'db_index_key', owner_name, char_length(owner_name) from db_index_key where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
+union all select 'db_serial', owner, char_length(owner) from db_serial where class_name = 'cbrd_25471_t'
+union all select 'db_trigger', owner_name, char_length(owner_name) from db_trigger where trigger_name = 'cbrd_25471_trg'
+union all select 'db_synonym', synonym_owner_name, char_length(synonym_owner_name) from db_synonym where synonym_name = 'cbrd_25471_syn'
+union all select 'db_auth', grantor_name, char_length(grantor_name) from db_auth where object_name = 'cbrd_25471_t' and grantee_name = 'PUBLIC'
+order by 1;
+
+call login ('dba', '') on class db_user;
+
+evaluate 'Case 12: ALTER TABLE ... OWNER TO refreshes owner_name to the full 31-char name';
+drop table if exists cbrd_25471_t2;
+create table cbrd_25471_t2 (c1 int);
+select owner_name, char_length(owner_name) from db_class where class_name = 'cbrd_25471_t2';
+alter table cbrd_25471_t2 owner to u_______10u_______20u_______30u;
+select owner_name, char_length(owner_name) from db_class where class_name = 'cbrd_25471_t2';
+
+drop table u_______10u_______20u_______30u.cbrd_25471_t2;
+drop synonym u_______10u_______20u_______30u.cbrd_25471_syn;
+drop view u_______10u_______20u_______30u.cbrd_25471_v;
+drop table u_______10u_______20u_______30u.cbrd_25471_t;
+drop user u_______10u_______20u_______30u;
