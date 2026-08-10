@@ -115,9 +115,6 @@ create synonym cbrd_25471_syn for cbrd_25471_t;
 create trigger cbrd_25471_trg before insert on cbrd_25471_t execute print 'x';
 grant select on cbrd_25471_t to public;
 
-/* db_serial has no discoverable row for an inline `auto_increment primary key` column in this
-   build (unlike a bare `auto_increment` column, per sql/_01_object/_02_class/_003_auto_increment/
-   cases/cubrid60.sql) -- its declared column size is still checked at the metadata level in Case 7 */
 select 'db_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_class where class_name = 'cbrd_25471_t'
 union all select 'db_vclass', owner_name, char_length(owner_name) from db_vclass where vclass_name = 'cbrd_25471_v'
 union all select 'db_attribute', owner_name, char_length(owner_name) from db_attribute where class_name = 'cbrd_25471_t' and attr_name = 'c1'
