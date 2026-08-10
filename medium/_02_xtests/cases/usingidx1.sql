@@ -16,7 +16,8 @@ create index foo_idx on foo (i, j);
 create index foo_idx2 on foo (s, t);
 select *
  from foo
- using index foo_idx; 
+ using index foo_idx
+ order by i;
 select *
   from foo
  where i = 5 and j = 50; 

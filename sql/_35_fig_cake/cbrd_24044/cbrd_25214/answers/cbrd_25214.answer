@@ -703,8 +703,8 @@ Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
-      INDEX SCAN (c.idx_tp) (key range: a.cola=c.cola, covered: true)
-    INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+      INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tp) (key range: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola
 
@@ -861,7 +861,7 @@ Trace Statistics:
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -892,7 +892,7 @@ Trace Statistics:
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1074,9 +1074,9 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
-      TABLE SCAN (b)
-      INDEX SCAN (c.idx_tp) (key range: b.colb=c.colbkey range: b.cola=c.cola, covered: true)
-    INDEX SCAN (a.idx_tp) (key range: a.cola=b.cola, covered: true)
+      TABLE SCAN (a)
+      INDEX SCAN (b.idx_tp) (key range: a.cola=b.cola, covered: true)
+    INDEX SCAN (c.idx_tp) (key range: b.colb=c.colbkey range: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tp__p__b_?] a, [dba.tp__p__b_?] b, [dba.tp__p__b_?] c where a.cola=b.cola and a.cola=c.cola and b.colb=c.colb
 
