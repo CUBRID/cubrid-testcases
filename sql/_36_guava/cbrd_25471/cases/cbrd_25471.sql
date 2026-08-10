@@ -8,8 +8,8 @@
  * 8   - set-element size of db_user.direct_groups / groups
  * 9   - db_server / _db_server.user_name is intentionally left at varchar(255)
  * 10  - a 31-char user name round-trips through db_user.name
- * 11-12 - a 31-char owner name round-trips through 15 of the 20 dependent views data
- *         (not just declared metadata), including after an OWNER TO transfer
+ * 11  - a 31-char owner name round-trips through 15 of the 20 dependent views data
+ *       (not just declared metadata); 12 - an OWNER TO transfer refreshes it too
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
@@ -115,6 +115,23 @@ create synonym cbrd_25471_syn for cbrd_25471_t;
 create trigger cbrd_25471_trg before insert on cbrd_25471_t execute print 'x';
 grant select on cbrd_25471_t to public;
 
+drop table if exists cbrd_25471_sub;
+drop table if exists cbrd_25471_super;
+create table cbrd_25471_super (c1 int primary key);
+create table cbrd_25471_sub under cbrd_25471_super (c2 int);
+
+drop table if exists cbrd_25471_part;
+create table cbrd_25471_part (c1 int, c2 int) partition by hash(c1) partitions 2;
+
+create procedure cbrd_25471_proc(i int) as
+begin
+  dbms_output.put_line('i=' || i);
+end;
+
+create serial cbrd_25471_ser;
+
+create server cbrd_25471_srv (host='localhost', port=33000, dbname=cbrd_25471_ext, user='cbrd_25471_extuser');
+
 select 'db_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_class where class_name = 'cbrd_25471_t'
 union all select 'db_vclass', owner_name, char_length(owner_name) from db_vclass where vclass_name = 'cbrd_25471_v'
 union all select 'db_attribute', owner_name, char_length(owner_name) from db_attribute where class_name = 'cbrd_25471_t' and attr_name = 'c1'
@@ -123,35 +140,7 @@ union all select 'db_index_key', owner_name, char_length(owner_name) from db_ind
 union all select 'db_trigger', owner_name, char_length(owner_name) from db_trigger where trigger_name = 'cbrd_25471_trg'
 union all select 'db_synonym', synonym_owner_name, char_length(synonym_owner_name) from db_synonym where synonym_name = 'cbrd_25471_syn'
 union all select 'db_auth', grantor_name, char_length(grantor_name) from db_auth where object_name = 'cbrd_25471_t' and grantee_name = 'PUBLIC'
-order by 1;
-
-call login ('dba', '') on class db_user;
-
-/* created as dba then transferred (ALTER ... OWNER TO), same proven mechanism as Case 12,
-   since these object kinds are simplest to create under a known-privileged session */
-drop table if exists cbrd_25471_sub;
-drop table if exists cbrd_25471_super;
-create table cbrd_25471_super (c1 int primary key);
-create table cbrd_25471_sub under cbrd_25471_super (c2 int);
-alter table cbrd_25471_sub owner to u_______10u_______20u_______30u;
-
-drop table if exists cbrd_25471_part;
-create table cbrd_25471_part (c1 int, c2 int) partition by hash(c1) partitions 2;
-alter table cbrd_25471_part owner to u_______10u_______20u_______30u;
-
-create procedure cbrd_25471_proc(i int) as
-begin
-  dbms_output.put_line('i=' || i);
-end;
-alter procedure cbrd_25471_proc owner to u_______10u_______20u_______30u;
-
-create serial cbrd_25471_ser;
-alter serial cbrd_25471_ser owner to u_______10u_______20u_______30u;
-
-create server cbrd_25471_srv (host='localhost', port=33000, dbname=cbrd_25471_ext, user='cbrd_25471_extuser');
-alter server cbrd_25471_srv owner to u_______10u_______20u_______30u;
-
-select 'db_direct_super_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_direct_super_class where class_name = 'cbrd_25471_sub'
+union all select 'db_direct_super_class', owner_name, char_length(owner_name) from db_direct_super_class where class_name = 'cbrd_25471_sub'
 union all select 'db_partition', owner_name, char_length(owner_name) from db_partition where class_name = 'cbrd_25471_part'
 union all select 'db_stored_procedure', owner, char_length(owner) from db_stored_procedure where sp_name = 'cbrd_25471_proc'
 union all select 'db_stored_procedure_args', owner_name, char_length(owner_name) from db_stored_procedure_args where sp_name = 'cbrd_25471_proc'
@@ -159,6 +148,8 @@ union all select 'db_serial', owner, char_length(owner) from db_serial where nam
 union all select 'db_server', owner, char_length(owner) from db_server where link_name = 'cbrd_25471_srv'
 union all select 'db_authorization', owner, char_length(owner) from db_authorization where owner = 'U_______10U_______20U_______30U'
 order by 1;
+
+call login ('dba', '') on class db_user;
 
 evaluate 'Case 12: ALTER TABLE ... OWNER TO refreshes owner_name to the full 31-char name';
 drop table if exists cbrd_25471_t2;
@@ -176,7 +167,7 @@ drop serial u_______10u_______20u_______30u.cbrd_25471_ser;
 drop procedure u_______10u_______20u_______30u.cbrd_25471_proc;
 drop table u_______10u_______20u_______30u.cbrd_25471_part;
 drop table u_______10u_______20u_______30u.cbrd_25471_sub;
-drop table cbrd_25471_super;
+drop table u_______10u_______20u_______30u.cbrd_25471_super;
 drop user u_______10u_______20u_______30u;
 
 /* a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary) -- already covered by
