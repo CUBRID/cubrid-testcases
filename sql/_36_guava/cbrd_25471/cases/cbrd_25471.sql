@@ -79,5 +79,7 @@ create user cbrd_25471_ok_31_chars_long_xxx;
 SELECT name, CHAR_LENGTH(name) FROM db_user WHERE name = 'CBRD_25471_OK_31_CHARS_LONG_XXX' ORDER BY 1;
 DROP USER cbrd_25471_ok_31_chars_long_xxx;
 
+--+ server-message on
 evaluate 'Case 10b: a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)';
 /* err */ create user cbrd_25471_too_long_32_chars_xxx;
+--+ server-message off

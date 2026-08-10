@@ -1,0 +1,406 @@
+===================================================
+    
+Case 1: base table _db_user.name is varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+name     VARCHAR(32)     YES     UNI     null          
+id     INTEGER     YES          null          
+password     OBJECT     YES          null          
+direct_groups     SET OF OBJECT     YES          null          
+groups     SET OF OBJECT     YES          null          
+authorization     OBJECT     YES          null          
+triggers     SEQUENCE OF OBJECT     YES          null          
+is_loginable     INTEGER     YES          null          
+is_system_created     INTEGER     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+    
+Case 2: db_user view name is varchar(32) (direct_groups/groups element size checked in Case 8)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+name     VARCHAR(32)     YES          null          
+id     INTEGER     YES          null          
+password     OBJECT     YES          null          
+direct_groups     SET OF VARCHAR     YES          null          
+groups     SET OF VARCHAR     YES          null          
+authorization     OBJECT     YES          null          
+triggers     SEQUENCE OF OBJECT     YES          null          
+is_loginable     VARCHAR(3)     YES          null          
+is_system_created     VARCHAR(3)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+    
+Case 3: class-object owner-name views are varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+class_type     VARCHAR(6)     YES          null          
+is_system_class     VARCHAR(3)     YES          null          
+tde_algorithm     VARCHAR(32)     YES          null          
+statistics_strategy     VARCHAR(8)     YES          null          
+partitioned     VARCHAR(3)     YES          null          
+is_reuse_oid_class     VARCHAR(3)     YES          null          
+collation     VARCHAR(32)     YES          null          
+comment     VARCHAR(2048)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+checked_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+super_class_name     VARCHAR(255)     YES          null          
+super_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+vclass_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+vclass_def     VARCHAR(1073741823)     YES          null          
+comment     VARCHAR(2048)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+invalidated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+attr_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+attr_type     VARCHAR(8)     YES          null          
+def_order     INTEGER     YES          null          
+from_class_name     VARCHAR(255)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+from_attr_name     VARCHAR(255)     YES          null          
+data_type     VARCHAR(9)     YES          null          
+prec     INTEGER     YES          null          
+scale     INTEGER     YES          null          
+charset     VARCHAR(32)     YES          null          
+collation     VARCHAR(32)     YES          null          
+domain_class_name     VARCHAR(255)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+default_value     VARCHAR(2048)     YES          null          
+is_partition_key     VARCHAR(3)     YES          null          
+is_nullable     VARCHAR(3)     YES          null          
+is_invisible     VARCHAR(3)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+attr_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+attr_type     VARCHAR(8)     YES          null          
+data_type     VARCHAR(9)     YES          null          
+prec     INTEGER     YES          null          
+scale     INTEGER     YES          null          
+code_set     INTEGER     YES          null          
+domain_class_name     VARCHAR(255)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 4: method-related owner-name views are varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+meth_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+meth_type     VARCHAR(8)     YES          null          
+from_class_name     VARCHAR(255)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+from_meth_name     VARCHAR(255)     YES          null          
+func_name     VARCHAR(255)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+meth_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+meth_type     VARCHAR(8)     YES          null          
+index_of     INTEGER     YES          null          
+data_type     VARCHAR(9)     YES          null          
+prec     INTEGER     YES          null          
+scale     INTEGER     YES          null          
+code_set     INTEGER     YES          null          
+domain_class_name     VARCHAR(255)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+meth_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+meth_type     VARCHAR(8)     YES          null          
+index_of     INTEGER     YES          null          
+data_type     VARCHAR(9)     YES          null          
+prec     INTEGER     YES          null          
+scale     INTEGER     YES          null          
+code_set     INTEGER     YES          null          
+domain_class_name     VARCHAR(255)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+path_name     VARCHAR(255)     YES          null          
+from_class_name     VARCHAR(255)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 5: index / auth / trigger / partition owner-name views are varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+index_name     VARCHAR(255)     YES          null          
+is_unique     VARCHAR(3)     YES          null          
+is_reverse     VARCHAR(3)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+key_count     INTEGER     YES          null          
+is_primary_key     VARCHAR(3)     YES          null          
+is_foreign_key     VARCHAR(3)     YES          null          
+filter_expression     VARCHAR(1073741823)     YES          null          
+have_function     VARCHAR(3)     YES          null          
+status     VARCHAR(255)     YES          null          
+referential_index_class_owner_name     VARCHAR(32)     YES          null          
+referential_index_class_name     VARCHAR(255)     YES          null          
+referential_index_name     VARCHAR(255)     YES          null          
+delete_rule     VARCHAR(32)     YES          null          
+update_rule     VARCHAR(32)     YES          null          
+referential_match_option     VARCHAR(7)     YES          null          
+index_type     VARCHAR(32)     YES          null          
+deduplicate_key_level     INTEGER     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+index_name     VARCHAR(255)     YES          null          
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+key_attr_name     VARCHAR(255)     YES          null          
+key_order     INTEGER     YES          null          
+asc_desc     VARCHAR(4)     YES          null          
+key_prefix_length     INTEGER     YES          null          
+func     VARCHAR(1023)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+grantor_name     VARCHAR(32)     YES          null          
+grantee_name     VARCHAR(32)     YES          null          
+object_type     VARCHAR(16)     YES          null          
+object_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+auth_type     VARCHAR(7)     YES          null          
+is_grantable     VARCHAR(3)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+trigger_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+target_class_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
+target_attr_name     VARCHAR(255)     YES          null          
+target_attr_type     VARCHAR(8)     YES          null          
+action_type     INTEGER     YES          null          
+action_time     INTEGER     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+class_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+partition_name     VARCHAR(255)     YES          null          
+partition_class_name     VARCHAR(255)     YES          null          
+partition_type     VARCHAR(32)     YES          null          
+partition_expr     VARCHAR(2048)     YES          null          
+partition_values     null     YES          null          
+class_partition_type     VARCHAR(32)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+    
+Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+sp_name     VARCHAR(255)     YES          null          
+pkg_name     VARCHAR(255)     YES          null          
+sp_type     VARCHAR(16)     YES          null          
+return_type     VARCHAR(16)     YES          null          
+arg_count     INTEGER     YES          null          
+lang     VARCHAR(16)     YES          null          
+authid     VARCHAR(16)     YES          null          
+is_deterministic     VARCHAR(3)     YES          null          
+target     VARCHAR(4096)     YES          null          
+owner     VARCHAR(32)     YES          null          
+code     VARCHAR(1073741823)     YES          null          
+sql_data_access     VARCHAR(17)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+sp_name     VARCHAR(255)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+pkg_name     VARCHAR(255)     YES          null          
+index_of     INTEGER     YES          null          
+arg_name     VARCHAR(255)     YES          null          
+data_type     VARCHAR(16)     YES          null          
+mode     VARCHAR(6)     YES          null          
+is_optional     VARCHAR(3)     YES          null          
+default_value     VARCHAR(2048)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+unique_name     VARCHAR(255)     YES          null          
+name     VARCHAR(255)     YES          null          
+owner     VARCHAR(32)     YES          null          
+current_val     NUMERIC(38,0)     YES          null          
+increment_val     NUMERIC(38,0)     YES          null          
+max_val     NUMERIC(38,0)     YES          null          
+min_val     NUMERIC(38,0)     YES          null          
+start_val     NUMERIC(38,0)     YES          null          
+cyclic     INTEGER     YES          null          
+started     INTEGER     YES          null          
+class_name     VARCHAR(255)     YES          null          
+attr_name     VARCHAR(255)     YES          null          
+cached_num     INTEGER     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner     VARCHAR(32)     YES          null          
+grants     null     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+synonym_name     VARCHAR(255)     YES          null          
+synonym_owner_name     VARCHAR(32)     YES          null          
+is_public_synonym     VARCHAR(3)     YES          null          
+target_name     VARCHAR(255)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
+comment     VARCHAR(2048)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+link_name     VARCHAR(255)     YES          null          
+host     VARCHAR(255)     YES          null          
+port     INTEGER     YES          null          
+db_name     VARCHAR(255)     YES          null          
+user_name     VARCHAR(255)     YES          null          
+properties     VARCHAR(2048)     YES          null          
+owner     VARCHAR(32)     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+invalidated_time     DATETIME     YES          null          
+
+===================================================
+    
+Case 7: aggregate check - every owner-name column across all dependent views is varchar(32)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+db_attr_setdomain_elm     domain_owner_name     STRING     32     
+db_attr_setdomain_elm     owner_name     STRING     32     
+db_attribute     domain_owner_name     STRING     32     
+db_attribute     from_owner_name     STRING     32     
+db_attribute     owner_name     STRING     32     
+db_auth     grantee_name     STRING     32     
+db_auth     grantor_name     STRING     32     
+db_auth     owner_name     STRING     32     
+db_authorization     owner     STRING     32     
+db_class     owner_name     STRING     32     
+db_direct_super_class     owner_name     STRING     32     
+db_direct_super_class     super_owner_name     STRING     32     
+db_index     owner_name     STRING     32     
+db_index     referential_index_class_owner_name     STRING     32     
+db_index_key     owner_name     STRING     32     
+db_meth_arg     domain_owner_name     STRING     32     
+db_meth_arg     owner_name     STRING     32     
+db_meth_arg_setdomain_elm     domain_owner_name     STRING     32     
+db_meth_arg_setdomain_elm     owner_name     STRING     32     
+db_meth_file     from_owner_name     STRING     32     
+db_meth_file     owner_name     STRING     32     
+db_method     from_owner_name     STRING     32     
+db_method     owner_name     STRING     32     
+db_partition     owner_name     STRING     32     
+db_serial     owner     STRING     32     
+db_server     owner     STRING     32     
+db_stored_procedure     owner     STRING     32     
+db_stored_procedure_args     owner_name     STRING     32     
+db_synonym     synonym_owner_name     STRING     32     
+db_synonym     target_owner_name     STRING     32     
+db_trigger     owner_name     STRING     32     
+db_trigger     target_owner_name     STRING     32     
+db_vclass     owner_name     STRING     32     
+
+===================================================
+    
+Case 8: db_user.direct_groups / groups set-element size is varchar(32)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+db_user     direct_groups     STRING     32     
+db_user     groups     STRING     32     
+
+===================================================
+    
+Case 9: db_server / _db_server.user_name is NOT changed, stays varchar(255)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+_db_server     user_name     STRING     255     
+db_server     user_name     STRING     255     
+
+===================================================
+    
+Case 10a: a 31-char user name is accepted and round-trips through db_user.name     
+
+===================================================
+0
+===================================================
+name    char_length(name)    
+CBRD_25471_OK_31_CHARS_LONG_XXX     31     
+
+===================================================
+0
+===================================================
+    
+Case 10b: a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary)     
+
+
+===================================================
+Error:-494
+Semantic: before ' ; '
+User name is too long. create user cbrd_25471_too_long_32_chars_xxx
+
