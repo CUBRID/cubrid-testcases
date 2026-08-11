@@ -36,6 +36,16 @@ Query Plan:
 
   rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -57,6 +67,16 @@ col_a
 trace    
 
 Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_b= ?:? )
+
+  TABLE SCAN (t)
+
+  rewritten query: select t.col_a from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_b= ?:? ) t (col_a, col_b, col_c) where (inst_num()> ?:?  and inst_num()<= ?:? )
+
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
@@ -99,6 +119,16 @@ Query Plan:
 
   rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:?  in multiset{?, ?, ?, ?, ?} and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:?  in multiset{?, ?, ?, ?, ?} and a.col_c= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:?  in multiset{?, ?, ?, ?, ?} and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -121,6 +151,16 @@ count(*)
 trace    
 
 Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:?  is null  and a.col_c= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:?  is null  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
@@ -178,6 +218,14 @@ Query Plan:
 
   rewritten query: select  if(a.col_a between ? and ?,  cast('TRUE' as varchar),  cast('FALSE' as varchar)), (select /*+ ORDERED NO_MERGE */ b.col_b from [dba.tbl_b] b where  ?:? = ?:?  and (inst_num()<= ?:? ) and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
 
+  TABLE SCAN (b)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ b.col_b from [dba.tbl_b] b where  ?:? = ?:?  and (inst_num()<= ?:? ) and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select  if(a.col_a between ? and ?,  cast('TRUE' as varchar),  cast('FALSE' as varchar)), (select /*+ ORDERED NO_MERGE */ b.col_b from [dba.tbl_b] b where  ?:? = ?:?  and (inst_num()<= ?:? ) and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -199,6 +247,14 @@ TRUE     null
 trace    
 
 Query Plan:
+  INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ b.col_c from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select  if(a.col_a between ? and ?,  cast('TRUE' as varchar),  cast('FALSE' as varchar)), (select /*+ ORDERED NO_MERGE */ b.col_c from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? ) from [dba.tbl_a] a where (inst_num()> ?:?  and inst_num()<= ?:? )
+
   INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ b.col_c from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
@@ -236,6 +292,14 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and (b.col_c= ?:? ) and inst_num()<= ?:? )
 
+  INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and (b.col_c= ?:? ) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and (b.col_c= ?:? ) and inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -257,6 +321,16 @@ count(*)
 trace    
 
 Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a, covered: true)
+    INDEX SCAN (c.pk_tbl_c_col_a) (key range: b.col_a=c.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and (c.col_c= ?:? ) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=a.col_a and b.col_a=c.col_a and  ?:? = ?:?  and (c.col_c= ?:? ) and inst_num()<= ?:? )
+
   NESTED LOOPS (inner join)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a, covered: true)
     INDEX SCAN (c.pk_tbl_c_col_a) (key range: b.col_a=c.col_a)
@@ -300,6 +374,17 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a, (select /*+ ORDERED NO_MERGE */ distinct b.col_a from [dba.tbl_b] b where  ?:? = ?:?  and b.col_c= ?:? ) av? (av_?) where a.col_a=av?.av_?
 
+  SORT (distinct)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct b.col_a from [dba.tbl_b] b where  ?:? = ?:?  and b.col_c= ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (av?)
+    INDEX SCAN (a.pk_tbl_a_col_a) (key range: a.col_a=av?.av_?, covered: true)
+
+  rewritten query: select count(*) from [dba.tbl_a] a, (select /*+ ORDERED NO_MERGE */ distinct b.col_a from [dba.tbl_b] b where  ?:? = ?:?  and b.col_c= ?:? ) av? (av_?) where a.col_a=av?.av_?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -332,6 +417,15 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a where a.col_b in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
 
+  SORT (distinct)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_b in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -354,6 +448,19 @@ count(*)
 trace    
 
 Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (b)
+      INDEX SCAN (c.pk_tbl_c_col_a) (key range: b.col_a=c.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct c.col_a from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=c.col_a and  ?:? = ?:?  and c.col_c= ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (av?)
+    INDEX SCAN (a.pk_tbl_a_col_a) (key range: a.col_a=av?.av_?, covered: true)
+
+  rewritten query: select count(*) from [dba.tbl_a] a, (select /*+ ORDERED NO_MERGE */ distinct c.col_a from [dba.tbl_b] b, [dba.tbl_c] c where b.col_a=c.col_a and  ?:? = ?:?  and c.col_c= ?:? ) av? (av_?) where a.col_a=av?.av_?
+
   SORT (distinct)
     NESTED LOOPS (inner join)
       TABLE SCAN (b)
@@ -400,6 +507,15 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a where a.col_a in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
 
+  SORT (distinct)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_a in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and  ?:? = ?:?  and b.col_c= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -432,6 +548,16 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a
 
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -454,6 +580,16 @@ count(*)
 trace    
 
 Query Plan:
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a
+
   TABLE SCAN (bb)
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
@@ -496,6 +632,16 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? ) b (col_a, col_b, col_c) on b.col_b= ?:?  and a.col_a=b.col_a
 
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? )
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? ) b (col_a, col_b, col_c) on b.col_b= ?:?  and a.col_a=b.col_a
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -518,6 +664,16 @@ count(*)
 trace    
 
 Query Plan:
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? )
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? ) b (col_a, col_b, col_c) on b.col_b= ?:?  and a.col_a=b.col_a
+
   TABLE SCAN (bb)
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? )
@@ -566,6 +722,22 @@ Query Plan:
 
   rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a left outer join (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? ) c (col_a, col_b, col_c) on b.col_b=c.col_b
 
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+
+  TABLE SCAN (cc)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? )
+
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a left outer join (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? ) c (col_a, col_b, col_c) on b.col_b=c.col_b
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -593,6 +765,22 @@ count(*)
 trace    
 
 Query Plan:
+  TABLE SCAN (bb)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
+
+  TABLE SCAN (cc)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? )
+
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
+
+  rewritten query: select count(*) from [dba.tbl_a] a left outer join (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? ) b (col_a, col_b, col_c) on a.col_a=b.col_a left outer join (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? ) c (col_a, col_b, col_c) on b.col_b=c.col_b
+
   TABLE SCAN (bb)
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
@@ -646,29 +834,6 @@ Query Plan:
 
   rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
 
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      CTE (non_recursive_part)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-0
-===================================================
-0
-===================================================
-count(*)    
-1000     
-
-===================================================
-trace    
-
-Query Plan:
   TABLE SCAN (bb)
 
   rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
@@ -702,6 +867,61 @@ count(*)
 trace    
 
 Query Plan:
+  TABLE SCAN (bb)
+
+  rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
+
+  TABLE SCAN (bb)
+
+  rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
+
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: with b(col_a, col_b, col_c) as (select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )select count(*) from [dba.tbl_a] a left outer join [dba.b] b on a.col_a=b.col_a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a
+
+  TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED NO_MERGE */ b.col_a, b.col_b, b.col_c from [dba.tbl_b] b where  ?:? = ?:?  and b.col_c= ?:? 
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a union select /*+ ORDERED NO_MERGE */ b.col_a, b.col_b, b.col_c from [dba.tbl_b] b where  ?:? = ?:?  and b.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
   TABLE SCAN (a)
 
   rewritten query: select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a
@@ -749,6 +969,17 @@ Query Plan:
 
   rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where  ?:? = ?:?  and b.col_a= ?:?  and a.col_a= ?:?  and a.col_a=b.col_a group by a.col_a, a.col_b) t (col_a, col_b, col_c)
 
+  SORT (group by)
+    NESTED LOOPS (cross join)
+      INDEX SCAN (a.pk_tbl_a_col_a) (key range: a.col_a= ?:? )
+      INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a= ?:? , covered: true)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where  ?:? = ?:?  and b.col_a= ?:?  and a.col_a= ?:?  and a.col_a=b.col_a group by a.col_a, a.col_b)
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where  ?:? = ?:?  and b.col_a= ?:?  and a.col_a= ?:?  and a.col_a=b.col_a group by a.col_a, a.col_b) t (col_a, col_b, col_c)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -772,6 +1003,17 @@ count(*)
 trace    
 
 Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a, covered: true)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a group by a.col_a, a.col_b having a.col_c= ?:?  and a.col_c= ?:? )
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a group by a.col_a, a.col_b having a.col_c= ?:?  and a.col_c= ?:? ) t (col_a, col_b, col_c)
+
   SORT (group by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
@@ -882,6 +1124,16 @@ Query Plan:
 
   rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and a.col_c= ?:?  and a.col_c= ?:? ) t (col_a, col_b, col_c)
 
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a, covered: true)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and a.col_c= ?:?  and a.col_c= ?:? )
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and a.col_c= ?:?  and a.col_c= ?:? ) t (col_a, col_b, col_c)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -904,6 +1156,16 @@ count(*)
 trace    
 
 Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+
+  rewritten query: (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*) from (select /*+ ORDERED NO_MERGE */ a.col_a, a.col_b, a.col_c from [dba.tbl_a] a, [dba.tbl_b] b where a.col_a=b.col_a and  ?:? = ?:?  and a.col_c= ?:? ) [__t?] (col_a, col_b, col_c)
+
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
