@@ -402,29 +402,9 @@ iscan
 Query stmt:
 select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
 /* ---> skip GROUP BY */
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx? (covers) (loose index scan on prefix ?)
-    filtr: term[?]
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
-/* ---> skip GROUP BY */
 ===================================================
 n    min_n2    
 
-Query plan:
-iscan
-    class: foo node[?]
-    index: idx? (covers) (loose index scan on prefix ?)
-    filtr: term[?]
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select /*+ INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where (foo.n?>= ?:?  and foo.n?<= ?:? ) group by foo.n
-/* ---> skip GROUP BY */
 Query plan:
 iscan
     class: foo node[?]

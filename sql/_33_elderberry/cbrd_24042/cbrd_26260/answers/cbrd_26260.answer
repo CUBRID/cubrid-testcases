@@ -326,13 +326,6 @@ iscan
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
-Query plan:
-iscan
-    class: a node[?]
-    index: pk term[?] (covers)
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
 ===================================================
 0
 ===================================================
@@ -345,20 +338,6 @@ select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
 cnt    
 3     
 
-Query plan:
-idx-join (inner join)
-    outer: iscan
-               class: a node[?]
-               index: pk term[?] (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: pk_tbl_b_colb term[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a a, tbl_b b where (b.x>= ?:? ) and (a.cola>= ?:?  and a.cola<= ?:? ) and a.colb=b.colb and (b.x>= ?:? )
 Query plan:
 idx-join (inner join)
     outer: iscan
@@ -469,13 +448,6 @@ select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
 cnt    
 4     
 
-Query plan:
-iscan
-    class: a node[?]
-    index: pk term[?] (covers)
-    cost:  ? card ?
-Query stmt:
-select count(*) from tbl_a a where (a.cola>= ?:?  and a.cola<= ?:? )
 Query plan:
 iscan
     class: a node[?]
