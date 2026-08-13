@@ -14,6 +14,8 @@
  * 6. Numbering not exposed as a column keeps being merged.
  * 7. Sort resolved by an index (no real sort).
  * 8. ROWNUM of a subquery without ORDER BY.
+ * 9. CAST () on the numbering column.
+ * 10. A subquery of the select list reads the numbering column.
  */
 
 --+ server-message on
@@ -68,5 +70,13 @@ FROM (SELECT name, ROWNUM AS rn FROM (SELECT name FROM t1 ORDER BY code) WHERE R
 -- 8. ROWNUM of a subquery which has no ORDER BY
 SELECT DECODE(rn, 1, 'ONE', 'OTHER') AS result
 FROM (SELECT ROWNUM AS rn, name FROM t1) WHERE rn <= 3;
+
+-- 9. CAST () reads the numbering column
+SELECT CAST(rn AS VARCHAR) AS result
+FROM (SELECT name, ROWNUM AS rn FROM (SELECT name FROM t1 ORDER BY name) WHERE ROWNUM <= 2) src;
+
+-- 10. a subquery of the select list reads the numbering column
+SELECT (SELECT COUNT(*) FROM t1 WHERE src.rn = 1) AS result
+FROM (SELECT name, ROWNUM AS rn FROM (SELECT name FROM t1 ORDER BY name) WHERE ROWNUM <= 2) src;
 
 DROP TABLE t1;
