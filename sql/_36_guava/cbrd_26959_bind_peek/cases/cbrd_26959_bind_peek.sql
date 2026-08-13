@@ -23,10 +23,10 @@ deallocate prepare p;
 set trace off;
 
 --test: BIND_SENSITIVE hint parses and executes on SELECT, UPDATE and DELETE
-select /*+ recompile bind_sensitive */ count(pad) from t_peek where a = 5;
-update /*+ recompile bind_sensitive */ t_peek set pad = pad where a = 5;
+select /*+ bind_sensitive */ count(pad) from t_peek where a = 5;
+update /*+ bind_sensitive */ t_peek set pad = pad where a = 5;
 select count(*) from t_peek where a = 5;
-delete /*+ recompile bind_sensitive */ from t_peek where a = 99999;
+delete /*+ bind_sensitive */ from t_peek where a = 99999;
 
 drop table t_peek;
 set system parameters 'dont_reuse_heap_file=no';

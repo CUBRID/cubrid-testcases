@@ -155,7 +155,7 @@ order by a.cola limit 10, 10;
 show trace;
 
 evaluate 'Q126. Even when the driving table uses an index scan, skip ORDER BY cannot be applied if ORDER BY includes columns from multiple tables.';
-select /*+ recompile ordered */ 'Q126', a.cola, b.cole 
+select /*+ recompile ordered no_use_hash */ 'Q126', a.cola, b.cole 
 from tbl_a a, tbl_b b 
 where a.cola = b.cold 
 and a.cola > 0

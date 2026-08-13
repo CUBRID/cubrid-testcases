@@ -1611,47 +1611,36 @@ Q126     10     10
 
 Query plan:
 temp(order by)
-    subplan: hash-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (inner join)
                  outer: iscan
                             class: a node[?]
                             index: idx_cola_colb_colc term[?] (covers)
                             cost:  ? card ?
-                 inner: sscan
+                 inner: iscan
                             class: b node[?]
+                            index: pk_tbl_b_cold term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+select /*+ ORDERED NO_USE_HASH */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
 Query Plan:
   SORT (order by)
-    HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola> ?:? ), covered: true)
-      TABLE SCAN (b)
+      INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_USE_HASH */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
