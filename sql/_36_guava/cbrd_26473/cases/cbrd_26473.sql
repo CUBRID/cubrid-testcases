@@ -5,15 +5,17 @@
  *  before it is evaluated. When an index scan already delivers rows in a
  *  compatible order, the engine reorders the index-compatible analytic functions
  *  to run first and skips (or reduces) their sort. Each analytic sort group is
- *  reported in the query trace as "sort: skip" (order provided by the index) or
- *  "sort: true" (a sort was still required); the ANALYTIC #N lines were also
+ *  reported in the query trace as "sort: false" (no sort needed - the index
+ *  already provided the order) or "sort: true" (a sort was still required); the
+ *  marker was spelled "sort: skip" until CBRD-26795 normalised it. The
+ *  ANALYTIC #N lines were also
  *  newly added to the trace output by this change, and are emitted once per
  *  distinct sort group (analytics that share a sort key are merged into one #N).
  *
  *  These are trace cases: the feature is asserted from the "show trace" output,
  *  so the scans are pinned with USING INDEX (+) / hints. No outer ORDER BY is
  *  used - an outer sort becomes the top plan node and suppresses the analytic
- *  sort-skip being tested (verified: adding one flips every "sort: skip" to
+ *  sort-skip being tested (verified: adding one flips every "sort: false" to
  *  "sort: true"). Determinism instead comes from the forced index scan order and
  *  the deterministic fresh CTP load: single-analytic results follow the index
  *  stream; multi-analytic results follow the engine's final sort order, whose
@@ -28,7 +30,14 @@
  *  prints its first-row value on every row and never exercises accumulation
  *  inside a partition; 30 rows cross partition boundaries and expose both the
  *  running value and the reset. Volatile trace counters (time, page, ioread,
- *  fetch) are masked to '?' by the CTP trace normalizer.
+ *  fetch) are masked to '?' by the CTP trace normalizer, and "(stopkey)" marks
+ *  the read-only-what-is-needed path added by CBRD-26524.
+ *
+ *  Regression guards for the three defects found while building this suite,
+ *  all introduced by CBRD-26473 and since fixed: CBRD-27125 and CBRD-27123
+ *  (merged analytics losing their window boundaries, fixed together) in
+ *  sections 5 and 8, and CBRD-27145 (NULLS LAST wrongly judged index-
+ *  compatible) in section 9.
  *
  *  Coverage (each analytic in sections 1-4 is checked in four scenarios:
  *  single-analytic skip, two analytics with the index-compatible one written
@@ -43,9 +52,11 @@
  *       plus one case where the index-compatible-but-unskippable (DESC) analytic
  *       is written SECOND, so the execution-order promotion is observable in the
  *       final row order rather than being a no-op
- *    5. Sort-group merging - two analytics whose sort keys normalize to the same
- *       key collapse into a single ANALYTIC #N group (the trace prints one line
- *       per sort group, not per function)
+ *    5. Sort-group merging - analytics whose sort keys normalize to the same key
+ *       collapse into a single ANALYTIC #N group (the trace prints one line per
+ *       sort group, not per function), three families on one key, merge plus
+ *       promotion, and the same columns in a different key order (CBRD-27125,
+ *       CBRD-27123)
  *    6. Index edge cases - partition on leading index columns, ORDER BY on a
  *       non-index column, and descending index scan (use_desc_idx) with an OVER
  *       order that conflicts with the scan direction and one that matches it
@@ -772,14 +783,50 @@ from t_group where c1 >= 0 using index gidx(+) limit 30;
 show trace;
 
 
--- todo: three scenarios are missing here because the sort-skip path
---       returns WRONG analytic values for them - recording the current
---       output would bake wrong values into the answer. Add each once its
---       issue is fixed; details and repros are in the issues:
---         three families on one shared sort key, and merge-plus-promotion
---           -> CBRD-27125
---         sort keys using the same columns in a DIFFERENT order
---           -> CBRD-27123
+--
+-- Fixed by CBRD-27125 (https://github.com/CUBRID/cubrid/pull/7581): when several
+-- analytics merged into one sort group and the sort was skipped, every function
+-- after the first stopped detecting partition/order-key changes. These three
+-- scenarios are the regression guards for it and for CBRD-27123.
+--
+evaluate '095. CBRD-27125 - three analytics of DIFFERENT families share one sort key (c1,c2,c3 order by c4): they collapse into a single ANALYTIC # group and every one must still see the partition boundary';
+select /*+ recompile */ c1, c2, c3, c4,
+  row_number() over (partition by c1, c2, c3 order by c4) as a1,
+  sum(c4)      over (partition by c1, c2, c3 order by c4) as a2,
+  lag(c4, 1)   over (partition by c1, c2, c3 order by c4) as a3
+from t_group where c1 >= 0 using index gidx(+) limit 30;
+show trace;
+
+--
+-- CBRD-27125: merging and promotion together. a0 is NOT index-compatible (its
+-- leading partition column c2 is not the index leading column) while a1 and a2
+-- normalize to the SAME key (c1,c2,c3,c4), so a1+a2 merge into one skipped group
+-- and are promoted ahead of a0. a0 therefore runs last and its sort (c2,c4) fixes
+-- the row order. a1 and a2 must keep DIFFERENT numbering despite sharing a group.
+--
+evaluate '096. CBRD-27125 - merge plus promotion: incompatible analytic written FIRST, the two mergeable ones after (2 ANALYTIC lines, the merged group first)';
+select /*+ recompile */ c1, c2, c3, c4,
+  row_number() over (partition by c2 order by c4)          as a0,
+  row_number() over (partition by c1, c2, c3 order by c4)  as a1,
+  row_number() over (partition by c1, c2 order by c3, c4)  as a2
+from t_group where c1 >= 0 using index gidx(+) limit 30;
+show trace;
+
+--
+-- CBRD-27123 (same root cause, same fix as CBRD-27125): sort keys built from the
+-- SAME columns in a DIFFERENT order. (c1,c2,c3) and (c3,c2,c1) describe the very
+-- same partitioning, so with the same ORDER BY the two row_numbers are
+-- semantically IDENTICAL and must agree on every row. Before the fix one of them
+-- was numbered against the other's partition (it returned 10 where 1 was due).
+-- Counted over all 1000 rows rather than a 30-row window so no mismatch can hide
+-- outside the LIMIT; the result is a single scalar row, so it needs no ORDER BY.
+--
+evaluate '097. CBRD-27123 - same columns in a different sort-key order describe the same partitioning, so the two row_numbers must agree on every row (expect total 1000, mismatch 0)';
+select count(*) as total,
+  sum(case when a1 <> a3 then 1 else 0 end) as mismatch
+from (select row_number() over (partition by c1, c2, c3 order by c4) as a1,
+             row_number() over (partition by c3, c2, c1 order by c4) as a3
+      from t_group where c1 >= 0 using index gidx(+)) t;
 
 set trace off;
 drop table t_group;
@@ -822,25 +869,25 @@ select n % 100, 'c2_' || (n % 10), 'c3_' || (n % 10), n from cte;
 
 set trace on;
 
-evaluate '095. Partition on leading index columns (c1, c2, c3), no ORDER BY - sort skipped';
+evaluate '098. Partition on leading index columns (c1, c2, c3), no ORDER BY - sort skipped';
 select /*+ recompile */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
 show trace;
 
-evaluate '096. ORDER BY c4 (not an index column) - sort required';
+evaluate '099. ORDER BY c4 (not an index column) - sort required';
 select /*+ recompile */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by c4) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
 show trace;
 
-evaluate '097. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
+evaluate '100. use_desc_idx with ascending OVER order - descending scan conflicts, sort required';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1, c2, c3 order by mod(c1, 10)) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
 show trace;
 
-evaluate '098. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
+evaluate '101. use_desc_idx with all-descending OVER order - matches descending scan, sort skipped';
 select /*+ recompile use_desc_idx */ c1, c2, c3,
   row_number() over (partition by c1 desc, c2 desc, c3 desc order by mod(c1, 10) desc) as rn
 from test_table_2 where c1 >= 0 using index midx_02(+) limit 30;
@@ -879,7 +926,7 @@ select n % 7, 'c2_' || (n % 3), 'c3_' || (n % 3), n from cte;
 
 set trace on;
 
-evaluate '099. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped';
+evaluate '102. ORDER BY mod(c4,10) - function-based index column that varies inside the partition, sort skipped';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
 from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
@@ -887,13 +934,13 @@ show trace;
 
 -- Value oracle for the scenario above: the SAME query forced onto a sequential
 -- scan cannot skip the sort, so it must still print an identical result block.
-evaluate '100. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one';
+evaluate '103. same query forced onto a sequential scan - sort required, result block must be identical to the skipped one';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by mod(c4, 10)) as rn
 from test_table_3 where c1 >= 0 using index none limit 30;
 show trace;
 
-evaluate '101. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering';
+evaluate '104. control - ORDER BY c4 itself, which is not an index column expression - sort required and the numbering differs from the mod(c4,10) ordering';
 select /*+ recompile */ c1, c2, c3, mod(c4, 10) as m,
   row_number() over (partition by c1, c2, c3 order by c4) as rn
 from test_table_3 where c1 >= 0 using index midx_03(+) limit 30;
@@ -914,10 +961,13 @@ drop table test_table_3;
 --    against rows going missing entirely. The result is a single scalar row,
 --    so it needs no ORDER BY, and no LIMIT is used - a LIMIT would truncate
 --    the comparison.
--- todo: the differential half of this check is missing - the same
---       analytics via an index scan vs a forced sequential scan, expecting
---       0 mismatches. Merged analytics inside a joined inline view disagree
---       today (900 of 1000 rows) -> CBRD-27125. Add once fixed.
+-- The differential half: the same analytics down an index scan (sort skipped)
+-- and down a forced sequential scan (sort performed) must agree on every row.
+-- Restored after CBRD-27125 was fixed - before that fix the two branches
+-- disagreed on 900 of 1000 rows. nvl() sentinels are required because lag() is
+-- NULL on the first row of each partition and a bare <> would evaluate to
+-- UNKNOWN and silently drop the mismatch; joined_cnt guards against rows going
+-- missing entirely. No LIMIT - a LIMIT would truncate the comparison.
 --
 drop table if exists test_table;
 create table test_table (id int auto_increment, name varchar, val int, primary key (id));
@@ -931,7 +981,31 @@ with recursive cte (n) as (
 )
 select 'name_' || n, n % 10 from cte;
 
-evaluate '102. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)';
+evaluate '105. CBRD-27125 - sort-skip path vs forced-sort path: analytic values must be identical (expect joined_cnt 1000, mismatch_cnt 0)';
+select count(*) as joined_cnt,
+  sum(case when nvl(a.rn, -1) <> nvl(b.rn, -1)
+             or nvl(a.rk, -1) <> nvl(b.rk, -1)
+             or nvl(a.sm, -1) <> nvl(b.sm, -1)
+             or nvl(a.fv, '~') <> nvl(b.fv, '~')
+             or nvl(a.lg, -1) <> nvl(b.lg, -1)
+           then 1 else 0 end) as mismatch_cnt
+from (select id,
+        row_number() over (partition by val order by id) as rn,
+        rank()       over (partition by val order by id) as rk,
+        sum(id)      over (partition by val order by id) as sm,
+        first_value(name) over (partition by val order by id) as fv,
+        lag(id, 1)   over (partition by val order by id) as lg
+      from test_table where val >= 0 using index midx_01(+)) a,
+     (select id,
+        row_number() over (partition by val order by id) as rn,
+        rank()       over (partition by val order by id) as rk,
+        sum(id)      over (partition by val order by id) as sm,
+        first_value(name) over (partition by val order by id) as fv,
+        lag(id, 1)   over (partition by val order by id) as lg
+      from test_table where val >= 0 using index none) b
+where a.id = b.id;
+
+evaluate '106. merged analytics vs the same analytics computed one per query - values must match (expect joined_cnt 1000, bad_a1 0, bad_a2 0)';
 select count(*) as joined_cnt,
   sum(case when nvl(m.a1, -1) <> nvl(s1.a1, -1) then 1 else 0 end) as bad_a1,
   sum(case when nvl(m.a2, -1) <> nvl(s2.a2, -1) then 1 else 0 end) as bad_a2
@@ -985,19 +1059,19 @@ select n, case when n % 10 = 0 then null else n % 10 end from cte;
 
 set trace on;
 
-evaluate '103. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped';
+evaluate '107. ORDER BY only, order key is a prefix of midx_01(val,id) - sort skipped';
 select /*+ recompile */ val,
   row_number() over (order by val) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
-evaluate '104. ORDER BY only, order key is the full index key (val, id) - sort skipped';
+evaluate '108. ORDER BY only, order key is the full index key (val, id) - sort skipped';
 select /*+ recompile */ val, id,
   row_number() over (order by val, id) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
 show trace;
 
-evaluate '105. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required';
+evaluate '109. ORDER BY only, mixed ASC/DESC key (val, id desc) the ASC index cannot supply - sort required';
 select /*+ recompile */ val, id,
   row_number() over (order by val, id desc) as rn
 from test_table where val >= 0 using index midx_01(+) limit 30;
@@ -1009,16 +1083,22 @@ show trace;
 -- UNKNOWN), and a forced index hint without an indexable predicate falls
 -- back to a table scan (verified). An index skip scan driven by a predicate
 -- on the SECOND index column delivers full index order including NULL keys.
-evaluate '106. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped';
+evaluate '110. ORDER BY only, NULLS FIRST matches the ASC index default (NULLs stored first) - sort skipped';
 select /*+ recompile index_ss */ val,
   row_number() over (order by val nulls first) as rn
 from test_table_null where id >= 1 using index nidx_01(+) limit 30;
 show trace;
 
--- todo: the NULLS LAST counterpart is missing - the sort-skip path
---       reports sort: skip and returns the NULL rows FIRST, so the current
---       output would bake a wrong ordering into the answer
---       -> CBRD-27145. Add once fixed.
+-- Fixed by CBRD-27145 (https://github.com/CUBRID/cubrid/pull/7586): the
+-- sort-skip path treated the index NULLs-first order as compatible with
+-- NULLS LAST, reported the sort as skipped and returned the NULL rows FIRST.
+-- NULLS LAST opposes the ASC index default, so the sort must be performed and
+-- the non-NULL rows must come first.
+evaluate '111. CBRD-27145 - ORDER BY only, NULLS LAST opposes the ASC index default: the sort must be performed and the NULL rows must come last';
+select /*+ recompile index_ss */ val,
+  row_number() over (order by val nulls last) as rn
+from test_table_null where id >= 1 using index nidx_01(+) limit 30;
+show trace;
 
 set trace off;
 drop table test_table_null;
