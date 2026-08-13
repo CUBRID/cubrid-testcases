@@ -80,3 +80,5 @@ SELECT (SELECT COUNT(*) FROM t1 WHERE src.rn = 1) AS result
 FROM (SELECT name, ROWNUM AS rn FROM (SELECT name FROM t1 ORDER BY name) WHERE ROWNUM <= 2) src;
 
 DROP TABLE t1;
+
+--+ server-message off
