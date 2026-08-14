@@ -155,22 +155,17 @@ l    m    s
 0     0     abcdefghijklmnopqrstuvwxyz     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: f node[?]
-                 index: idx_m_n term[?]
-                 cost:  ? card ?
+idx-join (semi join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: f node[?]
+               index: idx_l_m_n term[?] AND term[?] (covers)
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct f.l from foo f where f.m=b.m)
-Query plan:
-sscan
-    class: b node[?]
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select b.l, b.m, b.s from bar b where b.l in (select distinct f.l from foo f where f.m=b.m)
+select b.l, b.m, b.s from bar b semi join foo f on b.l=f.l and f.m=b.m
 ===================================================
 0
 ===================================================

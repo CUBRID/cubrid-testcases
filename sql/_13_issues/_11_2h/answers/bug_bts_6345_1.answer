@@ -171,28 +171,23 @@ count(*)
 632     
 
 Query plan:
-iscan
-    class: z node[?]
-    index: i_foo_i_j term[?] AND term[?] (covers)
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select y.k from foo z where z.i=x.i+? and (z.j=y.j+?) and inst_num()<= ?:? )
-Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: x node[?]
+idx-join (semi join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: x node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: y node[?]
+                          index: i_foo_i_j term[?] (covers)
+                          cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: y node[?]
-               index: i_foo_i_j term[?]
-               sargs: term[?]
+               class: z node[?]
+               index: i_foo_i_j term[?] AND term[?] (covers)
                cost:  ? card ?
-    sargs: term[?]
-    subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_IDX */ count(*) from foo x, foo y where x.i=y.i and  exists (select y.k from foo z where z.i=x.i+? and (z.j=y.j+?) and inst_num()<= ?:? )
+select /*+ ORDERED USE_IDX */ count(*) from foo x, foo y semi join foo z on z.j=y.j+? and z.i=x.i+? where x.i=y.i
 ===================================================
 0
 ===================================================
