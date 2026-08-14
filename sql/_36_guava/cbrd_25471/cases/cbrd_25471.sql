@@ -13,58 +13,58 @@
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
-desc _db_user;
+SHOW COLUMNS FROM _db_user WHERE field IN ('name');
 
 evaluate 'Case 2: db_user view name is varchar(32) (direct_groups/groups element size checked in Case 8)';
-desc db_user;
+SHOW COLUMNS FROM db_user WHERE field IN ('name');
 
 evaluate 'Case 3: class-object owner-name views are varchar(32)';
 evaluate 'db_class';
-desc db_class;
+SHOW COLUMNS FROM db_class WHERE field IN ('owner_name');
 evaluate 'db_direct_super_class';
-desc db_direct_super_class;
+SHOW COLUMNS FROM db_direct_super_class WHERE field IN ('owner_name', 'super_owner_name');
 evaluate 'db_vclass';
-desc db_vclass;
+SHOW COLUMNS FROM db_vclass WHERE field IN ('owner_name');
 evaluate 'db_attribute';
-desc db_attribute;
+SHOW COLUMNS FROM db_attribute WHERE field IN ('owner_name', 'from_owner_name', 'domain_owner_name');
 evaluate 'db_attr_setdomain_elm';
-desc db_attr_setdomain_elm;
+SHOW COLUMNS FROM db_attr_setdomain_elm WHERE field IN ('owner_name', 'domain_owner_name');
 
 evaluate 'Case 4: method-related owner-name views are varchar(32)';
 evaluate 'db_method';
-desc db_method;
+SHOW COLUMNS FROM db_method WHERE field IN ('owner_name', 'from_owner_name');
 evaluate 'db_meth_arg';
-desc db_meth_arg;
+SHOW COLUMNS FROM db_meth_arg WHERE field IN ('owner_name', 'domain_owner_name');
 evaluate 'db_meth_arg_setdomain_elm';
-desc db_meth_arg_setdomain_elm;
+SHOW COLUMNS FROM db_meth_arg_setdomain_elm WHERE field IN ('owner_name', 'domain_owner_name');
 evaluate 'db_meth_file';
-desc db_meth_file;
+SHOW COLUMNS FROM db_meth_file WHERE field IN ('owner_name', 'from_owner_name');
 
 evaluate 'Case 5: index / auth / trigger / partition owner-name views are varchar(32)';
 evaluate 'db_index';
-desc db_index;
+SHOW COLUMNS FROM db_index WHERE field IN ('owner_name', 'referential_index_class_owner_name');
 evaluate 'db_index_key';
-desc db_index_key;
+SHOW COLUMNS FROM db_index_key WHERE field IN ('owner_name');
 evaluate 'db_auth';
-desc db_auth;
+SHOW COLUMNS FROM db_auth WHERE field IN ('owner_name', 'grantor_name', 'grantee_name');
 evaluate 'db_trigger';
-desc db_trigger;
+SHOW COLUMNS FROM db_trigger WHERE field IN ('owner_name', 'target_owner_name');
 evaluate 'db_partition';
-desc db_partition;
+SHOW COLUMNS FROM db_partition WHERE field IN ('owner_name');
 
 evaluate 'Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)';
 evaluate 'db_stored_procedure';
-desc db_stored_procedure;
+SHOW COLUMNS FROM db_stored_procedure WHERE field IN ('owner');
 evaluate 'db_stored_procedure_args';
-desc db_stored_procedure_args;
+SHOW COLUMNS FROM db_stored_procedure_args WHERE field IN ('owner_name');
 evaluate 'db_serial';
-desc db_serial;
+SHOW COLUMNS FROM db_serial WHERE field IN ('owner');
 evaluate 'db_authorization';
-desc db_authorization;
+SHOW COLUMNS FROM db_authorization WHERE field IN ('owner');
 evaluate 'db_synonym';
-desc db_synonym;
+SHOW COLUMNS FROM db_synonym WHERE field IN ('synonym_owner_name', 'target_owner_name');
 evaluate 'db_server';
-desc db_server;
+SHOW COLUMNS FROM db_server WHERE field IN ('owner');
 
 evaluate 'Case 7: aggregate check - every owner-name column across all dependent views is varchar(32)';
 SELECT class_name, attr_name, data_type, prec
