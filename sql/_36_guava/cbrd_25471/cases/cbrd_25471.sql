@@ -183,14 +183,17 @@ drop table if exists cbrd_25471_e_fk;
 drop table if exists cbrd_25471_e_sub;
 drop table if exists cbrd_25471_e_sup;
 create table cbrd_25471_e_sup (c1 int primary key);
-create table cbrd_25471_e_sub under cbrd_25471_e_sup (c2 int); -- c1 inherited -> from_owner_name
+-- c1 inherited -> from_owner_name
+create table cbrd_25471_e_sub under cbrd_25471_e_sup (c2 int);
+-- FK index -> referential_index_class_owner_name
 create table cbrd_25471_e_fk (c1 int,
-foreign key (c1) references cbrd_25471_e_sup(c1)); -- FK index -> referential_index_class_owner_name
+foreign key (c1) references cbrd_25471_e_sup(c1));
 
 drop synonym if exists cbrd_25471_e_syn;
 drop table if exists cbrd_25471_e_tgt;
 create table cbrd_25471_e_tgt (c1 int);
-create synonym cbrd_25471_e_syn for cbrd_25471_e_tgt; -- target owned by user -> target_owner_name
+-- target owned by user -> target_owner_name
+create synonym cbrd_25471_e_syn for cbrd_25471_e_tgt;
 
 select synonym_name, synonym_owner_name from db_synonym where synonym_name = 'cbrd_25471_e_syn';
 
