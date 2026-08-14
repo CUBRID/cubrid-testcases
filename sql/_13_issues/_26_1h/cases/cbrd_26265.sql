@@ -127,7 +127,7 @@ create table tbl_b(
 insert into tbl_b values (1);
 
 evaluate concat('9. type mismatch, not null column, is not null');
-select /*+ recompile */ * from tbl_b where cola is not null;
+select /*+ recompile */ * from tbl_b where cast(cola as bigint) is not null;
 show trace;
 
 evaluate concat('10. type mismatch, not null column, like ''%''');
@@ -258,6 +258,8 @@ prepare q1 from 'select /*+ recompile */ * from tbl_a left outer join tbl_b on t
 evaluate concat('24. Join query with complex LIKE bind parameter, hostvar_peeking=yes');
 execute q1 using '';
 show trace;
+
+SET SYSTEM PARAMETERS 'hostvar_peeking=no';
 
 -- cleanup
 drop table tbl_w;
