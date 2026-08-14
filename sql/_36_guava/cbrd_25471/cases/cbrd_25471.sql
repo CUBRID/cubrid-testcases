@@ -9,7 +9,7 @@
  * 9   - db_server / _db_server.user_name is intentionally left at varchar(255)
  * 10  - a 31-char user name round-trips through db_user.name
  * 11  - a 31-char owner name round-trips through 15 of the 20 dependent views data
- *       (not just declared metadata); 12 - an OWNER TO transfer refreshes it too
+ *       12 - an OWNER TO transfer refreshes it, 13 - the 5 remaining owner columns
  */
 
 evaluate 'Case 1: base table _db_user.name is varchar(32)';
@@ -96,6 +96,8 @@ FROM db_attribute
 WHERE class_name IN ('_db_server', 'db_server') AND attr_name = 'user_name'
 ORDER BY class_name;
 
+/* DB_MAX_USER_LENGTH is 32, but that is a null-terminator-inclusive buffer size,
+   so 31 is the actual max creatable name length (confirmed on PR#3225) */
 evaluate 'Case 10: a 31-char user name is accepted and round-trips through db_user.name';
 create user cbrd_25471_ok_31_chars_long_xxx;
 SELECT name, CHAR_LENGTH(name) FROM db_user WHERE name = 'CBRD_25471_OK_31_CHARS_LONG_XXX' ORDER BY 1;
@@ -168,6 +170,61 @@ drop procedure u_______10u_______20u_______30u.cbrd_25471_proc;
 drop table u_______10u_______20u_______30u.cbrd_25471_part;
 drop table u_______10u_______20u_______30u.cbrd_25471_sub;
 drop table u_______10u_______20u_______30u.cbrd_25471_super;
+drop user u_______10u_______20u_______30u;
+
+evaluate 'Case 13: 31-char name round-trips through the secondary owner-name columns';
+
+create user u_______10u_______20u_______30u;
+
+-- objects owned by the 31-char user (created under its login)
+call login ('u_______10u_______20u_______30u', '') on class db_user;
+
+drop table if exists cbrd_25471_e_fk;
+drop table if exists cbrd_25471_e_sub;
+drop table if exists cbrd_25471_e_sup;
+create table cbrd_25471_e_sup (c1 int primary key);
+create table cbrd_25471_e_sub under cbrd_25471_e_sup (c2 int); -- c1 inherited -> from_owner_name
+create table cbrd_25471_e_fk (c1 int,
+foreign key (c1) references cbrd_25471_e_sup(c1)); -- FK index -> referential_index_class_owner_name
+
+drop synonym if exists cbrd_25471_e_syn;
+drop table if exists cbrd_25471_e_tgt;
+create table cbrd_25471_e_tgt (c1 int);
+create synonym cbrd_25471_e_syn for cbrd_25471_e_tgt; -- target owned by user -> target_owner_name
+
+select synonym_name, synonym_owner_name from db_synonym where synonym_name = 'cbrd_25471_e_syn';
+
+call login ('dba', '') on class db_user;
+
+-- a grant whose GRANTEE is the 31-char user (grantor = DBA, table owned by DBA)
+drop table if exists cbrd_25471_e_g;
+create table cbrd_25471_e_g (c1 int);
+grant select on cbrd_25471_e_g to u_______10u_______20u_______30u;
+
+-- --- checks (run as dba - system views expose all owners) ---
+select 'db_direct_super_class.super_owner_name' as col, super_owner_name as val, char_length(super_owner_name) as len
+from db_direct_super_class where class_name = 'cbrd_25471_e_sub'
+union all
+select 'db_attribute.from_owner_name', from_owner_name, char_length(from_owner_name)
+from db_attribute where class_name = 'cbrd_25471_e_sub' and attr_name = 'c1'
+union all
+select 'db_synonym.target_owner_name', target_owner_name, char_length(target_owner_name)
+from db_synonym where synonym_name = 'cbrd_25471_e_syn'
+union all
+select 'db_index.referential_index_class_owner_name', referential_index_class_owner_name, char_length(referential_index_class_owner_name)
+from db_index where class_name = 'cbrd_25471_e_fk' and referential_index_class_owner_name is not null
+union all
+select 'db_auth.grantee_name', grantee_name, char_length(grantee_name)
+from db_auth where object_name = 'cbrd_25471_e_g' and grantee_name = 'U_______10U_______20U_______30U'
+order by 1;
+
+-- --- cleanup (FK child before parent, user-owned objects qualified) ---
+drop table cbrd_25471_e_g;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_fk;
+drop synonym u_______10u_______20u_______30u.cbrd_25471_e_syn;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_tgt;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_sub;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_sup;
 drop user u_______10u_______20u_______30u;
 
 /* a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary) -- already covered by
