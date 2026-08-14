@@ -1,148 +1,25 @@
 ===================================================
-0
+    
+using seteq for search condition on system table     
+
 ===================================================
-0
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+_db_user     _db_user     0     null     SELECT     0     
+
 ===================================================
-0
-===================================================
-4
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+
 ===================================================
     
-brace set term must not be used as an index key     
+using = for search condition on system table     
 
 ===================================================
-a    b    c    
-1     2     x     
-
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b} seteq {?, ?} using index t_tbl.i_tbl_ab
-===================================================
-a    b    c    
-1     2     x     
-
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b}={?, ?} using index t_tbl.i_tbl_ab
-===================================================
-    
-rhs longer than lhs must not return a wrong result     
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
+_db_user     _db_user     0     null     SELECT     0     
 
 ===================================================
-a    b    c    
+grantor    grantee    object_type    object_of    auth_type    is_grantable    
 
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b}={?, ?, ?} using index t_tbl.i_tbl_ab
-===================================================
-    
-rhs shorter than lhs must not crash     
-
-===================================================
-a    b    c    
-
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b} seteq {} using index t_tbl.i_tbl_ab
-===================================================
-a    b    c    
-
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b}={} using index t_tbl.i_tbl_ab
-===================================================
-a    b    c    
-
-Query plan:
-sscan
-    class: t_tbl node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where {t_tbl.a, t_tbl.b}={?} using index t_tbl.i_tbl_ab
-===================================================
-    
-paren tuple term is still indexable     
-
-===================================================
-a    b    c    
-1     2     x     
-
-Query plan:
-iscan
-    class: t_tbl node[?]
-    index: i_tbl_ab term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select t_tbl.a, t_tbl.b, t_tbl.c from t_tbl t_tbl where t_tbl.b= ?:?  and t_tbl.a= ?:?  using index t_tbl.i_tbl_ab
-===================================================
-    
-system table without join     
-
-===================================================
-name    
-PUBLIC     
-
-Query plan:
-sscan
-    class: u node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select u.[name] from [_db_user] u where {u.[name]} seteq {'PUBLIC'} using index u.u__db_user_name
-===================================================
-name    
-PUBLIC     
-
-Query plan:
-sscan
-    class: u node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select u.[name] from [_db_user] u where {u.[name]}={'PUBLIC'} using index u.u__db_user_name
-===================================================
-name    
-
-Query plan:
-sscan
-    class: u node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select u.[name] from [_db_user] u where {u.[name]}={'PUBLIC', ?} using index u.u__db_user_name
-===================================================
-name    
-
-Query plan:
-sscan
-    class: u node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select u.[name] from [_db_user] u where {u.[name]}={} using index u.u__db_user_name
-===================================================
-0
 ===================================================
 0
 ===================================================
