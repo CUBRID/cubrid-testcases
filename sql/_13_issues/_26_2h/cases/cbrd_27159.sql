@@ -3,12 +3,12 @@
  * keep its WHERE term in the main query to filter the NULL-extended row.
  *
  * Coverage:
- * 1-2. Base-table vs view-substituted LEFT JOIN, both correctly empty.
- * 3.   A real match passes; an unmatched row is still excluded.
- * 4.   No-OR conjunct still filters after LEFT->INNER conversion.
+ * 1-2. Base-table vs the issue's literal view repro, both correctly empty.
+ * 3.   Same view repro: a real match passes, an unmatched row is excluded.
+ * 4,6,7 pin the fixed code path via a NO_MERGE derived table: a no-OR
+ *       conjunct after LEFT->INNER conversion, the issue's repro again,
+ *       and a non-deterministic term in a non-last conjunct.
  * 5.   Symmetric RIGHT JOIN, view on the NULL-extendable side.
- * 6.   Same as 3 via a NO_MERGE derived table (pins the code path).
- * 7.   A non-deterministic term (RANDOM()) does not error or change the result.
  */
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
@@ -45,7 +45,8 @@ ORDER BY a.c4;
 
 evaluate 'Case 4: a single no-OR conjunct still filters after LEFT->INNER conversion';
 SELECT a.c4
-FROM repro_left_join_t1 AS a LEFT JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
+FROM repro_left_join_t1 AS a
+LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
 WHERE b.c15 < 6
 ORDER BY a.c4;
 
@@ -64,7 +65,8 @@ ORDER BY a.c4;
 
 evaluate 'Case 7: a non-deterministic term does not error or change the deterministic result';
 SELECT a.c4
-FROM repro_left_join_t1 AS a LEFT JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
+FROM repro_left_join_t1 AS a
+LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
 WHERE a.c1 >= 1 AND (b.c4 <> 'sample_24' OR b.c15 < 6) AND (b.c15 <> 999999 OR RANDOM() < 0)
 ORDER BY a.c4;
 
