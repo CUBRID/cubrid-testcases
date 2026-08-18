@@ -72,7 +72,13 @@ C1: commit;
 MC: wait until C1 ready;
 
 MC: wait until C2 ready;
+C2: commit;
+MC: wait until C2 ready;
+
 C1: update statistics on t2;
+C1: commit;
+MC: wait until C1 ready;
+
 C2: update statistics on t2;
 C2: show indexes from t2;
 C2: commit;
@@ -111,11 +117,10 @@ C8: commit;
 MC: wait until C2 ready;
 C1: select /*+ recompile */ * from t2 where DAYOFMONTH(birty_date)=1 using index idx_t2_3(+)  ;
 C1: select /*+ recompile */ * from t2 where ADDDATE(birty_date, INTERVAL '12:12' HOUR_MINUTE)='2000-01-01 12:12:00' using index idx1(+)  ;
-/* C1: select /*+ recompile */ * from t2 where ADDTIME(birty_date, time'1:1:2')='2000-01-01 01:01:02' using index idx2(+)  ; */
 C1: select /*+ recompile */ * from t2 where DAYOFWEEK(birty_date)=7 using index idx2(+)  ;
 C1: select /*+ recompile */ * from t2 where ADD_MONTHS(birty_date,1)=2 using index idx3(+)  ;
 C1: select /*+ recompile */ * from t2 where DATE(birty_date)='2000-01-01' using index idx4(+)  ;
-C1: select /*+ recompile */ * from t2 where DATEDIFF(birth_date,'1999-12-31 00:00:00')=1 using index idx5(+)  ;
+C1: select /*+ recompile */ * from t2 where DATEDIFF(birty_date,'1999-12-31 00:00:00')=1 using index idx5(+)  ;
 C1: select /*+ recompile */ * from t2 where SUBDATE(birty_date,INTERVAL 24 HOUR)='1999-12-31 00:00:00' using index idx6(+)  ;
 C1: commit work;
 
