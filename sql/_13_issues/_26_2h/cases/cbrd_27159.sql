@@ -1,16 +1,14 @@
 /**
- * This test case verifies CBRD-27159: a LEFT/RIGHT JOIN against a
- * projection-only view must keep its WHERE term in the main query so it
- * can still filter the join's NULL-extended row when the view produces
- * no match for that row.
+ * This test case verifies CBRD-27159: an outer join against a view must
+ * keep its WHERE term in the main query to filter the NULL-extended row.
  *
  * Coverage:
- * 1. Base-table LEFT JOIN, view not involved - correctly empty (baseline).
- * 2. Main repro - the same query through a view is also empty.
- * 3. A real match through the view still passes the OR filter; an
- *    unmatched row is still correctly excluded.
- * 4. INNER JOIN through the same view is unaffected (contrast).
- * 5. Symmetric RIGHT JOIN, view on the NULL-extendable side.
+ * 1-2. Base-table vs view-substituted LEFT JOIN, both correctly empty.
+ * 3.   A real match passes; an unmatched row is still excluded.
+ * 4.   No-OR conjunct still filters after LEFT->INNER conversion.
+ * 5.   Symmetric RIGHT JOIN, view on the NULL-extendable side.
+ * 6.   Same as 3 via a NO_MERGE derived table (pins the code path).
+ * 7.   A non-deterministic term (RANDOM()) does not error or change the result.
  */
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
@@ -45,16 +43,29 @@ FROM repro_left_join_t1 AS a LEFT JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
 WHERE b.c4 <> 'sample_24' OR b.c15 < 6
 ORDER BY a.c4;
 
-evaluate 'Case 4: INNER JOIN through the same view is unaffected';
+evaluate 'Case 4: a single no-OR conjunct still filters after LEFT->INNER conversion';
 SELECT a.c4
-FROM repro_left_join_t1 AS a INNER JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
-WHERE b.c4 <> 'sample_24' OR b.c15 < 6
+FROM repro_left_join_t1 AS a LEFT JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
+WHERE b.c15 < 6
 ORDER BY a.c4;
 
 evaluate 'Case 5: symmetric RIGHT JOIN, view on the NULL-extendable side';
 SELECT a.c4
 FROM repro_left_join_v_t2 AS b RIGHT JOIN repro_left_join_t1 AS a ON a.c1 = b.c3
 WHERE b.c4 <> 'sample_24' OR b.c15 < 6
+ORDER BY a.c4;
+
+evaluate 'Case 6: same as Case 3 through a NO_MERGE derived table, pinning the fixed code path';
+SELECT a.c4
+FROM repro_left_join_t1 AS a
+LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
+WHERE b.c4 <> 'sample_24' OR b.c15 < 6
+ORDER BY a.c4;
+
+evaluate 'Case 7: a non-deterministic term does not error or change the deterministic result';
+SELECT a.c4
+FROM repro_left_join_t1 AS a LEFT JOIN repro_left_join_v_t2 AS b ON a.c1 = b.c3
+WHERE a.c1 >= 1 AND (b.c4 <> 'sample_24' OR b.c15 < 6) AND (b.c15 <> 999999 OR RANDOM() < 0)
 ORDER BY a.c4;
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
