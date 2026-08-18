@@ -7,7 +7,7 @@
  * 3.   Same view repro: a real match passes, an unmatched row is excluded.
  * 4,6,7 pin the fixed code path via a NO_MERGE derived table: a no-OR
  *       conjunct after LEFT->INNER conversion, the issue's repro again,
- *       and a non-deterministic term in a non-last conjunct.
+ *       and a non-deterministic term (RANDOM()) as an extra conjunct.
  * 5.   Symmetric RIGHT JOIN, view on the NULL-extendable side.
  */
 
