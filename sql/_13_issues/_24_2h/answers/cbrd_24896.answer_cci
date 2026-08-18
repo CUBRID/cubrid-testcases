@@ -7,13 +7,16 @@ grantor    grantee    object_type    object_of    auth_type    is_grantable
 _db_user     _db_user     0     null_db_user     SELECT     0     
 
 Query plan:
-follow
-    edge:  au node[?] grantee -> _db_user node[?]
-    head:  sscan
-              class: au node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?] AND term[?]
+idx-join (inner join)
+    outer: sscan
+               class: _db_user node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: au node[?]
+               index: i__db_auth_grantee au node[?] grantee -> _db_user node[?]
+               cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]} seteq {'PUBLIC'}) and (inst_num()<= ?:? )
@@ -21,13 +24,16 @@ select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is
 grantor    grantee    object_type    object_of    auth_type    is_grantable    
 
 Query plan:
-follow
-    edge:  au node[?] grantee -> _db_user node[?]
-    head:  sscan
-              class: au node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
+idx-join (inner join)
+    outer: sscan
+               class: _db_user node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: au node[?]
+               index: i__db_auth_grantee au node[?] grantee -> _db_user node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]} seteq {} and (au.is_grantable= ?:? )
@@ -40,13 +46,16 @@ grantor    grantee    object_type    object_of    auth_type    is_grantable
 _db_user     _db_user     0     null_db_user     SELECT     0     
 
 Query plan:
-follow
-    edge:  au node[?] grantee -> _db_user node[?]
-    head:  sscan
-              class: au node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?] AND term[?]
+idx-join (inner join)
+    outer: sscan
+               class: _db_user node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: au node[?]
+               index: i__db_auth_grantee au node[?] grantee -> _db_user node[?]
+               cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where ({au.grantee.[name]}={'PUBLIC'}) and (inst_num()<= ?:? )
@@ -54,13 +63,16 @@ select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is
 grantor    grantee    object_type    object_of    auth_type    is_grantable    
 
 Query plan:
-follow
-    edge:  au node[?] grantee -> _db_user node[?]
-    head:  sscan
-              class: au node[?]
-              sargs: term[?]
-              cost:  ? card ?
-    sargs: term[?]
+idx-join (inner join)
+    outer: sscan
+               class: _db_user node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: au node[?]
+               index: i__db_auth_grantee au node[?] grantee -> _db_user node[?]
+               sargs: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
 select au.grantor, au.grantee, au.object_type, au.object_of, au.auth_type, au.is_grantable from [_db_auth] au where {au.grantee.[name]}={} and (au.is_grantable= ?:? )
