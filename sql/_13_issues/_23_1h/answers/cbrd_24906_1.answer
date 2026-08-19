@@ -202,16 +202,21 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (semi join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+  INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: select /*+ ORDERED */ count(*) from [dba.tbl_a] a semi join [dba.tbl_b] b on a.col_a=b.col_a and b.col_c=? and b.col_c=?
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_UNNEST */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -280,16 +285,23 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (semi join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+  SORT (distinct)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: select /*+ ORDERED */ count(*) from [dba.tbl_a] a semi join [dba.tbl_b] b on a.col_b=b.col_b and a.col_a=b.col_a and b.col_c=? and b.col_c=?
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_b in (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -333,16 +345,23 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (semi join)
-    TABLE SCAN (a)
-    INDEX SCAN (b.pk_tbl_b_col_a) (key range: a.col_a=b.col_a)
+  SORT (distinct)
+    INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: select /*+ ORDERED */ count(*) from [dba.tbl_a] a semi join [dba.tbl_b] b on a.col_a=b.col_b and a.col_a=b.col_a and b.col_c=? and b.col_c=?
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_a in (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_b.pk_tbl_b_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
