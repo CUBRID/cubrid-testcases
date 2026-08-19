@@ -9,6 +9,9 @@
  *       conjunct after LEFT->INNER conversion, the issue's repro again,
  *       and a non-deterministic term (RANDOM()) as an extra conjunct.
  * 5.   Symmetric RIGHT JOIN, view on the NULL-extendable side.
+ * 8.   IS NULL anti-join through the same derived table; not itself a fix
+ *       discriminator (nullable terms are never copy-pushed), but guards
+ *       the adjacent nullable-term exclusion.
  */
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
@@ -68,6 +71,13 @@ SELECT a.c4
 FROM repro_left_join_t1 AS a
 LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
 WHERE a.c1 >= 1 AND (b.c4 <> 'sample_24' OR b.c15 < 6) AND (b.c15 <> 999999 OR RANDOM() < 0)
+ORDER BY a.c4;
+
+evaluate 'Case 8: a nullable term must not be pushed into the outer joined derived table';
+SELECT a.c4
+FROM repro_left_join_t1 AS a
+LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
+WHERE b.c4 IS NULL
 ORDER BY a.c4;
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
