@@ -1018,8 +1018,8 @@ Join graph edges:
 term[0]: [dba.cust].nk=[dba.supp].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
 term[1]: [dba.supp].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
 term[2]: [dba.cust].nk=[dba.nations].nk (sel ?) (join term) (mergeable) (inner-join) (loc 0)
-term[3]: [dba.orders].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
-term[4]: [dba.cust].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[3]: [dba.cust].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
+term[4]: [dba.orders].ck=[dba.part_ck].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
 term[5]: [dba.cust].ck=[dba.orders].ck (sel ?) (join term) (mergeable) (inner-join) (loc 0)
 Join graph terms:
 term[6]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
@@ -1163,7 +1163,7 @@ term[3]: [dba.nations].region=1 (sel ?) (sarg term) (not-join eligible) (loc 0)
 Query plan:
 hash-join (inner join)
     edge:  term[?]
-    outer: hash-join (inner join)
+    outer: nl-join (inner join)
                edge:  term[?]
                outer: nl-join (inner join)
                           edge:  term[?]
@@ -1178,6 +1178,7 @@ hash-join (inner join)
                           cost:  ? card ?
                inner: sscan
                           class: cust node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
