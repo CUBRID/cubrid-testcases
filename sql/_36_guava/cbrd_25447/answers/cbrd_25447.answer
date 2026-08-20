@@ -321,7 +321,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -346,7 +346,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
@@ -412,7 +412,7 @@ Trace Statistics:
 
 ===================================================
     
-10. contains LIMIT (should work, order is not guaranteed) -> row by row     
+10. contains LIMIT (should work, order is not guaranteed) -> mergeable list     
 
 ===================================================
 colb    
@@ -429,7 +429,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -842,7 +842,7 @@ Trace Statistics:
 
 ===================================================
     
-20. when rownum in select list (should work) -> row by row, no order guaranteed     
+20. when rownum in select list (should work) -> mergeable list, no order guaranteed     
 
 ===================================================
 count(*)    
@@ -867,7 +867,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -895,7 +895,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
