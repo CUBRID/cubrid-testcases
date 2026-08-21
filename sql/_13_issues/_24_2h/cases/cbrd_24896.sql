@@ -2,12 +2,12 @@
 
 EVALUATE 'using seteq for search condition on system table';
 
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
+SELECT grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} seteq {'PUBLIC'} LIMIT 1;
+SELECT grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} seteq {};
 
 EVALUATE 'using = for search condition on system table';
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
-SELECT /*+ recompile */ grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
+SELECT grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE {[au].[grantee].[name]} = {'PUBLIC'} LIMIT 1;
+SELECT grantor, grantee, object_type, object_of, auth_type, is_grantable FROM [_db_auth] AS [au] WHERE  (is_grantable = 1) AND {[au].[grantee].[name]} = {};
 
 -- create table
 drop table if exists tbl;
