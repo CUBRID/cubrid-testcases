@@ -1336,7 +1336,7 @@ Trace Statistics:
 
 ===================================================
     
-Q122. When a bind variable is used in LIMIT, the initial plan does not apply skip ORDER BY, but once the plan is recompiled for SORT LIMIT execution, skip ORDER BY is applied.     
+Q122. When a bind variable is used in LIMIT, the plan is compiled at execute time with the bound values, so the SORT LIMIT plan is applied from the first execution; verify it through the trace at EXECUTE time.     
 
 ===================================================
 0
@@ -1624,7 +1624,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+select /*+ ORDERED NO_USE_HASH */ 'Q?', a.cola, b.cole from tbl_a a, tbl_b b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 ===================================================
 trace    
 
@@ -1634,7 +1634,7 @@ Query Plan:
       INDEX SCAN (a.idx_cola_colb_colc) (key range: (a.cola> ?:? ), covered: true)
       INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
 
-  rewritten query: select /*+ ORDERED */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ ORDERED NO_USE_HASH */ 'Q?', a.cola, b.cole from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold and (a.cola> ?:? ) using index a.idx_cola_colb_colc(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
