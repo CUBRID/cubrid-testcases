@@ -29,12 +29,14 @@ SELECT REPEAT(s, n) FROM repeat_overflow_t1 WHERE id = 1;
 evaluate 'Case 2: the multibyte seed is 1000 characters and 3000 bytes, as the later cases assume';
 SELECT CHAR_LENGTH(s), OCTET_LENGTH(s) FROM repeat_overflow_t1 WHERE id = 2;
 
+-- ERROR: Trying to create a string requiring 4294968000 bytes of memory, while the maximum allowed is 1048576 bytes.
 evaluate 'Case 3: annotated issue repro, portable across branches - multibyte byte-size overflow now errors';
 SELECT REPEAT(s, n) FROM repeat_overflow_t1 WHERE id = 2;
 
 evaluate 'Case 4: one below the INT32_MAX byte-size boundary stays within range and returns NULL';
 SELECT REPEAT(s, n) FROM repeat_overflow_t1 WHERE id = 3;
 
+-- ERROR: Trying to create a string requiring 2147484000 bytes of memory, while the maximum allowed is 1048576 bytes.
 evaluate 'Case 5: one above the INT32_MAX byte-size boundary now errors cleanly instead of wrapping negative';
 SELECT REPEAT(s, n) FROM repeat_overflow_t1 WHERE id = 4;
 
@@ -46,6 +48,7 @@ INSERT INTO repeat_overflow_t2 VALUES (2, REPEAT(_iso88591'a', 1000), 2200000);
 evaluate 'Case 6: same char length and count as Case 3, single-byte source has no byte-size overflow and returns NULL';
 SELECT REPEAT(s, n) FROM repeat_overflow_t2 WHERE id = 1;
 
+-- ERROR: Value's precision of 2200000000 exceeds maximum allowed 2147483647
 evaluate 'Case 7: single-byte at this count overflows character length first, never reaching the byte-size path';
 SELECT REPEAT(s, n) FROM repeat_overflow_t2 WHERE id = 2;
 
@@ -60,6 +63,7 @@ INSERT INTO repeat_overflow_t3 VALUES (REPEAT('가', 1000), 1431656);
 evaluate 'Case 8: the unannotated seed is also 1000 characters and 3000 bytes on develops default utf8 basicdb';
 SELECT CHAR_LENGTH(s), OCTET_LENGTH(s) FROM repeat_overflow_t3 WHERE n = 1431656;
 
+-- ERROR: Trying to create a string requiring 4294968000 bytes of memory, while the maximum allowed is 1048576 bytes.
 evaluate 'Case 9: the issue exact SQL, unannotated, on develops default utf8 basicdb';
 SELECT REPEAT(s, n) FROM repeat_overflow_t3 WHERE n = 1431656;
 
