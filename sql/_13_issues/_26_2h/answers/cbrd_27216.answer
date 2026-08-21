@@ -3,20 +3,6 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-1
-===================================================
-1
-===================================================
-1
-===================================================
 1
 ===================================================
 1
@@ -48,7 +34,49 @@ Case 3: annotated issue repro, portable across branches - multibyte byte-size ov
 Error:-1042
 ===================================================
     
-Case 4: the unannotated seed is also 1000 characters and 3000 bytes on develops default utf8 basicdb     
+Case 4: one below the INT32_MAX byte-size boundary stays within range and returns NULL     
+
+===================================================
+repeat(s, n)    
+null     
+
+===================================================
+    
+Case 5: one above the INT32_MAX byte-size boundary now errors cleanly instead of wrapping negative     
+
+===================================================
+Error:-1042
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 6: same char length and count as Case 3, single-byte source has no byte-size overflow and returns NULL     
+
+===================================================
+repeat(s, n)    
+null     
+
+===================================================
+    
+Case 7: single-byte at this count overflows character length first, never reaching the byte-size path     
+
+===================================================
+Error:-1192
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 8: the unannotated seed is also 1000 characters and 3000 bytes on develops default utf8 basicdb     
 
 ===================================================
 char_length(s)    octet_length(s)    
@@ -56,38 +84,10 @@ char_length(s)    octet_length(s)
 
 ===================================================
     
-Case 5: the issue exact SQL, unannotated, on develops default utf8 basicdb     
+Case 9: the issue exact SQL, unannotated, on develops default utf8 basicdb     
 
 ===================================================
 Error:-1042
-===================================================
-    
-Case 6: one below the INT32_MAX byte-size boundary stays within range and returns NULL     
-
-===================================================
-repeat(s, n)    
-null     
-
-===================================================
-    
-Case 7: one above the INT32_MAX byte-size boundary now errors cleanly instead of wrapping negative     
-
-===================================================
-Error:-1042
-===================================================
-    
-Case 8: same char length and count as Case 3, single-byte source has no byte-size overflow and returns NULL     
-
-===================================================
-repeat(s, n)    
-null     
-
-===================================================
-    
-Case 9: single-byte at this count overflows character length first, never reaching the byte-size path     
-
-===================================================
-Error:-1192
 ===================================================
 0
 ===================================================
