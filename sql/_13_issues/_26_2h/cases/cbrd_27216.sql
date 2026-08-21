@@ -49,6 +49,10 @@ SELECT REPEAT(s, n) FROM repeat_overflow_t2 WHERE id = 1;
 evaluate 'Case 7: single-byte at this count overflows character length first, never reaching the byte-size path';
 SELECT REPEAT(s, n) FROM repeat_overflow_t2 WHERE id = 2;
 
+-- CTP's SQL-category basicdb is created as utf8 on CUBRID 11.5+, which is
+-- what proves the base scenario below with no charset annotation at all.
+-- On 11.4 and earlier basicdb defaults to iso88591 instead, so the same
+-- unannotated SQL gives a different result there.
 DROP TABLE IF EXISTS repeat_overflow_t3;
 CREATE TABLE repeat_overflow_t3 (s VARCHAR(4000), n INT);
 INSERT INTO repeat_overflow_t3 VALUES (REPEAT('가', 1000), 1431656);
