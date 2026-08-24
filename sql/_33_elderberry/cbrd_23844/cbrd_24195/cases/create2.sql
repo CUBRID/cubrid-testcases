@@ -7,7 +7,7 @@ create user u2 groups dba;
 call login ('u2') on class db_user;
 select user;
 create table u1.t1 (c1 int);
-select class_of, unique_name, class_name, owner.name from _db_class where (is_system_class | flags) % 8 = 0;
+select class_of, IF (is_system_class = 0, CONCAT (LOWER (owner.name), '.', class_name), class_name) as unique_name, class_name, owner.name from _db_class where (is_system_class | flags) % 8 = 0;
 create serial u1.s1;
 select unique_name, name, owner.name from _db_serial;
 create table t1 (c1 int);

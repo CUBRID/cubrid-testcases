@@ -56,7 +56,7 @@ select sp_name, lang, owner, comment from db_stored_procedure where sp_name='tes
 evaluate 'check to _db_class on procedure';
 evaluate 'create to dba.test_db_class';
 create or replace procedure test_db_class as
-    cursor c is select unique_name from _db_class where unique_name='dba.tbl';
+    cursor c is select IF (is_system_class = 0, CONCAT (LOWER (owner.name), '.', class_name), class_name) as unique_name from _db_class where IF (is_system_class = 0, CONCAT (LOWER (owner.name), '.', class_name), class_name) = 'dba.tbl';
 begin
     FOR r IN c LOOP
         DBMS_OUTPUT.put_line('_db_class result: ' || r.unique_name);
@@ -68,7 +68,7 @@ call test_db_class();
 
 evaluate 'create to public.test_db_class2, ERROR: Semantic: SELECT is not authorized on _db_class';
 create or replace procedure public.test_db_class2 as
-    cursor c is select unique_name from _db_class where unique_name='dba.tbl';
+    cursor c is select IF (is_system_class = 0, CONCAT (LOWER (owner.name), '.', class_name), class_name) as unique_name from _db_class where IF (is_system_class = 0, CONCAT (LOWER (owner.name), '.', class_name), class_name) = 'dba.tbl';
 begin
     FOR r IN c LOOP
         DBMS_OUTPUT.put_line('_db_class result: ' || r.unique_name);
