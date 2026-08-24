@@ -92,7 +92,7 @@ select distinct cola from tbl limit 2;
 show trace;
 
 
-evaluate '10. contains LIMIT (should work, order is not guaranteed) -> row by row';
+evaluate '10. contains LIMIT (should work, order is not guaranteed) -> mergeable list';
 select colb from tbl where id = 1 limit 1;
 show trace;
 
@@ -191,7 +191,7 @@ select /*+ PARALLEL(2) */ null from tbl limit 2;
 show trace;
 
 
-evaluate '20. when rownum in select list (should work) -> row by row, no order guaranteed';
+evaluate '20. when rownum in select list (should work) -> mergeable list, no order guaranteed';
 select count(*) from (select /*+ NO_MERGE */ rownum, cola from tbl);
 show trace;
 
