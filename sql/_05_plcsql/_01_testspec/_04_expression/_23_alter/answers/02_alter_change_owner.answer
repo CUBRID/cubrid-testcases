@@ -75,8 +75,7 @@ ERROR: Stored procedure compile error
 
 
 ===================================================
-Error:-1360
-Stored procedure compile error: Syntax: Unknown class "dba.tbl". select col1, col2 from [dba.tbl]
+0
 
 ===================================================
     
@@ -90,7 +89,7 @@ Syntax error: unexpected 'OWNER', expecting ';'
 
 ===================================================
 sp_name    lang    owner    comment    
-test_tbl     PLCSQL     PUBLIC     null     
+test_tbl     PLCSQL     DBA     1: OWNER TO COMMENT     
 
 
 ===================================================
@@ -107,7 +106,8 @@ add comment of procedure
 
 
 ===================================================
-0
+Error:-894
+Stored procedure/function 'public.test_tbl' does not exist.
 
 ===================================================
 sp_name    lang    owner    comment    
@@ -153,7 +153,7 @@ create to public.test_db_class2, ERROR: Semantic: SELECT is not authorized on _d
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select  concat('dba.', [_db_class].class_name) from [_db_cla...
 
 ===================================================
     
@@ -162,7 +162,7 @@ alter owner dba.test_db_class to public, ERROR: Semantic: SELECT is not authoriz
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select [_db_class].unique_name from [_db_class] [_db_class] ...
+Stored procedure compile error: Semantic: SELECT is not authorized on _db_class. select  concat('dba.', [_db_class].class_name) from [_db_cla...
 
 ===================================================
     
