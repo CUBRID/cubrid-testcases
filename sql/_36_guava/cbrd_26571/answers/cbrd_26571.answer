@@ -11,6 +11,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 5
 ===================================================
 3
@@ -18,6 +22,10 @@
 2
 ===================================================
 4
+===================================================
+3
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -114,14 +122,22 @@ Query Plan:
 
   rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
 
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.['ta'], x.[count(*)] from (select 'ta', count(*) from [dba.ta] [dba.ta] union select 'tb', count(*) from [dba.tb] [dba.tb]) x (['ta'], [count(*)]) order by ?
+
 
 Trace Statistics:
-  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
-    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
      
 
 ===================================================
@@ -298,57 +314,61 @@ Trace Statistics:
 0
 ===================================================
     
-Case 9: INTERSECT ALL / EXCEPT ALL -> the fix must cover all set operators, not only UNION     
+Case 9: INTERSECT ALL, same table/same literal -> a wrong count on either branch must surface as a non-matching row     
 
 ===================================================
-'ta'    count(*)    
+'x'    count(*)    
+x     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.ta)
+  TABLE SCAN (dba.tc)
 
-  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+  rewritten query: select 'x', count(*) from [dba.tc] [dba.tc]
 
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.tc)
 
-  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+  rewritten query: select 'x', count(*) from [dba.tc] [dba.tc]
 
 
 Trace Statistics:
   INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+      SCAN (table: dba.tc), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tc_id)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+      SCAN (table: dba.tc), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tc_id)
      
 
 ===================================================
-'ta'    count(*)    
-ta     5     
+    
+Case 9b: EXCEPT ALL, same table/same literal -> matching branches must yield an empty result     
+
+===================================================
+'x'    count(*)    
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.ta)
+  TABLE SCAN (dba.tc)
 
-  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+  rewritten query: select 'x', count(*) from [dba.tc] [dba.tc]
 
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.tc)
 
-  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+  rewritten query: select 'x', count(*) from [dba.tc] [dba.tc]
 
 
 Trace Statistics:
   DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+      SCAN (table: dba.tc), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tc_id)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+      SCAN (table: dba.tc), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tc_id)
      
 
 ===================================================
@@ -395,6 +415,8 @@ Trace Statistics:
 Case 11: DML immediately before the UNION count, then ROLLBACK -> optimized result must reflect the rolled-back (original) data     
 
 ===================================================
+1
+===================================================
 0
 ===================================================
 'ta'    count(*)    
@@ -423,3 +445,359 @@ Trace Statistics:
       SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
      
 
+===================================================
+    
+Case 12-1: REPEATABLE READ -> the PK count optimization must be OFF (heap scan)     
+
+===================================================
+0
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12-2: SERIALIZABLE -> the PK count optimization must be OFF (heap scan)     
+
+===================================================
+0
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12-3: back to READ COMMITTED -> the optimization must come back on both branches     
+
+===================================================
+0
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 13-1: serial execution, parallel(0) on the wrapped UNION ALL     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select /*+ PARALLEL(?) */ x.['ta'], x.[count(*)] from (select 'ta', count(*) from [dba.ta] [dba.ta] union all select 'tb', count(*) from [dba.tb] [dba.tb]) x (['ta'], [count(*)]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 13-2: serial execution, parallel(0) on the top-level UNION ALL     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select /*+ PARALLEL(?) */ 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 14: two count(*) in one select list -> records whether both, one, or neither are optimized     
+
+===================================================
+'ta'    count(*)    count(*)    
+ta     5     5     
+tb     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*), count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*), count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 15-1: non-optimizable branch FIRST (no PK) -> the following PK branch must still be optimized     
+
+===================================================
+'td'    count(*)    
+td     4     
+ta     5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select 'td', count(*) from [dba.td] [dba.td]
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+     
+
+===================================================
+    
+Case 15-2: non-optimizable branch FIRST (WHERE clause) -> the following PK branch must still be optimized     
+
+===================================================
+'ta-filtered'    count(*)    
+ta-filtered     4     
+tb     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.pk_ta_id) (key range: ([dba.ta].id> ?:? ), covered: true)
+
+  rewritten query: select 'ta-filtered', count(*) from [dba.ta] [dba.ta] where ([dba.ta].id> ?:? )
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (index: dba.ta.pk_ta_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 15-3: same table, plain UNION, no literal in the select list     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+     
+
+===================================================
+    
+Case 15-4: no literal in the select list, control shape     
+
+===================================================
+count(*)    
+3     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 16: unique index but no primary key -> records whether such a branch is optimized     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tf     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tf)
+
+  rewritten query: select 'tf', count(*) from [dba.tf] [dba.tf]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tf), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: idx_tf_id)
+     
+
+===================================================
+0
