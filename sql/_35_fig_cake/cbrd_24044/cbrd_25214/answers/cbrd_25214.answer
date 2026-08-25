@@ -257,7 +257,7 @@ Query Plan:
           INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, covered: true)
         INDEX SCAN (d.idx_tb) (key range: c.cola=d.cola, covered: true)
       INDEX SCAN (e.idx_tb) (key range: d.cola=e.cola, covered: true)
-    INDEX SCAN (f.idx_tb) (key range: b.cola=f.cola, covered: true)
+    INDEX SCAN (f.idx_tb) (key range: e.cola=f.cola, covered: true)
 
   rewritten query: select /*+ ORDERED */ a.cola, a.colb, b.cola, b.colb, c.cola, c.colb, d.cola, d.colb, e.cola, e.colb, f.cola, f.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c, [dba.tb] d, [dba.tb] e, [dba.tb] f where a.cola=b.cola and a.cola=c.cola and b.cola=c.cola and b.cola=f.cola and c.cola=d.cola and d.cola=e.cola and e.cola=f.cola and e.cola=b.cola
 
