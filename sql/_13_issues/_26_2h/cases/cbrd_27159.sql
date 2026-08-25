@@ -12,6 +12,10 @@
  * 8.   IS NULL anti-join through the same derived table; not itself a fix
  *       discriminator (nullable terms are never copy-pushed), but guards
  *       the adjacent nullable-term exclusion.
+ * 9.   Multiple surviving rows: the filter keeps exactly the right subset,
+ *       including a matched-but-excluded row (its derived-table match gets
+ *       filtered inside the spec, which is the corner a single-row case
+ *       cannot tell apart from a plain unmatched NULL-extended row).
  */
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
@@ -78,6 +82,16 @@ SELECT a.c4
 FROM repro_left_join_t1 AS a
 LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
 WHERE b.c4 IS NULL
+ORDER BY a.c4;
+
+INSERT INTO repro_left_join_t1 VALUES (3, 300), (4, 400);
+INSERT INTO repro_left_join_t2 VALUES (3, 'x', 2), (4, 'sample_24', 999);
+
+evaluate 'Case 9: multi-row - the filter keeps exactly the right subset, incl. a matched-but-excluded row';
+SELECT a.c4
+FROM repro_left_join_t1 AS a
+LEFT JOIN (SELECT /*+ NO_MERGE */ c15, c3, c4 FROM repro_left_join_t2) AS b ON a.c1 = b.c3
+WHERE b.c4 <> 'sample_24' OR b.c15 < 6
 ORDER BY a.c4;
 
 DROP VIEW IF EXISTS repro_left_join_v_t2;
