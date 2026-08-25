@@ -1,0 +1,2130 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+5
+
+===================================================
+0
+
+===================================================
+5
+
+===================================================
+0
+
+===================================================
+    
+A00 : no predicate (baseline) -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A01 : WHERE TRUE -- merged (already before the fix)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A02 : WHERE 1=1 -- merged (the reported case)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A03 : WHERE 'a'='a' -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A04 : WHERE 1=1 AND 2=2 -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A05 : WHERE 2>1 -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A06 : WHERE NOT (1=0) -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A07 : WHERE 'abc' LIKE 'abc' -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A08 : WHERE 1=1 AND 'x'='x' AND 3>2 -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A09 : WHERE 1=1 OR v.a > 0 -- merged (folds to a single TRUE)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A10 : WHERE CAST(1 AS INT)=1 -- NOT merged (not folded; the boundary of this change)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x)
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b) where  cast(? as integer)=? order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+A11 : WHERE 1 IN (1,2) -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A12 : WHERE 'a' IS NOT NULL -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A13 : WHERE 1=1 AND TRUE -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A14 : WHERE 1<>0 -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A15 : WHERE 3 BETWEEN 1 AND 5 -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+A16 : WHERE 1=1 only INSIDE the view, none outside -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+B01 : WHERE v.a > 0 -- NOT merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? )) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B02 : WHERE 1=1 AND v.a > 0 -- NOT merged (a real conjunct remains)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? )) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B03 : WHERE 1=0 -- always false, no plan is produced     
+
+
+===================================================
+a    b    
+
+
+===================================================
+trace    
+null     
+
+
+===================================================
+    
+B04 : WHERE v.a = NULL -- unknown, no plan is produced     
+
+
+===================================================
+a    b    
+
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B05 : WHERE ROWNUM <= 2 -- merged (rownum-only predicate path)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (v)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x where (rownum<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B06 : WHERE v.a IN (subquery) -- NOT merged     
+
+
+===================================================
+a    b    
+1     100     
+3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x)
+
+  SORT (distinct)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select distinct [dba.tright].x from [dba.tright] [dba.tright])
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (v)
+      TABLE SCAN (av?)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), (select distinct [dba.tright].x from [dba.tright] [dba.tright]) av? (av_?) where v.a=av?.av_? order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+B07 : WHERE v.a IS NOT NULL -- NOT merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tleft].a is not null )
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tleft].a is not null ) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B08 : WHERE v.b IS NULL -- NOT merged (filters outer-join NULL-extended rows)     
+
+
+===================================================
+a    b    
+2     null     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tright].y is null )
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tright].y is null ) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B09 : WHERE 1=1 AND v.b IS NULL -- NOT merged     
+
+
+===================================================
+a    b    
+2     null     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tright].y is null )
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tright].y is null ) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B10 : WHERE 0=1 OR v.a > 3 -- NOT merged     
+
+
+===================================================
+a    b    
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where ([dba.tleft].a> ?:? )) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B11 : WHERE NULL = NULL -- unknown, no plan is produced     
+
+
+===================================================
+a    b    
+
+
+===================================================
+trace    
+null     
+
+
+===================================================
+    
+B12 : WHERE 1=1 AND ROWNUM <= 2 -- merged (already before the fix)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (v)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x where (rownum<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+B13 : WHERE v.a = v.a -- NOT merged (column reference, not a constant)     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tleft].a=[dba.tleft].a)
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x where [dba.tleft].a=[dba.tleft].a) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+C01 : inner join view -- merged     
+
+
+===================================================
+a    b    
+1     100     
+3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v, [dba.tright] [dba.tright] where v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C02 : right outer join view -- merged     
+
+
+===================================================
+a    b    
+null     900     
+null     1000     
+null     2000     
+1     100     
+3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.tright)
+      TABLE SCAN (v)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v right outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C03 : GROUP BY view -- NOT merged (blocked by another rule)     
+
+
+===================================================
+a    b    
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tleft)
+
+  rewritten query: (select [dba.tleft].a, count(*) from [dba.tleft] [dba.tleft] group by [dba.tleft].a)
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], count(*) as [b] from [dba.tleft] [dba.tleft] group by [dba.tleft].a) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+C04 : ORDER BY view -- merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+4     null     
+5     50     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from [dba.tleft] v order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C05 : DISTINCT view -- NOT merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+4     null     
+5     50     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tleft)
+
+  rewritten query: (select distinct [dba.tleft].a, [dba.tleft].b from [dba.tleft] [dba.tleft])
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select distinct [dba.tleft].a as [a], [dba.tleft].b as [b] from [dba.tleft] [dba.tleft]) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C06 : UNION ALL view -- NOT merged     
+
+
+===================================================
+a    b    
+1     10     
+1     100     
+2     null     
+3     30     
+3     300     
+4     null     
+5     50     
+9     900     
+10     1000     
+20     2000     
+
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tleft)
+
+  rewritten query: select [dba.tleft].a, [dba.tleft].b from [dba.tleft] [dba.tleft]
+
+  TABLE SCAN (dba.tright)
+
+  rewritten query: select [dba.tright].x, [dba.tright].y from [dba.tright] [dba.tright]
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a, [dba.tleft].b from [dba.tleft] [dba.tleft] union all select [dba.tright].x, [dba.tright].y from [dba.tright] [dba.tright]) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+C07 : ROWNUM inside the view -- merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+4     null     
+5     50     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select (rownum), v.b from [dba.tleft] v order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C08 : ORDER BY + LIMIT view -- NOT merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tleft)
+
+  rewritten query: (select [dba.tleft].a, [dba.tleft].b from [dba.tleft] [dba.tleft] order by ? for orderby_num()<= ?:? )
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tleft].b as [b] from [dba.tleft] [dba.tleft] order by ? for orderby_num()<= ?:? ) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+C09 : no join, plain view -- merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+4     null     
+5     50     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from [dba.tleft] v order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C10 : two nested outer joins -- merged     
+
+
+===================================================
+a    b    c    
+1     100     100     
+2     null     null     
+3     300     300     
+4     null     null     
+5     null     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (v)
+        TABLE SCAN (dba.tright)
+      TABLE SCAN (tright_b)
+
+  rewritten query: select v.a, [dba.tright].y, tright_b.y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x left outer join [dba.tright] tright_b on v.a=tright_b.x order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C11 : outer join + aggregate -- NOT merged     
+
+
+===================================================
+a    b    
+1     1     
+2     0     
+3     1     
+4     0     
+5     0     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.tleft)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, count([dba.tright].y) from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x group by [dba.tleft].a)
+
+  SORT (order by)
+    TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], count([dba.tright].y) as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x group by [dba.tleft].a) v (a, b) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+C12 : named view over an outer join -- merged     
+
+
+===================================================
+0
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.v_oj)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select [dba.v_oj].a, [dba.tright].y from [dba.tleft] [dba.v_oj] left outer join [dba.tright] [dba.tright] on [dba.v_oj].a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C13 : view on top of a view -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+0
+
+===================================================
+    
+C14 : expression in the view select list -- merged     
+
+
+===================================================
+a    b    
+2     100     
+4     null     
+6     300     
+8     null     
+10     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select (v.a*?), [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+C15 : CTE instead of an inline view -- merged on develop; 11.4 keeps the CTE spec     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (cte)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select cte.a, [dba.tright].y from [dba.tleft] cte left outer join [dba.tright] [dba.tright] on cte.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D01 : outer ORDER BY -- merged     
+
+
+===================================================
+a    b    
+5     null     
+4     null     
+3     300     
+2     null     
+1     100     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ? desc , ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D02 : outer GROUP BY -- merged     
+
+
+===================================================
+a    count(*)    
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, count(*) from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x group by v.a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+D03 : outer ORDER BY ... LIMIT -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      SORT (limit)
+        TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+D04 : outer COUNT(*) -- merged     
+
+
+===================================================
+count(*)    
+5     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (v)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: select count(*) from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+D05 : outer DISTINCT -- merged     
+
+
+===================================================
+a    
+1     
+2     
+3     
+4     
+5     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select distinct v.a from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D06 : partial column selection -- merged     
+
+
+===================================================
+b    
+null     
+null     
+null     
+100     
+300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D07 : outer GROUP BY ... HAVING -- merged     
+
+
+===================================================
+a    count(*)    
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (v)
+        TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, count(*) from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x group by v.a having count(*)>=? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D08 : expression in the outer select list -- merged     
+
+
+===================================================
+v.a*2    
+2     
+4     
+6     
+8     
+10     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a*? from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D09 : ORDER BY a nullable outer-join column -- merged     
+
+
+===================================================
+a    b    
+2     null     
+4     null     
+5     null     
+1     100     
+3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+D10 : HAVING 1=1 -- merged (HAVING is not the predicate list being checked)     
+
+
+===================================================
+a    count(*)    
+1     1     
+2     1     
+3     1     
+4     1     
+5     1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, count(*) from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x group by v.a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+D11 : the view is not the only spec of the main query -- NOT merged     
+
+
+===================================================
+a    b    x    y    
+1     100     1     100     
+3     300     3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (v)
+      TABLE SCAN (w)
+
+  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+D12 : the same two specs without any constant predicate -- NOT merged either     
+
+
+===================================================
+a    b    x    y    
+1     100     1     100     
+3     300     3     300     
+
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tleft)
+    TABLE SCAN (dba.tright)
+
+  rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (v)
+      TABLE SCAN (w)
+
+  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+0
+
+===================================================
+    
+E01 : UPDATE ... WHERE a IN (inline view ... WHERE 1=1)     
+
+
+===================================================
+5
+
+===================================================
+a    b    
+1     11     
+2     null     
+3     31     
+4     null     
+5     51     
+
+
+===================================================
+    
+E02 : DELETE ... WHERE a IN (inline view ... WHERE 1=1)     
+
+
+===================================================
+1
+
+===================================================
+a    b    
+1     11     
+2     null     
+3     31     
+4     null     
+
+
+===================================================
+    
+E03 : INSERT ... SELECT ... WHERE 1=1     
+
+
+===================================================
+4
+
+===================================================
+a    b    c    
+1     11     p     
+2     null     q     
+3     31     null     
+4     null     null     
+101     11     z     
+102     null     z     
+103     31     z     
+104     null     z     
+
+
+===================================================
+    
+E04 : a view that itself contains WHERE 1=1     
+
+
+===================================================
+0
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+101     null     
+102     null     
+103     null     
+104     null     
+
+
+===================================================
+    
+E05 : the same view with an outer predicate     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+
+
+===================================================
+0
+
+===================================================
+    
+E06 : scalar subquery containing WHERE 1=1     
+
+
+===================================================
+cnt    
+8     
+
+
+===================================================
+    
+E07 : UNION ALL of two inline views with WHERE 1=1     
+
+
+===================================================
+a    
+1     
+1     
+2     
+3     
+3     
+4     
+9     
+10     
+20     
+101     
+102     
+103     
+104     
+
+
+===================================================
+    
+E08 : row count through the inline view     
+
+
+===================================================
+count(*)    
+8     
+
+
+===================================================
+    
+E09 : outer join NULL-extended rows are preserved     
+
+
+===================================================
+count(*)    
+6     
+
+
+===================================================
+    
+E10 : always-false predicate returns no rows     
+
+
+===================================================
+count(*)    
+0     
+
+
+===================================================
+0
+
+===================================================
+0
+
