@@ -19,10 +19,10 @@ Case 1: GROUP BY + window function in two UNION ALL branches -> correct values a
 ===================================================
 grp    sum(val)    running_total    
 g1     30     30     
-g2     70     100     
-g3     50     150     
 g1     300     300     
+g2     70     100     
 g2     300     600     
+g3     50     150     
 
 ===================================================
 trace    
@@ -64,6 +64,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -73,10 +74,10 @@ Case 2: two window functions in the same branch (row_number, rank) -> each must 
 ===================================================
 grp    s    rn    rk    
 g1     30     1     3     
-g3     50     2     2     
-g2     70     3     1     
 g1     300     1     1     
-g2     300     2     1     
+g2     70     3     1     
+g2     300     2     2     
+g3     50     2     2     
 
 ===================================================
 trace    
@@ -89,7 +90,7 @@ Query Plan:
 
   TABLE SCAN (dba.ta)
 
-  rewritten query: select a_?, a_?, row_number() over (order by ?), rank() over (order by ? desc ) from (select [dba.ta].grp, sum([dba.ta].val) as [s] from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?)
+  rewritten query: select a_?, a_?, row_number() over (order by ?, ?), rank() over (order by ? desc , ?) from (select [dba.ta].grp, sum([dba.ta].val) as [s] from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?)
 
   SORT (group by)
     TABLE SCAN (dba.tb)
@@ -98,7 +99,7 @@ Query Plan:
 
   TABLE SCAN (dba.tb)
 
-  rewritten query: select a_?, a_?, row_number() over (order by ?), rank() over (order by ? desc ) from (select [dba.tb].grp, sum([dba.tb].val) as [s] from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?)
+  rewritten query: select a_?, a_?, row_number() over (order by ?, ?), rank() over (order by ? desc , ?) from (select [dba.tb].grp, sum([dba.tb].val) as [s] from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?)
 
 
 Trace Statistics:
@@ -120,6 +121,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -130,7 +132,6 @@ Case 3: GROUP BY + window function combined via INTERSECT -> the fix must cover 
 grp    sum(val)    running_total    
 g1     30     30     
 g2     70     100     
-g3     50     150     
 
 ===================================================
 trace    
@@ -148,11 +149,11 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (dba.ta)
 
-  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp)
 
   TABLE SCAN (dba.ta)
 
-  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
 
 
 Trace Statistics:
@@ -172,6 +173,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -180,8 +182,6 @@ Case 4: GROUP BY + window function combined via EXCEPT -> the fix must cover EXC
 
 ===================================================
 grp    sum(val)    running_total    
-g1     30     30     
-g2     70     100     
 g3     50     150     
 
 ===================================================
@@ -198,13 +198,13 @@ Query Plan:
   rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
 
   SORT (group by)
-    TABLE SCAN (dba.tb)
+    TABLE SCAN (dba.ta)
 
-  rewritten query: (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp)
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp)
 
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.ta)
 
-  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?, a_?)
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
 
 
 Trace Statistics:
@@ -222,7 +222,7 @@ Trace Statistics:
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
       SUBQUERY (uncorrelated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -233,12 +233,12 @@ Case 5: 3-way UNION ALL, GROUP BY + window function in every branch -> hidden co
 ===================================================
 grp    sum(val)    running_total    
 g1     30     30     
-g2     70     100     
-g3     50     150     
 g1     300     300     
-g2     300     600     
 g2     70     70     
+g2     70     100     
+g2     300     600     
 g3     50     120     
+g3     50     150     
 
 ===================================================
 trace    
@@ -298,6 +298,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

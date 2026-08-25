@@ -15,7 +15,7 @@
  * names for every rewrite.
  *
  * Note: the existing CBRD-27158 coverage merged via PR #3190 (develop) and
- * backported via PR #3296 (release/11.4) only exercises CUBRID's own
+ * backported via PR #3296 (release/11.4) only exercises CUBRIDs own
  * pseudocolumns (rownum / orderby_num() / groupby_num() / inst_num())
  * combined with GROUP BY and set operators. It does not exercise a genuine
  * ANSI window function (OVER clause), which is what this test case adds.
@@ -24,17 +24,36 @@
  * masks digits in the trace output to ?, same convention as
  * CBRD-26571 cbrd_26571.sql and CBRD-26522s cbrd_26522.sql.
  *
+ * Note: Cases 1, 2, 3, 4, 5 add an explicit trailing ORDER BY over the whole
+ * set-operation result (by ordinal position). Without it the row order
+ * across UNION/UNION ALL branches is not guaranteed -- the trace shows the
+ * UNION node can use parallel workers, same non-determinism risk seen in
+ * CBRD-26522 cbrd_26522.sql -- so a byte-for-byte answer comparison could
+ * fail even when every value is correct.
+ *
  * Coverage:
  *   Case 1: GROUP BY + a window function in two UNION ALL branches
- *           -> result values must be correct and the trace's rewritten
+ *           -> result values must be correct and the trace rewritten
  *              query must show unique hidden column names per branch
  *   Case 2: two window functions in the SAME branch (row_number(), rank())
- *           -> each window function hidden column must get its own
- *              unique name, not collide with the other one in the same branch
+ *           -> each window function hidden column must get its own unique
+ *              name, not collide with the other one in the same branch.
+ *              grp is added as a tiebreak inside each OVER clause because
+ *              tb has two groups with an equal sum(val) (g1 and g2, both
+ *              300) -- without a tiebreak, row_number() over such a tie is
+ *              not deterministic by SQL semantics, regardless of this fix
  *   Case 3: the same GROUP BY + window pattern combined via INTERSECT
- *           -> the fix must also cover INTERSECT, not only UNION
+ *           -> the fix must also cover INTERSECT, not only UNION. The
+ *              second branch excludes grp g3 so the two branches actually
+ *              differ -- intersecting a branch with an identical copy of
+ *              itself would match even if both sides were corrupted the
+ *              same way, proving nothing
  *   Case 4: the same GROUP BY + window pattern combined via EXCEPT
- *           -> the fix must also cover EXCEPT, not only UNION
+ *           -> the fix must also cover EXCEPT, not only UNION. Mirrors
+ *              Case 3: the second branch is ta itself with grp g3 excluded,
+ *              so EXCEPT has a real, known row (g3) to remove -- the
+ *              original ta-vs-tb branches shared no matching rows at all,
+ *              so nothing was ever actually being subtracted
  *   Case 5: 3-way UNION ALL, GROUP BY + window function in every branch
  *           -> hidden column uniqueness must hold across 3+ branches, not
  *              just the first two
@@ -58,28 +77,32 @@ set trace on;
 evaluate 'Case 1: GROUP BY + window function in two UNION ALL branches -> correct values and unique hidden column names';
 select /*+ recompile */ grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta group by grp
 union all
-select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from tb group by grp;
+select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from tb group by grp
+order by 1, 2, 3;
 show trace;
 
 
 evaluate 'Case 2: two window functions in the same branch (row_number, rank) -> each must get its own unique hidden column';
-select /*+ recompile */ grp, sum(val) as s, row_number() over (order by sum(val)) as rn, rank() over (order by sum(val) desc) as rk from ta group by grp
+select /*+ recompile */ grp, sum(val) as s, row_number() over (order by sum(val), grp) as rn, rank() over (order by sum(val) desc, grp) as rk from ta group by grp
 union all
-select grp, sum(val) as s, row_number() over (order by sum(val)) as rn, rank() over (order by sum(val) desc) as rk from tb group by grp;
+select grp, sum(val) as s, row_number() over (order by sum(val), grp) as rn, rank() over (order by sum(val) desc, grp) as rk from tb group by grp
+order by 1, 2, 3, 4;
 show trace;
 
 
 evaluate 'Case 3: GROUP BY + window function combined via INTERSECT -> the fix must cover INTERSECT too';
 select /*+ recompile */ grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta group by grp
 intersect
-select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta group by grp;
+select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta where grp <> 'g3' group by grp
+order by 1, 2, 3;
 show trace;
 
 
 evaluate 'Case 4: GROUP BY + window function combined via EXCEPT -> the fix must cover EXCEPT too';
 select /*+ recompile */ grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta group by grp
 except
-select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from tb group by grp;
+select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta where grp <> 'g3' group by grp
+order by 1, 2, 3;
 show trace;
 
 
@@ -88,7 +111,8 @@ select /*+ recompile */ grp, sum(val), sum(sum(val)) over (order by grp) as runn
 union all
 select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from tb group by grp
 union all
-select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta where val > 20 group by grp;
+select grp, sum(val), sum(sum(val)) over (order by grp) as running_total from ta where val > 20 group by grp
+order by 1, 2, 3;
 show trace;
 
 
