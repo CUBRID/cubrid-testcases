@@ -76,6 +76,24 @@
  *           was originally reported against
  *           -> must produce the same values as Case 7s standalone result,
  *              since the second branch never contributes any rows
+ *   Cases 9-16 (tables tf/tg): a PR review round proposed four more
+ *           branch-level-ORDER BY shapes beyond Case 7/8s single window
+ *           function. Each is given as a standalone baseline followed by
+ *           its UNION form, same pairing as Case 7/8, so the set operation
+ *           is checked against a known-correct baseline rather than in
+ *           isolation.
+ *   Case 9/10: the branch ORDER BY key is an expression (ca + 1), not a
+ *           plain column, so it needs its own hidden column distinct from
+ *           the ones the window function and GROUP BY rewrites create
+ *   Case 11/12: two expression ORDER BY keys (ca + 1, ca * 2) in the same
+ *           branch, so the hidden-column counter must advance twice
+ *           without collision
+ *   Case 13/14: the branch ORDER BY is combined with LIMIT, bringing the
+ *           limit-push-down path into the same rewrite
+ *   Case 15/16: two window functions (row_number(), dense_rank()) plus a
+ *           plain-column branch ORDER BY all in the same branch -- the
+ *           most hidden columns generated for a single branch across this
+ *           file
  */
 
 drop table if exists ta, tb;
@@ -161,6 +179,75 @@ select val as out_a, val as out_b, val as out_c from te where val < 0;
 show trace;
 
 drop table if exists te, td;
+
+
+drop table if exists tg, tf;
+create table tf (ca int, cb datetime);
+create table tg (cd int);
+
+insert into tf values (1, '2026-01-01 00:00:00');
+insert into tg values (0), (1), (2), (3);
+commit;
+
+
+evaluate 'Case 9: hidden column from an expression ORDER BY key (ca + 1), standalone';
+select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+from tf group by ca order by ca + 1;
+show trace;
+
+
+evaluate 'Case 10: Case 9 combined via UNION with an always-empty second branch';
+(select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+ from tf group by ca order by ca + 1)
+union
+select cd as out_a, cd as out_b, cd as out_c from tg where cd < 0;
+show trace;
+
+
+evaluate 'Case 11: two expression ORDER BY keys (ca + 1, ca * 2) in the same branch, standalone';
+select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+from tf group by ca order by ca + 1, ca * 2;
+show trace;
+
+
+evaluate 'Case 12: Case 11 combined via UNION with an always-empty second branch';
+(select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+ from tf group by ca order by ca + 1, ca * 2)
+union
+select cd as out_a, cd as out_b, cd as out_c from tg where cd < 0;
+show trace;
+
+
+evaluate 'Case 13: branch-level ORDER BY combined with LIMIT, standalone';
+select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+from tf group by ca order by ca limit 1;
+show trace;
+
+
+evaluate 'Case 14: Case 13 combined via UNION with an always-empty second branch';
+(select /*+ recompile */ count(cb) as out_a, dense_rank() over (order by ca asc) as out_b, count(ca) as out_c
+ from tf group by ca order by ca limit 1)
+union
+select cd as out_a, cd as out_b, cd as out_c from tg where cd < 0;
+show trace;
+
+
+evaluate 'Case 15: branch-level ORDER BY plus two window functions in the same branch, standalone';
+select /*+ recompile */ count(cb) as out_a, row_number() over (order by ca asc) as out_b,
+       dense_rank() over (order by ca desc) as out_c, count(ca) as out_d
+from tf group by ca order by ca;
+show trace;
+
+
+evaluate 'Case 16: Case 15 combined via UNION with an always-empty second branch';
+(select /*+ recompile */ count(cb) as out_a, row_number() over (order by ca asc) as out_b,
+        dense_rank() over (order by ca desc) as out_c, count(ca) as out_d
+ from tf group by ca order by ca)
+union
+select cd as out_a, cd as out_b, cd as out_c, cd as out_d from tg where cd < 0;
+show trace;
+
+drop table if exists tg, tf;
 
 
 drop table if exists ta, tb;

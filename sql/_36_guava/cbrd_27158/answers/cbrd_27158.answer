@@ -456,3 +456,345 @@ Trace Statistics:
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+4
+===================================================
+0
+===================================================
+    
+Case 9: hidden column from an expression ORDER BY key (ca + 1), standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: Case 9 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 11: two expression ORDER BY keys (ca + 1, ca * 2) in the same branch, standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12: Case 11 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?) d? (a_?, a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 13: branch-level ORDER BY combined with LIMIT, standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 14: Case 13 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? ) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 15: branch-level ORDER BY plus two window functions in the same branch, standalone     
+
+===================================================
+out_a    out_b    out_c    out_d    
+1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, row_number() over (order by ?), dense_rank() over (order by ? desc ), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 16: Case 15 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    out_d    
+1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, row_number() over (order by ?), dense_rank() over (order by ? desc ), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_?, d?.a_? from (select a_?, row_number() over (order by ?) as [out_b], dense_rank() over (order by ? desc ) as [out_c], a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd, [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
