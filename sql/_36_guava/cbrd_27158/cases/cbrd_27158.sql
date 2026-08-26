@@ -62,6 +62,20 @@
  *           -> if hidden columns collided internally, ORDER BY could bind to
  *              the wrong column and silently produce the wrong row order.
  *              this is the most direct way "corrupted rows" would surface
+ *   Case 7: the original CBRD-27158 report repro (table td here), standalone
+ *           -- a branch-level trailing ORDER BY on the grouped column itself,
+ *           not just the window functions own OVER clause, with no set
+ *           operation at all yet
+ *           -> baseline: this is a different hidden-column source than
+ *              Cases 1-6 (the branch ORDER BY needs its own hidden column,
+ *              separate from the ones the window function rewrite creates),
+ *              and must produce correct values on its own before Case 8
+ *              adds a set operation around it
+ *   Case 8: the same query as Case 7, now combined via UNION with a second,
+ *           always-empty branch (tables td/te) -- the exact shape the bug
+ *           was originally reported against
+ *           -> must produce the same values as Case 7s standalone result,
+ *              since the second branch never contributes any rows
  */
 
 drop table if exists ta, tb;
@@ -123,5 +137,30 @@ select * from (
   select grp, sum(val) as s, sum(sum(val)) over (order by grp) as running_total from tb group by grp
 ) x order by running_total desc;
 show trace;
+
+
+drop table if exists te, td;
+create table td (id int, ts datetime);
+create table te (val int);
+
+insert into td values (1, '2026-01-01 00:00:00');
+
+evaluate 'Case 7: original report repro, standalone - branch-level ORDER BY on the grouped column, no set operation yet';
+select /*+ recompile */ count(ts) as out_a, dense_rank() over (order by id asc) as out_b, count(id) as out_c
+from td
+group by id
+order by id;
+show trace;
+
+
+evaluate 'Case 8: Case 7 combined via UNION with an always-empty second branch';
+(select /*+ recompile */ count(ts) as out_a, dense_rank() over (order by id asc) as out_b, count(id) as out_c
+from td group by id order by id)
+union
+select val as out_a, val as out_b, val as out_c from te where val < 0;
+show trace;
+
+drop table if exists te, td;
+
 
 drop table if exists ta, tb;

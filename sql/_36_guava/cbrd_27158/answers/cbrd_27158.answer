@@ -365,3 +365,94 @@ Trace Statistics:
 
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 7: original report repro, standalone - branch-level ORDER BY on the grouped column, no set operation yet     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select count([dba.td].ts), [dba.td].id, count([dba.td].id) from [dba.td] [dba.td] group by [dba.td].id)
+
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Case 7 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select count([dba.td].ts), [dba.td].id, count([dba.td].id) from [dba.td] [dba.td] group by [dba.td].id)
+
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.te)
+
+  rewritten query: select  cast([dba.te].val as bigint), [dba.te].val,  cast([dba.te].val as bigint) from [dba.te] [dba.te] where ([dba.te].val< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
