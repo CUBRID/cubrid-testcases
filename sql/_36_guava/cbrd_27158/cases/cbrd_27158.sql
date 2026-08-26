@@ -247,7 +247,7 @@ union
 select cd as out_a, cd as out_b, cd as out_c, cd as out_d from tg where cd < 0;
 show trace;
 
-set trace on;
+set trace off;
 
 drop table if exists tg, tf;
 
