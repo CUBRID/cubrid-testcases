@@ -1,0 +1,250 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case A: constant on tb ON clause, join term on tc ON clause -- different ON clauses     
+
+===================================================
+a    b    c    
+1     X     1     
+1     X     2     
+2     X     1     
+2     X     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case B: constant and join term both on tc ON clause -- same result set as A, different position     
+
+===================================================
+a    b    c    
+1     X     1     
+1     X     2     
+2     X     1     
+2     X     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case C: Case B wrapped as an inline view with an outer WHERE 1=1     
+
+===================================================
+a    b    c    
+1     X     1     
+1     X     2     
+2     X     1     
+2     X     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b)
+
+  TABLE SCAN (z)
+
+  rewritten query: select z.a, z.b, z.c from (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b) z (a, b, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case D: same as C with the outer WHERE 1=1 removed     
+
+===================================================
+a    b    c    
+1     X     1     
+1     X     2     
+2     X     1     
+2     X     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b)
+
+  TABLE SCAN (z)
+
+  rewritten query: select z.a, z.b, z.c from (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b) z (a, b, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case E: same as D with an outer JOIN ... ON in place of an outer WHERE     
+
+===================================================
+a    b    c    a    x    
+1     X     1     1     1     
+1     X     2     1     1     
+2     X     1     2     2     
+2     X     2     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (z)
+    INDEX SCAN (w.pk_ta_a) (key range: w.a=z.a)
+
+  rewritten query: select z.a, z.b, z.c, w.a, w.x from (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b) z (a, b, c), [dba.ta] w where w.a=z.a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case F: same as C but the inline view itself uses a comma join and a WHERE clause instead of ON clauses     
+
+===================================================
+a    b    c    
+1     X     1     
+1     X     2     
+2     X     1     
+2     X     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.tb)
+        INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , covered: true)
+
+  rewritten query: (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b)
+
+  TABLE SCAN (z)
+
+  rewritten query: select z.a, z.b, z.c from (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.ta].a=[dba.tb].a and [dba.tc].b= ?:?  and [dba.tb].b= ?:?  and [dba.tb].b=[dba.tc].b) z (a, b, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
