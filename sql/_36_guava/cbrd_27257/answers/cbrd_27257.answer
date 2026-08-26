@@ -1,0 +1,96 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1 (C1): LEFT OUTER, ON OR at the 64-node size (<=100 threshold) -- padding must survive regardless of the fix     
+
+===================================================
+id    id    
+1     1     
+2     null     
+3     null     
+
+===================================================
+    
+Case 2 (C2): LEFT OUTER, ON OR at the 125-node size (>100 threshold) -- the reports primary repro, padding must survive after the fix     
+
+===================================================
+id    id    
+1     1     
+2     null     
+3     null     
+
+===================================================
+    
+Case 3 (C3): LEFT OUTER, ON OR at the 256-node size (4 branches x 4 leaves) -- same padding expected at a different OR-tree size     
+
+===================================================
+id    id    
+1     1     
+2     null     
+3     null     
+
+===================================================
+    
+Case 4 (C4): the Case 2 condition as RIGHT OUTER JOIN, checked via COUNT(*) as the report specified     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+    
+Case 5 (C5): LEFT OUTER, >100 OR with no disjunct matching qs row at all -- every p row must come back NULL-padded     
+
+===================================================
+id    id    
+1     null     
+2     null     
+3     null     
+
+===================================================
+    
+Case 6 (C6): the Case 2 condition as INNER JOIN -- control, must return only the one real match either way     
+
+===================================================
+id    id    
+1     1     
+
+===================================================
+    
+Case 7 (C7): the same large OR as a genuine WHERE-level filter after a plain LEFT OUTER JOIN -- control, unaffected by the fix     
+
+===================================================
+id    id    
+1     1     
+
+===================================================
+    
+Case 8 (C8): the same large OR as a single-table WHERE filter, no join at all -- control, unaffected by the fix     
+
+===================================================
+id    
+1     
+
+===================================================
+    
+Case 9 (C9): the Case 2 condition, OUTER JOIN target wrapped as an inline view instead of a plain table     
+
+===================================================
+id    id    
+1     1     
+2     null     
+3     null     
+
+===================================================
+0
