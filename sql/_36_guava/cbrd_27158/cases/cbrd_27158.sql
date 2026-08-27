@@ -94,6 +94,22 @@
  *           plain-column branch ORDER BY all in the same branch -- the
  *           most hidden columns generated for a single branch across this
  *           file
+ *   Cases 17-19 (tables tp/tq): every OVER clause above is ORDER BY only --
+ *           none use PARTITION BY. A PARTITION BY key becomes its own
+ *           extra hidden column in the derived-table rewrite (separate
+ *           from the ORDER BY keys hidden column), so it widens the
+ *           hidden-column-uniqueness surface this file checks.
+ *   Case 17: PARTITION BY window (running sum per cat, ordered by grp) in
+ *           two UNION ALL branches
+ *           -> the partition-key hidden column must stay unique per branch
+ *   Case 18: two PARTITION BY window functions in the same branch
+ *           (row_number(), rank(), both partitioned by cat)
+ *           -> each partitioned window needs its own unique hidden
+ *              columns, not just each plain ORDER BY window as in Case 2
+ *   Case 19: the Case 17 pattern combined via INTERSECT, second branch
+ *           filtered to cat = A so the two branches genuinely differ
+ *           -> partition-key hidden columns must stay unique across
+ *              set-op branches too, not only within UNION ALL
  */
 
 drop table if exists ta, tb;
@@ -247,9 +263,53 @@ union
 select cd as out_a, cd as out_b, cd as out_c, cd as out_d from tg where cd < 0;
 show trace;
 
+drop table if exists tq, tp;
+create table tp (id int primary key, cat varchar(10), grp varchar(10), val int);
+create table tq (id int primary key, cat varchar(10), grp varchar(10), val int);
+
+insert into tp values (1,'A','g1',10), (2,'A','g1',20), (3,'A','g2',30),
+                      (4,'B','g1',100), (5,'B','g2',200), (6,'B','g2',50);
+insert into tq values (1,'A','g1',5), (2,'B','g2',7);
+commit;
+
+
+evaluate 'Case 17: PARTITION BY window in two UNION ALL branches -- partition-key hidden column stays unique per branch';
+select /*+ recompile */ cat, grp, sum(val), sum(sum(val)) over (partition by cat order by grp) as rt
+from tp group by cat, grp
+union all
+select cat, grp, sum(val), sum(sum(val)) over (partition by cat order by grp) as rt
+from tq group by cat, grp
+order by 1, 2, 3, 4;
+show trace;
+
+
+evaluate 'Case 18: two PARTITION BY window functions in the same branch (row_number, rank) -- each partition window gets its own unique hidden columns';
+select /*+ recompile */ cat, grp, sum(val) as s,
+       row_number() over (partition by cat order by sum(val), grp) as rn,
+       rank() over (partition by cat order by sum(val) desc, grp) as rk
+from tp group by cat, grp
+union all
+select cat, grp, sum(val) as s,
+       row_number() over (partition by cat order by sum(val), grp) as rn,
+       rank() over (partition by cat order by sum(val) desc, grp) as rk
+from tq group by cat, grp
+order by 1, 2, 3, 4, 5;
+show trace;
+
+
+evaluate 'Case 19: PARTITION BY window combined via INTERSECT -- partition-key hidden columns unique across set-op branches';
+select /*+ recompile */ cat, grp, sum(val), sum(sum(val)) over (partition by cat order by grp) as rt
+from tp group by cat, grp
+intersect
+select cat, grp, sum(val), sum(sum(val)) over (partition by cat order by grp) as rt
+from tp where cat = 'A' group by cat, grp
+order by 1, 2, 3;
+show trace;
+
 set trace off;
 
-drop table if exists tg, tf;
+drop table if exists tq, tp;
 
+drop table if exists tg, tf;
 
 drop table if exists ta, tb;
