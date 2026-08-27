@@ -15,6 +15,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 5
 ===================================================
 3
@@ -24,6 +26,8 @@
 4
 ===================================================
 3
+===================================================
+5
 ===================================================
 0
 ===================================================
@@ -412,10 +416,41 @@ Trace Statistics:
 
 ===================================================
     
-Case 11: DML immediately before the UNION count, then ROLLBACK -> optimized result must reflect the rolled-back (original) data     
+Case 11-1: uncommitted DML must be visible to the optimized count     
 
 ===================================================
 1
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select 'tb', count(*) from [dba.tb] [dba.tb]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 11-2: after ROLLBACK -> the optimized count must return to the original data     
+
 ===================================================
 0
 ===================================================
@@ -770,7 +805,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 16: unique index but no primary key -> records whether such a branch is optimized     
+Case 16-1: unique index but no primary key -> records whether such a branch is optimized     
 
 ===================================================
 'ta'    count(*)    
@@ -799,5 +834,117 @@ Trace Statistics:
       SCAN (table: dba.tf), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: idx_tf_id)
      
 
+===================================================
+    
+Case 16-2: unique-index-only table containing a NULL key -> count(*) must include the NULL row     
+
+===================================================
+1
+===================================================
+0
+===================================================
+'ta'    count(*)    
+ta     5     
+tf     4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tf)
+
+  rewritten query: select 'tf', count(*) from [dba.tf] [dba.tf]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tf), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: idx_tf_id)
+     
+
+===================================================
+    
+Case 17: partitioned PK table as the second branch of a UNION ALL     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tg     5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select 'ta', count(*) from [dba.ta] [dba.ta]
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select 'tg', count(*) from [dba.tg] [dba.tg]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tg_id)
+     
+
+===================================================
+    
+Case 18-1: first execution, no recompile hint -> the plan gets cached     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+    
+Case 18-2: identical statement text -> served from the plan cache, both branches must stay optimized     
+
+===================================================
+'ta'    count(*)    
+ta     5     
+tb     3     
+
+===================================================
+trace    
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_ta_id)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_tb_id)
+     
+
+===================================================
+0
+===================================================
+0
 ===================================================
 0

@@ -27,7 +27,7 @@
  *
  * Result-order note: a plain UNION (dedup) does not guarantee row order, so
  * any case comparing a UNION (not UNION ALL) result against a fixed .answer
- * wraps the UNION in an outer query with an explicit order by (see Case 10)
+ * wraps the UNION in an outer query with an explicit order by (see Case 3)
  * to keep the comparison deterministic.
  *
  * Coverage:
@@ -60,10 +60,17 @@
  *   Case 10: UNION ALL wrapped inside a subquery (not the top-level statement)
  *           -> the optimization must still apply per branch when the set operation
  *              is not the outermost statement
- *   Case 11: DML immediately before the UNION count, then ROLLBACK (not COMMIT)
- *           -> symmetric counterpart to Case 8: the re-acquired MVCC snapshot must
- *              reflect that the uncommitted change was rolled back, not the
- *              uncommitted (or stale) value
+ *   Case 11: DML immediately before the UNION count, then ROLLBACK (not COMMIT) -
+ *           symmetric counterpart to Case 8, split into two checks because the
+ *           fix re-reads global B-tree stats (a committed-data aggregate) and
+ *           then applies a correction for the current transactions own
+ *           uncommitted changes - checking only after rollback (as a single
+ *           case) never exercises that correction step, since by then the
+ *           stats and the actual data already agree again
+ *   Case 11-1: query issued before the ROLLBACK, while the insert is still
+ *           pending -> the optimized count must reflect that pending insert
+ *   Case 11-2: query issued after the ROLLBACK
+ *           -> the optimized count must return to the original data
  *   Case 12: transaction isolation level gating (CBRD-26705)
  *           -> REPEATABLE READ / SERIALIZABLE must turn the optimization off
  *              (heap scan), READ COMMITTED must turn it back on
@@ -76,12 +83,36 @@
  *           -> a non-optimizable branch placed FIRST must not block optimization
  *              of a later PK branch, and the fix must not depend on a literal
  *              being present in the select list
- *   Case 16: unique index but no primary key
+ *   Case 16: unique index but no primary key, split into two checks
+ *   Case 16-1: no NULL keys present in the table
  *           -> records whether a unique-index-only branch is optimized the
  *              same way as a primary-key branch
+ *   Case 16-2: same table with one NULL-key row inserted
+ *           -> count(*) must still include the NULL row when the count is
+ *              answered from index statistics rather than a heap scan
+ *   Case 17: a partitioned PK table (2 range partitions) as the second
+ *           branch of a UNION ALL
+ *           -> the fix loops per aggregate over every B-tree it has already
+ *              read stats for - every other branch in this file is a
+ *              single unpartitioned table, so that loop always runs exactly
+ *              once. A partitioned table is the practical way to force it
+ *              to visit more than one B-tree for a single branch, and
+ *              CBRD-26705s own regression history had 5 of its 8 cases on
+ *              the partitioned-table path - this closes a real gap, not a
+ *              hypothetical one
+ *   Case 18: plan-cache reuse across transactions - every other case in
+ *           this file uses recompile, so every execution builds a fresh
+ *           plan. The state this fix touches (count_state, snapshot) is
+ *           attached to the transaction, not the plan, so reusing a cached
+ *           plan across two separate (autocommit) transactions is a
+ *           distinct code path that recompile always skips
+ *   Case 18-1: first execution, no hint -> populates the plan cache
+ *   Case 18-2: the exact same statement text again
+ *           -> served from the cached plan - both branches must still be
+ *              optimized, not just the one from Case 18-1s own transaction
  */
 
-drop table if exists ta, tb, tc, td, te, tf;
+drop table if exists ta, tb, tc, td, te, tf, tg;
 create table ta (id int primary key, cola varchar(20));
 create table tb (id int primary key, colb int);
 create table tc (id int primary key);
@@ -89,12 +120,17 @@ create table td (id int, cold varchar(20));
 create table te (id int primary key);
 create table tf (id int, colf varchar(20));
 create unique index idx_tf_id on tf(id);
+create table tg (id int primary key, colg int)
+partition by range (id) (
+  partition p0 values less than (100),
+  partition p1 values less than (200));
 
 insert into ta values (1,'a'), (2,'b'), (3,'c'), (4,'d'), (5,'e');
 insert into tb values (1,10), (2,20), (3,30);
 insert into tc values (1), (2);
 insert into td values (1,'x'), (2,'y'), (3,'z'), (4,'w');
 insert into tf values (1,'a'), (2,'b'), (3,'c');
+insert into tg values (1,1), (2,2), (101,101), (102,102), (103,103);
 commit;
 
 set transaction isolation level read committed;
@@ -161,9 +197,14 @@ select * from (select /*+ recompile */ 'ta', count(*) from ta union all select '
 show trace;
 
 
-evaluate 'Case 11: DML immediately before the UNION count, then ROLLBACK -> optimized result must reflect the rolled-back (original) data';
+evaluate 'Case 11-1: uncommitted DML must be visible to the optimized count';
 autocommit off;
 insert into tb values (200, 200);
+select /*+ recompile */ 'ta', count(*) from ta union all select 'tb', count(*) from tb;
+show trace;
+
+
+evaluate 'Case 11-2: after ROLLBACK -> the optimized count must return to the original data';
 rollback;
 select /*+ recompile */ 'ta', count(*) from ta union all select 'tb', count(*) from tb;
 show trace;
@@ -223,9 +264,33 @@ select /*+ recompile */ count(*) from ta union all select count(*) from tb order
 show trace;
 
 
-evaluate 'Case 16: unique index but no primary key -> records whether such a branch is optimized';
+evaluate 'Case 16-1: unique index but no primary key -> records whether such a branch is optimized';
 select /*+ recompile */ 'ta', count(*) from ta union all select 'tf', count(*) from tf;
 show trace;
 
 
-drop table if exists ta, tb, tc, td, te, tf;
+evaluate 'Case 16-2: unique-index-only table containing a NULL key -> count(*) must include the NULL row';
+insert into tf values (null, 'd');
+commit;
+select /*+ recompile */ 'ta', count(*) from ta union all select 'tf', count(*) from tf;
+show trace;
+
+
+evaluate 'Case 17: partitioned PK table as the second branch of a UNION ALL';
+select /*+ recompile */ 'ta', count(*) from ta union all select 'tg', count(*) from tg;
+show trace;
+
+
+evaluate 'Case 18-1: first execution, no recompile hint -> the plan gets cached';
+select 'ta', count(*) from ta union all select 'tb', count(*) from tb;
+show trace;
+
+
+evaluate 'Case 18-2: identical statement text -> served from the plan cache, both branches must stay optimized';
+select 'ta', count(*) from ta union all select 'tb', count(*) from tb;
+show trace;
+
+set transaction isolation level read committed;
+set trace off;
+
+drop table if exists ta, tb, tc, td, te, tf, tg;
