@@ -26,7 +26,7 @@ create public synonym s3 comment;
 create synonym s1 comment 'synonym of db_class';
 create private synonym s2 comment 'private synonym of db_class';
 create public synonym s3 comment 'public synonym of db_class';
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- incorrect use of to instead of for
 drop synonym if exists s1;
@@ -36,7 +36,7 @@ drop synonym if exists s3;
 create synonym s1 to db_class;
 create private synonym s2 to db_class;
 create public synonym s3 to db_class;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- without comment string
 drop synonym if exists s1;
@@ -46,7 +46,7 @@ drop synonym if exists s3;
 create synonym s1 for db_class comment;
 create private synonym s2 for db_class comment;
 create public synonym s3 for db_class comment;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- with dot(.)
 --err case
@@ -59,7 +59,7 @@ create private synonym `u1.s2` for db_class;
 create public synonym [u1.s3] for db_class;
 create public synonym "u1.s3" for db_class;
 create public synonym `u1.s3` for db_class;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- with comment
 create synonym s1 for db_class comment 'synonym of db_class';
@@ -73,7 +73,7 @@ create private synonym u1.s2 for u1.t2 comment 'private synonym of db_class';
 -- err case : public synonym is not supported.
 create public synonym s3 for db_class comment 'public synonym of db_class';
 create public synonym u1.s3 for u1.t3 comment 'public synonym of db_class';
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;
@@ -90,7 +90,7 @@ create public synonym u1.s3 for db_class;
 create synonym s1 for u1.db_class;
 create private synonym s2 for u1.db_class;
 create public synonym s3 for u1.db_class;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- target does not exist
 drop synonym if exists s1;
@@ -107,7 +107,7 @@ create private synonym u1.s2 for u1.t1;
 create public synonym s3 for db_null;
 create public synonym u1.s3 for u1.t1;
 
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;
@@ -127,7 +127,7 @@ create private synonym s2 for db_class comment 'synonym of db_index';
 create public synonym s3 for db_class;
 create public synonym s3 for db_class comment 'synonym of db_index';
 
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;
@@ -139,13 +139,13 @@ create synonym s1 for db_class comment 'synonym of db_class';
 create private synonym s2 for db_class comment 'private synonym of db_class';
 -- err case : public synonym is not supported.
 create public synonym s3 for db_class comment 'public synonym of db_class';
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 create or replace synonym s1 for db_index;
 create or replace private synonym s2 for db_index;
 -- err case : public synonym is not supported.
 create or replace public synonym s3 for db_index;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 create user u1;
 drop table if exists u1.t1;
@@ -158,13 +158,13 @@ create synonym u1.s1 for u1.t1 comment 'synonym of db_class';
 create private synonym u1.s2 for u1.t1 comment 'private synonym of db_class';
 -- err case : public synonym is not supported.
 create public synonym u1.s3 for u1.t1 comment 'public synonym of db_class';
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 create or replace synonym u1.s1 for u1.t2;
 create or replace private synonym u1.s2 for u1.t2;
 -- err case : public synonym is not supported.
 create or replace public synonym u1.s3 for u1.t2;
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;

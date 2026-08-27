@@ -46,7 +46,7 @@ EXCEPTION
 END;
 
 -- check onwer & source
-SELECT unique_name, sp_name, owner.name FROM _db_stored_procedure WHERE is_system_generated = 0 order by owner.name;
+SELECT CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name) as unique_name, sp_name, owner.name FROM _db_stored_procedure WHERE is_system_generated = 0 order by owner.name;
 SELECT 'Func_FIBONACCI' as "name", owner.name, scode, substr(scode,0,6) FROM _db_stored_procedure_code order by owner.name;
 
 -- return: 2

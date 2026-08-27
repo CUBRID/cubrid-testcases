@@ -22,7 +22,7 @@ insert into s_test1 values(a,b,c,e) ( a_serial.next_value, b_serial.next_value, 
 insert into s_test1(a,b,c,d,e) values ( a_serial.next_value, b_serial.next_value, c_serial.next_value,bit_to_blob(X'aaa'),char_to_clob('bbb'));
 
 select a,b,c,blob_to_bit(d),clob_to_char(e) from s_test1 order by a;
-select '_db_serial' TABLE_NAME, unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name='s_test1' order by 1,2,3,4,5,6,7,8,9,10,11;
+select '_db_serial' TABLE_NAME, CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name='s_test1' order by 1,2,3,4,5,6,7,8,9,10,11;
 
 drop serial if exists a_serial;
 drop serial if exists b_serial;

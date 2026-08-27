@@ -15,7 +15,7 @@ end
 comment 'comment test';
 
 --select comment_test() as "col" from dual;
-select unique_name, sp_name, owner.name, comment from _db_stored_procedure where sp_name='comment_test';
+select CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name) as unique_name, sp_name, owner.name, comment from _db_stored_procedure where sp_name='comment_test';
 
 drop procedure comment_test;
 

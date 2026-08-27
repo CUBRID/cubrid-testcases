@@ -2,7 +2,7 @@
 -- verified for CBRD-25077
 
 -- check the default procedure
-select sp_name, pkg_name, is_system_generated from _db_stored_procedure order by unique_name;
+select sp_name, pkg_name, is_system_generated from _db_stored_procedure order by CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 
 -- drop test
 -- ERROR: Dropping system generated stored procedure is not allowed.
@@ -30,7 +30,7 @@ begin
 end;
 
 call test_proc1();
-select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by unique_name;
+select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 -- no result, because test_proc1 does not need parameter
 select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of.unique_name;
 
@@ -41,7 +41,7 @@ begin
 end;
 
 call test_proc2(99);
-select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by unique_name;
+select sp_name, pkg_name, is_system_generated from _db_stored_procedure where is_system_generated=0 order by CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of.unique_name;
 
 
@@ -53,7 +53,7 @@ end
 comment 'procedure comment';
 
 call test_proc3();
-select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by unique_name;
+select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of.unique_name, arg_name, default_value, is_optional, comment;
 
 
@@ -62,7 +62,7 @@ drop procedure test_proc2;
 drop procedure test_proc3;
 
 -- check to drop
-select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by unique_name;
+select sp_name, pkg_name, is_system_generated, comment from _db_stored_procedure where is_system_generated=0 order by CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 select * from _db_stored_procedure_args where is_system_generated=0 order by sp_of.unique_name;
 
 

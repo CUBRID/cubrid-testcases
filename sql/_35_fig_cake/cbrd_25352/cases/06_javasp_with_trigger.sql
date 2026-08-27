@@ -10,7 +10,7 @@ create trigger test_trigger1
   before insert on name_list
   execute call add_user('test_user') on class _db_user;
 
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 evaluate 'insert data & check result';
 insert into name_list(name) values('test_user');
@@ -27,7 +27,7 @@ insert into name_list2(name) values('test_user2');
 select name from db_user order by name;
 
 evaluate 'trigger list';
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 
 evaluate 'create test_trigger3: execute call dba.hello()';
@@ -35,7 +35,7 @@ create trigger test_trigger3
   before insert on name_list
   execute call dba.hello();
 
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 
 evaluate 'create test_trigger4: execute call public.hello()';
@@ -43,7 +43,7 @@ create trigger test_trigger4
   before insert on name_list
   execute call public.HeLlo();
 
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 
 evaluate 'create tbl with method m1()';
@@ -56,7 +56,7 @@ create trigger test_trigger5
   before insert on name_list
   execute call m1(class Tbl);
 
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 
 evaluate 'create test_trigger6: execute call m1()';
@@ -64,7 +64,7 @@ create trigger test_trigger6
   before insert on name_list
   execute call m1() on class tbl;
 
-select unique_name, owner.name, name, action_definition  from _db_trigger order by unique_name;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, owner.name, name, action_definition  from _db_trigger order by CONCAT (LOWER (owner.name), '.', name);
 
 
 evaluate 'Test done';

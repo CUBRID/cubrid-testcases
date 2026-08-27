@@ -65,7 +65,7 @@ END;
 call t_5();
 select 'ddl_test create view', a.* from view_ddl_test a ;
 select 'ddl_test create index', index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, index_type, deduplicate_key_level, comment from db_index where index_name ='ix01_ddl_test_as' ;
-select 'ddl_test create serial', unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name='seq_test_plcsql';
+select 'ddl_test create serial', CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name='seq_test_plcsql';
 select 'ddl_test create server', link_name, host, port, db_name, user_name, properties, owner, comment from db_server where link_name='srv1';
 select 'ddl_test create synonym', synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 'synonym_ddl_test';
 
@@ -82,7 +82,7 @@ END;
 call t_6();
 select 'ddl_test drop table', class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name in ('ddl_test', 'ddl_test_like', 'ddl_test_as');
 select 'ddl_test drop view', class_name, owner_name, class_type, is_system_class, tde_algorithm, statistics_strategy, partitioned, is_reuse_oid_class, collation, comment from db_class where class_name = 'view_ddl_test';
-select 'ddl_test drop serial', unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name = 'seq_test_plcsql';
+select 'ddl_test drop serial', CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial where name = 'seq_test_plcsql';
 select 'ddl_test drop server', link_name, host, port, db_name, user_name, properties, owner, comment from db_server where link_name='srv1';
 select 'ddl_test drop synonym', synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym where synonym_name = 'synonym_ddl_test';
 

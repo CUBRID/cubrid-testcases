@@ -16,7 +16,7 @@ set system parameters 'alter_table_change_type_strict=no';
 drop table if exists foo;
 create table foo(a int auto_increment, b char(20), c smallint default 22)auto_increment=100;
 
-select unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial order by 1;
 drop serial foo_ai_a;
 
 drop table if exists foo;

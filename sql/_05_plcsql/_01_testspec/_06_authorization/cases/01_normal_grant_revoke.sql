@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION sp1() return varchar as begin return 'hello'; end;
 CREATE OR REPLACE PROCEDURE sp2() as begin dbms_output.put_line('call sp2'); end;
 CREATE USER u1;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth where grantee.name = 'U1';
-SELECT unique_name, sp_name, sp_type, return_type, arg_count, target_method, owner.name FROM _db_stored_procedure where sp_name like 'sp%' ORDER BY unique_name;
+SELECT CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name) as unique_name, sp_name, sp_type, return_type, arg_count, target_method, owner.name FROM _db_stored_procedure where sp_name like 'sp%' ORDER BY CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name);
 
 call login('u1','') on class db_user;
 SELECT dba.sp1();

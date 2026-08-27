@@ -54,7 +54,7 @@ where sp.unique_name = 'dba.sp_comment_test'
   and sp.owner.name = code.owner.name;
 
 evaluate 'Case 2-2: comment is stored in _db_stored_procedure.comment';
-select comment from _db_stored_procedure where unique_name = 'dba.sp_comment_test';
+select comment from _db_stored_procedure where CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name) = 'dba.sp_comment_test';
 
 evaluate 'Case 3: owner and COMMENT combined suppression in scode';
 select case when locate('dba.sp_combined_test', code.scode) = 0
@@ -67,7 +67,7 @@ where sp.unique_name = 'dba.sp_combined_test'
 
 evaluate 'Case 4: ALTER PROCEDURE OWNER TO must succeed without internal error';
 alter procedure dba.sp_owner_test owner to public;
-select owner.name from _db_stored_procedure where unique_name = 'public.sp_owner_test';
+select owner.name from _db_stored_procedure where CONCAT (LOWER (owner.name), '.', CASE WHEN pkg_name IS NULL THEN '' ELSE CONCAT (pkg_name, '.') END, sp_name) = 'public.sp_owner_test';
 
 evaluate 'Case 5-1: SP with leading spaces before CREATE executes correctly';
     create or replace procedure sp_leading_space as

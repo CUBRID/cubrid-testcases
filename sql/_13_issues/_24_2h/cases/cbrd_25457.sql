@@ -14,13 +14,13 @@ alter table tbl1 modify col1 int default 0;
 alter table tbl1 modify col1 int auto_increment;
 show create table tbl1;
 select attr_name, owner_name, data_type, default_value, comment from db_attribute where class_name = 'tbl1';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl1';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl1';
 
 --Then, modify it to the default value of null.
 alter table tbl1 modify col1 int default null;
 show create table tbl1;
 select attr_name, owner_name, data_type, default_value, comment from db_attribute where class_name = 'tbl1';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl1';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl1';
 
 -- 2. In the case of a column without an attribute using the alter statement, modify it to auto_increment and then modify the default value to 0 using the alter statement.
 CREATE TABLE tbl2 (col1 INTEGER);
@@ -29,7 +29,7 @@ alter table tbl2 modify col1 int auto_increment;
 alter table tbl2 modify col1 int default 0;
 show create table tbl2;
 select attr_name, owner_name, data_type, default_value, comment from db_attribute where class_name = 'tbl2';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl2';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl2';
 
 -- Add column comment using alter statement.
 alter table tbl2 modify col1 int comment '2) test2';
@@ -42,7 +42,7 @@ CREATE TABLE tbl3 (col1 INTEGER AUTO_INCREMENT(1,1) NOT NULL);
 alter table tbl3 modify col1 int default 0;
 show create table tbl3;
 select attr_name, owner_name, data_type, default_value from db_attribute where class_name = 'tbl3';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl3';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl3';
 
 -- 4. Modify the auto_increment property on a column with the default property using the alter statement.
 CREATE TABLE tbl4 (col1 INTEGER DEFAULT 0);
@@ -50,7 +50,7 @@ CREATE TABLE tbl4 (col1 INTEGER DEFAULT 0);
 alter table tbl4 modify col1 int auto_increment;
 show create table tbl4;
 select attr_name, owner_name, data_type, default_value from db_attribute where class_name = 'tbl4';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl4';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl4';
 
 -- Modify column type using alter statement.
 ALTER TABLE tbl4 MODIFY col1 VARCHAR (200);
@@ -61,7 +61,7 @@ CREATE TABLE tbl5 (col1 INTEGER AUTO_INCREMENT(1,1));
 ALTER TABLE tbl5 ALTER COLUMN col1 SET default 0;
 show create table tbl5;
 select attr_name, owner_name, data_type, default_value from db_attribute where class_name = 'tbl5';
-select unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl5';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val from _db_serial where class_name = 'tbl5';
  
 -- 6. Using the alter statement, modify the default 0 attribute or default null in a column with the default attribute using the alter column statementi.
 CREATE TABLE tbl6 (col1 INTEGER DEFAULT 2);

@@ -5,7 +5,7 @@
 
 call login ('public') on class db_user;
 --err case
-select unique_name, name, owner, is_public, target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 --success case
 select synonym_name, synonym_owner_name, is_public_synonym, target_name, target_owner_name, comment from db_synonym order by 1;
 

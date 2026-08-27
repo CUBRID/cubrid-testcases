@@ -36,7 +36,7 @@ select name from _db_serial where name like 't_______10t_______20%';
 
 alter table t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t 
        owner to 	u_______10u_______20u_______30z;
-select unique_name from _db_serial where name like 't_______10t_______20%';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial where name like 't_______10t_______20%';
 
 drop table u_______10u_______20u_______30z.t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t;
 
@@ -67,7 +67,7 @@ select name from _db_serial where name like 't_______10t_______20%';
 
 alter table t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t 
             owner to 	u_______10u_______20u_______30z;
-select unique_name from _db_serial where name like 't_______10t_______20%';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial where name like 't_______10t_______20%';
 
 drop table u_______10u_______20u_______30z.t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t;
 select name from _db_serial where name like 't_______10t_______20%';

@@ -5,13 +5,13 @@
 create user test_user1;
 
 create serial cubrid_seq;
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 alter serial cubrid_seq OWNER TO test_user1;
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 alter serial test_user1.cubrid_seq OWNER TO dba comment '1) owner to comment';
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 /* semantic check error */
 alter serial cubrid_seq;
@@ -46,14 +46,14 @@ create user test_user1 groups dba;
 create user test_user2;
 
 create serial cubrid_seq;
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 alter serial cubrid_seq OWNER TO test_user1;
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 CALL login ('test_user1', '') ON CLASS db_user;
 alter serial cubrid_seq OWNER TO test_user2;
-select unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, [comment] from _db_serial where name = 'cubrid_seq';
 
 CALL login ('test_user2', '') ON CLASS db_user;
 alter serial cubrid_seq OWNER TO test_user1;
@@ -73,12 +73,12 @@ create serial test_user1.cubrid_seq cache 5;
 SELECT test_user1.cubrid_seq.nextval from dual;
 
 alter serial test_user1.cubrid_seq OWNER TO test_user2;
-SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM _db_serial WHERE name = 'cubrid_seq';
+SELECT CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, current_val, cached_num, [comment] FROM _db_serial WHERE name = 'cubrid_seq';
 
 SELECT test_user2.cubrid_seq.nextval from dual;
 
 alter serial test_user2.cubrid_seq comment 'test comment';
-SELECT unique_name, name, owner.name, current_val, cached_num, [comment] FROM _db_serial WHERE name = 'cubrid_seq';
+SELECT CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name, current_val, cached_num, [comment] FROM _db_serial WHERE name = 'cubrid_seq';
 
 SELECT test_user2.cubrid_seq.nextval from dual;
 
@@ -126,10 +126,10 @@ create table tbl1 (col1 int auto_increment, col2 varchar);
 
 alter serial tbl1_ai_col1 owner to test_user1;
 
-select unique_name, name, owner.name from _db_serial where name = 'tbl1_ai_col1';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name from _db_serial where name = 'tbl1_ai_col1';
 
 alter table tbl1 owner to test_user1;
-select unique_name, name, owner.name from _db_serial where name = 'tbl1_ai_col1';
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner.name from _db_serial where name = 'tbl1_ai_col1';
 
 /* reset */
 drop table test_user1.tbl1;

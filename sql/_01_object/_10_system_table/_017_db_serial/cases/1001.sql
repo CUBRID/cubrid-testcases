@@ -8,7 +8,7 @@ insert into test1 values ( a_serial.next_value, b_serial.next_value, c_serial.ne
 insert into test1 values ( a_serial.next_value, b_serial.next_value, c_serial.next_value);
 insert into test1 values ( a_serial.next_value, b_serial.next_value, c_serial.next_value);
 
-select unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, current_val, increment_val, max_val, min_val, start_val, cyclic, started, class_name, attr_name, cached_num, comment from _db_serial;
 drop class test1;
 drop serial a_serial;
 drop serial b_serial;

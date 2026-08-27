@@ -32,7 +32,7 @@ create table t_______10t_______20t_______30t_______40t_______50t_______60t______
 );
 
 /* length = 200c(table) + 46c(column) + 3(user:dba) + 5(extras) = 254c */
-select length (unique_name), unique_name from _db_serial;
+select length (CONCAT (LOWER (owner.name), '.', name)) as "char_length(unique_name)", CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial;
 
 /* length of the user name: 4 */
 create user u__4;
@@ -40,7 +40,7 @@ create user u__4;
 alter table t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200 owner to u__4;
 
 /* length = 200c(table) + 46c(column) + 4c(user: u__4) + 5c(extras) = 255c */
-select length (unique_name), unique_name from _db_serial;
+select length (CONCAT (LOWER (owner.name), '.', name)) as "char_length(unique_name)", CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial;
 
 alter table u__4.t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200 modify column c_______10c_______20c_______30c_______40c____6 bigint auto_increment;
 
@@ -57,7 +57,7 @@ create table t_______10t_______20t_______30t_______40t_______50t_______60t______
 );
 
 /* length = 222c(table) + 254c(column) + 3(user:dba) + 5(extras) = 484c */
-select length (unique_name), unique_name from _db_serial;
+select length (CONCAT (LOWER (owner.name), '.', name)) as "char_length(unique_name)", CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial;
 
 /* length of the user name: 31 */
 create user u_______10u_______20u_______30u;
@@ -65,7 +65,7 @@ create user u_______10u_______20u_______30u;
 alter table t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200t______210t______220t2 owner to u_______10u_______20u_______30u;
 
 /* length = 222c(table) + 254c(column) + 31c(user) + 5c(extras) = 512c */
-select length (unique_name), unique_name from _db_serial;
+select length (CONCAT (LOWER (owner.name), '.', name)) as "char_length(unique_name)", CONCAT (LOWER (owner.name), '.', name) as unique_name from _db_serial;
 
 alter table u_______10u_______20u_______30u.t_______10t_______20t_______30t_______40t_______50t_______60t_______70t_______80t_______90t______100t______110t______120t______130t______140t______150t______160t______170t______180t______190t______200t______210t______220t2 modify column c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c__4 bigint auto_increment;
 
