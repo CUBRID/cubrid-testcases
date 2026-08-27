@@ -10,11 +10,9 @@ _db_synonym     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     nu
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
-unique_name     VARCHAR(255)     NO     PRI     null          
-name     VARCHAR(255)     NO     MUL     null          
+name     VARCHAR(255)     NO     PRI     null          
 owner     OBJECT     NO          null          
 is_public     INTEGER     NO          0          
-target_unique_name     VARCHAR(255)     NO          null          
 target_name     VARCHAR(255)     NO          null          
 target_owner     OBJECT     NO          null          
 comment     VARCHAR(2048)     YES          null          
@@ -34,7 +32,7 @@ updated_time     DATETIME     YES          null
 
 ===================================================
 TABLE    CREATE TABLE    
-_db_synonym     CREATE TABLE [_db_synonym] ([unique_name] CHARACTER VARYING(255) NOT NULL, [name] CHARACTER VARYING(255) NOT NULL, [owner] [_db_user] NOT NULL, [is_public] INTEGER DEFAULT 0 NOT NULL, [target_unique_name] CHARACTER VARYING(255) NOT NULL, [target_name] CHARACTER VARYING(255) NOT NULL, [target_owner] [_db_user] NOT NULL, [comment] CHARACTER VARYING(2048), [created_time] DATETIME, [updated_time] DATETIME,  CONSTRAINT [pk__db_synonym_unique_name] PRIMARY KEY  ([unique_name]),  INDEX [i__db_synonym_name_owner_is_public] ([name], [owner], [is_public])) DONT_REUSE_OID, COLLATE utf8_bin     
+_db_synonym     CREATE TABLE [_db_synonym] ([name] CHARACTER VARYING(255) NOT NULL, [owner] [_db_user] NOT NULL, [is_public] INTEGER DEFAULT 0 NOT NULL, [target_name] CHARACTER VARYING(255) NOT NULL, [target_owner] [_db_user] NOT NULL, [comment] CHARACTER VARYING(2048), [created_time] DATETIME, [updated_time] DATETIME,  CONSTRAINT [pk__db_synonym_name_owner] PRIMARY KEY  ([name], [owner])) DONT_REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 VIEW    CREATE VIEW    
@@ -42,11 +40,9 @@ db_synonym     SELECT [s].[name] AS [synonym_name], [s].[owner].[name] AS [synon
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
-unique_name     VARCHAR(255)     NO     PRI     null          
-name     VARCHAR(255)     NO     MUL     null          
+name     VARCHAR(255)     NO     PRI     null          
 owner     OBJECT     NO          null          
 is_public     INTEGER     NO          0          
-target_unique_name     VARCHAR(255)     NO          null          
 target_name     VARCHAR(255)     NO          null          
 target_owner     OBJECT     NO          null          
 comment     VARCHAR(2048)     YES          null          
@@ -66,10 +62,8 @@ updated_time     DATETIME     YES          null
 
 ===================================================
 Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
-_db_synonym     1     i__db_synonym_name_owner_is_public     1     name     A     0     null     null     NO     BTREE     null     null     YES     
-_db_synonym     1     i__db_synonym_name_owner_is_public     2     owner     A     0     null     null     NO     BTREE     null     null     YES     
-_db_synonym     1     i__db_synonym_name_owner_is_public     3     is_public     A     0     null     null     NO     BTREE     null     null     YES     
-_db_synonym     0     pk__db_synonym_unique_name     1     unique_name     A     0     null     null     NO     BTREE     null     null     YES     
+_db_synonym     0     pk__db_synonym_name_owner     1     name     A     0     null     null     NO     BTREE     null     null     YES     
+_db_synonym     0     pk__db_synonym_name_owner     2     owner     A     0     null     null     NO     BTREE     null     null     YES     
 
 ===================================================
 unique_name    name    owner    is_public    target_unique_name    target_name    target_owner    comment    
