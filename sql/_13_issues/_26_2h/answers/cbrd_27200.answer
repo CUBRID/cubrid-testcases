@@ -704,13 +704,16 @@ Trace Statistics:
 
 ===================================================
     
-B05 : WHERE ROWNUM <= 2 -- merged (rownum-only predicate path)     
+B05 : WHERE ROWNUM <= 5 -- merged (rownum-only predicate path)     
 
 
 ===================================================
 a    b    
 1     100     
 2     null     
+3     300     
+4     null     
+5     null     
 
 
 ===================================================
@@ -953,13 +956,16 @@ null
 
 ===================================================
     
-B12 : WHERE 1=1 AND ROWNUM <= 2 -- merged (already before the fix)     
+B12 : WHERE 1=1 AND ROWNUM <= 5 -- merged (already before the fix)     
 
 
 ===================================================
 a    b    
 1     100     
 2     null     
+3     300     
+4     null     
+5     null     
 
 
 ===================================================
@@ -1560,6 +1566,75 @@ Trace Statistics:
 
 ===================================================
     
+C16 : the same ORDER BY + LIMIT view as C08, without the outer ORDER BY -- NOT merged     
+
+
+===================================================
+a    b    
+1     10     
+2     null     
+3     30     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tleft)
+
+  rewritten query: (select [dba.tleft].a, [dba.tleft].b from [dba.tleft] [dba.tleft] order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tleft].b as [b] from [dba.tleft] [dba.tleft] order by ? for orderby_num()<= ?:? ) v (a, b)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+C17 : constant TRUE at both nesting levels of a doubly nested view -- merged     
+
+
+===================================================
+a    b    
+1     100     
+2     null     
+3     300     
+4     null     
+5     null     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (v)
+      TABLE SCAN (dba.tright)
+
+  rewritten query: select v.a, [dba.tright].y from [dba.tleft] v left outer join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
 D01 : outer ORDER BY -- merged     
 
 
@@ -1913,7 +1988,7 @@ Query Plan:
       TABLE SCAN (v)
       TABLE SCAN (w)
 
-  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?
+  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?, ?
 
 
 Trace Statistics:
@@ -1954,7 +2029,7 @@ Query Plan:
       TABLE SCAN (v)
       TABLE SCAN (w)
 
-  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?
+  rewritten query: select v.a, v.b, w.x, w.y from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), [dba.tright] w where v.a=w.x order by ?, ?, ?, ?
 
 
 Trace Statistics:

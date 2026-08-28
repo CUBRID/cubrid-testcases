@@ -24,10 +24,10 @@
  * match tright.x, so the LEFT OUTER JOIN produces NULL-extended rows and tright keeps
  * non-matching rows (9, 10, 20).
  *
- * Groups (67 cases; 62 of them from the attached CBRD-27200_test_report.md)
- *   A 17  constant TRUE predicates            -> merged (A00/A01 already were)
+ * Groups (69 cases; 62 of them from the attached CBRD-27200_test_report.md)
+ *   A 17  constant TRUE predicates            -> merged, except A10 (not folded)
  *   B 13  real predicates                     -> unchanged
- *   C 15  view shapes, WHERE 1=1 fixed
+ *   C 17  view shapes, WHERE 1=1 fixed
  *   D 12  outer clauses / main-query shape, WHERE 1=1 fixed
  *   E 10  non-SELECT paths                    -> results only, no plan needed
  */
@@ -130,8 +130,8 @@ evaluate 'B04 : WHERE v.a = NULL -- unknown, no plan is produced';
 SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE v.a = NULL ORDER BY 1, 2;
 show trace;
 
-evaluate 'B05 : WHERE ROWNUM <= 2 -- merged (rownum-only predicate path)';
-SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE ROWNUM <= 2;
+evaluate 'B05 : WHERE ROWNUM <= 5 -- merged (rownum-only predicate path)';
+SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE ROWNUM <= 5;
 show trace;
 
 evaluate 'B06 : WHERE v.a IN (subquery) -- NOT merged';
@@ -158,8 +158,8 @@ evaluate 'B11 : WHERE NULL = NULL -- unknown, no plan is produced';
 SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE NULL = NULL ORDER BY 1, 2;
 show trace;
 
-evaluate 'B12 : WHERE 1=1 AND ROWNUM <= 2 -- merged (already before the fix)';
-SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE 1=1 AND ROWNUM <= 2;
+evaluate 'B12 : WHERE 1=1 AND ROWNUM <= 5 -- merged (already before the fix)';
+SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE 1=1 AND ROWNUM <= 5;
 show trace;
 
 evaluate 'B13 : WHERE v.a = v.a -- NOT merged (column reference, not a constant)';
@@ -230,6 +230,14 @@ WITH cte AS (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN trigh
 SELECT /*+ RECOMPILE */ * FROM cte WHERE 1=1 ORDER BY 1, 2;
 show trace;
 
+evaluate 'C16 : the same ORDER BY + LIMIT view as C08, without the outer ORDER BY -- NOT merged';
+SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tleft.b AS b FROM tleft ORDER BY tleft.a LIMIT 3) v WHERE 1=1;
+show trace;
+
+evaluate 'C17 : constant TRUE at both nesting levels of a doubly nested view -- merged';
+SELECT /*+ RECOMPILE */ * FROM (SELECT w.a AS a, w.b AS b FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x WHERE 1=1) w WHERE 1=1) v WHERE 1=1 ORDER BY 1, 2;
+show trace;
+
 -- ===== Group D : outer clauses, WHERE 1=1 fixed ==========================
 evaluate 'D01 : outer ORDER BY -- merged';
 SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v WHERE 1=1 ORDER BY v.a DESC, 2;
@@ -272,11 +280,11 @@ SELECT /*+ RECOMPILE */ v.a, COUNT(*) FROM (SELECT tleft.a AS a, tright.y AS b F
 show trace;
 
 evaluate 'D11 : the view is not the only spec of the main query -- NOT merged';
-SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v, tright w WHERE 1=1 AND v.a = w.x ORDER BY 1, 2, 3;
+SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v, tright w WHERE 1=1 AND v.a = w.x ORDER BY 1, 2, 3, 4;
 show trace;
 
 evaluate 'D12 : the same two specs without any constant predicate -- NOT merged either';
-SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v, tright w WHERE v.a = w.x ORDER BY 1, 2, 3;
+SELECT /*+ RECOMPILE */ * FROM (SELECT tleft.a AS a, tright.y AS b FROM tleft LEFT OUTER JOIN tright ON tleft.a = tright.x) v, tright w WHERE v.a = w.x ORDER BY 1, 2, 3, 4;
 show trace;
 
 set trace off;
