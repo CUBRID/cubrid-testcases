@@ -14,25 +14,25 @@ drop synonym if exists s1;
 drop synonym if exists s2;
 create synonym s1 for db_class;
 create private synonym s2 for db_class;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- without for
 --err case
 alter synonym s1;
 alter private synonym s2;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- incorrect use of to instead of for
 --err case
 alter synonym s1 to db_index;
 alter private synonym s2 to db_index;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 -- without comment string
 --err case
 alter synonym s1 for db_index comment;
 alter private synonym s2 for db_index comment;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop synonym s2;
@@ -42,11 +42,11 @@ drop synonym if exists s1;
 drop synonym if exists s2;
 create synonym s1 for db_class comment 'synonym of db_class.';
 create private synonym s2 for db_class comment 'private synonym of db_class.';
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 alter synonym s1 for db_index;
 alter private synonym s2 for db_index;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 create user u1;
 drop table if exists u1.t1;
@@ -57,11 +57,11 @@ create table u1.t1 (c1 int);
 create table u1.t2 (c1 int);
 create synonym u1.s1 for u1.t1 comment 'synonym of u1.t1.';
 create private synonym u1.s2 for u1.t1 comment 'private synonym of u1.t1.';
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 alter synonym u1.s1 for u1.t2;
 alter private synonym u1.s2 for u1.t2;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;
@@ -79,11 +79,11 @@ drop synonym if exists u1.s2;
 create table u1.t1 (c1 int);
 create synonym u1.s1 for u1.t1;
 create private synonym u1.s2 for u1.t1;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 --err case
 alter synonym u1.s1 for u2.t1;
 alter private synonym u1.s2 for u2.t1;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym u1.s1;
 drop synonym u1.s2;
@@ -95,11 +95,11 @@ drop synonym if exists s1;
 drop synonym if exists s2;
 create synonym s1 for db_class;
 create private synonym s2 for db_class;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 alter synonym s1 for db_null;
 alter private synonym s2 for db_null;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 create user u1;
 drop table if exists u1.t1;
@@ -108,11 +108,11 @@ drop synonym if exists u1.s2;
 create table u1.t1 (c1 int);
 create synonym u1.s1 for u1.t1;
 create private synonym u1.s2 for u1.t1;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 alter synonym u1.s1 for u1.t2;
 alter private synonym u1.s2 for u1.t2;
-select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, CONCAT (LOWER (target_owner.name), '.', target_name) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
+select CONCAT (LOWER (owner.name), '.', name) as unique_name, name, owner, is_public, (select IF (c.is_system_class = 0, CONCAT (LOWER (c.owner.name), '.', c.class_name), c.class_name) from _db_class c where c.class_name = target_name and c.owner = target_owner) as target_unique_name, target_name, target_owner, comment from _db_synonym order by 1;
 
 drop synonym s1;
 drop private synonym s2;

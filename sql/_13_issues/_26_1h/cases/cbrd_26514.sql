@@ -41,7 +41,7 @@ evaluate 'Case 1: owner name is suppressed from scode';
 select case when locate('dba.sp_owner_test', code.scode) = 0
             then 'OWNER_SUPPRESSED' else 'OWNER_LEAKED' end as result
 from _db_stored_procedure sp, _db_stored_procedure_code code
-where sp.unique_name = 'dba.sp_owner_test'
+where CONCAT (LOWER (sp.owner.name), '.', CASE WHEN sp.pkg_name IS NULL THEN '' ELSE CONCAT (sp.pkg_name, '.') END, sp.sp_name) = 'dba.sp_owner_test'
   and sp.target_class = code.name
   and sp.owner.name = code.owner.name;
 
@@ -49,7 +49,7 @@ evaluate 'Case 2-1: COMMENT clause is suppressed from scode';
 select case when locate('this is a test comment', code.scode) = 0
             then 'COMMENT_SUPPRESSED' else 'COMMENT_LEAKED' end as result
 from _db_stored_procedure sp, _db_stored_procedure_code code
-where sp.unique_name = 'dba.sp_comment_test'
+where CONCAT (LOWER (sp.owner.name), '.', CASE WHEN sp.pkg_name IS NULL THEN '' ELSE CONCAT (sp.pkg_name, '.') END, sp.sp_name) = 'dba.sp_comment_test'
   and sp.target_class = code.name
   and sp.owner.name = code.owner.name;
 
@@ -61,7 +61,7 @@ select case when locate('dba.sp_combined_test', code.scode) = 0
               and locate('combined test comment', code.scode) = 0
             then 'BOTH_SUPPRESSED' else 'LEAKED' end as result
 from _db_stored_procedure sp, _db_stored_procedure_code code
-where sp.unique_name = 'dba.sp_combined_test'
+where CONCAT (LOWER (sp.owner.name), '.', CASE WHEN sp.pkg_name IS NULL THEN '' ELSE CONCAT (sp.pkg_name, '.') END, sp.sp_name) = 'dba.sp_combined_test'
   and sp.target_class = code.name
   and sp.owner.name = code.owner.name;
 
@@ -97,7 +97,7 @@ select case when locate('dba.sp_mixed_ws', code.scode) = 0
               and locate('mixed whitespace test', code.scode) = 0
             then 'BOTH_SUPPRESSED' else 'LEAKED' end as result
 from _db_stored_procedure sp, _db_stored_procedure_code code
-where sp.unique_name = 'dba.sp_mixed_ws'
+where CONCAT (LOWER (sp.owner.name), '.', CASE WHEN sp.pkg_name IS NULL THEN '' ELSE CONCAT (sp.pkg_name, '.') END, sp.sp_name) = 'dba.sp_mixed_ws'
   and sp.target_class = code.name
   and sp.owner.name = code.owner.name;
 
