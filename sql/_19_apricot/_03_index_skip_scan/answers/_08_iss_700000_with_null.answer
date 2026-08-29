@@ -67,4 +67,65 @@ sscan
 Query stmt:
 select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k)
 ===================================================
+count(*)    
+150000     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
+Query plan:
+sscan
+    class: tt node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+===================================================
+count(*)    
+150000     
+
+Query plan:
+sscan
+    class: tt node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t tt where (tt.j>= ?:?  and tt.j<= ?:? )
+===================================================
+count(*)    
+150000     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: idx term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS NO_MERGE */ count(*) from t t where (t.j>= ?:?  and t.j<= ?:? )
+===================================================
+count(*)    
+150000     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MERGE */ count(*) from t t where (t.j>= ?:?  and t.j<= ?:? )
+===================================================
+count(*)    
+150000     
+
+Query plan:
+sscan
+    class: t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from t t where (t.j>= ?:?  and t.j<= ?:? )
+===================================================
 0
