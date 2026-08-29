@@ -1,0 +1,698 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+1-1. HASH m1=m2 join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH m1=m2     10     6     
+HASH m1=m2     20     4     
+HASH m1=m2     30     6     
+HASH m1=m2     40     4     
+HASH m1=m2     50     4     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH m?=m?', a.gid, count(*) from hj_m? a, hj_m? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+    
+1-2. HASH m2=m3 join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH m2=m3     10     6     
+HASH m2=m3     20     4     
+HASH m2=m3     30     8     
+HASH m2=m3     40     4     
+HASH m2=m3     50     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH m?=m?', a.gid, count(*) from hj_m? a, hj_m? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+    
+1-3. HASH m1=m3 join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH m1=m3     10     4     
+HASH m1=m3     20     4     
+HASH m1=m3     30     12     
+HASH m1=m3     40     4     
+HASH m1=m3     50     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH m?=m?', a.gid, count(*) from hj_m? a, hj_m? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+    
+1-4. spot-check gid 30 detail rows (hash-join)     
+
+===================================================
+gid    a_id    b_id    v    v    
+30     1     11     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+30     1     12     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+30     2     11     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+30     2     12     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+30     3     11     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+30     3     12     100000000000000000000000000000000000000000     100000000000000000000000000000000000000000     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.gid, a.id, b.id, a.v, b.v from hj_m? a, hj_m? b where a.v=b.v and b.gid= ?:?  and a.gid= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1-5. HASH+IDX m1=m2 (USE_HASH keeps hash-join with index)     
+
+===================================================
+tag    gid    join_rows    
+HASH+IDX m1=m2     10     6     
+HASH+IDX m1=m2     20     4     
+HASH+IDX m1=m2     30     6     
+HASH+IDX m1=m2     40     4     
+HASH+IDX m1=m2     50     4     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH+IDX m?=m?', a.gid, count(*) from hj_m? a, hj_m? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+2-1. d1=d2: numeric vs numeric(8,-36) -> 0 rows (different magnitude)     
+
+===================================================
+tag    join_rows    
+HASH d1=d2     0     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH d?=d?', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col?
+===================================================
+    
+2-2. d1=d3: numeric vs numeric(8,-35) -> 4 rows (equal)     
+
+===================================================
+tag    join_rows    
+HASH d1=d3     4     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH d?=d?', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+2-3. d1=d2 with index -> 0 rows     
+
+===================================================
+tag    join_rows    
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH d?=d? index', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k
+===================================================
+    
+2-4. d1=d3 with index -> 4 rows     
+
+===================================================
+tag    join_rows    
+HASH d1=d3 index     4     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH d?=d? index', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+3-1. fp positive-scale ps1=ps2 join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH fp(pos) ps1=ps2     60     4     
+HASH fp(pos) ps1=ps2     61     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH fp(pos) ps?=ps?', a.gid, count(*) from hj_fp_ps? a, hj_fp_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+    
+3-2. fp positive-scale ps1=ps2 with index (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH fp(pos) index ps1=ps2     60     4     
+HASH fp(pos) index ps1=ps2     61     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH fp(pos) index ps?=ps?', a.gid, count(*) from hj_fp_ps? a, hj_fp_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+4-1. fixed(38,127) positive-scale ps1=ps2 join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH fixed(pos) ps1=ps2     70     4     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH fixed(pos) ps?=ps?', a.gid, count(*) from hj_fx_ps? a, hj_fx_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+    
+4-2. fixed(38,127) positive-scale ps1=ps2 with index (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH fixed(pos) index ps1=ps2     70     4     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH fixed(pos) index ps?=ps?', a.gid, count(*) from hj_fx_ps? a, hj_fx_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+5-1. mixed fp<->fixed(38,127) join counts (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH mix fp=fixed     80     4     
+HASH mix fp=fixed     82     1     
+HASH mix fp=fixed     83     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH mix fp=fixed', a.gid, count(*) from hj_mix_fp a, hj_mix_fx b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+    
+5-2. mixed fp<->fixed(38,127) with index (hash-join)     
+
+===================================================
+tag    gid    join_rows    
+HASH mix fp=fixed index     80     4     
+HASH mix fp=fixed index     82     1     
+HASH mix fp=fixed index     83     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ 'HASH mix fp=fixed index', a.gid, count(*) from hj_mix_fp a, hj_mix_fx b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+    
+6-1. numeric=varchar: no hint -> nl-join     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from bb a, aa b where a.col?= cast(b.col? as double)
+===================================================
+    
+6-2. numeric=varchar: USE_HASH -> hash-join     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from bb a, aa b where a.col?= cast(b.col? as double)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+6-3. numeric=varchar: with index -> idx-join     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: a node[?]
+               index: idx_bb term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from bb a, aa b where a.col?= cast(b.col? as double)
+===================================================
+    
+6-4. numeric=varchar: USE_HASH with index -> hash-join     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from bb a, aa b where a.col?= cast(b.col? as double)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
