@@ -79,7 +79,7 @@ C2: DROP TRIGGER t1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
-C1: DROP TABLE tbl;
+C1: DROP TABLE IF EXISTS tbl;
 C1: COMMIT;
 MC: wait until C1 ready;
 
