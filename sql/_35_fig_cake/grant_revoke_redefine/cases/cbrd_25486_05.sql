@@ -31,7 +31,7 @@ grant select on t1_r to u2 with grant option;
 grant select on t1_h to u2 with grant option;
 grant select, alter on t1_l to u2 with grant option;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
@@ -43,7 +43,7 @@ grant select on u1.t1_r to u3 with grant option;
 grant select on u1.t1_h to u3 with grant option;
 grant select, alter on u1.t1_l to u3 with grant option;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
