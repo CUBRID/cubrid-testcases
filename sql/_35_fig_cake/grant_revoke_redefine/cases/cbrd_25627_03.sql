@@ -23,7 +23,7 @@ GRANT EXECUTE ON PROCEDURE u1.hello TO u3;
 select grantor_name, grantee_name, owner_name, object_type, object_name, auth_type from db_auth where grantee_name != 'PUBLIC' order by grantor_name, grantee_name;
 
 
-evaluate 'connect to u3 & changed to owner u1.hello -> u3.hello, ERROR: can only be performed by the DBA or a DBA group member';
+evaluate 'connect to u3 & changed to owner u1.hello -> u3.hello, ERROR: the owner or a member of DBA group can alter stored procedure';
 call login('u3','') on class db_user;
 ALTER FUNCTION u1.hello OWNER TO u3;
 
