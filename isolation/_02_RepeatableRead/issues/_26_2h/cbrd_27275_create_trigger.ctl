@@ -5,19 +5,17 @@ Reference case:
 Author:Zion Yun
 
 Test Plan:
-The fix makes CREATE / DROP / RENAME TRIGGER take a savepoint and roll back to it on failure,
-regardless of isolation level (previously the savepoint was skipped under READ COMMITTED, which
-is why the reported bug needed READ COMMITTED to reproduce). This file verifies the CREATE
-TRIGGER repro also holds under REPEATABLE READ - see
-isolation/_01_ReadCommitted/issues/_26_2h/cbrd_27275.ctl for the READ COMMITTED variants
-(CREATE/DROP/RENAME, table and user trigger) and cbrd_27275_serializable.ctl in that same
-directory for the SERIALIZABLE variant.
+The fix makes CREATE TRIGGER take a savepoint and roll back to it on failure, regardless of
+isolation level. This file covers the table-trigger CREATE under REPEATABLE READ - see the other
+cbrd_27275_*.ctl files under isolation/_01_ReadCommitted, _02_RepeatableRead, and
+_07_serializable/issues/_26_2h for the other scenarios (DROP/RENAME/user trigger) and isolation
+levels.
 
 Test Point:
-1) A failed CREATE TRIGGER leaves no row behind in _db_trigger or db_trigger under REPEATABLE
-   READ.
+1) A failed CREATE TRIGGER leaves no row behind in _db_trigger or db_trigger.
 2) Recreating a trigger under the same name after a failed CREATE leaves exactly one trigger,
    and only its action fires on INSERT.
+3) The final DROP TRIGGER leaves no row behind either.
 
 NUM_CLIENTS = 2
 C1: hold X-lock on tbl without commit
