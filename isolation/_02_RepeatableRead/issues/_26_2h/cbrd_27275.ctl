@@ -8,7 +8,7 @@ Test Plan:
 The fix makes CREATE / DROP / RENAME TRIGGER take a savepoint and roll back to it on failure,
 regardless of isolation level (previously the savepoint was skipped under READ COMMITTED, which
 is why the reported bug needed READ COMMITTED to reproduce). This file verifies the CREATE
-TRIGGER repro also holds under REPEATABLE READ; see
+TRIGGER repro also holds under REPEATABLE READ - see
 isolation/_01_ReadCommitted/issues/_26_2h/cbrd_27275.ctl for the READ COMMITTED variants
 (CREATE/DROP/RENAME, table and user trigger) and cbrd_27275_serializable.ctl in that same
 directory for the SERIALIZABLE variant.

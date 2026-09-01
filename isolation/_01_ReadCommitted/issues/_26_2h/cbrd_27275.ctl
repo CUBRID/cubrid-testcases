@@ -8,7 +8,7 @@ Test Plan:
 The fix makes CREATE / DROP / RENAME TRIGGER take a savepoint and roll back to it on failure,
 regardless of isolation level (previously the savepoint was skipped under READ COMMITTED, which
 is why the reported bug needed READ COMMITTED to reproduce). This file covers READ COMMITTED
-only; the REPEATABLE READ and SERIALIZABLE variants of the CREATE TRIGGER repro live in their
+only - the REPEATABLE READ and SERIALIZABLE variants of the CREATE TRIGGER repro live in their
 own files (see isolation/_02_RepeatableRead/issues/_26_2h/cbrd_27275.ctl and
 cbrd_27275_serializable.ctl in this directory).
 
