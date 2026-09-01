@@ -43,6 +43,7 @@ C2: DROP TRIGGER t1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
+/* commit (not rollback) here on purpose - releasing the lock via commit works too */
 C1: COMMIT;
 MC: wait until C1 ready;
 
