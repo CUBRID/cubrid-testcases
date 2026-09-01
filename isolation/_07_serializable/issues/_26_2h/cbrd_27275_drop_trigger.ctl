@@ -43,7 +43,7 @@ C2: DROP TRIGGER t1;
 C2: COMMIT;
 MC: wait until C2 ready;
 
-C1: ROLLBACK;
+C1: COMMIT;
 MC: wait until C1 ready;
 
 /* the trigger must still be fully intact: exactly one row, still resolvable by name */
