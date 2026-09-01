@@ -166,7 +166,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -248,8 +248,8 @@ Trace Statistics:
 ===================================================
 dept_no    name    fn_amt    
 201     George     500     
-201     Laura     500     
 201     George     500     
+201     Laura     500     
 
 ===================================================
 trace    
@@ -260,10 +260,10 @@ Query Plan:
 
   rewritten query: (select [dba.fn_int]([dba.sales_tbl].sales_amount), [dba.sales_tbl].dept_no from [dba.sales_tbl] [dba.sales_tbl] group by [dba.sales_tbl].dept_no)
 
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (b)
-      INDEX SCAN (a.pk_sales_tbl_dept_no_name_sales_month) (key range: a.dept_no=b.dept_no, covered: true)
+  NESTED LOOPS (inner join)
+    INDEX SCAN (a.pk_sales_tbl_dept_no_name_sales_month) (covered: true)
+    TABLE SCAN (b)
+  skip order by: true
 
   rewritten query: select a.dept_no, a.[name], b.fn_amt from [dba.sales_tbl] a, (select [dba.fn_int]([dba.sales_tbl].sales_amount), [dba.sales_tbl].dept_no from [dba.sales_tbl] [dba.sales_tbl] group by [dba.sales_tbl].dept_no) b (fn_amt, dept_no) where a.dept_no=b.dept_no order by ? for orderby_num()<=?
 
@@ -271,14 +271,14 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ORDERBY (time: ?, topnsort: true)
+    SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
         SCAN (index: dba.sales_tbl.pk_sales_tbl_dept_no_name_sales_month), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-        GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
 ===================================================

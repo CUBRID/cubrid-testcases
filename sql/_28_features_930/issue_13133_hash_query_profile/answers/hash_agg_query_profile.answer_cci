@@ -63,7 +63,8 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -114,7 +115,17 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "rows": ?
+        "rows": ?,
+        "readrows": ?
+      },
+      "PARALLEL GROUPBY": {
+        "parallel workers": ?,
+        "min time": ?,
+        "max time": ?,
+        "min pages": ?,
+        "max pages": ?,
+        "min ioreads": ?,
+        "max ioreads": ?
       }
     }
   }
@@ -158,7 +169,17 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "rows": ?
+        "rows": ?,
+        "readrows": ?
+      },
+      "PARALLEL GROUPBY": {
+        "parallel workers": ?,
+        "min time": ?,
+        "max time": ?,
+        "min pages": ?,
+        "max pages": ?,
+        "min ioreads": ?,
+        "max ioreads": ?
       }
     }
   }
@@ -210,7 +231,17 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "rows": ?
+        "rows": ?,
+        "readrows": ?
+      },
+      "PARALLEL GROUPBY": {
+        "parallel workers": ?,
+        "min time": ?,
+        "max time": ?,
+        "min pages": ?,
+        "max pages": ?,
+        "min ioreads": ?,
+        "max ioreads": ?
       }
     }
   }
@@ -262,7 +293,17 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "rows": ?
+        "rows": ?,
+        "readrows": ?
+      },
+      "PARALLEL GROUPBY": {
+        "parallel workers": ?,
+        "min time": ?,
+        "max time": ?,
+        "min pages": ?,
+        "max pages": ?,
+        "min ioreads": ?,
+        "max ioreads": ?
       }
     }
   }
@@ -305,12 +346,15 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "row by row"
+          "gather": "mergeable list",
+          "topnsort": true
         }
       },
       "ORDERBY": {
         "time": ?,
-        "topnsort": true
+        "sort": true,
+        "page": ?,
+        "ioread": ?
       }
     }
   }

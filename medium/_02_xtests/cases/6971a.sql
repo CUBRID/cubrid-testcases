@@ -18,15 +18,19 @@ call set_cost('follow', 'i') on class foo;
 call set_cost('nl-join', 'i') on class foo;
 call set_cost('m-join', '0') on class foo;
 select /*+ recompile use_merge */ fn, fb.bn
-  from foo;
+  from foo
+ order by fn;
 select /*+ recompile use_merge */ fn, fb.bn, zn
-  from foo, baz;
+  from foo, baz
+ order by fn, zn;
 select fn, fb.bn, zn
   from foo, baz
- where fb is null or fb.bn is null;
+ where fb is null or fb.bn is null
+ order by fn, zn;
 select /*+ recompile use_merge */ fn, fb.bn, zn
   from foo, baz
- where fb is null or fb.bn is null or zn is null;
+ where fb is null or fb.bn is null or zn is null
+ order by fn, zn;
 drop class baz, bar, foo;
 commit;
 rollback;

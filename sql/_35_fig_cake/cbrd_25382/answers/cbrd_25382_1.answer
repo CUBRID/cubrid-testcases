@@ -453,22 +453,22 @@ count(*)
 2000     
 
 Query plan:
-idx-join (inner join)
-    outer: hash-join (inner join)
-               edge:  term[?] AND term[?] AND term[?] AND term[?]
+hash-join (inner join)
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
+    outer: idx-join (inner join)
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
-               inner: sscan
-                          class: b node[?]
+               inner: iscan
+                          class: c node[?]
+                          index: i_c term[?]
+                          sargs: term[?] AND term[?] AND term[?]
                           cost:  ? card ?
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
-    inner: iscan
-               class: c node[?]
-               index: i_a term[?] AND term[?] AND term[?]
-               sargs: term[?]
+    inner: sscan
+               class: b node[?]
                cost:  ? card ?
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from ta a, tb b, tc c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
@@ -476,18 +476,17 @@ select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) 
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    HASH JOIN (inner join)
+  HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       TABLE SCAN (a)
-      TABLE SCAN (b)
-    INDEX SCAN (c.i_a) (key range: a.ca=c.cakey range: a.cb=c.cbkey range: a.cc=c.cc)
+      INDEX SCAN (c.i_c) (key range: a.cd=c.cd)
+    TABLE SCAN (b)
 
   rewritten query: select /*+ LEADING(a) USE_NL(c) USE_HASH(a, b) NO_PARALLEL_SUBQUERY */ count(*) from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and a.cb=b.cb and a.cc=b.cc and a.cd=b.cd and a.ca=c.ca and a.cb=c.cb and a.cc=c.cc and a.cd=c.cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tc.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
         PARALLEL (time: ?, fetch: ?, ioread: ?)
@@ -496,6 +495,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.tc.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
