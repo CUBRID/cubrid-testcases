@@ -46,6 +46,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (aggregate operands): interpreted (not covered)
+    EXPR_COMPILE (data filter): interpreted (not covered)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -101,6 +103,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (aggregate operands): interpreted (not covered)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
@@ -130,6 +133,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (data filter): active
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -147,6 +151,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (data filter): active
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -863,6 +868,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (aggregate operands): interpreted (not covered)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -975,6 +981,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      EXPR_COMPILE (data filter): active
       SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
               (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
@@ -1062,6 +1069,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        EXPR_COMPILE (data filter): interpreted (not covered)
         SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -1084,6 +1092,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        EXPR_COMPILE (data filter): interpreted (not covered)
         SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -1111,6 +1120,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (aggregate operands): interpreted (not covered)
+    EXPR_COMPILE (data filter): active
     SCAN (table: dba.large_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 

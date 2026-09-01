@@ -213,6 +213,10 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (output list): active, columns covered ?/?
+      steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+      [  ?] add_bigint     c?, c? -> c? (slot)
+      roots: [?]=c?
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -413,6 +417,10 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (output list): active, columns covered ?/?
+      steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+      [  ?] cast           c? -> c? (slot) dom=character varying
+      roots: [?]=c?
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -459,6 +467,7 @@ Trace Statistics:
         ORDERBY (time: ?, topnsort: true)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        EXPR_COMPILE (aggregate operands): interpreted (not covered)
         SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -494,6 +503,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        EXPR_COMPILE (aggregate operands): interpreted (not covered)
         SCAN (table: dba.tpage), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
