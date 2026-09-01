@@ -1,8 +1,6 @@
 /*
 Test Case: related to CBRD-27275
 Priority: 1
-Reference case:
-Author:Zion Yun
 
 Test Plan:
 The fix makes CREATE TRIGGER take a savepoint and roll back to it on failure, regardless of
