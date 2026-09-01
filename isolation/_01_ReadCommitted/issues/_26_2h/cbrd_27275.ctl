@@ -12,25 +12,6 @@ only; the REPEATABLE READ and SERIALIZABLE variants of the CREATE TRIGGER repro 
 own files (see isolation/_02_RepeatableRead/issues/_26_2h/cbrd_27275.ctl and
 cbrd_27275_serializable.ctl in this directory).
 
-Test Scenario:
-1) CREATE TRIGGER (table trigger): C1 inserts into tbl and holds the lock without committing,
-   C2 sets lock_timeout=3 and tries to CREATE TRIGGER with the same name (t1) -> fails with an
-   SCH_M lock timeout, C2 commits without rolling back, C1 rolls back to release the lock ->
-   verify no orphan row remains, then recreate under the same name and verify only one trigger
-   exists and works correctly; also verify no orphan row remains after the final DROP TRIGGER.
-2) DROP TRIGGER: same lock setup, but C2 tries to DROP an existing trigger -> fails with an
-   SCH_M lock timeout, commits without rolling back -> verify the trigger is left fully intact
-   (not partially removed) and still fires correctly.
-3) RENAME TRIGGER: same lock setup, but C2 tries to RENAME an existing trigger -> fails with a
-   lock timeout, commits without rolling back -> verify the trigger is still found under its
-   original name (no half-renamed/duplicate state) and still fires correctly.
-4) CREATE TRIGGER (user trigger, AFTER COMMIT): the same failure needs a different lock -- step
-   3 (register_user_trigger for a non-table trigger) locks the owner's db_user row instead of a
-   class. C1 holds that lock via an uncommitted user-trigger CREATE, C2's user-trigger CREATE
-   times out on it and commits without rolling back -> verify neither trigger leaves an orphan
-   row. Run last: an unfixed build would leave an AFTER-COMMIT trigger that fires on every later
-   COMMIT in this file, so any contamination stays confined to this test's own checks.
-
 Test Point:
 1) A failed CREATE TRIGGER (table or user trigger) leaves no row behind in _db_trigger.
 2) Recreating a trigger under the same name after a failed CREATE leaves exactly one trigger,

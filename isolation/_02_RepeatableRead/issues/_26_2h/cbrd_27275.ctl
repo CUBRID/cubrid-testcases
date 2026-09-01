@@ -13,12 +13,6 @@ isolation/_01_ReadCommitted/issues/_26_2h/cbrd_27275.ctl for the READ COMMITTED 
 (CREATE/DROP/RENAME, table and user trigger) and cbrd_27275_serializable.ctl in that same
 directory for the SERIALIZABLE variant.
 
-Test Scenario:
-C1 inserts into tbl and holds the lock without committing, C2 sets lock_timeout=3 and tries to
-CREATE TRIGGER with the same name (t1) -> fails with an SCH_M lock timeout, C2 commits without
-rolling back, C1 rolls back to release the lock -> verify no orphan row remains, then recreate
-under the same name and verify only one trigger exists and works correctly.
-
 Test Point:
 1) A failed CREATE TRIGGER leaves no row behind in _db_trigger or db_trigger under REPEATABLE
    READ.
@@ -73,10 +67,11 @@ C2: INSERT INTO tbl VALUES (2);
 C2: COMMIT;
 MC: wait until C2 ready;
 
-/* cleanup */
+/* cleanup, plus confirm the drop itself leaves no leftover row */
 C2: SET SYSTEM PARAMETERS 'lock_timeout=DEFAULT';
 C2: DROP TRIGGER t1;
 C2: COMMIT;
+C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
 MC: wait until C2 ready;
 
 C1: DROP TABLE IF EXISTS tbl;
