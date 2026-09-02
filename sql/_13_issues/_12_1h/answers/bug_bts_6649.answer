@@ -44,14 +44,14 @@ count(*)
 
 Query plan:
 idx-join (inner join)
-    outer: sscan
-               class: b node[?]
+    outer: iscan
+               class: f node[?]
+               index: foo_a term[?] (covers)
                sargs: term[?]
                cost:  ? card ?
     inner: iscan
-               class: f node[?]
-               index: foo_a term[?] (covers)
-               filtr: term[?]
+               class: b node[?]
+               index: bar_a term[?] (covers)
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
@@ -66,14 +66,14 @@ c    c
 
 Query plan:
 idx-join (inner join)
-    outer: sscan
-               class: b node[?]
+    outer: iscan
+               class: f node[?]
+               index: foo_a term[?]
                sargs: term[?]
                cost:  ? card ?
     inner: iscan
-               class: f node[?]
-               index: foo_a term[?]
-               filtr: term[?]
+               class: b node[?]
+               index: bar_a term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
