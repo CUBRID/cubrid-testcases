@@ -417,7 +417,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select posts.title, posts.category, posts.entry_date from posts posts, users users where posts.uid=users.id and ((posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? )) and users.[name]= ?:?  order by ? desc  for orderby_num()<= ?:? 
+select /*+ ORDERED */ posts.title, posts.category, posts.entry_date from users users, posts posts where posts.uid=users.id and ((posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? ) or (posts.category= ?:? )) and users.[name]= ?:?  order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
