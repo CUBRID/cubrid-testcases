@@ -12,7 +12,7 @@ _07_serializable/issues/_26_2h for the other scenarios (CREATE table trigger, DR
 isolation levels.
 
 Test Point:
-1) A failed user-trigger CREATE leaves no row behind in _db_trigger, and neither does the
+1) A failed user-trigger CREATE leaves no row behind in db_trigger, and neither does the
    holder's own uncommitted CREATE once it is rolled back.
 
 NUM_CLIENTS = 2
@@ -45,7 +45,7 @@ C1: ROLLBACK;
 MC: wait until C1 ready;
 
 /* neither name should have an orphan row */
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name IN ('dba.user_trg_holder', 'dba.user_trg_victim') ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name IN ('dba.user_trg_holder', 'dba.user_trg_victim') ORDER BY 1,2;
 MC: wait until C2 ready;
 
 C2: SET SYSTEM PARAMETERS 'lock_timeout=DEFAULT';

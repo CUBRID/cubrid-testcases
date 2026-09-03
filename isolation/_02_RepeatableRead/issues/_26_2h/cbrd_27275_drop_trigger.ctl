@@ -48,8 +48,8 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 /* the trigger must still be fully intact: exactly one row, still resolvable by name */
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
-C2: SELECT trigger_name, owner_name, target_class_name FROM db_trigger WHERE trigger_name = 't1' ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, owner.name FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 C2: INSERT INTO tbl VALUES (2);
 C2: COMMIT;
 MC: wait until C2 ready;

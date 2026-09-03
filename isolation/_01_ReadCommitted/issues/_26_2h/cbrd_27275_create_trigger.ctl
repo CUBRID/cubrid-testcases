@@ -10,7 +10,8 @@ _07_serializable/issues/_26_2h for the other scenarios (DROP/RENAME/user trigger
 levels.
 
 Test Point:
-1) A failed CREATE TRIGGER leaves no row behind in _db_trigger or db_trigger.
+1) A failed CREATE TRIGGER leaves no row behind in db_trigger (raw table, no
+   separate view on this branch).
 2) Recreating a trigger under the same name after a failed CREATE leaves exactly one trigger,
    and only its action fires on INSERT.
 3) The final DROP TRIGGER leaves no row behind either.
@@ -36,7 +37,7 @@ C1: CREATE TABLE tbl(a INT);
 C1: COMMIT;
 MC: wait until C1 ready;
 
-/* test case: check whether a failed CREATE TRIGGER leaves an orphan row in _db_trigger */
+/* test case: check whether a failed CREATE TRIGGER leaves an orphan row in db_trigger */
 C1: INSERT INTO tbl VALUES (1);
 MC: wait until C1 ready;
 
@@ -48,8 +49,8 @@ MC: wait until C2 ready;
 C1: ROLLBACK;
 MC: wait until C1 ready;
 
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
-C2: SELECT trigger_name, owner_name, target_class_name FROM db_trigger WHERE trigger_name = 't1' ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, owner.name FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 MC: wait until C2 ready;
 
 /* recreate under the same name -> without an orphan, exactly one trigger should exist */
@@ -57,8 +58,8 @@ C2: CREATE TRIGGER t1 AFTER INSERT ON tbl EXECUTE PRINT 'NEW';
 C2: COMMIT;
 MC: wait until C2 ready;
 
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
-C2: SELECT trigger_name, owner_name, target_class_name FROM db_trigger WHERE trigger_name = 't1' ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, owner.name FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 C2: INSERT INTO tbl VALUES (2);
 C2: COMMIT;
 MC: wait until C2 ready;
@@ -67,7 +68,7 @@ MC: wait until C2 ready;
 C2: SET SYSTEM PARAMETERS 'lock_timeout=DEFAULT';
 C2: DROP TRIGGER t1;
 C2: COMMIT;
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
 MC: wait until C2 ready;
 
 C1: DROP TABLE IF EXISTS tbl;

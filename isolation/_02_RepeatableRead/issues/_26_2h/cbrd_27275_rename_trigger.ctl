@@ -48,8 +48,8 @@ C1: ROLLBACK;
 MC: wait until C1 ready;
 
 /* only the original name must exist - no leftover row under the new name */
-C2: SELECT unique_name, action_definition FROM _db_trigger WHERE unique_name IN ('dba.t1', 'dba.t1_renamed') ORDER BY 1,2;
-C2: SELECT trigger_name, owner_name, target_class_name FROM db_trigger WHERE trigger_name IN ('t1', 't1_renamed') ORDER BY 1,2;
+C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name IN ('dba.t1', 'dba.t1_renamed') ORDER BY 1,2;
+C2: SELECT name, owner.name FROM db_trigger WHERE name IN ('t1', 't1_renamed') ORDER BY 1,2;
 C2: INSERT INTO tbl VALUES (2);
 C2: COMMIT;
 MC: wait until C2 ready;
