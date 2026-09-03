@@ -1061,6 +1061,16 @@ count(*)
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1100,6 +1110,34 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.pl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.pl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+39950     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.pl] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1155,6 +1193,27 @@ count(*)
 ===================================================
 count(*)    
 3500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
 
 ===================================================
 0

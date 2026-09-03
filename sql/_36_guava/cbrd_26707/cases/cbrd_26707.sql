@@ -75,10 +75,10 @@ show trace;
 
 
 evaluate 'Case 3: NOT EXISTS + column output -> parallel heap scan (mergeable list)';
-select * from (select /*+ NO_MERGE */ cola, colb from ta a where not exists (select 1 from tb b where b.id = a.id)) order by 1 limit 3;
+select /*+ recompile */ * from (select /*+ NO_MERGE */ cola, colb from ta a where not exists (select 1 from tb b where b.id = a.id)) order by 1 limit 3;
 show trace;
 -- serial reference
-select * from (select /*+ NO_MERGE no_parallel_scan */ cola, colb from ta a where not exists (select 1 from tb b where b.id = a.id)) order by 1 limit 3;
+select /*+ recompile */ * from (select /*+ NO_MERGE no_parallel_scan */ cola, colb from ta a where not exists (select 1 from tb b where b.id = a.id)) order by 1 limit 3;
 show trace;
 
 
@@ -111,10 +111,10 @@ show trace;
 
 
 evaluate 'Case 7: filter subquery + max() compare + column output -> parallel heap scan (mergeable list)';
-select * from (select /*+ NO_MERGE */ cola, colb from ta a where a.colb = (select max(b.colb) from tb b where b.id = a.id)) order by 1 limit 3;
+select /*+ recompile */ * from (select /*+ NO_MERGE */ cola, colb from ta a where a.colb = (select max(b.colb) from tb b where b.id = a.id)) order by 1 limit 3;
 show trace;
 -- serial reference
-select * from (select /*+ NO_MERGE no_parallel_scan */ cola, colb from ta a where a.colb = (select max(b.colb) from tb b where b.id = a.id)) order by 1 limit 3;
+select /*+ recompile */ * from (select /*+ NO_MERGE no_parallel_scan */ cola, colb from ta a where a.colb = (select max(b.colb) from tb b where b.id = a.id)) order by 1 limit 3;
 show trace;
 
 
@@ -135,26 +135,26 @@ show trace;
 
 
 evaluate 'Case 10: NOT EXISTS + GROUP BY -> parallel heap scan (mergeable list)';
-select colb, count(*) from ta a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001') group by colb order by 1 limit 3;
+select /*+ recompile */ colb, count(*) from ta a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001') group by colb order by 1 limit 3;
 show trace;
 -- serial reference
-select /*+ no_parallel_scan */ colb, count(*) from ta a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001') group by colb order by 1 limit 3;
+select /*+ recompile no_parallel_scan */ colb, count(*) from ta a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001') group by colb order by 1 limit 3;
 show trace;
 
 
 evaluate 'Case 11: NOT EXISTS + DISTINCT -> parallel heap scan (mergeable list)';
-select distinct colb from ta a where not exists (select 1 from tb b where b.id = a.id) order by 1 limit 3;
+select /*+ recompile */ distinct colb from ta a where not exists (select 1 from tb b where b.id = a.id) order by 1 limit 3;
 show trace;
 -- serial reference
-select /*+ no_parallel_scan */ distinct colb from ta a where not exists (select 1 from tb b where b.id = a.id) order by 1 limit 3;
+select /*+ recompile no_parallel_scan */ distinct colb from ta a where not exists (select 1 from tb b where b.id = a.id) order by 1 limit 3;
 show trace;
 
 
 evaluate 'Case 12: NOT EXISTS + ORDER BY + LIMIT -> parallel heap scan (mergeable list)';
-select cola from ta a where not exists (select 1 from tb b where b.id = a.id) order by cola limit 3;
+select /*+ recompile */ cola from ta a where not exists (select 1 from tb b where b.id = a.id) order by cola limit 3;
 show trace;
 -- serial reference
-select /*+ no_parallel_scan */ cola from ta a where not exists (select 1 from tb b where b.id = a.id) order by cola limit 3;
+select /*+ recompile no_parallel_scan */ cola from ta a where not exists (select 1 from tb b where b.id = a.id) order by cola limit 3;
 show trace;
 
 
@@ -179,17 +179,17 @@ show trace;
 
 
 evaluate 'Case 15: SELECT-list correlated subquery + WHERE NOT EXISTS -> parallel heap scan (mergeable list)';
-select * from (select /*+ NO_MERGE */ a.cola, (select count(*) from tb b where b.id = a.id) as cnt
+select /*+ recompile */ * from (select /*+ NO_MERGE */ a.cola, (select count(*) from tb b where b.id = a.id) as cnt
 from ta a where not exists (select 1 from tb c where c.id = a.id and c.colb = '00000000000000000001')) order by 1 limit 3;
 show trace;
 -- serial reference
-select * from (select /*+ NO_MERGE no_parallel_scan */ a.cola, (select count(*) from tb b where b.id = a.id) as cnt
+select /*+ recompile */ * from (select /*+ NO_MERGE no_parallel_scan */ a.cola, (select count(*) from tb b where b.id = a.id) as cnt
 from ta a where not exists (select 1 from tb c where c.id = a.id and c.colb = '00000000000000000001')) order by 1 limit 3;
 show trace;
 
 
 evaluate 'Case 16: NOT EXISTS + PARALLEL(2) hint -> parallel heap scan (buildvalue)';
-select /*+ PARALLEL(2) */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
+select /*+ recompile PARALLEL(2) */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
 show trace;
 -- serial reference
 select /*+ recompile no_parallel_scan */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
@@ -197,7 +197,7 @@ show trace;
 
 
 evaluate 'Case 17: NOT EXISTS + NO_PARALLEL_SCAN hint -> not parallelized';
-select /*+ NO_PARALLEL_SCAN */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
+select /*+ recompile NO_PARALLEL_SCAN */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
 show trace;
 
 
@@ -211,7 +211,10 @@ PARTITION BY RANGE (colb) (
 );
 insert into pl select rownum, lpad(rownum, 20, '0'), rownum % 15
 from db_class a, db_class b, db_class c, db_class d limit 40000;
-select /*+ PARALLEL(2) */ count(*) from pl a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001');
+select /*+ recompile PARALLEL(2) */ count(*) from pl a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001');
+show trace;
+-- serial oracle: the count must match the parallel result above
+select /*+ recompile no_parallel_scan */ count(*) from pl a where not exists (select 1 from tb b where b.id = a.id and b.colb = '00000000000000000001');
 show trace;
 drop table if exists pl;
 
@@ -219,11 +222,13 @@ drop table if exists pl;
 evaluate 'Case 19: INSERT ... SELECT + NOT EXISTS -> parallel heap scan (mergeable list)';
 drop table if exists rt;
 create table rt (id int, cola varchar(20), colb varchar(20), colc varchar(20), cold varchar(20));
-insert into rt select * from ta a where not exists (select 1 from tb b where b.id = a.id) order by id;
+insert into rt select /*+ recompile */ * from ta a where not exists (select 1 from tb b where b.id = a.id) order by id;
 show trace;
--- verify the parallel insert produced the same rows a serial scan would
+-- verify the parallel insert produced the same rows an independent serial scan would:
+-- rt row count must equal the serial (no_parallel_scan) NOT EXISTS count.
 select count(*) from rt;
-select count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
+select /*+ recompile no_parallel_scan */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
+show trace;
 drop table if exists rt;
 
 
