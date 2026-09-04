@@ -32,12 +32,12 @@ insert into test_to_char_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
 insert into test_to_char_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10) 
 	values ('99999','99999.','9.99999','.99999','00000','00000.','0.00000','.00000','9,9,9,9,9,','0,0,0,0,0,');
 			select cast(n1 as varchar)+'  sc'+c1+' sc'+c2+' sc'+c3+' sc'+c4+' sc'+c5+' sc'+c6+' sc'+c7+' sc'+c8+'
-		'+to_char(n1,'sc'+c1+' sc'+c2+' sc'+c3+' sc'+c4+' sc'+c5+' sc'+c6+' sc'+c7+' sc'+c8+' sc') from test_to_char_f,test_to_char; 
+		'+to_char(n1,'sc'+c1+' sc'+c2+' sc'+c3+' sc'+c4+' sc'+c5+' sc'+c6+' sc'+c7+' sc'+c8+' sc') from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n1 as varchar)+'	'+c9+' '+c10+'
-		'+to_char(n1,c9+' '+c10) from test_to_char_f,test_to_char;
+		'+to_char(n1,c9+' '+c10) from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n2 as varchar)+'  sc'+c1+' sc'+c2+' sc'+c3+' sc'+c4+' sc'+c5+' sc'+c6+' sc'+c7+' sc'+c8+'
 			select cast(n2 as varchar)+'	'+c9+' '+c10+'
 			select cast(n3 as varchar)+'  sc'+c1+' sc'+c2+' sc'+c3+' sc'+c4+' sc'+c5+' sc'+c6+' sc'+c7+' sc'+c8+'
 			select cast(n3 as varchar)+'	'+c9+' '+c10+'
-		'+to_char(n3,c9+' '+c10) from test_to_char_f,test_to_char;
+		'+to_char(n3,c9+' '+c10) from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 rollback;

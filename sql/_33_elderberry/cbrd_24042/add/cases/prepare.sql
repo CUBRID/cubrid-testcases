@@ -40,9 +40,12 @@ PREPARE q FROM '
     WHERE v.JobTitle = ''Developer''
 ';
 
--- Check result (mergable)
---@queryplan
+-- Check result (mergable); the plan is compiled at EXECUTE time with the bound values,
+-- so view it through the trace at that point instead of a PREPARE-time plan dump.
+set trace on;
 EXECUTE q USING 1500, 3000;
+show trace;
+set trace off;
 DEALLOCATE PREPARE q;
 
 DROP TABLE IF EXISTS tbl;
