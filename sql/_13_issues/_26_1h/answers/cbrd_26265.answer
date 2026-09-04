@@ -1,0 +1,747 @@
+===================================================
+0
+===================================================
+    
+1. IS NOT NULL on NOT NULL column     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+1     100     
+
+Query plan:
+sscan
+    class: tbl_w node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_w.cola, tbl_w.colb from tbl_w tbl_w
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_w)
+
+  rewritten query: select [dba.tbl_w].cola, [dba.tbl_w].colb from [dba.tbl_w] [dba.tbl_w]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_w), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+2. IS NOT NULL with additional filter     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+a    b    
+2     hello     
+
+Query plan:
+sscan
+    class: tbl_x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_x.a, tbl_x.b from tbl_x tbl_x where tbl_x.b= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_x)
+
+  rewritten query: select [dba.tbl_x].a, [dba.tbl_x].b from [dba.tbl_x] [dba.tbl_x] where [dba.tbl_x].b= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_x), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+3. IS NOT NULL in LIKE predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+c    d    e    
+1     null     abcdef     
+2     null     hello     
+3     null     test     
+
+Query plan:
+sscan
+    class: tbl_y node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_y)
+
+  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_y), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. IS NOT NULL in LIKE predicate with literal "?"     
+
+===================================================
+c    d    e    
+
+Query plan:
+sscan
+    class: tbl_y node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y where tbl_y.e= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_y)
+
+  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y] where [dba.tbl_y].e= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_y), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. IS NOT NULL in complex LIKE expression     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+x    y    z    
+1     null     hi     
+2     null     cubrid     
+3     null     test     
+
+Query plan:
+sscan
+    class: tbl_z node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_z)
+
+  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_z), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. IS NOT NULL in complex LIKE expression with literal "?"     
+
+===================================================
+x    y    z    
+
+Query plan:
+sscan
+    class: tbl_z node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z where tbl_z.z= ?:? 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_z)
+
+  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z] where [dba.tbl_z].z= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_z), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+7. IS NOT NULL + complex LIKE on NOT NULL column (regression from review)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+cola    colb    
+a     1     
+b     2     
+
+Query plan:
+sscan
+    class: tbl_r node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_r.cola, tbl_r.colb from tbl_r tbl_r where tbl_r.cola is not null 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_r)
+
+  rewritten query: select [dba.tbl_r].cola, [dba.tbl_r].colb from [dba.tbl_r] [dba.tbl_r] where [dba.tbl_r].cola is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_r), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+8. OR combination (should not break logic)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+cola    colb    
+1     null     
+2     10     
+
+Query plan:
+sscan
+    class: tbl_or node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_or.cola, tbl_or.colb from tbl_or tbl_or where (tbl_or.cola is not null  or (tbl_or.colb= ?:? ))
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_or)
+
+  rewritten query: select [dba.tbl_or].cola, [dba.tbl_or].colb from [dba.tbl_or] [dba.tbl_or] where ([dba.tbl_or].cola is not null  or ([dba.tbl_or].colb= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_or), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+9. type mismatch, not null column, is not null     
+
+===================================================
+cola    
+1     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_b.cola from tbl_b tbl_b
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].cola from [dba.tbl_b] [dba.tbl_b]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. type mismatch, not null column, like '%'     
+
+===================================================
+cola    
+1     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_b.cola from tbl_b tbl_b
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].cola from [dba.tbl_b] [dba.tbl_b]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+11. type mismatch, not null column, like '%' || '' || '%'     
+
+===================================================
+cola    
+1     
+
+Query plan:
+sscan
+    class: tbl_b node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_b.cola from tbl_b tbl_b
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].cola from [dba.tbl_b] [dba.tbl_b]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+12. pk column, is not null     
+
+===================================================
+cola    
+abc     
+def     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.cola from tbl_a tbl_a
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+13. pk column, like '%'     
+
+===================================================
+cola    
+abc     
+def     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.cola from tbl_a tbl_a
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+14. pk column, like '%' || '' || '%'     
+
+===================================================
+cola    
+abc     
+def     
+
+Query plan:
+sscan
+    class: tbl_a node[?]
+    cost:  ? card ?
+Query stmt:
+select tbl_a.cola from tbl_a tbl_a
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+15. join query, is not null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+cola    colb    cola    
+abc     1     null     
+def     2     null     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: tbl_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select tbl_a.cola, tbl_a.colb, tbl_b.cola from tbl_a tbl_a left outer join tbl_b tbl_b on tbl_a.colb=tbl_b.cola
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tbl_a)
+    TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_b].cola from [dba.tbl_a] [dba.tbl_a] left outer join [dba.tbl_b] [dba.tbl_b] on [dba.tbl_a].colb=[dba.tbl_b].cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+16. NOT NULL column with LIKE bind parameter, hostvar_peeking=no     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].cola like  ?:?  and ([dba.tbl_a].cola>= like_match_lower_bound( ?:? ) and [dba.tbl_a].cola< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+17. NOT NULL column with complex LIKE bind parameter, hostvar_peeking=no     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] where [dba.tbl_a].cola like  cast('%' as varchar)|| ?:? || cast('%' as varchar) and ([dba.tbl_a].cola>= like_match_lower_bound( cast('%' as varchar)|| ?:? || cast('%' as varchar)) and [dba.tbl_a].cola< like_match_upper_bound( cast('%' as varchar)|| ?:? || cast('%' as varchar)))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+18. NOT NULL column with LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+19. NOT NULL column with complex LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+20. Type mismatch with LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].cola from [dba.tbl_b] [dba.tbl_b]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+21. Type mismatch with complex LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_b].cola from [dba.tbl_b] [dba.tbl_b]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+22. Primary key column with LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+23. Primary key column with complex LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tbl_a)
+
+  rewritten query: select [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+24. Join query with complex LIKE bind parameter, hostvar_peeking=yes     
+
+===================================================
+cola    colb    cola    
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (dba.tbl_a)
+    TABLE SCAN (dba.tbl_b)
+
+  rewritten query: select [dba.tbl_a].cola, [dba.tbl_a].colb, [dba.tbl_b].cola from [dba.tbl_a] [dba.tbl_a] left outer join [dba.tbl_b] [dba.tbl_b] on [dba.tbl_a].colb=[dba.tbl_b].cola
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
