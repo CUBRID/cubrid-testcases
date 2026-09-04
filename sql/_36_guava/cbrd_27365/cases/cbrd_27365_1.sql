@@ -1,0 +1,29 @@
+-- CBRD-27365 TC01: NULL 혼합 (첫 고정 컬럼 NULL / 마지막 가변 컬럼 NULL / 전부 NULL / 널비트맵 유무 경계)
+-- 목적: 새 포맷의 has-null 비트·조건부 널비트맵·첫 NULL 이전 상수 오프셋·NULL 뒤 걷기 시작 오프셋(D-199-7)을 리스트 파일 경로(ORDER BY/GROUP BY/DISTINCT/UNION/IN 서브쿼리)에서 검증.
+DROP TABLE IF EXISTS t01;
+CREATE TABLE t01 (id INT, a INT, b BIGINT, c DOUBLE, d CHAR(4), e VARCHAR(100), f NUMERIC(12,3), g DATE, h VARCHAR(10));
+INSERT INTO t01 VALUES (1, 10, 100, 1.5, 'ab', 'alpha', 1.250, DATE'2024-01-01', 'x');
+INSERT INTO t01 VALUES (2, NULL, 200, 2.5, 'cd', 'beta', 2.250, DATE'2024-01-02', 'y');
+INSERT INTO t01 VALUES (3, 30, NULL, 3.5, NULL, 'gamma', 3.250, NULL, NULL);
+INSERT INTO t01 VALUES (4, 40, 400, NULL, 'gh', NULL, NULL, DATE'2024-01-04', 'w');
+INSERT INTO t01 VALUES (5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO t01 VALUES (6, 60, 600, 6.5, '', '', 0, DATE'2024-01-06', '');
+INSERT INTO t01 VALUES (7, 70, 700, 7.5, 'ij', 'eta', 7.250, DATE'2024-01-07', NULL);
+INSERT INTO t01 VALUES (8, NULL, 800, 8.5, 'kl', 'theta', NULL, DATE'2024-01-08', 'v');
+-- 정렬(리스트 파일 + 정렬 레코드): NULL 이 정렬키·값 양쪽에 섬
+SELECT * FROM t01 ORDER BY a, id;
+SELECT * FROM t01 ORDER BY e DESC, id;
+SELECT * FROM t01 ORDER BY d, f, id;
+-- 첫 고정 컬럼이 NULL 인 행 뒤의 가변 컬럼 읽기(D-199-7 경계)
+SELECT a, d, e, h FROM t01 WHERE a IS NULL ORDER BY id;
+SELECT id, a, e FROM t01 WHERE e IS NOT NULL AND a IS NULL ORDER BY id;
+-- 집계/DISTINCT/UNION: NULL 그룹
+SELECT a, COUNT(*), SUM(b), MAX(e), MIN(d) FROM t01 GROUP BY a ORDER BY a;
+SELECT DISTINCT a, h FROM t01 ORDER BY a, h;
+SELECT id, e FROM t01 WHERE a IS NULL UNION ALL SELECT id, h FROM t01 WHERE b IS NULL ORDER BY 1, 2;
+SELECT id FROM t01 WHERE e IN (SELECT h FROM t01 WHERE h IS NOT NULL) OR e IS NULL ORDER BY id;
+-- 전 컬럼 NULL 행만
+SELECT * FROM t01 WHERE a IS NULL AND b IS NULL AND c IS NULL ORDER BY id;
+-- 빈 문자열 vs NULL 구분(0바이트 NULL 과 길이 0 가변 값)
+SELECT id, d, e, h, d IS NULL, e = '', h IS NULL FROM t01 WHERE id IN (5, 6) ORDER BY id;
+DROP TABLE t01;

@@ -28,6 +28,9 @@ insert into ta
   select mod (n, 10), mod (n, 100), mod (n, 1000), n from cte;
 insert into tb select * from ta;
 insert into tc select * from ta;
+-- extra rows that join nothing (cc >= 1000, cd >= 10001): they only make the projection of
+-- 'select distinct c.ca from tc c' (subqueries case) span more than one temp page.
+insert into tc select ca, cb, cc + 1000, cd + 10000 from ta;
 insert into td select * from ta;
 
 -- unnecessary
