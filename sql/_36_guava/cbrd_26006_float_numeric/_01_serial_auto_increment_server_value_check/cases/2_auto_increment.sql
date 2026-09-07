@@ -74,14 +74,14 @@ evaluate '3-2. MODIFY NUMERIC(10) AUTO_INCREMENT(1,1): serial reset -> new id=1 
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC(10) AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '3-3. MODIFY NUMERIC AUTO_INCREMENT(1,1): serial reset again -> new id=1';
 -- MODIFY back to NUMERIC with explicit (1,1) resets serial to 1 again
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '3-4. DROP + ADD COLUMN: existing rows -> NULL, new INSERT gets id=1';
 -- DROP + ADD COLUMN: existing rows become NULL (no backfill), serial restarts at 1
@@ -89,21 +89,21 @@ ALTER TABLE t1 DROP COLUMN id;
 ALTER TABLE t1 ADD COLUMN id NUMERIC(20) AUTO_INCREMENT(1, 1) FIRST;
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '3-5. MODIFY BIGINT (no seed): serial preserved -> new id=2';
 -- MODIFY type only (no AUTO_INCREMENT params): serial state preserved, continues from 2
 ALTER TABLE t1 MODIFY id BIGINT;
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '3-6. MODIFY NUMERIC (no seed): serial preserved -> new id=3';
 -- MODIFY type only again: serial preserved, continues from 3
 ALTER TABLE t1 MODIFY id NUMERIC;
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 DROP TABLE IF EXISTS t1;
 
@@ -125,13 +125,13 @@ evaluate '4-2. MODIFY NUMERIC(10) AUTO_INCREMENT(1,1): serial reset, index prese
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC(10) AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '4-3. MODIFY NUMERIC AUTO_INCREMENT(1,1): serial reset again -> new id=1';
 ALTER TABLE t1 MODIFY COLUMN id NUMERIC AUTO_INCREMENT(1, 1);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '4-4. DROP + ADD COLUMN + recreate index: existing rows -> NULL, new id=1';
 -- DROP COLUMN removes index, ADD COLUMN + CREATE INDEX to restore
@@ -140,20 +140,20 @@ ALTER TABLE t1 ADD COLUMN id NUMERIC AUTO_INCREMENT(1, 1);
 CREATE INDEX idx_t1 ON t1(id);
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '4-5. MODIFY BIGINT (no seed): serial preserved -> new id=2';
 -- MODIFY type only: serial preserved, index preserved
 ALTER TABLE t1 MODIFY id BIGINT;
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 evaluate '4-6. MODIFY NUMERIC (no seed): serial preserved -> new id=3';
 ALTER TABLE t1 MODIFY id NUMERIC;
 SHOW CREATE TABLE t1;
 INSERT INTO t1 (name) VALUES ('test');
-SELECT * FROM t1;
+SELECT * FROM t1 ORDER BY 1, 2;
 
 DROP TABLE IF EXISTS t1;
 
@@ -179,7 +179,7 @@ CREATE TABLE t2 (col1 NUMERIC(38));
 INSERT INTO t2 SELECT LAST_INSERT_ID() FROM t1;
 INSERT INTO t2 SELECT s1.NEXT_VALUE;
 INSERT INTO t2 SELECT s1.CURRENT_VALUE;
-SELECT * FROM t2;
+SELECT * FROM t2 ORDER BY 1;
 
 DROP SERIAL IF EXISTS s1;
 DROP TABLE IF EXISTS t1;
