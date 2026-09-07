@@ -187,3 +187,105 @@ select te.cola, te.colb from te te where (te.cola> ?:? ) and (te.colb> ?:? )
 0
 ===================================================
 0
+===================================================
+    
+2. Equality index scan and index-ordered retrieval on a NUMERIC key     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+cola    colb    
+2.25     2     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: idx_ta term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select ta.cola, ta.colb from ta ta where ta.cola= ?:? 
+===================================================
+cola    colb    
+2.25     2     
+10.5     1     
+100     3     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: idx_ta term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.cola, ta.colb from ta ta where (ta.cola> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+    
+3. Index scan on Float NUMERIC keys at extreme magnitudes     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+cola    colb    
+0.0000000000000000000000000000000000000000000000001     2     
+10000000000000000000000000000000000000000000000000     1     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: idx_tb term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.cola, tb.colb from tb tb where (tb.cola> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+    
+4. Index probe does not round the search key to the column scale     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cola    colb    
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: idx_tc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tc.cola, tc.colb from tc tc where tc.cola= ?:? 
+===================================================
+cola    colb    
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: idx_tc term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select tc.cola, tc.colb from tc tc where tc.cola= ?:? 
+===================================================
+0

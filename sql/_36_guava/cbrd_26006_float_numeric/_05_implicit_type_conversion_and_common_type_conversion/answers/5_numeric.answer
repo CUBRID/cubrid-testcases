@@ -20,7 +20,7 @@ cast(2 as numeric(1,0))+ cast(1.1 as numeric)    typeof( cast(2 as numeric(1,0))
 
 ===================================================
 cast(2 as numeric(1,0))+ cast(1.1 as float)    typeof( cast(2 as numeric(1,0))+ cast(1.1 as float))    
-3.100000023841858     double     
+3.100000024     double     
 
 ===================================================
     
@@ -44,7 +44,7 @@ cast(2 as numeric)+ cast(1.1 as numeric)    typeof( cast(2 as numeric)+ cast(1.1
 
 ===================================================
 cast(2 as numeric)+ cast(1.1 as float)    typeof( cast(2 as numeric)+ cast(1.1 as float))    
-3.100000023841858     double     
+3.100000024     double     
 
 ===================================================
     
@@ -54,3 +54,41 @@ cast(2 as numeric)+ cast(1.1 as float)    typeof( cast(2 as numeric)+ cast(1.1 a
 cast(2 as numeric)+ cast(1.1 as double)    typeof( cast(2 as numeric)+ cast(1.1 as double))    
 3.1     double     
 
+===================================================
+    
+3-1. high-precision Float NUMERIC + Float NUMERIC preserves full precision     
+
+===================================================
+cast(0.12345678901234567890123456789012345678 as numeric)+ cast(1 as numeric)    typeof( cast(0.12345678901234567890123456789012345678 as numeric)+ cast(1 as numeric))    
+1.12345678901234567890123456789012345678     numeric     
+
+===================================================
+    
+3-2. high-precision Float NUMERIC + DOUBLE collapses to DOUBLE (precision loss)     
+
+===================================================
+cast(0.12345678901234567890123456789012345678 as numeric)+ cast(1 as double)    typeof( cast(0.12345678901234567890123456789012345678 as numeric)+ cast(1 as double))    
+1.123456789     double     
+
+===================================================
+    
+3-3. NUMERIC with -, *, / (division is numeric, not integer)     
+
+===================================================
+cast(2 as numeric)- cast(1 as numeric)    typeof( cast(2 as numeric)- cast(1 as numeric))    
+1     numeric     
+
+===================================================
+cast(2 as numeric)* cast(3 as numeric)    typeof( cast(2 as numeric)* cast(3 as numeric))    
+6     numeric     
+
+===================================================
+cast(1 as numeric)/ cast(3 as numeric)    typeof( cast(1 as numeric)/ cast(3 as numeric))    
+0.3333333333333333333333333333333333333333     numeric     
+
+===================================================
+    
+3-4. NUMERIC arithmetic overflow beyond Float NUMERIC range (error)     
+
+===================================================
+Error:-730

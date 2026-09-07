@@ -54,3 +54,28 @@ INSERT INTO t1 VALUES (0.00000000001);
 SELECT * FROM t1;
 
 DROP TABLE IF EXISTS t1;
+
+-- ===========================================================================
+-- Section 2: MODIFY narrowing validates existing data
+-- ===========================================================================
+evaluate '2-1. MODIFY narrowing precision overflows existing data (error)';
+DROP TABLE IF EXISTS t2;
+CREATE TABLE t2 (col1 NUMERIC(20));
+INSERT INTO t2 VALUES (123456);
+-- 6-digit value does not fit NUMERIC(5,0) (error)
+ALTER TABLE t2 MODIFY col1 NUMERIC(5);
+-- table stays unchanged after the failed ALTER
+SHOW CREATE TABLE t2;
+SELECT * FROM t2;
+DROP TABLE IF EXISTS t2;
+
+evaluate '2-2. MODIFY Float -> Fixed rejects out-of-range existing data (error)';
+DROP TABLE IF EXISTS t2;
+CREATE TABLE t2 (col1 NUMERIC);
+INSERT INTO t2 VALUES (1234567890123456789012345678901234567890);
+-- 40-digit value is beyond Fixed NUMERIC(38) range (error)
+ALTER TABLE t2 MODIFY col1 NUMERIC(38);
+-- table stays unchanged after the failed ALTER
+SHOW CREATE TABLE t2;
+SELECT * FROM t2;
+DROP TABLE IF EXISTS t2;

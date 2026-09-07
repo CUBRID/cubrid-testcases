@@ -118,3 +118,34 @@ INSERT INTO t1 VALUES (
 
 DROP TABLE IF EXISTS t1;
 DROP TABLE IF EXISTS t2;
+
+
+-- ===========================================================================
+-- Section 5: Rounding and carry overflow at a normal scale
+-- ===========================================================================
+evaluate '5. Rounding at NUMERIC(5,2): scale rounding and half-up tie';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC(5,2));
+SHOW CREATE TABLE t1;
+INSERT INTO t1 VALUES (999.99), (123.456), (1.005), (1.004);
+SELECT * FROM t1;
+
+evaluate '5-1. Rounding carry overflows precision (error)';
+-- 999.995 rounds to 1000.00 which needs 6 digits and exceeds precision 5
+INSERT INTO t1 VALUES (999.995);
+-- 1000 needs 4 integer digits plus scale 2 = 6 digits and exceeds precision 5
+INSERT INTO t1 VALUES (1000);
+SELECT * FROM t1;
+
+DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 6: NULL insert
+-- ===========================================================================
+evaluate '6. INSERT NULL into Fixed NUMERIC';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC(10,3));
+INSERT INTO t1 VALUES (NULL), (1.5);
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;

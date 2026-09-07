@@ -44,9 +44,70 @@ UNION
 SELECT 1000000000000000000 AS e;
 
 -- ===========================================================================
--- Section 3: PREPARE with UNION
+-- Section 3: dedup equivalence across Float NUMERIC representations
 -- ===========================================================================
-evaluate '3. prepare statement with union';
+evaluate '3-1. dedup collapses trailing-zero-only differences';
+-- 1.5, 1.50, 1.500 are the same Float NUMERIC value
+SELECT 1.5 AS a
+UNION
+SELECT 1.50 AS a
+UNION
+SELECT 1.500 AS a;
+
+evaluate '3-2. dedup collapses values equal after 40-significant-digit rounding';
+-- both operands have 41 significant digits and round to the same 40-digit value
+SELECT 1.0000000000000000000000000000000000000001 AS a
+UNION
+SELECT 1.0000000000000000000000000000000000000002 AS a;
+
+-- ===========================================================================
+-- Section 4: sorting across the full signed Float NUMERIC range
+-- ===========================================================================
+evaluate '4. UNION sorts negative, tiny, and huge magnitudes in order';
+SELECT -1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS a
+UNION
+SELECT 0 AS a
+UNION
+SELECT 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 AS a
+UNION
+SELECT 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS a;
+
+-- ===========================================================================
+-- Section 5: NULL handling in UNION
+-- ===========================================================================
+evaluate '5-1. UNION with NULL, duplicate NULLs are dedup and NULL sorts first';
+SELECT 99999999999999999999999999999999999999 AS a
+UNION
+SELECT NULL AS a
+UNION
+SELECT NULL AS a;
+
+evaluate '5-2. UNION ALL keeps duplicate NULLs';
+SELECT 99999999999999999999999999999999999999 AS a
+UNION ALL
+SELECT NULL AS a
+UNION ALL
+SELECT NULL AS a;
+
+-- ===========================================================================
+-- Section 6: INTERSECT and DIFFERENCE with Float NUMERIC
+-- ===========================================================================
+evaluate '6-1. INTERSECT matches equal values written differently';
+-- 2222 and 2222.0 are equal, so the intersection keeps 2222
+(SELECT 2222 AS a UNION ALL SELECT 222.2 AS a)
+INTERSECT
+SELECT 2222.0 AS a;
+
+evaluate '6-2. DIFFERENCE removes equal values written differently';
+-- 2222.0 removes 2222 from the left side, leaving 222.2
+(SELECT 2222 AS a UNION ALL SELECT 222.2 AS a)
+DIFFERENCE
+SELECT 2222.0 AS a;
+
+-- ===========================================================================
+-- Section 7: PREPARE with UNION
+-- ===========================================================================
+evaluate '7. prepare statement with union';
 PREPARE st FROM 'SELECT ? as f UNION SELECT ? as f';
 EXECUTE st USING 1234567890, 1234567891;
 

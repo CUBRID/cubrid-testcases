@@ -4,8 +4,10 @@
 -- Section 1: INSERT 1.1 into various column types
 -- ===========================================================================
 -- Fix verification:
--- - When inserting 1.1 into INT/BIGINT, the value must be stored as 1 (fractional part truncated),
---   not 11, and no "Cannot coerce" error should occur.
+-- - When inserting 1.1 into INT/BIGINT, the value must be stored as 1, not 11,
+--   and no "Cannot coerce" error should occur.
+-- - Coercion into an integer type rounds half away from zero (not truncation), so 1.1 becomes 1.
+--   See Section 2 for the rounding boundary (1.5 -> 2, 2.5 -> 3, -2.5 -> -3).
 evaluate '1-1. INSERT 1.1 into INT';
 DROP TABLE IF EXISTS t1;
 DROP TABLE IF EXISTS t2;
@@ -126,3 +128,55 @@ DROP TABLE IF EXISTS t10;
 DROP TABLE IF EXISTS t11;
 DROP TABLE IF EXISTS t12;
 DROP TABLE IF EXISTS t13;
+
+
+-- ===========================================================================
+-- Section 2: Rounding vs truncation when coercing into integer types
+-- ===========================================================================
+evaluate '2. Rounding vs truncation coercing float into INT';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 INT);
+INSERT INTO t1 VALUES (1.4), (1.5), (1.9), (2.5), (-1.5), (-2.5);
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 3: Overflow when coercing a large value into integer types
+-- ===========================================================================
+evaluate '3. Overflow coercing a large value into integer types (error)';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 INT);
+-- 10-digit value exceeds INT max 2147483647 (error)
+INSERT INTO t1 VALUES (9999999999);
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;
+
+DROP TABLE IF EXISTS t2;
+CREATE TABLE t2 (col1 BIGINT);
+-- 20-digit value exceeds BIGINT max (error)
+INSERT INTO t2 VALUES (99999999999999999999);
+SELECT * FROM t2;
+DROP TABLE IF EXISTS t2;
+
+
+-- ===========================================================================
+-- Section 4: High-precision Float NUMERIC coerced into DOUBLE and VARCHAR
+-- ===========================================================================
+evaluate '4. High-precision value coerced into DOUBLE (precision loss)';
+-- The stored DOUBLE value is identical across clients, but its display precision differs.
+-- JDBC prints the shortest round-trip form (0.12345678901234568),
+-- while CCI prints fewer significant digits (0.123456789), so the JDBC and CCI answers differ.
+-- This is a driver display difference, not a value difference (see 6_insert_coercion.answer_cci).
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 DOUBLE);
+INSERT INTO t1 VALUES (0.1234567890123456789012345678901234567890);
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;
+
+evaluate '4-1. High-precision value coerced into VARCHAR';
+DROP TABLE IF EXISTS t2;
+CREATE TABLE t2 (col1 VARCHAR);
+INSERT INTO t2 VALUES (0.1234567890123456789012345678901234567890);
+SELECT * FROM t2;
+DROP TABLE IF EXISTS t2;

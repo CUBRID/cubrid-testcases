@@ -93,3 +93,30 @@ INSERT INTO t1 VALUES (
 );
 
 DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 5: NULL insert
+-- ===========================================================================
+evaluate '5. INSERT NULL into Float NUMERIC';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC);
+INSERT INTO t1 VALUES (NULL), (1.5);
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 6: DISTINCT and GROUP BY collapse equal values with different scales
+-- ===========================================================================
+evaluate '6. Scale-differing equal values collapse under DISTINCT and GROUP BY';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC);
+INSERT INTO t1 VALUES (1), (1.0), (1.00), (2.5), (2.50);
+-- each row keeps its own scale on display
+SELECT * FROM t1;
+-- DISTINCT collapses equal values to one row each
+SELECT DISTINCT col1 FROM t1 ORDER BY col1;
+-- GROUP BY groups equal values together
+SELECT col1, COUNT(*) FROM t1 GROUP BY col1 ORDER BY col1;
+DROP TABLE IF EXISTS t1;

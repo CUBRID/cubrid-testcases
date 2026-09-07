@@ -46,3 +46,37 @@ cast(2 as integer)+ cast(2.1 as float)    typeof( cast(2 as integer)+ cast(2.1 a
 cast(2 as integer)+ cast(2.1 as double)    typeof( cast(2 as integer)+ cast(2.1 as double))    
 4.1     double     
 
+===================================================
+    
+1-7. INT + high-precision Float NUMERIC preserves full precision     
+
+===================================================
+cast(1 as integer)+ cast(0.12345678901234567890123456789012345678 as numeric)    typeof( cast(1 as integer)+ cast(0.12345678901234567890123456789012345678 as numeric))    
+1.12345678901234567890123456789012345678     numeric     
+
+===================================================
+    
+1-8. INT with -, *, / and NUMERIC, and INT / INT integer division     
+
+===================================================
+cast(2 as integer)- cast(1 as numeric)    typeof( cast(2 as integer)- cast(1 as numeric))    
+1     numeric     
+
+===================================================
+cast(2 as integer)* cast(3 as numeric)    typeof( cast(2 as integer)* cast(3 as numeric))    
+6     numeric     
+
+===================================================
+cast(1 as integer)/ cast(3 as numeric)    typeof( cast(1 as integer)/ cast(3 as numeric))    
+0.3333333333333333333333333333333333333333     numeric     
+
+===================================================
+cast(1 as integer)/ cast(3 as integer)    typeof( cast(1 as integer)/ cast(3 as integer))    
+0     integer     
+
+===================================================
+    
+1-9. INT + INT overflow behavior     
+
+===================================================
+Error:-458

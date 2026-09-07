@@ -76,6 +76,21 @@ SELECT
 
 SELECT CAST(LPAD('1', 254, '1') AS NUMERIC);
 
+-- 40 significant digits split across the decimal point (25 integer + 15 fractional)
+evaluate '1-8. mixed 40 digits (40,15)';
+SELECT
+  1234567890123456789012345.123456789012345;
+
+-- 41 significant digits, the 41st rounds the 40th up inside the fractional part
+evaluate '1-9. mixed 41 digits rounds to (40,15)';
+SELECT
+  1234567890123456789012345.1234567890123455;
+
+-- rounding carry propagates from the fractional part across the decimal into the integer part
+evaluate '1-10. mixed 41 digits carries to (26,0)';
+SELECT
+  9999999999999999999999999.9999999999999995;
+
 -- ===========================================================================
 -- Section 2: Overflow
 -- ===========================================================================

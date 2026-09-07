@@ -38,3 +38,37 @@ cast(2 as bigint)+ cast(1 as float)    typeof( cast(2 as bigint)+ cast(1 as floa
 cast(2 as bigint)+ cast(1 as double)    typeof( cast(2 as bigint)+ cast(1 as double))    
 3.0     double     
 
+===================================================
+    
+1-6. BIGINT + high-precision Float NUMERIC preserves full precision     
+
+===================================================
+cast(1 as bigint)+ cast(0.12345678901234567890123456789012345678 as numeric)    typeof( cast(1 as bigint)+ cast(0.12345678901234567890123456789012345678 as numeric))    
+1.12345678901234567890123456789012345678     numeric     
+
+===================================================
+    
+1-7. BIGINT with -, *, / and NUMERIC, and BIGINT / BIGINT integer division     
+
+===================================================
+cast(2 as bigint)- cast(1 as numeric)    typeof( cast(2 as bigint)- cast(1 as numeric))    
+1     numeric     
+
+===================================================
+cast(2 as bigint)* cast(3 as numeric)    typeof( cast(2 as bigint)* cast(3 as numeric))    
+6     numeric     
+
+===================================================
+cast(1 as bigint)/ cast(3 as numeric)    typeof( cast(1 as bigint)/ cast(3 as numeric))    
+0.3333333333333333333333333333333333333333     numeric     
+
+===================================================
+cast(1 as bigint)/ cast(3 as bigint)    typeof( cast(1 as bigint)/ cast(3 as bigint))    
+0     bigint     
+
+===================================================
+    
+1-8. BIGINT + BIGINT overflow behavior     
+
+===================================================
+Error:-458

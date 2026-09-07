@@ -40,3 +40,41 @@ SELECT * FROM t1 ORDER BY col1;
 SELECT COUNT(*) FROM t1 WHERE col1 = 1;
 
 DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 2: UPDATE with an arithmetic expression
+-- ===========================================================================
+evaluate '2. UPDATE with an arithmetic expression produces a Float NUMERIC result';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC);
+INSERT INTO t1 VALUES (1), (2), (10);
+UPDATE t1 SET col1 = col1 / 3;
+SELECT * FROM t1 ORDER BY col1;
+DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 3: UPDATE to an out-of-range value
+-- ===========================================================================
+evaluate '3. UPDATE to an out-of-range value fails and leaves the row unchanged (error)';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC);
+INSERT INTO t1 VALUES (5);
+-- 255-digit literal is beyond the Float NUMERIC range (error)
+UPDATE t1 SET col1 = 999999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;
+SELECT * FROM t1;
+DROP TABLE IF EXISTS t1;
+
+
+-- ===========================================================================
+-- Section 4: UPDATE SET NULL and range-predicate WHERE
+-- ===========================================================================
+evaluate '4. UPDATE SET NULL and range-predicate WHERE';
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 (col1 NUMERIC);
+INSERT INTO t1 VALUES (1), (50), (100), (1000);
+UPDATE t1 SET col1 = NULL WHERE col1 = 1;
+UPDATE t1 SET col1 = 0 WHERE col1 > 100;
+SELECT * FROM t1 ORDER BY col1;
+DROP TABLE IF EXISTS t1;

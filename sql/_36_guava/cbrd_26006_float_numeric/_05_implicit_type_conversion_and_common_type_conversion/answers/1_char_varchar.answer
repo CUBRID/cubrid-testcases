@@ -82,3 +82,33 @@ cast('1' as varchar)+ cast(2.1 as float)    typeof( cast('1' as varchar)+ cast(2
 cast('1' as varchar)+ cast(2.1 as double)    typeof( cast('1' as varchar)+ cast(2.1 as double))    
 3.1     double     
 
+===================================================
+    
+1-7. High-precision numeric string collapses to DOUBLE (precision loss)     
+
+===================================================
+cast('0.12345678901234567890123456789012345678' as varchar)+ cast(0 as numeric)    typeof( cast('0.12345678901234567890123456789012345678' as varchar)+ cast(0 as numeric))    
+0.12345678901234568     double     
+
+===================================================
+    
+1-8. Decimal and scientific-notation strings convert to DOUBLE     
+
+===================================================
+cast('2.5' as varchar)- cast('1' as varchar)    typeof( cast('2.5' as varchar)- cast('1' as varchar))    
+1.5     double     
+
+===================================================
+cast('1e3' as varchar)+ cast(0 as integer)    typeof( cast('1e3' as varchar)+ cast(0 as integer))    
+1000.0     double     
+
+===================================================
+cast('.5' as varchar)* cast('4' as varchar)    typeof( cast('.5' as varchar)* cast('4' as varchar))    
+2.0     double     
+
+===================================================
+    
+1-9. Non-numeric string in arithmetic (error)     
+
+===================================================
+Error:-181

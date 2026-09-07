@@ -54,3 +54,37 @@ cast(2 as smallint)+ cast(2.1 as float)    typeof( cast(2 as smallint)+ cast(2.1
 cast(2 as smallint)+ cast(2.1 as double)    typeof( cast(2 as smallint)+ cast(2.1 as double))    
 4.1     double     
 
+===================================================
+    
+1-8. SHORT + high-precision Float NUMERIC preserves full precision     
+
+===================================================
+cast(1 as smallint)+ cast(0.12345678901234567890123456789012345678 as numeric)    typeof( cast(1 as smallint)+ cast(0.12345678901234567890123456789012345678 as numeric))    
+1.12345678901234567890123456789012345678     numeric     
+
+===================================================
+    
+1-9. SHORT with -, *, / and NUMERIC, and SHORT / SHORT integer division     
+
+===================================================
+cast(2 as smallint)- cast(1 as numeric)    typeof( cast(2 as smallint)- cast(1 as numeric))    
+1     numeric     
+
+===================================================
+cast(2 as smallint)* cast(3 as numeric)    typeof( cast(2 as smallint)* cast(3 as numeric))    
+6     numeric     
+
+===================================================
+cast(1 as smallint)/ cast(3 as numeric)    typeof( cast(1 as smallint)/ cast(3 as numeric))    
+0.3333333333333333333333333333333333333333     numeric     
+
+===================================================
+cast(1 as smallint)/ cast(3 as smallint)    typeof( cast(1 as smallint)/ cast(3 as smallint))    
+0     smallint     
+
+===================================================
+    
+1-10. SHORT + SHORT overflow behavior     
+
+===================================================
+Error:-458
