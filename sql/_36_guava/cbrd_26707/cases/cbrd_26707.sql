@@ -36,8 +36,15 @@
  *               recursive check still blocks parallel heap scan (NOT parallelized)
  *    Case 23:   SP inside a correlated scalar (regu-linked aptr) subquery
  *               predicate -> NOT parallelized (aptr branch; Case 6 is the control)
- *    Case 24-25: SP inside an IN-subquery predicate, correlated -> NOT parallelized
- *               vs uncorrelated -> parallel; proves the block is scoped to correlation
+ *    Case 24:   SP inside a correlated IN-subquery predicate -> NOT parallelized
+ *               (Case 29 is the same query without the SP -> parallel: the SP is the blocker)
+ *    Case 25:   SP inside an UNcorrelated IN-subquery predicate -> parallel (the IN is unnested
+ *               into a join); contrast Case 28 -> the block follows unnesting, not correlation
+ *    Case 26:   NOT EXISTS mergeable list folded into per-column sums (no limit) -> full-row check
+ *    Case 27:   trailing set-scan spec blocks list merge -> parallel heap scan (row by row)
+ *    Case 28:   SP inside an UNcorrelated SCALAR subquery predicate -> NOT parallelized (a scalar
+ *               subquery is not unnested, so the aptr remains and the SP still blocks)
+ *    Case 29:   correlated IN-subquery without a blocking element -> parallel (buildvalue)
  */
 
 drop table if exists ta, tb;
@@ -103,10 +110,10 @@ show trace;
 
 
 evaluate 'Case 6: filter subquery + min() compare -> parallel heap scan (buildvalue)';
-select /*+ recompile */ count(*) from ta a where a.cola > (select min(b.cola) from tb b where b.id = a.id);
+select /*+ recompile */ count(*) from ta a where a.cola >= (select min(b.cola) from tb b where b.id = a.id);
 show trace;
 -- serial reference
-select /*+ recompile no_parallel_scan */ count(*) from ta a where a.cola > (select min(b.cola) from tb b where b.id = a.id);
+select /*+ recompile no_parallel_scan */ count(*) from ta a where a.cola >= (select min(b.cola) from tb b where b.id = a.id);
 show trace;
 
 
@@ -191,9 +198,7 @@ show trace;
 evaluate 'Case 16: NOT EXISTS + PARALLEL(2) hint -> parallel heap scan (buildvalue)';
 select /*+ recompile PARALLEL(2) */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
 show trace;
--- serial reference
-select /*+ recompile no_parallel_scan */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
-show trace;
+-- serial reference: Case 17 runs the identical query with NO_PARALLEL_SCAN
 
 
 evaluate 'Case 17: NOT EXISTS + NO_PARALLEL_SCAN hint -> not parallelized';
@@ -225,9 +230,10 @@ create table rt (id int, cola varchar(20), colb varchar(20), colc varchar(20), c
 insert into rt select /*+ recompile */ * from ta a where not exists (select 1 from tb b where b.id = a.id) order by id;
 show trace;
 -- verify the parallel insert produced the same rows an independent serial scan would:
--- rt row count must equal the serial (no_parallel_scan) NOT EXISTS count.
-select count(*) from rt;
-select /*+ recompile no_parallel_scan */ count(*) from ta a where not exists (select 1 from tb b where b.id = a.id);
+-- per-column sums (not just the row count) must equal the serial NOT EXISTS aggregate, so a value
+-- dropped, duplicated, or corrupted by the parallel gather is caught -- not only a lost row.
+select count(*), sum(id), sum(cast(cola as bigint)), sum(cast(colb as int)), sum(cast(cold as bigint)) from rt;
+select /*+ recompile no_parallel_scan */ count(*), sum(a.id), sum(cast(a.cola as bigint)), sum(cast(a.colb as int)), sum(cast(a.cold as bigint)) from ta a where not exists (select 1 from tb b where b.id = a.id);
 show trace;
 drop table if exists rt;
 
@@ -258,22 +264,79 @@ evaluate 'Case 23: SP in a correlated scalar subquery predicate (aptr branch) ->
 -- the SP sits in the inner WHERE of a correlated scalar (regu-linked aptr) subquery, so the
 -- fix's sibling_check propagates CANNOT_PARALLEL to the driving heap scan. Case 6 is the same
 -- correlated scalar subquery without the SP and DOES parallelize -> positive control.
-select /*+ recompile */ count(*) from ta a where a.cola > (select min(b.cola) from tb b where b.id = a.id and sp_f(b.id) > 0);
+select /*+ recompile */ count(*) from ta a where a.cola >= (select min(b.cola) from tb b where b.id = a.id and sp_f(b.id) > 0);
 show trace;
 
 
 evaluate 'Case 24: SP in a correlated IN-subquery predicate -> NOT parallelized';
+-- correlated IN is not unnested, so the SP in its predicate blocks the driving heap scan.
+-- Case 29 is the same query without the SP and DOES parallelize -> the SP is the blocker.
 select /*+ recompile */ count(*) from ta a where a.id in (select b.id from tb b where b.colb = a.colb and sp_f(b.id) > 0);
 show trace;
 
 
 evaluate 'Case 25: SP in an uncorrelated IN-subquery predicate -> parallel heap scan (buildvalue)';
--- identical SP-in-predicate as Case 24 but uncorrelated: the block is scoped to correlation
--- (regu-linked uncorrelated subqueries are exempt), so the driving heap scan parallelizes.
+-- identical SP-in-predicate as Case 24 but uncorrelated: the optimizer unnests the uncorrelated
+-- IN into a join with a derived table (see the rewritten query in the answer), so no regu-linked
+-- aptr subquery remains and the driving heap scan parallelizes. Contrast Case 28 (uncorrelated
+-- SCALAR + SP), which is NOT unnested and is blocked -> the block follows unnesting, not correlation.
 select /*+ recompile */ count(*) from ta a where a.id in (select b.id from tb b where sp_f(b.id) > 0);
 show trace;
 -- serial reference: result must match the parallel block above
 select /*+ recompile no_parallel_scan */ count(*) from ta a where a.id in (select b.id from tb b where sp_f(b.id) > 0);
+show trace;
+
+
+evaluate 'Case 26: NOT EXISTS + mergeable list folded into per-column sums (no limit) -> parallel heap scan (mergeable list)';
+-- cases 3/7/11/12/15 all carry "limit 3" and case 19 checks only the row count, so a row lost or
+-- corrupted in the middle/tail of the gather is invisible. here the whole 3500-row mergeable gather
+-- is folded into per-column sums, which change if any single gathered value is wrong.
+select /*+ recompile */ count(*), sum(cast(cola as bigint)), sum(cast(colb as int)), sum(cast(colc as bigint)), sum(cast(cold as bigint))
+from (select /*+ NO_MERGE */ cola, colb, colc, cold from ta a where not exists (select 1 from tb b where b.id = a.id));
+show trace;
+-- serial reference: result must match the parallel block above
+select /*+ recompile */ count(*), sum(cast(cola as bigint)), sum(cast(colb as int)), sum(cast(colc as bigint)), sum(cast(cold as bigint))
+from (select /*+ NO_MERGE no_parallel_scan */ cola, colb, colc, cold from ta a where not exists (select 1 from tb b where b.id = a.id));
+show trace;
+
+
+evaluate 'Case 27: NOT EXISTS + trailing set-scan spec -> parallel heap scan (row by row)';
+-- the driving heap scan of ta still parallelizes, but the trailing set spec (table({..})) blocks
+-- list merging, so only CANNOT_LIST_MERGE is raised and the gather falls back to "row by row" --
+-- the intermediate mode between parallel+merged (cases 1-20) and parallel-blocked (cases 21-24).
+select /*+ recompile ordered */ a.id, tset.v
+from ta a, table({1, 2, 3}) as tset(v)
+where not exists (select 1 from tb b where b.id = a.id) and cast(a.cola as int) < 503
+order by 1, 2;
+show trace;
+-- serial reference: result must match the parallel block above
+select /*+ recompile ordered no_parallel_scan */ a.id, tset.v
+from ta a, table({1, 2, 3}) as tset(v)
+where not exists (select 1 from tb b where b.id = a.id) and cast(a.cola as int) < 503
+order by 1, 2;
+show trace;
+
+
+evaluate 'Case 28: SP in an uncorrelated scalar subquery predicate -> NOT parallelized';
+-- a scalar subquery is NOT unnested into a join, so it stays a regu-linked aptr even when
+-- uncorrelated; the SP in its predicate therefore still blocks the driving heap scan. Contrast
+-- Case 25 (uncorrelated IN + SP), which IS unnested and parallelizes.
+select /*+ recompile */ count(*) from ta a where a.cola >= (select min(b.cola) from tb b where sp_f(b.id) > 0);
+show trace;
+-- positive control: the same uncorrelated scalar subquery without the SP parallelizes,
+-- proving the SP -- not the uncorrelated-scalar shape -- is what blocks the case above.
+select /*+ recompile */ count(*) from ta a where a.cola >= (select min(b.cola) from tb b);
+show trace;
+
+
+evaluate 'Case 29: correlated IN-subquery without a blocking element -> parallel heap scan (buildvalue)';
+-- the acceptance criteria names IN (subquery) explicitly, but case 9 is NOT IN and cases 24/25
+-- both carry an SP. this is Case 24 with the SP removed: it parallelizes, which covers the plain-IN
+-- acceptance criterion and confirms the SP is what blocks Case 24.
+select /*+ recompile */ count(*) from ta a where a.id in (select b.id from tb b where b.colb = a.colb);
+show trace;
+-- serial reference: result must match the parallel block above
+select /*+ recompile no_parallel_scan */ count(*) from ta a where a.id in (select b.id from tb b where b.colb = a.colb);
 show trace;
 
 

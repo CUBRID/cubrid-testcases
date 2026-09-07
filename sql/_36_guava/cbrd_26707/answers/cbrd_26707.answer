@@ -327,7 +327,7 @@ Case 6: filter subquery + min() compare -> parallel heap scan (buildvalue)
 
 ===================================================
 count(*)    
-0     
+500     
 
 ===================================================
 trace    
@@ -339,7 +339,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.ta] a where (a.cola>(select min(b.cola) from [dba.tb] b where b.id=a.id))
+  rewritten query: select count(*) from [dba.ta] a where (a.cola>=(select min(b.cola) from [dba.tb] b where b.id=a.id))
 
 
 Trace Statistics:
@@ -353,7 +353,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-0     
+500     
 
 ===================================================
 trace    
@@ -365,7 +365,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where (a.cola>(select min(b.cola) from [dba.tb] b where b.id=a.id))
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where (a.cola>=(select min(b.cola) from [dba.tb] b where b.id=a.id))
 
 
 Trace Statistics:
@@ -1026,31 +1026,6 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    
-3500     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
     
 Case 17: NOT EXISTS + NO_PARALLEL_SCAN hint -> not parallelized     
 
@@ -1187,12 +1162,12 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    
-3500     
+count(*)    sum(id)    sum( cast(cola as bigint))    sum( cast(colb as integer))    sum( cast(cold as bigint))    
+3500     7876750     7876750     7000     7876750     
 
 ===================================================
-count(*)    
-3500     
+count(*)    sum(a.id)    sum( cast(a.cola as bigint))    sum( cast(a.colb as integer))    sum( cast(a.cold as bigint))    
+3500     7876750     7876750     7000     7876750     
 
 ===================================================
 trace    
@@ -1204,7 +1179,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(a.id), sum( cast(a.cola as bigint)), sum( cast(a.colb as integer)), sum( cast(a.cold as bigint)) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -1338,7 +1313,7 @@ Case 23: SP in a correlated scalar subquery predicate (aptr branch) -> NOT paral
 
 ===================================================
 count(*)    
-0     
+500     
 
 ===================================================
 trace    
@@ -1350,7 +1325,7 @@ Query Plan:
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.ta] a where (a.cola>(select min(b.cola) from [dba.tb] b where b.id=a.id and [dba.sp_f](b.id)>?))
+  rewritten query: select count(*) from [dba.ta] a where (a.cola>=(select min(b.cola) from [dba.tb] b where b.id=a.id and [dba.sp_f](b.id)>?))
 
 
 Trace Statistics:
@@ -1461,6 +1436,265 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 26: NOT EXISTS + mergeable list folded into per-column sums (no limit) -> parallel heap scan (mergeable list)     
+
+===================================================
+count(*)    sum( cast(cola as bigint))    sum( cast(colb as integer))    sum( cast(colc as bigint))    sum( cast(cold as bigint))    
+3500     7876750     7000     7876750     7876750     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb, colc, cold)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(cola as bigint))    sum( cast(colb as integer))    sum( cast(colc as bigint))    sum( cast(cold as bigint))    
+3500     7876750     7000     7876750     7876750     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb, colc, cold)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 27: NOT EXISTS + trailing set-scan spec -> parallel heap scan (row by row)     
+
+===================================================
+id    v    
+501     1     
+501     2     
+501     3     
+502     1     
+502     2     
+502     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (a)
+      TABLE SCAN (tset)
+
+  rewritten query: select /*+ ORDERED */ a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) and  cast(a.cola as integer)<? order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    v    
+501     1     
+501     2     
+501     3     
+502     1     
+502     2     
+502     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (a)
+      TABLE SCAN (tset)
+
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) and  cast(a.cola as integer)<? order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 28: SP in an uncorrelated scalar subquery predicate -> NOT parallelized     
+
+===================================================
+count(*)    
+4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select min(b.cola) from [dba.tb] b where b.cola is not null  and [dba.sp_f](b.id)>?)
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.ta] a where (a.cola>=(select min(b.cola) from [dba.tb] b where b.cola is not null  and [dba.sp_f](b.id)>?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (b)
+
+  rewritten query: (select min(b.cola) from [dba.tb] b)
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.ta] a where (a.cola>=(select min(b.cola) from [dba.tb] b))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 29: correlated IN-subquery without a blocking element -> parallel heap scan (buildvalue)     
+
+===================================================
+count(*)    
+250     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (b)
+
+  rewritten query: (select distinct b.id from [dba.tb] b where b.colb=a.colb)
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*) from [dba.ta] a where a.id in (select distinct b.id from [dba.tb] b where b.colb=a.colb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+250     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (b)
+
+  rewritten query: (select distinct b.id from [dba.tb] b where b.colb=a.colb)
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where a.id in (select distinct b.id from [dba.tb] b where b.colb=a.colb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
