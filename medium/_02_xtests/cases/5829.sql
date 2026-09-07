@@ -8,5 +8,5 @@ insert into discounts (d_discount, d_begin_range, d_end_range)
 values (10.00, 2500, 4999);
 insert into discounts (d_discount, d_begin_range, d_end_range)
 values (20.00, 5000, 10000000);
-select * from discounts;
+select * from discounts order by d_begin_range;
 rollback;

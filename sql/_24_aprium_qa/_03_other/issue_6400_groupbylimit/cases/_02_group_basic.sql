@@ -88,8 +88,8 @@ CREATE TABLE t2( a decimal auto_increment);
 INSERT INTO t2 VALUES (null);
 INSERT INTO t2 VALUES (default);
 
-SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a order by b, t1.* ;
-SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a+t2.a  order by t1.* desc ;
+SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a order by b, t1.a ;
+SELECT t1.*,count(*) as b FROM t1,t2  where t1.a=t2.a group by t1.a+t2.a  order by t1.a desc ;
 
 drop table if exists t1,t2;
 

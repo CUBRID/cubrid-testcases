@@ -1,0 +1,234 @@
+/**
+ * This test case verifies CBRD-25471: db_user.name / owner-name columns unified to varchar(32)
+ *
+ * Coverage:
+ * 1-2 - base table _db_user.name and db_user view name are varchar(32) (set-element size in 8)
+ * 3-6 - the 20 remaining dependent owner-name/grantor/grantee views are varchar(32)
+ * 7   - aggregate cross-check of every owner-name column's declared size in one query
+ * 8   - set-element size of db_user.direct_groups / groups
+ * 9   - db_server / _db_server.user_name is intentionally left at varchar(255)
+ * 10  - a 31-char user name round-trips through db_user.name
+ * 11  - a 31-char owner name round-trips through 15 of the 20 dependent views data
+ *       12 - an OWNER TO transfer refreshes it, 13 - the 5 remaining owner columns
+ */
+
+evaluate 'Case 1: base table _db_user.name is varchar(32)';
+SHOW COLUMNS FROM _db_user WHERE field IN ('name');
+
+evaluate 'Case 2: db_user view name is varchar(32) (direct_groups/groups element size checked in Case 8)';
+SHOW COLUMNS FROM db_user WHERE field IN ('name');
+
+evaluate 'Case 3: class-object owner-name views are varchar(32)';
+evaluate 'db_class';
+SHOW COLUMNS FROM db_class WHERE field IN ('owner_name');
+evaluate 'db_direct_super_class';
+SHOW COLUMNS FROM db_direct_super_class WHERE field IN ('owner_name', 'super_owner_name');
+evaluate 'db_vclass';
+SHOW COLUMNS FROM db_vclass WHERE field IN ('owner_name');
+evaluate 'db_attribute';
+SHOW COLUMNS FROM db_attribute WHERE field IN ('owner_name', 'from_owner_name', 'domain_owner_name');
+evaluate 'db_attr_setdomain_elm';
+SHOW COLUMNS FROM db_attr_setdomain_elm WHERE field IN ('owner_name', 'domain_owner_name');
+
+evaluate 'Case 4: method-related owner-name views are varchar(32)';
+evaluate 'db_method';
+SHOW COLUMNS FROM db_method WHERE field IN ('owner_name', 'from_owner_name');
+evaluate 'db_meth_arg';
+SHOW COLUMNS FROM db_meth_arg WHERE field IN ('owner_name', 'domain_owner_name');
+evaluate 'db_meth_arg_setdomain_elm';
+SHOW COLUMNS FROM db_meth_arg_setdomain_elm WHERE field IN ('owner_name', 'domain_owner_name');
+evaluate 'db_meth_file';
+SHOW COLUMNS FROM db_meth_file WHERE field IN ('owner_name', 'from_owner_name');
+
+evaluate 'Case 5: index / auth / trigger / partition owner-name views are varchar(32)';
+evaluate 'db_index';
+SHOW COLUMNS FROM db_index WHERE field IN ('owner_name', 'referential_index_class_owner_name');
+evaluate 'db_index_key';
+SHOW COLUMNS FROM db_index_key WHERE field IN ('owner_name');
+evaluate 'db_auth';
+SHOW COLUMNS FROM db_auth WHERE field IN ('owner_name', 'grantor_name', 'grantee_name');
+evaluate 'db_trigger';
+SHOW COLUMNS FROM db_trigger WHERE field IN ('owner_name', 'target_owner_name');
+evaluate 'db_partition';
+SHOW COLUMNS FROM db_partition WHERE field IN ('owner_name');
+
+evaluate 'Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)';
+evaluate 'db_stored_procedure';
+SHOW COLUMNS FROM db_stored_procedure WHERE field IN ('owner');
+evaluate 'db_stored_procedure_args';
+SHOW COLUMNS FROM db_stored_procedure_args WHERE field IN ('owner_name');
+evaluate 'db_serial';
+SHOW COLUMNS FROM db_serial WHERE field IN ('owner');
+evaluate 'db_authorization';
+SHOW COLUMNS FROM db_authorization WHERE field IN ('owner');
+evaluate 'db_synonym';
+SHOW COLUMNS FROM db_synonym WHERE field IN ('synonym_owner_name', 'target_owner_name');
+evaluate 'db_server';
+SHOW COLUMNS FROM db_server WHERE field IN ('owner');
+
+evaluate 'Case 7: aggregate check - every owner-name column across all dependent views is varchar(32)';
+SELECT class_name, attr_name, data_type, prec
+FROM db_attribute
+WHERE class_name IN (
+        'db_class', 'db_direct_super_class', 'db_vclass', 'db_attribute',
+        'db_attr_setdomain_elm', 'db_method', 'db_meth_arg',
+        'db_meth_arg_setdomain_elm', 'db_meth_file', 'db_index', 'db_index_key',
+        'db_auth', 'db_trigger', 'db_partition', 'db_stored_procedure',
+        'db_stored_procedure_args', 'db_serial', 'db_authorization',
+        'db_synonym', 'db_server'
+      )
+  AND attr_name IN (
+        'owner', 'owner_name', 'super_owner_name', 'from_owner_name',
+        'domain_owner_name', 'target_owner_name', 'synonym_owner_name',
+        'grantor_name', 'grantee_name', 'referential_index_class_owner_name'
+      )
+ORDER BY class_name, attr_name;
+
+evaluate 'Case 8: db_user.direct_groups / groups set-element size is varchar(32)';
+SELECT class_name, attr_name, data_type, prec
+FROM db_attr_setdomain_elm
+WHERE class_name = 'db_user' AND attr_name IN ('direct_groups', 'groups')
+ORDER BY attr_name, data_type, prec;
+
+evaluate 'Case 9: db_server / _db_server.user_name is NOT changed, stays varchar(255)';
+SELECT class_name, attr_name, data_type, prec
+FROM db_attribute
+WHERE class_name IN ('_db_server', 'db_server') AND attr_name = 'user_name'
+ORDER BY class_name;
+
+/* DB_MAX_USER_LENGTH is 32, but that is a null-terminator-inclusive buffer size,
+   so 31 is the actual max creatable name length (confirmed on PR#3225) */
+evaluate 'Case 10: a 31-char user name is accepted and round-trips through db_user.name';
+create user cbrd_25471_ok_31_chars_long_xxx;
+SELECT name, CHAR_LENGTH(name) FROM db_user WHERE name = 'CBRD_25471_OK_31_CHARS_LONG_XXX' ORDER BY 1;
+DROP USER cbrd_25471_ok_31_chars_long_xxx;
+
+evaluate 'Case 11: a 31-char owner name round-trips untruncated through the dependent views';
+create user u_______10u_______20u_______30u;
+call login ('u_______10u_______20u_______30u', '') on class db_user;
+
+drop table if exists cbrd_25471_t;
+create table cbrd_25471_t (c1 int auto_increment primary key, c2 int);
+create index i_cbrd_25471_c2 on cbrd_25471_t (c2);
+drop view if exists cbrd_25471_v;
+create view cbrd_25471_v as select c1 from cbrd_25471_t;
+drop synonym if exists cbrd_25471_syn;
+create synonym cbrd_25471_syn for cbrd_25471_t;
+create trigger cbrd_25471_trg before insert on cbrd_25471_t execute print 'x';
+grant select on cbrd_25471_t to public;
+
+drop table if exists cbrd_25471_sub;
+drop table if exists cbrd_25471_super;
+create table cbrd_25471_super (c1 int primary key);
+create table cbrd_25471_sub under cbrd_25471_super (c2 int);
+
+drop table if exists cbrd_25471_part;
+create table cbrd_25471_part (c1 int, c2 int) partition by hash(c1) partitions 2;
+
+create procedure cbrd_25471_proc(i int) as
+begin
+  dbms_output.put_line('i=' || i);
+end;
+
+create serial cbrd_25471_ser;
+
+create server cbrd_25471_srv (host='localhost', port=33000, dbname=cbrd_25471_ext, user='cbrd_25471_extuser');
+
+select 'db_class' as view_name, owner_name as owner, char_length(owner_name) as len from db_class where class_name = 'cbrd_25471_t'
+union all select 'db_vclass', owner_name, char_length(owner_name) from db_vclass where vclass_name = 'cbrd_25471_v'
+union all select 'db_attribute', owner_name, char_length(owner_name) from db_attribute where class_name = 'cbrd_25471_t' and attr_name = 'c1'
+union all select 'db_index', owner_name, char_length(owner_name) from db_index where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
+union all select 'db_index_key', owner_name, char_length(owner_name) from db_index_key where class_name = 'cbrd_25471_t' and index_name = 'i_cbrd_25471_c2'
+union all select 'db_trigger', owner_name, char_length(owner_name) from db_trigger where trigger_name = 'cbrd_25471_trg'
+union all select 'db_synonym', synonym_owner_name, char_length(synonym_owner_name) from db_synonym where synonym_name = 'cbrd_25471_syn'
+union all select 'db_auth', grantor_name, char_length(grantor_name) from db_auth where object_name = 'cbrd_25471_t' and grantee_name = 'PUBLIC'
+union all select 'db_direct_super_class', owner_name, char_length(owner_name) from db_direct_super_class where class_name = 'cbrd_25471_sub'
+union all select 'db_partition', owner_name, char_length(owner_name) from db_partition where class_name = 'cbrd_25471_part'
+union all select 'db_stored_procedure', owner, char_length(owner) from db_stored_procedure where sp_name = 'cbrd_25471_proc'
+union all select 'db_stored_procedure_args', owner_name, char_length(owner_name) from db_stored_procedure_args where sp_name = 'cbrd_25471_proc'
+union all select 'db_serial', owner, char_length(owner) from db_serial where name = 'cbrd_25471_ser'
+union all select 'db_server', owner, char_length(owner) from db_server where link_name = 'cbrd_25471_srv'
+union all select 'db_authorization', owner, char_length(owner) from db_authorization where owner = 'U_______10U_______20U_______30U'
+order by 1;
+
+call login ('dba', '') on class db_user;
+
+evaluate 'Case 12: ALTER TABLE ... OWNER TO refreshes owner_name to the full 31-char name';
+drop table if exists cbrd_25471_t2;
+create table cbrd_25471_t2 (c1 int);
+select owner_name, char_length(owner_name) from db_class where class_name = 'cbrd_25471_t2';
+alter table cbrd_25471_t2 owner to u_______10u_______20u_______30u;
+select owner_name, char_length(owner_name) from db_class where class_name = 'cbrd_25471_t2';
+
+drop table u_______10u_______20u_______30u.cbrd_25471_t2;
+drop synonym u_______10u_______20u_______30u.cbrd_25471_syn;
+drop view u_______10u_______20u_______30u.cbrd_25471_v;
+drop table u_______10u_______20u_______30u.cbrd_25471_t;
+drop server u_______10u_______20u_______30u.cbrd_25471_srv;
+drop serial u_______10u_______20u_______30u.cbrd_25471_ser;
+drop procedure u_______10u_______20u_______30u.cbrd_25471_proc;
+drop table u_______10u_______20u_______30u.cbrd_25471_part;
+drop table u_______10u_______20u_______30u.cbrd_25471_sub;
+drop table u_______10u_______20u_______30u.cbrd_25471_super;
+drop user u_______10u_______20u_______30u;
+
+evaluate 'Case 13: 31-char name round-trips through the secondary owner-name columns';
+
+create user u_______10u_______20u_______30u;
+
+-- objects owned by the 31-char user (created under its login)
+call login ('u_______10u_______20u_______30u', '') on class db_user;
+
+drop table if exists cbrd_25471_e_fk;
+drop table if exists cbrd_25471_e_sub;
+drop table if exists cbrd_25471_e_sup;
+create table cbrd_25471_e_sup (c1 int primary key);
+-- c1 inherited -> from_owner_name
+create table cbrd_25471_e_sub under cbrd_25471_e_sup (c2 int);
+-- FK index -> referential_index_class_owner_name
+create table cbrd_25471_e_fk (c1 int,
+foreign key (c1) references cbrd_25471_e_sup(c1));
+
+drop synonym if exists cbrd_25471_e_syn;
+drop table if exists cbrd_25471_e_tgt;
+create table cbrd_25471_e_tgt (c1 int);
+-- target owned by user -> target_owner_name
+create synonym cbrd_25471_e_syn for cbrd_25471_e_tgt;
+
+select synonym_name, synonym_owner_name from db_synonym where synonym_name = 'cbrd_25471_e_syn';
+
+call login ('dba', '') on class db_user;
+
+-- a grant whose GRANTEE is the 31-char user (grantor = DBA, table owned by DBA)
+drop table if exists cbrd_25471_e_g;
+create table cbrd_25471_e_g (c1 int);
+grant select on cbrd_25471_e_g to u_______10u_______20u_______30u;
+
+-- --- checks (run as dba - system views expose all owners) ---
+select 'db_direct_super_class.super_owner_name' as col, super_owner_name as val, char_length(super_owner_name) as len
+from db_direct_super_class where class_name = 'cbrd_25471_e_sub'
+union all
+select 'db_attribute.from_owner_name', from_owner_name, char_length(from_owner_name)
+from db_attribute where class_name = 'cbrd_25471_e_sub' and attr_name = 'c1'
+union all
+select 'db_synonym.target_owner_name', target_owner_name, char_length(target_owner_name)
+from db_synonym where synonym_name = 'cbrd_25471_e_syn'
+union all
+select 'db_index.referential_index_class_owner_name', referential_index_class_owner_name, char_length(referential_index_class_owner_name)
+from db_index where class_name = 'cbrd_25471_e_fk' and referential_index_class_owner_name is not null
+union all
+select 'db_auth.grantee_name', grantee_name, char_length(grantee_name)
+from db_auth where object_name = 'cbrd_25471_e_g' and grantee_name = 'U_______10U_______20U_______30U'
+order by 1;
+
+-- --- cleanup (FK child before parent, user-owned objects qualified) ---
+drop table cbrd_25471_e_g;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_fk;
+drop synonym u_______10u_______20u_______30u.cbrd_25471_e_syn;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_tgt;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_sub;
+drop table u_______10u_______20u_______30u.cbrd_25471_e_sup;
+drop user u_______10u_______20u_______30u;
+
+/* a 32-char user name is rejected (DB_MAX_USER_LENGTH boundary) -- already covered by
+   sql/_13_issues/_12_1h/cases/bug_bts_6633.sql, not repeated here */

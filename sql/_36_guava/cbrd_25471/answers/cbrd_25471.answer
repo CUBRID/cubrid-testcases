@@ -1,0 +1,450 @@
+===================================================
+    
+Case 1: base table _db_user.name is varchar(32)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+name     VARCHAR(32)     YES     UNI     null          
+
+===================================================
+    
+Case 2: db_user view name is varchar(32) (direct_groups/groups element size checked in Case 8)     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 3: class-object owner-name views are varchar(32)     
+
+===================================================
+    
+db_class     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_direct_super_class     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+super_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_vclass     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_attribute     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_attr_setdomain_elm     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 4: method-related owner-name views are varchar(32)     
+
+===================================================
+    
+db_method     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_meth_arg     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_meth_arg_setdomain_elm     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+domain_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_meth_file     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+from_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 5: index / auth / trigger / partition owner-name views are varchar(32)     
+
+===================================================
+    
+db_index     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+referential_index_class_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_index_key     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_auth     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+grantor_name     VARCHAR(32)     YES          null          
+grantee_name     VARCHAR(32)     YES          null          
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_trigger     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_partition     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 6: stored procedure / serial / authorization / synonym / server owner-name views are varchar(32)     
+
+===================================================
+    
+db_stored_procedure     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_stored_procedure_args     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_serial     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_authorization     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_synonym     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+synonym_owner_name     VARCHAR(32)     YES          null          
+target_owner_name     VARCHAR(32)     YES          null          
+
+===================================================
+    
+db_server     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+owner     VARCHAR(32)     YES          null          
+
+===================================================
+    
+Case 7: aggregate check - every owner-name column across all dependent views is varchar(32)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+db_attr_setdomain_elm     domain_owner_name     STRING     32     
+db_attr_setdomain_elm     owner_name     STRING     32     
+db_attribute     domain_owner_name     STRING     32     
+db_attribute     from_owner_name     STRING     32     
+db_attribute     owner_name     STRING     32     
+db_auth     grantee_name     STRING     32     
+db_auth     grantor_name     STRING     32     
+db_auth     owner_name     STRING     32     
+db_authorization     owner     STRING     32     
+db_class     owner_name     STRING     32     
+db_direct_super_class     owner_name     STRING     32     
+db_direct_super_class     super_owner_name     STRING     32     
+db_index     owner_name     STRING     32     
+db_index     referential_index_class_owner_name     STRING     32     
+db_index_key     owner_name     STRING     32     
+db_meth_arg     domain_owner_name     STRING     32     
+db_meth_arg     owner_name     STRING     32     
+db_meth_arg_setdomain_elm     domain_owner_name     STRING     32     
+db_meth_arg_setdomain_elm     owner_name     STRING     32     
+db_meth_file     from_owner_name     STRING     32     
+db_meth_file     owner_name     STRING     32     
+db_method     from_owner_name     STRING     32     
+db_method     owner_name     STRING     32     
+db_partition     owner_name     STRING     32     
+db_serial     owner     STRING     32     
+db_server     owner     STRING     32     
+db_stored_procedure     owner     STRING     32     
+db_stored_procedure_args     owner_name     STRING     32     
+db_synonym     synonym_owner_name     STRING     32     
+db_synonym     target_owner_name     STRING     32     
+db_trigger     owner_name     STRING     32     
+db_trigger     target_owner_name     STRING     32     
+db_vclass     owner_name     STRING     32     
+
+===================================================
+    
+Case 8: db_user.direct_groups / groups set-element size is varchar(32)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+db_user     direct_groups     STRING     32     
+db_user     groups     STRING     32     
+
+===================================================
+    
+Case 9: db_server / _db_server.user_name is NOT changed, stays varchar(255)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+_db_server     user_name     STRING     255     
+db_server     user_name     STRING     255     
+
+===================================================
+    
+Case 10: a 31-char user name is accepted and round-trips through db_user.name     
+
+===================================================
+0
+===================================================
+name    char_length(name)    
+CBRD_25471_OK_31_CHARS_LONG_XXX     31     
+
+===================================================
+0
+===================================================
+    
+Case 11: a 31-char owner name round-trips untruncated through the dependent views     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+view_name    owner    len    
+db_attribute     U_______10U_______20U_______30U     31     
+db_auth     U_______10U_______20U_______30U     31     
+db_authorization     U_______10U_______20U_______30U     31     
+db_class     U_______10U_______20U_______30U     31     
+db_direct_super_class     U_______10U_______20U_______30U     31     
+db_index     U_______10U_______20U_______30U     31     
+db_index_key     U_______10U_______20U_______30U     31     
+db_partition     U_______10U_______20U_______30U     31     
+db_partition     U_______10U_______20U_______30U     31     
+db_serial     U_______10U_______20U_______30U     31     
+db_server     U_______10U_______20U_______30U     31     
+db_stored_procedure     U_______10U_______20U_______30U     31     
+db_stored_procedure_args     U_______10U_______20U_______30U     31     
+db_synonym     U_______10U_______20U_______30U     31     
+db_trigger     U_______10U_______20U_______30U     31     
+db_vclass     U_______10U_______20U_______30U     31     
+
+===================================================
+    
+null     
+
+===================================================
+    
+Case 12: ALTER TABLE ... OWNER TO refreshes owner_name to the full 31-char name     
+
+===================================================
+0
+===================================================
+0
+===================================================
+owner_name    char_length(owner_name)    
+DBA     3     
+
+===================================================
+0
+===================================================
+owner_name    char_length(owner_name)    
+U_______10U_______20U_______30U     31     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 13: 31-char name round-trips through the secondary owner-name columns     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+synonym_name    synonym_owner_name    
+cbrd_25471_e_syn     U_______10U_______20U_______30U     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+col    val    len    
+db_attribute.from_owner_name     U_______10U_______20U_______30U     31     
+db_auth.grantee_name     U_______10U_______20U_______30U     31     
+db_direct_super_class.super_owner_name     U_______10U_______20U_______30U     31     
+db_index.referential_index_class_owner_name     U_______10U_______20U_______30U     31     
+db_synonym.target_owner_name     U_______10U_______20U_______30U     31     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -4,14 +4,18 @@ insert into x values (1, {1, 2, 3}, {2, 3, 4});
 insert into x values (20, {40}, {50, 60});
 select x.r
 from x, table(x.r) as r(i)
-where x.i = r.i;
+where x.i = r.i
+order by x.i, r.i;
 select x.r
 from x, table(x.r) as r(i)
-where r.i = x.i;
+where r.i = x.i
+order by x.i, r.i;
 select x.i, r.i, x.r
-from x, table(x.r) as r(i);
+from x, table(x.r) as r(i)
+order by x.i, r.i;
 select x.i, r.i, t.i, x.r, x.s
 from x, table(x.r) as r(i), table(x.s) as t(i)
-where r.i = t.i;
+where r.i = t.i
+order by x.i, r.i, t.i;
 rollback work;
 rollback;

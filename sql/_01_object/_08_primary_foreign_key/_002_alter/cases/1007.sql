@@ -20,7 +20,7 @@ CREATE TABLE track(
 
 ALTER TABLE track DROP ATTRIBUTE album_1,album_2;
 select * from db_index_key
-where class_name in ('album','track') order by 2,1;
+where class_name in ('album','track') order by class_name, index_name, key_order, key_attr_name;
 
 select index_name, is_unique, is_reverse, class_name, owner_name, key_count, is_primary_key, is_foreign_key, filter_expression, have_function, status, referential_index_class_owner_name, referential_index_class_name, referential_index_name, delete_rule, update_rule, referential_match_option, index_type, deduplicate_key_level, comment from db_index where class_name in ('album', 'track') order by 1;
 

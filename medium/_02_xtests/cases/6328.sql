@@ -6,5 +6,5 @@ autocommit off;
  insert into foo values(NULL);
  insert into foo values('ahc');
  insert into foo values(NULL);
- select octet_length(f1) from foo;
+ select octet_length(f1) from foo order by f1 nulls first;
 rollback;

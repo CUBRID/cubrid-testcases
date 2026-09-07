@@ -33,8 +33,9 @@ set timezone 'Asia/Seoul';
 select all * from v1 order by id;
 
 set timezone 'Europe/Bucharest';
-select distinct tv2.col1 from (select id,col1 from v1 order by 1) tv2 order by 1;
-select unique tv2.col1, tv2.col2 from (select id,col1,col2 from tz_test order by id) tv2 order by 1;
+-- When dealing with data containing duplicate values, using `DISTINCT` or `UNIQUE` in a query does not explicitly guarantee the specific output. The query must be modified to ensure the output is explicitly guaranteed.
+select v1.col1 from v1 where v1.id = (select min(tv2.id) from v1 tv2 where tv2.col1 = v1.col1) order by 1;
+select tz_test.col1, tz_test.col2 from tz_test where tz_test.id = (select min(t2.id) from tz_test t2 where t2.col1 = tz_test.col1 and t2.col2 = tz_test.col2) order by 1;
 
 --test: alter view
 alter view v1 as select * from tz_test where col1<timestamptz'2013-12-10 15:30:00 +8:59' and col2>timestamptz'1992-07-10 2:00:00';

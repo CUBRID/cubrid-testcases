@@ -19,7 +19,8 @@ count(*)
 3000     
 
 Query plan:
-idx-join (inner join)
+hash-join (inner join)
+    edge:  term[?]
     outer: idx-join (inner join)
                outer: idx-join (inner join)
                           outer: idx-join (inner join)
@@ -27,41 +28,40 @@ idx-join (inner join)
                                                 outer: idx-join (inner join)
                                                            outer: idx-join (inner join)
                                                                       outer: sscan
-                                                                                 class: v node[?]
+                                                                                 class: t node[?]
                                                                                  cost:  ? card ?
                                                                       inner: iscan
-                                                                                 class: t node[?]
+                                                                                 class: a node[?]
                                                                                  index: pk_t_i term[?] (covers)
                                                                                  cost:  ? card ?
                                                                       cost:  ? card ?
                                                            inner: iscan
-                                                                      class: a node[?]
+                                                                      class: b node[?]
                                                                       index: pk_t_i term[?] (covers)
                                                                       cost:  ? card ?
                                                            cost:  ? card ?
                                                 inner: iscan
-                                                           class: b node[?]
+                                                           class: c node[?]
                                                            index: pk_t_i term[?] (covers)
                                                            cost:  ? card ?
                                                 cost:  ? card ?
                                      inner: iscan
-                                                class: c node[?]
+                                                class: d node[?]
                                                 index: pk_t_i term[?] (covers)
                                                 cost:  ? card ?
                                      cost:  ? card ?
                           inner: iscan
-                                     class: d node[?]
+                                     class: e node[?]
                                      index: pk_t_i term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: e node[?]
-                          index: pk_t_i term[?] (covers)
+                          class: u node[?]
+                          index: fk_u_t term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: iscan
-               class: u node[?]
-               index: fk_u_t term[?] (covers)
+    inner: sscan
+               class: v node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:

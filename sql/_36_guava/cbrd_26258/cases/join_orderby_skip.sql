@@ -118,9 +118,8 @@ evaluate 'Q121. When an additional condition is included on FK-PK columns apart 
 select /*+ recompile ordered */ 'Q121', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold and b.cold != -1 order by a.cola, a.colb limit 200, 10;
 show trace;
 
-evaluate 'Q122. When a bind variable is used in LIMIT, the initial plan does not apply skip ORDER BY, but once the plan is recompiled for SORT LIMIT execution, skip ORDER BY is applied.';
+evaluate 'Q122. When a bind variable is used in LIMIT, the plan is compiled at execute time with the bound values, so the SORT LIMIT plan is applied from the first execution; verify it through the trace at EXECUTE time.';
 prepare q from 'select /*+ ordered */ ''Q122'', a.*, b.* from tbl_a a, tbl_b b where a.cola = b.cold order by a.cola, a.colb limit ?, ?';
---@queryplan
 execute q using 210, 10;
 show trace;
 
@@ -156,7 +155,7 @@ order by a.cola limit 10, 10;
 show trace;
 
 evaluate 'Q126. Even when the driving table uses an index scan, skip ORDER BY cannot be applied if ORDER BY includes columns from multiple tables.';
-select /*+ recompile ordered */ 'Q126', a.cola, b.cole 
+select /*+ recompile ordered no_use_hash */ 'Q126', a.cola, b.cole 
 from tbl_a a, tbl_b b 
 where a.cola = b.cold 
 and a.cola > 0
