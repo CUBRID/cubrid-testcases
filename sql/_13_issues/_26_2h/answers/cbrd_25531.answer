@@ -1,0 +1,1212 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+    
+Case 1: the analytic column is not referenced by the main query     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from t? t?)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? t?) [__t?] (?)
+===================================================
+0
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from t? v?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from t? v?) v? (?)
+===================================================
+    
+Case 2: the analytic column is referenced by the main query     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key ()
+           func[?]: row_number partition by () order by ()
+Query stmt:
+(select row_number() over () from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over () as [rn] from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key ()
+           func[?]: row_number partition by () order by ()
+Query stmt:
+(select row_number() over () from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over () from t? v?) v? (rn) order by ?
+===================================================
+    
+Case 3: the OVER-clause column is also referenced by the main query     
+
+===================================================
+rn    c3    
+1     1     
+1     2     
+2     1     
+2     2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].c? from (select row_number() over (partition by ?) as [rn], t?.c? from t? t?) [__t?] (rn, c?) order by ?, ?
+===================================================
+0
+===================================================
+rn    c3    
+1     1     
+1     2     
+2     1     
+2     2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn, v?.c? from (select row_number() over (partition by ?), v?.c? from t? v?) v? (rn, c?) order by ?, ?
+===================================================
+    
+Case 4: the OVER-clause column is referenced by ordinal, not by the main query     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], t?.c? from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), v?.c? from t? v?) v? (rn) order by ?
+===================================================
+    
+Case 5: the OVER-clause column is missing from the view select list     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?) from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn] from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?) from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?) from t? v?) v? (rn) order by ?
+===================================================
+    
+Case 6: the OVER-clause column is an expression over another column     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), nvl(t?.c?, ?) from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], nvl(t?.c?, ?) as [nvl_c?] from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), (nvl(v?.c?, ?)) from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), (nvl(v?.c?, ?)) from t? v?) v? (rn) order by ?
+===================================================
+    
+Case 7: the OVER-clause column is a scalar subquery     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(t?.c?) from t? t?)
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), (select max(t?.c?) from t? t?) from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], (select max(t?.c?) from t? t?) as [max_c?] from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(t?.c?) from t? t?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), (select max(t?.c?) from t? t?) from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), (select max(t?.c?) from t? t?) from t? v?) v? (rn) order by ?
+===================================================
+    
+Case 8: outer ORDER BY column is also referenced by the analytic function     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c? from t? t? order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], t?.c? from t? t? order by ?) [__t?] (rn, c?) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c? from t? v? order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), v?.c? from t? v? order by ?) v? (rn) order by ?
+===================================================
+    
+Case 9: outer ORDER BY column is not referenced by the analytic function     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c?, t?.c? from t? t? order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], t?.c?, t?.c? from t? t? order by ?) [__t?] (rn, c?) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c?, v?.c? from t? v? order by ?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), v?.c?, v?.c? from t? v? order by ?) v? (rn) order by ?
+===================================================
+    
+Case 10: outer GROUP BY column is also referenced by the analytic function     
+
+===================================================
+rn    
+1     
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?)
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) t? (a_?, a_?, a_?, a_?))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) t? (a_?, a_?, a_?, a_?)) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) v? (a_?, a_?, a_?, a_?))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) v? (a_?, a_?, a_?, a_?)) v? (rn) order by ?
+===================================================
+    
+Case 11: outer GROUP BY column is not referenced by the analytic function     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?)
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) t? (a_?, a_?, a_?, a_?))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) t? (a_?, a_?, a_?, a_?)) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?)
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) v? (a_?, a_?, a_?, a_?))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), a_? from (select t?.c?, t?.c?, t?.c?, t?.c? from t? t? group by t?.c?) v? (a_?, a_?, a_?, a_?)) v? (rn) order by ?
+===================================================
+    
+Case 12: join query     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?) from t? t?, t? t? where t?.c?=t?.c?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn] from t? t?, t? t? where t?.c?=t?.c?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: v? node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?) from t? v?, t? t? where (v?.c?=t?.c?))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?) from t? v?, t? t? where (v?.c?=t?.c?)) v? (rn) order by ?
+===================================================
+    
+Case 13: no_merge hint, view contains an analytic function     
+
+===================================================
+rn    c3    
+1     1     
+1     2     
+2     1     
+2     2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select /*+ NO_MERGE */ t?.c?, t?.c?, t?.c?, row_number() over (partition by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn, [__t?].c? from (select /*+ NO_MERGE */ t?.c?, t?.c?, t?.c?, row_number() over (partition by ?) as [rn], t?.c? from t? t?) [__t?] (c?, c?, c?, rn, c?) order by ?, ?
+===================================================
+0
+===================================================
+rn    c3    
+1     1     
+1     2     
+2     1     
+2     2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select /*+ NO_MERGE */ row_number() over (partition by ?), v?.c?, v?.c?, v?.c?, v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn, v?.c? from (select /*+ NO_MERGE */ row_number() over (partition by ?), v?.c?, v?.c?, v?.c?, v?.c? from t? v?) v? (rn, c?, c?, c?, c?) order by ?, ?
+===================================================
+    
+Case 14: no_merge hint, view has no analytic function -- no_merge disables list pruning outright, with or without an analytic function     
+
+===================================================
+c1    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ t?.c?, t?.c?, t?.c?, t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].c? from (select /*+ NO_MERGE */ t?.c?, t?.c?, t?.c?, t?.c? from t? t?) [__t?] (c?, c?, c?, c?) order by ?
+===================================================
+0
+===================================================
+c1    
+1     
+2     
+3     
+4     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_MERGE */ v?.c?, v?.c?, v?.c?, v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.c? from (select /*+ NO_MERGE */ v?.c?, v?.c?, v?.c?, v?.c? from t? v?) v? (c?, c?, c?, c?) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 15: row_number() result must match between a named view and its equivalent inline view     
+
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn from (select row_number() over (partition by ?), v?.c? from t? v?) v? (rn) order by ?
+===================================================
+rn    
+1     
+1     
+2     
+2     
+3     
+3     
+4     
+4     
+5     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], t?.c? from t? t?) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+    
+Case 16: PREPARE/EXECUTE compiles and runs the pruned plan correctly     
+
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+3     
+
+===================================================
+0
+===================================================
+    
+Case 17: two analytic functions in the view, only one referenced by the main query     
+
+===================================================
+rn1    
+1     
+1     
+2     
+2     
+3     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn? from (select row_number() over (partition by ?) as [rn?], t?.c? from t? t?) [__t?] (rn?) order by ?
+===================================================
+0
+===================================================
+rn1    
+1     
+1     
+2     
+2     
+3     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.rn? from (select row_number() over (partition by ?), v?.c? from t? v?) v? (rn?) order by ?
+===================================================
+    
+Case 18: ORDER BY inside the OVER clause, referenced by ordinal -- ROW_NUMBER would not catch a wrong ordinal (its value set is order-invariant), so use a running SUM whose value depends on the actual row order     
+
+===================================================
+c1    s    
+1     1     
+2     3     
+3     6     
+4     1     
+5     3     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select t?.c?, sum(t?.c?) over (partition by ? order by ?), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].c?, [__t?].s from (select t?.c?, sum(t?.c?) over (partition by ? order by ?) as [s], t?.c? from t? t?) [__t?] (c?, s) order by ?
+===================================================
+0
+===================================================
+c1    s    
+1     1     
+2     3     
+3     6     
+4     1     
+5     3     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select v?.c?, sum(v?.c?) over (partition by ? order by ?), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.c?, v?.s from (select v?.c?, sum(v?.c?) over (partition by ? order by ?), v?.c? from t? v?) v? (c?, s) order by ?
+===================================================
+    
+Case 19: regression -- the running SUM must match between a view and its equivalent inline view     
+
+===================================================
+0
+===================================================
+c1    s    
+1     6     
+2     5     
+3     3     
+4     3     
+5     2     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? desc nulls last)
+           func[?]: sum partition by (? asc nulls first) order by (? desc nulls last)
+Query stmt:
+(select v?.c?, sum(v?.c?) over (partition by ? order by ? desc ), v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.c?, v?.s from (select v?.c?, sum(v?.c?) over (partition by ? order by ? desc ), v?.c? from t? v?) v? (c?, s) order by ?
+===================================================
+c1    s    
+1     6     
+2     5     
+3     3     
+4     3     
+5     2     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? desc nulls last)
+           func[?]: sum partition by (? asc nulls first) order by (? desc nulls last)
+Query stmt:
+(select t?.c?, sum(t?.c?) over (partition by ? order by ? desc ), t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].c?, [__t?].s from (select t?.c?, sum(t?.c?) over (partition by ? order by ? desc ) as [s], t?.c? from t? t?) [__t?] (c?, s) order by ?
+===================================================
+    
+Case 20: both the PARTITION BY and ORDER BY ordinals reference columns the main query does not select -- both must be re-added as hidden columns at once     
+
+===================================================
+s    
+1     
+1     
+3     
+3     
+6     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select sum(t?.c?) over (partition by ? order by ?), t?.c?, t?.c? from t? t?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].s from (select sum(t?.c?) over (partition by ? order by ?) as [s], t?.c?, t?.c? from t? t?) [__t?] (s) order by ?
+===================================================
+0
+===================================================
+s    
+1     
+1     
+3     
+3     
+6     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select sum(v?.c?) over (partition by ? order by ?), v?.c?, v?.c? from t? v?)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select v?.s from (select sum(v?.c?) over (partition by ? order by ?), v?.c?, v?.c? from t? v?) v? (s) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
