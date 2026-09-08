@@ -266,7 +266,7 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_LS */ max(tt.c) from t? tt semi join t? t? on tt.c=t?.a and t?.c>tt.c group by tt.f
+select /*+ ORDERED INDEX_LS */ max(tt.c) from t? tt semi join t? t? on (t?.c>tt.c) and tt.c=t?.a group by tt.f
 ===================================================
 max(c)    
 9     

@@ -191,11 +191,11 @@ idx-join (anti join)
     inner: iscan
                class: b node[?]
                index: idx term[?] (covers)
-               filtr: term[?] AND term[?]
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a anti join tab_a b on (a.col_a=b.col_a) and (b.col_a> cast(? as varchar)) and (b.col_a> cast(? as varchar))
+select count(*) from tab_a a anti join tab_a b on (b.col_a> ?:? ) and (a.col_a=b.col_a)
 ===================================================
 count(*)    
 140     
@@ -208,11 +208,11 @@ idx-join (anti join)
     inner: iscan
                class: b node[?]
                index: idx term[?] (covers)
-               filtr: term[?] AND term[?]
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tab_a a anti join tab_a b on (a.col_a=b.col_a) and (b.col_a> cast(? as varchar)) and (b.col_a> cast(? as varchar))
+select count(*) from tab_a a anti join tab_a b on (b.col_a> ?:? ) and (a.col_a=b.col_a)
 ===================================================
 0
 ===================================================
