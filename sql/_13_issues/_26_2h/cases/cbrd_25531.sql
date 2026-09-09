@@ -18,122 +18,122 @@
  *       both PARTITION BY and ORDER BY ordinals hidden-appended at once
  */
 
-DROP TABLE IF EXISTS t1;
-CREATE TABLE t1(c1 INT AUTO_INCREMENT, c2 INT, c3 INT, c4 INT);
-INSERT INTO t1(c2, c3, c4) VALUES
+DROP TABLE IF EXISTS tbla;
+CREATE TABLE tbla(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tbla(colb, colc, cold) VALUES
 (1,1,1),
 (1,1,2),
 (1,2,2),
 (1,2,3);
 
-DROP TABLE IF EXISTS t2;
-CREATE TABLE t2(c1 INT, c2 INT);
-INSERT INTO t2 VALUES (1,1),(2,1),(3,2),(4,2);
+DROP TABLE IF EXISTS tblb;
+CREATE TABLE tblb(cola INT, colb INT);
+INSERT INTO tblb VALUES (1,1),(2,1),(3,2),(4,2);
 
 evaluate 'Case 1: the analytic column is not referenced by the main query';
 SELECT /*+ recompile */ COUNT(*)
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1);
-CREATE OR REPLACE VIEW v1 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ COUNT(*) FROM v1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla);
+CREATE OR REPLACE VIEW va AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ COUNT(*) FROM va;
 
 evaluate 'Case 2: the analytic column is referenced by the main query';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER() AS rn, c4 FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v2 AS SELECT c1, c2, c3, ROW_NUMBER() OVER() AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn FROM v2 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER() AS rn, cold FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vb AS SELECT cola, colb, colc, ROW_NUMBER() OVER() AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn FROM vb ORDER BY 1;
 
 evaluate 'Case 3: the OVER-clause column is also referenced by the main query';
-SELECT /*+ recompile */ rn, c3
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1) ORDER BY 1, 2;
-CREATE OR REPLACE VIEW v3 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn, c3 FROM v3 ORDER BY 1, 2;
+SELECT /*+ recompile */ rn, colc
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla) ORDER BY 1, 2;
+CREATE OR REPLACE VIEW vc AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn, colc FROM vc ORDER BY 1, 2;
 
 evaluate 'Case 4: the OVER-clause column is referenced by ordinal, not by the main query';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, c4 FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v4 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn FROM v4 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vd AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn FROM vd ORDER BY 1;
 
 evaluate 'Case 5: the OVER-clause column is missing from the view select list';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v5 AS SELECT c1, c2, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn FROM v5 ORDER BY 1;
+FROM (SELECT cola, colb, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW ve AS SELECT cola, colb, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn FROM ve ORDER BY 1;
 
 evaluate 'Case 6: the OVER-clause column is an expression over another column';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, NVL(c3, 0) AS nvl_c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, c4 FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v6 AS SELECT c1, c2, NVL(c3, 0) AS nvl_c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn FROM v6 ORDER BY 1;
+FROM (SELECT cola, colb, NVL(colc, 0) AS nvl_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vf AS SELECT cola, colb, NVL(colc, 0) AS nvl_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn FROM vf ORDER BY 1;
 
 evaluate 'Case 7: the OVER-clause column is a scalar subquery';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, (SELECT MAX(c3) FROM t1) AS max_c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v7 AS SELECT c1, c2, (SELECT MAX(c3) FROM t1) AS max_c3, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM t1;
-SELECT /*+ recompile */ rn FROM v7 ORDER BY 1;
+FROM (SELECT cola, colb, (SELECT MAX(colc) FROM tbla) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vg AS SELECT cola, colb, (SELECT MAX(colc) FROM tbla) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla;
+SELECT /*+ recompile */ rn FROM vg ORDER BY 1;
 
 evaluate 'Case 8: outer ORDER BY column is also referenced by the analytic function';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 ORDER BY c3) ORDER BY 1;
-CREATE OR REPLACE VIEW v8 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 ORDER BY c3;
-SELECT /*+ recompile */ rn FROM v8 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla ORDER BY colc) ORDER BY 1;
+CREATE OR REPLACE VIEW vh AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla ORDER BY colc;
+SELECT /*+ recompile */ rn FROM vh ORDER BY 1;
 
 evaluate 'Case 9: outer ORDER BY column is not referenced by the analytic function';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 ORDER BY c1) ORDER BY 1;
-CREATE OR REPLACE VIEW v9 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 ORDER BY c1;
-SELECT /*+ recompile */ rn FROM v9 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla ORDER BY cola) ORDER BY 1;
+CREATE OR REPLACE VIEW vi AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla ORDER BY cola;
+SELECT /*+ recompile */ rn FROM vi ORDER BY 1;
 
 evaluate 'Case 10: outer GROUP BY column is also referenced by the analytic function';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 GROUP BY c3) ORDER BY 1;
-CREATE OR REPLACE VIEW v10 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 GROUP BY c3;
-SELECT /*+ recompile */ rn FROM v10 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla GROUP BY colc) ORDER BY 1;
+CREATE OR REPLACE VIEW vj AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla GROUP BY colc;
+SELECT /*+ recompile */ rn FROM vj ORDER BY 1;
 
 evaluate 'Case 11: outer GROUP BY column is not referenced by the analytic function';
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 GROUP BY c1) ORDER BY 1;
-CREATE OR REPLACE VIEW v11 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1 GROUP BY c1;
-SELECT /*+ recompile */ rn FROM v11 ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla GROUP BY cola) ORDER BY 1;
+CREATE OR REPLACE VIEW vk AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla GROUP BY cola;
+SELECT /*+ recompile */ rn FROM vk ORDER BY 1;
 
 evaluate 'Case 12: join query';
 SELECT /*+ recompile */ rn
-FROM (SELECT t1.c1 AS t1_c1, t2.c1 AS t2_c1, ROW_NUMBER() OVER(PARTITION BY t2.c2) AS rn FROM t1, t2 WHERE t1.c1 = t2.c1) ORDER BY 1;
-CREATE OR REPLACE VIEW v12 AS SELECT t1.c1 AS t1_c1, t2.c1 AS t2_c1, ROW_NUMBER() OVER(PARTITION BY t2.c2) AS rn FROM t1, t2 WHERE t1.c1 = t2.c1;
-SELECT /*+ recompile */ rn FROM v12 ORDER BY 1;
+FROM (SELECT tbla.cola AS tbla_cola, tblb.cola AS tblb_cola, ROW_NUMBER() OVER(PARTITION BY tblb.colb) AS rn FROM tbla, tblb WHERE tbla.cola = tblb.cola) ORDER BY 1;
+CREATE OR REPLACE VIEW vl AS SELECT tbla.cola AS tbla_cola, tblb.cola AS tblb_cola, ROW_NUMBER() OVER(PARTITION BY tblb.colb) AS rn FROM tbla, tblb WHERE tbla.cola = tblb.cola;
+SELECT /*+ recompile */ rn FROM vl ORDER BY 1;
 
 evaluate 'Case 13: no_merge hint, view contains an analytic function';
-SELECT /*+ recompile */ rn, c3
-FROM (SELECT /*+ no_merge */ c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1) ORDER BY 1, 2;
-CREATE OR REPLACE VIEW v13 AS SELECT /*+ no_merge */ c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t1;
-SELECT /*+ recompile */ rn, c3 FROM v13 ORDER BY 1, 2;
+SELECT /*+ recompile */ rn, colc
+FROM (SELECT /*+ no_merge */ cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla) ORDER BY 1, 2;
+CREATE OR REPLACE VIEW vm AS SELECT /*+ no_merge */ cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbla;
+SELECT /*+ recompile */ rn, colc FROM vm ORDER BY 1, 2;
 
 evaluate 'Case 14: no_merge hint, view has no analytic function -- no_merge disables list pruning outright, with or without an analytic function';
-SELECT /*+ recompile */ c1
-FROM (SELECT /*+ no_merge */ c1, c2, c3, c4 FROM t1) ORDER BY 1;
-CREATE OR REPLACE VIEW v14 AS SELECT /*+ no_merge */ c1, c2, c3, c4 FROM t1;
-SELECT /*+ recompile */ c1 FROM v14 ORDER BY 1;
+SELECT /*+ recompile */ cola
+FROM (SELECT /*+ no_merge */ cola, colb, colc, cold FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vn AS SELECT /*+ no_merge */ cola, colb, colc, cold FROM tbla;
+SELECT /*+ recompile */ cola FROM vn ORDER BY 1;
 
-DROP VIEW v1;
-DROP VIEW v2;
-DROP VIEW v3;
-DROP VIEW v4;
-DROP VIEW v5;
-DROP VIEW v6;
-DROP VIEW v7;
-DROP VIEW v8;
-DROP VIEW v9;
-DROP VIEW v10;
-DROP VIEW v11;
-DROP VIEW v12;
-DROP VIEW v13;
-DROP VIEW v14;
-DROP TABLE t1, t2;
+DROP VIEW va;
+DROP VIEW vb;
+DROP VIEW vc;
+DROP VIEW vd;
+DROP VIEW ve;
+DROP VIEW vf;
+DROP VIEW vg;
+DROP VIEW vh;
+DROP VIEW vi;
+DROP VIEW vj;
+DROP VIEW vk;
+DROP VIEW vl;
+DROP VIEW vm;
+DROP VIEW vn;
+DROP TABLE tbla, tblb;
 
 evaluate 'Case 15: row_number() result must match between a named view and its equivalent inline view';
-DROP TABLE IF EXISTS t3;
-CREATE TABLE t3(c1 INT AUTO_INCREMENT, c2 INT, c3 INT, c4 INT);
-INSERT INTO t3(c2, c3, c4) VALUES
+DROP TABLE IF EXISTS tblc;
+CREATE TABLE tblc(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tblc(colb, colc, cold) VALUES
 (1,1,1),
 (1,1,2),
 (1,1,3),
@@ -144,18 +144,18 @@ INSERT INTO t3(c2, c3, c4) VALUES
 (1,2,3),
 (1,2,4);
 
-CREATE OR REPLACE VIEW v15 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t3;
+CREATE OR REPLACE VIEW vo AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tblc;
 
-SELECT /*+ recompile */ rn FROM v15 ORDER BY 1;
+SELECT /*+ recompile */ rn FROM vo ORDER BY 1;
 SELECT /*+ recompile */ rn
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t3) ORDER BY 1;
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tblc) ORDER BY 1;
 
-DROP VIEW v15;
-DROP TABLE t3;
+DROP VIEW vo;
+DROP TABLE tblc;
 
-DROP TABLE IF EXISTS t4;
-CREATE TABLE t4(c1 INT AUTO_INCREMENT, c2 INT, c3 INT, c4 INT);
-INSERT INTO t4(c2, c3, c4) VALUES
+DROP TABLE IF EXISTS tbld;
+CREATE TABLE tbld(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tbld(colb, colc, cold) VALUES
 (1,1,1),
 (1,1,2),
 (1,1,3),
@@ -163,36 +163,36 @@ INSERT INTO t4(c2, c3, c4) VALUES
 (1,2,2);
 
 evaluate 'Case 16: PREPARE/EXECUTE compiles and runs the pruned plan correctly';
-PREPARE stmt1 FROM 'SELECT rn FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn, c4 FROM t4) WHERE rn > ? ORDER BY 1';
+PREPARE stmt1 FROM 'SELECT rn FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbld) WHERE rn > ? ORDER BY 1';
 EXECUTE stmt1 USING 0;
 DEALLOCATE PREPARE stmt1;
 
 evaluate 'Case 17: two analytic functions in the view, only one referenced by the main query';
-SELECT /*+ recompile */ rn1
-FROM (SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn1, RANK() OVER(ORDER BY c2) AS rn2, c4 FROM t4) ORDER BY 1;
-CREATE OR REPLACE VIEW v17 AS SELECT c1, c2, c3, ROW_NUMBER() OVER(PARTITION BY c3) AS rn1, RANK() OVER(ORDER BY c2) AS rn2, c4 FROM t4;
-SELECT /*+ recompile */ rn1 FROM v17 ORDER BY 1;
+SELECT /*+ recompile */ rna
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rna, RANK() OVER(ORDER BY colb) AS rnb, cold FROM tbld) ORDER BY 1;
+CREATE OR REPLACE VIEW vq AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rna, RANK() OVER(ORDER BY colb) AS rnb, cold FROM tbld;
+SELECT /*+ recompile */ rna FROM vq ORDER BY 1;
 
 evaluate 'Case 18: ORDER BY inside the OVER clause, referenced by ordinal -- ROW_NUMBER would not catch a wrong ordinal (its value set is order-invariant), so use a running SUM whose value depends on the actual row order';
-SELECT /*+ recompile */ c1, s
-FROM (SELECT c1, c2, c3, SUM(c4) OVER(PARTITION BY c3 ORDER BY 1) AS s, c4 FROM t4) ORDER BY 1;
-CREATE OR REPLACE VIEW v18 AS SELECT c1, c2, c3, SUM(c4) OVER(PARTITION BY c3 ORDER BY 1) AS s, c4 FROM t4;
-SELECT /*+ recompile */ c1, s FROM v18 ORDER BY 1;
+SELECT /*+ recompile */ cola, s
+FROM (SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY 1) AS s, cold FROM tbld) ORDER BY 1;
+CREATE OR REPLACE VIEW vr AS SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY 1) AS s, cold FROM tbld;
+SELECT /*+ recompile */ cola, s FROM vr ORDER BY 1;
 
 evaluate 'Case 19: regression -- the running SUM must match between a view and its equivalent inline view';
-CREATE OR REPLACE VIEW v19 AS SELECT c1, c2, c3, SUM(c4) OVER(PARTITION BY c3 ORDER BY c1 DESC) AS s, c4 FROM t4;
-SELECT /*+ recompile */ c1, s FROM v19 ORDER BY 1;
-SELECT /*+ recompile */ c1, s
-FROM (SELECT c1, c2, c3, SUM(c4) OVER(PARTITION BY c3 ORDER BY c1 DESC) AS s, c4 FROM t4) ORDER BY 1;
+CREATE OR REPLACE VIEW vs AS SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola DESC) AS s, cold FROM tbld;
+SELECT /*+ recompile */ cola, s FROM vs ORDER BY 1;
+SELECT /*+ recompile */ cola, s
+FROM (SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola DESC) AS s, cold FROM tbld) ORDER BY 1;
 
 evaluate 'Case 20: both the PARTITION BY and ORDER BY ordinals reference columns the main query does not select -- both must be re-added as hidden columns at once';
 SELECT /*+ recompile */ s
-FROM (SELECT c1, c2, c3, c4, SUM(c4) OVER(PARTITION BY 3 ORDER BY 1) AS s FROM t4) ORDER BY 1;
-CREATE OR REPLACE VIEW v20 AS SELECT c1, c2, c3, c4, SUM(c4) OVER(PARTITION BY 3 ORDER BY 1) AS s FROM t4;
-SELECT /*+ recompile */ s FROM v20 ORDER BY 1;
+FROM (SELECT cola, colb, colc, cold, SUM(cold) OVER(PARTITION BY 3 ORDER BY 1) AS s FROM tbld) ORDER BY 1;
+CREATE OR REPLACE VIEW vt AS SELECT cola, colb, colc, cold, SUM(cold) OVER(PARTITION BY 3 ORDER BY 1) AS s FROM tbld;
+SELECT /*+ recompile */ s FROM vt ORDER BY 1;
 
-DROP VIEW v17;
-DROP VIEW v18;
-DROP VIEW v19;
-DROP VIEW v20;
-DROP TABLE t4;
+DROP VIEW vq;
+DROP VIEW vr;
+DROP VIEW vs;
+DROP VIEW vt;
+DROP TABLE tbld;
