@@ -1,7 +1,8 @@
 /*
  * CBRD-27374: when the length of the select list of a SYS_REFCURSOR cursor is
- * checked, what the cursor remembers of it, and what state is left when the
- * check fails. 01_count.sql covers what is compared with what.
+ * checked, what the cursor remembers of it, what state is left when the check
+ * fails, and what counts as the projection the length is taken from (E6, E8 and
+ * E9). 01_count.sql covers which numbers are compared with which.
  *
  * The check reads the meta data of the prepared statement before the row is
  * read, keeps the length until the cursor is closed, and reports a mismatch as
@@ -13,6 +14,11 @@
  * E3 is the clearest difference in behavior: before the fix the mismatched
  * FETCH silently consumed a row, so the retry returned the second row, and
  * there was no exception to catch.
+ *
+ * The answers keep the (line, column) that each error reports. That is a
+ * position inside the CREATE PROCEDURE statement it came from, and it is kept
+ * verbatim, so editing a procedure body shifts it and the answer has to be
+ * regenerated.
  */
 
 --+ server-message on

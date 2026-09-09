@@ -14,6 +14,11 @@
  * Before the fix a mismatch was not reported: extra select list columns were
  * silently dropped, and extra INTO variables ended in an unrelated "Missing or
  * invalid position of the bind variable provided." error.
+ *
+ * The answers keep the (line, column) that each error reports. That is a
+ * position inside the CREATE PROCEDURE statement it came from, and it is kept
+ * verbatim, so editing a procedure body shifts it and the answer has to be
+ * regenerated.
  */
 
 --+ server-message on
