@@ -12,24 +12,24 @@ create view dba.vtbl on select * from tbl;
 
 evaluate 'u1 grant to dba.vtbl';
 GRANT SELECT ON dba.vtbl TO u1;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 evaluate 'u1 re-grant to dba.vtbl';
 GRANT SELECT ON dba.vtbl TO u1;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner = 'U1' order by owner;
 
 
 evaluate 'u1 grant to dba.vtbl (with grant option)';
 GRANT SELECT ON dba.vtbl TO u1 WITH GRANT OPTION;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC';
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner = 'U1' order by owner;
 
 evaluate 'u1 re-grant to dba.vtbl';
 GRANT SELECT ON dba.vtbl TO u1;
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC';
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner = 'U1' order by owner;
 
@@ -46,7 +46,7 @@ evaluate 'u1 grant to dba.vtbl (with grant option)';
 GRANT SELECT ON dba.vtbl TO u1 WITH GRANT OPTION;
 GRANT INSERT ON dba.vtbl TO u1;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, auth_type;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner = 'U1' order by owner;
 
@@ -54,7 +54,7 @@ select owner, grants from db_authorization where owner = 'U1' order by owner;
 evaluate 'u1 re-grant to dba.vtbl';
 GRANT SELECT, INSERT ON dba.vtbl TO u1;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner = 'U1' order by owner;
 
