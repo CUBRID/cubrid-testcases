@@ -6,6 +6,9 @@
  * The check reads the meta data of the prepared statement before the row is
  * read, keeps the length until the cursor is closed, and reports a mismatch as
  * an ordinary PL/CSQL exception, so the cursor stays usable after it is caught.
+ * The length it reads is the user-visible projection: a hidden ORDER BY column
+ * added by the rewrite is not counted, and for a WITH query it is the outer
+ * projection and not the columns the CTE body defines.
  *
  * E3 is the clearest difference in behavior: before the fix the mismatched
  * FETCH silently consumed a row, so the retry returned the second row, and
@@ -144,6 +147,61 @@ begin
 end;
 call p27374s_static_hv(10001);
 
+evaluate 'E8: an ORDER BY column that is not in the select list is not counted';
+-- the length is the user-visible projection count. ORDER BY on a column that is
+-- not in the select list adds a hidden column in the rewrite; it must not be
+-- counted. Case a is the discriminator: if the hidden column were counted, this
+-- matching one variable fetch would fail with a length of (2). Case b then
+-- confirms the counted length really is (1). (Relates to the hidden order-by
+-- column family of CBRD-27172 / CBRD-27334.)
+create or replace procedure p27374s_hidden_ok as
+    rc sys_refcursor;
+    vname varchar(40);
+begin
+    open rc for 'select name from t27374s order by code';
+    fetch rc into vname;
+    dbms_output.put_line('fetched ' || vname);
+    close rc;
+end;
+call p27374s_hidden_ok();
+
+evaluate 'E8: the same statement against two variables is (1) against 2';
+create or replace procedure p27374s_hidden_bad as
+    rc sys_refcursor;
+    vname varchar(40);
+    vextra int;
+begin
+    open rc for 'select name from t27374s order by code';
+    fetch rc into vname, vextra;
+    close rc;
+end;
+call p27374s_hidden_bad();
+
+evaluate 'E9: for a WITH query the length is the outer projection, not the CTE body';
+-- if the inner count leaked, this matching one variable fetch would fail with a
+-- length of (2)
+create or replace procedure p27374s_cte_ok as
+    rc sys_refcursor;
+    vcode int;
+begin
+    open rc for 'with s as (select code, name from t27374s) select code from s order by code';
+    fetch rc into vcode;
+    dbms_output.put_line('fetched ' || vcode);
+    close rc;
+end;
+call p27374s_cte_ok();
+
+evaluate 'E9: an outer projection of two columns against one variable is (2) against 1';
+create or replace procedure p27374s_cte_bad as
+    rc sys_refcursor;
+    vcode int;
+begin
+    open rc for 'with s as (select code from t27374s) select code, code + 1 from s';
+    fetch rc into vcode;
+    close rc;
+end;
+call p27374s_cte_bad();
+
 -- clean up the shared database
 drop procedure p27374s_empty;
 drop procedure p27374s_two_fetch;
@@ -152,6 +210,10 @@ drop procedure p27374s_alter;
 drop procedure p27374s_loop_open;
 drop procedure p27374s_shape;
 drop procedure p27374s_static_hv;
+drop procedure p27374s_hidden_ok;
+drop procedure p27374s_hidden_bad;
+drop procedure p27374s_cte_ok;
+drop procedure p27374s_cte_bad;
 drop table if exists t27374s;
 drop table if exists t27374s_alt;
 
