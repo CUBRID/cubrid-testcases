@@ -8,7 +8,7 @@
  * decided by the control flow. An ordinary cursor declared with a static SELECT
  * keeps its compile-time check instead.
  *
- * This file covers what is compared with what. 02_state.sql covers when the
+ * This file covers what is compared with what. cbrd_27374_state.sql covers when the
  * check runs and what it leaves behind.
  *
  * Before the fix a mismatch was not reported: extra select list columns were
