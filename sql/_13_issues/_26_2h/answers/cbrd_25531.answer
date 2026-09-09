@@ -1229,3 +1229,243 @@ select vt.s from (select sum(vt.cold) over (partition by ? order by ?), vt.colc,
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+    
+Case 21: LAG(cold) referenced -- the argument column cold and the OVER order column cola must be re-added as hidden columns; the LAG value is order-sensitive     
+
+===================================================
+cola    lg    
+1     null     
+2     10     
+3     20     
+4     null     
+5     40     
+
+Query plan:
+sscan
+    class: tble node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: lag partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select tble.cola, lag(tble.cold, ?, null) over (partition by ? order by ?), tble.colc from tble tble)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].cola, [__t?].lg from (select tble.cola, lag(tble.cold, ?, null) over (partition by ? order by ?) as [lg], tble.colc from tble tble) [__t?] (cola, lg) order by ?
+===================================================
+0
+===================================================
+cola    lg    
+1     null     
+2     10     
+3     20     
+4     null     
+5     40     
+
+Query plan:
+sscan
+    class: vu node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: lag partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select vu.cola, lag(vu.cold, ?, null) over (partition by ? order by ?), vu.colc from tble vu)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: vu node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select vu.cola, vu.lg from (select vu.cola, lag(vu.cold, ?, null) over (partition by ? order by ?), vu.colc from tble vu) vu (cola, lg) order by ?
+===================================================
+    
+Case 22: LEAD(cold) not referenced by the main query -- the whole select list, the analytic and its argument column cold included, must collapse to (1)     
+
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: tble node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tble tble)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from tble tble) [__t?] (?)
+===================================================
+0
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: vv node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tble vv)
+Query plan:
+sscan
+    class: vv node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from tble vv) vv (?)
+===================================================
+    
+Case 23: nested, the inner analytic is unreferenced at the top -- both levels must reduce (the top and the inner select list collapse to (1))     
+
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: tble node[?]
+    cost:  ? card ?
+Query stmt:
+(select tble.cola from tble tble)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from (select tble.cola from tble tble) [__t?] (cola))
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from (select tble.cola from tble tble) [__t?] (cola)) [__t?] (?)
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+5     
+
+Query plan:
+sscan
+    class: vw_in node[?]
+    cost:  ? card ?
+Query stmt:
+(select vw_in.cola from tble vw_in)
+Query plan:
+sscan
+    class: vw_out node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from (select vw_in.cola from tble vw_in) vw_out (cola))
+Query plan:
+sscan
+    class: vw_out node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from (select vw_in.cola from tble vw_in) vw_out (cola)) vw_out (?)
+===================================================
+    
+Case 24: regression -- the inner running SUM read through the outer view must match between the nested view and its equivalent nested inline view (a desync at depth would change the value)     
+
+===================================================
+cola    s_in    
+1     10     
+2     30     
+3     60     
+4     40     
+5     90     
+
+Query plan:
+sscan
+    class: tble node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select tble.cola, sum(tble.cold) over (partition by ? order by ?), tble.colc from tble tble)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select [__t?].cola, [__t?].s_in from (select tble.cola, sum(tble.cold) over (partition by ? order by ?) as [s_in], tble.colc from tble tble) [__t?] (cola, s_in))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].cola, [__t?].s_in from (select [__t?].cola, [__t?].s_in from (select tble.cola, sum(tble.cold) over (partition by ? order by ?) as [s_in], tble.colc from tble tble) [__t?] (cola, s_in)) [__t?] (cola, s_in) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+cola    s_in    
+1     10     
+2     30     
+3     60     
+4     40     
+5     90     
+
+Query plan:
+sscan
+    class: vx_in node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select vx_in.cola, sum(vx_in.cold) over (partition by ? order by ?), vx_in.colc from tble vx_in)
+Query plan:
+sscan
+    class: vx_out node[?]
+    cost:  ? card ?
+Query stmt:
+(select vx_out.cola, vx_out.s_in from (select vx_in.cola, sum(vx_in.cold) over (partition by ? order by ?), vx_in.colc from tble vx_in) vx_out (cola, s_in))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: vx_out node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select vx_out.cola, vx_out.s_in from (select vx_out.cola, vx_out.s_in from (select vx_in.cola, sum(vx_in.cold) over (partition by ? order by ?), vx_in.colc from tble vx_in) vx_out (cola, s_in)) vx_out (cola, s_in) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -2,20 +2,21 @@
  * This test case verifies CBRD-25531: unreferenced select-list items of a
  * non-mergeable inline view are now pruned even when the view contains an
  * analytic function, matching the pruning already done for a plain view.
- * Each case runs as both an inline view and a named view (always
- * non-mergeable, pinning the pre-fix baseline).
+ * Each case runs as both an inline view and a named view (non-mergeable).
  *
  * Coverage:
  * 1-2   analytic column referenced by main query or not
- * 3-7   OVER-clause reference shapes (main query, ordinal, missing,
- *       expression, scalar subquery)
+ * 3-7   OVER-clause reference shapes (direct, ordinal, missing, expression,
+ *       scalar subquery)
  * 8-11  outer ORDER BY / GROUP BY vs the OVER-clause column
  * 12-14 join query, no_merge hint with/without an analytic function
- * 15    regression: row_number() must match between a view and its
- *       equivalent inline view (select-list reorder desyncing OVER)
+ * 15    regression: view vs. inline view (select-list reorder desyncs OVER)
  * 16-17 PREPARE/EXECUTE path, two analytic functions with only one used
- * 18-20 ORDER BY inside OVER: ordinal reference, regression vs a view,
- *       both PARTITION BY and ORDER BY ordinals hidden-appended at once
+ * 18-20 ORDER BY-inside-OVER ordinal, its regression, both ordinals
+ *       hidden-appended at once
+ * 21-22 LAG/LEAD argument column kept alive/pruned by reference
+ * 23-24 nested non-mergeable views: pruning and the regression propagate
+ *       through two levels
  */
 
 DROP TABLE IF EXISTS tbla;
@@ -197,3 +198,48 @@ DROP VIEW vr;
 DROP VIEW vs;
 DROP VIEW vt;
 DROP TABLE tbld;
+
+DROP TABLE IF EXISTS tble;
+CREATE TABLE tble(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tble(colb, colc, cold) VALUES
+(1,1,10),
+(1,1,20),
+(1,1,30),
+(1,2,40),
+(1,2,50);
+
+evaluate 'Case 21: LAG(cold) referenced -- the argument column cold and the OVER order column cola must be re-added as hidden columns; the LAG value is order-sensitive';
+SELECT /*+ recompile */ cola, lg
+FROM (SELECT cola, colb, colc, LAG(cold) OVER(PARTITION BY colc ORDER BY cola) AS lg, cold FROM tble) ORDER BY 1;
+CREATE OR REPLACE VIEW vu AS SELECT cola, colb, colc, LAG(cold) OVER(PARTITION BY colc ORDER BY cola) AS lg, cold FROM tble;
+SELECT /*+ recompile */ cola, lg FROM vu ORDER BY 1;
+
+evaluate 'Case 22: LEAD(cold) not referenced by the main query -- the whole select list, the analytic and its argument column cold included, must collapse to (1)';
+SELECT /*+ recompile */ COUNT(*)
+FROM (SELECT cola, colb, colc, LEAD(cold) OVER(PARTITION BY colc ORDER BY cola) AS ld, cold FROM tble);
+CREATE OR REPLACE VIEW vv AS SELECT cola, colb, colc, LEAD(cold) OVER(PARTITION BY colc ORDER BY cola) AS ld, cold FROM tble;
+SELECT /*+ recompile */ COUNT(*) FROM vv;
+
+evaluate 'Case 23: nested, the inner analytic is unreferenced at the top -- both levels must reduce (the top and the inner select list collapse to (1))';
+SELECT /*+ recompile */ COUNT(*)
+FROM (SELECT cola, ROW_NUMBER() OVER(PARTITION BY cola) AS rn_out
+      FROM (SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola) AS s_in, cold FROM tble));
+CREATE OR REPLACE VIEW vw_in AS SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola) AS s_in, cold FROM tble;
+CREATE OR REPLACE VIEW vw_out AS SELECT cola, ROW_NUMBER() OVER(PARTITION BY cola) AS rn_out FROM vw_in;
+SELECT /*+ recompile */ COUNT(*) FROM vw_out;
+
+evaluate 'Case 24: regression -- the inner running SUM read through the outer view must match between the nested view and its equivalent nested inline view (a desync at depth would change the value)';
+SELECT /*+ recompile */ cola, s_in
+FROM (SELECT cola, s_in, ROW_NUMBER() OVER(PARTITION BY cola) AS rn_out
+      FROM (SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola) AS s_in, cold FROM tble)) ORDER BY 1;
+CREATE OR REPLACE VIEW vx_in AS SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY colc ORDER BY cola) AS s_in, cold FROM tble;
+CREATE OR REPLACE VIEW vx_out AS SELECT cola, s_in, ROW_NUMBER() OVER(PARTITION BY cola) AS rn_out FROM vx_in;
+SELECT /*+ recompile */ cola, s_in FROM vx_out ORDER BY 1;
+
+DROP VIEW vu;
+DROP VIEW vv;
+DROP VIEW vw_in;
+DROP VIEW vw_out;
+DROP VIEW vx_in;
+DROP VIEW vx_out;
+DROP TABLE tble;
