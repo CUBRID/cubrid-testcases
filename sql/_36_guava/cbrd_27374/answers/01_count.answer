@@ -1,0 +1,284 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+2
+
+===================================================
+    
+D1: dynamic, select list (2) into one variable -- the report of the issue     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+===================================================
+    
+D2: dynamic, select list (2) into three variables -- the Additional Information     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 8, column 1) length (2) of the SELECT list and the number (3) of variables in the INTO clause do not match
+
+===================================================
+    
+D3: dynamic, the counts match -- the fetch must still return the row     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim
+===================================================
+    
+D4: dynamic, "select *" is counted from the prepared statement, so (3)     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 7, column 1) length (3) of the SELECT list and the number (2) of variables in the INTO clause do not match
+
+===================================================
+    
+D5: dynamic with a USING clause is checked the same way     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+===================================================
+    
+S1: static, select list (2) into one variable     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+===================================================
+    
+S2: static, the counts match     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim
+===================================================
+    
+C1: declared cursor, mismatch is rejected while the procedure is created     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: the number of columns of the cursor must be equal to the number of into-variables
+
+===================================================
+    
+C2: declared cursor with matching counts still compiles and runs     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim
+===================================================
+    
+R1: the remembered length is dropped on CLOSE, so the cursor can be reopened for another length     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim
+10002
+===================================================
+    
+R2: reading the length of a closed cursor is an invalid cursor error, not a mismatch     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 8, column 1) attempted to read a meta data of an unopened cursor
+
+===================================================
+    
+R3: the NULL check comes first, so a cursor never opened reports being NULL     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 5, column 1) the cursor is NULL
+
+===================================================
+    
+M1: the record has as many fields as the select list has columns     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim M
+===================================================
+    
+M2: the same record against a two column select list is (2) against three fields     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (3) of variables in the INTO clause do not match
+
+===================================================
+0
+
+===================================================
+    
+B1: the branch opening the two column select list matches the two INTO variables     
+
+
+===================================================
+    
+null     
+
+
+10001 kim
+===================================================
+    
+B2: the other branch of the same procedure opens (1), so the same FETCH is a mismatch     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 11, column 1) length (1) of the SELECT list and the number (2) of variables in the INTO clause do not match
+
+===================================================
+    
+L1: a loop that fetches every row is not disturbed by the check     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim
+10002 lee
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.p27374_c_short' does not exist.
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

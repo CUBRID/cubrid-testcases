@@ -1,0 +1,177 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+2
+
+===================================================
+0
+
+===================================================
+1
+
+===================================================
+    
+E1: the length is read before the row is, so an empty result set is a mismatch     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+===================================================
+    
+E2: the length is kept while the cursor is open, after the first fetch produced its row     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 9, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+10001 kim
+===================================================
+    
+E3: the mismatch is a catchable exception and the failed check consumed no row     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+caught: length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+after: 10001 kim
+===================================================
+    
+E4: the length follows the statement, not the source -- before the table gains a column     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+10001 kim M
+===================================================
+0
+
+===================================================
+    
+E4: the same procedure, not recompiled, now reports a mismatch of (4)     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 8, column 1) length (4) of the SELECT list and the number (3) of variables in the INTO clause do not match
+
+===================================================
+    
+E5: a cursor opened and closed on every iteration prepares its own statement each time     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+1: 10001 kim
+2: 10001 kim
+3: 10001 kim
+===================================================
+0
+
+===================================================
+    
+E6: a UNION of two one column queries is (1)     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 13, column 1) length (1) of the SELECT list and the number (2) of variables in the INTO clause do not match
+
+===================================================
+    
+E6: an aggregate query without GROUP BY is (2)     
+
+
+===================================================
+    
+null     
+
+
+fetched 2 lee
+===================================================
+    
+E6: a select list of literals without a FROM clause is (3)     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 13, column 1) length (3) of the SELECT list and the number (2) of variables in the INTO clause do not match
+
+===================================================
+    
+E7: a static SELECT that reads a PL/CSQL variable binds values and is checked the same way     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 1) length (2) of the SELECT list and the number (1) of variables in the INTO clause do not match
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
