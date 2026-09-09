@@ -164,6 +164,7 @@ INSERT INTO tbld(colb, colc, cold) VALUES
 
 evaluate 'Case 16: PREPARE/EXECUTE compiles and runs the pruned plan correctly';
 PREPARE stmt1 FROM 'SELECT rn FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tbld) WHERE rn > ? ORDER BY 1';
+--@queryplan
 EXECUTE stmt1 USING 0;
 DEALLOCATE PREPARE stmt1;
 

@@ -966,6 +966,25 @@ rn
 2     
 3     
 
+Query plan:
+sscan
+    class: tbld node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), tbld.colc from tbld tbld)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], tbld.colc from tbld tbld) [__t?] (rn) where ([__t?].rn> ?:? ) order by ?
 ===================================================
 0
 ===================================================
