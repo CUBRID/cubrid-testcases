@@ -64,15 +64,15 @@ id    col1    col2
 3     2015-09-17 03:30:00.0 America/Belem -03     2015-09-17 03:00:00.0 -03:30     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -85,15 +85,15 @@ id    col1    col2
 11     2015-09-17 19:29:59.001 -04:30     2015-09-17 23:59:59.001 UTC UTC     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -119,44 +119,44 @@ id    col1    col2
 6     2015-09-17 17:12:56.0 +04:00     2015-09-17 10:12:56.0 America/Noronha -02     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    col2    col1    
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 cost:  ? card ?
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
 id    col1    col2    
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: tz_test node[?]
-                 index: idx? term[?]
-                 filtr: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where (tz_test.col?< ?:? ) and (tz_test.col?> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    col1    col2    
 1     2015-09-17 13:30:00.0 Indian/Christmas +07     2015-09-17 15:30:00.0 +09:00     
@@ -173,15 +173,15 @@ id    col1    col2
 15     2015-09-17 12:59:59.001 Indian/Christmas +07     2015-09-17 02:59:59.001 America/Belem -03     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: tz_test node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: tz_test node[?]
+    index: idx? 
+    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select tz_test.id, tz_test.col?, tz_test.col? from tz_test tz_test where tz_test.col?= cast(tz_test.col? as datetimetz) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 col1    col2    
 2015-09-17 13:00:00.0 Indian/Christmas +07     2015-09-17 03:00:00.0 America/Belem -03     
