@@ -179,14 +179,14 @@ H     8
 I     9     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_LS */ t?.a, max(t?.g) from t? t? where (t?.h>= ?:? ) group by t?.a
+/* ---> skip GROUP BY */
 ===================================================
 0

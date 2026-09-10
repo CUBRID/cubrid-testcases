@@ -36,15 +36,15 @@ null     2
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_? (covers)
+    filtr: term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t?.c?, t?.c? from t? t? where (t?.c?> ?:? ) order by ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

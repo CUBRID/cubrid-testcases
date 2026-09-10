@@ -5369,15 +5369,15 @@ i    j    k    l
 2     3     3096     1001     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: idx (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j, t.k, t.l from t t where t.j is not null  and t.l= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
