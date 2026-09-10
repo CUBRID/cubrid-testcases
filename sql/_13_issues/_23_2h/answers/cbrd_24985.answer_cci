@@ -101,10 +101,52 @@ select a,class a, ?:?  as [a.drc_yn] from TB_RDRECORD a, (select distinct F.FLS_
 rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
 0000001     20160000078754     1          
 
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.rctr_id, a.fls_id, a.drc_yn, a.dflp_cnvr_stts from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? ) av? (av_?) where a.FLS_ID= ?:?  and a.FLS_ID=av?.av_?
 ===================================================
 rctr_id    fls_id    drc_yn    dflp_cnvr_stts    
 0000001     20160000078753     1          
 
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: F node[?]
+                 sargs: term[?] AND term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? )
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.rctr_id, a.fls_id, a.drc_yn, a.dflp_cnvr_stts from TB_RDRECORD a, (select distinct F.FLS_ID from TB_RDFOLDER F where F.RCTR_ID= ?:?  and F.FLS_ID= ?:? ) av? (av_?) where a.FLS_ID= ?:?  and a.FLS_ID=av?.av_?
 ===================================================
 0
 ===================================================

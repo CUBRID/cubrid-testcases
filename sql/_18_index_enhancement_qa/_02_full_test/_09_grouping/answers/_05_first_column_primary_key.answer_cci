@@ -31,7 +31,7 @@ iscan
     sort:  ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d from t t group by t.a, t.b, t.c, t.d
+select t.a, t.b, t.c, t.d from t t group by t.a
 /* ---> skip GROUP BY */
 ===================================================
 0
@@ -52,7 +52,7 @@ iscan
     sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc 
+select t.a, t.b, t.c, t.d from t t group by t.a desc 
 /* ---> skip GROUP BY */
 ===================================================
 0
@@ -71,7 +71,7 @@ iscan
     sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having groupby_num()<=?
+select t.a, t.b, t.c, t.d from t t group by t.a desc  having groupby_num()<=?
 /* ---> skip GROUP BY */
 ===================================================
 0
@@ -87,7 +87,7 @@ iscan
     sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)>?
+select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc  having count(*)>?
 /* ---> skip GROUP BY */
 ===================================================
 0
@@ -106,7 +106,7 @@ iscan
     sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having groupby_num()<? and count(*)=?
+select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc  having groupby_num()<? and count(*)=?
 /* ---> skip GROUP BY */
 ===================================================
 0
@@ -122,7 +122,7 @@ iscan
     sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc , t.b desc , t.c desc , t.d desc  having count(*)> ?:? 
+select t.a, t.b, t.c, t.d, count(*) from t t group by t.a desc  having count(*)> ?:? 
 /* ---> skip GROUP BY */
 ===================================================
 0
