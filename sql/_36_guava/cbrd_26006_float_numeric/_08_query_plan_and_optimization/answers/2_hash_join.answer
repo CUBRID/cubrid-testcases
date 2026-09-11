@@ -318,20 +318,23 @@ select /*+ USE_HASH */ 'HASH d?=d?', count(*) from hj_d? a, hj_d? b where a.k=b.
 tag    join_rows    
 
 Query plan:
-temp(group by)
-    subplan: hash-join (inner join)
-                 edge:  term[?] AND term[?]
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: b node[?]
-                            cost:  ? card ?
+temp(order by)
+    subplan: temp(group by)
+                 subplan: hash-join (inner join)
+                              edge:  term[?] AND term[?]
+                              outer: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                              inner: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
                  cost:  ? card ?
-    sort:  
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ 'HASH d?=d? index', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k
+select /*+ USE_HASH */ 'HASH d?=d? index', count(*), a.k from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k order by ?
 ===================================================
     
 2-4. d1=d3 with index -> 4 rows     
@@ -341,20 +344,23 @@ tag    join_rows
 HASH d1=d3 index     4     
 
 Query plan:
-temp(group by)
-    subplan: hash-join (inner join)
-                 edge:  term[?] AND term[?]
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: b node[?]
-                            cost:  ? card ?
+temp(order by)
+    subplan: temp(group by)
+                 subplan: hash-join (inner join)
+                              edge:  term[?] AND term[?]
+                              outer: sscan
+                                         class: a node[?]
+                                         cost:  ? card ?
+                              inner: sscan
+                                         class: b node[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
                  cost:  ? card ?
-    sort:  
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ 'HASH d?=d? index', count(*) from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k
+select /*+ USE_HASH */ 'HASH d?=d? index', count(*), a.k from hj_d? a, hj_d? b where a.k=b.k and a.col?=b.col? group by a.k order by ?
 ===================================================
 0
 ===================================================

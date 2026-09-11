@@ -55,3 +55,21 @@ FROM t1
 ORDER BY grade ASC, col2 DESC;
 
 DROP TABLE IF EXISTS t1;
+
+-- ===========================================================================
+-- Section 3: Bucket assignment at the boundaries
+-- ===========================================================================
+evaluate '3. Bucket assignment at the boundaries';
+SELECT WIDTH_BUCKET(40, 50, 80, 3);   -- 0 (below min)
+SELECT WIDTH_BUCKET(50, 50, 80, 3);   -- 1 (min is inclusive)
+SELECT WIDTH_BUCKET(65, 50, 80, 3);   -- 2
+SELECT WIDTH_BUCKET(79, 50, 80, 3);   -- 3
+SELECT WIDTH_BUCKET(80, 50, 80, 3);   -- 4 (max is exclusive, overflow bucket)
+SELECT WIDTH_BUCKET(90, 50, 80, 3);   -- 4 (above max)
+
+-- ===========================================================================
+-- Section 4: Fractional and high-precision bounds
+-- ===========================================================================
+evaluate '4. Fractional and high-precision bounds';
+SELECT WIDTH_BUCKET(0.5, 0, 1, 4);
+SELECT WIDTH_BUCKET(0.123456789012345678901234567890, 0, 1, 10);

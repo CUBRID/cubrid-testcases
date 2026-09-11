@@ -45,7 +45,6 @@ insert into foo values('3');
 insert into foo values('4');
 insert into foo values('5');
 
-select /*+ recompile */ to_number(f) from foo;
 select /*+ recompile */ to_number(f) from foo order by 1;
 select /*+ recompile */ to_number(f) from foo order by 1 desc;
 
@@ -68,3 +67,14 @@ SELECT TO_NUMBER('9999999999999999999999999999999999999999999',
 )
 order by 1;
 drop table if exists foo;
+
+-- ===========================================================================
+-- Section 4: default format NUMERIC(38,0) validates the source (no coercion)
+-- ===========================================================================
+evaluate '4. Default format NUMERIC(38,0): fractional string is a format mismatch';
+-- With no format, TO_NUMBER validates the source string against the default format NUMERIC(38,0).
+-- It validates against the mask, it does not round the value to fit. A fractional string does not
+-- match the (38,0) mask (which has no fractional part), so it raises a format mismatch error (-494),
+-- the same class as a 39-or-more-digit integer in Section 2. A 38-digit integer matches and succeeds.
+SELECT TO_NUMBER('0.1234567890123456789012345678901234567890');
+SELECT TO_NUMBER('99999999999999999999999999999999999999');

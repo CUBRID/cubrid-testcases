@@ -350,7 +350,8 @@ evaluate '7-1. fixed(38,127) ps1=ps2 join counts (nl-join)';
 SELECT 'NL fixed(pos) ps1=ps2' AS tag, a.gid, a.id, COUNT(*) AS join_rows
 FROM nl_fx_ps1 a, nl_fx_ps2 b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid, a.id;
+GROUP BY a.gid, a.id
+ORDER BY a.gid, a.id;
 
 CREATE INDEX idx_nl_fx_ps1_gv ON nl_fx_ps1(gid, v);
 CREATE INDEX idx_nl_fx_ps2_gv ON nl_fx_ps2(gid, v);
@@ -359,7 +360,8 @@ evaluate '7-2. fixed(38,127) ps1=ps2 with index (idx-join)';
 SELECT 'NL+IDX fixed(pos) ps1=ps2' AS tag, a.gid, a.id, COUNT(*) AS join_rows
 FROM nl_fx_ps1 a, nl_fx_ps2 b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid, a.id;
+GROUP BY a.gid, a.id
+ORDER BY a.gid, a.id;
 
 
 -- ===========================================================================

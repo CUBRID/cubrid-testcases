@@ -28,7 +28,7 @@ INSERT INTO t_pl_t1 VALUES
 
 CREATE OR REPLACE PROCEDURE plpc_print_t1_1
 AS
-  CURSOR c IS SELECT col1 AS a FROM t_pl_t1;
+  CURSOR c IS SELECT col1 AS a FROM t_pl_t1 ORDER BY col1;
 BEGIN
   FOR r IN c LOOP
     DBMS_OUTPUT.put_line(r.a);
@@ -64,6 +64,29 @@ SELECT plfn_get_t1_col1_1(
 )) AS t;
 
 DROP TABLE IF EXISTS t_pl_t1;
+
+
+evaluate '2. %TYPE from a Fixed NUMERIC(p,s) column';
+/* ============================================================
+ * 2. %TYPE inherits the Fixed NUMERIC(p,s) type of the column
+ * ============================================================ */
+DROP TABLE IF EXISTS t_pl_fx;
+CREATE TABLE t_pl_fx (c NUMERIC(10,2));
+INSERT INTO t_pl_fx VALUES (123.456);
+
+CREATE OR REPLACE FUNCTION plfn_fx_type (p t_pl_fx.c%TYPE) RETURN t_pl_fx.c%TYPE
+AS
+  v t_pl_fx.c%TYPE;
+BEGIN
+  SELECT c INTO v FROM t_pl_fx WHERE c = p;
+  RETURN v;
+END;
+
+-- 123.456 stored as NUMERIC(10,2) rounds to 123.46, and the %TYPE return keeps that fixed type
+SELECT plfn_fx_type(123.46) AS v, typeof(plfn_fx_type(123.46)) AS t;
+
+DROP FUNCTION plfn_fx_type;
+DROP TABLE IF EXISTS t_pl_fx;
 
 -- Cleanup: drop all created procedures and functions
 DROP PROCEDURE plpc_print_t1_1;

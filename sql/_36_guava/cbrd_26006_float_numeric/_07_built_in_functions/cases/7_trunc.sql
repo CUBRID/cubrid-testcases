@@ -46,6 +46,9 @@ SELECT TRUNC(9999999999999999999999999999999999999999.99999999999999999999, 0);
 SELECT TRUNC(-9999999999999999999999999999999999999999.99999999999999999999, 0);
 
 evaluate '6. tiny values';
+-- CCI note: these operands are e-notation literals (DOUBLE), and TRUNC keeps DOUBLE (no numeric cast),
+-- so the tiny DOUBLE result prints in scientific notation (1.0E-40) under JDBC but as 0.0 under CCI
+-- (driver display difference, see 7_trunc.answer_cci)
 SELECT TRUNC(1e-40, 50);
 SELECT TRUNC(1e-252, 252);
 SELECT TRUNC(-1e-252, 252);
@@ -82,3 +85,15 @@ SELECT TRUNC(10 / 3, 40);
 SELECT TRUNC(-10 / 3, 40);
 SELECT TRUNC(10 / 1.000000000000000000000000000000000000001, 40);
 SELECT TRUNC(10 / 1.0000000000000000000000000000000000000001, 40);
+
+evaluate '9. TRUNC always truncates toward zero (no rounding)';
+SELECT TRUNC(2.5, 0);
+SELECT TRUNC(-2.5, 0);
+SELECT TRUNC(0.9, 0);
+SELECT TRUNC(-0.9, 0);
+
+evaluate '10. Normalization happens before TRUNC (0.999... becomes 1)';
+-- 45 nines normalize to 1.0 first, so TRUNC gives 1 (not 0)
+SELECT TRUNC(0.999999999999999999999999999999999999999999999, 0);
+-- 39 nines stay below 1, so TRUNC gives 0
+SELECT TRUNC(0.999999999999999999999999999999999999999, 0);

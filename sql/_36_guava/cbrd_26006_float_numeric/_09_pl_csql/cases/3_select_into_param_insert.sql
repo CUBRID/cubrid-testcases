@@ -30,11 +30,11 @@ CALL plpc_print_param_1(CAST(123456789.9999999999999999 AS DOUBLE));
 SELECT CAST(123456789.9999999999999999 AS DOUBLE) AS server_double;
 SELECT CAST(CAST(123456789.9999999999999999 AS DOUBLE) AS NUMERIC) AS server_to_numeric;
 
-/* 99999999999999999999999.999999999999999를 double로 변환 하면 9.999999999999999E+22이 되며 이는
- * 99999999999999990000000 값과 동일함.
- * 그런데, 이 값을 numeric으로 변환하면 100000000000000000000000 값으로 되며 동일하지 않음.
- * 이는 develop 에서도 동일한 문제가 발생함!!
- * 즉, double의 부정확한 값으로 인해 numeric 값이 부정확하게 나오는 것임으로 버그가 아님!
+/* Converting 99999999999999999999999.999999999999999 to DOUBLE yields 9.999999999999999E+22,
+ * which equals the value 99999999999999990000000.
+ * However, converting that DOUBLE back to NUMERIC gives 100000000000000000000000, which is not equal.
+ * The same behavior occurs on develop as well.
+ * So the inexact NUMERIC value comes from the DOUBLE inexactness, and is not a bug.
  */
 CALL plpc_print_param_1(CAST(99999999999999999999999.999999999999999 AS DOUBLE));
 SELECT CAST(99999999999999999999999.999999999999999 AS DOUBLE) AS server_double;
@@ -45,9 +45,13 @@ SELECT CAST(99999999999999990000000 AS DOUBLE) AS server_double;
 SELECT CAST(CAST(99999999999999990000000 AS DOUBLE) AS NUMERIC(38)) AS server_to_numeric_38;
 SELECT CAST(CAST(99999999999999990000000 AS DOUBLE) AS NUMERIC) AS server_to_numeric;
 
+-- 40-significant-digit bare decimal param is Float NUMERIC and is preserved (unlike the DOUBLE casts above)
+CALL plpc_print_param_1(0.1234567890123456789012345678901234567890);
+SELECT 0.1234567890123456789012345678901234567890 AS server_bare_40;
+
 
 -- in/out/local printing + NULL cases
-/* 얘도 double의 정밀도로 인해 numeric과 결과가 다르게 나옴! */
+/* This case also differs from the exact NUMERIC because of DOUBLE precision (so JDBC and CCI displays may differ too) */
 CREATE OR REPLACE PROCEDURE plpc_inout_show_1 (out_n NUMERIC)
 AS
   in_n   NUMERIC := 0.0000000000000000000000001;
@@ -67,7 +71,7 @@ SELECT CAST(0.0000000000000000000000001 AS DOUBLE) AS server_double_small;
 SELECT CAST(CAST(0.0000000000000000000000001 AS DOUBLE) AS NUMERIC) AS server_double_to_numeric_small;
 
 -- Function param/return + typeof (return must be domain numeric)
-/* 얘도 double의 정밀도로 인해 numeric과 결과가 다르게 나옴! */
+/* This case also differs from the exact NUMERIC because of DOUBLE precision (so JDBC and CCI displays may differ too) */
 CREATE OR REPLACE FUNCTION plfn_echo_1 (out_n NUMERIC) RETURN NUMERIC
 AS
   in_n NUMERIC := 0.0000000000000000000000001;
@@ -89,7 +93,7 @@ SELECT plfn_echo_1(CAST(0.0000000000000000000000001 AS DOUBLE)) AS v,
 
 -- SELECT INTO with integer coercion
 -- If DUAL is not available, replace "FROM dual" with a valid single-row source.
-/* 얘도 double의 정밀도로 인해 numeric과 결과가 다르게 나옴! */
+/* This case also differs from the exact NUMERIC because of DOUBLE precision (so JDBC and CCI displays may differ too) */
 CREATE OR REPLACE FUNCTION plfn_select_into_int_1 (out_n NUMERIC) RETURN NUMERIC
 AS
   in_i INTEGER;
@@ -109,7 +113,7 @@ CALL plfn_select_into_int_1(0.0000000000000000000000001);
 CALL plfn_select_into_int_1(CAST(0.0000000000000000000000001 AS DOUBLE));
 
 -- Insert storage validation via procedure
-/* 얘도 double의 정밀도로 인해 numeric과 결과가 다르게 나옴! */
+/* This case also differs from the exact NUMERIC because of DOUBLE precision (so JDBC and CCI displays may differ too) */
 DROP TABLE IF EXISTS t_pl_io;
 CREATE TABLE t_pl_io (col1 NUMERIC);
 

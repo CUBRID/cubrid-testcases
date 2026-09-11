@@ -84,6 +84,9 @@ evaluate '6. tiny values';
 -- ------------------------------------------------------------
 -- tiny values (positive scale region) near underflow/printing behavior
 -- ------------------------------------------------------------
+-- CCI note: the first column echoes the raw 1e-XX literal which is a DOUBLE. JDBC prints it in
+-- scientific notation (1.0E-40) but CCI prints it as 0.0 (driver display difference, see 6_round.answer_cci).
+-- The ROUND(cast(... AS NUMERIC), n) result in the second column is NUMERIC and prints the same in both.
 SELECT 1e-40, ROUND(cast(1e-40 as numeric), 50);
 SELECT 1e-252, ROUND(cast(1e-252 as numeric), 252);
 SELECT -1e-252, ROUND(cast(-1e-252 as numeric), 252);
@@ -117,3 +120,12 @@ SELECT ROUND(
   99999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
   -100
 );
+
+evaluate '8. Exact half-way tie rounds half up (away from zero)';
+-- exact .5 ties round away from zero, not to the even neighbor
+SELECT ROUND(0.5, 0);
+SELECT ROUND(1.5, 0);
+SELECT ROUND(2.5, 0);
+SELECT ROUND(-2.5, 0);
+SELECT ROUND(0.125, 2);
+SELECT ROUND(0.135, 2);

@@ -166,13 +166,15 @@ evaluate '2-3. d1=d2 with index -> 0 rows';
 SELECT /*+ USE_HASH */ 'HASH d1=d2 index' AS tag, COUNT(*) AS join_rows
 FROM hj_d1 a, hj_d2 b
 WHERE a.k=b.k AND a.col1=b.col2
-GROUP BY a.k;
+GROUP BY a.k
+ORDER BY a.k;
 
 evaluate '2-4. d1=d3 with index -> 4 rows';
 SELECT /*+ USE_HASH */ 'HASH d1=d3 index' AS tag, COUNT(*) AS join_rows
 FROM hj_d1 a, hj_d3 b
 WHERE a.k=b.k AND a.col1=b.col3
-GROUP BY a.k;
+GROUP BY a.k
+ORDER BY a.k;
 
 
 -- ===========================================================================
@@ -227,7 +229,8 @@ evaluate '3-2. fp positive-scale ps1=ps2 with index (hash-join)';
 SELECT /*+ USE_HASH */ 'HASH fp(pos) index ps1=ps2' AS tag, a.gid, COUNT(*) AS join_rows
 FROM hj_fp_ps1 a, hj_fp_ps2 b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid;
+GROUP BY a.gid
+ORDER BY a.gid;
 
 
 -- ===========================================================================
@@ -258,7 +261,8 @@ evaluate '4-1. fixed(38,127) positive-scale ps1=ps2 join counts (hash-join)';
 SELECT /*+ USE_HASH */ 'HASH fixed(pos) ps1=ps2' AS tag, a.gid, COUNT(*) AS join_rows
 FROM hj_fx_ps1 a, hj_fx_ps2 b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid;
+GROUP BY a.gid
+ORDER BY a.gid;
 
 CREATE INDEX idx_hj_fx_ps1_v ON hj_fx_ps1(gid, id, v);
 CREATE INDEX idx_hj_fx_ps2_v ON hj_fx_ps2(gid, id, v);
@@ -267,7 +271,8 @@ evaluate '4-2. fixed(38,127) positive-scale ps1=ps2 with index (hash-join)';
 SELECT /*+ USE_HASH */ 'HASH fixed(pos) index ps1=ps2' AS tag, a.gid, COUNT(*) AS join_rows
 FROM hj_fx_ps1 a, hj_fx_ps2 b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid;
+GROUP BY a.gid
+ORDER BY a.gid;
 
 
 -- ===========================================================================
@@ -327,7 +332,8 @@ evaluate '5-2. mixed fp<->fixed(38,127) with index (hash-join)';
 SELECT /*+ USE_HASH */ 'HASH mix fp=fixed index' AS tag, a.gid, COUNT(*) AS join_rows
 FROM hj_mix_fp a, hj_mix_fx b
 WHERE a.gid=b.gid AND a.v=b.v
-GROUP BY a.gid;
+GROUP BY a.gid
+ORDER BY a.gid;
 
 
 

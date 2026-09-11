@@ -67,6 +67,8 @@ evaluate '4. positive-scale boundary';
 -- positive-scale boundary-ish (close to +252 region)
 -- ------------------------------------------------------------
 -- around 1e-252 magnitude, should still be representable (depends on literal trimming/rounding)
+-- CCI note: 1e-252 is an e-notation literal so it is a DOUBLE. The tiny DOUBLE MOD result
+-- prints as 1.0E-252 under JDBC but as 0.0 under CCI (driver display difference, see 4_mod.answer_cci)
 SELECT MOD(1e-252, 9);
 SELECT MOD(-1e-252, 9);
 
@@ -141,6 +143,7 @@ SELECT MOD(123456789012345678901234567890, COALESCE(NULLIF(999999,999999), 99999
 
 -- COALESCE with huge/small values
 SELECT MOD(COALESCE(NULL, 9999999999999999999999999999999999999999), 999999);
+-- CCI note: 1e-252 is a DOUBLE, its tiny MOD result prints as 0.0 under CCI (see 4_mod.answer_cci)
 SELECT MOD(COALESCE(NULL, 1e-252), 999999);
 SELECT MOD(COALESCE(NULL, -1e-252), 999999);
 
@@ -149,6 +152,7 @@ evaluate '9. potential overflow (observation)';
 -- potential overflow via extreme tiny divisor-like behavior
 -- (MOD itself may or may not throw, keep as observation tests for scale<-214 paths)
 -- ------------------------------------------------------------
+-- CCI note: divisor 1e-252 is a DOUBLE, so the tiny MOD remainder prints as 0.0 under CCI (see 4_mod.answer_cci)
 SELECT MOD(
   99999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
   1e-252
@@ -162,3 +166,10 @@ SELECT MOD(
 -- minimal divisor = 0 (returns dividend, not an error)
 SELECT MOD(1, 0);
 SELECT MOD(0.123, 0);
+
+evaluate '10. Result sign follows the dividend, independent of divisor sign';
+-- CUBRID MOD result takes the sign of the dividend, the divisor sign does not matter
+SELECT MOD(10.5, 3);
+SELECT MOD(-10.5, 3);
+SELECT MOD(10.5, -3);
+SELECT MOD(-10.5, -3);

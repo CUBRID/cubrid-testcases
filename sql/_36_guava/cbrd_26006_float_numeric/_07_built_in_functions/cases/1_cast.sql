@@ -128,3 +128,13 @@ evaluate '8. DOUBLE literal out-of-range (error)';
 -- time with a syntax error (-493). This is a DOUBLE-stage (underflow) failure at parsing,
 -- not a NUMERIC cast overflow.
 SELECT 1e-308;
+
+evaluate '9. Bare decimal preserves 40 digits, e-notation does not';
+-- bare decimal literal is a Float NUMERIC and keeps all 40 significant digits
+SELECT CAST(0.1234567890123456789012345678901234567890 AS NUMERIC);
+-- the same magnitude via e-notation parses as DOUBLE first, so only about 15 to 17 digits survive
+SELECT CAST(1234567890123456789012345678901234567890e-40 AS NUMERIC);
+
+evaluate '10. CAST string to NUMERIC (precision on the string path)';
+SELECT CAST('0.1234567890123456789012345678901234567890' AS NUMERIC);
+SELECT CAST('99999999999999999999999999999999999999' AS NUMERIC);

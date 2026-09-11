@@ -32,9 +32,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-2. rownum >= -HUGE (one-sided, negative-huge lower; key limit dropped -> return all rows)     
@@ -57,9 +59,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-3. rownum < -HUGE (one-sided, negative-huge upper -> key_limit_upper = 0 -> 0 rows)     
@@ -72,9 +76,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-4. rownum <= -HUGE (one-sided, negative-huge upper -> key_limit_upper = 0 -> 0 rows)     
@@ -87,9 +93,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-5. rownum > +HUGE (one-sided, positive-huge lower; key limit dropped -> rownum predicate false -> 0 rows)     
@@ -102,9 +110,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-6. rownum >= +HUGE (one-sided, positive-huge lower; key limit dropped -> rownum predicate false -> 0 rows)     
@@ -117,9 +127,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-7. rownum < +HUGE (one-sided, positive-huge upper -> key_limit_upper = -1 -> return all rows)     
@@ -142,9 +154,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-8. rownum <= +HUGE (one-sided, positive-huge upper -> key_limit_upper = -1 -> return all rows)     
@@ -167,9 +181,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-9. 5 < rownum AND rownum < +HUGE (two-sided, upper overflow -> no upper bound -> all rows after rownum > 5)     
@@ -187,9 +203,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-10. -HUGE <= rownum AND rownum <= 5 (two-sided, lower overflow -> key_limit_lower = 0 -> 5 rows)     
@@ -207,9 +225,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and -?<=rownum and (rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and -?<=rownum and (rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-11. 5 <= rownum AND rownum <= +HUGE (two-sided, upper overflow -> no upper bound -> all rows from rownum >= 5)     
@@ -228,9 +248,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and ?<=rownum and (rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and ?<=rownum and (rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-12. rownum = +HUGE (lower = BIGINT_MAX / upper = -1 -> 0 rows)     
@@ -243,9 +265,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-13. rownum = -HUGE (both lower and upper = 0 -> 0 rows)     
@@ -258,9 +282,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-14. -HUGE < rownum AND rownum < 5 (case1: left=INARITH fetch succeeds -> 4 rows)     
@@ -277,9 +303,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 1     a     
@@ -293,9 +321,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= cast(? as smallint))
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= cast(? as smallint)) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-15. rownum BETWEEN -HUGE AND 5 (case2: left=POS_VALUE[int] fetch succeeds -> 5 rows)     
@@ -313,9 +343,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-16. (BIGINT or -HUGE) < rownum AND rownum < HUGE (case3: two-sided overflow, positive sign -> 0 rows)     
@@ -328,9 +360,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and ?<rownum and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 1     a     
@@ -349,9 +383,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and -?<rownum and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-17. rownum BETWEEN (BIGINT or -HUGE) AND HUGE (case4: lower overflow -> 0, upper overflow -> -1 -> return all rows)     
@@ -364,9 +400,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 1     a     
@@ -385,9 +423,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum>= ?:?  and rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-18. rownum predicate within BIGINT range (existing behavior preserved)     
@@ -404,9 +444,11 @@ iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
     sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:?  and rownum<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum> ?:?  and rownum<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
     
 1-19. LIMIT clause: negative result preserves error handling     
@@ -434,13 +476,23 @@ Query plan:
 iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
-    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 2     b     
@@ -457,10 +509,11 @@ Query plan:
 iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
-    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 id    a    
 
@@ -468,10 +521,11 @@ Query plan:
 iscan
     class: t node[?]
     index: i_t_all term[?] (covers)
-    sargs: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.id, t.a from t t where (t.id> ?:? ) and (inst_num()> ?:?  and inst_num()<= ?:? )
+select t.id, t.a from t t where (t.id> ?:? ) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
     
 1-21. Host variable bound to NUMERIC exceeding BIGINT range (handled identically)     
@@ -491,5 +545,15 @@ id    a
 9     i     
 10     j     
 
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_all term[?] (covers)
+    sargs: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.a from t t where (t.id> ?:? ) and (rownum< ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
