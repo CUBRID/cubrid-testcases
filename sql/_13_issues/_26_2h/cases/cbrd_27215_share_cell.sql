@@ -2,7 +2,8 @@
  * CBRD-27215 (PR #7658) on top of CBRD-27178 (#7763): SUM and AVG share one accumulator not only when their
  * operand regu trees are equal (develop) but also when the compiled operand program resolves both operands
  * to the same cell -- commuted operands (a + b / b + a, n * m / m * n), literals equal by value, common
- * sub-expressions, host variables bound to the same value.  Results must equal the interpreter's on every
+ * sub-expressions (two distinct host variables stay distinct cells even when bound alike).  Results must equal
+ * the interpreter's on every
  * path: BUILDVALUE, filtered BUILDVALUE, hash GROUP BY, sort GROUP BY, prepared statements re-executed with
  * the same and with different bind types (the program is recompiled and the links re-derived).
  */
