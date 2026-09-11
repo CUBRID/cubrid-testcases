@@ -581,27 +581,25 @@ select 'test?' from tbl tbl
 cola    colb    
 
 Query plan:
-sscan
-    class: c node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl c where (c.cola=b.cola) and inst_num()<= ?:? )
-Query plan:
-nl-join (inner join)
+nl-join (semi join)
     edge:  term[?]
-    outer: sscan
-               class: b node[?]
-               sargs: term[?]
-               subqs: ?
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: s node[?]
+                          sargs: term[?] AND term[?]
+                          cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: s node[?]
-               sargs: term[?] AND term[?]
+               class: c node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, s) */ b.cola, b.colb from tbl s, tbl b where (s.cola=b.cola) and  exists (select ? from tbl c where (c.cola=b.cola) and inst_num()<= ?:? ) and (s.colb< ?:? )
+select /*+ LEADING(b, s) */ b.cola, b.colb from tbl s, tbl b semi join tbl c on c.cola=b.cola where (s.cola=b.cola) and (s.colb< ?:? )
 ===================================================
 'test19'    
 

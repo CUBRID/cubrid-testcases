@@ -456,23 +456,18 @@ id    text
 7     ACABC     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: t? node[?]
-                 index: idx_tbl? term[?] (covers)
-                 cost:  ? card ?
+idx-join (semi join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct t?.id from tbl? t? where t?.id=t?.id)
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx_tbl? term[?] (covers)
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select t?.id, t?.[text] from tbl t? where t?.id in (select distinct t?.id from tbl? t? where t?.id=t?.id) and (t?.id> ?:? )
+select t?.id, t?.[text] from tbl t? semi join tbl? t? on t?.id=t?.id where (t?.id> ?:? )
 ===================================================
 0
 ===================================================
