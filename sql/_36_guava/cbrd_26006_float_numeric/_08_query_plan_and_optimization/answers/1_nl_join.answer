@@ -1,0 +1,904 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+1-1. NL, no index: expect nl-join (1 row)     
+
+===================================================
+id    col1    id    col2    
+1     2     1     2.0     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-2. NL, no index: expect nl-join (1 row)     
+
+===================================================
+id    col2    id    col3    
+1     2.0     1     2.00000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-3. NL, no index: expect nl-join (1 row)     
+
+===================================================
+id    col1    id    col3    
+1     2     1     2.00000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1-4. NL with index: expect idx-join (1 row each)     
+
+===================================================
+id    col1    id    col2    
+1     2     1     2.0     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_eq?_col? term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-5. NL with index: expect idx-join (1 row each)     
+
+===================================================
+id    col2    id    col3    
+1     2.0     1     2.00000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_eq?_col? term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-6. USE_HASH with index: expect hash-join (1 row each)     
+
+===================================================
+id    col1    id    col2    
+1     2     1     2.0     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-7. USE_HASH with index: expect hash-join (1 row each)     
+
+===================================================
+id    col2    id    col3    
+1     2.0     1     2.00000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1-8. USE_HASH, no index: expect hash-join (1 row each)     
+
+===================================================
+id    col1    id    col2    
+1     2     1     2.0     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+    
+1-9. USE_HASH, no index: expect hash-join (1 row each)     
+
+===================================================
+id    col1    id    col3    
+1     2     1     2.00000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.id, a.col?, b.id, b.col? from t_eq? a, t_eq? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+2-1. sanity: should be 1 (true)     
+
+===================================================
+a.v=b.v    
+1     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.v=b.v from t_rnd? a, t_rnd? b where a.k=b.k
+===================================================
+    
+2-2. NL, no index: expect nl-join (1 row)     
+
+===================================================
+k    v    k    v    
+1     100000000000000000000000000000000000000000     1     100000000000000000000000000000000000000000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.k, a.v, b.k, b.v from t_rnd? a, t_rnd? b where a.v=b.v
+===================================================
+    
+2-3. USE_HASH, no index: expect hash-join (1 row)     
+
+===================================================
+k    v    k    v    
+1     100000000000000000000000000000000000000000     1     100000000000000000000000000000000000000000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.k, a.v, b.k, b.v from t_rnd? a, t_rnd? b where a.v=b.v
+===================================================
+0
+===================================================
+0
+===================================================
+    
+2-4. NL with index: expect idx-join (1 row)     
+
+===================================================
+k    v    k    v    
+1     100000000000000000000000000000000000000000     1     100000000000000000000000000000000000000000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_rnd?_v term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.k, a.v, b.k, b.v from t_rnd? a, t_rnd? b where a.v=b.v
+===================================================
+    
+2-5. USE_HASH with index: expect hash-join (1 row)     
+
+===================================================
+k    v    k    v    
+1     100000000000000000000000000000000000000000     1     100000000000000000000000000000000000000000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.k, a.v, b.k, b.v from t_rnd? a, t_rnd? b where a.v=b.v
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+3-1. USE_HASH (hash-join): t_ps1 vs t_ps2 -> 0 rows (different magnitudes)     
+
+===================================================
+col1    col2    
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.col?, b.col? from t_ps? a, t_ps? b where a.col?=b.col?
+===================================================
+    
+3-2. USE_HASH (hash-join): t_ps2 vs t_ps3 -> 1 row (equal)     
+
+===================================================
+col2    col3    
+0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.col?, b.col? from t_ps? a, t_ps? b where a.col?=b.col?
+===================================================
+    
+3-3. NL (no hint, nl-join): t_ps1 vs t_ps2 -> 0 rows     
+
+===================================================
+col1    col2    
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col?, b.col? from t_ps? a, t_ps? b where a.col?=b.col?
+===================================================
+    
+3-4. NL (no hint, nl-join): t_ps2 vs t_ps3 -> 1 row     
+
+===================================================
+col2    col3    
+0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col?, b.col? from t_ps? a, t_ps? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+4-1. USE_HASH (hash-join): ns1 vs ns2 -> 0 rows (different magnitudes)     
+
+===================================================
+col1    col2    
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.col?, b.col? from t_ns? a, t_ns? b where a.col?=b.col?
+===================================================
+    
+4-2. USE_HASH (hash-join): ns2 vs ns3 -> 1 row (equal)     
+
+===================================================
+col2    col3    
+10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.col?, b.col? from t_ns? a, t_ns? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+    
+4-3. NL with index: expect idx-join     
+
+===================================================
+col2    col3    
+10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_ns?_col? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col?, b.col? from t_ns? a, t_ns? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+5-1. NL, no index: expect nl-join (1 row)     
+
+===================================================
+col1    col2    
+2222000     2222000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col?, b.col? from t_ct? a, t_ct? b where a.col?=b.col?
+===================================================
+    
+5-2. USE_HASH, no index: expect hash-join (1 row)     
+
+===================================================
+col1    col2    
+2222000     2222000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.col?, b.col? from t_ct? a, t_ct? b where a.col?=b.col?
+===================================================
+0
+===================================================
+    
+5-3. NL with index: expect idx-join (1 row)     
+
+===================================================
+col1    col2    
+2222000     2222000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx_ct?_col? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.col?, b.col? from t_ct? a, t_ct? b where a.col?=b.col?
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+6-1. fp(pos) ps1=ps2 join counts: gid 60->4, gid 61->2 (nl-join)     
+
+===================================================
+tag    gid    join_rows    
+NL fp(pos) ps1=ps2     60     4     
+NL fp(pos) ps1=ps2     61     2     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL fp(pos) ps?=ps?', a.gid, count(*) from nl_fp_ps? a, nl_fp_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+    
+6-2. show gid 61 matches (id 13 excluded: 41st digit=5 rounds up)     
+
+===================================================
+gid    a_id    b_id    v    v    
+61     1     11     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     
+61     1     12     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001234567890123456789012345678901234567890     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.gid, a.id, b.id, a.v, b.v from nl_fp_ps? a, nl_fp_ps? b where a.v=b.v and b.gid= ?:?  and a.gid= ?:?  order by ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+    
+6-3. fp(pos) ps1=ps2 with index (idx-join)     
+
+===================================================
+tag    gid    join_rows    
+NL+IDX fp(pos) ps1=ps2     60     4     
+NL+IDX fp(pos) ps1=ps2     61     2     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx_nl_fp_ps?_gv term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL+IDX fp(pos) ps?=ps?', a.gid, count(*) from nl_fp_ps? a, nl_fp_ps? b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+7-1. fixed(38,127) ps1=ps2 join counts (nl-join)     
+
+===================================================
+tag    gid    id    join_rows    
+NL fixed(pos) ps1=ps2     38     89     1     
+NL fixed(pos) ps1=ps2     38     93     1     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL fixed(pos) ps?=ps?', a.gid, a.id, count(*) from nl_fx_ps? a, nl_fx_ps? b where a.gid=b.gid and a.v=b.v group by a.gid, a.id
+===================================================
+0
+===================================================
+0
+===================================================
+    
+7-2. fixed(38,127) ps1=ps2 with index (idx-join)     
+
+===================================================
+tag    gid    id    join_rows    
+NL+IDX fixed(pos) ps1=ps2     38     89     1     
+NL+IDX fixed(pos) ps1=ps2     38     93     1     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx_nl_fx_ps?_gv term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL+IDX fixed(pos) ps?=ps?', a.gid, a.id, count(*) from nl_fx_ps? a, nl_fx_ps? b where a.gid=b.gid and a.v=b.v group by a.gid, a.id
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+8-1. mixed fp<->fixed join counts: gid 80->4, 81->1, 82->1, 83->2 (nl-join)     
+
+===================================================
+tag    gid    join_rows    
+NL mix fp=fixed     80     4     
+NL mix fp=fixed     81     1     
+NL mix fp=fixed     82     1     
+NL mix fp=fixed     83     2     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL mix fp=fixed', a.gid, count(*) from nl_mix_fp a, nl_mix_fx b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+    
+8-2. show gid 82 (both fp and fx are 0 -> 1 match)     
+
+===================================================
+gid    fp_id    fx_id    v    v    
+82     1     11     0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select a.gid, a.id, b.id, a.v, b.v from nl_mix_fp a, nl_mix_fx b where a.v=b.v and b.gid= ?:?  and a.gid= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+    
+8-3. mixed fp<->fixed with index (idx-join)     
+
+===================================================
+tag    gid    join_rows    
+NL+IDX mix fp=fixed     80     4     
+NL+IDX mix fp=fixed     81     1     
+NL+IDX mix fp=fixed     82     1     
+NL+IDX mix fp=fixed     83     2     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: idx_nl_mix_fx_gv term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'NL+IDX mix fp=fixed', a.gid, count(*) from nl_mix_fp a, nl_mix_fx b where a.gid=b.gid and a.v=b.v group by a.gid
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
