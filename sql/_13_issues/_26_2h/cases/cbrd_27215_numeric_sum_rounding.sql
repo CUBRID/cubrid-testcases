@@ -1,13 +1,14 @@
 /**
- * CBRD-27215 (PR #7658, review round 2 T6): NUMERIC SUM/AVG accumulate exactly (deferred carry) and round
- * ONCE when the result is materialized.  When the running sum exceeds DB_MAX_NUMERIC_PRECISION (40) digits
- * this differs from the old per-row rounding in the last digits -- the new value is the exact sum correctly
- * rounded to 40 significant digits:
- *   3036 x (10^38 - 1) = 303599999999999999999999999999999999996964 -> ...7000  (per-row rounding gave ...9900)
- *   2024 x (10^38 - 1) = 202399999999999999999999999999999999997976 -> ...8000
- *   1012 x (10^38 - 1) = 101199999999999999999999999999999999998988 -> ...9000
- * The same values must come from the serial path, the hash GROUP BY, the sort GROUP BY and the parallel
- * BUILDVALUE_OPT path.  Decided 2026-09-10 (keep the once-rounded sum).
+ * CBRD-27215 (PR #7658) with CBRD-27178 (#7763) and the CBRD-27408 rule: NUMERIC SUM/AVG accumulate in the
+ * resident word accumulator (SUM_ACC) and, when the running sum reaches 41 digits, round that row exactly
+ * like binary addition does, so SUM(n) equals the same values added with +.  The values are therefore the
+ * legacy per-row rounding results:
+ *   3036 x (10^38 - 1) -> 303599999999999999999999999999999999999900   (exact 303599999999999999999999999999999999996964)
+ *   2024 x (10^38 - 1) -> 202399999999999999999999999999999999999900
+ *   1012 x (10^38 - 1) -> 101199999999999999999999999999999999999900
+ * The same values must come from the serial path, the hash GROUP BY, the sort GROUP BY, the filtered path and
+ * the parallel BUILDVALUE_OPT path (compiled operand cells feed the same accumulator).
+ * History: review round 2 T6 first kept the once-rounded sum (...7000); superseded 2026-09-11 to match + (CBRD-27408).
  */
 drop table if exists nn;
 create table nn (n numeric(38,0), g int default 1);
