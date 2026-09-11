@@ -31,6 +31,8 @@ drop table if exists UTC_DATE_TBL;
 drop table if exists UTC_TIMESTAMP_TBL;
 drop table if exists TZ_OFFSET_TBL;
 drop table if exists RAND_TBL;
+drop table if exists RAND_TBL_2;
+drop table if exists RAND_TBL_3;
 
 evaluate 'Case 1: CREATE TABLE with SYS_DATE function';
 CREATE TABLE SYS_DATE_TBL (col1 int) PARTITION BY HASH (SYS_DATE + col1) PARTITIONS 10;
@@ -103,6 +105,11 @@ CREATE TABLE RAND_TBL(col1 int) PARTITION BY HASH(RAND() + col1) PARTITIONS 10;
 
 CREATE TABLE RAND_TBL(col1 int) PARTITION BY HASH(RANDOM() + col1) PARTITIONS 10;
 
+evaluate 'Case 14: CREATE TABLE with RAND function';
+CREATE TABLE RAND_TBL_2(col1 int) PARTITION BY HASH(RAND(col1)) PARTITIONS 10;
+
+CREATE TABLE RAND_TBL_3(col1 int) PARTITION BY HASH(RANDOM(col1)) PARTITIONS 10;
+
 drop table if exists SYS_DATE_TBL;
 drop table if exists SYS_TIME_TBL;
 drop table if exists SYS_DATETIME_TBL;
@@ -116,3 +123,5 @@ drop table if exists UTC_DATE_TBL;
 drop table if exists UTC_TIMESTAMP_TBL;
 drop table if exists TZ_OFFSET_TBL;
 drop table if exists RAND_TBL;
+drop table if exists RAND_TBL_2;
+drop table if exists RAND_TBL_3;

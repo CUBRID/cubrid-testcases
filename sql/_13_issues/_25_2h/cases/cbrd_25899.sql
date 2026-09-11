@@ -71,13 +71,14 @@ GROUP  BY col1
 HAVING CONNECT_BY_ROOT id <> '';
 
 -- Bug: Currently failing (CBRD-26495). This test case will be re-enabled after the issue is resolved.
--- evaluate('7. Invalid: ORDER BY CONNECT_BY_ROOT with GROUP BY');
--- SELECT /*+ recompile */ col1, SUM(col1)
--- FROM   tbl
--- START WITH parnts_col1 IS NULL
--- CONNECT BY PRIOR col1 = parnts_col1
--- GROUP  BY col1
--- ORDER BY CONNECT_BY_ROOT id;
+-- [CBRD-26495] Issue resolved on March 10, 2026(semantic error : Error:-494).
+evaluate('7. Invalid: ORDER BY CONNECT_BY_ROOT with GROUP BY');
+SELECT /*+ recompile */ col1, SUM(col1)
+FROM   tbl
+START WITH parnts_col1 IS NULL
+CONNECT BY PRIOR col1 = parnts_col1
+GROUP  BY col1
+ORDER BY CONNECT_BY_ROOT id;
 
 evaluate('8. Invalid: SYS_CONNECT_BY_PATH + GROUP BY explicit column');
 SELECT /*+ recompile */ col1,

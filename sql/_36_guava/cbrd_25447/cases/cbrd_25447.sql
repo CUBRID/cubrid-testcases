@@ -97,7 +97,7 @@ select colb from tbl where id = 1 limit 1;
 show trace;
 
 
-evaluate '11. JOIN first table (should work) -> row by row, second table (should not work)';
+evaluate '11. JOIN first table (should work) -> mergeable list or count, second table (should not work)';
 select count(*) from tbl a join tbl b on a.cola = b.cola where a.id = 1;
 show trace;
 
