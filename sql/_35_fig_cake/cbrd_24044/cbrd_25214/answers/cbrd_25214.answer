@@ -797,6 +797,13 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (output list): active, columns covered ?/?
+      steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+      [  ?] case           c?, c? -> c? then=[?..?) else=[?..?) pred=(c? EQT* c?)
+      [  ?] case           c?, c? -> c? then=[?..?) else=[?..?) pred=(c? EQT* c?)
+      [  ?] case           c?, c? -> c? then=[?..?) else=[?..?) pred=(c? EQ* c?)
+      [  ?] case           c?, c? -> c? then=[?..?) else=[?..?) pred=(c? EQ* c?)
+      roots: [?]=c? [?]=c? [?]=c? [?]=c?
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
