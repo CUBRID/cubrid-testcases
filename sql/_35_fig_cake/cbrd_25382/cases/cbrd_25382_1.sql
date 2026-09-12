@@ -72,7 +72,7 @@ show trace;
 --select trace_stats ();
 
 do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. build input: int vs bigint -> int or bigint (page: int == bigint)');
+evaluate concat ('####', lpad (@i, 3), '. build input: int vs bigint -> int (page: int < bigint)');
 
 --@queryplan
 select /*+ recompile use_hash no_parallel_hash_join no_parallel_subquery */
@@ -111,7 +111,7 @@ show trace;
 --select trace_stats ();
 
 do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. cost: in_memory, hybrid < file, build_method: hybrid');
+evaluate concat ('####', lpad (@i, 3), '. cost: in_memory, hybrid < file, build_method: memory (build input too small for hybrid)');
 
 set system parameters 'max_hash_list_scan_size=128k';
 
