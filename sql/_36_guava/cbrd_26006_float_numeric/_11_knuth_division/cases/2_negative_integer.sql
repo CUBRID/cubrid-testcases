@@ -1,3 +1,16 @@
+/*
+ * Knuth division battery: negative integer operands.
+ *
+ * Contents -- 150 scenarios of the form: SELECT n AS scenario, a / b
+ *   Operands : negative integers, 1 to 38 significant digits each.
+ *   Notes    : no zero divisors, and no exact remainder-0 pairs.
+ *   Path     : 32 use integer division (both operands within BIGINT range, truncating), 118 use numeric division to 40 significant digits.
+ *   Related deterministic edge cases are in 8_division_edge_cases.sql
+ *
+ * Expected values -- captured from the engine, then cross-checked against an
+ *   independent Python decimal recomputation (40 significant digits, half-up).
+ *   All 150 match the independent recomputation exactly.
+ */
 evaluate '2. Knuth division: negative integer operands';
 SELECT 1 AS scenario, -23921230874922083407542440207894845 / -1785510499892961632114873;
 SELECT 2 AS scenario, -6318864405839 / -50161003009270664674627800731940281;

@@ -1,3 +1,16 @@
+/*
+ * Knuth division battery: mixed-sign integer operands.
+ *
+ * Contents -- 150 scenarios of the form: SELECT n AS scenario, a / b
+ *   Operands : mixed-sign integers, 1 to 38 significant digits each.
+ *   Notes    : no zero divisors, and one exact remainder-0 pair.
+ *   Path     : 39 use integer division (both operands within BIGINT range, truncating), 111 use numeric division to 40 significant digits.
+ *   Related deterministic edge cases are in 8_division_edge_cases.sql
+ *
+ * Expected values -- captured from the engine, then cross-checked against an
+ *   independent Python decimal recomputation (40 significant digits, half-up).
+ *   All 150 match the independent recomputation exactly.
+ */
 evaluate '3. Knuth division: mixed sign integer operands';
 SELECT 1 AS scenario, 2604166720811160770616197975999494 / 917667706918963645928918874229;
 SELECT 2 AS scenario, -2638528936864276936803263 / 84639581717753024620386652;

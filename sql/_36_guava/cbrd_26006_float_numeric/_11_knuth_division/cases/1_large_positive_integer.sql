@@ -1,3 +1,16 @@
+/*
+ * Knuth division battery: large positive integer operands.
+ *
+ * Contents -- 150 scenarios of the form: SELECT n AS scenario, a / b
+ *   Operands : positive integers, 1 to 38 significant digits each.
+ *   Notes    : no zero divisors, and no exact remainder-0 pairs.
+ *   Path     : 29 use integer division (both operands within BIGINT range, truncating), 121 use numeric division to 40 significant digits.
+ *   Related deterministic edge cases are in 8_division_edge_cases.sql
+ *
+ * Expected values -- captured from the engine, then cross-checked against an
+ *   independent Python decimal recomputation (40 significant digits, half-up).
+ *   All 150 match the independent recomputation exactly.
+ */
 evaluate '1. Knuth division: large positive integer operands';
 SELECT 1 AS scenario, 420056768388084388779057389158 / 2056845980638101086236037;
 SELECT 2 AS scenario, 4851830410534784779 / 13259551370;
