@@ -125,6 +125,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN
     ROLLBACK;
+    DBMS_OUTPUT.put_line('insert failed: ' || SQLCODE || ' ' || SQLERRM);
 END;
 
 CALL plpc_ins_1(NULL);

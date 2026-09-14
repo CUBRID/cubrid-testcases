@@ -169,7 +169,7 @@ CALL plpc_fp_div_ovf_1();
 evaluate '2. Float numeric comparisons (=, <, >)';
 /* ============================================================
  * 2. Float numeric comparisons (=, <, >)
- *  - Plain comparisons do not “fail”, they produce 0/1.
+ *  - Plain comparisons do not fail, they produce 0/1.
  *  - If you need a FAIL case, force overflow inside an expression.
  * ============================================================ */
 
@@ -381,29 +381,10 @@ DROP TABLE IF EXISTS t_pl_fn_cmp;
 
 
 -- /* ============================================================
---  * 아래 case는 pl/csql 과 cub_server 간에 결과가 달라지는 문제가 있는 case임
---  * cub_server : 0.000..1524157875323883675049535156256668194501
---  * pl/csql    : 0.000..0152415787532388367504953515625666819450  -- 아래 문제를 해결하면 cub_server와 동일한 결과를 출력함.
---  * 차이가 발생한 이유는
---  * pl/csql 쪽에서는 연산 전 자릿수를 계산 후,  연산할 때 해당 자릿수를 제한 및 반올림을 수행하고 결과를 다시 prec 과 scale의  max에 맞게 다시 조정하는 과정을 거치게됨
---  * 즉, 해당 과정은 두 번 반올림을 수행하는 것과 동일하여 여기서 차이가 생김
---  * 따라서 위 해당 case를 해결하기 위해서는 연산 전 자릿수 제한 없이 계산하는 부분을 제거!!
---  * public static BigDecimal opMult(BigDecimal l, BigDecimal r) {
---  * [AS-IS]
---  *      아래 조건문 제거 필요!!!
---  *      if (precision > NumericValue.DB_MAX_NUMERIC_PRECISION) {
---  *          scale -= (precision - NumericValue.DB_MAX_NUMERIC_PRECISION),
---  *          precision = NumericValue.DB_MAX_NUMERIC_PRECISION,
---  *      }
---  *      BigDecimal ret =
---  *              l.multiply(r, new MathContext(precision, RoundingMode.HALF_UP))
---  *                      .setScale(scale, RoundingMode.HALF_UP),
---  *      ret = NumericValue.adjustPrecisionScale(ret),
---  * [TO-BE]
---  *      BigDecimal ret =
---  *              l.multiply(r, new MathContext(precision, RoundingMode.HALF_UP))
---  *                      .setScale(scale, RoundingMode.HALF_UP),
---  *      ret = NumericValue.adjustPrecisionScale(ret),
+--  * Float NUMERIC multiplication: server (SQL) vs PL/CSQL consistency
+--  * Multiply a tiny high-scale value (fraction ~scale 253) by a 50-digit
+--  * integer and confirm the SQL SELECT (server_mul_2) and the PL/CSQL
+--  * DBMS_OUTPUT (plpc_fp_mul_1) print the same 40-significant-digit result.
 --  * ============================================================ */
 
 select 
