@@ -1,0 +1,500 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+60000
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: PARALLEL hash join with UNION ALL inner (dependent list) - result     
+
+===================================================
+0
+===================================================
+cnt    s1    s2    
+100000     5000050000     200000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_sd?] a, (select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 2: same join single-threaded (NO_PARALLEL_HASH_JOIN) - must match Case 1     
+
+===================================================
+cnt    s1    s2    
+100000     5000050000     200000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_sd?] a, (select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 3: deeper dependent-list chain (4-way UNION ALL) - parallel     
+
+===================================================
+cnt    s2    
+200000     400000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(b.c?) from [dba.t_sd?] a, (((select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 4: same 4-way UNION ALL join single-threaded - must match Case 3     
+
+===================================================
+cnt    s2    
+200000     400000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), sum(b.c?) from [dba.t_sd?] a, (((select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 5: UNION ALL on BOTH sides (both inputs carry dependent lists) - parallel     
+
+===================================================
+cnt    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from (select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) a (c?), (select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 6: same both-sides join single-threaded - must match Case 5     
+
+===================================================
+cnt    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from (select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) a (c?), (select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?) where a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 7: LEFT OUTER join, UNION ALL null-supplying side - parallel     
+
+===================================================
+cnt    matched    
+100000     100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*), count(b.c?) from [dba.t_sd?] a left outer join (select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) on a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 8: same LEFT OUTER join single-threaded - must match Case 7     
+
+===================================================
+cnt    matched    
+100000     100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  TABLE SCAN (dba.t_sd?)
+
+  rewritten query: select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count(b.c?) from [dba.t_sd?] a left outer join (select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?] union all select [dba.t_sd?].c?, [dba.t_sd?].c? from [dba.t_sd?] [dba.t_sd?]) b (c?, c?) on a.c?=b.c?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sd?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

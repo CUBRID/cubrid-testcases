@@ -1,0 +1,137 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+    
+Case 1: single hash join over overflow records     
+
+===================================================
+0
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c? from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?] from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?) [__t?] (a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: partition hash join over overflow records     
+
+===================================================
+0
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c? from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?] from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?) [__t?] (a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: parallel hash join over overflow records     
+
+===================================================
+0
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, a.dummy?, a.dummy?, a.dummy?, a.dummy?, a.c?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c?, b.dummy?, b.dummy?, b.dummy?, b.dummy?, b.c? from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.dummy? as [a_dummy?], a.c? as [a_c?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.dummy? as [b_dummy?], b.c? as [b_c?] from [dba.t_overflow] a, [dba.t_overflow] b where a.c?=b.c? and a.c?=b.c? and a.c?=b.c?) [__t?] (a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, a_dummy?, a_dummy?, a_dummy?, a_dummy?, a_c?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?, b_dummy?, b_dummy?, b_dummy?, b_dummy?, b_c?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            PARALLEL (time: ?, fetch: ?, ioread: ?)
+              BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+              PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
