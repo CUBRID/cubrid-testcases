@@ -29,6 +29,11 @@
  * 20 - the declared precision applies to a parameter of a nested local procedure
  * 21 - an error raised inside a called stored procedure is reported through the caller
  * 22 - RETURN: the precision/scale resolved from a view column is applied as well
+ * 23 - IN: the length declared for a VARCHAR column is not applied
+ * 24 - OUT: the length declared for a VARCHAR column is not applied
+ * 25 - INOUT: the length declared for a VARCHAR column is not applied
+ * 26 - RETURN: the length declared for a VARCHAR column is not applied
+ * 27 - RETURN: the length declared for a CHAR column is not applied
  */
 
 --+ server-message on
@@ -42,7 +47,9 @@ create table cbrd_26884_tbl (
     c_numeric_5_0   numeric(5,0),
     c_numeric_38_38 numeric(38,38),
     c_decimal       decimal,
-    c_decimal_20_15 decimal(20,15)
+    c_decimal_20_15 decimal(20,15),
+    c_char_10       char(10),
+    c_varchar_10    varchar(10)
 );
 
 evaluate 'Case 1: RETURN numeric(20,15), an integer part of 24 digits exceeds the precision 20-15=5';
@@ -243,6 +250,58 @@ select cbrd_26884_view_func() from db_root;
 drop function cbrd_26884_view_func;
 
 drop view cbrd_26884_view;
+
+-- %type of a CHAR/VARCHAR column
+--
+-- The fix is limited to NUMERIC, so the length declared through %type is still
+-- not applied in a parameter/return position. CHAR/VARCHAR has no length
+-- constraint there, which is the same as Oracle, and these cases guard that the
+-- NUMERIC precision check did not spread to the character types.
+
+evaluate 'Case 23: IN varchar(10), a 15 character value is accepted because the declared length is not applied';
+create or replace procedure cbrd_26884_proc (v_varchar in cbrd_26884_tbl.c_varchar_10%type) as
+begin
+    dbms_output.put_line('v_varchar [' || v_varchar || ']');
+end;
+call cbrd_26884_proc('ABCDEFGHIJKLMNO');
+
+evaluate 'Case 24: OUT varchar(10), assigning a 15 character value is accepted';
+create or replace procedure cbrd_26884_proc (v_varchar out cbrd_26884_tbl.c_varchar_10%type) as
+begin
+    v_varchar := 'ABCDEFGHIJKLMNO';
+end;
+
+select '' into :v_varchar from db_root;
+call cbrd_26884_proc(:v_varchar);
+select :v_varchar from db_root;
+
+evaluate 'Case 25: INOUT varchar(10), the body extends a 5 character value to 15 characters';
+create or replace procedure cbrd_26884_proc (v_varchar inout cbrd_26884_tbl.c_varchar_10%type) as
+begin
+    v_varchar := v_varchar || 'FGHIJKLMNO';
+end;
+
+select 'ABCDE' into :v_varchar from db_root;
+call cbrd_26884_proc(:v_varchar);
+select :v_varchar from db_root;
+
+evaluate 'Case 26: RETURN varchar(10), a 15 character value is returned as it is';
+create or replace function cbrd_26884_func return cbrd_26884_tbl.c_varchar_10%type as
+begin
+    return 'ABCDEFGHIJKLMNO';
+end;
+select cbrd_26884_func() from db_root;
+
+evaluate 'Case 27: RETURN char(10), a 15 character value is returned as it is';
+create or replace function cbrd_26884_func return cbrd_26884_tbl.c_char_10%type as
+begin
+    return 'ABCDEFGHIJKLMNO';
+end;
+select cbrd_26884_func() from db_root;
+
+drop function cbrd_26884_func;
+drop procedure cbrd_26884_proc;
+
 drop table cbrd_26884_tbl;
 
 --+ server-message off
