@@ -38,7 +38,7 @@ MC: wait until C1 ready;
 C1: INSERT INTO tbl VALUES (1);
 MC: wait until C1 ready;
 
-C2: SET SYSTEM PARAMETERS 'lock_timeout=3';
+C2: SET TRANSACTION LOCK TIMEOUT 3;
 C2: DROP TRIGGER t1;
 C2: COMMIT;
 MC: wait until C2 ready;
@@ -55,7 +55,7 @@ C2: COMMIT;
 MC: wait until C2 ready;
 
 /* cleanup: DROP TRIGGER must succeed now that no other session holds the lock */
-C2: SET SYSTEM PARAMETERS 'lock_timeout=DEFAULT';
+C2: SET TRANSACTION LOCK TIMEOUT INFINITE;
 C2: DROP TRIGGER t1;
 C2: COMMIT;
 MC: wait until C2 ready;

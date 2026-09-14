@@ -35,7 +35,7 @@ C1: CREATE TRIGGER user_trg_holder AFTER COMMIT EXECUTE PRINT 'HOLDER';
 MC: wait until C1 ready;
 
 /* C2 fails registering another user trigger under the same owner and commits the failure */
-C2: SET SYSTEM PARAMETERS 'lock_timeout=3';
+C2: SET TRANSACTION LOCK TIMEOUT 3;
 C2: CREATE TRIGGER user_trg_victim AFTER COMMIT EXECUTE PRINT 'VICTIM';
 C2: COMMIT;
 MC: wait until C2 ready;
@@ -48,7 +48,7 @@ MC: wait until C1 ready;
 C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name IN ('dba.user_trg_holder', 'dba.user_trg_victim') ORDER BY 1,2;
 MC: wait until C2 ready;
 
-C2: SET SYSTEM PARAMETERS 'lock_timeout=DEFAULT';
+C2: SET TRANSACTION LOCK TIMEOUT INFINITE;
 MC: wait until C2 ready;
 
 C1: quit;
