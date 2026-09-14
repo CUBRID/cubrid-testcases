@@ -274,9 +274,11 @@ end;
 call p27374_loop();
 
 -- ----------------------------------------------------------------------------
--- clean up the shared database. p27374_c_short normally fails to compile, so its
--- drop reports "does not exist"; it is dropped anyway so that a spec change or a
--- bug letting it compile does not leave it behind.
+-- clean up the shared database. p27374_c_short is not in the list: C1 is a
+-- negative case whose procedure is rejected at compile time, so it is never
+-- created, and dropping it would only add a "does not exist" error to the answer
+-- that has nothing to do with what is being tested. If a spec change ever let C1
+-- compile, C1 itself fails first and that is the signal to look at.
 -- ----------------------------------------------------------------------------
 
 drop procedure p27374_d_short;
@@ -286,7 +288,6 @@ drop procedure p27374_d_star;
 drop procedure p27374_d_using;
 drop procedure p27374_s_short;
 drop procedure p27374_s_match;
-drop procedure p27374_c_short;
 drop procedure p27374_c_match;
 drop procedure p27374_reopen;
 drop procedure p27374_closed;
