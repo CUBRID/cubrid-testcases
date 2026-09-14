@@ -20,41 +20,75 @@ INSERT INTO t1 VALUES (1.0);
 INSERT INTO t1 VALUES (1.000);
 
 
-evaluate '2. Trailing zero: base-table form vs covering-index normalization';
+evaluate '2. Trailing zero: base-table form (per insert order) vs covering-index normalization';
 /* ------------------------------------------------------------
- * 2. The three rows are numerically equal (1 = 1.0 = 1.000) but were stored
- *    with different scales. Because they are equal, ORDER BY col1 cannot make
- *    the row order deterministic, so an id column is added and ORDER BY id is
- *    used instead. Base-table access prints the stored form (1, 1.0, 1.000),
- *    while a covering-index scan on col1 normalizes the trailing zeros (1, 1, 1).
- *    (The earlier Case A/B/C insert-order variants all produced the same output,
- *     so they are replaced by this base vs covering comparison.)
- *    The execution path itself (non-covering vs covering) is proven by the
- *    query-plan directive captured for 2-1 and 2-2 below: 2-1 is a non-covering
- *    scan, 2-2 an index scan marked (covers).
+ * 2. Three numerically-equal values (1 = 1.0 = 1.000) are inserted in three
+ *    different orders (Case A/B/C). Because the values are equal, ORDER BY col1
+ *    cannot make the row order deterministic, so an id column (= insert sequence)
+ *    is used with ORDER BY id. Base-table access prints each row's stored scale
+ *    in insert order (so Case A/B/C differ), while a covering-index scan on col1
+ *    normalizes the trailing zeros to 1, 1, 1 regardless of insert order.
+ *    The execution path is proven by the query-plan directive on 2-1 (non-covering)
+ *    and 2-2 (index scan marked (covers)).
  * ------------------------------------------------------------ */
-DROP TABLE IF EXISTS t1;
 
+-- Case A: insert 1 -> 1.0 -> 1.000
+DROP TABLE IF EXISTS t1;
 CREATE TABLE t1 (
   id   INT,
   col1 NUMERIC
 );
-
 CREATE INDEX idx_01 ON t1(col1);
 
 INSERT INTO t1 VALUES (1, 1);
 INSERT INTO t1 VALUES (2, 1.0);
 INSERT INTO t1 VALUES (3, 1.000);
 
-evaluate '2-1. Base table access: printed form keeps the inserted scale (1, 1.0, 1.000)';
+evaluate '2-1. Case A base-table access: stored form in insert order (1, 1.0, 1.000)';
 --@queryplan
 SELECT /*+ NO_COVERING_IDX RECOMPILE */ id, col1
   FROM t1
  WHERE col1 > 0
  ORDER BY id;
 
-evaluate '2-2. Covering index scan on col1: trailing zeros normalized (1, 1, 1)';
+evaluate '2-2. Case A covering index scan on col1: normalized (1, 1, 1)';
 --@queryplan
+SELECT /*+ RECOMPILE */ col1
+  FROM t1
+ WHERE col1 > 0
+ ORDER BY col1;
+
+-- Case B: insert 1.0 -> 1 -> 1.000
+DELETE FROM t1;
+INSERT INTO t1 VALUES (1, 1.0);
+INSERT INTO t1 VALUES (2, 1);
+INSERT INTO t1 VALUES (3, 1.000);
+
+evaluate '2-3. Case B base-table access: stored form in insert order (1.0, 1, 1.000)';
+SELECT /*+ NO_COVERING_IDX RECOMPILE */ id, col1
+  FROM t1
+ WHERE col1 > 0
+ ORDER BY id;
+
+evaluate '2-4. Case B covering index scan: normalized (1, 1, 1) regardless of insert order';
+SELECT /*+ RECOMPILE */ col1
+  FROM t1
+ WHERE col1 > 0
+ ORDER BY col1;
+
+-- Case C: insert 1.000 -> 1.0 -> 1
+DELETE FROM t1;
+INSERT INTO t1 VALUES (1, 1.000);
+INSERT INTO t1 VALUES (2, 1.0);
+INSERT INTO t1 VALUES (3, 1);
+
+evaluate '2-5. Case C base-table access: stored form in insert order (1.000, 1.0, 1)';
+SELECT /*+ NO_COVERING_IDX RECOMPILE */ id, col1
+  FROM t1
+ WHERE col1 > 0
+ ORDER BY id;
+
+evaluate '2-6. Case C covering index scan: normalized (1, 1, 1) regardless of insert order';
 SELECT /*+ RECOMPILE */ col1
   FROM t1
  WHERE col1 > 0
