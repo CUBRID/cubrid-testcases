@@ -1,0 +1,317 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+1
+===================================================
+    
+[1] c2 = all (empty subquery): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+NULL     5     
+NULL     NULL     
+2     NULL     
+3     1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: u node[?]
+                 index: i_u_c?_c? term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct u.c? from u u where (u.c?> ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c?= all (select distinct u.c? from u u where (u.c?> ?:? )) order by ?
+===================================================
+    
+[1-control] same query, index forced off: ground truth for [1]     
+
+===================================================
+c1    c2    
+NULL     5     
+NULL     NULL     
+2     NULL     
+3     1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: u node[?]
+                 index: i_u_c?_c? term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct u.c? from u u where (u.c?> ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c?= all (select distinct u.c? from u u where (u.c?> ?:? )) using index none order by ?
+===================================================
+    
+[1b] c2 not in (empty subquery): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+NULL     5     
+NULL     NULL     
+2     NULL     
+3     1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: u node[?]
+                 index: i_u_c?_c? term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct u.c? from u u where (u.c?> ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c? not in (select distinct u.c? from u u where (u.c?> ?:? )) order by ?
+===================================================
+    
+[1b-control] same query, index forced off: ground truth for [1b]     
+
+===================================================
+c1    c2    
+NULL     5     
+NULL     NULL     
+2     NULL     
+3     1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: u node[?]
+                 index: i_u_c?_c? term[?] (covers)
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct u.c? from u u where (u.c?> ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c? not in (select distinct u.c? from u u where (u.c?> ?:? )) using index none order by ?
+===================================================
+    
+[2] not exists (correlated subquery with no match against a NULL column): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+NULL     NULL     
+2     NULL     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from v v where (v.x=u.c?) and inst_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where  not  exists (select ? from v v where (v.x=u.c?) and inst_num()<= ?:? ) order by ?
+===================================================
+    
+[2-control] same query, index forced off: ground truth for [2]     
+
+===================================================
+c1    c2    
+NULL     NULL     
+2     NULL     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from v v where (v.x=u.c?) and inst_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where  not  exists (select ? from v v where (v.x=u.c?) and inst_num()<= ?:? ) using index none order by ?
+===================================================
+    
+[3] left outer join + j = all (empty subquery): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     NULL     NULL     
+3     NULL     NULL     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct v.x from v v where (v.x> ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: oa node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ob node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i where ob.j= all (select distinct v.x from v v where (v.x> ?:? )) order by ?
+===================================================
+    
+[3b] left outer join + j not in (empty subquery): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     NULL     NULL     
+3     NULL     NULL     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct v.x from v v where (v.x> ?:? ))
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: oa node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ob node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i where ob.j not in (select distinct v.x from v v where (v.x> ?:? )) order by ?
+===================================================
+    
+[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     NULL     NULL     
+3     NULL     NULL     
+
+Query plan:
+sscan
+    class: v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from v v where (v.x=ob.j) and inst_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: oa node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ob node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i where  not  exists (select ? from v v where (v.x=ob.j) and inst_num()<= ?:? ) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
