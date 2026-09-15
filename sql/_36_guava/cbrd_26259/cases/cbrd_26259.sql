@@ -33,8 +33,6 @@
  *   oa(i)/ob(i, j): outer-join pair; oa has rows with no match in ob.
  */
 
-;plan detail
-
 set system parameters 'dont_reuse_heap_file=yes';
 
 drop table if exists u;
