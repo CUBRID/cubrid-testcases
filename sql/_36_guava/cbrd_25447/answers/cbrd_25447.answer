@@ -995,22 +995,17 @@ count(id)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select /*+ PARALLEL(?) */ ? from [dba.tbl] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ PARALLEL(?) */ count(a.id) from [dba.tbl] a where a.cola like  ?:?  and  exists (select /*+ PARALLEL(?) */ ? from [dba.tbl] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ PARALLEL(?) */ count(a.id) from [dba.tbl] a semi join [dba.tbl] b on b.id=a.id where a.cola like  ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
