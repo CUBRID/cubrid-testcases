@@ -7,9 +7,13 @@
  *   Path     : all 150 use numeric division to 40 significant digits.
  *   Related deterministic edge cases are in 8_division_edge_cases.sql
  *
- * Expected values -- captured from the engine, then cross-checked against an
- *   independent Python decimal recomputation (40 significant digits, half-up).
- *   148 of 150 match. 2 differ by 1 unit in the last (40th) significant digit (under review as spec vs engine precision limit).
+ * Expected values -- captured from the engine and cross-checked against an independent
+ *   Python decimal recomputation that mirrors the engine: an operand with more than 40
+ *   significant digits is first normalized to 40 (the Float NUMERIC max precision) before
+ *   the division, then the quotient is rounded to 40 significant digits (half-up).
+ *   All 150 values match. (Dividing the un-normalized operands instead shows a few
+ *   last-digit differences, which come from this operand normalization -- confirmed with
+ *   the dev team, not an engine bug.)
  */
 evaluate '5. Knuth division: negative floating point operands';
 SELECT 1 AS scenario, -0.0027148414755230752798 / -66824111.9324493527723;

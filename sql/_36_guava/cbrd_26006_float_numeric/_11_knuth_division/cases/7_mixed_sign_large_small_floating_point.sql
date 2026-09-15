@@ -7,9 +7,13 @@
  *   Path     : 17 use integer division (both operands within BIGINT range, truncating), 283 use numeric division to 40 significant digits.
  *   Related deterministic edge cases are in 8_division_edge_cases.sql
  *
- * Expected values -- captured from the engine, then cross-checked against an
- *   independent Python decimal recomputation (40 significant digits, half-up).
- *   298 of 300 match. 2 differ by 1 unit in the last (40th) significant digit (under review as spec vs engine precision limit).
+ * Expected values -- captured from the engine and cross-checked against an independent
+ *   Python decimal recomputation that mirrors the engine: an operand with more than 40
+ *   significant digits is first normalized to 40 (the Float NUMERIC max precision) before
+ *   the division, then the quotient is rounded to 40 significant digits (half-up).
+ *   All 300 values match. (Dividing the un-normalized operands instead shows a few
+ *   last-digit differences, which come from this operand normalization -- confirmed with
+ *   the dev team, not an engine bug.)
  */
 evaluate '7. Knuth division: mixed sign large/small floating point operands';
 SELECT 1 AS scenario, 3413.85719290271469096051643829209 / -89038676597919132161395;
