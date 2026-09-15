@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS t1;
 -- Section 1: Negative scale
 -- ===========================================================================
 evaluate '1. Negative scale';
-DROP TABLE IF EXISTS t2;
 CREATE TABLE t1 (col1 NUMERIC(1,-1));
 SHOW CREATE TABLE t1;
 

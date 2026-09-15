@@ -13,11 +13,12 @@ SELECT 222.2 AS a;
 
 evaluate '1-2. Simple UNION vs UNION ALL (all)';
 -- UNION ALL returns all rows as-is
-SELECT 2222 AS b
+SELECT 2222 AS b, 1 AS seq
 UNION ALL
-SELECT 2222.0 AS b
+SELECT 2222.0 AS b, 2 AS seq
 UNION ALL
-SELECT 222.2 AS b;
+SELECT 222.2 AS b, 3 AS seq
+ORDER BY seq;
 
 -- ===========================================================================
 -- Section 2: UNION with large magnitude literals
@@ -37,7 +38,7 @@ UNION
 SELECT 1000000000000000000 AS d;
 
 evaluate '2-3. UNION between 255-digit fractional literal and 19-digit integer literal';
--- Fractional literal is truncated at display limit, so UNION succeeds unlike 4-4
+-- Fractional literal is truncated at display limit, so UNION succeeds unlike 2-2
 SELECT
   (0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001) AS e
 UNION
@@ -83,11 +84,12 @@ UNION
 SELECT NULL AS a;
 
 evaluate '5-2. UNION ALL keeps duplicate NULLs';
-SELECT 99999999999999999999999999999999999999 AS a
+SELECT 99999999999999999999999999999999999999 AS a, 1 AS seq
 UNION ALL
-SELECT NULL AS a
+SELECT NULL AS a, 2 AS seq
 UNION ALL
-SELECT NULL AS a;
+SELECT NULL AS a, 3 AS seq
+ORDER BY seq;
 
 -- ===========================================================================
 -- Section 6: INTERSECT and DIFFERENCE with Float NUMERIC
