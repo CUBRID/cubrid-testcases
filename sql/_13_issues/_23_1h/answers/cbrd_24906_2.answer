@@ -426,7 +426,7 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -435,11 +435,17 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -458,7 +464,7 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? )
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -467,11 +473,17 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -490,7 +502,7 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? )
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -499,11 +511,17 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -522,7 +540,7 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where bb.col_b= ?:? )
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -531,11 +549,17 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -558,8 +582,8 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? )
 
-  NESTED LOOPS (left outer join)
-    NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
+    HASH JOIN (left outer join)
       TABLE SCAN (a)
       TABLE SCAN (b)
     TABLE SCAN (c)
@@ -569,16 +593,27 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -601,8 +636,8 @@ Query Plan:
 
   rewritten query: (select /*+ ORDERED NO_MERGE */ cc.col_a, cc.col_b, cc.col_c from [dba.tbl_c] cc where cc.col_c= ?:? )
 
-  NESTED LOOPS (left outer join)
-    NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
+    HASH JOIN (left outer join)
       TABLE SCAN (a)
       TABLE SCAN (b)
     TABLE SCAN (c)
@@ -612,16 +647,27 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -640,7 +686,7 @@ Query Plan:
 
   rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -649,12 +695,18 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -673,7 +725,7 @@ Query Plan:
 
   rewritten query: select /*+ ORDERED NO_MERGE MATERIALIZE */ bb.col_a, bb.col_b, bb.col_c from [dba.tbl_b] bb where  ?:? = ?:?  and bb.col_c= ?:? 
 
-  NESTED LOOPS (left outer join)
+  HASH JOIN (left outer join)
     TABLE SCAN (a)
     TABLE SCAN (b)
 
@@ -682,12 +734,18 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
