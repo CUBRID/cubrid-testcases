@@ -356,8 +356,14 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              EXPR_COMPILE (data filter): active
+              EXPR_COMPILE (output list): active, columns covered ?/?
+                steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+                [  ?] sub_int        c?, c? -> c? (slot)
+                roots: [?]=c?
               SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              EXPR_COMPILE (data filter): active
               SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -432,6 +438,10 @@ Trace Statistics:
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       CTE (recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          EXPR_COMPILE (output list): active, columns covered ?/?
+            steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+            [  ?] add_int        c?, c? -> c? (slot)
+            roots: [?]=c?
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -787,6 +797,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (data filter): interpreted (not covered)
     SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: _db_collation.pk__db_collation_coll_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     SUBQUERY (uncorrelated)
@@ -797,6 +808,7 @@ Trace Statistics:
         SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           SCAN (set time: ?, fetch: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        EXPR_COMPILE (data filter): interpreted (not covered)
         SCAN (table: _db_auth), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -912,6 +924,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (data filter): interpreted (not covered)
     SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1001,6 +1014,7 @@ Trace Statistics:
     SUBQUERY (correlated)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          EXPR_COMPILE (data filter): active
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1051,6 +1065,7 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          EXPR_COMPILE (data filter): active
           SCAN (table: dba.tmp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1164,9 +1179,19 @@ Query Plan:
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      EXPR_COMPILE (output list): active, columns covered ?/?
+        steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+        [  ?] add_int        c?, c? -> c? (slot)
+        [  ?] add_int        c?, c? -> c? (slot)
+        roots: [?]=c? [?]=c?
       SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      EXPR_COMPILE (output list): active, columns covered ?/?
+        steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+        [  ?] add_int        c?, c? -> c? (slot)
+        [  ?] add_int        c?, c? -> c? (slot)
+        roots: [?]=c? [?]=c?
       SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
      
@@ -1296,9 +1321,19 @@ Query Plan:
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      EXPR_COMPILE (output list): active, columns covered ?/?
+        steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+        [  ?] add_int        c?, c? -> c? (slot)
+        [  ?] add_int        c?, c? -> c? (slot)
+        roots: [?]=c? [?]=c?
       SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      EXPR_COMPILE (output list): active, columns covered ?/?
+        steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+        [  ?] add_int        c?, c? -> c? (slot)
+        [  ?] add_int        c?, c? -> c? (slot)
+        roots: [?]=c? [?]=c?
       SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
      

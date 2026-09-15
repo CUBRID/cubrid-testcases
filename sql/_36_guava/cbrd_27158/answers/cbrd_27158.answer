@@ -171,6 +171,7 @@ Trace Statistics:
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
       SUBQUERY (uncorrelated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          EXPR_COMPILE (data filter): interpreted (not covered)
           SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
   ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -222,6 +223,7 @@ Trace Statistics:
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
       SUBQUERY (uncorrelated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          EXPR_COMPILE (data filter): interpreted (not covered)
           SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
@@ -491,6 +493,10 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (output list): active, columns covered ?/?
+      steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+      [  ?] add_int        c?, c? -> c? (slot)
+      roots: [?]=c?
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
     SUBQUERY (uncorrelated)
@@ -572,6 +578,11 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    EXPR_COMPILE (output list): active, columns covered ?/?
+      steps: ? (prologue: ?, exec-prologue: ?, compute: ?), cells: ?, slots: ?, roots: ?, hostvar types: ?
+      [  ?] add_int        c?, c? -> c? (slot)
+      [  ?] mul_int        c?, c? -> c? (slot)
+      roots: [?]=c? [?]=c?
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
     SUBQUERY (uncorrelated)
@@ -967,6 +978,7 @@ Trace Statistics:
       ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
       SUBQUERY (uncorrelated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          EXPR_COMPILE (data filter): interpreted (not covered)
           SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
   ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
