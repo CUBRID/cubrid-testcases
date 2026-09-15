@@ -11,6 +11,8 @@
  * 3 - the pre-existing login() method on class db_user is unaffected
  */
 
+--+ holdcas on;
+
 DROP TABLE IF EXISTS login;
 DROP SERIAL IF EXISTS nologin;
 
@@ -35,3 +37,5 @@ SELECT current_user FROM db_root;
 DROP TABLE IF EXISTS login;
 DROP SERIAL IF EXISTS nologin;
 DROP USER login;
+
+--+ holdcas off;

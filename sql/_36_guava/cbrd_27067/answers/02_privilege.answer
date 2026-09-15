@@ -77,7 +77,62 @@ null
 
 ===================================================
     
-Case 5: INFORMATION_SCHEMA is denied in both directions and stays NO     
+Case 5: NOLOGIN blocks a CALL login switch, checked before the password -- the wrong password gives the same error, not a password error     
+
+
+===================================================
+0
+
+===================================================
+Error:-1369
+Login is disabled for user "user_nl".
+
+===================================================
+Error:-1369
+Login is disabled for user "user_nl".
+
+===================================================
+0
+
+===================================================
+    
+Case 6: ALTER USER dba NOLOGIN is denied     
+
+
+===================================================
+Error:-1378
+Cannot change the login capability of user "DBA".
+
+===================================================
+    
+Case 7: ALTER USER dba LOGIN is denied the same way, even though dba is already loginable, and a DBA-group member cannot target itself either     
+
+
+===================================================
+Error:-1378
+Cannot change the login capability of user "DBA".
+
+===================================================
+    
+null     
+
+
+===================================================
+Error:-1378
+Cannot change the login capability of user "GROUP_DBAMEM".
+
+===================================================
+Error:-1378
+Cannot change the login capability of user "GROUP_DBAMEM".
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 8: INFORMATION_SCHEMA is denied in both directions and stays NO     
 
 
 ===================================================

@@ -6,7 +6,7 @@ Case 1: CREATE USER with no login clause defaults to loginable
 0
 ===================================================
 name    is_loginable    
-USER_A1     YES     
+SYN_A1     YES     
 
 ===================================================
     
@@ -18,8 +18,8 @@ Case 2-3: CREATE USER ... LOGIN / NOLOGIN
 0
 ===================================================
 name    is_loginable    
-USER_A2N     NO     
-USER_A2Y     YES     
+SYN_A2N     NO     
+SYN_A2Y     YES     
 
 ===================================================
     
@@ -31,13 +31,13 @@ Case 4: ALTER USER ... NOLOGIN then LOGIN
 0
 ===================================================
 name    is_loginable    
-USER_U1     NO     
+SYN_U1     NO     
 
 ===================================================
 0
 ===================================================
 name    is_loginable    
-USER_U1     YES     
+SYN_U1     YES     
 
 ===================================================
     
@@ -55,7 +55,7 @@ Case 6: ALTER USER with no clause at all is unrelated pre-existing error
 Error:-493
 ===================================================
     
-Case 7: CREATE USER combined clauses -- PASSWORD, then NOLOGIN, then GROUPS/MEMBERS, then COMMENT     
+Case 7: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause     
 
 ===================================================
 0
@@ -64,12 +64,16 @@ Case 7: CREATE USER combined clauses -- PASSWORD, then NOLOGIN, then GROUPS/MEMB
 ===================================================
 0
 ===================================================
-name    is_loginable    comment    
-USER_A6     NO     c6     
+name    is_loginable    comment    groups    
+SYN_A6     NO     c6     PUBLIC,SYN_G1,     
+
+===================================================
+groups    
+PUBLIC,SYN_A6,SYN_G1,     
 
 ===================================================
     
-Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, password itself unaffected     
+Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new password actually takes effect     
 
 ===================================================
 0
@@ -77,7 +81,7 @@ Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, passwor
 0
 ===================================================
 name    is_loginable    comment    
-USER_U2     NO     c8     
+SYN_U2     NO     c8     
 
 ===================================================
 0
@@ -86,8 +90,14 @@ USER_U2     NO     c8
 null     
 
 ===================================================
+Error:-171
+===================================================
+    
+null     
+
+===================================================
 CURRENT_USER    
-USER_U2     
+SYN_U2     
 
 ===================================================
     
