@@ -1,0 +1,266 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+12000
+===================================================
+5000
+===================================================
+5000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: overflow dependent lists (UNION ALL) on BOTH sides - parallel     
+
+===================================================
+0
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.ckey, a.da, a.db, a.dc, a.dd, a.de, b.ckey, b.da, b.db, b.dc, b.dd, b.de from (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) a (ckey, da, db, dc, dd, de), (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) where a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.ckey as [a_ckey], a.da as [a_da], a.db as [a_db], a.dc as [a_dc], a.dd as [a_dd], a.de as [a_de], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) a (ckey, da, db, dc, dd, de), (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) where a.ckey=b.ckey) [__t?] (a_ckey, a_da, a_db, a_dc, a_dd, a_de, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            PARALLEL (time: ?, fetch: ?, ioread: ?)
+              BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+              PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same both-sides join single-threaded (NO_PARALLEL_HASH_JOIN) - must match Case 1     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey, a.da, a.db, a.dc, a.dd, a.de, b.ckey, b.da, b.db, b.dc, b.dd, b.de from (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) a (ckey, da, db, dc, dd, de), (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) where a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey as [a_ckey], a.da as [a_da], a.db as [a_db], a.dc as [a_dc], a.dd as [a_dd], a.de as [a_de], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) a (ckey, da, db, dc, dd, de), (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) where a.ckey=b.ckey) [__t?] (a_ckey, a_da, a_db, a_dc, a_dd, a_de, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: LEFT OUTER, null-supplying side is an overflow dependent list (2000 unmatched rows kept) - parallel     
+
+===================================================
+cnt    matched    
+12000     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.ckey, b.ckey, b.da, b.db, b.dc, b.dd, b.de from [dba.t_ovp] a left outer join (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) on a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*), count([__t?].b_ckey) from (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.ckey as [a_ckey], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from [dba.t_ovp] a left outer join (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) on a.ckey=b.ckey) [__t?] (a_ckey, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            PARALLEL (time: ?, fetch: ?, ioread: ?)
+              BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+              PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_ovp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: same LEFT OUTER join single-threaded - must match Case 3     
+
+===================================================
+cnt    matched    
+12000     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_ovda)
+
+  rewritten query: select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda]
+
+  TABLE SCAN (dba.t_ovdb)
+
+  rewritten query: select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey, b.ckey, b.da, b.db, b.dc, b.dd, b.de from [dba.t_ovp] a left outer join (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) on a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*), count([__t?].b_ckey) from (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey as [a_ckey], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from [dba.t_ovp] a left outer join (select [dba.t_ovda].ckey, [dba.t_ovda].da, [dba.t_ovda].db, [dba.t_ovda].dc, [dba.t_ovda].dd, [dba.t_ovda].de from [dba.t_ovda] [dba.t_ovda] union all select [dba.t_ovdb].ckey, [dba.t_ovdb].da, [dba.t_ovdb].db, [dba.t_ovdb].dc, [dba.t_ovdb].dd, [dba.t_ovdb].de from [dba.t_ovdb] [dba.t_ovdb]) b (ckey, da, db, dc, dd, de) on a.ckey=b.ckey) [__t?] (a_ckey, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_ovdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_ovp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

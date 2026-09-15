@@ -1,0 +1,217 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+    
+Case 1: no partitioning needed -> parallel hash join not performed (parallel probe is the exception)     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: partitioning needed -> parallel hash join performed     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: NO_PARALLEL_HASH_JOIN forces single-threaded even when partitioning is needed     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: PARALLEL(0) -> thread pool cannot be reserved -> parallel hash join not performed     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: parallelism exceeds the partition count -> parallel hash join still performed     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: invalid PARALLEL hint value is clamped     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_px_hint] a, [dba.t_px_hint] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_px_hint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
