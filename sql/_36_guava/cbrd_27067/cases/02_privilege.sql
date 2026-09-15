@@ -1,9 +1,9 @@
 /**
  * This test case verifies CBRD-27067: changing login capability requires
- * the DBA/DBA-group permission already used by ALTER USER's other clauses.
+ * the DBA/DBA-group permission ALTER USER's other clauses already use,
+ * and INFORMATION_SCHEMA can never have it changed in either direction.
  * CALL login() on class db_user switches the session's active user, which
- * is checked the same way as a real reconnection (see the issue's own
- * "session user switch (CALL login)" note).
+ * the issue documents as checked the same way as a real reconnection.
  *
  * Coverage:
  * 1 - a plain user changing another user's login capability is denied
@@ -12,8 +12,12 @@
  * 3 - a plain user changing their own PASSWORD/COMMENT is still allowed
  * 4 - a DBA-group member changing another user's login capability
  *     is allowed
+ * 5 - INFORMATION_SCHEMA is denied both directions, is_loginable stays NO
  */
 
+--+ holdcas on;
+
+CALL login('dba', '') ON CLASS db_user;
 CREATE USER user_u1 PASSWORD 'p1';
 CREATE USER user_u2 PASSWORD 'p2';
 CREATE USER group_dbamem PASSWORD 'pd' GROUPS dba;
@@ -41,8 +45,15 @@ ALTER USER user_u2 LOGIN;
 
 CALL login('dba', '') ON CLASS db_user;
 
+evaluate 'Case 5: INFORMATION_SCHEMA is denied in both directions and stays NO';
+ALTER USER information_schema LOGIN;
+ALTER USER information_schema NOLOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'INFORMATION_SCHEMA';
+
 --+ server-message off
 
 DROP USER user_u1;
 DROP USER user_u2;
 DROP USER group_dbamem;
+
+--+ holdcas off;
