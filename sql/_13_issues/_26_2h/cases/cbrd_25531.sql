@@ -1,8 +1,7 @@
 /**
  * This test case verifies CBRD-25531: unreferenced select-list items of a
- * non-mergeable inline view are now pruned even when the view contains an
- * analytic function, matching the pruning already done for a plain view.
- * Each case runs as both an inline view and a named view (non-mergeable).
+ * non-mergeable inline view are now pruned even with an analytic function.
+ * Each case runs as an inline view and a named view unless noted.
  *
  * Coverage:
  * 1-2   analytic column referenced by main query or not
@@ -15,8 +14,9 @@
  * 18-20 ORDER BY-inside-OVER ordinal, its regression, both ordinals
  *       hidden-appended at once
  * 21-22 LAG/LEAD argument column kept alive/pruned by reference
- * 23-24 nested non-mergeable views: pruning and the regression propagate
- *       through two levels
+ * 23-24 nesting: pruning and the regression propagate through two levels
+ * 25    DISTINCT view never collapses (dedup key); 26 NULL partition key
+ * 27    ordinal target after the analytic; 28 INSERT...SELECT; 29 WITH
  */
 
 DROP TABLE IF EXISTS tbla;
@@ -67,10 +67,10 @@ FROM (SELECT cola, colb, NVL(colc, 0) AS nvl_colc, ROW_NUMBER() OVER(PARTITION B
 CREATE OR REPLACE VIEW vf AS SELECT cola, colb, NVL(colc, 0) AS nvl_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tbla;
 SELECT /*+ recompile */ rn FROM vf ORDER BY 1;
 
-evaluate 'Case 7: the OVER-clause column is a scalar subquery';
+evaluate 'Case 7: the OVER-clause column is a scalar subquery -- correlated, so its value actually varies per row (a constant subquery result cannot tell the ordinal apart from another constant column)';
 SELECT /*+ recompile */ rn
-FROM (SELECT cola, colb, (SELECT MAX(colc) FROM tbla) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla) ORDER BY 1;
-CREATE OR REPLACE VIEW vg AS SELECT cola, colb, (SELECT MAX(colc) FROM tbla) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla;
+FROM (SELECT cola, colb, (SELECT MAX(x.colc) FROM tbla x WHERE x.cola <= tbla.cola) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla) ORDER BY 1;
+CREATE OR REPLACE VIEW vg AS SELECT cola, colb, (SELECT MAX(x.colc) FROM tbla x WHERE x.cola <= tbla.cola) AS max_colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn FROM tbla;
 SELECT /*+ recompile */ rn FROM vg ORDER BY 1;
 
 evaluate 'Case 8: outer ORDER BY column is also referenced by the analytic function';
@@ -243,3 +243,70 @@ DROP VIEW vw_out;
 DROP VIEW vx_in;
 DROP VIEW vx_out;
 DROP TABLE tble;
+
+DROP TABLE IF EXISTS tblf;
+CREATE TABLE tblf(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tblf(colb, colc, cold) VALUES
+(1,1,1),
+(1,1,2),
+(1,2,2),
+(1,2,3);
+
+DROP TABLE IF EXISTS tblg;
+CREATE TABLE tblg(cola INT AUTO_INCREMENT, colb INT, colc INT, cold INT);
+INSERT INTO tblg(colb, colc, cold) VALUES
+(1,1,1),
+(1,1,2),
+(1,null,3),
+(1,null,4);
+
+evaluate 'Case 25: DISTINCT view, analytic unreferenced -- the select list may collapse to (1) only when that does not change the row count, and under DISTINCT the list itself is the dedup key';
+SELECT /*+ recompile */ COUNT(*)
+FROM (SELECT DISTINCT colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn FROM tblf);
+CREATE OR REPLACE VIEW vy AS SELECT DISTINCT colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn FROM tblf;
+SELECT /*+ recompile */ COUNT(*) FROM vy;
+SELECT /*+ recompile */ COUNT(*)
+FROM (SELECT DISTINCT colb, colc FROM tblf);
+CREATE OR REPLACE VIEW vz AS SELECT DISTINCT colb, colc FROM tblf;
+SELECT /*+ recompile */ COUNT(*) FROM vz;
+
+evaluate 'Case 26: the partition key holds NULLs -- the column re-added for the ordinal must keep the two NULL rows in one partition, and the running SUM makes a wrong ordinal change the value';
+SELECT /*+ recompile */ cola, s
+FROM (SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY 3 ORDER BY 1) AS s, cold FROM tblg) ORDER BY 1;
+CREATE OR REPLACE VIEW vaa AS SELECT cola, colb, colc, SUM(cold) OVER(PARTITION BY 3 ORDER BY 1) AS s, cold FROM tblg;
+SELECT /*+ recompile */ cola, s FROM vaa ORDER BY 1;
+
+evaluate 'Case 27: the PARTITION BY ordinal points at a column that sits after the analytic function in the select list -- the counterpart of Case 4, where the ordinal points at a column before it';
+SELECT /*+ recompile */ rn
+FROM (SELECT cola, ROW_NUMBER() OVER(PARTITION BY 4) AS rn, colb, colc, cold FROM tblf) ORDER BY 1;
+CREATE OR REPLACE VIEW vab AS SELECT cola, ROW_NUMBER() OVER(PARTITION BY 4) AS rn, colb, colc, cold FROM tblf;
+SELECT /*+ recompile */ rn FROM vab ORDER BY 1;
+
+evaluate 'Case 28: the rewrite is reached from INSERT ... SELECT, not only from a top-level SELECT -- a desynced ordinal here stores wrong values instead of printing them';
+DROP TABLE IF EXISTS tblh;
+CREATE TABLE tblh(cola INT, colb INT);
+INSERT INTO tblh(cola, colb)
+SELECT /*+ recompile */ rn, 9
+FROM (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tblf);
+SELECT cola, colb FROM tblh ORDER BY 1, 2;
+DELETE FROM tblh;
+CREATE OR REPLACE VIEW vac AS SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tblf;
+INSERT INTO tblh(cola, colb) SELECT /*+ recompile */ rn, 9 FROM vac;
+SELECT cola, colb FROM tblh ORDER BY 1, 2;
+
+evaluate 'Case 29: the same view body reached through a WITH clause, the third path next to the inline view and the named view';
+--@queryplan
+WITH w AS (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY colc) AS rn, cold FROM tblf)
+SELECT /*+ recompile */ COUNT(*) FROM w;
+--@queryplan
+WITH w AS (SELECT cola, colb, colc, ROW_NUMBER() OVER(PARTITION BY 3) AS rn, cold FROM tblf)
+SELECT /*+ recompile */ rn FROM w ORDER BY 1;
+
+DROP VIEW vy;
+DROP VIEW vz;
+DROP VIEW vaa;
+DROP VIEW vab;
+DROP VIEW vac;
+DROP TABLE tblh;
+DROP TABLE tblg;
+DROP TABLE tblf;

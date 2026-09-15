@@ -330,21 +330,22 @@ Query stmt:
 select vf.rn from (select row_number() over (partition by ?), (nvl(vf.colc, ?)) from tbla vf) vf (rn) order by ?
 ===================================================
     
-Case 7: the OVER-clause column is a scalar subquery     
+Case 7: the OVER-clause column is a scalar subquery -- correlated, so its value actually varies per row (a constant subquery result cannot tell the ordinal apart from another constant column)     
 
 ===================================================
 rn    
 1     
+1     
 2     
-3     
-4     
+2     
 
 Query plan:
 sscan
-    class: tbla node[?]
+    class: x node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select max(tbla.colc) from tbla tbla)
+(select max(x.colc) from tbla x where (x.cola<=tbla.cola))
 Query plan:
 sscan
     class: tbla node[?]
@@ -353,7 +354,7 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first)
            func[?]: row_number partition by (? asc nulls first) order by ()
 Query stmt:
-(select row_number() over (partition by ?), (select max(tbla.colc) from tbla tbla) from tbla tbla)
+(select row_number() over (partition by ?), (select max(x.colc) from tbla x where (x.cola<=tbla.cola)) from tbla tbla)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -362,22 +363,23 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select [__t?].rn from (select row_number() over (partition by ?) as [rn], (select max(tbla.colc) from tbla tbla) as [max_colc] from tbla tbla) [__t?] (rn) order by ?
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], (select max(x.colc) from tbla x where (x.cola<=tbla.cola)) as [max_colc] from tbla tbla) [__t?] (rn) order by ?
 ===================================================
 0
 ===================================================
 rn    
 1     
+1     
 2     
-3     
-4     
+2     
 
 Query plan:
 sscan
-    class: tbla node[?]
+    class: x node[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select max(tbla.colc) from tbla tbla)
+(select max(x.colc) from tbla x where (x.cola<=vg.cola))
 Query plan:
 sscan
     class: vg node[?]
@@ -386,7 +388,7 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first)
            func[?]: row_number partition by (? asc nulls first) order by ()
 Query stmt:
-(select row_number() over (partition by ?), (select max(tbla.colc) from tbla tbla) from tbla vg)
+(select row_number() over (partition by ?), (select max(x.colc) from tbla x where (x.cola<=vg.cola)) from tbla vg)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -395,7 +397,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select vg.rn from (select row_number() over (partition by ?), (select max(tbla.colc) from tbla tbla) from tbla vg) vg (rn) order by ?
+select vg.rn from (select row_number() over (partition by ?), (select max(x.colc) from tbla x where (x.cola<=vg.cola)) from tbla vg) vg (rn) order by ?
 ===================================================
     
 Case 8: outer ORDER BY column is also referenced by the analytic function     
@@ -1455,6 +1457,325 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select vx_out.cola, vx_out.s_in from (select vx_out.cola, vx_out.s_in from (select vx_in.cola, sum(vx_in.cold) over (partition by ? order by ?), vx_in.colc from tble vx_in) vx_out (cola, s_in)) vx_out (cola, s_in) order by ?
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+    
+Case 25: DISTINCT view, analytic unreferenced -- the select list may collapse to (1) only when that does not change the row count, and under DISTINCT the list itself is the dedup key     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tblf node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select distinct tblf.colb, tblf.colc, row_number() over (partition by ?) from tblf tblf)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct tblf.colb, tblf.colc, row_number() over (partition by ?) as [rn] from tblf tblf) [__t?] (colb, colc, rn)
+===================================================
+0
+===================================================
+count(*)    
+4     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: vy node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select distinct vy.colb, vy.colc, row_number() over (partition by ?) from tblf vy)
+Query plan:
+sscan
+    class: vy node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct vy.colb, vy.colc, row_number() over (partition by ?) from tblf vy) vy (colb, colc, rn)
+===================================================
+count(*)    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: tblf node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tblf.colb, tblf.colc from tblf tblf)
+Query plan:
+sscan
+    class: __t? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct tblf.colb, tblf.colc from tblf tblf) [__t?] (colb, colc)
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: vz node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct vz.colb, vz.colc from tblf vz)
+Query plan:
+sscan
+    class: vz node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct vz.colb, vz.colc from tblf vz) vz (colb, colc)
+===================================================
+    
+Case 26: the partition key holds NULLs -- the column re-added for the ordinal must keep the two NULL rows in one partition, and the running SUM makes a wrong ordinal change the value     
+
+===================================================
+cola    s    
+1     1     
+2     3     
+3     3     
+4     7     
+
+Query plan:
+sscan
+    class: tblg node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select tblg.cola, sum(tblg.cold) over (partition by ? order by ?), tblg.colc from tblg tblg)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].cola, [__t?].s from (select tblg.cola, sum(tblg.cold) over (partition by ? order by ?) as [s], tblg.colc from tblg tblg) [__t?] (cola, s) order by ?
+===================================================
+0
+===================================================
+cola    s    
+1     1     
+2     3     
+3     3     
+4     7     
+
+Query plan:
+sscan
+    class: vaa node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: sum partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select vaa.cola, sum(vaa.cold) over (partition by ? order by ?), vaa.colc from tblg vaa)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: vaa node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select vaa.cola, vaa.s from (select vaa.cola, sum(vaa.cold) over (partition by ? order by ?), vaa.colc from tblg vaa) vaa (cola, s) order by ?
+===================================================
+    
+Case 27: the PARTITION BY ordinal points at a column that sits after the analytic function in the select list -- the counterpart of Case 4, where the ordinal points at a column before it     
+
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: tblf node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), tblf.colc from tblf tblf)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: __t? node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select [__t?].rn from (select row_number() over (partition by ?) as [rn], tblf.colc from tblf tblf) [__t?] (rn) order by ?
+===================================================
+0
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: vab node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), vab.colc from tblf vab)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: vab node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select vab.rn from (select row_number() over (partition by ?), vab.colc from tblf vab) vab (rn) order by ?
+===================================================
+    
+Case 28: the rewrite is reached from INSERT ... SELECT, not only from a top-level SELECT -- a desynced ordinal here stores wrong values instead of printing them     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+cola    colb    
+1     9     
+1     9     
+2     9     
+2     9     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tblh node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tblh.cola, tblh.colb from tblh tblh order by ?, ?
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+cola    colb    
+1     9     
+1     9     
+2     9     
+2     9     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tblh node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tblh.cola, tblh.colb from tblh tblh order by ?, ?
+===================================================
+    
+Case 29: the same view body reached through a WITH clause, the third path next to the inline view and the named view     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+sscan
+    class: tblf node[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tblf tblf)
+Query plan:
+sscan
+    class: w node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select ? from tblf tblf) w (?)
+===================================================
+rn    
+1     
+1     
+2     
+2     
+
+Query plan:
+sscan
+    class: tblf node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by ()
+Query stmt:
+(select row_number() over (partition by ?), tblf.colc from tblf tblf)
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: w node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select w.rn from (select row_number() over (partition by ?) as [rn], tblf.colc from tblf tblf) w (rn) order by ?
+===================================================
+0
 ===================================================
 0
 ===================================================
