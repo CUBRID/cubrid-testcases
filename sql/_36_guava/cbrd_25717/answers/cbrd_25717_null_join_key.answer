@@ -27,7 +27,7 @@
 Case 1: INNER join, 10% NULL keys on both sides - parallel (NULL must never match)     
 
 ===================================================
-cnt    s1    
+cnt    skey    
 90000     4500000000     
 
 ===================================================
@@ -38,7 +38,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.c? as bigint)) from [dba.t_nk?] a, [dba.t_nk?] b where a.c?=b.c?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.ckey as bigint)) from [dba.t_nka] a, [dba.t_nkb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -50,9 +50,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nkb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -60,7 +60,7 @@ Trace Statistics:
 Case 2: same INNER join single-threaded (NO_PARALLEL_HASH_JOIN) - must match Case 1     
 
 ===================================================
-cnt    s1    
+cnt    skey    
 90000     4500000000     
 
 ===================================================
@@ -71,7 +71,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.c? as bigint)) from [dba.t_nk?] a, [dba.t_nk?] b where a.c?=b.c?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.ckey as bigint)) from [dba.t_nka] a, [dba.t_nkb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -82,9 +82,9 @@ Trace Statistics:
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nkb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -103,7 +103,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.c?) from [dba.t_nk?] a left outer join [dba.t_nk?] b on a.c?=b.c?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_nka] a left outer join [dba.t_nkb] b on a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -115,9 +115,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nkb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -136,7 +136,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count(b.c?) from [dba.t_nk?] a left outer join [dba.t_nk?] b on a.c?=b.c?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count(b.ckey) from [dba.t_nka] a left outer join [dba.t_nkb] b on a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -147,9 +147,9 @@ Trace Statistics:
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nk?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nkb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -168,21 +168,29 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_nko?] a, [dba.t_nko?] b where a.c?=b.c?
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ a.ckey, a.da, a.db, a.dc, a.dd, a.de, b.ckey, b.da, b.db, b.dc, b.dd, b.de from [dba.t_nkoa] a, [dba.t_nkob] b where a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ a.ckey as [a_ckey], a.da as [a_da], a.db as [a_db], a.dc as [a_dc], a.dd as [a_dd], a.de as [a_de], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from [dba.t_nkoa] a, [dba.t_nkob] b where a.ckey=b.ckey) [__t?] (a_ckey, a_da, a_db, a_dc, a_dd, a_de, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
-        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        PARALLEL (time: ?, fetch: ?, ioread: ?)
-          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
-          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nko?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nko?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            PARALLEL (time: ?, fetch: ?, ioread: ?)
+              BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+              PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_nkoa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_nkob), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -201,20 +209,28 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.t_nko?] a, [dba.t_nko?] b where a.c?=b.c?
+  rewritten query: (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey, a.da, a.db, a.dc, a.dd, a.de, b.ckey, b.da, b.db, b.dc, b.dd, b.de from [dba.t_nkoa] a, [dba.t_nkob] b where a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ckey as [a_ckey], a.da as [a_da], a.db as [a_db], a.dc as [a_dc], a.dd as [a_dd], a.de as [a_de], b.ckey as [b_ckey], b.da as [b_da], b.db as [b_db], b.dc as [b_dc], b.dd as [b_dd], b.de as [b_de] from [dba.t_nkoa] a, [dba.t_nkob] b where a.ckey=b.ckey) [__t?] (a_ckey, a_da, a_db, a_dc, a_dd, a_de, b_ckey, b_da, b_db, b_dc, b_dd, b_de)
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nko?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nko?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_nkoa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_nkob), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

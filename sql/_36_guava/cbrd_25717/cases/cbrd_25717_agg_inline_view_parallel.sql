@@ -14,7 +14,7 @@
 -- test data
 drop table if exists t_agg;
 
-create table t_agg (c1 int);
+create table t_agg (ckey int);
 
 insert into t_agg
   with recursive cte(n) as (
@@ -41,7 +41,7 @@ select /*+ recompile
            parallel(8) */
   count (*)
 from t_agg a, t_agg b
-where a.c1 = b.c1
+where a.ckey = b.ckey
 limit 1;
 
 show trace;
@@ -53,7 +53,7 @@ select /*+ recompile
            parallel(0) */
   count (*)
 from t_agg a, t_agg b
-where a.c1 = b.c1
+where a.ckey = b.ckey
 limit 1;
 
 show trace;

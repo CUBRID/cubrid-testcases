@@ -12,7 +12,7 @@
 -- test data
 drop table if exists t_trace_json;
 
-create table t_trace_json (c1 int);
+create table t_trace_json (ckey int);
 
 insert into t_trace_json
   with recursive cte(n) as (
@@ -36,7 +36,7 @@ select /*+ recompile
            parallel(8) */
   count (*)
 from t_trace_json a, t_trace_json b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -49,7 +49,7 @@ select /*+ recompile
            no_parallel_hash_join */
   count (*)
 from t_trace_json a, t_trace_json b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 

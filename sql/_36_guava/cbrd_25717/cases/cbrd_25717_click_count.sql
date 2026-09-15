@@ -12,10 +12,10 @@
 
 drop table if exists t_click_counter, t_filter;
 
-create table t_click_counter (c1 int, c2 int);
-create index t_click_counter_c1 on t_click_counter (c1);
+create table t_click_counter (ckey int, cval int);
+create index t_click_counter_c1 on t_click_counter (ckey);
 
-create table t_filter (c1 int);
+create table t_filter (ckey int);
 
 insert into t_click_counter
   with recursive cte(n) as (
@@ -32,38 +32,38 @@ evaluate 'Case 1: INCR function used -> hash join must not be performed (HINT ig
 
 --@queryplan
 select /*+ recompile ordered use_hash */
-  incr (a.c2)
+  incr (a.cval)
 from t_click_counter a, t_click_counter b, t_filter c
-where a.c1 = b.c1 and a.c1 = c.c1;
+where a.ckey = b.ckey and a.ckey = c.ckey;
 
 
 evaluate 'Case 2: WITH INCREMENT FOR used -> hash join must not be performed (HINT ignored)';
 
 --@queryplan
 select /*+ recompile ordered use_hash */
-  a.c2
+  a.cval
 from t_click_counter a, t_click_counter b, t_filter c
-where a.c1 = b.c1 and a.c1 = c.c1
-with increment for a.c2;
+where a.ckey = b.ckey and a.ckey = c.ckey
+with increment for a.cval;
 
 
 evaluate 'Case 3: DECR function used -> hash join must not be performed (HINT ignored)';
 
 --@queryplan
 select /*+ recompile ordered use_hash */
-  decr (a.c2)
+  decr (a.cval)
 from t_click_counter a, t_click_counter b, t_filter c
-where a.c1 = b.c1 and a.c1 = c.c1;
+where a.ckey = b.ckey and a.ckey = c.ckey;
 
 
 evaluate 'Case 4: WITH DECREMENT FOR used -> hash join must not be performed (HINT ignored)';
 
 --@queryplan
 select /*+ recompile ordered use_hash */
-  a.c2
+  a.cval
 from t_click_counter a, t_click_counter b, t_filter c
-where a.c1 = b.c1 and a.c1 = c.c1
-with decrement for a.c2;
+where a.ckey = b.ckey and a.ckey = c.ckey
+with decrement for a.cval;
 
 
 --

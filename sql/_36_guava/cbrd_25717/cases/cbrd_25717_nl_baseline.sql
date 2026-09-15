@@ -23,20 +23,20 @@
 -- test data
 --
 
-drop table if exists t_nl1, t_nl2;
+drop table if exists t_nla, t_nlb;
 
-create table t_nl1 (c1 int, c2 int);
-create table t_nl2 (c1 int, c2 int);
+create table t_nla (ckey int, cval int);
+create table t_nlb (ckey int, cval int);
 
-insert into t_nl1
+insert into t_nla
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select n, mod (n, 7) from cte;
 
-insert into t_nl2
+insert into t_nlb
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select n, mod (n, 5) from cte;
 
-update statistics on t_nl1, t_nl2;
+update statistics on t_nla, t_nlb;
 
 set trace on;
 
@@ -44,9 +44,9 @@ set trace on;
 evaluate 'Case 1: NESTED LOOP baseline (USE_NL) - the reference result';
 
 select /*+ recompile ordered use_nl no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nl1 a, t_nl2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nla a, t_nlb b
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -55,9 +55,9 @@ evaluate 'Case 2: single hash join (no partitioning - default scan size) - must 
 set system parameters 'max_hash_list_scan_size=default';
 
 select /*+ recompile use_hash no_parallel_hash_join no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nl1 a, t_nl2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nla a, t_nlb b
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -66,18 +66,18 @@ evaluate 'Case 3: partition hash join, single-threaded (scan size lowered) - mus
 set system parameters 'max_hash_list_scan_size=4k';
 
 select /*+ recompile use_hash no_parallel_hash_join no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nl1 a, t_nl2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nla a, t_nlb b
+where a.ckey = b.ckey;
 
 show trace;
 
 evaluate 'Case 4: PARALLEL partition hash join - must match Case 1';
 
 select /*+ recompile use_hash parallel(8) no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nl1 a, t_nl2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nla a, t_nlb b
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -87,7 +87,7 @@ set trace off;
 -- clean up test data
 --
 
-drop table t_nl1, t_nl2;
+drop table t_nla, t_nlb;
 
 -- restore default so it does not leak into later cases
 set system parameters 'max_hash_list_scan_size=default';

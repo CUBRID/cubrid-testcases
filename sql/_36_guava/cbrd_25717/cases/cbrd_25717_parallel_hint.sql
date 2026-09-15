@@ -22,7 +22,7 @@
 
 drop table if exists t_px_hint;
 
-create table t_px_hint (c1 int);
+create table t_px_hint (ckey int);
 
 insert into t_px_hint
   with recursive cte(n) as (
@@ -46,7 +46,7 @@ select /*+ recompile
            no_parallel_subquery */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -62,7 +62,7 @@ select /*+ recompile
            no_parallel_subquery */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -78,7 +78,7 @@ select /*+ recompile
            no_parallel_hash_join */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -94,7 +94,7 @@ select /*+ recompile
            parallel(0) */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -110,7 +110,7 @@ select /*+ recompile
            parallel(32) */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 
@@ -126,7 +126,7 @@ select /*+ recompile
            parallel(-1000) */
   count (*)
 from t_px_hint a, t_px_hint b
-where a.c1 = b.c1;
+where a.ckey = b.ckey;
 
 show trace;
 

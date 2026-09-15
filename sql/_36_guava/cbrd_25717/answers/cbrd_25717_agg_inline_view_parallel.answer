@@ -24,11 +24,11 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.c?=b.c?)
+  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
 
   TABLE SCAN (a)
 
-  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.c?=b.c?) a (a_?) where (inst_num()<= ?:? )
+  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -69,11 +69,11 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.c?=b.c?)
+  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
 
   TABLE SCAN (a)
 
-  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.c?=b.c?) a (a_?) where (inst_num()<= ?:? )
+  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
 
 
 Trace Statistics:

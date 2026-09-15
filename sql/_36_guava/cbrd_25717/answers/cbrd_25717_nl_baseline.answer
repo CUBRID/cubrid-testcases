@@ -17,7 +17,7 @@
 Case 1: NESTED LOOP baseline (USE_NL) - the reference result     
 
 ===================================================
-cnt    s1    s2    
+cnt    skey    sval    
 2000     2001000     4000     
 
 ===================================================
@@ -28,12 +28,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_nl?] a, [dba.t_nl?] b where a.c?=b.c?
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_nla] a, [dba.t_nlb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_nla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_nlb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -43,7 +43,7 @@ Case 2: single hash join (no partitioning - default scan size) - must match Case
 ===================================================
 0
 ===================================================
-cnt    s1    s2    
+cnt    skey    sval    
 2000     2001000     4000     
 
 ===================================================
@@ -54,7 +54,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_nl?] a, [dba.t_nl?] b where a.c?=b.c?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_nla] a, [dba.t_nlb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -62,10 +62,10 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nlb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -75,7 +75,7 @@ Case 3: partition hash join, single-threaded (scan size lowered) - must match Ca
 ===================================================
 0
 ===================================================
-cnt    s1    s2    
+cnt    skey    sval    
 2000     2001000     4000     
 
 ===================================================
@@ -86,7 +86,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_nl?] a, [dba.t_nl?] b where a.c?=b.c?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_nla] a, [dba.t_nlb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -97,9 +97,9 @@ Trace Statistics:
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nlb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -107,7 +107,7 @@ Trace Statistics:
 Case 4: PARALLEL partition hash join - must match Case 1     
 
 ===================================================
-cnt    s1    s2    
+cnt    skey    sval    
 2000     2001000     4000     
 
 ===================================================
@@ -118,7 +118,7 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.c? as bigint)), sum(b.c?) from [dba.t_nl?] a, [dba.t_nl?] b where a.c?=b.c?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_nla] a, [dba.t_nlb] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -130,9 +130,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_nl?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_nlb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

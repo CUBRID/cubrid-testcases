@@ -15,7 +15,7 @@
 Case 1: INCR function used -> hash join must not be performed (HINT ignored)     
 
 ===================================================
-c2    
+cval    
 0     
 
 Query plan:
@@ -35,13 +35,13 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
-select a.c?,  incr(a.c?) from t_click_counter a, t_click_counter b, t_filter c where a.c?=b.c? and a.c?=c.c?
+select a.cval,  incr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
 ===================================================
     
 Case 2: WITH INCREMENT FOR used -> hash join must not be performed (HINT ignored)     
 
 ===================================================
-c2    
+cval    
 1     
 
 Query plan:
@@ -61,13 +61,13 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
-select a.c?,  incr(a.c?) from t_click_counter a, t_click_counter b, t_filter c where a.c?=b.c? and a.c?=c.c?
+select a.cval,  incr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
 ===================================================
     
 Case 3: DECR function used -> hash join must not be performed (HINT ignored)     
 
 ===================================================
-c2    
+cval    
 2     
 
 Query plan:
@@ -87,13 +87,13 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
-select a.c?,  decr(a.c?) from t_click_counter a, t_click_counter b, t_filter c where a.c?=b.c? and a.c?=c.c?
+select a.cval,  decr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
 ===================================================
     
 Case 4: WITH DECREMENT FOR used -> hash join must not be performed (HINT ignored)     
 
 ===================================================
-c2    
+cval    
 1     
 
 Query plan:
@@ -113,6 +113,6 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt: [Warning: HINT ignored]
-select a.c?,  decr(a.c?) from t_click_counter a, t_click_counter b, t_filter c where a.c?=b.c? and a.c?=c.c?
+select a.cval,  decr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
 ===================================================
 0

@@ -29,25 +29,25 @@
 -- test data
 --
 
-drop table if exists t_nm1, t_nm2, t_sk_skew, t_sk_uniq;
+drop table if exists t_nma, t_nmb, t_sk_skew, t_sk_uniq;
 
 -- N:M - 10 duplicates per key on each side
-create table t_nm1 (c1 int, c2 int);
-create table t_nm2 (c1 int, c2 int);
+create table t_nma (ckey int, cval int);
+create table t_nmb (ckey int, cval int);
 
-insert into t_nm1
+insert into t_nma
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select mod (rownum, 2000), mod (rownum, 7) from cte a, cte b limit 20000;
 
-insert into t_nm2
+insert into t_nmb
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select mod (rownum, 2000), mod (rownum, 5) from cte a, cte b limit 20000;
 
 -- SKEW - the SKEWED table is deliberately the SMALLER side. The optimizer always builds the hash
 -- table from the smaller input (ORDERED does not override that), and only a skewed BUILD side
 -- makes the partitions unequal - a skewed probe against a small build needs no partitioning at all.
-create table t_sk_skew (c1 int, c2 int);
-create table t_sk_uniq (c1 int, c2 int);
+create table t_sk_skew (ckey int, cval int);
+create table t_sk_uniq (ckey int, cval int);
 
 insert into t_sk_skew
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
@@ -58,7 +58,7 @@ insert into t_sk_uniq
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select rownum, mod (rownum, 7) from cte a, cte b limit 100000;
 
-update statistics on t_nm1, t_nm2, t_sk_skew, t_sk_uniq;
+update statistics on t_nma, t_nmb, t_sk_skew, t_sk_uniq;
 
 -- lower the threshold so a partition hash join (and sector-based parallel split) is triggered
 set system parameters 'max_hash_list_scan_size=256k';
@@ -69,52 +69,52 @@ set trace on;
 evaluate 'Case 1: N:M duplicate keys on both sides - parallel (expect 200000 pairs)';
 
 select /*+ recompile use_hash parallel(8) no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nm1 a, t_nm2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nma a, t_nmb b
+where a.ckey = b.ckey;
 
 show trace;
 
 evaluate 'Case 2: same N:M join single-threaded (NO_PARALLEL_HASH_JOIN) - must match Case 1';
 
 select /*+ recompile use_hash no_parallel_hash_join no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (a.c1 as bigint)) as s1, sum (b.c2) as s2
-from t_nm1 a, t_nm2 b
-where a.c1 = b.c1;
+  count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
+from t_nma a, t_nmb b
+where a.ckey = b.ckey;
 
 show trace;
 
 evaluate 'Case 3: skewed BUILD side (80% of rows share one key) - parallel, exercises work-stealing';
 
 select /*+ recompile use_hash parallel(8) no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (u.c1 as bigint)) as s1, sum (s.c2) as s2
+  count (*) as cnt, sum (cast (u.ckey as bigint)) as skey, sum (s.cval) as sval
 from t_sk_uniq u, t_sk_skew s
-where u.c1 = s.c1;
+where u.ckey = s.ckey;
 
 show trace;
 
 evaluate 'Case 4: same skewed join single-threaded - must match Case 3';
 
 select /*+ recompile use_hash no_parallel_hash_join no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, sum (cast (u.c1 as bigint)) as s1, sum (s.c2) as s2
+  count (*) as cnt, sum (cast (u.ckey as bigint)) as skey, sum (s.cval) as sval
 from t_sk_uniq u, t_sk_skew s
-where u.c1 = s.c1;
+where u.ckey = s.ckey;
 
 show trace;
 
 evaluate 'Case 5: N:M LEFT OUTER (duplicate keys on the null-supplying side) - parallel';
 
 select /*+ recompile ordered use_hash parallel(8) no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, count (b.c1) as matched
-from t_nm1 a left outer join t_nm2 b on a.c1 = b.c1;
+  count (*) as cnt, count (b.ckey) as matched
+from t_nma a left outer join t_nmb b on a.ckey = b.ckey;
 
 show trace;
 
 evaluate 'Case 6: same N:M LEFT OUTER join single-threaded - must match Case 5';
 
 select /*+ recompile ordered use_hash no_parallel_hash_join no_parallel_scan no_parallel_subquery */
-  count (*) as cnt, count (b.c1) as matched
-from t_nm1 a left outer join t_nm2 b on a.c1 = b.c1;
+  count (*) as cnt, count (b.ckey) as matched
+from t_nma a left outer join t_nmb b on a.ckey = b.ckey;
 
 show trace;
 
@@ -124,7 +124,7 @@ set trace off;
 -- clean up test data
 --
 
-drop table t_nm1, t_nm2, t_sk_skew, t_sk_uniq;
+drop table t_nma, t_nmb, t_sk_skew, t_sk_uniq;
 
 -- restore default so it does not leak into later cases
 set system parameters 'max_hash_list_scan_size=default';
