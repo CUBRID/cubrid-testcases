@@ -98,16 +98,20 @@ DROP TABLE IF EXISTS t1;
 
 evaluate '3. Trailing zero: misc TO_CHAR behavior';
 /* ------------------------------------------------------------
- * 3. Misc
+ * 3. Misc TO_CHAR behavior.
+ *    TO_CHAR(number) with NO format mask strips trailing zeros after the
+ *    decimal point (number_to_char, string_opfunc.c). This is existing
+ *    behavior since 2014, unrelated to CBRD-26006. A format mask would set
+ *    the digit count instead.
  * ------------------------------------------------------------ */
 
-evaluate '3-1. When converted to string, trailing zeros can be preserved/visible';
+evaluate '3-1. TO_CHAR(number) with no format removes trailing zeros, so 1.0 and 1.00 both print 1 and compare equal';
 SELECT
   TO_CHAR(CAST(1.0  AS NUMERIC)) AS a,
   TO_CHAR(CAST(1.00 AS NUMERIC)) AS b,
   (TO_CHAR(CAST(1.0 AS NUMERIC)) = TO_CHAR(CAST(1.00 AS NUMERIC))) AS c;
 
-evaluate '3-2. When concatenated with text, the formatting after trailing zeros matters';
+evaluate '3-2. TO_CHAR with no format removes trailing zeros, so the two text concatenations are identical';
 SELECT
   (TO_CHAR(CAST(1.0  AS NUMERIC))  + 'a') AS a,
   (TO_CHAR(CAST(1.00 AS NUMERIC))  + 'a') AS b,
@@ -238,13 +242,13 @@ INSERT INTO t2 VALUES (6, -2.0);
 INSERT INTO t2 VALUES (7, -2.00000);
 
 evaluate '6-2. GROUP BY multiple values: equal scales merge, different value and sign stay separate';
--- Expect: three groups -> -2 (count 2), 2 (count 4), 2.01 (count 1)
+-- Expect: three groups -> -2.0 (count 2), 2 (count 4), 2.01 (count 1)
 SELECT col1, COUNT(*) AS cnt FROM t2 GROUP BY col1 ORDER BY col1;
 
 evaluate '6-3. DISTINCT and HAVING over the value-merged groups';
--- Expect: 3 distinct values -> -2, 2, 2.01
+-- Expect: 3 distinct values -> -2.0, 2, 2.01
 SELECT DISTINCT col1 FROM t2 ORDER BY col1;
--- Expect: groups with more than one row -> -2 (sum id 13, count 2), 2 (sum id 10, count 4)
+-- Expect: groups with more than one row -> -2.0 (sum id 13, count 2), 2 (sum id 10, count 4)
 SELECT col1, SUM(id) AS sid, COUNT(*) AS cnt
   FROM t2
  GROUP BY col1

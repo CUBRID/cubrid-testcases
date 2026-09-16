@@ -20,12 +20,12 @@ INSERT INTO t1 VALUES
 -- Lower bound > upper bound path
 SELECT col1, col2, WIDTH_BUCKET(col2, 80, 50, 3) AS grade
 FROM t1
-ORDER BY grade ASC, col2 DESC;
+ORDER BY grade ASC, col2 DESC, col1 ASC;
 
 -- Normal path
 SELECT col1, col2, WIDTH_BUCKET(col2, 50, 80, 3) AS grade
 FROM t1
-ORDER BY grade ASC, col2 DESC;
+ORDER BY grade ASC, col2 DESC, col1 ASC;
 
 DROP TABLE IF EXISTS t1;
 
@@ -47,12 +47,12 @@ INSERT INTO t1 VALUES
 
 SELECT col1, col2, WIDTH_BUCKET(col2, 80, 50, 3.01) AS grade
 FROM t1
-ORDER BY grade ASC, col2 DESC;
+ORDER BY grade ASC, col2 DESC, col1 ASC;
 
 -- Normal path
 SELECT col1, col2, WIDTH_BUCKET(col2, 50, 80, 3.01) AS grade
 FROM t1
-ORDER BY grade ASC, col2 DESC;
+ORDER BY grade ASC, col2 DESC, col1 ASC;
 
 DROP TABLE IF EXISTS t1;
 

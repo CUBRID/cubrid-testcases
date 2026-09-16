@@ -82,7 +82,7 @@ BEGIN
   RETURN v;
 END;
 
--- 123.456 stored as NUMERIC(10,2) rounds to 123.46, and the %TYPE return keeps that fixed type
+-- 123.456 stored as NUMERIC(10,2) rounds to 123.46, but the %TYPE return surfaces as Float bare numeric (see typeof below)
 SELECT plfn_fx_type(123.46) AS v, typeof(plfn_fx_type(123.46)) AS t;
 
 DROP FUNCTION plfn_fx_type;
