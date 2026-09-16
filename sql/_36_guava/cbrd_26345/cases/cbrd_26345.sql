@@ -9,7 +9,11 @@
 --   - activation across join shapes (3-way join, view-to-table join,
 --     indexed inner scan)
 --   - cases where memoize must not activate (cartesian product,
---     TABLE()-derived inner, SET/MULTISET/SEQUENCE column projection)
+--     TABLE()-derived inner, untyped SET column projection)
+--   - element-typed collection columns (SET(INT)/MULTISET(INT)/SEQUENCE(INT))
+--     are NOT excluded and get memoized like any other type once enough
+--     repeated keys are read - separated from the hit=0 case (no repeated
+--     keys read yet) so neither is mistaken for the other
 --   - multi-row-per-key cache correctness (row-level output compared
 --     between memoize enabled and disabled)
 
@@ -124,6 +128,8 @@ drop table if exists set_col_tbl;
 drop table if exists multiset_col_tbl;
 drop table if exists sequence_col_tbl;
 drop table if exists inner_dup;
+drop table if exists untyped_tbl;
+drop table if exists unique_outer;
 drop view if exists low_ndv_view;
 
 create table extra_join_tbl (dup_key int, seq int);
@@ -138,6 +144,26 @@ insert into multiset_col_tbl values (1, multiset{1,1,2}), (2, multiset{3,3,4}), 
 
 create table sequence_col_tbl (id int, sq sequence(int));
 insert into sequence_col_tbl values (1, sequence{1,2}), (2, sequence{3,4}), (3, sequence{5,6}), (4, sequence{7,8}), (5, sequence{9,10});
+
+-- untyped_tbl's SET column has no declared element type, unlike set_col_tbl's
+-- SET(INT) above. Per CBRD-26345's 2026-09-15 description update, this is the
+-- only shape the exclusion check actually catches: possible_check() (memoize.cpp)
+-- keys off the placeholder value's own domain type, but an element-typed
+-- collection's placeholder gets initialized to the element type instead of
+-- SET/MULTISET/SEQUENCE (parse_dbi.c pt_data_type_init_value), so only an
+-- untyped SET is recognized and excluded - SET(INT)/MULTISET(INT)/SEQUENCE(INT)
+-- are not.
+create table untyped_tbl (id int, s set);
+insert into untyped_tbl values (1,{11,12}), (2,{21,22,23}), (3,{31,32}), (4,{41,42,43}), (5,{51,52});
+
+-- unique_outer has 5 rows with 5 distinct keys matching set_col_tbl/
+-- multiset_col_tbl/sequence_col_tbl's ids 1..5, none repeated - every probe is
+-- a first-time key, so hit is always 0 and no MEMOIZE trace can appear here
+-- regardless of column type. Isolates the hit=0 case so it is never confused
+-- with an actual type-based exclusion (query_dump.c only prints MEMOIZE when
+-- storage != nullptr AND hit > 0 - hit=0 looks identical to "never created").
+create table unique_outer (id int);
+insert into unique_outer values (1),(2),(3),(4),(5);
 
 -- inner_dup has duplicate join keys (unlike inner_tbl, whose join_key is
 -- unique 1..10), so a cache hit for a given key must return more than one
@@ -172,16 +198,140 @@ evaluate 'TARGET_SET-derived TABLE() inner - expect: no memoize';
 select /*+ recompile parallel(0) ordered use_nl(t) */ count(*) from outer_tbl inner join TABLE({1,2,3,4,5,6,7,8,9,10}) t(x) on outer_tbl.low_ndv_int = t.x;
 show trace;
 
-evaluate 'SET column real projection - expect: no memoize';
-select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id limit 5;
-show trace;
+-- CBRD-26345 description (2026-09-15 update): an element-typed collection
+-- (SET(INT)/MULTISET(INT)/SEQUENCE(INT)) is NOT excluded from memoize - only
+-- an untyped SET is. Following the JIRA's attached test.md verification
+-- design (T1-T6) as closely as possible, in the same order as test.md's own
+-- SQL (MULTISET, SET, SEQUENCE - each through LIMIT 5 / LIMIT 50 / ORDER BY
+-- LIMIT 5 / no LIMIT, at both memoize_memory_limit=64M and =0).
 
-evaluate 'MULTISET column real projection - expect: no memoize';
+-- ===== MULTISET(INT), 64M =====
+evaluate 'MULTISET(INT) real projection, limit 5 only - no assertion on memoize state, output correctness only (memoize_memory_limit=64M)';
 select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id limit 5;
 show trace;
 
-evaluate 'SEQUENCE column real projection - expect: no memoize';
+evaluate 'MULTISET(INT) real projection, limit 50 - expect: partial MEMOIZE trace may appear (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id limit 50;
+show trace;
+
+evaluate 'MULTISET(INT) real projection, order by uniq_int limit 5 - expect: memoize enabled (element-typed collection is not excluded, memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'MULTISET(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id;
+show trace;
+
+-- ===== SET(INT), 64M =====
+evaluate 'SET(INT) real projection, limit 5 only - no assertion on memoize state, output correctness only (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id limit 5;
+show trace;
+
+evaluate 'SET(INT) real projection, limit 50 - expect: partial MEMOIZE trace may appear (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id limit 50;
+show trace;
+
+evaluate 'SET(INT) real projection, order by uniq_int limit 5 - expect: memoize enabled (element-typed collection is not excluded, memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'SET(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id;
+show trace;
+
+-- ===== SEQUENCE(INT), 64M =====
+evaluate 'SEQUENCE(INT) real projection, limit 5 only - no assertion on memoize state, output correctness only (memoize_memory_limit=64M)';
 select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id limit 5;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, limit 50 - expect: partial MEMOIZE trace may appear (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id limit 50;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, order by uniq_int limit 5 - expect: memoize enabled (element-typed collection is not excluded, memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id;
+show trace;
+
+set system parameters 'memoize_memory_limit=0';
+
+-- ===== MULTISET(INT), 0 =====
+evaluate 'MULTISET(INT) real projection, limit 5 only - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id limit 5;
+show trace;
+
+evaluate 'MULTISET(INT) real projection, limit 50 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id limit 50;
+show trace;
+
+evaluate 'MULTISET(INT) real projection, order by uniq_int limit 5 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'MULTISET(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id;
+show trace;
+
+-- ===== SET(INT), 0 =====
+evaluate 'SET(INT) real projection, limit 5 only - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id limit 5;
+show trace;
+
+evaluate 'SET(INT) real projection, limit 50 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id limit 50;
+show trace;
+
+evaluate 'SET(INT) real projection, order by uniq_int limit 5 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'SET(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id;
+show trace;
+
+-- ===== SEQUENCE(INT), 0 =====
+evaluate 'SEQUENCE(INT) real projection, limit 5 only - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id limit 5;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, limit 50 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id limit 50;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, order by uniq_int limit 5 - expect: no memoize (disabled), row output must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+evaluate 'SEQUENCE(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id;
+show trace;
+
+set system parameters 'memoize_memory_limit=64M';
+
+-- untyped SET (no declared element type) - the one shape that IS actually
+-- excluded. Kept next to the element-typed positive cases above so a future
+-- regression that disables memoize globally can't hide behind this
+-- negative-only case.
+evaluate 'untyped SET real projection, order by uniq_int limit 5 - expect: no memoize (only this untyped shape is actually excluded, memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(untyped_tbl) */ outer_tbl.low_ndv_int, untyped_tbl.s from outer_tbl inner join untyped_tbl on outer_tbl.low_ndv_int = untyped_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+set system parameters 'memoize_memory_limit=0';
+
+evaluate 'untyped SET real projection, order by uniq_int limit 5 - expect: no memoize (disabled), row output and scan volume must match the 64M run above exactly';
+select /*+ recompile parallel(0) ordered use_nl(untyped_tbl) */ outer_tbl.low_ndv_int, untyped_tbl.s from outer_tbl inner join untyped_tbl on outer_tbl.low_ndv_int = untyped_tbl.id order by outer_tbl.uniq_int limit 5;
+show trace;
+
+set system parameters 'memoize_memory_limit=64M';
+
+-- hit=0 dedicated case: unique_outer's 5 keys never repeat, so every probe is
+-- a first-time miss and no MEMOIZE trace can appear regardless of column type
+-- - this is evidence of hit=0, not of type-based exclusion.
+evaluate 'MULTISET(INT) real projection against unique (non-repeating) keys - expect: no memoize (hit=0, not a type exclusion, memoize_memory_limit=64M)';
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ unique_outer.id, multiset_col_tbl.ms from unique_outer inner join multiset_col_tbl on unique_outer.id = multiset_col_tbl.id order by unique_outer.id;
 show trace;
 
 evaluate 'memoize with index scan on inner table - expect: memoize enabled';
@@ -206,6 +356,8 @@ set system parameters 'memoize_memory_limit=default';
 -- cleanup
 drop view if exists low_ndv_view;
 drop table if exists inner_dup;
+drop table if exists unique_outer;
+drop table if exists untyped_tbl;
 drop table if exists sequence_col_tbl;
 drop table if exists multiset_col_tbl;
 drop table if exists set_col_tbl;
