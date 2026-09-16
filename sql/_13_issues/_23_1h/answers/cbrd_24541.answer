@@ -17,7 +17,7 @@ a    b
 1     a              
 
 Query plan:
-idx-join (semi join)
+idx-join (inner join)
     outer: sscan
                class: ta node[?]
                cost:  ? card ?
@@ -27,7 +27,7 @@ idx-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select ta.a, ta.b from ta ta semi join tb tb on tb.a=ta.a
+select ta.a, ta.b from ta ta, tb tb where tb.a=ta.a
 ===================================================
 0
 ===================================================
