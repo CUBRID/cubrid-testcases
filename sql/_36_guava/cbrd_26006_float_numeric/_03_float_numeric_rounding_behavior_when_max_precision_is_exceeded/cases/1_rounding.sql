@@ -38,9 +38,9 @@ SELECT COUNT(*) FROM t1 WHERE col1 =
 DROP TABLE IF EXISTS t1;
 
 -- ===========================================================================
--- Section 2: Truncation at 254-digit display limit (scale: 252)
+-- Section 2: Rounding (not truncation) at the max-scale / 254-char display boundary (scale: 252)
 -- ===========================================================================
-evaluate '2. Truncation at 254-digit display limit (prec=40, scale=252)';
+evaluate '2. Rounding at the max-scale / 254-char display boundary, not truncation (prec=40, scale=252)';
 CREATE TABLE t1 (col1 NUMERIC);
 
 -- prec: 40, scale: 252
@@ -57,14 +57,15 @@ SELECT COUNT(*) FROM t1 WHERE col1 =
 -- Expect: 1
 
 -- prec: 41, scale: 253
--- If the literal length (including "0.") exceeds 254 characters, digits after the 254th are truncated
--- without raising an error. As a result, the following predicates compare equal.
-evaluate '2-2. Truncation does not increment';
+-- At the 254-character display limit the 41st digit is still ROUNDED half-up, not truncated.
+-- Pure truncation would drop the 41st digit and make both 2-2 and 2-3 compare equal, but the
+-- trailing 5 in 2-3 rounds up, so only 2-3 stops matching the stored value.
+evaluate '2-2. Rounding does not increment (trailing 4)';
 SELECT COUNT(*) FROM t1 WHERE col1 =
   0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012345678901234567890123456789012345678904;
 -- Expect: 1
 
-evaluate '2-3. Truncation increments';
+evaluate '2-3. Rounding increments (trailing 5)';
 SELECT COUNT(*) FROM t1 WHERE col1 =
   0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012345678901234567890123456789012345678905;
 -- Expect: 0
