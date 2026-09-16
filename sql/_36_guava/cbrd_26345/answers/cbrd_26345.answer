@@ -436,6 +436,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+0
+===================================================
 100
 ===================================================
 0
@@ -575,6 +577,8 @@ Trace Statistics:
      
 
 ===================================================
+0
+===================================================
     
 MULTISET(INT) real projection, limit 5 only - no assertion on memoize state, output correctness only (memoize_memory_limit=64M)     
 
@@ -590,16 +594,28 @@ low_ndv_int    ms
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.multiset_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.multiset_col_tbl].ms from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.multiset_col_tbl].ms from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.multiset_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -663,17 +679,29 @@ low_ndv_int    ms
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.multiset_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.multiset_col_tbl].ms from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.multiset_col_tbl].ms from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.multiset_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -50747,16 +50775,28 @@ low_ndv_int    s
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.set_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.set_col_tbl].s from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.set_col_tbl].s from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.set_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -50820,17 +50860,29 @@ low_ndv_int    s
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.set_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.set_col_tbl].s from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.set_col_tbl].s from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.set_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -100904,16 +100956,28 @@ low_ndv_int    sq
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.sequence_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.sequence_col_tbl].sq from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.sequence_col_tbl].sq from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.sequence_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -100977,17 +101041,29 @@ low_ndv_int    sq
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.sequence_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.sequence_col_tbl].sq from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.sequence_col_tbl].sq from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.sequence_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -151063,16 +151139,28 @@ low_ndv_int    ms
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.multiset_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.multiset_col_tbl].ms from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.multiset_col_tbl].ms from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.multiset_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -151136,16 +151224,28 @@ low_ndv_int    ms
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.multiset_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.multiset_col_tbl].ms from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(multiset_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.multiset_col_tbl].ms from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.multiset_col_tbl] [dba.multiset_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.multiset_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.multiset_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -201217,16 +201317,28 @@ low_ndv_int    s
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.set_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.set_col_tbl].s from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.set_col_tbl].s from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.set_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -201290,16 +201402,28 @@ low_ndv_int    s
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.set_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.set_col_tbl].s from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(set_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.set_col_tbl].s from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.set_col_tbl] [dba.set_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.set_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.set_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -251371,16 +251495,28 @@ low_ndv_int    sq
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.sequence_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.sequence_col_tbl].sq from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.sequence_col_tbl].sq from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.sequence_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================
@@ -251444,18 +251580,32 @@ low_ndv_int    sq
 trace    
 
 Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ordered_outer_view)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?)
+
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.outer_tbl)
+    TABLE SCAN (dba.ordered_outer_view)
     TABLE SCAN (dba.sequence_col_tbl)
 
-  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.sequence_col_tbl].sq from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.outer_tbl].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+  rewritten query: select /*+ ORDERED USE_NL(sequence_col_tbl) PARALLEL(?) */ [dba.ordered_outer_view].low_ndv_int, [dba.sequence_col_tbl].sq from (select /*+ NO_MERGE */ [dba.ordered_outer_view].low_ndv_int, [dba.ordered_outer_view].uniq_int from [dba.outer_tbl] [dba.ordered_outer_view] order by ?) [dba.ordered_outer_view] (low_ndv_int, uniq_int) inner join [dba.sequence_col_tbl] [dba.sequence_col_tbl] on [dba.ordered_outer_view].low_ndv_int=[dba.sequence_col_tbl].id where (inst_num()<= ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.sequence_col_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
+===================================================
+0
 ===================================================
     
 SEQUENCE(INT) real projection, order by uniq_int limit 5 - expect: no memoize (disabled), row output must match the 64M run above exactly     
@@ -301656,6 +301806,25 @@ low_ndv_int    payload    count(*)
 9     a     10000     
 
 ===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.outer_tbl)
+      TABLE SCAN (dba.inner_dup)
+
+  rewritten query: select /*+ ORDERED USE_NL(inner_dup) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, [dba.inner_dup].payload, count(*) from [dba.outer_tbl] [dba.outer_tbl] inner join [dba.inner_dup] [dba.inner_dup] on [dba.outer_tbl].low_ndv_int=[dba.inner_dup].join_key group by [dba.outer_tbl].low_ndv_int, [dba.inner_dup].payload
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.inner_dup), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
 low_ndv_int    count(inner_dup.payload)    
 0     0     
 1     10000     
@@ -301667,6 +301836,25 @@ low_ndv_int    count(inner_dup.payload)
 7     10000     
 8     10000     
 9     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.outer_tbl)
+      TABLE SCAN (dba.inner_dup)
+
+  rewritten query: select /*+ ORDERED USE_NL(inner_dup) PARALLEL(?) */ [dba.outer_tbl].low_ndv_int, count([dba.inner_dup].payload) from [dba.outer_tbl] [dba.outer_tbl] left outer join [dba.inner_dup] [dba.inner_dup] on [dba.inner_dup].payload<>'b' and [dba.outer_tbl].low_ndv_int=[dba.inner_dup].join_key group by [dba.outer_tbl].low_ndv_int
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.inner_dup), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
 
 ===================================================
 0
