@@ -189,6 +189,15 @@ SELECT DISTINCT col1 FROM t1;
 evaluate '5-4. COUNT(DISTINCT) = 1, COUNT(*) = 3';
 SELECT COUNT(DISTINCT col1) AS distinct_cnt, COUNT(*) AS total_cnt FROM t1;
 
+evaluate '5-5. UNION negative control: equal scales merge but a different value survives';
+-- 2.0 and 2.00000 are equal (collapse to one), 2.01 differs and must remain -> two rows
+SELECT 2.0 AS v FROM dual
+UNION
+SELECT 2.00000 FROM dual
+UNION
+SELECT 2.01 FROM dual
+ORDER BY v;
+
 DROP TABLE IF EXISTS t1;
 
 
@@ -211,3 +220,35 @@ SELECT col1, COUNT(*) AS cnt, MIN(col1) AS mn, MAX(col1) AS mx, SUM(col1) AS sm
  ORDER BY col1;
 
 DROP TABLE IF EXISTS t1;
+
+/* ------------------------------------------------------------
+ * 6-2/6-3. Multiple values with negative controls: equal-value
+ *   different-scale rows merge into one group, while a genuinely
+ *   different value (2.01) and the opposite sign (-2) stay separate.
+ *   The id column lets SUM(id) show which rows fell into each group.
+ * ------------------------------------------------------------ */
+DROP TABLE IF EXISTS t2;
+CREATE TABLE t2 (id INT, col1 NUMERIC);
+INSERT INTO t2 VALUES (1, 2);
+INSERT INTO t2 VALUES (2, 2.0);
+INSERT INTO t2 VALUES (3, 2.00000);
+INSERT INTO t2 VALUES (4, 2.0000000000);
+INSERT INTO t2 VALUES (5, 2.01);
+INSERT INTO t2 VALUES (6, -2.0);
+INSERT INTO t2 VALUES (7, -2.00000);
+
+evaluate '6-2. GROUP BY multiple values: equal scales merge, different value and sign stay separate';
+-- Expect: three groups -> -2 (count 2), 2 (count 4), 2.01 (count 1)
+SELECT col1, COUNT(*) AS cnt FROM t2 GROUP BY col1 ORDER BY col1;
+
+evaluate '6-3. DISTINCT and HAVING over the value-merged groups';
+-- Expect: 3 distinct values -> -2, 2, 2.01
+SELECT DISTINCT col1 FROM t2 ORDER BY col1;
+-- Expect: groups with more than one row -> -2 (sum id 13, count 2), 2 (sum id 10, count 4)
+SELECT col1, SUM(id) AS sid, COUNT(*) AS cnt
+  FROM t2
+ GROUP BY col1
+HAVING COUNT(*) > 1
+ ORDER BY col1;
+
+DROP TABLE IF EXISTS t2;
