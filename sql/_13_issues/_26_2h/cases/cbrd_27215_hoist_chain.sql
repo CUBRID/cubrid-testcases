@@ -104,4 +104,30 @@ execute h7 using NULL, 0, 0;
 execute h7 using 0, 0, 0;
 deallocate prepare h7;
 
+-- error order is the interpreter's: a hoisted step that fails (1 / ? with 0 bound) is not reported
+-- ahead of an earlier column or operand that fails on the same row at run time (the cast of 'abc'
+-- to int), and it is when it comes first.  The cast fails at run time, not at semantic check.
+drop table if exists hce;
+create table hce (id int, s varchar(10));
+insert into hce values (1, 'abc'), (2, '7');
+prepare h8 from 'select cast(s as int), 1 / ? from hce where id = 1';
+execute h8 using 0;
+deallocate prepare h8;
+prepare h9 from 'select 1 / ?, cast(s as int) from hce where id = 1';
+execute h9 using 0;
+deallocate prepare h9;
+prepare h10 from 'select cast(s as int) + 1 / ? from hce where id = 1';
+execute h10 using 0;
+deallocate prepare h10;
+prepare h11 from 'select 1 / ? + cast(s as int) from hce where id = 1';
+execute h11 using 0;
+deallocate prepare h11;
+prepare h12 from 'select id from hce where cast(s as int) > 0 and 1 / ? > 0';
+execute h12 using 0;
+deallocate prepare h12;
+prepare h13 from 'select id from hce where 1 / ? > 0 and cast(s as int) > 0';
+execute h13 using 0;
+deallocate prepare h13;
+drop table hce;
+
 drop table hc;
