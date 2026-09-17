@@ -13,9 +13,12 @@
  *           of the same query - the results must be identical. Both runs emit SQL Trace; the
  *           PARALLEL node and the HASHJOIN "parallel workers" attribute appear only in the
  *           parallel case.
- * Note: N:M sizing is deliberate. 20000 rows per side over 2000 distinct keys gives 10 duplicates
- *       per key per side, so the join produces 2000 x 10 x 10 = 200000 rows - large enough to
- *       catch a lost chain, small enough to stay fast. For the skew case the SKEWED table is made
+ * Note: N:M sizing is deliberate. 20000 rows per side, but the key ranges differ on purpose:
+ *       t_nmb spreads over 2000 keys (10 duplicates each) and t_nma over 2500 keys (8 each), so the
+ *       2000 shared keys produce 2000 x 8 x 10 = 160000 rows - large enough to catch a lost chain,
+ *       small enough to stay fast. The 500 extra keys on the left side (4000 rows) find no partner,
+ *       so the LEFT OUTER cases keep them NULL-extended (164000 rows) - a LEFT OUTER where every
+ *       row matches never exercises the NULL-fill path. For the skew case the SKEWED table is made
  *       the smaller input (50000 vs 100000 rows) on purpose: the optimizer builds the hash table
  *       from the smaller side no matter how the FROM clause is ordered, and only a skewed BUILD
  *       side produces unequal partitions. Pairing a skewed probe with a small build - the obvious
@@ -66,7 +69,7 @@ set system parameters 'max_hash_list_scan_size=256k';
 set trace on;
 
 
-evaluate 'Case 1: N:M duplicate keys on both sides - parallel (expect 200000 pairs)';
+evaluate 'Case 1: N:M duplicate keys on both sides - parallel (expect 160000 pairs)';
 
 select /*+ recompile use_hash parallel(8) no_parallel_scan no_parallel_subquery */
   count (*) as cnt, sum (cast (a.ckey as bigint)) as skey, sum (b.cval) as sval
