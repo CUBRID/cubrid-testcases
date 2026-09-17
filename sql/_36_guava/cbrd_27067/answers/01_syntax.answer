@@ -6,11 +6,11 @@ Case 1: CREATE USER with no login clause defaults to loginable
 0
 ===================================================
 name    is_loginable    
-SYN_A1     YES     
+USR1     YES     
 
 ===================================================
     
-Case 2-3: CREATE USER ... LOGIN / NOLOGIN     
+Case 2: CREATE USER ... LOGIN / NOLOGIN     
 
 ===================================================
 0
@@ -18,12 +18,12 @@ Case 2-3: CREATE USER ... LOGIN / NOLOGIN
 0
 ===================================================
 name    is_loginable    
-SYN_A2N     NO     
-SYN_A2Y     YES     
+USR2     YES     
+USR3     NO     
 
 ===================================================
     
-Case 4: ALTER USER ... NOLOGIN then LOGIN     
+Case 3: ALTER USER ... NOLOGIN then LOGIN     
 
 ===================================================
 0
@@ -31,31 +31,43 @@ Case 4: ALTER USER ... NOLOGIN then LOGIN
 0
 ===================================================
 name    is_loginable    
-SYN_U1     NO     
+USR4     NO     
 
 ===================================================
 0
 ===================================================
 name    is_loginable    
-SYN_U1     YES     
+USR4     YES     
 
 ===================================================
     
-Case 5: re-applying the same login state is a no-op success     
+Case 4: re-applying the same login state, either direction, is a no-op     
 
 ===================================================
 0
 ===================================================
 0
 ===================================================
+name    is_loginable    
+USR4     NO     
+
+===================================================
+0
+===================================================
+0
+===================================================
+name    is_loginable    
+USR4     YES     
+
+===================================================
     
-Case 6: ALTER USER with no clause at all is unrelated pre-existing error     
+Case 5: ALTER USER with no clause at all is unrelated pre-existing error     
 
 ===================================================
 Error:-493
 ===================================================
     
-Case 7: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause     
+Case 6: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause     
 
 ===================================================
 0
@@ -65,15 +77,15 @@ Case 7: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS 
 0
 ===================================================
 name    is_loginable    comment    groups    
-SYN_A6     NO     c6     PUBLIC,SYN_G1,     
+USR5     NO     c5     PUBLIC,USR6,     
 
 ===================================================
 groups    
-PUBLIC,SYN_A6,SYN_G1,     
+PUBLIC,USR5,USR6,     
 
 ===================================================
     
-Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new password actually takes effect     
+Case 7: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new password actually takes effect     
 
 ===================================================
 0
@@ -81,7 +93,7 @@ Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new
 0
 ===================================================
 name    is_loginable    comment    
-SYN_U2     NO     c8     
+USR8     NO     c7     
 
 ===================================================
 0
@@ -97,7 +109,7 @@ null
 
 ===================================================
 CURRENT_USER    
-SYN_U2     
+USR8     
 
 ===================================================
     
@@ -105,10 +117,34 @@ null
 
 ===================================================
     
-Case 9: NOLOGIN written as two words is a syntax error     
+Case 8: NOLOGIN written as two words is a syntax error     
 
 ===================================================
 Error:-493
+===================================================
+    
+Case 9: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+Case 10: DROP USER refuses a user that still owns an object, and succeeds once the object is gone     
+
+===================================================
+0
+===================================================
+Error:-837
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

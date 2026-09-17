@@ -1,72 +1,91 @@
 /**
  * This test case verifies CBRD-27067: CREATE/ALTER USER LOGIN | NOLOGIN
- * syntax, catalog exposure via db_user.is_loginable, and clause ordering.
+ * syntax, catalog exposure via db_user.is_loginable, clause ordering, and
+ * general CREATE/ALTER/DROP USER syntax the manual documents alongside it.
  *
  * Coverage:
  * 1    CREATE USER with no clause defaults to loginable
- * 2-3  CREATE USER ... LOGIN / NOLOGIN
- * 4-5  ALTER USER ... LOGIN / NOLOGIN, and re-applying the same state (no-op)
- * 6    ALTER USER with no clause at all (unrelated pre-existing error)
- * 7    CREATE combined with PASSWORD, then NOLOGIN, then GROUPS/MEMBERS,
- *      then COMMENT, all four landing on the right clause
- * 8    ALTER combined with PASSWORD, then NOLOGIN, then COMMENT, the new
- *      password actually taking effect, checked as a non-DBA caller
- * 9    NOLOGIN written as two words is a syntax error
+ * 2    CREATE USER ... LOGIN / NOLOGIN
+ * 3-4  ALTER USER NOLOGIN/LOGIN, and re-applying the same state (no-op)
+ * 5    ALTER USER with no clause at all (unrelated pre-existing error)
+ * 6-7  CREATE/ALTER combined with PASSWORD, GROUPS/MEMBERS or COMMENT,
+ *      each landing on the right clause, new password taking effect
+ * 8    NOLOGIN written as two words is a syntax error
+ * 9    LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS, only on
+ *      the plain ALTER USER form
+ * 10   DROP USER refuses a user that still owns an object, succeeds once
+ *      the object is gone (general user-management syntax)
  */
 
 --+ holdcas on;
 
 evaluate 'Case 1: CREATE USER with no login clause defaults to loginable';
-CREATE USER syn_a1 PASSWORD 'pw';
-SELECT name, is_loginable FROM db_user WHERE name = 'SYN_A1';
+CREATE USER usr1 PASSWORD 'pw';
+SELECT name, is_loginable FROM db_user WHERE name = 'USR1';
 
-evaluate 'Case 2-3: CREATE USER ... LOGIN / NOLOGIN';
-CREATE USER syn_a2y PASSWORD 'pw' LOGIN;
-CREATE USER syn_a2n PASSWORD 'pw' NOLOGIN;
-SELECT name, is_loginable FROM db_user WHERE name IN ('SYN_A2Y', 'SYN_A2N') ORDER BY name;
+evaluate 'Case 2: CREATE USER ... LOGIN / NOLOGIN';
+CREATE USER usr2 PASSWORD 'pw' LOGIN;
+CREATE USER usr3 PASSWORD 'pw' NOLOGIN;
+SELECT name, is_loginable FROM db_user WHERE name IN ('USR2', 'USR3') ORDER BY name;
 
-evaluate 'Case 4: ALTER USER ... NOLOGIN then LOGIN';
-CREATE USER syn_u1 PASSWORD 'pw';
-ALTER USER syn_u1 NOLOGIN;
-SELECT name, is_loginable FROM db_user WHERE name = 'SYN_U1';
-ALTER USER syn_u1 LOGIN;
-SELECT name, is_loginable FROM db_user WHERE name = 'SYN_U1';
+evaluate 'Case 3: ALTER USER ... NOLOGIN then LOGIN';
+CREATE USER usr4 PASSWORD 'pw';
+ALTER USER usr4 NOLOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'USR4';
+ALTER USER usr4 LOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'USR4';
 
-evaluate 'Case 5: re-applying the same login state is a no-op success';
-ALTER USER syn_u1 LOGIN;
-ALTER USER syn_u1 LOGIN;
+evaluate 'Case 4: re-applying the same login state, either direction, is a no-op';
+ALTER USER usr4 NOLOGIN;
+ALTER USER usr4 NOLOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'USR4';
+ALTER USER usr4 LOGIN;
+ALTER USER usr4 LOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'USR4';
 
-evaluate 'Case 6: ALTER USER with no clause at all is unrelated pre-existing error';
-ALTER USER syn_u1;
+evaluate 'Case 5: ALTER USER with no clause at all is unrelated pre-existing error';
+ALTER USER usr4;
 
-evaluate 'Case 7: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause';
-CREATE USER syn_g1;
-CREATE USER syn_m1;
-CREATE USER syn_a6 PASSWORD 'pw6' NOLOGIN GROUPS syn_g1 MEMBERS syn_m1 COMMENT 'c6';
-SELECT name, is_loginable, comment, groups FROM db_user WHERE name = 'SYN_A6';
-SELECT groups FROM db_user WHERE name = 'SYN_M1';
+evaluate 'Case 6: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause';
+CREATE USER usr6;
+CREATE USER usr7;
+CREATE USER usr5 PASSWORD 'pw5' NOLOGIN GROUPS usr6 MEMBERS usr7 COMMENT 'c5';
+SELECT name, is_loginable, comment, groups FROM db_user WHERE name = 'USR5';
+SELECT groups FROM db_user WHERE name = 'USR7';
 
-evaluate 'Case 8: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new password actually takes effect';
-CREATE USER syn_u2 PASSWORD 'pw2';
-ALTER USER syn_u2 PASSWORD 'newpw2' NOLOGIN COMMENT 'c8';
-SELECT name, is_loginable, comment FROM db_user WHERE name = 'SYN_U2';
-ALTER USER syn_u2 LOGIN;
-CALL login('syn_u1', 'pw') ON CLASS db_user;
-CALL login('syn_u2', 'wrongpw') ON CLASS db_user;
-CALL login('syn_u2', 'newpw2') ON CLASS db_user;
+evaluate 'Case 7: ALTER USER combined clauses, PASSWORD then NOLOGIN then COMMENT, the new password actually takes effect';
+CREATE USER usr8 PASSWORD 'pw8';
+ALTER USER usr8 PASSWORD 'newpw8' NOLOGIN COMMENT 'c7';
+SELECT name, is_loginable, comment FROM db_user WHERE name = 'USR8';
+ALTER USER usr8 LOGIN;
+CALL login('usr4', 'pw') ON CLASS db_user;
+CALL login('usr8', 'wrongpw') ON CLASS db_user;
+CALL login('usr8', 'newpw8') ON CLASS db_user;
 SELECT current_user FROM db_root;
 CALL login('dba', '') ON CLASS db_user;
 
-evaluate 'Case 9: NOLOGIN written as two words is a syntax error';
-ALTER USER syn_u1 NO LOGIN;
+evaluate 'Case 8: NOLOGIN written as two words is a syntax error';
+ALTER USER usr4 NO LOGIN;
 
-DROP USER syn_a1;
-DROP USER syn_a2y;
-DROP USER syn_a2n;
-DROP USER syn_a6;
-DROP USER syn_g1;
-DROP USER syn_m1;
-DROP USER syn_u1;
-DROP USER syn_u2;
+evaluate 'Case 9: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS';
+CREATE USER usr9;
+CREATE USER usr10;
+ALTER USER usr9 ADD MEMBERS usr10 NOLOGIN;
+
+evaluate 'Case 10: DROP USER refuses a user that still owns an object, and succeeds once the object is gone';
+CREATE TABLE usr1.tbl1 (col1 INT);
+DROP USER usr1;
+DROP TABLE usr1.tbl1;
+DROP USER usr1;
+
+DROP USER usr2;
+DROP USER usr3;
+DROP USER usr4;
+DROP USER usr5;
+DROP USER usr6;
+DROP USER usr7;
+DROP USER usr8;
+DROP USER usr9;
+DROP USER usr10;
 
 --+ holdcas off;
