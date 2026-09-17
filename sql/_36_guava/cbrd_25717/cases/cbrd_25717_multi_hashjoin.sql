@@ -10,7 +10,9 @@
  * How verified: every parallel case is paired with a single-threaded (no_parallel_hash_join) run
  *           of the same query - the results must be identical. Both runs emit SQL Trace, so the
  *           answer records how many HASHJOIN nodes the plan had and which of them got workers.
- * Note: the three tables share key range 1..100000 so both joins actually match. SUM is cast to
+ * Note: t_mha and t_mhb hold keys 1..100000 while t_mhc holds only 1..90000, so the LEFT OUTER
+ *       second join keeps 10000 rows that find no partner and must survive NULL-extended.
+ *       The first join still matches fully. SUM is cast to
  *       BIGINT to avoid INT overflow, and every result is a single aggregate row, so no ORDER BY
  *       is needed for determinism.
  * Source: own addition (not in the JIRA attachment) - covers multi-node parallel hash join.
@@ -36,7 +38,7 @@ insert into t_mhb
 
 insert into t_mhc
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
-  select rownum, mod (rownum, 3) from cte a, cte b limit 100000;
+  select rownum, mod (rownum, 3) from cte a, cte b limit 90000;
 
 update statistics on t_mha, t_mhb, t_mhc;
 

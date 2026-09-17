@@ -197,29 +197,6 @@ Case 4: bind (host) variables in during-join predicate
 
 ===================================================
 0
-Query plan:
-hash-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: a node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               cost:  ? card ?
-    during:term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.id, a.filter, b.id, b.filter from t_during a left outer join t_during b on (a.filter> ?:? ) and (a.id> ?:?  and a.id< ?:? ) and a.id=b.id)
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: __t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? desc
-    cost:  ? card ?
-Query stmt:
-select /*+ NO_PUSH_PRED NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ [__t?].a_id, [__t?].a_filter, [__t?].b_id, [__t?].b_filter from (select /*+ USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ a.id as [a_id], a.filter as [a_filter], b.id as [b_id], b.filter as [b_filter] from t_during a left outer join t_during b on (a.filter> ?:? ) and (a.id> ?:?  and a.id< ?:? ) and a.id=b.id) [__t?] (a_id, a_filter, b_id, b_filter) where [__t?].b_id is not null  order by ? desc 
 ===================================================
 a_id    a_filter    b_id    b_filter    
 40691     fffffe98d0963d27015c198262d97221     40691     fffffe98d0963d27015c198262d97221     

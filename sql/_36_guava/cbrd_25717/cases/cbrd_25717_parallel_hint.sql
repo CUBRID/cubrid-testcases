@@ -83,7 +83,7 @@ where a.ckey = b.ckey;
 show trace;
 
 
-evaluate 'Case 4: PARALLEL(0) -> thread pool cannot be reserved -> parallel hash join not performed';
+evaluate 'Case 4: PARALLEL(0) -> degree below 2 -> parallel hash join not requested';
 
 set system parameters 'max_hash_list_scan_size=256k';
 
@@ -115,7 +115,7 @@ where a.ckey = b.ckey;
 show trace;
 
 
-evaluate 'Case 6: invalid PARALLEL hint value is clamped';
+evaluate 'Case 6: PARALLEL(-1000) -> negative degree clamped to 0, same path as Case 4';
 
 set system parameters 'max_hash_list_scan_size=256k';
 

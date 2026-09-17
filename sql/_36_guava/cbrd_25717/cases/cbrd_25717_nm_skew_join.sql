@@ -37,7 +37,7 @@ create table t_nmb (ckey int, cval int);
 
 insert into t_nma
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
-  select mod (rownum, 2000), mod (rownum, 7) from cte a, cte b limit 20000;
+  select mod (rownum, 2500), mod (rownum, 7) from cte a, cte b limit 20000;
 
 insert into t_nmb
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)

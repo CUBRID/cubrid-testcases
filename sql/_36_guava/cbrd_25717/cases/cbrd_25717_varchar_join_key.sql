@@ -11,7 +11,10 @@
  *           of the same query - the results must be identical. Both runs emit SQL Trace; the
  *           PARALLEL node and the HASHJOIN "parallel workers" attribute appear only in the
  *           parallel case.
- * Note: md5() yields a fixed 32-char hex string, so Case 5/6 add a genuinely variable-length key
+ * Note: t_vcb holds only 90000 of t_vca's 100000 keys on purpose, so the LEFT OUTER cases keep
+ *       10000 rows that find no partner and must survive NULL-extended. A LEFT OUTER where every
+ *       row matches never exercises hjoin_outer_fill_null_values at all.
+ *       md5() yields a fixed 32-char hex string, so Case 5/6 add a genuinely variable-length key
  *       (md5 repeated 1..3 times) to make page occupancy uneven rather than merely non-integer.
  *       Keys stay unique per row, so the joins are 1:1 and the counts are exact.
  * Source: own addition (not in the JIRA attachment) - matches the issue's own varchar workload.
@@ -33,7 +36,7 @@ insert into t_vca
 
 insert into t_vcb
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
-  select md5 (rownum), mod (rownum, 5) from cte a, cte b limit 100000;
+  select md5 (rownum), mod (rownum, 5) from cte a, cte b limit 90000;
 
 -- variable-width string key (md5 repeated 1..3 times -> 32 / 64 / 96 chars)
 create table t_vva (ckey varchar(128), cval int);

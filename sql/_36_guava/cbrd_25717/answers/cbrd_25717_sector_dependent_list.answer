@@ -11,7 +11,7 @@
 ===================================================
 60000
 ===================================================
-40000
+30000
 ===================================================
 0
 ===================================================
@@ -24,7 +24,7 @@ Case 1: PARALLEL hash join with UNION ALL inner (dependent list) - result
 0
 ===================================================
 cnt    skey    sval    
-100000     5000050000     200000     
+90000     4050045000     180000     
 
 ===================================================
 trace    
@@ -42,13 +42,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_sda] a, (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_sda] a, (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -64,10 +63,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -76,7 +73,7 @@ Case 2: same join single-threaded (NO_PARALLEL_HASH_JOIN) - must match Case 1
 
 ===================================================
 cnt    skey    sval    
-100000     5000050000     200000     
+90000     4050045000     180000     
 
 ===================================================
 trace    
@@ -94,13 +91,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_sda] a, (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(a.ckey as bigint)), sum(b.cval) from [dba.t_sda] a, (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -115,10 +111,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -127,7 +121,7 @@ Case 3: deeper dependent-list chain (4-way UNION ALL) - parallel
 
 ===================================================
 cnt    sval    
-200000     400000     
+180000     360000     
 
 ===================================================
 trace    
@@ -153,13 +147,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(b.cval) from [dba.t_sda] a, (((select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) union all select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb]) union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum(b.cval) from [dba.t_sda] a, (((select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) union all select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb]) union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -183,10 +176,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -195,7 +186,7 @@ Case 4: same 4-way UNION ALL join single-threaded - must match Case 3
 
 ===================================================
 cnt    sval    
-200000     400000     
+180000     360000     
 
 ===================================================
 trace    
@@ -221,13 +212,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), sum(b.cval) from [dba.t_sda] a, (((select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) union all select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb]) union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum(b.cval) from [dba.t_sda] a, (((select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) union all select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb]) union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -250,10 +240,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -262,7 +250,7 @@ Case 5: UNION ALL on BOTH sides (both inputs carry dependent lists) - parallel
 
 ===================================================
 cnt    
-100000     
+90000     
 
 ===================================================
 trace    
@@ -288,13 +276,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) a (ckey), (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) b (ckey) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) a (ckey), (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) b (ckey) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -317,10 +304,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -329,7 +314,7 @@ Case 6: same both-sides join single-threaded - must match Case 5
 
 ===================================================
 cnt    
-100000     
+90000     
 
 ===================================================
 trace    
@@ -355,13 +340,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) a (ckey), (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) b (ckey) where a.ckey=b.ckey
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) a (ckey), (select [dba.t_sdb].ckey from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey from [dba.t_sdc] [dba.t_sdc]) b (ckey) where a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -383,10 +367,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -395,7 +377,7 @@ Case 7: LEFT OUTER join, UNION ALL null-supplying side - parallel
 
 ===================================================
 cnt    matched    
-100000     100000     
+100000     90000     
 
 ===================================================
 trace    
@@ -413,13 +395,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_sda] a left outer join (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) on a.ckey=b.ckey
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_sda] a left outer join (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) on a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -435,10 +416,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -447,7 +426,7 @@ Case 8: same LEFT OUTER join single-threaded - must match Case 7
 
 ===================================================
 cnt    matched    
-100000     100000     
+100000     90000     
 
 ===================================================
 trace    
@@ -465,13 +444,12 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count(b.ckey) from [dba.t_sda] a left outer join (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) on a.ckey=b.ckey
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count(b.ckey) from [dba.t_sda] a left outer join (select [dba.t_sdb].ckey, [dba.t_sdb].cval from [dba.t_sdb] [dba.t_sdb] union all select [dba.t_sdc].ckey, [dba.t_sdc].cval from [dba.t_sdc] [dba.t_sdc]) b (ckey, cval) on a.ckey=b.ckey
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_sdb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -486,10 +464,8 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sda), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================

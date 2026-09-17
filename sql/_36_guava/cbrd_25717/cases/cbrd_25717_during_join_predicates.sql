@@ -7,15 +7,6 @@
  *           the test from an enumeration (pt_is_expr_node || pt_is_function) to its complement
  *           (!pt_is_name_node), so node kinds outside those two stop being skipped.
  *           A/C: parallel result == serial
- * Note: Case 4 needs a SECOND answer file, cbrd_25717_during_join_predicates.answer_cci.
- *           Case 4 puts "--@queryplan" in front of a PREPARE statement. The CTP CCI runner
- *           (sql_by_cci/execute.c) emits a query plan only for SELECT / CALL / EVALUATE /
- *           GET_STATS and for UPDATE / DELETE - every other statement type falls through to a
- *           branch that prints just the affected-row count, so the directive is silently ignored
- *           for PREPARE. The JDBC runner (ConsoleDAO.java) calls getQueryplan() whenever the
- *           directive is set, regardless of statement type, and does print it. The _cci answer is
- *           therefore the same file minus Case 4's plan block. This is a CTP runner limitation,
- *           not a product difference - drop the extra answer file once CTP is fixed.
  * Source: JIRA attachment cbrd-25717_test-case_20260811.zip (adapted)
  */
 
@@ -124,7 +115,6 @@ show trace;
 
 evaluate 'Case 4: bind (host) variables in during-join predicate';
 
---@queryplan
 prepare q from '
 select /*+ no_push_pred
            no_parallel_scan

@@ -46,11 +46,12 @@ limit 1;
 
 show trace;
 
-evaluate 'Case 2: same query with PARALLEL(0) - serial baseline, identical count';
+evaluate 'Case 2: same query with NO_PARALLEL_HASH_JOIN - serial baseline, identical count';
 
 select /*+ recompile
            use_hash
-           parallel(0) */
+           parallel(8)
+           no_parallel_hash_join */
   count (*)
 from t_agg a, t_agg b
 where a.ckey = b.ckey

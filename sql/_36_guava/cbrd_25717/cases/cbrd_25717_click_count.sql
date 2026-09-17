@@ -27,6 +27,18 @@ insert into t_click_counter
 
 insert into t_filter values (10000);
 
+/*
+ * Cases 1-4 all touch the SAME row (ckey = 10000) and are therefore order-dependent.
+ * INCR / DECR return the value BEFORE the change, so cval walks 0 -> 1 -> 2 -> 1 -> 0 and the
+ * expected output is 0, 1, 2, 1 - each case reads what the previous one left behind:
+ *     Case 1  INCR            reads 0, leaves 1
+ *     Case 2  WITH INCREMENT  reads 1, leaves 2
+ *     Case 3  DECR            reads 2, leaves 1
+ *     Case 4  WITH DECREMENT  reads 1, leaves 0
+ * Reordering the cases, or dropping one, shifts every later expected value. Keep them together
+ * and in this order.
+ */
+
 
 evaluate 'Case 1: INCR function used -> hash join must not be performed (HINT ignored)';
 

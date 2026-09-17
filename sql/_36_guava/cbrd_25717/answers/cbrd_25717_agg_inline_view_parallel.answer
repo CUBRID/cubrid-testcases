@@ -55,7 +55,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 2: same query with PARALLEL(0) - serial baseline, identical count     
+Case 2: same query with NO_PARALLEL_HASH_JOIN - serial baseline, identical count     
 
 ===================================================
 count(*)    
@@ -69,11 +69,11 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
+  rewritten query: (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
 
   TABLE SCAN (a)
 
-  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
+  rewritten query: select a.a_? from (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -82,6 +82,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
           HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
             BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
@@ -90,8 +91,10 @@ Trace Statistics:
                      (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
