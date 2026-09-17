@@ -93,6 +93,8 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+          EXPR_COMPILE (aggregate operands): plain operands (peeked in place, no program) [px worker]
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
@@ -112,8 +114,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    EXPR_COMPILE (aggregate operands): active
-      agg[?]: generic
+    EXPR_COMPILE (aggregate operands): plain operands (peeked in place, no program)
     EXPR_COMPILE (data filter): active
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -146,6 +147,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -265,6 +267,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (set time: ?, fetch: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -317,6 +320,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (noscan time: ?, fetch: ?, ioread: ?)
      
 
@@ -374,6 +378,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -663,6 +668,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          EXPR_COMPILE (data filter): active [px worker]
       SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
