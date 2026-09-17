@@ -961,10 +961,10 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1128,6 +1128,179 @@ Trace Statistics:
                     SCAN (table: dba.ttb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ttc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+    
+CBRD-26670: session var wrapping an analytic function (original repro) - should not crash     
+
+===================================================
+@v := count(b) over (partition by a+a order by b+b)    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select @v := count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select @v := count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+CBRD-26670: session var inside the analytic argument - should not crash     
+
+===================================================
+count(@v := b) over (partition by a order by b)    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count(@v := [dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count(@v := [dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+CBRD-26670: session var in the analytic PARTITION BY - should not crash     
+
+===================================================
+count(b) over (partition by @v := a order by b)    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+CBRD-26670: session var in the analytic window ORDER BY - should not crash     
+
+===================================================
+count(b) over (partition by a order by @v := b)    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+CBRD-26670: NO_PARALLEL_SUBQUERY (serial) control - should not crash     
+
+===================================================
+@v := count(b) over (partition by a+a order by b+b)    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ @v := count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+  TABLE SCAN (dba.zt)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ @v := count([dba.zt].b) over (partition by ? order by ?) from [dba.zt] [dba.zt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.zt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================

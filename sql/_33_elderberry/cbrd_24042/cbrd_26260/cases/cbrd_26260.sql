@@ -149,6 +149,12 @@ WHERE a.cola BETWEEN ? AND ?';
 execute sc using 20, 1, 4;
 deallocate prepare sc;
 
+drop view if exists view_b;
+drop view if exists view_c;
+drop view if exists view_a;
+drop view if exists view_b_key;
+drop view if exists view_b_distinct;
+drop view if exists view_b_group;
 drop table if exists tbl_a;
 drop table if exists tbl_b;
 drop table if exists tbl_c;

@@ -455,16 +455,16 @@ count(*)
 Query plan:
 iscan
     class: t node[?]
-    index: idx term[?] (index skip scan)
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? ))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k)
 ===================================================
 count(*)    
 12000     
@@ -472,16 +472,16 @@ count(*)
 Query plan:
 iscan
     class: t node[?]
-    index: idx term[?] (index skip scan)
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? ))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k)
 ===================================================
 1
 ===================================================
@@ -499,16 +499,16 @@ count(*)
 Query plan:
 iscan
     class: t node[?]
-    index: idx term[?] (index skip scan)
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? ))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k)
 ===================================================
 count(*)    
 12003     
@@ -516,15 +516,15 @@ count(*)
 Query plan:
 iscan
     class: t node[?]
-    index: idx term[?] (index skip scan)
+    index: idx term[?] (covers) (index skip scan)
     cost:  ? card ?
 Query stmt:
-(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? ))
+(select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? ))
 Query plan:
 sscan
     class: tt node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k, t.l from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k, l)
+select count(*) from (select /*+ INDEX_SS NO_MERGE */ t.i, t.j, t.k from t t where (t.j>= ?:?  and t.j<= ?:? )) tt (i, j, k)
 ===================================================
 0

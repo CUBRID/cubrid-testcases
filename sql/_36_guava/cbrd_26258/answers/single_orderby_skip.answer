@@ -783,7 +783,7 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.tbl_a.i?_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-          GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+          GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -849,7 +849,8 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, rows: ?)
+          GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      

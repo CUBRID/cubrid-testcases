@@ -396,7 +396,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb from (select t.ca, t.cb from t t where inst_num()<=?+? union all select t.ca, t.cb from t t where inst_num()<=?+?) d? (ca, cb) where (inst_num()> ?:?  and inst_num()<= ?:? )
+select d?.a_?, d?.a_? from (select t.ca, t.cb from t t where inst_num()<=?+? union all select t.ca, t.cb from t t where inst_num()<=?+?) d? (a_?, a_?) where (inst_num()> ?:?  and inst_num()<= ?:? )
 ===================================================
 0
 ===================================================
@@ -436,7 +436,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where (t.ca= ?:? ) and inst_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select t.ca, t.cb, t.cc from t t where (t.ca= ?:? ) and inst_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    cb    cc    
 1     0     10     
@@ -497,7 +497,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  union select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  union select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    cb    cc    
 1     0     18     
@@ -531,7 +531,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where (rownum>= ?:? ) and t.cb= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    cb    cc    
 1     0     10     
@@ -571,7 +571,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select t.ca, t.cb, t.cc from t t where t.ca= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:?  group by t.ca, t.cb, t.cc having groupby_num()<= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    count(cb)    max(cc)    
 1     10     19     
@@ -615,7 +615,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.a_?, d?.a_? from ((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca having groupby_num()<= ?:?  union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (rownum> ?:? ) and t.cb= ?:? ) d? (ca, a_?, a_?) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from ((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca having groupby_num()<= ?:?  union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where (rownum> ?:? ) and t.cb= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    count(cb)    max(cc)    
 1     10     19     
@@ -666,7 +666,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.a_?, d?.a_? from (((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) d? (ca, a_?, a_?) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (((select t.ca, count(t.cb), max(t.cc) from t t where t.ca= ?:?  group by t.ca union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) union all select t.ca,  cast(t.cb as bigint) as [cb], t.cc from t t where t.cb= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    cb    cc    
 1     0     10     
@@ -702,7 +702,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select distinct t.ca, t.cb, t.cc from t t where t.ca= ?:?  for orderby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select distinct t.ca, t.cb, t.cc from t t where t.ca= ?:?  for orderby_num()<= ?:?  union all select t.ca, t.cb, t.cc from t t where (t.cb= ?:? ) and inst_num()<= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 ca    cb    cc    
 1     0     10     
@@ -736,7 +736,7 @@ sscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select d?.ca, d?.cb, d?.cc from (select /*+ NO_PUSH_PRED */ t.ca, t.cb, t.cc from t t where t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (ca, cb, cc) where (inst_num()<= ?:? )
+select d?.a_?, d?.a_?, d?.a_? from (select /*+ NO_PUSH_PRED */ t.ca, t.cb, t.cc from t t where t.ca= ?:?  union all select t.ca, t.cb, t.cc from t t where t.cb= ?:? ) d? (a_?, a_?, a_?) where (inst_num()<= ?:? )
 ===================================================
 0
 ===================================================

@@ -174,3 +174,26 @@ alter table uuid_def_t add column c4 string default uuid(7);
 alter table uuid_def_t add column c5 bit(128) default uuid(null);
 select count(*) wrongly_added from db_attribute where class_name = 'uuid_def_t' and attr_name in ('c1', 'c2', 'c3', 'c4', 'c5');
 drop table uuid_def_t;
+
+evaluate '[TEST 10] DEFAULT UUID decimal arguments are rounded and normalized';
+drop table if exists uuid_arg_def_t;
+create table uuid_arg_def_t (u4 bit(128) default uuid(4.111), u7 bit(128) default uuid(7.321), v int);
+show create table uuid_arg_def_t;
+insert into uuid_arg_def_t(v) values (1), (2), (3);
+select count(*) total,
+       count(distinct u4) u4_uniq,
+       count(distinct u7) u7_uniq,
+       count(case when substr(uuid_format(u4), 15, 1) = '4' then 1 end) u4_is_v4,
+       count(case when substr(uuid_format(u7), 15, 1) = '7' then 1 end) u7_is_v7
+from uuid_arg_def_t;
+drop table uuid_arg_def_t;
+ 
+evaluate '[TEST 11] DEFAULT UUID argument coercion overflow and rounded unsupported versions raise errors at CREATE TABLE (DDL) time';
+drop table if exists uuid_arg_def_e1, uuid_arg_def_e2, uuid_arg_def_e3;
+create table uuid_arg_def_e1 (u bit(128) default uuid(99999999999999999));
+create table uuid_arg_def_e2 (u bit(128) default uuid(4.6));
+create table uuid_arg_def_e3 (u bit(128) default uuid(7.5));
+select count(*) wrongly_created
+from db_class
+where class_name in ('uuid_arg_def_e1', 'uuid_arg_def_e2', 'uuid_arg_def_e3');
+drop table if exists uuid_arg_def_e1, uuid_arg_def_e2, uuid_arg_def_e3;

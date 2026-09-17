@@ -181,4 +181,9 @@ on b.cola = 1
 and a.colb = b.colb
 where b.cola is not null;
 
+drop view if exists v;
+drop view if exists v_simple;
+drop view if exists v_multi;
+drop view if exists v_partial_pk;
+drop view if exists v_cond;
 drop table if exists tbl;

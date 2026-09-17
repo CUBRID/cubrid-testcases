@@ -550,19 +550,27 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    TABLE SCAN (t?)
+  HASH JOIN (inner join)
     TABLE SCAN (t)
+    TABLE SCAN (t?)
 
   rewritten query: select count(*) from [dba.tree?] t inner join [dba.tree?] t? on t.id=t?.treeid start with t.mgrid is null  and t.gubun= ?:?  connect by  prior t.id=t.mgrid and t.gubun= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tree?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
