@@ -1,8 +1,16 @@
 /**
- * CBRD-27215 (PR #7658 review): SUM(numeric * ?) with an INTEGER/BIGINT/SHORT host variable must
- * coerce the integer side to NUMERIC and multiply with the plain numeric family, as the interpreter
- * does (qdata_multiply_numeric ()) -- not report an overflow, and with the same result scale.
- * A NUMERIC bind keeps the pure NUMERIC x NUMERIC (float) path; rebinding another type recompiles.
+ * CBRD-27215 (PR #7658 review): SUM(numeric * ?) with an integer-family host variable must coerce
+ * the integer side to NUMERIC and multiply with the plain numeric family, as the interpreter does
+ * (qdata_multiply_numeric ()) -- not report an overflow, and with the same result scale. Rebinding
+ * another type recompiles the program.
+ *
+ * What the markers below actually bind (CTP sql harness, CubridUtil.getSqlType () +
+ * ConsoleDAO): $int -> setInt, $smallint -> setObject, $numeric -> setDouble, and any name the
+ * map does not know falls back to VARCHAR -> setString. So this case covers the INTEGER and
+ * SMALLINT binds directly, and reaches the NUMERIC and DOUBLE right-hand sides through the
+ * column types rather than through the bind. BIGINT and true NUMERIC (BigDecimal) binds are not
+ * expressible here; cbrd_27215_hostvar_prog.sql covers them with csql "prepare ... execute ...
+ * using", where the literal's own type reaches the server.
  */
 
 drop table if exists t1;
@@ -14,9 +22,8 @@ insert into t1 values (4, 0, 5, 0, 1.00, 8000000000, 4.5, 'xyz', date'2025-06-30
 
 $int, $2
 select sum(n1 * ?) from t1;
-$bigint, $2
-select sum(n1 * ?) from t1;
-$short, $2
+select sum(n1 * bi) from t1;
+$smallint, $2
 select sum(n1 * ?) from t1;
 $numeric, $2.00
 select sum(n1 * ?) from t1;
@@ -24,15 +31,13 @@ $int, $3
 select sum(n1 * ?) from t1;
 $int, $2
 select sum(? * n1) from t1;
-$bigint, $2
-select sum(? * n1) from t1;
+select sum(bi * n1) from t1;
 $int, $2, $int, $2, $int, $2, $int, $2
 select sum(n1 * ?), sum(n1 + ?), sum(n1 - ?), sum(n1 / ?) from t1;
 $numeric, $2.5, $numeric, $2.5, $numeric, $2.5, $numeric, $2.5
 select sum(n1 * ?), sum(n1 + ?), sum(n1 - ?), sum(n1 / ?) from t1;
 $int, $2
 select id, n1 * ? from t1 order by id;
-$bigint, $2
-select id, n1 * ? from t1 order by id;
+select id, n1 * bi from t1 order by id;
 select sum(n1 * bi), sum(n1 * a), sum(n1 * 2), sum(bi * n1), sum(n1 * 2.5) from t1;
 drop table t1;

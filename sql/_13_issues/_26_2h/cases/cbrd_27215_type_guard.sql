@@ -13,4 +13,9 @@ with recursive r(n, m) as (select 1, 1 from db_root union all select n + 1, m * 
 with recursive r(n) as (select cast(1 as bigint) from db_root union all select n * 1000000007 from r where n < 1000000000000000) select n, n = 1000000007, n > 5 from r;
 select id, extract(year from dt), extract(month from dt), extract(day from dt) from t1 order by id;
 select sum(case when bi > 5500000000 then 1 else 0 end), sum(case when d > 2.0 then 1 else 0 end) from t1;
+-- the scan filter reads a TYPE_CONSTANT whose run-time value changes type: the anchor is INTEGER
+-- and the recursive step turns it into BIGINT, so a leaf compiled for INTEGER must not trust the
+-- domain. Anchoring the CTE as BIGINT from the start would not reproduce the change.
+with recursive rc(n) as (select 1 from db_root union all select (select count(*) from t1 where id <= rc.n) + rc.n from rc where n < 5) select * from rc;
+with recursive rc(n) as (select 1 from db_root union all select (select count(*) from t1 where id <= rc.n) * 4294967296 + rc.n from rc where n < 3) select n, n > 1000000000 from rc;
 drop table t1;

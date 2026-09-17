@@ -30,4 +30,16 @@ select id, a + (case when c = 0 then b else b / c end) from t1 order by id;
 select id, a + nvl(a, b / c) from t1 order by id;
 select id, (a + b / c) + (a * b / c) from t1 order by id;
 select id, case when a is not null and a + b / c > 0 then 1 else 0 end from t1 order by id;
+
+-- a single comparison, not an AND/OR chain: the interpreter fetches the right operand only for a
+-- non-NULL left one, so a NULL left side must not run b / c (id = 1 has a NULL a and c = 0)
+select case when a > b / c then 1 else 0 end from t1 where id = 1;
+select if (a > b / c, 1, 0) from t1 where id = 1;
+select a > b / c from t1 where id = 1;
+select sum(case when a > b / c then 1 else 0 end) from t1 where id = 1;
+select id, case when a > b / c then 1 else 0 end from t1 order by id;
+-- the same skip through LIKE: the pattern is fetched only for a non-NULL source
+insert into t1 values (5, NULL, 7, 0, 1.00, 1, 1.0, NULL, NULL);
+select id, s like cast (b / c as varchar) from t1 where id = 5;
+select id, case when s like cast (b / c as varchar) then 1 else 0 end from t1 where id = 5;
 drop table t1;
