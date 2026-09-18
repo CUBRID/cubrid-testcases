@@ -13,6 +13,12 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
     
 Case 1: COUNT(*) and COUNT(col) -> parallel heap scan (buildvalue)     
 
@@ -329,8 +335,8 @@ Trace Statistics:
 Case 9: DISTINCT variants -> parallel heap scan (buildvalue)     
 
 ===================================================
-count(distinct cola)    sum(distinct cola)    avg(distinct cola)    min(colb)    max(colb)    
-100     4950     49.5     00000000000000000000     00000000000000000049     
+count(distinct cola)    sum(distinct cola)    avg(distinct cola)    count(distinct colb)    count(distinct colc)    sum(distinct colc)    min(colb)    max(colb)    
+100     4950     49.5     50     200     29850.0     00000000000000000000     00000000000000000049     
 
 ===================================================
 trace    
@@ -338,7 +344,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bv)
 
-  rewritten query: select count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), min([dba.bv].colb), max([dba.bv].colb) from [dba.bv] [dba.bv]
+  rewritten query: select count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), count(distinct [dba.bv].colb), count(distinct [dba.bv].colc), sum(distinct [dba.bv].colc), min([dba.bv].colb), max([dba.bv].colb) from [dba.bv] [dba.bv]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -347,8 +353,8 @@ Trace Statistics:
      
 
 ===================================================
-count(distinct cola)    sum(distinct cola)    avg(distinct cola)    min(colb)    max(colb)    
-100     4950     49.5     00000000000000000000     00000000000000000049     
+count(distinct cola)    sum(distinct cola)    avg(distinct cola)    count(distinct colb)    count(distinct colc)    sum(distinct colc)    min(colb)    max(colb)    
+100     4950     49.5     50     200     29850.0     00000000000000000000     00000000000000000049     
 
 ===================================================
 trace    
@@ -356,7 +362,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bv)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), min([dba.bv].colb), max([dba.bv].colb) from [dba.bv] [dba.bv]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), count(distinct [dba.bv].colb), count(distinct [dba.bv].colc), sum(distinct [dba.bv].colc), min([dba.bv].colb), max([dba.bv].colb) from [dba.bv] [dba.bv]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -740,6 +746,147 @@ Trace Statistics:
 Error:-458
 Overflow occurred in addition context.
 
+===================================================
+    
+Case 20: STDDEV and VARIANCE families with DISTINCT -> parallel heap scan (buildvalue)     
+
+===================================================
+stddev(distinct cola)    stddev_pop(distinct cola)    stddev_samp(distinct cola)    variance(distinct cola)    var_pop(distinct cola)    var_samp(distinct cola)    
+28.866070048     28.866070048     29.011491976     833.25     833.25     841.666666667     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select stddev(distinct [dba.bv].cola), stddev_pop(distinct [dba.bv].cola), stddev_samp(distinct [dba.bv].cola), variance(distinct [dba.bv].cola), var_pop(distinct [dba.bv].cola), var_samp(distinct [dba.bv].cola) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+stddev(distinct cola)    stddev_pop(distinct cola)    stddev_samp(distinct cola)    variance(distinct cola)    var_pop(distinct cola)    var_samp(distinct cola)    
+28.866070048     28.866070048     29.011491976     833.25     833.25     841.666666667     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ stddev(distinct [dba.bv].cola), stddev_pop(distinct [dba.bv].cola), stddev_samp(distinct [dba.bv].cola), variance(distinct [dba.bv].cola), var_pop(distinct [dba.bv].cola), var_samp(distinct [dba.bv].cola) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 21: DISTINCT aggregates over no matching row and over an all-NULL column -> parallel heap scan (buildvalue)     
+
+===================================================
+count(distinct cola)    sum(distinct cola)    avg(distinct cola)    stddev(distinct cola)    
+0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), stddev(distinct [dba.bv].cola) from [dba.bv] [dba.bv] where ([dba.bv].cola< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(distinct cola)    sum(distinct cola)    avg(distinct cola)    stddev(distinct cola)    
+0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct [dba.bv].cola), sum(distinct [dba.bv].cola), avg(distinct [dba.bv].cola), stddev(distinct [dba.bv].cola) from [dba.bv] [dba.bv] where ([dba.bv].cola< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(distinct coln)    sum(distinct coln)    avg(distinct coln)    variance(distinct coln)    
+10000     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select count(*), count(distinct [dba.bv].coln), sum(distinct [dba.bv].coln), avg(distinct [dba.bv].coln), variance(distinct [dba.bv].coln) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct coln)    sum(distinct coln)    avg(distinct coln)    variance(distinct coln)    
+10000     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.bv].coln), sum(distinct [dba.bv].coln), avg(distinct [dba.bv].coln), variance(distinct [dba.bv].coln) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 22: SUM overflowing inside a single worker -> same error as serial     
+
+===================================================
+Error:-458
+Overflow occurred in addition context.
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.ovfw)
+
+  rewritten query: select sum([dba.ovfw].b) from [dba.ovfw] [dba.ovfw]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ovfw), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+Error:-458
+Overflow occurred in addition context.
+
+===================================================
+0
 ===================================================
 0
 ===================================================

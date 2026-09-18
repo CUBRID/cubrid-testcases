@@ -46,6 +46,9 @@
  *    Case 18:    DISTINCT and non-DISTINCT aggregates in the same query
  *    Case 19:    SUM that overflows only after the per-worker parts are added
  *                together -- parallel must raise the same error as serial
+ *    Case 20:    STDDEV and VARIANCE families with DISTINCT
+ *    Case 21:    DISTINCT aggregates over no matching row and over an all-NULL column
+ *    Case 22:    SUM that overflows inside one worker -- the other error site
  */
 
 drop table if exists bv;
@@ -69,6 +72,16 @@ drop table if exists ovf;
 create table ovf (id int, b bigint, colb varchar(20), colc varchar(20), cold varchar(20), cole varchar(20));
 insert into ovf
 select rownum, 1106804644422573, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0'),
+       lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0')
+from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
+
+/* Every row holds the BIGINT maximum, so a worker overflows as soon as it adds
+ * its second row. The error is raised inside the worker, before any partial
+ * result is merged -- the other error site that Case 19 cannot reach. */
+drop table if exists ovfw;
+create table ovfw (id int, b bigint, colb varchar(20), colc varchar(20), cold varchar(20), cole varchar(20));
+insert into ovfw
+select rownum, 9223372036854775807, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0'),
        lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0')
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
 
@@ -149,12 +162,20 @@ show trace;
 
 evaluate 'Case 9: DISTINCT variants -> parallel heap scan (buildvalue)';
 -- DISTINCT keeps a per-thread list that is connected at the end instead of being
--- accumulated in place; the gather mode stays buildvalue.
+-- accumulated in place; the gather mode stays buildvalue. colb has 50 distinct
+-- values and colc has 200, out of 10000 rows, so the counts below only come out
+-- right if the duplicates really were removed.
+-- MIN and MAX are the exception: their result does not depend on duplicates, so
+-- the optimizer drops the DISTINCT and they run on the ordinary path. The answer
+-- file therefore shows them as plain min(colb) / max(colb). They are kept here
+-- because the acceptance criteria list a DISTINCT variant for every function.
 select /*+ recompile */ count(distinct cola), sum(distinct cola), avg(distinct cola),
+       count(distinct colb), count(distinct colc), sum(distinct colc),
        min(distinct colb), max(distinct colb) from bv;
 show trace;
 -- serial reference
 select /*+ recompile no_parallel_scan */ count(distinct cola), sum(distinct cola), avg(distinct cola),
+       count(distinct colb), count(distinct colc), sum(distinct colc),
        min(distinct colb), max(distinct colb) from bv;
 show trace;
 
@@ -265,7 +286,56 @@ select /*+ recompile no_parallel_scan */ sum(b) from ovf;
 --+ server-message off
 
 
+evaluate 'Case 20: STDDEV and VARIANCE families with DISTINCT -> parallel heap scan (buildvalue)';
+-- these six take the per-thread list path like COUNT/SUM/AVG DISTINCT in Case 9,
+-- but the main thread finishes them by walking the connected list and summing
+-- X and X^2. cola holds 100 distinct values, so the population figures match
+-- Case 4 while the sample figures use n = 100 instead of 10000 and differ.
+select /*+ recompile */ stddev(distinct cola), stddev_pop(distinct cola), stddev_samp(distinct cola),
+       variance(distinct cola), var_pop(distinct cola), var_samp(distinct cola) from bv;
+show trace;
+-- serial reference
+select /*+ recompile no_parallel_scan */ stddev(distinct cola), stddev_pop(distinct cola), stddev_samp(distinct cola),
+       variance(distinct cola), var_pop(distinct cola), var_samp(distinct cola) from bv;
+show trace;
+
+
+evaluate 'Case 21: DISTINCT aggregates over no matching row and over an all-NULL column -> parallel heap scan (buildvalue)';
+-- every worker ends with an empty list; the merge must drop the empty lists and
+-- still produce count 0 and NULL. Cases 10 and 11 cover the same shapes without
+-- DISTINCT.
+select /*+ recompile */ count(distinct cola), sum(distinct cola), avg(distinct cola), stddev(distinct cola)
+from bv where cola < 0;
+show trace;
+-- serial reference
+select /*+ recompile no_parallel_scan */ count(distinct cola), sum(distinct cola), avg(distinct cola), stddev(distinct cola)
+from bv where cola < 0;
+show trace;
+-- coln is NULL in every row: the rows are scanned but nothing enters the lists.
+select /*+ recompile */ count(*), count(distinct coln), sum(distinct coln), avg(distinct coln), variance(distinct coln) from bv;
+show trace;
+-- serial reference
+select /*+ recompile no_parallel_scan */ count(*), count(distinct coln), sum(distinct coln), avg(distinct coln), variance(distinct coln) from bv;
+show trace;
+
+
+evaluate 'Case 22: SUM overflowing inside a single worker -> same error as serial';
+-- every row is the BIGINT maximum, so a worker overflows on its second row and
+-- the error has to travel from the worker to the client. Case 19 raises the same
+-- error at the other site, when the per-worker parts are added together.
+--+ server-message on
+select /*+ recompile */ sum(b) from ovfw;
+--+ server-message off
+-- the trace proves the failing query really ran in parallel
+show trace;
+--+ server-message on
+-- serial reference: must report the identical error
+select /*+ recompile no_parallel_scan */ sum(b) from ovfw;
+--+ server-message off
+
+
 set trace off;
 
 drop table if exists bv;
 drop table if exists ovf;
+drop table if exists ovfw;
