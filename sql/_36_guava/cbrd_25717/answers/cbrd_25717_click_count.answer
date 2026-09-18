@@ -1,0 +1,118 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+1
+===================================================
+    
+Case 1: INCR function used -> hash join must not be performed (HINT ignored)     
+
+===================================================
+cval    
+0     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: t_click_counter_c? term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: t_click_counter_c? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cval,  incr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
+===================================================
+    
+Case 2: WITH INCREMENT FOR used -> hash join must not be performed (HINT ignored)     
+
+===================================================
+cval    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: t_click_counter_c? term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: t_click_counter_c? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cval,  incr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
+===================================================
+    
+Case 3: DECR function used -> hash join must not be performed (HINT ignored)     
+
+===================================================
+cval    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: t_click_counter_c? term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: t_click_counter_c? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cval,  decr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
+===================================================
+    
+Case 4: WITH DECREMENT FOR used -> hash join must not be performed (HINT ignored)     
+
+===================================================
+cval    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: t_click_counter_c? term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: t_click_counter_c? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select a.cval,  decr(a.cval) from t_click_counter a, t_click_counter b, t_filter c where a.ckey=b.ckey and a.ckey=c.ckey
+===================================================
+0

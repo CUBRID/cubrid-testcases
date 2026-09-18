@@ -1,0 +1,105 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: aggregate + LIMIT -> derived rewrite, PARALLEL(8) hint preserved in derived hash join     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.a_? from (select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            PARALLEL (time: ?, fetch: ?, ioread: ?)
+              BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+              PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+                     (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 2: same query with NO_PARALLEL_HASH_JOIN - serial baseline, identical count     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey)
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.a_? from (select /*+ USE_HASH NO_PARALLEL_HASH_JOIN PARALLEL(?) */ count(*) from [dba.t_agg] a, [dba.t_agg] b where a.ckey=b.ckey) a (a_?) where (inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+                     (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_agg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
