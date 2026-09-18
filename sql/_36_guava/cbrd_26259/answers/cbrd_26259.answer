@@ -156,23 +156,21 @@ null     null
 2     null     
 
 Query plan:
-sscan
-    class: v node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from v v where (v.x=u.c?) and inst_num()<= ?:? )
-Query plan:
 temp(order by)
-    subplan: sscan
-                 class: u node[?]
-                 sargs: term[?]
-                 subqs: ?
+    subplan: nl-join (anti join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.c?, u.c? from u u where  not  exists (select ? from v v where (v.x=u.c?) and inst_num()<= ?:? ) order by ?
+select u.c?, u.c? from u u anti join v v on v.x=u.c? order by ?
 ===================================================
     
 [2-control] same query, index forced off: ground truth for [2]     
@@ -183,23 +181,21 @@ null     null
 2     null     
 
 Query plan:
-sscan
-    class: v node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from v v where (v.x=u.c?) and inst_num()<= ?:? )
-Query plan:
 temp(order by)
-    subplan: sscan
-                 class: u node[?]
-                 sargs: term[?]
-                 subqs: ?
+    subplan: nl-join (anti join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select u.c?, u.c? from u u where  not  exists (select ? from v v where (v.x=u.c?) and inst_num()<= ?:? ) using index none order by ?
+select u.c?, u.c? from u u anti join v v on v.x=u.c? using index none order by ?
 ===================================================
     
 [3] left outer join + j = all (empty subquery): padding rows must survive, join must stay outer     
@@ -283,12 +279,185 @@ i    i    j
 3     null     null     
 
 Query plan:
-sscan
-    class: v node[?]
-    sargs: term[?] AND term[?]
+temp(order by)
+    subplan: nl-join (anti join)
+                 edge:  term[?]
+                 outer: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: oa node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: ob node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select ? from v v where (v.x=ob.j) and inst_num()<= ?:? )
+select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i anti join v v on v.x=ob.j order by ?
+===================================================
+    
+[1c] c2 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+===================================================
+    
+[1c-control] same query, index forced off: ground truth for [1c]     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+===================================================
+    
+[1d] c2 = all {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c?= all {} order by ?
+===================================================
+    
+[1d-control] same query, index forced off: ground truth for [1d]     
+
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c?= all {} using index none order by ?
+===================================================
+    
+[1e] c2 not in {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c? not in {} order by ?
+===================================================
+    
+[1e-control] same query, index forced off: ground truth for [1e]     
+
+===================================================
+c1    c2    
+null     5     
+null     null     
+2     null     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where u.c? not in {} using index none order by ?
+===================================================
+    
+[4] (c2 > 0) is not true: (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where (u.c?>?) is not true order by ?
+===================================================
+    
+[4-control] same query, index forced off: ground truth for [4]     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: u node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select u.c?, u.c? from u u where (u.c?>?) is not true using index none order by ?
+===================================================
+    
+[3d] left outer join + j <=> null (NULLSAFE_EQ): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+2     null     null     
+3     null     null     
+
 Query plan:
 temp(order by)
     subplan: nl-join (left outer join)
@@ -301,12 +470,11 @@ temp(order by)
                             sargs: term[?] AND term[?]
                             cost:  ? card ?
                  after: term[?]
-                 subqs: ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i where  not  exists (select ? from v v where (v.x=ob.j) and inst_num()<= ?:? ) order by ?
+select oa.i, ob.i, ob.j from oa oa left outer join ob ob on oa.i=ob.i where ob.j<=>null order by ?
 ===================================================
 0
 ===================================================

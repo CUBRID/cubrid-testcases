@@ -27,6 +27,22 @@
  * "= ALL"/"<> ALL" before reaching the not-null check, so [1b]/[3b] each
  * need their own case to actually exercise that switch branch.
  *
+ * [1]/[1b]/[3]/[3b]'s arg2 is a subquery; = ALL/NOT IN are also vacuously
+ * TRUE for NULL when arg2 is instead a host variable or literal set bound
+ * empty at execution time, which is a syntactically different arg2 (not
+ * PT_IS_QUERY) that the not-null checks must catch too:
+ *   [1c]/[1c-control]: NOT IN against a host variable bound to {}
+ *   [1d]/[1d-control]: = ALL against a literal set {}
+ *   [1e]/[1e-control]: NOT IN against a literal set {}
+ * Separately, two more operators are TRUE for a NULL operand and were
+ * missing from one or both checks:
+ *   [4]/[4-control]: (c2 > 0) IS NOT TRUE -- NULL > 0 is UNKNOWN, and
+ *     UNKNOWN IS NOT TRUE is TRUE, so this is never a not-null proof.
+ *   [3d]: j <=> NULL (NULLSAFE_EQ) in an outer join -- true precisely
+ *     when j IS NULL, so it can never prove j is not null either; this
+ *     was already handled by qo_check_nullable_expr() but missing from
+ *     qo_check_nullable_expr_with_spec().
+ *
  * Schema:
  *   u(c1, c2): composite index (c1, c2); one row is entirely NULL.
  *   v(x): empty/non-empty subquery source.
@@ -81,6 +97,36 @@ where ob.j not in (select x from v where x > 1000) order by oa.i;
 evaluate '[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer';
 select oa.i, ob.i, ob.j from oa left outer join ob on oa.i = ob.i
 where not exists (select 1 from v where v.x = ob.j) order by oa.i;
+
+evaluate '[1c] c2 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip';
+prepare stmt_1c from 'select c1, c2 from u where c2 not in ? order by c1';
+execute stmt_1c using {};
+
+evaluate '[1c-control] same query, index forced off: ground truth for [1c]';
+prepare stmt_1c_ctrl from 'select c1, c2 from u where c2 not in ? using index none order by c1';
+execute stmt_1c_ctrl using {};
+
+evaluate '[1d] c2 = all {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip';
+select c1, c2 from u where c2 = all {} order by c1;
+
+evaluate '[1d-control] same query, index forced off: ground truth for [1d]';
+select c1, c2 from u where c2 = all {} using index none order by c1;
+
+evaluate '[1e] c2 not in {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip';
+select c1, c2 from u where c2 not in {} order by c1;
+
+evaluate '[1e-control] same query, index forced off: ground truth for [1e]';
+select c1, c2 from u where c2 not in {} using index none order by c1;
+
+evaluate '[4] (c2 > 0) is not true: (NULL,NULL) must survive ORDER BY skip';
+select c1, c2 from u where (c2 > 0) is not true order by c1;
+
+evaluate '[4-control] same query, index forced off: ground truth for [4]';
+select c1, c2 from u where (c2 > 0) is not true using index none order by c1;
+
+evaluate '[3d] left outer join + j <=> null (NULLSAFE_EQ): padding rows must survive, join must stay outer';
+select oa.i, ob.i, ob.j from oa left outer join ob on oa.i = ob.i
+where ob.j <=> null order by oa.i;
 
 drop table if exists u;
 drop table if exists v;
