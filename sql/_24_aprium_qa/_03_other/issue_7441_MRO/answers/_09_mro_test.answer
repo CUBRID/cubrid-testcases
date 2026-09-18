@@ -192,15 +192,15 @@ select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:
 a    b    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_a_b (covers) (desc_index)
+    filtr: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 
@@ -216,15 +216,15 @@ select t.a, t.b from t t where t.a= ?:?  order by ? desc  for orderby_num()<= ?:
 a    b    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_a_b (covers) (desc_index)
+    filtr: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 3     3     
@@ -430,15 +430,15 @@ a    b
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_a_b (covers) (desc_index)
+    filtr: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select t.a, t.b from t t where t.b= ?:?  order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 1     1     
