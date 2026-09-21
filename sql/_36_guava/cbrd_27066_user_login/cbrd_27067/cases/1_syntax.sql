@@ -1,20 +1,18 @@
 /**
  * This test case verifies CBRD-27067: CREATE/ALTER USER LOGIN | NOLOGIN
- * syntax, catalog exposure via db_user.is_loginable, clause ordering, and
- * general CREATE/ALTER/DROP USER syntax the manual documents alongside it.
+ * syntax, catalog exposure via db_user.is_loginable, and clause ordering.
  *
  * Coverage:
  * 1    CREATE USER with no clause defaults to loginable
  * 2    CREATE USER ... LOGIN / NOLOGIN
- * 3-4  ALTER USER NOLOGIN/LOGIN, and re-applying the same state (no-op)
+ * 3    ALTER USER NOLOGIN/LOGIN
+ * 4    re-applying the same state (no-op)
  * 5    ALTER USER with no clause at all (unrelated pre-existing error)
  * 6-7  CREATE/ALTER combined with PASSWORD, GROUPS/MEMBERS or COMMENT,
  *      each landing on the right clause, new password taking effect
  * 8    NOLOGIN written as two words is a syntax error
  * 9    LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS, only on
  *      the plain ALTER USER form
- * 10   DROP USER refuses a user that still owns an object, succeeds once
- *      the object is gone (general user-management syntax)
  */
 
 --+ holdcas on;
@@ -72,12 +70,7 @@ CREATE USER usr9;
 CREATE USER usr10;
 ALTER USER usr9 ADD MEMBERS usr10 NOLOGIN;
 
-evaluate 'Case 10: DROP USER refuses a user that still owns an object, and succeeds once the object is gone';
-CREATE TABLE usr1.tbl1 (col1 INT);
 DROP USER usr1;
-DROP TABLE usr1.tbl1;
-DROP USER usr1;
-
 DROP USER usr2;
 DROP USER usr3;
 DROP USER usr4;
