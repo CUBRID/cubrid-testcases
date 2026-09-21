@@ -1,0 +1,583 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+5000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+EXISTS, unnested: NL semi join, MEMOIZE expected     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+EXISTS, NO_UNNEST: same result     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+    
+NOT EXISTS, unnested: NL anti join, MEMOIZE expected     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+NOT EXISTS, NO_UNNEST: same result     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+data filter on a non-index column: memoized, correct     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+key filter that rejects every key: semi 0 / anti all, both memoized     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+anti: keys that match and keys that do not, row list; a cached no-match after a cached match must emit the outer once     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+40
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    min(k)    max(k)    
+60     4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_mix_inner_k) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.k) from [dba.mix_outer] o anti join [dba.mix_inner] i on i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.mix_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.mix_inner.i_mix_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(k)    max(k)    
+60     4     4     
+
+===================================================
+a    k    
+4     4     
+9     4     
+14     4     
+19     4     
+24     4     
+29     4     
+34     4     
+39     4     
+44     4     
+49     4     
+54     4     
+59     4     
+
+===================================================
+a    k    
+4     4     
+9     4     
+14     4     
+19     4     
+24     4     
+29     4     
+34     4     
+39     4     
+44     4     
+49     4     
+54     4     
+59     4     
+
+===================================================
+count(*)    
+240     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+NULL correlation value never matches; anti keeps the row     
+
+===================================================
+1
+===================================================
+1
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+2
+===================================================
+    
+semi / anti followed by another join     
+
+===================================================
+count(*)    
+6668     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    INDEX SCAN (c.idx_col?_col?_col?) (key range: c.col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a, [dba.subquery_small] b semi join [dba.subquery_small] c on c.col?=a.col? where a.col?=b.col? and b.col?= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+6668     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+user KEYLIMIT on the inner merges with the key limit of 1     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col? using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+unique inner: no memoize, result unchanged     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.pk_subquery_small_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.pk_subquery_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+memoize off: falls back, result unchanged     
+
+===================================================
+0
+===================================================
+count(*)    
+20000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+    
+partitioned inner: one memo across partitions, MEMOIZE expected, correct (CBRD-24541 shape)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+2
+===================================================
+a    b    
+1     a              
+1     d              
+3     c              
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.pk_part_inner_a) (key range: i.a=o.a, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.a, o.b from [dba.part_outer] o semi join [dba.part_inner] i on i.a=o.a order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.part_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.part_inner.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    
+2     b              
+
+===================================================
+a    b    
+1     a              
+1     d              
+3     c              
+
+===================================================
+a    b    
+2     b              
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+partitioned outer x partitioned inner; a key present in two inner partitions is emitted once     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+40
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    min(o.k)    max(o.k)    
+240     0     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_pin_k) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.k) from [dba.pout] o semi join [dba.pin] i on i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pout), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.pin.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(o.k)    max(o.k)    
+240     0     3     
+
+===================================================
+count(*)    min(o.k)    max(o.k)    
+60     4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_pin_k) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.k) from [dba.pout] o anti join [dba.pin] i on i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pout), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pout__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.pin.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.pin__p__p?.i_pin_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(o.k)    max(o.k)    
+60     4     4     
+
+===================================================
+    
+semi inner followed by a join to a partitioned table     
+
+===================================================
+count(*)    
+960     
+
+===================================================
+count(*)    
+960     
+
+===================================================
+count(*)    
+240     
+
+===================================================
+count(*)    
+240     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
