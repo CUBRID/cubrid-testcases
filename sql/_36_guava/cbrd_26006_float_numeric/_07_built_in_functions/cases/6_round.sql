@@ -66,6 +66,11 @@ SELECT ROUND(0.99999999999999999999999999999999999999990000, 0);
 SELECT ROUND(0.1, 0);
 SELECT ROUND(0.09999999999999999999999999999999999999999, 0);
 
+-- CBRD-27165 case4: a 40-nine integer with a negative round digit carries to 41 digits (previously returned 10x)
+-- Expect 10000000000000000000000000000000000000000 (40 significant digits at scale -1 = 10^40), not 10^41
+SELECT ROUND(9999999999999999999999999999999999999999, -1);
+SELECT ROUND(-9999999999999999999999999999999999999999, -1);
+
 evaluate '5. 40-digit mantissa boundary';
 -- ------------------------------------------------------------
 -- 40-digit mantissa boundary + 41st digit triggers rounding
