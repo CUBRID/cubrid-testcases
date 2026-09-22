@@ -1,0 +1,52 @@
+/* 2. SHORT implicit conversions */
+
+-- ===========================================================================
+-- Section 1: SHORT conversions
+-- ===========================================================================
+
+evaluate '1-1. SHORT + SHORT => SHORT';
+SELECT CAST(2 AS SHORT) + CAST(1 AS SHORT),
+       TYPEOF(CAST(2 AS SHORT) + CAST(1 AS SHORT));
+
+evaluate '1-2. SHORT + INT => INT';
+SELECT CAST(2 AS SHORT) + CAST(1 AS INT),
+       TYPEOF(CAST(2 AS SHORT) + CAST(1 AS INT));
+
+evaluate '1-3. SHORT + BIGINT => BIGINT';
+SELECT CAST(2 AS SHORT) + CAST(1 AS BIGINT),
+       TYPEOF(CAST(2 AS SHORT) + CAST(1 AS BIGINT));
+
+evaluate '1-4. SHORT + Fixed NUMERIC => Float NUMERIC';
+SELECT CAST(2 AS SHORT) + CAST(1 AS NUMERIC(1)),
+       TYPEOF(CAST(2 AS SHORT) + CAST(1 AS NUMERIC(1)));
+
+evaluate '1-5. SHORT + Float NUMERIC => Float NUMERIC';
+SELECT CAST(2 AS SHORT) + CAST(1 AS NUMERIC),
+       TYPEOF(CAST(2 AS SHORT) + CAST(1 AS NUMERIC));
+
+evaluate '1-6. SHORT + FLOAT => FLOAT';
+SELECT CAST(2 AS SHORT) + CAST(2.1 AS FLOAT),
+       TYPEOF(CAST(2 AS SHORT) + CAST(2.1 AS FLOAT));
+
+evaluate '1-7. SHORT + DOUBLE => DOUBLE';
+SELECT CAST(2 AS SHORT) + CAST(2.1 AS DOUBLE),
+       TYPEOF(CAST(2 AS SHORT) + CAST(2.1 AS DOUBLE));
+
+evaluate '1-8. SHORT + high-precision Float NUMERIC preserves full precision';
+-- integer + Float NUMERIC stays NUMERIC (not DOUBLE), so all 38 digits survive
+SELECT CAST(1 AS SHORT) + CAST(0.12345678901234567890123456789012345678 AS NUMERIC),
+       TYPEOF(CAST(1 AS SHORT) + CAST(0.12345678901234567890123456789012345678 AS NUMERIC));
+
+evaluate '1-9. SHORT with -, *, / and NUMERIC, and SHORT / SHORT integer division';
+SELECT CAST(2 AS SHORT) - CAST(1 AS NUMERIC),
+       TYPEOF(CAST(2 AS SHORT) - CAST(1 AS NUMERIC));
+SELECT CAST(2 AS SHORT) * CAST(3 AS NUMERIC),
+       TYPEOF(CAST(2 AS SHORT) * CAST(3 AS NUMERIC));
+SELECT CAST(1 AS SHORT) / CAST(3 AS NUMERIC),
+       TYPEOF(CAST(1 AS SHORT) / CAST(3 AS NUMERIC));
+SELECT CAST(1 AS SHORT) / CAST(3 AS SHORT),
+       TYPEOF(CAST(1 AS SHORT) / CAST(3 AS SHORT));
+
+evaluate '1-10. SHORT + SHORT overflow behavior';
+SELECT CAST(32767 AS SHORT) + CAST(1 AS SHORT),
+       TYPEOF(CAST(32767 AS SHORT) + CAST(1 AS SHORT));
