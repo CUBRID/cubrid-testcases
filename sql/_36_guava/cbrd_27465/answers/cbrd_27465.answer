@@ -20,7 +20,7 @@
 0
 ===================================================
     
-EXISTS, unnested: NL semi join, MEMOIZE expected     
+Case 1: EXISTS, unnested -> NL semi join with a MEMOIZE line; result = NO_UNNEST     
 
 ===================================================
 count(*)    
@@ -44,16 +44,12 @@ Trace Statistics:
      
 
 ===================================================
-    
-EXISTS, NO_UNNEST: same result     
-
-===================================================
 count(*)    
 20000     
 
 ===================================================
     
-NOT EXISTS, unnested: NL anti join, MEMOIZE expected     
+Case 2: NOT EXISTS, unnested -> NL anti join with a MEMOIZE line; result = NO_UNNEST     
 
 ===================================================
 count(*)    
@@ -77,16 +73,130 @@ Trace Statistics:
      
 
 ===================================================
-    
-NOT EXISTS, NO_UNNEST: same result     
-
-===================================================
 count(*)    
 0     
 
 ===================================================
     
-data filter on a non-index column: memoized, correct     
+Case 3: correlated IN -> NL semi join, memoized; result = NO_UNNEST     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+600
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    min(k)    max(g)    
+360     0     4     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_in_inner_k_g) (key range: i.k=o.kkey range: o.g=i.g, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.g) from [dba.in_outer] o semi join [dba.in_inner] i on i.k=o.k and o.g=i.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.in_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.in_inner.i_in_inner_k_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(k)    max(g)    
+360     0     4     
+
+===================================================
+    
+Case 4: correlated NOT IN on NOT NULL columns -> NL anti join, memoized; result = NO_UNNEST     
+
+===================================================
+count(*)    min(k)    max(g)    
+240     0     4     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_in_inner_k_g) (key range: i.k=o.kkey range: o.g=i.g, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.g) from [dba.in_outer] o anti join [dba.in_inner] i on i.k=o.k and o.g=i.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.in_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.in_inner.i_in_inner_k_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(k)    max(g)    
+240     0     4     
+
+===================================================
+a    k    g    
+5     2     0     
+6     0     1     
+7     1     2     
+8     2     3     
+9     0     4     
+15     0     0     
+20     2     0     
+21     0     1     
+22     1     2     
+23     2     3     
+24     0     4     
+30     0     0     
+35     2     0     
+36     0     1     
+37     1     2     
+38     2     3     
+39     0     4     
+
+===================================================
+a    k    g    
+5     2     0     
+6     0     1     
+7     1     2     
+8     2     3     
+9     0     4     
+15     0     0     
+20     2     0     
+21     0     1     
+22     1     2     
+23     2     3     
+24     0     4     
+30     0     0     
+35     2     0     
+36     0     1     
+37     1     2     
+38     2     3     
+39     0     4     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: data filter on a non-index column: memoized, no key limit; result = NO_UNNEST     
 
 ===================================================
 count(*)    
@@ -123,7 +233,7 @@ count(*)
 
 ===================================================
     
-key filter that rejects every key: semi 0 / anti all, both memoized     
+Case 6: key filter that rejects every key: semi = 0, anti = all rows, memoized in both     
 
 ===================================================
 count(*)    
@@ -169,7 +279,7 @@ Trace Statistics:
 
 ===================================================
     
-anti: keys that match and keys that do not, row list; a cached no-match after a cached match must emit the outer once     
+Case 7: anti join over keys that match and keys that do not; a cached no-match after a cached match emits the outer row once     
 
 ===================================================
 0
@@ -254,7 +364,7 @@ count(*)
 0
 ===================================================
     
-NULL correlation value never matches; anti keeps the row     
+Case 8: NULL correlation value never matches; anti keeps the row     
 
 ===================================================
 1
@@ -276,7 +386,7 @@ count(*)
 2
 ===================================================
     
-semi / anti followed by another join     
+Case 9: semi / anti inner followed by another join     
 
 ===================================================
 count(*)    
@@ -322,7 +432,7 @@ count(*)
 
 ===================================================
     
-user KEYLIMIT on the inner merges with the key limit of 1     
+Case 10: user KEYLIMIT on the inner survives the merge: the rewritten query keeps it     
 
 ===================================================
 count(*)    
@@ -347,7 +457,88 @@ Trace Statistics:
 
 ===================================================
     
-unique inner: no memoize, result unchanged     
+Case 11: user KEYLIMIT with an offset: EXISTS holds only for keys with more entries than the offset     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+11
+===================================================
+0
+===================================================
+0
+===================================================
+k    count(*)    
+3     50     
+4     50     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_klim_inner_k_a) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.klim_outer] o semi join [dba.klim_inner] i on i.k=o.k group by o.k using index i.i_klim_inner_k_a keylimit  ?:? , ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.klim_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.klim_inner.i_klim_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    count(*)    
+3     50     
+4     50     
+
+===================================================
+k    count(*)    
+0     50     
+1     50     
+2     50     
+5     50     
+
+===================================================
+k    count(*)    
+0     50     
+1     50     
+2     50     
+5     50     
+
+===================================================
+k    count(*)    
+1     50     
+2     50     
+3     50     
+4     50     
+
+===================================================
+k    count(*)    
+1     50     
+2     50     
+3     50     
+4     50     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 12: unique inner: memoize gives up (hit ratio 0), result unchanged     
 
 ===================================================
 count(*)    
@@ -370,8 +561,12 @@ Trace Statistics:
      
 
 ===================================================
+count(*)    
+20000     
+
+===================================================
     
-memoize off: falls back, result unchanged     
+Case 13: memoize_memory_limit=0: falls back, no MEMOIZE line, result unchanged     
 
 ===================================================
 0
@@ -403,7 +598,7 @@ count(*)
 0
 ===================================================
     
-partitioned inner: one memo across partitions, MEMOIZE expected, correct (CBRD-24541 shape)     
+Case 14: partitioned inner: one memo across the partitions, MEMOIZE line, correct (CBRD-24541 shape)     
 
 ===================================================
 0
@@ -467,7 +662,7 @@ a    b
 0
 ===================================================
     
-partitioned outer x partitioned inner; a key present in two inner partitions is emitted once     
+Case 15: partitioned outer x partitioned inner; a key present in two inner partitions is emitted once     
 
 ===================================================
 0
@@ -552,10 +747,6 @@ count(*)    min(o.k)    max(o.k)
 60     4     4     
 
 ===================================================
-    
-semi inner followed by a join to a partitioned table     
-
-===================================================
 count(*)    
 960     
 
@@ -571,6 +762,8 @@ count(*)
 count(*)    
 240     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
