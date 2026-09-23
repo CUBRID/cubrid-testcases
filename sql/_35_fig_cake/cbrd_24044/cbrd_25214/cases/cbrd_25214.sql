@@ -124,7 +124,7 @@ left outer join tb c on b.cola = c.cola
 where a.cola = c.cola;
 show trace;
 
-select 'remove a.cola = c.cola -11';
+select 'keep a.cola = c.cola -11';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and a.cola = c.cola(+)
@@ -135,7 +135,19 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -12';
+/* same as -11 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed */
+select 'keep b.cola = c.cola -11-1';
+select /*+ recompile */ * from tb a, ta b, tb c
+where a.cola = b.cola(+)
+   and a.cola = c.cola(+)
+   and b.cola = c.cola(+);
+show trace;
+
+select /*+ recompile */ * from tb a left outer join ta b on a.cola = b.cola
+left outer join tb c on a.cola = c.cola and b.cola = c.cola;
+show trace;
+
+select 'keep b.cola = c.cola -12';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and b.cola = c.cola(+)
@@ -146,7 +158,19 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on b.cola = c.cola and a.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -13';
+/* same as -12 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed */
+select 'keep b.cola = c.cola -12-1';
+select /*+ recompile */ * from tb a, ta b, tb c
+where a.cola = b.cola(+)
+   and b.cola = c.cola(+)
+   and a.cola = c.cola(+);
+show trace;
+
+select /*+ recompile */ * from tb a left outer join ta b on a.cola = b.cola
+left outer join tb c on b.cola = c.cola and a.cola = c.cola;
+show trace;
+
+select 'keep b.cola = c.cola -13';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and b.colb = c.colb(+)
@@ -158,7 +182,20 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on b.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-select 'remove b.cola = c.cola -14';
+/* same as -13 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed */
+select 'keep b.cola = c.cola -13-1';
+select /*+ recompile */ * from tb a, ta b, tb c
+where a.cola = b.cola(+)
+   and b.colb = c.colb(+)
+   and a.cola = c.cola(+)
+   and b.cola = c.cola(+);
+show trace;
+
+select /*+ recompile */ * from tb a left outer join ta b on a.cola = b.cola
+left outer join tb c on b.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
+show trace;
+
+select 'keep b.cola = c.cola -14';
 select /*+ recompile */ * from ta a, ta b, tb c
 where a.cola = b.cola(+)
    and a.colb = c.colb(+)
@@ -167,6 +204,19 @@ where a.cola = b.cola(+)
 show trace;
 
 select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
+left outer join tb c on a.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
+show trace;
+
+/* same as -14 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed */
+select 'keep b.cola = c.cola -14-1';
+select /*+ recompile */ * from tb a, ta b, tb c
+where a.cola = b.cola(+)
+   and a.colb = c.colb(+)
+   and a.cola = c.cola(+)
+   and b.cola = c.cola(+);
+show trace;
+
+select /*+ recompile */ * from tb a left outer join ta b on a.cola = b.cola
 left outer join tb c on a.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
 show trace;
 
