@@ -11,5 +11,6 @@ select if(exec_stats('Num_domain_coerce_compare') > 0, 1, 0) as observed_decisio
 -- Reading clears this individual counter; stopped collection prevents self-measurement.
 select exec_stats('Num_domain_coerce_compare') as after_read;
 select exec_stats('Num_domain_gate_convert') as gate_converts,
-       exec_stats('Num_planned_convert') as planned_converts;
+       exec_stats('Num_planned_convert') as planned_converts,
+       exec_stats('Num_domain_bind_plan_mismatch') as bind_plan_mismatch;
 drop table domain_counter_t;
