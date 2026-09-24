@@ -1,5 +1,6 @@
 -- D-316-2 / D-317-20: mixed comparison decisions must be observable before domain planning.
--- Future domain-planning commits change the observed-decision expectation to 0.
+-- workspace#352 plans the comparison before any row: no observed decision, and the INT column converts
+-- once per row (planned_converts = 3 rows).
 create table domain_counter_t (i int);
 insert into domain_counter_t values (1), (2), (3);
 set @collect_exec_stats=0;
