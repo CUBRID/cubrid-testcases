@@ -1,0 +1,250 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: parallel partition hash join - JSON trace (split + parallel, no collision_rate)     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "HASH JOIN (inner join)": [
+      {
+        "TABLE SCAN": {
+          "table": "a"
+        }
+      },
+      {
+        "TABLE SCAN": {
+          "table": "b"
+        }
+      }
+    ],
+    "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_trace_json] a, [dba.t_trace_json] b where a.ckey=b.ckey"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        }
+      },
+      "SUBQUERY (uncorrelated)": [
+        {
+          "HASHJOIN": {
+            "time": ?,
+            "fetch": ?,
+            "fetch_time": ?,
+            "ioread": ?,
+            "parallel workers": ?,
+            "split": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "partitions": ?
+            },
+            "parallel": {
+              "time": ?,
+              "build": {
+                "time": "?..?",
+                "fetch": ?,
+                "ioread": ?,
+                "rows": ?,
+                "method": "hybrid"
+              },
+              "probe": {
+                "time": "?..?",
+                "fetch": ?,
+                "ioread": ?,
+                "readrows": ?,
+                "readkeys": ?,
+                "rows": ?
+              }
+            },
+            "SUBQUERY (uncorrelated)": [
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_trace_json)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              },
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_trace_json)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}     
+
+===================================================
+    
+Case 2: NO_PARALLEL_HASH_JOIN - JSON trace (split present, parallel absent)     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "HASH JOIN (inner join)": [
+      {
+        "TABLE SCAN": {
+          "table": "a"
+        }
+      },
+      {
+        "TABLE SCAN": {
+          "table": "b"
+        }
+      }
+    ],
+    "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.t_trace_json] a, [dba.t_trace_json] b where a.ckey=b.ckey"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        }
+      },
+      "SUBQUERY (uncorrelated)": [
+        {
+          "HASHJOIN": {
+            "time": ?,
+            "fetch": ?,
+            "fetch_time": ?,
+            "ioread": ?,
+            "split": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "partitions": ?
+            },
+            "build": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "rows": ?,
+              "method": "hybrid"
+            },
+            "probe": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readrows": ?,
+              "readkeys": ?,
+              "rows": ?
+            },
+            "SUBQUERY (uncorrelated)": [
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_trace_json)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              },
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_trace_json)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
