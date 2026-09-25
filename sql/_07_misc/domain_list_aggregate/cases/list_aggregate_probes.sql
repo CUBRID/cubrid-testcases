@@ -169,4 +169,30 @@ prepare q from 'select g, sum(distinct ? + i), group_concat(? order by 1 desc) f
 execute q using 10, 'y';
 execute q using null, 'z';
 select count(distinct 'a'), group_concat(distinct 5 order by 1), median('2.5'), median(null) from la_sv;
+
+-- [LEADLAG] LEAD / LAG over a NULL operand hold only NULLs: a row past the window's end converts the default to the
+-- function's NULL or open domain, which rejects a value
+prepare q from 'select i, lead(?, 1, ''x'') over (order by i) from la_sv order by i';
+execute q using null;
+execute q using 'y';
+prepare q from 'select i, lead(?, 1, ?) over (order by i) from la_sv order by i';
+execute q using null, null;
+execute q using null, 7;
+prepare q from 'select i, lag(? + 1, 1, 5) over (order by i) from la_sv order by i';
+execute q using null;
+execute q using 1;
+prepare q from 'select i, lead(?, 0, ''x'') over (order by i) from la_sv order by i';
+execute q using null;
+select i, lead(null, 1, 'x') over (order by i) from la_sv order by i;
+select i, lag(null, 1) over (order by i) from la_sv order by i;
+
+-- [UNCLASS] MEDIAN over a bind or a literal that none of DOUBLE, DATETIME, TIME takes
+prepare q from 'select median(?) from la_sv';
+execute q using 'abc';
+execute q using '2.5';
+prepare q from 'select g, median(?) from la_sv group by g order by g';
+execute q using 'abc';
+execute q using '01:00:00';
+select median('abc') from la_sv;
+select median('abc') from la_sv where i > 5;
 drop table la_sv;
