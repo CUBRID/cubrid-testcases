@@ -2,7 +2,9 @@
 -- workspace#341 (map #312, dpin-15): list files open with the plan's column domains, sorts, GROUP BY positions and
 -- list scans read the plan, and aggregates and analytic functions are set up from the plan before the first row
 -- (no first-row resolve). Session variables the statement assigns keep develop's first-value binding (D-336-E).
--- Every answer here is develop's.
+-- Every answer here is develop's but [SETOP]: a set-operation or CTE column whose branch binds differ in type is
+-- rejected before any row (the user's decision on workspace#341), where develop rejected it only when both branches
+-- held rows.
 drop table if exists la_t;
 drop table if exists la_u;
 create table la_t (i int, g int, c float, s varchar(20), d date, n numeric(10,2), ds varchar(20));
@@ -196,3 +198,28 @@ execute q using '01:00:00';
 select median('abc') from la_sv;
 select median('abc') from la_sv where i > 5;
 drop table la_sv;
+
+-- [SETOP] set-operation and CTE columns over binds: branch domains that differ are rejected before any row
+drop table if exists la_so;
+create table la_so (i int);
+insert into la_so values (1);
+prepare q from 'select ? x from la_so where i = 1 union all select ? from la_so where i = 1';
+execute q using 1, 'a';
+execute q using 'a', 'bcd';
+execute q using 1, 2;
+execute q using 1, null;
+prepare q from 'select ? x from la_so where i = 1 union all select ? from la_so where i > 5';
+execute q using 1, 'a';
+execute q using 'a', 1;
+execute q using 1, 2;
+prepare q from 'select x, typeof(x) from (select ? x from la_so where i = 1 union all select ? from la_so where i > 5) s';
+execute q using 1, 'a';
+execute q using 1, 2;
+prepare q from 'select ? x from la_so where i > 5 union all select ? from la_so where i > 5';
+execute q using 1, 'a';
+prepare q from 'select ? x from la_so difference select ? from la_so where i > 5';
+execute q using 1, 'a';
+prepare q from 'with cte(x) as (select ? from la_so where i = 1 union all select ? from la_so where i > 5) select x, typeof(x) from cte';
+execute q using 'a', 1;
+execute q using 'a', 'b';
+drop table la_so;
