@@ -223,3 +223,4 @@ prepare q from 'with cte(x) as (select ? from la_so where i = 1 union all select
 execute q using 'a', 1;
 execute q using 'a', 'b';
 drop table la_so;
+deallocate variable @c, @d, @e, @m, @u, @v, @w;

@@ -88,4 +88,5 @@ deallocate prepare dbc_g3;
 
 set names utf8;
 drop table dbc_t;
+deallocate variable @dbc_bin, @dbc_cs;
 --+ holdcas off;
