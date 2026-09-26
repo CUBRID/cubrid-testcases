@@ -1,7 +1,7 @@
 --+ holdcas on;
 -- workspace#340 (map #312, dpin-14): fetch takes every open domain from the gate (S-01~S-06, S-11) and never from a
--- value, except where the plan hands the reading to the row (D-336-E: a session variable that changes within the
--- statement). Every answer here is develop's (develop optdebug A/B, byte-identical).
+-- value. Every answer here is develop's (develop optdebug A/B, byte-identical) except [S5]: a session variable holds
+-- one type for a statement that reads it, and another type is an error before any row (workspace#366, U3).
 drop table if exists fg_t;
 drop table if exists fg_k;
 create table fg_t (i int, c float, s varchar(20), d date);
@@ -24,7 +24,7 @@ execute q using 1, 2, null, 3, null, 4, 5, 6, 6, 7, 8, 9, 10, null, 11;
 prepare q from 'select hour(?), ascii(?), hex(?), conv(?, 10, 2), str_to_date(?, ''%Y'') from fg_t order by 1';
 execute q using null, null, null, null, null;
 
--- [S5] session variables
+-- [S5] session variables: another type within the statement is an error before any row (workspace#366)
 set @v = 1;
 select @v := @v + 1, @v := '2.5' from fg_t order by i;
 select @v;

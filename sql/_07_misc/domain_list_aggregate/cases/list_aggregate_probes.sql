@@ -1,10 +1,10 @@
 --+ holdcas on;
 -- workspace#341 (map #312, dpin-15): list files open with the plan's column domains, sorts, GROUP BY positions and
 -- list scans read the plan, and aggregates and analytic functions are set up from the plan before the first row
--- (no first-row resolve). Session variables the statement assigns keep develop's first-value binding (D-336-E).
--- Every answer here is develop's but [SETOP]: a set-operation or CTE column whose branch binds differ in type is
--- rejected before any row (the user's decision on workspace#341), where develop rejected it only when both branches
--- held rows.
+-- (no first-row resolve). Every answer here is develop's but [SETOP] and [CLASS]. [SETOP]: a set-operation or CTE
+-- column whose branch binds differ in type is rejected before any row (the user's decision on workspace#341), where
+-- develop rejected it only when both branches held rows. [CLASS]: a session variable's string class is the one its
+-- value gives when the execution starts (workspace#366), where develop took the first value's.
 drop table if exists la_t;
 drop table if exists la_u;
 create table la_t (i int, g int, c float, s varchar(20), d date, n numeric(10,2), ds varchar(20));
@@ -106,7 +106,8 @@ prepare q from 'select i, group_concat(? order by 1) from la_nv group by i order
 execute q using null;
 drop table la_nv;
 
--- [SV] session variables whose type changes within the statement (D-336-E)
+-- [SV] session variables whose type changes within the statement: -1384 before any row (workspace#366). The
+-- unparenthesized `@v := x a` forms here parse as ambiguous (-493), as in develop
 set @v = 1;
 select @v := @v + 1 a, @v := '2.5' b from db_root;
 drop table if exists la_sv;

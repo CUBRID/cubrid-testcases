@@ -1,8 +1,8 @@
 --+ holdcas on;
 -- workspace#340 (map #312, dpin-14): Num_domain_resolve_fetch per statement. The gate decides every open domain
--- before the main block and fetch reads the decision, so every cell reads 0 but [N-sv-change]: a session variable
--- that changes its domain before a node's first computation is bound as develop binds it (D-336-E). In [SV-char]
--- the variable grows only after every node's first computation, so the decisions hold.
+-- before the main block and fetch reads the decision, so every cell reads 0. A session variable holds one type for
+-- a statement that reads it: [N-sv-change] assigns it another type, an error before any row (workspace#366, which
+-- replaced develop's binding D-336-E). In [SV-char] the variable grows within its string type, so the decisions hold.
 drop table if exists fg_c5;
 create table fg_c5 (i int, s varchar(20) collate utf8_en_ci, c char(6));
 insert into fg_c5 values (1, 'a', 'a'), (2, 'b', 'b');
@@ -63,7 +63,7 @@ select exec_stats('Num_domain_resolve_fetch') f;
 set @collect_exec_stats=0;
 deallocate prepare q;
 drop table fg_c5;
--- #340 additions: fetch counter per cell (0 expected but for the D-336-E rows)
+-- #340 additions: fetch counter per cell (0 expected)
 drop table if exists fg_c6;
 drop table if exists fg_c7;
 create table fg_c6 (i int, c float, s varchar(20));
@@ -93,7 +93,7 @@ set @v = 1;
 set @collect_exec_stats=0; set @collect_exec_stats=1;
 select @v := @v + 1 from fg_c6;
 select exec_stats('Num_domain_resolve_fetch') f;
--- [N-sv-change] a session variable that changes type before a node's first value (D-336-E: counted)
+-- [N-sv-change] a session variable assigned another type within the statement: -1384 before any row (workspace#366)
 set @w = 'x';
 set @collect_exec_stats=0; set @collect_exec_stats=1;
 select @w := 1, @w + 1 from fg_c6;

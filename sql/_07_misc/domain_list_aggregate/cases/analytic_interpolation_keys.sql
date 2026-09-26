@@ -2,8 +2,8 @@
 -- workspace#362 (map #312, dpin-17f): an analytic MEDIAN or PERCENTILE sorts a string operand in the function's class
 -- (DOUBLE, DATETIME or TIME). The analytic setup now decides the class before the sort - the compiled function domain,
 -- or the class the gate gave a value argument - where the sort took it from the first pair of values it compared. A
--- class over a session variable read is still confirmed by the first value the sort compares, since the statement can
--- change the variable before any row reads it. A bind or a literal given directly has no sort key, one seen through a
+-- class over a session variable read is the one its value gives when the execution starts, for the whole statement
+-- (workspace#366). A bind or a literal given directly has no sort key, one seen through a
 -- derived table column has. Every answer here is develop's but [SHARED] (D-362-01, a user decision): another
 -- function's string ORDER BY key that shares the sort with a MEDIAN over a constant or a number compares in its own
 -- domain, where develop compared it in the class of its first value (an error for 'b', numbers for '10' and '9').
@@ -54,7 +54,7 @@ deallocate prepare q;
 select i, median('2024-01-02 10:00:00') over (partition by p) m from ai_t order by i;
 select i, percentile_cont(0.5) within group (order by '10:00:00') over (partition by p) m from ai_t order by i;
 
--- [SESSION] a session variable the statement does not change: its class is the gate's, which the first value confirms
+-- [SESSION] a session variable the statement does not change: its class is the gate's
 set @v = '1.5';
 select i, median(@v) over (partition by p) m1 from ai_t order by i;
 set @v = '2024-01-02 10:00:00';
@@ -67,7 +67,8 @@ set @v = null;
 select i, median(@v) over (partition by p) m5 from ai_t order by i;
 deallocate variable @v;
 
--- [SESSION_CHANGED] a derived table changes the variable before any row reads it: the first value's class, as develop's
+-- [SESSION_CHANGED] a derived table changes the variable before any row reads it: the start value's class
+-- (workspace#366), whose conversion the changed values fail where develop took their class
 set @m = '1.5';
 select i, median(@m) over (partition by p) m1, @m v from (select (@m := '01:00:00') x from db_root) d, ai_t order by i;
 set @m = '1.5';
