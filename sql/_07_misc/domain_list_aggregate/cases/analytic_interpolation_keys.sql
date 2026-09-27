@@ -6,7 +6,9 @@
 -- (workspace#366). A bind or a literal given directly has no sort key, one seen through a
 -- derived table column has. Every answer here is develop's but [SHARED] (D-362-01, a user decision): another
 -- function's string ORDER BY key that shares the sort with a MEDIAN over a constant or a number compares in its own
--- domain, where develop compared it in the class of its first value (an error for 'b', numbers for '10' and '9').
+-- domain, where develop compared it in the class of its first value (an error for 'b', numbers for '10' and '9'),
+-- and [SETOP]'s '01:00:00' first value: a set operation's string column is DOUBLE by its type (D-335-10), so a
+-- date or time string is -1118, where develop typed the column TIME by its first value and failed at 'abc'.
 drop table if exists ai_t;
 drop table if exists ai_s;
 create table ai_t (i int, p int, s varchar(20), n int, y varchar(20));
@@ -35,6 +37,21 @@ execute q using 'abc';
 execute q using null;
 prepare q from 'select median(dt.x) over () m from (select ? x from ai_t where i = 1 union all select ? x from ai_t where i > 1) dt';
 execute q using '1.5', '1.5';
+deallocate prepare q;
+
+-- [SETOP] a set operation's column over string binds is DOUBLE by its type (D-335-10): a first value that does not
+-- convert is -1118, as the aggregate's first value is (workspace#344 D-344-02), and a later one fails as the row's
+-- conversion does (-181)
+prepare q from 'select median(dt.x) over () m from (select ? x from ai_t where i = 1 union all select ? x from ai_t where i > 1) dt';
+execute q using 'abc', 'abc';
+execute q using '1.5', 'abc';
+execute q using '01:00:00', 'abc';
+prepare q from 'select percentile_cont(0.5) within group (order by dt.x) over () m from (select ? x from ai_t where i = 1 union all select ? x from ai_t where i > 1) dt';
+execute q using 'abc', 'abc';
+prepare q from 'select percentile_disc(0.5) within group (order by dt.x) over () m from (select ? x from ai_t where i = 1 union all select ? x from ai_t where i > 1) dt';
+execute q using 'abc', 'abc';
+prepare q from 'select median(dt.x) m from (select ? x from ai_t where i = 1 union all select ? x from ai_t where i > 1) dt';
+execute q using 'abc', 'abc';
 deallocate prepare q;
 
 -- [DIRECT] a bind or a literal given directly is constant: no sort key
