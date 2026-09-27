@@ -1,10 +1,11 @@
 --+ holdcas on;
 -- workspace#341 (map #312, dpin-15): list files open with the plan's column domains, sorts, GROUP BY positions and
 -- list scans read the plan, and aggregates and analytic functions are set up from the plan before the first row
--- (no first-row resolve). Every answer here is develop's but [SETOP] and [CLASS]. [SETOP]: a set-operation or CTE
--- column whose branch binds differ in type is rejected before any row (the user's decision on workspace#341), where
--- develop rejected it only when both branches held rows. [CLASS]: a session variable's string class is the one its
--- value gives when the execution starts (workspace#366), where develop took the first value's.
+-- (no first-row resolve). Every answer here is develop's but [SETOP], [CLASS] and [UNCLASS]. [SETOP]: a set-operation
+-- or CTE column whose branch binds differ in type is rejected before any row (the user's decision on workspace#341),
+-- where develop rejected it only when both branches held rows. [CLASS]: a session variable's string class is the one
+-- its value gives when the execution starts (workspace#366), where develop took the first value's. [UNCLASS]: a value
+-- no class takes is -1118 before any row (workspace#367), where develop raised it at the first row.
 drop table if exists la_t;
 drop table if exists la_u;
 create table la_t (i int, g int, c float, s varchar(20), d date, n numeric(10,2), ds varchar(20));
@@ -189,7 +190,7 @@ execute q using null;
 select i, lead(null, 1, 'x') over (order by i) from la_sv order by i;
 select i, lag(null, 1) over (order by i) from la_sv order by i;
 
--- [UNCLASS] MEDIAN over a bind or a literal that none of DOUBLE, DATETIME, TIME takes
+-- [UNCLASS] MEDIAN over a bind or a literal that none of DOUBLE, DATETIME, TIME takes, with no row too
 prepare q from 'select median(?) from la_sv';
 execute q using 'abc';
 execute q using '2.5';
