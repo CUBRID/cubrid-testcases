@@ -148,6 +148,31 @@ execute q using 2, 'abc';
 prepare q from 'select a from ce_t where ? = 1 and c = concat(?, '''') order by a';
 execute q using 2, 'abc';
 
+-- [GUARD-NESTED] the same where the constant condition holds a CASE, IF or DECODE node or an IN list over binds: no
+-- row changes it either (workspace#368)
+prepare q from 'select a, case when if(? = 0, 0, 1) = 0 then a else cast(concat(?, '''') as int) end from ce_t order by a';
+execute q using 0, 'abc';
+execute q using 1, 'abc';
+prepare q from 'select a, case when (case when ? = 0 then 0 else 1 end) = 0 then a else cast(concat(?, '''') as int) end from ce_t order by a';
+execute q using 0, 'abc';
+prepare q from 'select a, case when decode(?, 0, 0, 1) = 0 then a else cast(concat(?, '''') as int) end from ce_t order by a';
+execute q using 0, 'abc';
+prepare q from 'select a, if(if(? = 0, 0, 1) = 0, a, cast(concat(?, '''') as int)) from ce_t order by a';
+execute q using 0, 'abc';
+prepare q from 'select a, case when if(? = 0, 0, 1) = 0 or c = concat(?, '''') then 1 else 0 end from ce_t order by a';
+execute q using 0, 'abc';
+prepare q from 'select a, coalesce(cast(if(? = 0, 1, null) as int), cast(concat(?, '''') as int), a) from ce_t order by a';
+execute q using 0, 'abc';
+execute q using 1, 'abc';
+prepare q from 'select a, case when ? in (?, ?) then a else cast(concat(?, '''') as int) end from ce_t order by a';
+execute q using 1, 1, 2, 'abc';
+execute q using 3, 1, 2, 'abc';
+-- [VOLATILE] a session variable is no constant condition - the statement may assign it, a stored procedure it calls
+-- too: the arm it does not take fails before any row (workspace#368 D-368-03)
+set @ce_g = 0;
+prepare q from 'select a, case when @ce_g = 0 then a else cast(concat(?, '''') as int) end from ce_t order by a';
+execute q using 'abc';
+
 -- [KEEP] develop's answers where the row converts or compares the value (D-367-05)
 prepare q from 'update ce_e set c = concat(?, '''')';
 execute q using 'abc';
@@ -161,6 +186,7 @@ prepare q from 'select a, field(concat(?, ''''), a, 2) from ce_t order by a';
 execute q using 'abc';
 
 drop variable @ce_m;
+drop variable @ce_g;
 deallocate prepare q;
 drop table ce_t;
 drop table ce_e;
