@@ -20,11 +20,13 @@
  *     stay below the old limit (IN lists of 3, 10, 110, 115 values): all
  *     keep their filter text.
  * 2 - Adding a 117-value IN-list filtered index: the new index AND the four
- *     earlier ones keep their filter text. This is the issue comment sequence;
- *     the 115/117 boundary was seen on a ko_KR.utf8 database. On an en_US
+ *     earlier ones keep their filter text. This is the issue comment sequence.
+ *     The 115/117 boundary was seen on a ko_KR.utf8 database. On an en_US
  *     database the 117-value stream still fits, and the loss starts at Case 3.
  * 3 - The report repro: a 1000-value IN-list filtered index.
- * 4 - A VARCHAR-column filtered index with a 150-value string IN list.
+ * 4 - A VARCHAR-column filtered index with a 150-value string IN list: its
+ *     filter text still holds all 150 values (counted, so the check does not
+ *     depend on the database charset).
  * 5 - A 1000-value filtered index on a table holding 3 rows inside the
  *     filter and 10 rows outside it: after UPDATE STATISTICS ... WITH
  *     FULLSCAN, SHOW INDEX reports 3 keys for it (same as the 3-value
@@ -141,7 +143,7 @@ SELECT index_name, CHAR_LENGTH (filter_expression) AS filter_len,
  WHERE class_name = 't_filt'
  ORDER BY index_name;
 
-evaluate 'Case 4: a VARCHAR-column filtered index with a 150-value string IN list keeps its filter text';
+evaluate 'Case 4: a VARCHAR-column filtered index with a 150-value string IN list keeps all 150 values in its filter text';
 CREATE INDEX idx_str150 ON t_filt (s) WHERE s IN (
     'v001', 'v002', 'v003', 'v004', 'v005', 'v006', 'v007', 'v008', 'v009', 'v010',
     'v011', 'v012', 'v013', 'v014', 'v015', 'v016', 'v017', 'v018', 'v019', 'v020',
@@ -159,11 +161,10 @@ CREATE INDEX idx_str150 ON t_filt (s) WHERE s IN (
     'v131', 'v132', 'v133', 'v134', 'v135', 'v136', 'v137', 'v138', 'v139', 'v140',
     'v141', 'v142', 'v143', 'v144', 'v145', 'v146', 'v147', 'v148', 'v149', 'v150'
 );
-SELECT index_name, CHAR_LENGTH (filter_expression) AS filter_len,
-       RIGHT (filter_expression, 20) AS filter_tail
+SELECT index_name,
+       CHAR_LENGTH (filter_expression) - CHAR_LENGTH (REPLACE (filter_expression, 'v', '')) AS v_values
   FROM db_index
- WHERE class_name = 't_filt'
- ORDER BY index_name;
+ WHERE class_name = 't_filt' AND index_name = 'idx_str150';
 
 evaluate 'Case 5: a 1000-value filtered index holds only the rows inside its filter (3 of 13 keys)';
 DROP TABLE IF EXISTS t_card;
