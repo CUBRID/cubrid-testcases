@@ -37,8 +37,118 @@ count(*)
 100000     
 
 ===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
 count(*)    
 0     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (o)
+    INDEX SCAN (s.pk_part_inner_k_a) (key range: s.k=o.k, covered: true)
+
+  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner] s on s.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (o)
+    INDEX SCAN (s.pk_part_inner_k_a) (key range: s.k=o.k, covered: true)
+
+  rewritten query: select count(*) from [dba.outer_big] o anti join [dba.part_inner] s on s.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (o)
+    INDEX SCAN (s.pk_part_inner_r_k_a) (key range: s.k=o.k, covered: true)
+
+  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner_r] s on s.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner_r.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner_r__p__p?.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (o)
+    INDEX SCAN (s.pk_part_inner_r_k_a) (key range: s.k=o.k, covered: true)
+
+  rewritten query: select count(*) from [dba.outer_big] o anti join [dba.part_inner_r] s on s.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner_r.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner_r__p__p?.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
 
 ===================================================
 0

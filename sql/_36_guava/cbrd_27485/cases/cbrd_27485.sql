@@ -20,6 +20,10 @@
  *   Case 3: EXISTS, range partitioned inner -> 100000
  *   Case 4: NOT EXISTS, range partitioned inner -> 0
  *   Case 5: Case 1 and Case 2 with trace on -> same counts, no server failure
+ *   Case 6: Recompile HASH / RANGE queries with trace on to check join plans
+ * SHOW TRACE checks the parallel outer scan and nested loop SEMI / ANTI
+ * join with a partitioned inner, so a serial or different join plan fails
+ * the answer comparison even when the result counts remain correct.
  */
 drop table if exists outer_big, part_inner, part_inner_r;
 
@@ -50,7 +54,21 @@ select count(*) from outer_big o where not exists (select 1 from part_inner_r s 
 -- Case 5
 set trace on;
 select count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
+show trace;
 select count(*) from outer_big o where not exists (select 1 from part_inner s where s.k = o.k);
+show trace;
+
+-- Case 6
+-- Keep Case 5 on the cached plans to cover trace after an untraced execution.
+-- Recompile here because those cached plans do not contain Query Plan text.
+select /*+ recompile */ count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
+show trace;
+select /*+ recompile */ count(*) from outer_big o where not exists (select 1 from part_inner s where s.k = o.k);
+show trace;
+select /*+ recompile */ count(*) from outer_big o where exists (select 1 from part_inner_r s where s.k = o.k);
+show trace;
+select /*+ recompile */ count(*) from outer_big o where not exists (select 1 from part_inner_r s where s.k = o.k);
+show trace;
 set trace off;
 
 drop table outer_big, part_inner, part_inner_r;
