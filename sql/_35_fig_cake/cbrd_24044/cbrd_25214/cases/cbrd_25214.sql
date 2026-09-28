@@ -182,7 +182,8 @@ select /*+ recompile */ * from ta a left outer join ta b on a.cola = b.cola
 left outer join tb c on b.colb = c.colb and a.cola = c.cola and b.cola = c.cola;
 show trace;
 
-/* same as -13 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed */
+/* same as -13 but starting from tb, whose NULL-padded cola 4, 5 and 6 check whether a term is wrongly removed.
+ * b.colb = c.colb blocks c on those rows too, so a wrongly removed term shows in the plan, not in the rows */
 select 'keep b.cola = c.cola -13-1';
 select /*+ recompile */ * from tb a, ta b, tb c
 where a.cola = b.cola(+)
