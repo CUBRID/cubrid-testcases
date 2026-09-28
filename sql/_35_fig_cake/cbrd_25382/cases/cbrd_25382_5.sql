@@ -118,7 +118,7 @@ from
   (select /*+ no_merge */ * from ta where cc = 3) a,
   (select /*+ no_merge */ * from tb where cc = 3) b
 where a.cd = b.cd
-  and a.ca in (select distinct c.ca from tc c)
+  and a.ca in (select /*+ no_unnest */ distinct c.ca from tc c)
 order by a.cd;
 
 show trace;

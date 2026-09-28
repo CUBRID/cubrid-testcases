@@ -1213,13 +1213,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
+  rewritten query: (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (av?)
 
-  rewritten query: select count(*) from [dba.ta] a, (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
+  rewritten query: select count(*) from [dba.ta] a, (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
 
 
 Trace Statistics:
@@ -1246,13 +1246,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
+  rewritten query: (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (av?)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a, (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a, (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
 
 
 Trace Statistics:

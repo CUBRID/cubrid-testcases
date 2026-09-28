@@ -105,29 +105,20 @@ c
 
 Query plan:
 temp(distinct)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct t?.a from t? t? where (t?.c> ?:? ))
-Query plan:
-temp(distinct)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (semi join)
                  outer: iscan
                             class: t? node[?]
                             index: i_t?_all? (covers) (loose index scan on prefix ?)
                             cost:  ? card ?
-                 inner: sscan
-                            class: av? node[?]
-                            sargs: term[?]
+                 inner: iscan
+                            class: t?_? node[?]
+                            index: i_t?_all? term[?] (covers) (loose index scan on prefix ?)
+                            filtr: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_LS */ distinct t?.c from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? )) av? (av_?) where t?.c=av?.av_?
+select /*+ ORDERED INDEX_LS */ distinct t?.c from t? t? semi join t? t?_? on (t?_?.c> ?:? ) and t?.c=t?_?.a
 ===================================================
 c    
 1     
@@ -222,31 +213,22 @@ max(c)
 9     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct t?.a from t? t? where (t?.c> ?:? ))
-Query plan:
 temp(group by)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
+    subplan: idx-join (semi join)
                  outer: iscan
                             class: t? node[?]
                             index: i_t?_all (covers) (loose index scan on prefix ?)
                             cost:  ? card ?
-                 inner: sscan
-                            class: av? node[?]
-                            sargs: term[?]
+                 inner: iscan
+                            class: t?_? node[?]
+                            index: i_t?_all? term[?] (covers) (loose index scan on prefix ?)
+                            filtr: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED INDEX_LS */ max(t?.c) from t? t?, (select distinct t?.a from t? t? where (t?.c> ?:? )) av? (av_?) where t?.c=av?.av_? group by t?.f
+select /*+ ORDERED INDEX_LS */ max(t?.c) from t? t? semi join t? t?_? on (t?_?.c> ?:? ) and t?.c=t?_?.a group by t?.f
 ===================================================
 max(c)    
 
