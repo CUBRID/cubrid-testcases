@@ -1,0 +1,373 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: NOT EXISTS / EXISTS, hash partitioned following join; result = NO_UNNEST     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
+    INDEX SCAN (w.pk_t_w_k_id) (key range: w.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] o, [dba.t_w] w anti join [dba.t_i] s on s.k=o.k where w.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_i.pk_t_i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_w.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+id    id    
+1     10     
+1     11     
+3     30     
+3     31     
+4     10     
+4     11     
+6     30     
+6     31     
+7     40     
+9     10     
+9     11     
+10     30     
+10     31     
+
+===================================================
+id    id    
+1     10     
+1     11     
+3     30     
+3     31     
+4     10     
+4     11     
+6     30     
+6     31     
+7     40     
+9     10     
+9     11     
+10     30     
+10     31     
+
+===================================================
+    
+Case 2: explicit ANTI JOIN / SEMI JOIN syntax in FROM order, then a partitioned join; result = NO_UNNEST     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
+    INDEX SCAN (w.pk_t_w_k_id) (key range: w.k=o.k, covered: true)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_o] o anti join [dba.t_i] s on s.k=o.k inner join [dba.t_w] w on w.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_i.pk_t_i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_w.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+    
+Case 3: range partitioned following join, and a single partition left by pruning; result = NO_UNNEST     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+6     
+
+===================================================
+count(*)    
+6     
+
+===================================================
+    
+Case 4: two partitioned following joins, the second joined to the first; result = NO_UNNEST     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+    
+Case 5: partitioned semi / anti inner followed by a partitioned join; result = NO_UNNEST     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+    
+Case 6: partitioned driving table, anti join, then an unpartitioned or a partitioned join; result = NO_UNNEST     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
+    INDEX SCAN (w.pk_t_wnp_k_id) (key range: w.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_op] o, [dba.t_wnp] w anti join [dba.t_i] s on s.k=o.k where w.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_op), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_op__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_op__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_i.pk_t_i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_wnp.pk_t_wnp_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+count(*)    
+13     
+
+===================================================
+    
+Case 7: repeated keys with memoize on and off; result = NO_UNNEST     
+
+===================================================
+0
+===================================================
+k    count(*)    
+1     12     
+3     6     
+4     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        NESTED LOOPS (anti join)
+          TABLE SCAN (o)
+          INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
+        INDEX SCAN (x.pk_t_x_k_v) (key range: o.k=x.k, covered: true)
+      INDEX SCAN (w.pk_t_w_k_id) (key range: w.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.t_o] o, [dba.t_w] w, [dba.t_x] x anti join [dba.t_i] s on s.k=o.k where w.k=o.k and x.k=w.k group by o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_i.pk_t_i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_x.pk_t_x_k_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.t_x__p__p?.pk_t_x_k_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.t_x__p__p?.pk_t_x_k_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.t_x__p__p?.pk_t_x_k_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               PARTITION (index: dba.t_x__p__p?.pk_t_x_k_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+          SCAN (index: dba.t_w.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_w__p__p?.pk_t_w_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    count(*)    
+1     12     
+3     6     
+4     2     
+
+===================================================
+0
+===================================================
+k    count(*)    
+1     12     
+3     6     
+4     2     
+
+===================================================
+0
+===================================================
+    
+Case 8: left outer join to a partitioned table after the anti join; result = NO_UNNEST     
+
+===================================================
+count(*)    count(w.id)    
+13     13     
+
+===================================================
+count(*)    count(w.id)    
+13     13     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 9: driving table scanned in parallel, hash join ruled out, trace off; result = parallel(0) = NO_UNNEST     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+count(*)    
+116667     
+
+===================================================
+count(*)    
+116667     
+
+===================================================
+count(*)    
+116667     
+
+===================================================
+count(*)    
+33334     
+
+===================================================
+count(*)    
+33334     
+
+===================================================
+count(*)    
+33334     
+
+===================================================
+0
