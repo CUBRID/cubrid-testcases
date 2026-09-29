@@ -1,0 +1,71 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: LEFT OUTER + during_join_pred, parallel probe - residual evaluated per worker     
+
+===================================================
+total    null_filled    matched    
+50000     33334     16666     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(case when b.id is null  then ? end), count(case when b.id is not null  then ? end) from [dba.t_outer] a left outer join [dba.t_inner] b on  mod(a.id, ?)=? and a.ckey=b.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same join single-threaded - must match Case 1     
+
+===================================================
+total    null_filled    matched    
+50000     33334     16666     
+
+===================================================
+0
+===================================================
+    
+Case 3: trace is off from here - row set equality both ways, each result must be 0     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0

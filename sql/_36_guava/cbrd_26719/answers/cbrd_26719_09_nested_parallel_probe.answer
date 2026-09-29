@@ -1,0 +1,77 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+100
+===================================================
+80000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: two hash joins in one query - both run a parallel probe     
+
+===================================================
+count(*)    
+80000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (ba)
+    TABLE SCAN (bb)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_p] a, [dba.t_ba] ba, [dba.t_bb] bb where a.cval=ba.ckey and a.cval=bb.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_bb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.t_ba), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                      (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 2: trace is off from here - row set equality both ways, each result must be 0     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0

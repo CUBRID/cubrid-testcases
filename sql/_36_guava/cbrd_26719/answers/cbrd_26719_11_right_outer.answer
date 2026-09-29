@@ -1,0 +1,153 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+0
+===================================================
+    
+Case 1: RIGHT OUTER, parallel probe active - null-supplying side keeps unmatched rows     
+
+===================================================
+total_rows    matched    
+100000     50000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (b)
+    TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_ro_build] b right outer join [dba.t_ro_probe] a on a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_probe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same RIGHT OUTER single-threaded - must match Case 1     
+
+===================================================
+total_rows    matched    
+100000     50000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (b)
+    TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_ro_build] b right outer join [dba.t_ro_probe] a on a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_probe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: RIGHT OUTER + during_join_pred - residual evaluated per worker     
+
+===================================================
+total_rows    matched    
+100000     16500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (b)
+    TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_ro_build] b right outer join [dba.t_ro_probe] a on  mod(b.cval, ?)=? and a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_probe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: same RIGHT OUTER + during_join_pred single-threaded - must match Case 3     
+
+===================================================
+total_rows    matched    
+100000     16500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (b)
+    TABLE SCAN (a)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from [dba.t_ro_build] b right outer join [dba.t_ro_probe] a on  mod(b.cval, ?)=? and a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ro_probe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 5: row set equality both ways (parallel EXCEPT serial, serial EXCEPT parallel)     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0

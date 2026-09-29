@@ -1,0 +1,71 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: probe tuples exceed one page - parallel probe over an overflow chain     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ a.ckey, a.pa, a.pb, a.pc, a.pd, a.pe, a.pf, a.pg, a.ph, b.ckey from [dba.t_p_overflow] a, [dba.t_b_small] b where a.ckey=b.ckey)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from (select /*+ ORDERED USE_HASH NO_MERGE NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ a.ckey, a.pa, a.pb, a.pc, a.pd, a.pe, a.pf, a.pg, a.ph, b.ckey as [bckey] from [dba.t_p_overflow] a, [dba.t_b_small] b where a.ckey=b.ckey) [__t?] (ckey, pa, pb, pc, pd, pe, pf, pg, ph, bckey)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_b_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_p_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 2: trace is off from here - row set equality both ways, each result must be 0     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0
