@@ -1,75 +1,122 @@
+/**
+ *  This test case verifies CBRD-27510: binds and session variables read through derived tables, string arithmetic,
+ *  common values, aggregates and set operations take their domains before the first row.
+ *
+ *  develop gave these nodes their domains while it executed - fetch resolved an open domain from the first value it
+ *  read, and a list file column over a bind took the type of the value written into it. CBRD-27510 decides every
+ *  open domain before the first row. The compiler decides what it can, and the gate (qexec_resolve_domains, run
+ *  once per execution before the main block) decides the rest from the types of the bind values and session
+ *  variables. The execution reads those decisions.
+ *
+ *  Every answer here is the develop answer except one statement of Case 6, which assigns a CHAR session variable an
+ *  INTEGER while reading it - -1384 before any row (a new error code). A variable that keeps one type, such as the
+ *  CHAR variable of Case 4 that grows by CONCAT, answers as develop.
+ *
+ *  Coverage:
+ *    Case 1: CONCAT of binds through a derived table, a plus over string binds and over a string column
+ *    Case 2: IFNULL over a VARCHAR or CHAR column and a string or number bind
+ *    Case 3: GROUP_CONCAT and MAX(CONCAT) over binds
+ *    Case 4: string, format and CHAR session variables, a string variable under ABS and SUM
+ *    Case 5: NULL binds, a comparison slot, a set operation slot, an open sort key
+ *    Case 6: a session variable that keeps its type, and one assigned another type
+ *    Case 7: ADDTIME, GROUP_CONCAT and PERCENTILE_CONT over session variables and binds, a scalar subquery in an
+ *            index key range
+ */
 --+ holdcas on;
--- workspace#340 (map #312, dpin-14): the gate decides every open domain before the main block and fetch reads the
--- decision. Until workspace#345 removed the campaign's counters these cells also read Num_domain_resolve_fetch (0).
--- A session variable holds one type for a statement that reads it: [N-sv-change] assigns it another type, an error
--- before any row (workspace#366, which replaced develop's binding D-336-E). In [SV-char] the variable grows within its
--- string type, so the decisions hold.
 drop table if exists fg_c5;
 create table fg_c5 (i int, s varchar(20) collate utf8_en_ci, c char(6));
 insert into fg_c5 values (1, 'a', 'a'), (2, 'b', 'b');
--- [CH-concat] concat(?, ?) through a derived table
+
+-- Case 1 [CH-concat]. CONCAT(?, ?) seen through a derived table column.
+evaluate 'Case 1: CONCAT and plus over string binds';
 prepare q from 'select v from (select concat(?, ?) v from fg_c5) x order by v';
 execute q using 'a', 'b';
--- [CH-plus] ? + ? over strings
+
+-- [CH-plus] A plus over two string binds.
 prepare q from 'select ? + ? from fg_c5';
 execute q using 'a', 'b';
--- [CH-strcol] s + ?
+
+-- [CH-strcol] A plus over a string column and a string bind.
 prepare q from 'select s + ? from fg_c5';
 execute q using 'z';
--- [CV] ifnull(s, ?) string and number binds
+
+-- Case 2 [CV]. IFNULL over a VARCHAR column (utf8_en_ci) and a bind, run with a string and then with a number.
+evaluate 'Case 2: IFNULL over a column and a bind';
 prepare q from 'select ifnull(s, ?) from fg_c5';
 execute q using 'zz';
 execute q using 7;
--- [CV-char] ifnull(c, ?)
+
+-- [CV-char] IFNULL over a CHAR column and a string bind.
 prepare q from 'select ifnull(c, ?) from fg_c5';
 execute q using 'zz';
--- [GC] group_concat(?) and max(concat(?, ?))
+
+-- Case 3 [GC]. GROUP_CONCAT and MAX(CONCAT) over binds.
+evaluate 'Case 3: GROUP_CONCAT and MAX over binds';
 prepare q from 'select group_concat(?), max(concat(?, ?)) from fg_c5';
 execute q using 'a', 'b', 'c';
--- [SV-str] string session variable @v = '2'
+
+-- Case 4 [SV-str]. A string session variable read as it is, under a plus and under CONCAT.
+evaluate 'Case 4: string, format and CHAR session variables';
 set @v = '2';
 select @v, @v + 1, concat(@v, 'x') from fg_c5;
--- [SV-fmt] to_char with a session variable format
+
+-- [SV-fmt] TO_CHAR with a session variable as its format.
 set @f = 'YYYY';
 select to_char(date'2020-03-04', @f) from fg_c5;
--- [SV-char] CHAR session variable that grows (bug_bts_4562)
+
+-- [SV-char] A CHAR session variable that grows by CONCAT stays within one string type (the shape of bug_bts_4562).
 set @b = cast('ab' as char(8));
 select @b := concat(@b, 'x') from fg_c5;
--- [S5f] string session variable in arithmetic and aggregates (#336 probe 5 cell)
+
+-- [S5f] A string session variable under ABS and SUM.
 set @m = '5';
 select @m, abs(@m), sum(@m) from fg_c5;
 deallocate prepare q;
 drop table fg_c5;
--- #340 additions
+
+-- The rest runs over fg_c6 and fg_c7.
 drop table if exists fg_c6;
 drop table if exists fg_c7;
 create table fg_c6 (i int, c float, s varchar(20));
 insert into fg_c6 values (1, 0.5, 'a'), (2, 1.5, 'b');
--- [N-nullbind] no-value decisions
+
+-- Case 5 [N-nullbind]. NULL binds, which carry no type, under a plus, COALESCE and NVL2.
+evaluate 'Case 5: NULL binds and slots';
 prepare q from 'select ? + 1, coalesce(?, ?), nvl2(?, ?, ?) from fg_c6';
 execute q using null, null, null, null, null, null;
--- [N-slot] slot reads (S-05)
+
+-- [N-slot] A bind compared with a column.
 prepare q from 'select i from fg_c6 where i = ?';
 execute q using 1;
--- [N-union] CAST(? AS uncertain)
+
+-- [N-union] The CAST(? AS uncertain) a set operation puts over a bind.
 prepare q from 'select ? union all select i from fg_c6';
 execute q using 7;
--- [N-topn] open sort key (S-11)
+
+-- [N-topn] An ORDER BY key over a bind under LIMIT.
 prepare q from 'select i + ? k from fg_c6 order by k limit 1';
 execute q using 1;
--- [N-sv-same] a session variable that keeps its type
+
+-- Case 6 [N-sv-same]. A session variable whose assignment keeps its INTEGER type answers as develop.
+evaluate 'Case 6: session variables that keep or change their type';
 set @v = 1;
 select @v := @v + 1 from fg_c6;
--- [N-sv-change] a session variable assigned another type within the statement: -1384 before any row (workspace#366)
+
+-- [N-sv-change] A CHAR variable assigned an INTEGER in a statement that reads it - -1384 before any row. develop
+-- answered with rows (1, 2).
 set @w = 'x';
 select @w := 1, @w + 1 from fg_c6;
--- [N-addtime] ADDTIME over a session variable string: the gate classifies it
+
+-- Case 7 [N-addtime]. ADDTIME over a date-time string with a zone in a session variable.
+evaluate 'Case 7: ADDTIME, GROUP_CONCAT and PERCENTILE over variables and binds';
 set @z = '2020-01-01 10:00:00 +09:00';
 select addtime(@z, time'1:00:00') from fg_c6;
--- [N-gconcat] a GROUP_CONCAT of a CHAR bind read through its accumulator and a scalar subquery
+
+-- [N-gconcat] GROUP_CONCAT of a CHAR bind in the select list and in a scalar subquery.
 prepare q from 'select group_concat(?), (select group_concat(?) from fg_c6) from fg_c6';
 execute q using 'a', 'b';
--- [N-pct] a percentile fraction over a session variable, and a scalar subquery an index key range reads
+
+-- [N-pct] A percentile fraction from a session variable, and a scalar subquery an index key range reads.
 set @p = 0.5;
 create table fg_c7 (i int primary key, c double);
 insert into fg_c7 values (1, 0.5), (2, 1.5), (3, 2.5);

@@ -1,13 +1,33 @@
+/**
+ *  This test case verifies CBRD-27510: a ? in PL/CSQL static SQL is a slot like a JDBC ?, typed by the value PL
+ *  sends.
+ *
+ *  PL/CSQL runs a static SQL statement by replacing each PL variable with a ? and sending the variable's value.
+ *  CBRD-27510 treats that ? like a JDBC bind - the gate (qexec_resolve_domains) takes the domain of the value PL
+ *  sends, not the variable's declared type. PL sends CHAR as VARCHAR, TIMESTAMP as DATETIME, NUMERIC with the
+ *  precision and scale of the value's digits, and NULL without a type. Each procedure prints what its statements
+ *  saw through DBMS_OUTPUT.
+ *
+ *  Every answer here is the develop answer. A slot LIMIT inside a derived table and a slot FIELD argument fail in
+ *  develop's PL static SQL with -889 before they reach the server, so they are left out.
+ *
+ *  Coverage:
+ *    Case 1: the domain the gate sees for a bare ?, for each declared type
+ *    Case 2: NULL values, which reach the gate without a type
+ *    Case 3: arithmetic, functions and common values over slots
+ *    Case 4: a comparison and an assignment next to a column, which keep develop's client cast
+ *    Case 5: aggregates and set operations over slots
+ *    Case 6: built-in function calls in PL expressions, run as SQL with ? arguments
+ *    Case 7: LIMIT over a slot at the top level
+ */
 --+ server-message on
--- workspace#339 (map #312, dpin-13): a PL/CSQL static SQL ? is a slot like a JDBC ? (D-336-B)
--- The gate takes the domain of the value PL sends, not the declared type, and every answer is the develop answer.
--- PL sends CHAR as VARCHAR, TIMESTAMP as DATETIME, NUMERIC as the digits of the value, and NULL without a type.
 drop table if exists dps_t;
 create table dps_t (i int, s varchar(10), c char(5), n numeric(10,2), d date);
 insert into dps_t values (1, '1', 'ab', 1.50, date'2024-01-02');
 insert into dps_t values (2, '2', 'cd', 2.25, date'2024-01-03');
 
--- A. the domain the gate sees for a bare ? is the type of the value PL sends
+-- Case 1 [A]. TYPEOF of a bare ? for each declared type - the type of the value PL sends.
+evaluate 'Case 1: the domain of a bare slot';
 create or replace procedure dps_a () as
     v_int int := 1;
     v_num numeric(10,5) := 12.34568;
@@ -38,7 +58,8 @@ begin
 end;
 call dps_a();
 
--- B. NULL values reach the gate without a type
+-- Case 2 [B]. NULL values reach the gate without a type.
+evaluate 'Case 2: NULL values';
 create or replace procedure dps_b () as
     v_int int := null;
     v_num numeric(10,2) := null;
@@ -62,7 +83,8 @@ begin
 end;
 call dps_b();
 
--- C. arithmetic, functions and common values over slots are decided at the gate from the value
+-- Case 3 [C]. Arithmetic, functions and common values over slots are decided at the gate from the value.
+evaluate 'Case 3: arithmetic, functions and common values over slots';
 create or replace procedure dps_c () as
     v_int int := 2;
     v_num numeric(10,5) := 12.34568;
@@ -101,7 +123,8 @@ begin
 end;
 call dps_c();
 
--- D. comparison and assignment next to a column keep the develop client cast
+-- Case 4 [D]. A comparison and an assignment next to a column keep develop's client cast.
+evaluate 'Case 4: comparisons and assignments next to a column';
 create or replace procedure dps_d () as
     v_str varchar := '1';
     v_num numeric(10,5) := 1.5;
@@ -126,7 +149,8 @@ begin
 end;
 call dps_d();
 
--- E. aggregates and set operations over slots
+-- Case 5 [E]. Aggregates and set operations over slots.
+evaluate 'Case 5: aggregates and set operations over slots';
 create or replace procedure dps_e () as
     v_int int := 3;
     v_str varchar := '2.5';
@@ -147,7 +171,8 @@ begin
 end;
 call dps_e();
 
--- F. built-in function calls in PL expressions run as SQL with ? arguments
+-- Case 6 [F]. Built-in function calls in PL expressions run as SQL with ? arguments.
+evaluate 'Case 6: built-in functions in PL expressions';
 create or replace procedure dps_f () as
     v_int int := 1;
     v_num numeric(10,5) := 12.34568;
@@ -162,8 +187,8 @@ begin
 end;
 call dps_f();
 
--- G. LIMIT over a slot at the top level (a slot LIMIT inside a derived table and a slot FIELD argument
--- fail in develop PL static SQL with -889 before reaching the server, so they stay out of this case)
+-- Case 7 [G]. LIMIT over a slot at the top level.
+evaluate 'Case 7: LIMIT over a slot';
 create or replace procedure dps_g () as
     v_lim int := 1;
     k int;

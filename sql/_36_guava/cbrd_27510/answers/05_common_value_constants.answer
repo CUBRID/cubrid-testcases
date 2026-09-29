@@ -13,6 +13,10 @@
 ===================================================
 2
 ===================================================
+    
+Case 1: NULL CAST operands and the last argument     
+
+===================================================
 0
 ===================================================
 typeof(coalesce( cast( ?:0  as datetime),  cast( ?:1  as datetime),  ?:2 ))    coalesce( cast( ?:3  as datetime),  cast( ?:4  as datetime),  ?:5 )    
@@ -117,6 +121,10 @@ typeof(coalesce( cast( ?:0  as char(5)),  ?:1 ))    coalesce( cast( ?:2  as char
 character (-1)     x         
 
 ===================================================
+    
+Case 2: bind-typed nodes inside the subtree and chains     
+
+===================================================
 0
 ===================================================
 typeof(coalesce(nullif( ?:0 ,  ?:1 ), 1))    coalesce(nullif( ?:2 ,  ?:3 ), 1)    
@@ -165,6 +173,10 @@ typeof(v)    v
 integer     1     
 
 ===================================================
+    
+Case 3: consumers of such a common value     
+
+===================================================
 0
 ===================================================
 typeof(coalesce( cast( ?:0  as datetime),  ?:1 )+1)    coalesce( cast( ?:2  as datetime),  ?:3 )+1    
@@ -211,6 +223,10 @@ typeof(max(coalesce( cast( ?:0  as date),  ?:1 , k)))    max(coalesce( cast( ?:2
 integer     2     3     
 
 ===================================================
+    
+Case 4: NULL results, bare binds and constants with a value     
+
+===================================================
 0
 ===================================================
 typeof(nullif( cast( ?:0  as double),  ?:1 ))    nullif( cast( ?:2  as double),  ?:3 )    typeof(least( cast( ?:4  as double),  ?:5 ))    least( cast( ?:6  as double),  ?:7 )    typeof(greatest( cast( ?:8  as datetime),  ?:9 ))    greatest( cast( ?:10  as datetime),  ?:11 )    
@@ -241,16 +257,8 @@ typeof(coalesce( cast( ?:0  as double),  ?:1 ))    coalesce( cast( ?:2  as doubl
 double     1.5     
 
 ===================================================
-0
-===================================================
-k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:2  as datetime), dt,  ?:3 )    
-1     character varying (1073741823)     1     
-2     character varying (1073741823)     10:00:00.000 AM 01/05/2024     
-
-===================================================
-k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:2  as datetime), dt,  ?:3 )    
-1     datetime     2024-01-02 00:00:00.0     
-2     datetime     2024-01-05 10:00:00.0     
+    
+Case 5: an operand from the row in both heap orders     
 
 ===================================================
 0
@@ -263,6 +271,22 @@ k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:
 k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:2  as datetime), dt,  ?:3 )    
 1     datetime     2024-01-02 00:00:00.0     
 2     datetime     2024-01-05 10:00:00.0     
+
+===================================================
+0
+===================================================
+k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:2  as datetime), dt,  ?:3 )    
+1     character varying (1073741823)     1     
+2     character varying (1073741823)     10:00:00.000 AM 01/05/2024     
+
+===================================================
+k    typeof(coalesce( cast( ?:0  as datetime), dt,  ?:1 ))    coalesce( cast( ?:2  as datetime), dt,  ?:3 )    
+1     datetime     2024-01-02 00:00:00.0     
+2     datetime     2024-01-05 10:00:00.0     
+
+===================================================
+    
+Case 6: a parallel heap scan over such a term     
 
 ===================================================
 0

@@ -1,10 +1,32 @@
+/**
+ *  This test case verifies CBRD-27510: index search keys follow a key plan made before the first row.
+ *
+ *  develop built an index search key by converting each key value into the index column's domain while it scanned,
+ *  and chose between a strict conversion and keeping the value from the value itself. CBRD-27510 makes a key plan
+ *  before the first row. A multi-column key column of another type is converted strictly into the index column's
+ *  domain or else kept under its value's domain. A NUMERIC, CHAR or BIT value of the column's type with other
+ *  parameters is kept, and once one column is kept every column is written under its value's domain. A
+ *  single-column key takes its value as it is, and the B-tree compares a value it cannot compare directly through
+ *  the scan's key comparison table.
+ *
+ *  Each index scan is paired with the same query on USING INDEX NONE, whose sequential scan gives the same rows.
+ *  Every answer here is the develop answer.
+ *
+ *  Coverage:
+ *    Case 1: a single-column INT key against values of other types
+ *    Case 2: BIGINT keys beyond a double's precision against a double value
+ *    Case 3: NUMERIC keys against integers, doubles and other precisions
+ *    Case 4: strings - a CHAR index with VARCHAR values, a collation the index does not have
+ *    Case 5: dates and times against other types
+ *    Case 6: a multi-column key, converted strictly or kept under the value's domain
+ *    Case 7: descending columns
+ *    Case 8: key lists and range lists whose keys have different types
+ *    Case 9: join and correlated keys
+ *    Case 10: an index skip scan
+ *    Case 11: a multi-range optimization
+ *    Case 12: a covering scan and a loose index scan over kept keys
+ */
 --+ holdcas on;
--- workspace#342 (map #312, dpin-16): search keys follow a key plan made before any row. A multi-column key column of
--- another type is converted strictly into the index column's domain or else kept under its value's domain, a NUMERIC,
--- CHAR or BIT of the column's type with other parameters is kept, and once a column is kept every column is written
--- under its value's domain (B31). A single-column key takes its value as it is and the B-tree compares a value the
--- index does not compare as it is through the scan's key comparison table (B30). Each index scan below is paired
--- with the same query on USING INDEX NONE. Every answer here is develop's.
 drop table if exists ik_t;
 drop table if exists ik_o;
 create table ik_t (i int, b bigint, s smallint, n numeric(10,2), d double, f float, c char(4), v varchar(20),
@@ -36,7 +58,9 @@ insert into ik_o values (2, 1.5, 2.000, 'x', 2);
 insert into ik_o values (3, 3.0, 2.250, '3', 3);
 insert into ik_o values (4, null, null, null, null);
 
--- [SINGLE] a single-column INT key: the value as it is, a kept type compared through the key comparison table
+-- Case 1 [SINGLE]. A single-column INT key takes its value as it is, and a type the key does not have is compared
+-- through the key comparison table.
+evaluate 'Case 1: a single-column INT key';
 select i from ik_t where i = 1.5 using index ik_i order by 1;
 select i from ik_t where i = 1.5 using index none order by 1;
 select i from ik_t where i = 2.0 using index ik_i order by 1;
@@ -70,13 +94,15 @@ prepare q from 'select i from ik_t where i > ? and i <= ? using index none order
 execute q using 1.5, 4.5;
 execute q using 2, 4.0;
 
--- [SINGLE] BIGINT keys beyond a double's precision against a double value
+-- Case 2 [SINGLE]. BIGINT keys beyond a double's precision against a double value.
+evaluate 'Case 2: BIGINT keys against a double';
 select i from ik_t where b = 9007199254740993.0e0 using index ik_b order by 1;
 select i from ik_t where b = 9007199254740993.0e0 using index none order by 1;
 select i from ik_t where b > 9007199254740991.5 using index ik_b order by 1;
 select i from ik_t where b > 9007199254740991.5 using index none order by 1;
 
--- [SINGLE] NUMERIC keys against integers, doubles and other precisions
+-- Case 3 [SINGLE]. NUMERIC keys against integers, doubles and other precisions.
+evaluate 'Case 3: NUMERIC keys';
 select i from ik_t where n = 2 using index ik_n order by 1;
 select i from ik_t where n = 2 using index none order by 1;
 select i from ik_t where n = 1.5e0 using index ik_n order by 1;
@@ -94,7 +120,8 @@ execute q using 2;
 execute q using 2.2;
 execute q using '3.5';
 
--- [SINGLE] strings: a CHAR index with VARCHAR values, a collation the index does not have
+-- Case 4 [SINGLE]. A CHAR index searched with VARCHAR values, and a collation the index does not have.
+evaluate 'Case 4: string keys';
 select i from ik_t where c = 'c' using index ik_c order by 1;
 select i from ik_t where c = 'c' using index none order by 1;
 select i from ik_t where c = cast('c ' as varchar(4)) using index ik_c order by 1;
@@ -106,7 +133,8 @@ select i from ik_t where u = 'b' collate utf8_bin using index none order by 1;
 select i from ik_t where u > 'c' collate utf8_bin using index ik_u order by 1;
 select i from ik_t where u > 'c' collate utf8_bin using index none order by 1;
 
--- [SINGLE] dates and times against other types
+-- Case 5 [SINGLE]. Date and time keys against values of other types.
+evaluate 'Case 5: date and time keys';
 select i from ik_t where dt = datetime'2024-01-02 00:00:00' using index ik_dt order by 1;
 select i from ik_t where dt = datetime'2024-01-02 00:00:00' using index none order by 1;
 select i from ik_t where dt = datetime'2024-01-02 12:00:00' using index ik_dt order by 1;
@@ -122,7 +150,9 @@ prepare q from 'select i from ik_t where tm < ? using index none order by 1';
 execute q using 10800;
 execute q using '03:00:00';
 
--- [MULTI] a multi-column key: strict conversion into the column's domain, or the value kept under its own
+-- Case 6 [MULTI]. A multi-column key - each column converted strictly into its domain, or the value kept under its
+-- own domain, after which every column is kept.
+evaluate 'Case 6: a multi-column key';
 select g, i from ik_t where g = 1 and i > 1.5 using index ik_gi order by 1, 2;
 select g, i from ik_t where g = 1 and i > 1.5 using index none order by 1, 2;
 select g, i from ik_t where g = '2' and i = 4.0 using index ik_gi order by 1, 2;
@@ -160,13 +190,16 @@ execute q using 2, 3.5;
 execute q using '1', 1.0;
 execute q using 2.0, '4';
 
--- [DESC] descending columns: a kept column keeps its column's direction
+-- Case 7 [DESC]. Descending columns - a kept column keeps its column's direction.
+evaluate 'Case 7: descending columns';
 select g, i from ik_t where g = 2 and i < 3.5 using index ik_gid order by 1 desc, 2 desc;
 select g, i from ik_t where g = 2 and i < 3.5 using index none order by 1 desc, 2 desc;
 select g, i from ik_t where g = 1 and i >= 1.5 using index ik_gid order by 1 desc, 2 desc;
 select g, i from ik_t where g = 1 and i >= 1.5 using index none order by 1 desc, 2 desc;
 
--- [LIST] key lists and range lists whose keys have different types: sorted, deduplicated and merged as planned
+-- Case 8 [LIST]. Key lists and range lists whose keys have different types are sorted, deduplicated and merged as
+-- planned.
+evaluate 'Case 8: key lists and range lists';
 select i from ik_t where i in (1, 1.5, 2, 2.0, 3.5) using index ik_i order by 1;
 select i from ik_t where i in (1, 1.5, 2, 2.0, 3.5) using index none order by 1;
 select i from ik_t where i in (4, '4', 2.5e0, 1) using index ik_i order by 1;
@@ -184,7 +217,8 @@ prepare q from 'select i from ik_t where i in (?, ?, ?) using index none order b
 execute q using 1, 1.5, '3';
 execute q using 2.0, 2, 6;
 
--- [CORRELATED] a join or correlated key: its rule planned by the load, its converter run at each range
+-- Case 9 [CORRELATED]. A join or correlated key - the load plans its rule and each range runs its converter.
+evaluate 'Case 9: join and correlated keys';
 select /*+ ordered use_nl */ o.k, t.i from ik_o o, ik_t t where t.i = o.dd using index t.ik_i order by 1, 2;
 select /*+ ordered use_nl */ o.k, t.i from ik_o o, ik_t t where t.i = o.dd using index none order by 1, 2;
 select /*+ ordered use_nl */ o.k, t.i from ik_o o, ik_t t where t.n = o.nn using index t.ik_n order by 1, 2;
@@ -206,7 +240,8 @@ execute q using 1, 0.5;
 execute q using 2, '1';
 execute q using 1, 1;
 
--- [ISS] an index skip scan: the skip value is read from the index and written under its column's domain
+-- Case 10 [ISS]. An index skip scan reads the skip value from the index and writes it under its column's domain.
+evaluate 'Case 10: an index skip scan';
 select /*+ index_ss */ g, i from ik_t where i = 2.0 using index ik_gi order by 1, 2;
 select /*+ index_ss */ g, i from ik_t where i = 2.0 using index none order by 1, 2;
 select /*+ index_ss */ g, i from ik_t where i = 2.5 using index ik_gi order by 1, 2;
@@ -215,7 +250,8 @@ select /*+ index_ss */ g, i from ik_t where i > 3.5 using index none order by 1,
 select /*+ index_ss */ g, i from ik_t where i < 3.5 using index ik_gid order by 1, 2;
 select /*+ index_ss */ g, i from ik_t where i < 3.5 using index none order by 1, 2;
 
--- [MRO] a multi-range optimization: its sort columns take the index's domains, ascending
+-- Case 11 [MRO]. A multi-range optimization - its sort columns take the index's domains, ascending.
+evaluate 'Case 11: a multi-range optimization';
 select g, i from ik_t where g in (1, 2, 3) and i > 1.5 using index ik_gi order by i limit 3;
 select g, i from ik_t where g in (1, 2, 3) and i > 1.5 using index none order by i limit 3;
 select g, i from ik_t where g in (1, 2, 3) and i > 0 using index ik_gi order by i desc limit 2;
@@ -223,7 +259,8 @@ select g, i from ik_t where g in (1, 2, 3) and i > 0 using index none order by i
 select g, n from ik_t where g in (1, 2) and n > 1.5e0 using index ik_gn order by n limit 2;
 select g, n from ik_t where g in (1, 2) and n > 1.5e0 using index none order by n limit 2;
 
--- [COVERING, LOOSE] a covering scan and a loose index scan over kept keys
+-- Case 12 [COVERING, LOOSE]. A covering scan and a loose index scan over kept keys.
+evaluate 'Case 12: covering and loose index scans';
 select g, i from ik_t where g = 2 and i >= 2.5 using index ik_gi order by 1, 2;
 select /*+ index_ls */ distinct g from ik_t where g > 1.5 using index ik_gi order by 1;
 select distinct g from ik_t where g > 1.5 using index none order by 1;

@@ -1,9 +1,27 @@
+/**
+ *  This test case verifies CBRD-27510: comparisons made outside a predicate term are decided before the first row.
+ *
+ *  Besides WHERE terms, the executor compares values in FIELD, NULLIF, LEAST and GREATEST, against LIMIT's row
+ *  count, between a merge join's columns, between a collection's elements, between JSON scalars, against partition
+ *  bounds and between the bounds of two ORDERBY_NUM terms. develop decided each of these comparisons from the two
+ *  values when it compared them. CBRD-27510 decides them before the first row. FIELD, NULLIF, LEAST, GREATEST,
+ *  LIMIT and a merge join read a comparison record made at load time or by the gate (qexec_resolve_domains).
+ *  Collection elements, JSON scalars, partition bounds, hash group keys and ORDERBY_NUM bounds read a key pair
+ *  table that holds the comparison of every pair of key types a value can have. A filter index predicate and a
+ *  function index expression carry the records their stream's load made.
+ *
+ *  Every answer here is the develop answer.
+ *
+ *  Coverage:
+ *    Case 1: heterogeneous collections - element order, comparison, arithmetic, CAST
+ *    Case 2: scalars of different JSON types
+ *    Case 3: FIELD, NULLIF, LEAST and GREATEST over operands of different types
+ *    Case 4: LIMIT's row count against 0, the bounds of two ORDERBY_NUM terms
+ *    Case 5: partition pruning with constants of other types
+ *    Case 6: a merge join over columns of other types
+ *    Case 7: a filter index predicate and a function index expression over values of other types
+ */
 --+ holdcas on;
--- workspace#354 (map #312, dpin-17b): the comparisons outside a predicate term are decided before any row. FIELD,
--- NULLIF, LEAST and GREATEST, LIMIT's row count and a merge join's columns read the comparison record the load or the
--- gate made. A collection's elements, JSON scalars, partition bounds, hash group keys and the bounds of two ORDERBY_NUM
--- terms read the key pair table, the comparison of every pair of keys a value can have. A filter index predicate and a
--- function index expression carry the records their stream's load made. Every answer here is develop's.
 drop table if exists ot_c;
 drop table if exists ot_j;
 drop table if exists ot_f;
@@ -13,7 +31,9 @@ drop table if exists ot_ma;
 drop table if exists ot_mb;
 drop table if exists ot_x;
 
--- [COLLECTION] heterogeneous collections: element order, comparison, arithmetic, cast
+-- Case 1 [COLLECTION]. Collections holding elements of different types - their element order, comparisons,
+-- arithmetic and CAST.
+evaluate 'Case 1: heterogeneous collections';
 create table ot_c (k int, ms multiset, st set, sq sequence, si set(int), sv set(varchar(10)), sc set(char(3)));
 insert into ot_c values (1, {1, 'a', 2.5, date'2024-01-01'}, {'b', 1, 3.5}, {'x', 1, 2}, {1, 2}, {'1', 'a'}, {'1', 'a'});
 insert into ot_c values (2, {'a', 1}, {1, 'b'}, {1, 'x', 2}, {2, 3}, {'2'}, {'2'});
@@ -40,7 +60,8 @@ execute q using 'a';
 execute q using 2.5;
 execute q using 1;
 
--- [JSON] scalars of different JSON types
+-- Case 2 [JSON]. Comparisons between JSON scalars of different types.
+evaluate 'Case 2: JSON scalars of different types';
 create table ot_j (k int, j json);
 insert into ot_j values (1, '1');
 insert into ot_j values (2, '1.5');
@@ -58,7 +79,8 @@ select k from ot_j where j < json_extract ('["b"]', '$[0]') order by 1;
 select a.k, b.k from ot_j a, ot_j b where a.j = b.j and a.k < b.k order by 1, 2;
 select j, count (*) from ot_j group by j order by 1;
 
--- [ARITH] FIELD, NULLIF, LEAST and GREATEST over operands of different types
+-- Case 3 [ARITH]. FIELD, NULLIF, LEAST and GREATEST over operands of different types.
+evaluate 'Case 3: FIELD, NULLIF, LEAST and GREATEST';
 create table ot_f (k int, i int, s varchar(10), c char(3), n numeric(6,2), d date, b bigint);
 insert into ot_f values (1, 1, '1', 'a', 1.00, date'2024-01-01', 10);
 insert into ot_f values (2, 2, 'b', '2', 2.50, date'2024-01-02', 20);
@@ -77,7 +99,9 @@ prepare q from 'select k from ot_f where field (i, ?, ?) > 0 order by 1';
 execute q using '10', 2;
 execute q using 1.0, 'x';
 
--- [LIMIT] the row count against 0, and the bounds of two ORDERBY_NUM terms against each other
+-- Case 4 [LIMIT]. LIMIT's row count from a bind against 0, and the bounds of two ORDERBY_NUM terms compared with
+-- each other.
+evaluate 'Case 4: LIMIT and ORDERBY_NUM bounds';
 prepare q from 'select k from ot_f order by k limit ?';
 execute q using 2;
 execute q using 3000000000;
@@ -90,7 +114,8 @@ prepare q from 'select k from ot_f order by k for orderby_num () <= ? and orderb
 execute q using 2.5, 3;
 execute q using 3, 2.5;
 
--- [PARTITION] pruning with constants of other types
+-- Case 5 [PARTITION]. Range, list and hash partition pruning with constants of other types.
+evaluate 'Case 5: partition pruning with constants of other types';
 create table ot_pr (a int, b varchar(10)) partition by range (a) (partition p0 values less than (10), partition p1 values less than (100), partition p2 values less than maxvalue);
 insert into ot_pr values (1, 'a');
 insert into ot_pr values (50, 'b');
@@ -114,7 +139,8 @@ prepare q from 'select a from ot_pl where b = ? order by 1';
 execute q using 'c';
 execute q using 1;
 
--- [MERGE] a merge join over columns of other types
+-- Case 6 [MERGE]. A merge join over columns of other types.
+evaluate 'Case 6: a merge join over columns of other types';
 create table ot_ma (x bigint, v int);
 create table ot_mb (y smallint, w varchar(5));
 insert into ot_ma values (1, 10);
@@ -127,7 +153,9 @@ select /*+ recompile ordered USE_MERGE */ a.x, b.y from ot_ma a inner join ot_mb
 select /*+ recompile ordered USE_MERGE */ a.x, b.y from ot_ma a left outer join ot_mb b on a.x = b.y order by 1;
 select /*+ recompile ordered USE_MERGE */ a.v, b.w from ot_ma a right outer join ot_mb b on a.x = b.w order by 2;
 
--- [STREAM] a filter index predicate and a function index expression over values of other types
+-- Case 7 [STREAM]. A filter index predicate and a function index expression over values of other types - their
+-- streams' records are made when the streams are loaded.
+evaluate 'Case 7: filter and function index streams';
 create table ot_x (a int, s varchar(10), n numeric(6,2));
 create index ot_x_a on ot_x (a) where a > 1.5;
 create index ot_x_n on ot_x (n) where n in (1, 2.5, '3');

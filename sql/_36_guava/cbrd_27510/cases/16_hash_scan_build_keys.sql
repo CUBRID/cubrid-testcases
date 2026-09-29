@@ -1,11 +1,25 @@
+/**
+ *  This test case verifies CBRD-27510: a hash list scan decides how each build key is copied or converted before
+ *  its first build row.
+ *
+ *  A hash list scan copies each build key of the inner list into its hash table, converted into the probe key's
+ *  domain when the two key types differ. develop decided that conversion from each key value it copied. CBRD-27510
+ *  decides each key's copy or conversion before the first build row, from the probe key's domain as the scan reads
+ *  it and the domain the plan gives the key's values, and the row runs that decision. The build side is an inner
+ *  derived table kept as a list by NO_MERGE and its WHERE clause, the probe side is the outer table, and the trace
+ *  of each query shows the hash list scan.
+ *
+ *  Every answer here is the develop answer, including build values the conversion refuses.
+ *
+ *  Coverage:
+ *    Case 1: one query per pair of key types the compiler fixes
+ *    Case 2: probe and build keys over binds, two keys, a scan reopened for every outer row, a probe key whose
+ *            collation a bind gives
+ *    Case 3: keys over a session variable read
+ *    Case 4: the hierarchical hash list scan of CONNECT BY over a join
+ *    Case 5: build values the conversion into the probe key's domain refuses
+ */
 --+ holdcas on;
--- workspace#356 (map #312, dpin-17d): a hash list scan copies each build key into its hash table, in the probe key's
--- domain where a key pair's types differ. The scan now decides each key's copy or conversion before its first build
--- row, from the probe key's domain as the scan reads it and the domain the plan gives the key's values, and the row
--- runs that decision. The build side is the inner derived table, kept a list by NO_MERGE and a WHERE clause, the probe
--- side the outer table. One cell per pair of key types, then keys over binds and session variables, a scan reopened
--- for every outer row, the hierarchical scan of CONNECT BY, JSON build keys, and build values the conversion refuses.
--- The trace of each query shows the hash list scan. Every answer here is develop's.
 drop table if exists hk_o;
 drop table if exists hk_i;
 create table hk_o (k int, i int, bi bigint, si smallint, d double, f float, n numeric(10,2), n0 numeric(20,0), s varchar(20), c char(5), dt date, dtm datetime, e enum('a','b','c'), m monetary);
@@ -18,7 +32,9 @@ insert into hk_i select * from hk_o;
 insert into hk_i values (5, 5, 5, 5, 5.0, 5.0, 5.00, 5, '5', '5', date'2020-01-05', datetime'2020-01-05 00:00:00', 'a', 5);
 insert into hk_i values (6, 3, 3, 3, 3.0, 3.0, 3.00, 3, 'a', 'a', date'2020-01-03', datetime'2020-01-03 00:00:00', 'a', 3);
 
--- [FIXED] the compiler fixes both key domains
+-- Case 1 [FIXED]. The compiler fixes both key domains - one query for each pair of key types (INT, BIGINT,
+-- SMALLINT, DOUBLE, FLOAT, NUMERIC, VARCHAR, CHAR, DATE, DATETIME, ENUM, MONETARY).
+evaluate 'Case 1: key type pairs the compiler fixes';
 set trace on;
 select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i = b.i order by 1, 2;
 show trace;
@@ -69,7 +85,8 @@ show trace;
 select /*+ ordered */ a.k, b.k from hk_o a left outer join (select /*+ NO_MERGE */ * from hk_i where k > 0) b on a.bi = b.i order by 1, 2;
 show trace;
 
--- [BIND] a probe key or a build key over a bind: the gate decides its domain
+-- Case 2 [BIND]. A probe key or a build key over a bind - the gate decides its domain at each execution.
+evaluate 'Case 2: keys over binds';
 prepare hk_b1 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + ? = b.i order by 1, 2';
 execute hk_b1 using 0;
 show trace;
@@ -102,12 +119,14 @@ execute hk_b6 using 0.5, 0;
 execute hk_b6 using 0, 0.5;
 execute hk_b6 using 0, 0.0;
 execute hk_b6 using 0.0, 0;
--- two keys: the second pair's types differ
+
+-- Two keys, where the second pair's types differ.
 prepare hk_b8 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ k, i, i + ? v from hk_i where k > 0) b where a.i + ? = b.v and a.bi = b.i order by 1, 2';
 execute hk_b8 using 0, 0;
 show trace;
 execute hk_b8 using 0, 0.0;
--- a hash list scan reopened for every outer row
+
+-- A hash list scan in a correlated subquery, reopened for every outer row.
 prepare hk_b7 from 'select a.k, (select count(*) from hk_o x, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where x.i + ? = b.i and x.k = a.k) c from hk_o a order by 1';
 execute hk_b7 using 0;
 show trace;
@@ -121,13 +140,16 @@ execute hk_b9 using 0, 0e0;
 execute hk_b9 using 0e0, 0;
 execute hk_b6 using 0, 0e0;
 execute hk_b6 using 0e0, 0;
--- a probe key whose string collation the bind gives
+
+-- A probe key whose string collation the bind gives.
 prepare hk_b10 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where b.c = concat(a.s, ?) order by 1, 2';
 execute hk_b10 using '';
 show trace;
 execute hk_b10 using 'x';
 
--- [SESSION VARIABLE] a key over a session variable read
+-- Case 3 [SESSION VARIABLE]. A key over a session variable read, with the variable holding an integer, a decimal
+-- and a string.
+evaluate 'Case 3: keys over a session variable';
 set @hk_v = 0;
 select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + @hk_v = b.i order by 1, 2;
 show trace;
@@ -160,7 +182,9 @@ set @hk_v = '0';
 select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ k, i v from hk_i where k > 0) b where a.bi = b.v + @hk_v order by 1, 2;
 set trace off;
 
--- [CONNECT BY] the hierarchical hash list scan over a join: the prior key against the build key
+-- Case 4 [CONNECT BY]. The hierarchical hash list scan over a join - the PRIOR key against the build key, and a
+-- BIGINT key beyond the INT range.
+evaluate 'Case 4: the hash list scan of CONNECT BY';
 drop table if exists hk_q;
 drop table if exists hk_q2;
 create table hk_q (id int, pid bigint, name varchar(10));
@@ -179,7 +203,9 @@ insert into hk_q values (5, 3000000000, 'x');
 select q.id, q.pid, q2.job, level from hk_q q inner join hk_q2 q2 on q.id = q2.qid start with q.pid is null connect by prior q.id = q.pid order by 1, 2, 3, 4;
 select q.id, q.pid, q2.job, level from hk_q q inner join hk_q2 q2 on q.id = q2.qid start with q.pid is null connect by prior q.pid = q.id order by 1, 2, 3, 4;
 
--- [REFUSED] build values the conversion into the probe key's domain refuses, each on its own table
+-- Case 5 [REFUSED]. Build values that the conversion into the probe key's domain refuses, each on its own table,
+-- with the same query on no_hash_list_scan beside it.
+evaluate 'Case 5: build values the conversion refuses';
 create table hk_r (k int, i int, si smallint, c char(3), st set(int), ms multiset(int), sq sequence(int));
 insert into hk_r values (1, 1, 1, 'abc', {1, 2}, {1, 2}, {1, 2}), (2, 2, 2, 'x', {3}, {3, 3}, {3});
 create table hk_r1 (k int, bi bigint);

@@ -1,9 +1,24 @@
+/**
+ *  This test case verifies CBRD-27510: an index scan carries its B-tree's key domain, and the scan open matches it
+ *  with the B-tree's root header.
+ *
+ *  The key plan of an index scan is made when the plan is loaded, from the key domain the scan carries in the XASL
+ *  stream. When the scan opens, CBRD-27510 checks that domain against the B-tree's root header before the key plan
+ *  is used. This case covers the indexes whose root header and key values differ in form or come from other B-trees
+ *  - OBJECT keys (the root header keeps OBJECT, the key values are OIDs), partitions (each partition's B-tree has
+ *  its own root header), a superclass index scanned over its subclass, and primary key, unique, function and
+ *  descending indexes. Each index scan is paired with the same query on USING INDEX NONE. The DROP TABLE statements
+ *  at the end delete the tables' grants through the single-column OBJECT index of the authorization catalog.
+ *
+ *  Every answer here is the develop answer.
+ *
+ *  Coverage:
+ *    Case 1: a typed and a generic OBJECT column, alone and with another column
+ *    Case 2: range and hash partitions
+ *    Case 3: a superclass index scanned over its subclass
+ *    Case 4: primary key, unique, function and descending indexes
+ */
 --+ holdcas on;
--- workspace#342 (map #312, dpin-16): an index scan carries its B-tree's key domain, and the scan open matches it with
--- the B-tree's root header before the key plan is used. OBJECT keys (the root header keeps OBJECT, the key values are
--- OIDs), partitions, a class hierarchy, and function, unique, primary key and descending indexes, each index scan
--- paired with the same query on USING INDEX NONE. The DROP TABLE statements at the end delete the tables' grants
--- through the single-column OBJECT index of the authorization catalog. Every answer here is develop's.
 drop table if exists okc;
 drop table if exists okp;
 drop table if exists okpt;
@@ -12,7 +27,9 @@ drop table if exists oksub;
 drop table if exists oksup;
 drop table if exists okf;
 
--- [OBJECT] a typed and a generic OBJECT column, alone and with another column (a referable class keeps its OIDs)
+-- Case 1 [OBJECT]. A typed and a generic OBJECT column, alone and with another column. The referable class keeps
+-- its OIDs (dont_reuse_oid).
+evaluate 'Case 1: OBJECT keys';
 create table okp (a int primary key, n varchar(10)) dont_reuse_oid;
 insert into okp values (1, 'one');
 insert into okp values (2, 'two');
@@ -34,7 +51,8 @@ select k from okc where r is null using index none order by 1;
 select c.k, p.n from okp p, okc c where c.r = p and p.a < 3 using index c.okc_r order by 1;
 select c.k, p.n from okp p, okc c where c.r = p and p.a < 3 using index none order by 1;
 
--- [PARTITION] range and hash partitions: each partition's B-tree has its own root header
+-- Case 2 [PARTITION]. Range and hash partitions, each with its own B-tree root header.
+evaluate 'Case 2: partitioned indexes';
 create table okpt (a int, b varchar(10), c numeric(6,2)) partition by range (a)
   (partition p0 values less than (10), partition p1 values less than maxvalue);
 create index okpt_ab on okpt (a, b);
@@ -62,7 +80,8 @@ select a from okph where s = 'x' using index none order by 1;
 select a from okph where s > 'x' and s < 'zz' using index okph_s order by 1;
 select a from okph where s > 'x' and s < 'zz' using index none order by 1;
 
--- [HIERARCHY] a superclass index scanned over its subclass too
+-- Case 3 [HIERARCHY]. A superclass index scanned over its subclass too.
+evaluate 'Case 3: a superclass index over its subclass';
 create table oksup (a int, v varchar(10));
 create table oksub under oksup (b int);
 create index oksup_a on oksup (a);
@@ -75,7 +94,8 @@ select a, v from all oksup where a = 1 using index none order by 2;
 select a, v from all oksup where a >= 1.5 using index oksup_a order by 1, 2;
 select a, v from all oksup where a >= 1.5 using index none order by 1, 2;
 
--- [KINDS] primary key, unique, function and descending indexes
+-- Case 4 [KINDS]. Primary key, unique, function and descending indexes.
+evaluate 'Case 4: primary key, unique, function and descending indexes';
 create table okf (i int, s varchar(30), d datetime, primary key (i));
 create unique index okf_s on okf (s);
 create index okf_fn on okf (lower (s));
