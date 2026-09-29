@@ -1,0 +1,51 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a NOLOGIN user and a NOLOGIN PUBLIC both still appear in db_user, distinguished only by is_loginable     
+
+===================================================
+name    is_loginable    
+PUBLIC     NO     
+USER_CAT1     NO     
+USER_CAT2     YES     
+
+===================================================
+    
+Case 2: the DBA sees the same thing through _db_user directly     
+
+===================================================
+name    is_loginable    
+PUBLIC     0     
+USER_CAT1     0     
+USER_CAT2     1     
+
+===================================================
+    
+Case 3: a NOLOGIN user and PUBLIC still appear in db_authorization, same as a loginable one     
+
+===================================================
+owner    
+PUBLIC     
+USER_CAT1     
+USER_CAT2     
+
+===================================================
+    
+Case 4: information_schema.schemata still lists the schema of the NOLOGIN user and of PUBLIC     
+
+===================================================
+schema_name    
+PUBLIC     
+USER_CAT1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
