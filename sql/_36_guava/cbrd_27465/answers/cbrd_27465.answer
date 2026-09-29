@@ -767,6 +767,142 @@ count(*)
 ===================================================
 0
 ===================================================
+    
+Case 16: partitioned outer: an unpartitioned plain NL inner and a semi / anti inner keep one memo across the outer partitions     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+10
+===================================================
+0
+===================================================
+10
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+30
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(i.v)    
+18     90     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_nl_inner_k) (key range: i.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(i.v) from [dba.nl_outer] o, [dba.nl_inner] i where i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.nl_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.nl_inner.i_nl_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    sum(i.v)    
+54     810     
+
+===================================================
+0
+===================================================
+count(*)    sum(i.v)    
+54     810     
+
+===================================================
+0
+===================================================
+count(*)    min(o.k)    max(o.k)    
+18     1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_nl_inner_k) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min(o.k), max(o.k) from [dba.nl_outer] o semi join [dba.nl_inner] i on i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.nl_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.nl_inner.i_nl_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    min(o.k)    max(o.k)    
+18     1     9     
+
+===================================================
+a    k    
+10     0     
+110     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_nl_pinner_k) (key range: i.k=o.k, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.a, o.k from [dba.nl_outer] o anti join [dba.nl_pinner] i on i.k=o.k order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.nl_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.nl_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.nl_pinner.i_nl_pinner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.nl_pinner__p__p?.i_nl_pinner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.nl_pinner__p__p?.i_nl_pinner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.nl_pinner__p__p?.i_nl_pinner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    k    
+10     0     
+110     0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 0
 ===================================================
 0

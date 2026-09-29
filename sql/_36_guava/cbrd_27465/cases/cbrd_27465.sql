@@ -52,6 +52,11 @@
  *    Case 15: partitioned outer x partitioned inner, a key present in two
  *             inner partitions is emitted once, then a semi inner with a join to a
  *             partitioned table
+ *    Case 16: partitioned outer whose two partitions hold the same keys: a plain
+ *             NL inner without partitions and a semi / anti inner keep one memo
+ *             across the outer partitions (the MEMOIZE line needs the hits of the
+ *             second outer partition), a partitioned plain NL inner still renews
+ *             its row memo per inner partition (result = memoize off)
  */
 
 drop table if exists subquery_big;
@@ -253,6 +258,45 @@ select /*+ recompile parallel(0) */ count(*) from subquery_big b, pout o where b
 select /*+ recompile parallel(0) */ count(*) from subquery_big b, pout o where b.col1 = o.a and not exists (select /*+ NO_UNNEST */ 1 from pin i where i.k = o.k);
 drop table pout;
 drop table pin;
+
+
+evaluate 'Case 16: partitioned outer: an unpartitioned plain NL inner and a semi / anti inner keep one memo across the outer partitions';
+-- nl_outer has two range partitions that each hold the keys 0..9 once. A memo renewed for the second
+-- outer partition ends with no hit and shows no MEMOIZE line. A memo kept across the partitions answers
+-- every key of the second partition from the first one and shows the line. Key 0 has no inner row.
+drop table if exists nl_outer;
+drop table if exists nl_inner;
+drop table if exists nl_pinner;
+create table nl_outer (a int primary key, k int) partition by range (a) (partition p0 values less than (100), partition p1 values less than maxvalue);
+insert into nl_outer select rownum, mod(rownum, 10) from db_class a, db_class b limit 10;
+insert into nl_outer select rownum + 100, mod(rownum, 10) from db_class a, db_class b limit 10;
+create table nl_inner (k int, v int);
+insert into nl_inner select mod(rownum, 10), rownum from db_class a, db_class b limit 10;
+delete from nl_inner where k = 0;
+create index i_nl_inner_k on nl_inner (k);
+create table nl_pinner (k int, v int) partition by hash (v) partitions 3;
+insert into nl_pinner select mod(rownum, 10), rownum from db_class a, db_class b limit 30;
+delete from nl_pinner where k = 0;
+create index i_nl_pinner_k on nl_pinner (k);
+update statistics on all classes with fullscan;
+-- plain NL, unpartitioned inner: the memo filled in the first outer partition serves the second
+select /*+ recompile ordered use_nl parallel(0) */ count(*), sum(i.v) from nl_outer o, nl_inner i where i.k = o.k;
+show trace;
+-- plain NL, partitioned inner: its row memo is still renewed per inner partition, result = memoize off
+select /*+ recompile ordered use_nl parallel(0) */ count(*), sum(i.v) from nl_outer o, nl_pinner i where i.k = o.k;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile ordered use_nl parallel(0) */ count(*), sum(i.v) from nl_outer o, nl_pinner i where i.k = o.k;
+set system parameters 'memoize_memory_limit=2M';
+-- semi inner without partitions and anti inner with partitions: the match memo spans the outer partitions
+select /*+ recompile parallel(0) */ count(*), min(o.k), max(o.k) from nl_outer o where exists (select 1 from nl_inner i where i.k = o.k);
+show trace;
+select /*+ recompile parallel(0) */ count(*), min(o.k), max(o.k) from nl_outer o where exists (select /*+ NO_UNNEST */ 1 from nl_inner i where i.k = o.k);
+select /*+ recompile parallel(0) */ a, k from nl_outer o where not exists (select 1 from nl_pinner i where i.k = o.k) order by 1;
+show trace;
+select /*+ recompile parallel(0) */ a, k from nl_outer o where not exists (select /*+ NO_UNNEST */ 1 from nl_pinner i where i.k = o.k) order by 1;
+drop table nl_outer;
+drop table nl_inner;
+drop table nl_pinner;
 
 
 set trace off;
