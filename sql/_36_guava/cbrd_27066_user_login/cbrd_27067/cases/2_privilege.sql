@@ -98,7 +98,7 @@ ALTER USER group_dbamem LOGIN;
 
 CALL login('dba', '') ON CLASS db_user;
 
-evaluate 'Case 11: a DBA-group member can change another DBA-group members login capability -- only self-targeting is denied -- and a second DBA-group member can then restore it';
+evaluate 'Case 11: dba can change another DBA-group member''s login capability, and so can a second DBA-group member -- only self-targeting is denied';
 CREATE USER group_dbamem2 PASSWORD 'pd2' GROUPS dba;
 ALTER USER group_dbamem NOLOGIN;
 CALL login('group_dbamem', 'pd') ON CLASS db_user;

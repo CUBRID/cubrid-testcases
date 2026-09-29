@@ -45,7 +45,7 @@ ALTER USER usr4 LOGIN;
 ALTER USER usr4 LOGIN;
 SELECT name, is_loginable FROM db_user WHERE name = 'USR4';
 
-evaluate 'Case 5: ALTER USER with no clause at all is unrelated pre-existing error';
+evaluate 'Case 5: ALTER USER with no clause at all is an unrelated pre-existing error';
 ALTER USER usr4;
 
 evaluate 'Case 6: CREATE USER combined clauses, PASSWORD then NOLOGIN then GROUPS/MEMBERS then COMMENT, each landing on the right clause';
