@@ -197,20 +197,7 @@ INFORMATION_SCHEMA     NO
 
 ===================================================
     
-Case 11: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected     
-
-
-===================================================
-0
-
-===================================================
-name    is_loginable    
-PUBLIC     NO     
-
-
-===================================================
-    
-Case 12: a grant to PUBLIC, old or newly added, still resolves for another user while PUBLIC itself is NOLOGIN     
+Case 11: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected, and a grant made to it before the switch keeps resolving for another user afterward     
 
 
 ===================================================
@@ -221,6 +208,14 @@ Case 12: a grant to PUBLIC, old or newly added, still resolves for another user 
 
 ===================================================
 0
+
+===================================================
+0
+
+===================================================
+name    is_loginable    
+PUBLIC     NO     
+
 
 ===================================================
     
@@ -235,6 +230,11 @@ a
 ===================================================
     
 null     
+
+
+===================================================
+    
+Case 12: a grant newly added to PUBLIC while it is already NOLOGIN also resolves for another user     
 
 
 ===================================================

@@ -15,8 +15,9 @@
  * 8-9   DBA and a DBA-group member's own login capability can never be
  *       changed, even by itself
  * 10    INFORMATION_SCHEMA denied both directions, stays NO
- * 11-13 PUBLIC is not protected, its grants keep resolving while it is
- *       NOLOGIN, and connecting as PUBLIC itself follows the same flag
+ * 11-13 PUBLIC is not protected; a grant made to it before it is switched
+ *       to NOLOGIN keeps resolving afterward, same as one added after, and
+ *       connecting as PUBLIC itself follows the same flag
  */
 
 --+ holdcas on;
@@ -88,18 +89,18 @@ ALTER USER information_schema LOGIN;
 ALTER USER information_schema NOLOGIN;
 SELECT name, is_loginable FROM db_user WHERE name = 'INFORMATION_SCHEMA';
 
-evaluate 'Case 11: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected';
-ALTER USER public NOLOGIN;
-SELECT name, is_loginable FROM db_user WHERE name = 'PUBLIC';
-
-evaluate 'Case 12: a grant to PUBLIC, old or newly added, still resolves for another user while PUBLIC itself is NOLOGIN';
+evaluate 'Case 11: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected, and a grant made to it before the switch keeps resolving for another user afterward';
 CREATE TABLE pt1 (a INT);
 INSERT INTO pt1 VALUES (1);
 GRANT SELECT ON pt1 TO PUBLIC;
+ALTER USER public NOLOGIN;
+SELECT name, is_loginable FROM db_user WHERE name = 'PUBLIC';
 CALL login('user_u1', 'p1') ON CLASS db_user;
 SELECT a FROM dba.pt1;
 
 CALL login('dba', '') ON CLASS db_user;
+
+evaluate 'Case 12: a grant newly added to PUBLIC while it is already NOLOGIN also resolves for another user';
 CREATE TABLE pt2 (a INT);
 INSERT INTO pt2 VALUES (2);
 GRANT SELECT ON pt2 TO PUBLIC;
