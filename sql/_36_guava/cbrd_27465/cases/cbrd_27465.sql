@@ -293,13 +293,15 @@ show trace;
 select /*+ recompile parallel(0) */ count(*), min(o.k), max(o.k) from nl_outer o where exists (select /*+ NO_UNNEST */ 1 from nl_inner i where i.k = o.k);
 select /*+ recompile parallel(0) */ a, k from nl_outer o where not exists (select 1 from nl_pinner i where i.k = o.k) order by 1;
 show trace;
+-- trace goes off before the last query: the plan of a traced query that no show trace reads stays in the
+-- session, and the next case's first show trace over a cached plan would print it (cbrd_27485 runs next)
+set trace off;
 select /*+ recompile parallel(0) */ a, k from nl_outer o where not exists (select /*+ NO_UNNEST */ 1 from nl_pinner i where i.k = o.k) order by 1;
 drop table nl_outer;
 drop table nl_inner;
 drop table nl_pinner;
 
 
-set trace off;
 set system parameters 'memoize_memory_limit=default';
 
 drop table subquery_big;
