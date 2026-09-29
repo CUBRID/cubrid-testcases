@@ -99,4 +99,6 @@ from (
     from t_ro_build b right outer join t_ro_probe a on a.cval = b.ckey
   );
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_ro_build, t_ro_probe;

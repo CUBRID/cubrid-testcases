@@ -88,4 +88,6 @@ from (
     from t_p_overflow a, t_b_small b where a.ckey = b.ckey
   );
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_b_small, t_p_overflow;

@@ -184,4 +184,6 @@ from (
     where a.cval = b.ckey
   );
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_dl_build, t_dl_pa, t_dl_pb, t_dl_pc;

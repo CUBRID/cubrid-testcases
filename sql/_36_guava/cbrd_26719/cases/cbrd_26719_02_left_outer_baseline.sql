@@ -75,4 +75,6 @@ from (
   );
 -- expected: 0
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_b, t_p;

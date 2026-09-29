@@ -75,4 +75,6 @@ from (
     from t_p_str a, t_b_str b where a.kstr = b.kstr
   );
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_b_str, t_p_str;

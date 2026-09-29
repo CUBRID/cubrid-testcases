@@ -67,5 +67,7 @@ from t_p a left outer join t_b b on a.ckey = b.id and a.id > @lo and a.id < @hi;
 
 set trace off;
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_b, t_p;
 drop variable @lo, @hi;

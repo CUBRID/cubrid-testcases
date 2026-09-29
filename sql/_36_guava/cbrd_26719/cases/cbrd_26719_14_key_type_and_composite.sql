@@ -226,5 +226,7 @@ from (
     from t_kt_cprobe a, t_kt_cbuild b where a.kint = b.kint and a.kstr = b.kstr
   );
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_kt_fbuild, t_kt_fprobe, t_kt_vbuild, t_kt_vprobe,
            t_kt_cbuild, t_kt_cprobe, t_kt_mbuild, t_kt_mprobe;

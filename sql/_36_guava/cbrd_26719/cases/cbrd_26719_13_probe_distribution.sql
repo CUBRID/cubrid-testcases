@@ -121,4 +121,6 @@ show trace;
 
 set trace off;
 
+set system parameters 'max_hash_list_scan_size=default';
+
 drop table t_pd_build, t_pd_null, t_pd_dup, t_pd_skew;
