@@ -209,7 +209,7 @@ show trace;
 evaluate '23. connect by clause (should not work)';
 drop table if exists tree;
 create table tree(id int, mgrid int, name varchar(32), birthyear int, dumy char(2048));
-insert into tree select rownum,decode(rownum,3,1,4,1,5,2,6,2,7,6, null),'abc',2025,'' from db_class a, db_class b, db_class c, db_class d limit 200;
+insert into tree select rownum,decode(rownum,3,1,4,1,5,2,6,2,7,6, null),'abc',2025,'' from db_class a, db_class b, db_class c, db_class d limit 2000;
 
 select id, mgrid, name from tree where id < 10
 connect by prior id = mgrid order by id;
