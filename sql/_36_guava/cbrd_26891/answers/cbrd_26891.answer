@@ -7,14 +7,12 @@ Case 1: column name exactly 254 bytes - should succeed
 ===================================================
 0
 ===================================================
-attr_name    char_length(attr_name)    char_length(attr_name)    
+attr_name    char_length(attr_name)    octet_length(attr_name)    
 c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c__z     254     254     
 
 ===================================================
-0
-===================================================
     
-Case 2: column name exceeding 254 bytes - should error     
+Case 2: column name 255 bytes - should error     
 
 ===================================================
 0
@@ -22,7 +20,15 @@ Case 2: column name exceeding 254 bytes - should error
 Error:-493
 ===================================================
     
-Case 3: alter table change column name exceeding 254 bytes - should error     
+Case 3: column name 256 bytes - should error     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+Case 4: alter table change column name exceeding 254 bytes - should error     
 
 ===================================================
 0
@@ -31,10 +37,18 @@ Case 3: alter table change column name exceeding 254 bytes - should error
 ===================================================
 Error:-493
 ===================================================
+    
+Case 5: alter table rename column exceeding 254 bytes - should error     
+
+===================================================
 0
 ===================================================
+0
+===================================================
+Error:-493
+===================================================
     
-Case 4: index name exactly 254 bytes - should succeed     
+Case 6: index name exactly 254 bytes - should succeed     
 
 ===================================================
 0
@@ -43,14 +57,12 @@ Case 4: index name exactly 254 bytes - should succeed
 ===================================================
 0
 ===================================================
-index_name    char_length(index_name)    char_length(index_name)    
+index_name    char_length(index_name)    octet_length(index_name)    
 i_______10i_______20i_______30i_______40i_______50i_______60i_______70i_______80i_______90i______100i______110i______120i______130i______140i______150i______160i______170i______180i______190i______200i______210i______220i______230i______240i______250i__z     254     254     
 
 ===================================================
-0
-===================================================
     
-Case 5: index name exceeding 254 bytes - should error     
+Case 7: index name 255 bytes - should error     
 
 ===================================================
 0
@@ -59,48 +71,8 @@ Case 5: index name exceeding 254 bytes - should error
 ===================================================
 Error:-493
 ===================================================
-0
-===================================================
     
-Case 6: constraint name exceeding 254 bytes - should error     
-
-===================================================
-0
-===================================================
-Error:-493
-===================================================
-    
-Case 7: partition name exceeding 254 bytes - should error     
-
-===================================================
-0
-===================================================
-Error:-493
-===================================================
-    
-Case 8: column name with Korean chars exceeding 254 bytes - should error     
-
-===================================================
-0
-===================================================
-Error:-493
-===================================================
-    
-Case 9: column name with Korean chars at boundary (252 bytes) - should succeed     
-
-===================================================
-0
-===================================================
-0
-===================================================
-attr_name    char_length(attr_name)    char_length(attr_name)    
-가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하     84     84     
-
-===================================================
-0
-===================================================
-    
-Case 10: index name with Korean chars exceeding 254 bytes - should error     
+Case 8: index name 256 bytes - should error     
 
 ===================================================
 0
@@ -109,10 +81,20 @@ Case 10: index name with Korean chars exceeding 254 bytes - should error
 ===================================================
 Error:-493
 ===================================================
+    
+Case 9: constraint name exactly 254 bytes - should succeed     
+
+===================================================
 0
 ===================================================
+0
+===================================================
+index_name    char_length(index_name)    octet_length(index_name)    
+c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c__z     254     254     
+
+===================================================
     
-Case 11: delimited identifier exceeding 254 bytes - should error     
+Case 10: constraint name exceeding 254 bytes - should error     
 
 ===================================================
 0
@@ -120,7 +102,7 @@ Case 11: delimited identifier exceeding 254 bytes - should error
 Error:-493
 ===================================================
     
-Case 12: backtick delimited identifier exceeding 254 bytes - should error     
+Case 11: partition name exceeding 254 bytes - should error     
 
 ===================================================
 0
@@ -128,7 +110,7 @@ Case 12: backtick delimited identifier exceeding 254 bytes - should error
 Error:-493
 ===================================================
     
-Case 13: bracket delimited identifier exceeding 254 bytes - should error     
+Case 12: column name with Korean chars 255 bytes - should error     
 
 ===================================================
 0
@@ -136,7 +118,19 @@ Case 13: bracket delimited identifier exceeding 254 bytes - should error
 Error:-493
 ===================================================
     
-Case 14: add column with name exceeding 254 bytes - should error     
+Case 13: column name with Korean chars 252 bytes - should succeed     
+
+===================================================
+0
+===================================================
+0
+===================================================
+attr_name    char_length(attr_name)    octet_length(attr_name)    
+가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하     84     252     
+
+===================================================
+    
+Case 14: index name with Korean chars 255 bytes - should error     
 
 ===================================================
 0
@@ -145,10 +139,42 @@ Case 14: add column with name exceeding 254 bytes - should error
 ===================================================
 Error:-493
 ===================================================
+    
+Case 15: double-quoted identifier exceeding 254 bytes - should error     
+
+===================================================
 0
 ===================================================
+Error:-493
+===================================================
     
-Case 15: multiple columns with one exceeding limit - should error     
+Case 16: backtick identifier exceeding 254 bytes - should error     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+Case 17: bracket identifier exceeding 254 bytes - should error     
+
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+Case 18: add column with name exceeding 254 bytes - should error     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+===================================================
+    
+Case 19: multiple columns with one exceeding limit - should error     
 
 ===================================================
 0
