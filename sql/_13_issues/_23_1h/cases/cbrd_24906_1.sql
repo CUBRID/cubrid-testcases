@@ -123,7 +123,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  exists (select /*+ no_merge ordered */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  exists (select /*+ ordered no_unnest */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -153,7 +153,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_b in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  a.col_b in (select /*+ ordered no_unnest */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 
@@ -173,7 +173,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_a in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
+  a.col_a in (select /*+ ordered no_unnest */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = 1 and b.col_c = 9);
 show trace;
 
 

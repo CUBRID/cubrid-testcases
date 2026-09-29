@@ -24,22 +24,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -50,21 +45,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -79,22 +69,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a semi join [dba.tb] b on b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -105,21 +90,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a semi join [dba.tb] b on b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -136,18 +116,16 @@ cola    colb
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE */ a.cola, a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ a.cola, a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id)
 
   SORT (order by)
     TABLE SCAN (__t?)
 
-  rewritten query: select [__t?].cola, [__t?].colb from (select /*+ NO_MERGE */ a.cola, a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [__t?].cola, [__t?].colb from (select /*+ NO_MERGE */ a.cola, a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id) [__t?] (cola, colb) order by ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
@@ -158,9 +136,7 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -173,18 +149,16 @@ cola    colb
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id)
 
   SORT (order by)
     TABLE SCAN (__t?)
 
-  rewritten query: select [__t?].cola, [__t?].colb from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [__t?].cola, [__t?].colb from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id) [__t?] (cola, colb) order by ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
@@ -194,9 +168,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -211,22 +183,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where a.cola like  ?:?  and  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id where a.cola like  ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -237,21 +204,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where a.cola like  ?:?  and  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id where a.cola like  ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -266,27 +228,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (c)
-
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? ) and  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -298,26 +252,18 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (c)
-
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? ) and  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -582,24 +528,19 @@ colb    count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
   SORT (group by)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select a.colb, count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? ) group by a.colb having groupby_num()<=?
-
+  rewritten query: select a.colb, count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id group by a.colb having groupby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -612,23 +553,18 @@ colb    count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
   SORT (group by)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ a.colb, count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? ) group by a.colb having groupby_num()<=?
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ a.colb, count(*) from [dba.ta] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id group by a.colb having groupby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -645,25 +581,20 @@ colb
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (distinct)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select distinct a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) order by ? for orderby_num()<= ?:? 
-
+  rewritten query: select distinct a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -676,24 +607,19 @@ colb
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (distinct)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ distinct a.colb from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) order by ? for orderby_num()<= ?:? 
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ distinct a.colb from [dba.ta] a anti join [dba.tb] b on b.id=a.id order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -710,24 +636,19 @@ cola
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (order by)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select a.cola from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) order by ? for orderby_num()<= ?:? 
-
+  rewritten query: select a.cola from [dba.ta] a anti join [dba.tb] b on b.id=a.id order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -740,23 +661,18 @@ cola
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (order by)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ a.cola from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) order by ? for orderby_num()<= ?:? 
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ a.cola from [dba.ta] a anti join [dba.tb] b on b.id=a.id order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -771,24 +687,19 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (anti join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    TABLE SCAN (b)
-
-  rewritten query: select count(*) from [dba.ta] a, [dba.tb] b where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? ) and a.id=b.id
-
+  rewritten query: select count(*) from [dba.ta] a inner join [dba.tb] b on a.id=b.id anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -800,23 +711,18 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (c)
+  NESTED LOOPS (anti join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (a)
-    TABLE SCAN (b)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a, [dba.tb] b where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? ) and a.id=b.id
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a inner join [dba.tb] b on a.id=b.id anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -833,37 +739,30 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id
 
-  TABLE SCAN (a)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: select count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+  rewritten query: select count(*) from [dba.ta] a semi join [dba.tb] b on b.id=a.id
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -875,35 +774,28 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id
 
-  TABLE SCAN (a)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a semi join [dba.tb] b on b.id=a.id
 
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -924,18 +816,16 @@ Query Plan:
 
   rewritten query: (select count(*) from [dba.tb] b where b.id=a.id)
 
-  TABLE SCAN (c)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) from [dba.ta] a where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) from [dba.ta] a anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id)
 
   SORT (order by)
     TABLE SCAN (__t?)
 
-  rewritten query: select [__t?].cola, [__t?].cnt from (select /*+ NO_MERGE */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) as [cnt] from [dba.ta] a where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )) [__t?] (cola, cnt) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [__t?].cola, [__t?].cnt from (select /*+ NO_MERGE */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) as [cnt] from [dba.ta] a anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id) [__t?] (cola, cnt) order by ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
@@ -946,11 +836,10 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (correlated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -967,18 +856,16 @@ Query Plan:
 
   rewritten query: (select count(*) from [dba.tb] b where b.id=a.id)
 
-  TABLE SCAN (c)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (c)
 
-  rewritten query: (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) from [dba.ta] a where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) from [dba.ta] a anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id)
 
   SORT (order by)
     TABLE SCAN (__t?)
 
-  rewritten query: select [__t?].cola, [__t?].cnt from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) as [cnt] from [dba.ta] a where  not  exists (select ? from [dba.tb] c where c.id=a.id and (c.colb= ?:? ) and inst_num()<= ?:? )) [__t?] (cola, cnt) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [__t?].cola, [__t?].cnt from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, (select count(*) from [dba.tb] b where b.id=a.id) as [cnt] from [dba.ta] a anti join [dba.tb] c on c.colb= ?:?  and c.id=a.id) [__t?] (cola, cnt) order by ? for orderby_num()<= ?:? 
 
 
 Trace Statistics:
@@ -988,11 +875,10 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (correlated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1007,22 +893,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1037,21 +918,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1072,14 +948,11 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.pl] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.pl] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1088,9 +961,7 @@ Trace Statistics:
            PARTITION (table: dba.pl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1101,14 +972,11 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.pl] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and (b.colb= ?:? ) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.pl] a anti join [dba.tb] b on b.colb= ?:?  and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1116,9 +984,7 @@ Trace Statistics:
            PARTITION (table: dba.pl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1137,15 +1003,12 @@ Case 19: INSERT ... SELECT + NOT EXISTS -> parallel heap scan (mergeable list)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (order by)
-    TABLE SCAN (a)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
 
-  rewritten query: select a.id, a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) order by ?
-
+  rewritten query: select a.id, a.cola, a.colb, a.colc, a.cold from [dba.ta] a anti join [dba.tb] b on b.id=a.id order by ?
 
 Trace Statistics:
   INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1154,11 +1017,9 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1173,21 +1034,16 @@ count(*)    sum(a.id)    sum( cast(a.cola as bigint))    sum( cast(a.colb as int
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(a.id), sum( cast(a.cola as bigint)), sum( cast(a.colb as integer)), sum( cast(a.cold as bigint)) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(a.id), sum( cast(a.cola as bigint)), sum( cast(a.colb as integer)), sum( cast(a.cold as bigint)) from [dba.ta] a anti join [dba.tb] b on b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1204,22 +1060,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where (a.cola like  ?:?  or a.colb like  ?:? ) and  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id where (a.cola like  ?:?  or a.colb like  ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1230,21 +1081,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where (a.cola like  ?:?  or a.colb like  ?:? ) and  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a anti join [dba.tb] b on b.id=a.id where (a.cola like  ?:?  or a.colb like  ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1259,23 +1105,17 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and ([dba.sp_f](b.id)>?) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and ([dba.sp_f](b.id)>?) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on [dba.sp_f](b.id)>? and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1290,21 +1130,16 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where b.id=a.id and ((@v := b.id) is not null ) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where  not  exists (select ? from [dba.tb] b where b.id=a.id and ((@v := b.id) is not null ) and inst_num()<= ?:? )
-
+  rewritten query: select count(*) from [dba.ta] a anti join [dba.tb] b on (@v := b.id) is not null  and b.id=a.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1350,25 +1185,17 @@ count(*)
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where b.colb=a.colb and [dba.sp_f](b.id)>?)
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where a.id in (select distinct b.id from [dba.tb] b where b.colb=a.colb and [dba.sp_f](b.id)>?)
-
+  rewritten query: select count(*) from [dba.ta] a semi join [dba.tb] b on [dba.sp_f](b.id)>? and b.colb=a.colb and a.id=b.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1452,17 +1279,15 @@ count(*)    sum( cast(cola as bigint))    sum( cast(colb as integer))    sum( ca
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a anti join [dba.tb] b on b.id=a.id)
 
   TABLE SCAN (__t?)
 
-  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb, colc, cold)
+  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a anti join [dba.tb] b on b.id=a.id) [__t?] (cola, colb, colc, cold)
 
 
 Trace Statistics:
@@ -1472,9 +1297,7 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1485,17 +1308,15 @@ count(*)    sum( cast(cola as bigint))    sum( cast(colb as integer))    sum( ca
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
 
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
-  TABLE SCAN (a)
-
-  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ))
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a anti join [dba.tb] b on b.id=a.id)
 
   TABLE SCAN (__t?)
 
-  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )) [__t?] (cola, colb, colc, cold)
+  rewritten query: select count(*), sum( cast([__t?].cola as bigint)), sum( cast([__t?].colb as integer)), sum( cast([__t?].colc as bigint)), sum( cast([__t?].cold as bigint)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ a.cola, a.colb, a.colc, a.cold from [dba.ta] a anti join [dba.tb] b on b.id=a.id) [__t?] (cola, colb, colc, cold)
 
 
 Trace Statistics:
@@ -1504,9 +1325,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (correlated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1526,27 +1345,22 @@ id    v
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (order by)
     NESTED LOOPS (cross join)
-      TABLE SCAN (a)
+      NESTED LOOPS (anti join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
       TABLE SCAN (tset)
 
-  rewritten query: select /*+ ORDERED */ a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) and  cast(a.cola as integer)<? order by ?, ?
-
+  rewritten query: select a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) anti join [dba.tb] b on b.id=a.id where  cast(a.cola as integer)<? order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
-      SCAN (set time: ?, fetch: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1562,26 +1376,21 @@ id    v
 trace    
 
 Query Plan:
-  TABLE SCAN (b)
-
-  rewritten query: (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? )
-
   SORT (order by)
     NESTED LOOPS (cross join)
-      TABLE SCAN (a)
+      NESTED LOOPS (anti join)
+        TABLE SCAN (a)
+        TABLE SCAN (b)
       TABLE SCAN (tset)
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) where  not  exists (select ? from [dba.tb] b where (b.id=a.id) and inst_num()<= ?:? ) and  cast(a.cola as integer)<? order by ?, ?
-
+  rewritten query: select a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) anti join [dba.tb] b on b.id=a.id where  cast(a.cola as integer)<? order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (set time: ?, fetch: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1653,23 +1462,17 @@ count(*)
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where b.colb=a.colb)
-
-  TABLE SCAN (a)
-
-  rewritten query: select count(*) from [dba.ta] a where a.id in (select distinct b.id from [dba.tb] b where b.colb=a.colb)
-
+  rewritten query: select count(*) from [dba.ta] a semi join [dba.tb] b on b.colb=a.colb and a.id=b.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1680,23 +1483,16 @@ count(*)
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where b.colb=a.colb)
-
-  TABLE SCAN (a)
-
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a where a.id in (select distinct b.id from [dba.tb] b where b.colb=a.colb)
-
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a semi join [dba.tb] b on b.colb=a.colb and a.id=b.id
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
