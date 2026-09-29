@@ -62,6 +62,25 @@ idx_str150     150
 
 ===================================================
     
+Case 4-1: ALTER TABLE ADD COLUMN reloads the class, and every filter must survive     
+
+===================================================
+0
+===================================================
+index_name    filter_len    filter_tail    
+idx_10     58     , 5, 6, 7, 8, 9, 10}     
+idx_3     36     in multiset{1, 2, 3}     
+idx_big1000     4920     997, 998, 999, 1000}     
+idx_big110     469      107, 108, 109, 110}     
+idx_big115     494      112, 113, 114, 115}     
+idx_big117     504      114, 115, 116, 117}     
+
+===================================================
+index_name    v_values    
+idx_str150     150     
+
+===================================================
+    
 Case 5: a 1000-value filtered index holds only the rows inside its filter (3 of 13 keys, then 4 of 15 after DML)     
 
 ===================================================
@@ -92,6 +111,58 @@ dba.t_card     1     idx_c3     1     id     A     3     null     null     YES  
 
 ===================================================
     
+Case 5-1: UPDATE moves a row out of the filter (4 -> 2012), so idx_c1000 drops back to 3 keys     
+
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_card     1     idx_c1000     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t_card     1     idx_c3     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+    
+Case 5-2: UPDATE moves a row into the filter (2011 -> 5), so idx_c1000 has 4 keys again     
+
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_card     1     idx_c1000     1     id     A     4     null     null     YES     BTREE     null     null     YES     
+dba.t_card     1     idx_c3     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+    
+Case 5-3: DELETE of a row inside the filter, so idx_c1000 has 3 keys     
+
+===================================================
+1
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_card     1     idx_c1000     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t_card     1     idx_c3     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+    
+Case 5-4: REBUILD reloads idx_c1000 from the stored filter, the key count must not change     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_card     1     idx_c1000     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+dba.t_card     1     idx_c3     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+    
 Case 6: function index is created, listed with its function, and finds rows inserted before and after it     
 
 ===================================================
@@ -103,8 +174,23 @@ index_name    key_attr_name    func
 idx_fn     null      upper([dba.t_filt].[s])     
 
 ===================================================
+0
+===================================================
 id    s    
 2     b     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_filt.idx_fn) (key range:  upper([dba.t_filt].s)= ?:? )
+
+  rewritten query: select [dba.t_filt].id, [dba.t_filt].s from [dba.t_filt] [dba.t_filt] where  upper([dba.t_filt].s)= ?:?  using index [dba.t_filt].idx_fn
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_filt.idx_fn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
 
 ===================================================
 1
@@ -112,6 +198,63 @@ id    s
 id    s    
 4     d     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_filt.idx_fn) (key range:  upper([dba.t_filt].s)= ?:? )
+
+  rewritten query: select [dba.t_filt].id, [dba.t_filt].s from [dba.t_filt] [dba.t_filt] where  upper([dba.t_filt].s)= ?:?  using index [dba.t_filt].idx_fn
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_filt.idx_fn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 7: a 1000-value filtered index on a partitioned table keeps its filter in every partition     
+
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+class_name    filter_len    filter_tail    
+t_pfilt     4921     997, 998, 999, 1000}     
+t_pfilt__p__p0     4928     997, 998, 999, 1000}     
+t_pfilt__p__p1     4928     997, 998, 999, 1000}     
+
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_pfilt__p__p0     1     idx_pf1000     1     id     A     2     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_pfilt__p__p1     1     idx_pf1000     1     id     A     2     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+2
+===================================================
+0
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_pfilt__p__p0     1     idx_pf1000     1     id     A     3     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+Table    Non_unique    Key_name    Seq_in_index    Column_name    Collation    Cardinality    Sub_part    Packed    Null    Index_type    Func    Comment    Visible    
+dba.t_pfilt__p__p1     1     idx_pf1000     1     id     A     2     null     null     YES     BTREE     null     null     YES     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
