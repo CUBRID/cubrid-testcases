@@ -10,12 +10,16 @@
  * 5    ALTER USER with no clause at all (unrelated pre-existing error)
  * 6-7  CREATE/ALTER combined with PASSWORD, GROUPS/MEMBERS or COMMENT,
  *      each landing on the right clause, new password taking effect
- * 8    NOLOGIN written as two words is a syntax error
- * 9    LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS, only on
+ * 8    ALTER USER with a clause that omits LOGIN/NOLOGIN leaves an
+ *      existing NOLOGIN state untouched, not reset to the default
+ * 9    NOLOGIN written as two words is a syntax error
+ * 10   LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS, only on
  *      the plain ALTER USER form
  */
 
 --+ holdcas on;
+
+CALL login('dba', '') ON CLASS db_user;
 
 evaluate 'Case 1: CREATE USER with no login clause defaults to loginable';
 CREATE USER usr1 PASSWORD 'pw';
@@ -62,10 +66,14 @@ CALL login('usr8', 'newpw8') ON CLASS db_user;
 SELECT current_user FROM db_root;
 CALL login('dba', '') ON CLASS db_user;
 
-evaluate 'Case 8: NOLOGIN written as two words is a syntax error';
+evaluate 'Case 8: ALTER USER with a clause that omits LOGIN/NOLOGIN leaves an existing NOLOGIN state untouched, not reset to the default';
+ALTER USER usr3 COMMENT 'c10';
+SELECT name, is_loginable, comment FROM db_user WHERE name = 'USR3';
+
+evaluate 'Case 9: NOLOGIN written as two words is a syntax error';
 ALTER USER usr4 NO LOGIN;
 
-evaluate 'Case 9: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS';
+evaluate 'Case 10: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS';
 CREATE USER usr9;
 CREATE USER usr10;
 ALTER USER usr9 ADD MEMBERS usr10 NOLOGIN;

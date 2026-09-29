@@ -33,7 +33,30 @@ Operation "alter_user" can only be performed by the DBA or a DBA group member.
 
 ===================================================
     
-Case 3: a plain user changing their own PASSWORD/COMMENT is still allowed     
+Case 3: a plain user combining an allowed PASSWORD change with a denied NOLOGIN-on-self in one statement rolls back the whole statement, including the password     
+
+
+===================================================
+Error:-140
+Operation "alter_user" can only be performed by the DBA or a DBA group member.
+
+===================================================
+    
+null     
+
+
+===================================================
+Error:-171
+Incorrect or missing password.
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 4: a plain user changing their own PASSWORD/COMMENT is still allowed     
 
 
 ===================================================
@@ -51,7 +74,7 @@ null
 
 ===================================================
     
-Case 4: a DBA-group member changing another user login capability is allowed     
+Case 5: a DBA-group member changing another user login capability is allowed     
 
 
 ===================================================
@@ -77,7 +100,7 @@ null
 
 ===================================================
     
-Case 5: NOLOGIN blocks a CALL login switch, checked before the password     
+Case 6: NOLOGIN blocks a CALL login switch, checked before the password     
 
 
 ===================================================
@@ -92,7 +115,7 @@ Login is disabled for user "user_nologin".
 
 ===================================================
     
-Case 6: a wrong password gives the same rejection for a NOLOGIN user, but the real password error for a LOGIN-capable one, checked as a non-DBA caller so the password is actually verified     
+Case 7: a wrong password gives the same rejection for a NOLOGIN user, but the real password error for a LOGIN-capable one, checked as a non-DBA caller so the password is actually verified     
 
 
 ===================================================
@@ -115,7 +138,7 @@ null
 
 ===================================================
     
-Case 7: LOGIN restores connects with the original password, checked as a non-DBA caller     
+Case 8: LOGIN restores connects with the original password, checked as a non-DBA caller     
 
 
 ===================================================
@@ -143,7 +166,7 @@ null
 
 ===================================================
     
-Case 8: ALTER USER dba NOLOGIN is denied, and so is the no-op LOGIN direction     
+Case 9: ALTER USER dba NOLOGIN is denied, and so is the no-op LOGIN direction     
 
 
 ===================================================
@@ -156,7 +179,7 @@ Cannot change the login capability of user "DBA".
 
 ===================================================
     
-Case 9: a DBA-group member cannot target itself, even with DBA-group permission     
+Case 10: a DBA-group member cannot target itself, even with DBA-group permission     
 
 
 ===================================================
@@ -179,7 +202,35 @@ null
 
 ===================================================
     
-Case 10: INFORMATION_SCHEMA is denied in both directions and stays NO     
+Case 11: a DBA-group member can change another DBA-group members login capability -- only self-targeting is denied -- and a second DBA-group member can then restore it     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+Error:-1369
+Login is disabled for user "group_dbamem".
+
+===================================================
+    
+null     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 12: INFORMATION_SCHEMA is denied in both directions and stays NO     
 
 
 ===================================================
@@ -197,7 +248,7 @@ INFORMATION_SCHEMA     NO
 
 ===================================================
     
-Case 11: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected, and a grant made to it before the switch keeps resolving for another user afterward     
+Case 13: ALTER USER public NOLOGIN is allowed, PUBLIC is not protected, and a grant made to it before the switch keeps resolving for another user afterward     
 
 
 ===================================================
@@ -234,7 +285,7 @@ null
 
 ===================================================
     
-Case 12: a grant newly added to PUBLIC while it is already NOLOGIN also resolves for another user     
+Case 14: a grant newly added to PUBLIC while it is already NOLOGIN also resolves for another user     
 
 
 ===================================================
@@ -263,7 +314,42 @@ null
 
 ===================================================
     
-Case 13: connecting as PUBLIC itself fails while NOLOGIN, succeeds once restored to LOGIN     
+Case 15: a grant made to a NOLOGIN group is still inherited by a loginable member of that group     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+1
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+a    
+3     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 16: connecting as PUBLIC itself fails while NOLOGIN, succeeds once restored to LOGIN     
 
 
 ===================================================
@@ -288,6 +374,17 @@ PUBLIC
 null     
 
 
+===================================================
+0
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

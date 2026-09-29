@@ -1,5 +1,9 @@
 ===================================================
     
+null     
+
+===================================================
+    
 Case 1: CREATE USER with no login clause defaults to loginable     
 
 ===================================================
@@ -117,13 +121,23 @@ null
 
 ===================================================
     
-Case 8: NOLOGIN written as two words is a syntax error     
+Case 8: ALTER USER with a clause that omits LOGIN/NOLOGIN leaves an existing NOLOGIN state untouched, not reset to the default     
+
+===================================================
+0
+===================================================
+name    is_loginable    comment    
+USR3     NO     c10     
+
+===================================================
+    
+Case 9: NOLOGIN written as two words is a syntax error     
 
 ===================================================
 Error:-493
 ===================================================
     
-Case 9: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS     
+Case 10: LOGIN/NOLOGIN has no slot on ALTER USER ... ADD MEMBERS     
 
 ===================================================
 0
