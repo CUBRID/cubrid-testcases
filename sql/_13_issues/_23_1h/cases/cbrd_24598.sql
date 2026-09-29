@@ -14,8 +14,8 @@ execute q using 'A';
 -- success
 execute q using 1; 
 
--- develop failed here (-181): the previous execution's INT bind had coerced the cached literal '' in place
--- (workspace#352 plans the comparison, the literal stays as it is)
+-- develop failed here with -181: the previous execution's INT bind had converted the cached literal '' in place.
+-- CBRD-27510 converts a constant into a value of its own per execution, so the literal stays as it is.
 execute q using 'A'; 
 
 -- prepare required 
@@ -24,7 +24,7 @@ prepare p from 'select decode (?, '''', c, NULL, c, ''Z'') from table ({''X''}) 
 -- success
 execute p using 1;
 
--- develop failed here (-181) for the same reason (workspace#352)
+-- develop failed here with -181 for the same reason.
 execute p using 'A';
 
 -- success
