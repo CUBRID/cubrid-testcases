@@ -168,16 +168,16 @@ id    name    address    telephone    id    course_id    score    course_id    c
 7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     5     30.0     5     chemistry     
 
 Query plan:
-idx-join (inner join)
-    outer: nl-join (cross join)
+nl-join (cross join)
+    outer: idx-join (inner join)
                outer: iscan
                           class: t? node[?]
                           index: t?_idx term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: t? node[?]
                           index: t?_idx term[?]
-                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
