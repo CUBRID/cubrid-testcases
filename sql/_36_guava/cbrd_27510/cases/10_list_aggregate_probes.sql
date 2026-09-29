@@ -45,11 +45,11 @@ prepare q from 'select g, group_concat(s + ? order by 1) from la_t group by g or
 execute q using 'x';
 
 -- [AGG] BUILDVALUE aggregates and their output
-prepare q from 'select sum(?), avg(?), min(?), max(?), count(distinct ?) from t';
+prepare q from 'select sum(?), avg(?), min(?), max(?), count(distinct ?) from la_t';
 execute q using 1, 2, 3, 4, 5;
 execute q using 1.5, '2', date'2024-01-01', 'x', 'y';
 execute q using null, null, null, null, null;
-prepare q from 'select sum(i) + ?, max(s) || ? from t';
+prepare q from 'select sum(i) + ?, max(s) || ? from la_t';
 execute q using 1, 'z';
 prepare q from 'select (select max(? + i) from la_t) from la_u order by 1';
 execute q using 1;
@@ -97,11 +97,11 @@ prepare q from 'select i, ? + 1 x from la_nv group by i, x order by i';
 execute q using null;
 prepare q from 'select i, sum(?) over (partition by i), median(? + 1) over () from la_nv order by i';
 execute q using null, null;
-prepare q from 'select median(? + 1), sum(? * 2), max(?) from nv';
+prepare q from 'select median(? + 1), sum(? * 2), max(?) from la_nv';
 execute q using null, null, null;
 prepare q from 'select * from (select ? + i x from la_nv) a union all select j from la_nv order by 1';
 execute q using null;
-prepare q from 'select distinct ? + i from nv';
+prepare q from 'select distinct ? + i from la_nv';
 execute q using null;
 prepare q from 'select i, group_concat(? order by 1) from la_nv group by i order by i';
 execute q using null;
@@ -110,16 +110,16 @@ drop table la_nv;
 -- [SV] session variables whose type changes within the statement: -1384 before any row (workspace#366). The
 -- unparenthesized `@v := x a` forms here parse as ambiguous (-493), as in develop
 set @v = 1;
-select @v := @v + 1 a, @v := '2.5' b from db_root;
+select (@v := @v + 1) a, (@v := '2.5') b from db_root;
 drop table if exists la_sv;
 create table la_sv (i int);
 insert into la_sv values (1), (2), (3);
 set @v = 1;
-select @v := @v + 1 a, @v := '2.5' b from la_sv order by a;
+select (@v := @v + 1) a, (@v := '2.5') b from la_sv order by a;
 set @w = 1;
-select @w := @w + i a from la_sv order by a desc;
+select (@w := @w + i) a from la_sv order by a desc;
 deallocate variable @u;
-select @u := i a, count(*) from la_sv group by a order by a;
+select (@u := i) a, count(*) from la_sv group by a order by a;
 drop table la_sv;
 
 drop table if exists la_sv;
@@ -166,7 +166,7 @@ select @c;
 drop table la_gb;
 
 -- [LISTS] DISTINCT / ORDER BY lists over binds, NULL binds and literals
-prepare q from 'select count(distinct ?), group_concat(distinct ? order by 1) from sv';
+prepare q from 'select count(distinct ?), group_concat(distinct ? order by 1) from la_sv';
 execute q using 1, 'x';
 execute q using null, null;
 prepare q from 'select g, sum(distinct ? + i), group_concat(? order by 1 desc) from la_sv group by g order by g';
@@ -226,3 +226,4 @@ execute q using 'a', 1;
 execute q using 'a', 'b';
 drop table la_so;
 deallocate variable @c, @d, @e, @m, @u, @v, @w;
+--+ holdcas off;

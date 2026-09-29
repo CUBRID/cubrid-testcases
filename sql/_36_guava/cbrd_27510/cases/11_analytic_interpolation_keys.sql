@@ -116,3 +116,4 @@ deallocate prepare q;
 
 drop table ai_t;
 drop table ai_s;
+--+ holdcas off;
