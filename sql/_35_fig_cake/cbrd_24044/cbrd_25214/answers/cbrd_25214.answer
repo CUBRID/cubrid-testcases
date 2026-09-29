@@ -671,8 +671,8 @@ Query Plan:
     TABLE SCAN (a)
     SORT (temp)
       NESTED LOOPS (cross join)
-        INDEX SCAN (b.idx_ta) (key range: (b.cola= ?:? ), covered: true)
         INDEX SCAN (c.idx_tb) (key range: c.cola= ?:? , covered: true)
+        INDEX SCAN (b.idx_ta) (key range: (b.cola= ?:? ), covered: true)
 
   rewritten query: select ?, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.ta] a, [dba.ta] b, [dba.tb] c where c.cola= ?:?  and (b.cola= ?:? ) and b.cola=c.cola
 
@@ -682,8 +682,8 @@ Trace Statistics:
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SUBQUERY (uncorrelated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-            SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (index: dba.tb.idx_tb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.ta.idx_ta), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
