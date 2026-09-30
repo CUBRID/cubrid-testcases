@@ -39,8 +39,10 @@
  *     it, then DELETE removes it (4 -> 3 -> 4 -> 3 keys).
  *     5-4: ALTER INDEX ... REBUILD reloads the index from the stored filter
  *     (still 3 keys).
- *     (A UNIQUE filtered index would be the natural oracle, but the grammar
- *     rejects UNIQUE with a filter/function index.)
+ *     (A UNIQUE filtered index would be the natural oracle, but CREATE
+ *     UNIQUE INDEX ... WHERE is rejected by the grammar with -493, the same
+ *     as in the existing filtered_index_syntax_unique case, so the
+ *     uniqueness impact named in the issue cannot be reached from SQL.)
  * 6 - Function index (stream now stored as VARCHAR): created, listed in
  *     db_index_key, and queried for a row inserted before and a row inserted
  *     after the index exists (the latter goes through the server-side
