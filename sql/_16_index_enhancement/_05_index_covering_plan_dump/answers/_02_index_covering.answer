@@ -233,22 +233,18 @@ id
 1     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: t? node[?]
-                 index: idx_tbl? term[?] (covers)
-                 cost:  ? card ?
+nl-join (semi join)
+    outer: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: idx_tbl? term[?] (covers)
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct t?.id from tbl? t? where t?.id= ?:? )
-Query plan:
-iscan
-    class: t? node[?]
-    index: idx_tbl? term[?] (covers)
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select t?.id from tbl t? where ? in (select distinct t?.id from tbl? t? where t?.id= ?:? ) and t?.id= ?:? 
+select t?.id from tbl t? semi join tbl? t? on t?.id=t?.id and t?.id= ?:?  where t?.id= ?:? 
 ===================================================
 0
 ===================================================
