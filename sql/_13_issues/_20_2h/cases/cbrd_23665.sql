@@ -89,23 +89,25 @@ select /*+ ordered */ aa.* from tmp_hls aa, (select * from tmp_hls b where b.c >
 show trace;
 
 set trace off;
-create table t1 (a int, b int, c int);
-insert into t1 select rownum,rownum,rownum from db_class a, db_class b, db_class c, db_class d limit 150000;
+-- t1 carries a varchar(30) column, joined below so that it stays in the hash build list: the
+-- in-memory/hybrid thresholds are then driven by the tuple payload (not separable with all-int tuples).
+create table t1 (a int, b int, c int, d varchar(30));
+insert into t1 select rownum,rownum,rownum,lpad(rownum,30,'0') from db_class a, db_class b, db_class c, db_class d limit 100000;
 
 -- memory limit, sql hint, trace info
 set trace on;
-select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c and a.d = b.d;
 show trace;
-select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c and a.d = b.d;
 show trace;
 -- change max_hash_list_scan_size
 set system parameters 'max_hash_list_scan_size=16M';
-select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c and a.d = b.d;
 show trace;
 set system parameters 'max_hash_list_scan_size=8M';
-select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 150000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 100000) b where a.a = b.a and a.b = b.b and a.c = b.c and a.d = b.d;
 show trace;
-select /*+ ordered no_hash_list_scan */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c;
+select /*+ ordered no_hash_list_scan */ count(*) from (select /*+ no_parallel_scan */ * from t1 limit 1) a, (select /*+ no_parallel_scan */ * from t1 limit 50000) b where a.a = b.a and a.b = b.b and a.c = b.c and a.d = b.d;
 show trace;
 
 drop table if exists tmp_hls;
