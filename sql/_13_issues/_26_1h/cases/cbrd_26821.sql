@@ -1,6 +1,6 @@
 /**
- * This test case verifies CBRD-26821: Au_disable must not stay disabled after a DML statement
- * (stale Au_disable by overwriting parser->au_save in do_select_internal)
+ * This test case verifies CBRD-26821: authorization checks must be back on after a DML statement
+ * (stale Au_disable left by do_select_internal overwriting parser->au_save)
  *
  * After each DML statement, the same session reads a table that u_26821 has no
  * privilege on. The read must fail with an authorization error.
@@ -12,7 +12,7 @@
  * 3 - UPDATE CLASS attribute with a subquery and an object host variable in SET
  * 4 - UPDATE with a subquery in SET (CBRD-26823)
  * 5 - DELETE with a subquery in WHERE (CBRD-26823)
- * 6 - MERGE with subqueries in UPDATE and INSERT (CBRD-26823)
+ * 6 - MERGE with subqueries in both UPDATE and INSERT branches (CBRD-26823)
  * 7 - INSERT VALUES with a subquery (CBRD-26823)
  * 8 - INSERT SELECT (CBRD-26823)
  * 9 - INSERT ON DUPLICATE KEY UPDATE with a subquery (CBRD-26823)
@@ -31,7 +31,7 @@ call login ('u_26821', '') on class db_user;
 
 create table t1 (a int, b int, c varchar(10)) dont_reuse_oid;
 create table t2 (x int);
-create class t3 class attribute (ca int, cb t1) (a int) dont_reuse_oid;
+create class t3 class attribute (ca int, cb t1) (a int);
 create unique index idx_t1_a on t1 (a);
 
 insert into t1 values (1, 1, 'a'), (2, 2, 'b');
@@ -62,8 +62,8 @@ evaluate 'Case 5: DELETE with a subquery in WHERE';
 delete from t1 where a = (select max(x) from t2);
 select * from dba.t_secret;
 
-evaluate 'Case 6: MERGE with subqueries in UPDATE and INSERT';
-merge into t1 using t2 on (t1.a = t2.x)
+evaluate 'Case 6: MERGE with subqueries in both UPDATE and INSERT branches';
+merge into t1 using t2 on (t1.a + 8 = t2.x)
   when matched then update set t1.b = (select max(x) from t2)
   when not matched then insert values ((select min(x) from t2) + t2.x, 9, 'm');
 select * from dba.t_secret;
