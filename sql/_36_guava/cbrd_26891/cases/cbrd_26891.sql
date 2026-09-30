@@ -1,6 +1,6 @@
 /**
  * This test case verifies CBRD-26891: Perform clear checks on length limits
- * for column and index names.
+ * for column, index, constraint, and partition names.
  *
  * Specification Change:
  * - Enforce a maximum identifier length of 254 bytes.
@@ -8,6 +8,12 @@
  *   - column name: max 254 bytes
  *   - index name: max 254 bytes
  *   - constraint name: max 254 bytes
+ *
+ * Note: the limit is byte-based, so the character count at the boundary
+ * depends on the database charset. CTP creates the test database as UTF-8,
+ * so this verification is for UTF-8, where each Korean character is 3 bytes
+ * (the multibyte cases below). Other charsets follow the same byte-based
+ * rule and would be verified the same way, by counting bytes.
  */
 
 evaluate 'Case 1: column name exactly 254 bytes - should succeed';
@@ -27,11 +33,13 @@ evaluate 'Case 4: alter table change column name exceeding 254 bytes - should er
 drop table if exists tbl;
 create table tbl (col1 int);
 alter table tbl change column col1 c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx int;
+select attr_name from db_attribute where class_name = 'tbl';
 
 evaluate 'Case 5: alter table rename column exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl (col1 int);
 alter table tbl rename column col1 as c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx;
+select attr_name from db_attribute where class_name = 'tbl';
 
 evaluate 'Case 6: index name exactly 254 bytes - should succeed';
 drop table if exists tbl;
@@ -71,29 +79,35 @@ drop table if exists tbl;
 create table tbl ("가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하" int);
 select attr_name, char_length(attr_name), octet_length(attr_name) from db_attribute where class_name = 'tbl';
 
-evaluate 'Case 14: index name with Korean chars 255 bytes - should error';
+evaluate 'Case 14: column name mixed ASCII and Korean exactly 254 bytes - should succeed';
+drop table if exists tbl;
+create table tbl ("ab가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하" int);
+select attr_name, char_length(attr_name), octet_length(attr_name) from db_attribute where class_name = 'tbl';
+
+evaluate 'Case 15: index name with Korean chars 255 bytes - should error';
 drop table if exists tbl;
 create table tbl (id int);
 create index "가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가" on tbl(id);
 
-evaluate 'Case 15: double-quoted identifier exceeding 254 bytes - should error';
+evaluate 'Case 16: double-quoted identifier exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl ("c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx" int);
 
-evaluate 'Case 16: backtick identifier exceeding 254 bytes - should error';
+evaluate 'Case 17: backtick identifier exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl (`c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx` int);
 
-evaluate 'Case 17: bracket identifier exceeding 254 bytes - should error';
+evaluate 'Case 18: bracket identifier exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl ([c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx] int);
 
-evaluate 'Case 18: add column with name exceeding 254 bytes - should error';
+evaluate 'Case 19: add column with name exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl (id int);
 alter table tbl add column c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx int;
+select attr_name from db_attribute where class_name = 'tbl';
 
-evaluate 'Case 19: multiple columns with one exceeding limit - should error';
+evaluate 'Case 20: multiple columns with one exceeding limit - should error';
 drop table if exists tbl;
 create table tbl (valid_col int, c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx int);
 
