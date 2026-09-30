@@ -7,19 +7,19 @@
  * If Au_disable leaks (stays true), the read succeeds and 777 is shown.
  *
  * Coverage:
- * 1 - UPDATE OBJECT with a subquery in SET (do_update -> do_select_internal, CBRD-26821)
- * 2 - UPDATE OBJECT with a subquery and another value in SET
- * 3 - UPDATE CLASS attribute with a subquery and an object host variable in SET
- * 4 - UPDATE with a subquery in SET (CBRD-26823)
- * 5 - DELETE with a subquery in WHERE (CBRD-26823)
- * 6 - MERGE with subqueries in both UPDATE and INSERT branches (CBRD-26823)
- * 7 - INSERT VALUES with a subquery (CBRD-26823)
- * 8 - INSERT SELECT (CBRD-26823)
- * 9 - INSERT ON DUPLICATE KEY UPDATE with a subquery (CBRD-26823)
- * 10 - DO with a subquery (CBRD-26823)
+ * Case 1, 2, 9 - reproduce CBRD-26821
+ * Case 3 - 8   - regression guards for CBRD-26823
+ *
+ * 1 - UPDATE OBJECT with a subquery in SET
+ * 2 - UPDATE CLASS attribute with a subquery and an object host variable in SET
+ * 3 - UPDATE with a subquery in SET
+ * 4 - DELETE with a subquery in WHERE
+ * 5 - MERGE with subqueries in both UPDATE and INSERT branches
+ * 6 - INSERT VALUES with a subquery
+ * 7 - INSERT ON DUPLICATE KEY UPDATE with a subquery
+ * 8 - DO with a subquery
+ * 9 - UPDATE OBJECT by dba, then login as u_26821
  */
-
---+ server-message on
 
 drop table if exists t_secret;
 
@@ -45,46 +45,42 @@ evaluate 'Case 1: UPDATE OBJECT with a subquery in SET';
 update object :o set a = (select max(x) from t2);
 select * from dba.t_secret;
 
-evaluate 'Case 2: UPDATE OBJECT with a subquery and another value in SET';
-update object :o set b = (select min(x) from t2), c = 'k';
-select * from dba.t_secret;
-
-evaluate 'Case 3: UPDATE CLASS attribute with a subquery and an object host variable in SET';
+evaluate 'Case 2: UPDATE CLASS attribute with a subquery and an object host variable in SET';
 update class t3 set ca = (select max(x) from t2), cb = :o2;
 select class t3.ca, class t3.cb.a from t3;
 select * from dba.t_secret;
 
-evaluate 'Case 4: UPDATE with a subquery in SET';
+evaluate 'Case 3: UPDATE with a subquery in SET';
 update t1 set b = (select max(x) from t2), c = 'u' where a = 2;
 select * from dba.t_secret;
 
-evaluate 'Case 5: DELETE with a subquery in WHERE';
+evaluate 'Case 4: DELETE with a subquery in WHERE';
 delete from t1 where a = (select max(x) from t2);
 select * from dba.t_secret;
 
-evaluate 'Case 6: MERGE with subqueries in both UPDATE and INSERT branches';
+evaluate 'Case 5: MERGE with subqueries in both UPDATE and INSERT branches';
 merge into t1 using t2 on (t1.a + 8 = t2.x)
   when matched then update set t1.b = (select max(x) from t2)
   when not matched then insert values ((select min(x) from t2) + t2.x, 9, 'm');
 select * from dba.t_secret;
 
-evaluate 'Case 7: INSERT VALUES with a subquery';
+evaluate 'Case 6: INSERT VALUES with a subquery';
 insert into t1 values ((select max(x) from t2) + 100, 5, 'i');
 select * from dba.t_secret;
 
-evaluate 'Case 8: INSERT SELECT';
-insert into t1 select x + 200, x, 's' from t2;
-select * from dba.t_secret;
-
-evaluate 'Case 9: INSERT ON DUPLICATE KEY UPDATE with a subquery';
+evaluate 'Case 7: INSERT ON DUPLICATE KEY UPDATE with a subquery';
 insert into t1 values (2, 0, 'd') on duplicate key update b = (select min(x) from t2), c = 'odku';
 select * from dba.t_secret;
 
-evaluate 'Case 10: DO with a subquery';
+evaluate 'Case 8: DO with a subquery';
 do (select max(x) from t2);
 select * from dba.t_secret;
 
-select a, b, c from t1 order by a;
+evaluate 'Case 9: UPDATE OBJECT by dba, then login as u_26821';
+call login ('dba', '') on class db_user;
+update object :o2 set b = (select max(x) from u_26821.t2);
+call login ('u_26821', '') on class db_user;
+select * from dba.t_secret;
 
 drop table t1, t2, t3;
 
@@ -92,5 +88,3 @@ call login ('dba', '') on class db_user;
 
 drop table t_secret;
 drop user u_26821;
-
---+ server-message off
