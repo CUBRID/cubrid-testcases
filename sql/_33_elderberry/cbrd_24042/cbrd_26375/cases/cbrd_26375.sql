@@ -162,4 +162,12 @@ from tbl a,
 where a.cola = c.cola
   and a.cola = b.cola(+);
 
+drop view if exists v_tbl;
+drop view if exists v_tbl_const_expr;
+drop view if exists v_tbl_group_const;
+drop view if exists v_tbl_const_key;
+drop view if exists v_tbl_group_col;
+drop view if exists v_tbl_pred_const;
+drop view if exists v_tbl_cast_const;
+drop view if exists v_tbl_const;
 drop table if exists tbl;

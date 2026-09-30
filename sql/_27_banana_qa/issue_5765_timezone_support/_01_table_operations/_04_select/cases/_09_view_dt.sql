@@ -33,8 +33,9 @@ set timezone 'Asia/Seoul';
 select all * from v1 order by id;
 
 set timezone 'Europe/Bucharest';
-select distinct newt.col1 from (select id,col1 from v1 order by id) newt order by 1;
-select unique newt.col1, newt.col2 from (select id,col1,col2 from tz_test order by id) newt  order by 1;
+-- When dealing with data containing duplicate values, using `DISTINCT` or `UNIQUE` in a query does not explicitly guarantee the specific output. The query must be modified to ensure the output is explicitly guaranteed.
+select v1.col1 from v1 where v1.id = (select min(v2.id) from v1 v2 where v2.col1 = v1.col1) order by 1;
+select tz_test.col1, tz_test.col2 from tz_test where tz_test.id = (select min(t2.id) from tz_test t2 where t2.col1 = tz_test.col1 and t2.col2 = tz_test.col2) order by 1;
 
 --test: alter view
 alter view v1 as select * from tz_test where col1<datetimetz'1933-12-10 15:30:00.999 +8:59' and col2>datetimetz'1891-07-10 2:00:00.999';

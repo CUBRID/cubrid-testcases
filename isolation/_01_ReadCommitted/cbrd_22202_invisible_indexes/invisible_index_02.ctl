@@ -29,6 +29,7 @@ MC: wait until C2 ready;
 
 C1: update statistics on t1;
 C1: show index from t1;
+C1: COMMIT;
 MC: wait until C1 ready;
 
 C2: update statistics on t1;

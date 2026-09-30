@@ -30,6 +30,7 @@ select uuid_format('01234567-89ab-cdef-0123456789abcdef0');
 select uuid_format('0123456789abcdef-0123456789abcdef000');
 select uuid_format(B'1010');
 select uuid_format(cast(X'01234567' as bit(32)));
+select uuid_format(cast(repeat('1', 129) as bit varying(129)));
 select uuid_format(12345);
 
 evaluate '[TEST 5] formatting generated UUIDs: length and pattern checks only';

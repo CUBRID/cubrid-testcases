@@ -22,14 +22,14 @@ sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one))
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, a_?))
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  and (inst_num())<= ?:? 
+select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, a_?)) from tbl tbl where tbl.col_two= ?:?  and (inst_num())<= ?:? 
 ===================================================
     
 expand 1     
@@ -52,14 +52,14 @@ sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?))
 Query plan:
 sscan
     class: tbl node[?]
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where (rownum<= ?:? ) and tbl.col_two= ?:? 
+select tbl.col_two, tbl.col_three, (inst_num()), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?)) from tbl tbl where (rownum<= ?:? ) and tbl.col_two= ?:? 
 ===================================================
     
 expand 2     
@@ -82,7 +82,7 @@ sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?))
 Query plan:
 temp(order by)
     subplan: sscan
@@ -92,7 +92,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where ((tbl.col_two= ?:? ) or (tbl.col_two= ?:? ) or (tbl.col_two= ?:? )) order by ? for orderby_num()<= ?:? 
+select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?)) from tbl tbl where ((tbl.col_two= ?:? ) or (tbl.col_two= ?:? ) or (tbl.col_two= ?:? )) order by ? for orderby_num()<= ?:? 
 ===================================================
     
 expand 3     
@@ -115,7 +115,7 @@ sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one))
+(select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?))
 Query plan:
 temp(order by)
     subplan: sscan
@@ -125,7 +125,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, col_one)) from tbl tbl where tbl.col_two= ?:?  order by ? for orderby_num()<= ?:? 
+select tbl.col_two, tbl.col_three, orderby_num(), (select d?.a_? from ((select ?, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scalar col_one]) d? (a_?, a_?)) from tbl tbl where tbl.col_two= ?:?  order by ? for orderby_num()<= ?:? 
 ===================================================
 col_two    col_three    orderby_num()    scala col_one    
 1     1     1     1     
@@ -144,7 +144,7 @@ sscan
     class: d? node[?]
     cost:  ? card ?
 Query stmt:
-(select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one))
+(select d?.a_? from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, a_?))
 Query plan:
 temp(group by)
     subplan: sscan
@@ -154,7 +154,7 @@ temp(group by)
     sort:  
     cost:  ? card ?
 Query stmt:
-select tbl.col_two, tbl.col_three, groupby_num(), (select d?.col_two from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (col_two, col_one)), tbl.col_one from tbl tbl where tbl.col_one= ?:?  group by tbl.col_one, tbl.col_two
+select tbl.col_two, tbl.col_three, groupby_num(), (select d?.a_? from ((select tbl.col_two, tbl.col_one from tbl tbl order by ? for orderby_num()<= ?:? ) as [scala col_one]) d? (a_?, a_?)), tbl.col_one from tbl tbl where tbl.col_one= ?:?  group by tbl.col_one, tbl.col_two
 ===================================================
 0
 ===================================================
