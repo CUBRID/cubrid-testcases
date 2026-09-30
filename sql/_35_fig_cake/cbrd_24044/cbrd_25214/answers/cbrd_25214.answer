@@ -454,7 +454,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola
 
@@ -482,7 +482,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola
 
@@ -682,7 +682,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and b.colb=c.colb
 
@@ -710,7 +710,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: b.colb=c.colbkey range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and b.colb=c.colb
 
@@ -796,7 +796,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and a.colb=c.colb
 
@@ -824,7 +824,7 @@ Query Plan:
     NESTED LOOPS (left outer join)
       TABLE SCAN (a)
       INDEX SCAN (b.idx_ta) (key range: a.cola=b.cola, covered: true)
-    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: a.cola=c.cola, key filter: b.cola=c.cola, covered: true)
+    INDEX SCAN (c.idx_tb) (key range: a.colb=c.colbkey range: b.cola=c.cola, key filter: a.cola=c.cola, covered: true)
 
   rewritten query: select a.cola, a.colb, b.cola, b.colb, c.cola, c.colb from [dba.tb] a left outer join [dba.ta] b on a.cola=b.cola left outer join [dba.tb] c on b.cola=c.cola and a.cola=c.cola and a.colb=c.colb
 
