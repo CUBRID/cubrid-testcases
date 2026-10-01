@@ -5,6 +5,12 @@
  * After each DML statement, the same session reads a table that u_26821 has no
  * privilege on. The read must fail with an authorization error.
  * If Au_disable leaks (stays true), the read succeeds and 777 is shown.
+ * The baseline read before any DML shows the check is on to begin with.
+ *
+ * Without the fix, only Case 1, 2 and 13 leak; Case 3 - 12 do not leak even then.
+ * A leak stays for the rest of the session, so every later case also shows 777
+ * and the first case that shows 777 is the one that leaked. To see whether a later
+ * case leaks by itself, run it in its own session.
  *
  * Coverage:
  * Case 1, 2, 13 - reproduce CBRD-26821
@@ -51,14 +57,17 @@ insert into t3 values (1);
 select t1 into :o from t1 where a = 1;
 select t1 into :o2 from t1 where a = 2;
 
+evaluate 'Baseline: authorization is on before any DML';
+select * from dba.t_secret;
+
 evaluate 'Case 1: UPDATE OBJECT with a subquery in SET';
 update object :o set a = (select max(x) from t2);
 select * from dba.t_secret;
 
 evaluate 'Case 2: UPDATE CLASS attribute with a subquery and an object host variable in SET';
 update class t3 set ca = (select max(x) from t2), cb = :o2;
-select class t3.ca, class t3.cb.a from t3;
 select * from dba.t_secret;
+select class t3.ca, class t3.cb.a from t3;
 
 evaluate 'Case 3: UPDATE with a subquery in SET';
 update t1 set b = (select max(x) from t2), c = 'u' where a = 2;
@@ -102,8 +111,8 @@ select * from dba.t_secret;
 
 evaluate 'Case 12: DELETE with an object label and a subquery in WHERE';
 delete from t4 where r = :o2 and n = (select max(x) from t2);
-select r.a, n from t4 order by 2;
 select * from dba.t_secret;
+select r.a, n from t4 order by 2;
 
 evaluate 'Case 13: UPDATE OBJECT by dba, then login as u_26821';
 call login ('dba', '') on class db_user;
