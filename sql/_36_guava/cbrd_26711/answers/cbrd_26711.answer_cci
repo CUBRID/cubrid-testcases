@@ -886,6 +886,45 @@ Error:-458
 Overflow occurred in addition context.
 
 ===================================================
+    
+Case 23: DATETIME column aggregates -> parallel heap scan (buildvalue)     
+
+===================================================
+count(colt)    min(colt)    max(colt)    count(distinct colt)    
+10000     2026-09-29 00:00:00.001     2026-09-29 00:00:10.0     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select count([dba.bv].colt), min([dba.bv].colt), max([dba.bv].colt), count(distinct [dba.bv].colt) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(colt)    min(colt)    max(colt)    count(distinct colt)    
+10000     2026-09-29 00:00:00.001     2026-09-29 00:00:10.0     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bv)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count([dba.bv].colt), min([dba.bv].colt), max([dba.bv].colt), count(distinct [dba.bv].colt) from [dba.bv] [dba.bv]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0

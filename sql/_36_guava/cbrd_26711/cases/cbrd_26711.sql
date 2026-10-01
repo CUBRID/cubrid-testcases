@@ -49,18 +49,20 @@
  *    Case 20:    STDDEV and VARIANCE families with DISTINCT
  *    Case 21:    DISTINCT aggregates over no matching row and over an all-NULL column
  *    Case 22:    SUM that overflows inside one worker -- the other error site
+ *    Case 23:    DATETIME column aggregates, with and without DISTINCT
  */
 
 drop table if exists bv;
 
 create table bv (id int, cola int, colb varchar(20), colc numeric(15,5),
                  cold varchar(20), cole varchar(20), colf varchar(20),
-                 coln int, colneg int);
+                 coln int, colneg int, colt datetime);
 insert into bv
 select rownum, rownum % 100, lpad(to_char(rownum % 50), 20, '0'), (rownum % 200) * 1.5,
        lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 20, '0'),
        null,
-       case when rownum % 2 = 0 then -(rownum % 97) else (rownum % 97) end
+       case when rownum % 2 = 0 then -(rownum % 97) else (rownum % 97) end,
+       to_datetime('2026-09-29 00:00:00.000', 'YYYY-MM-DD HH24:MI:SS.FF') + rownum
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
 
 /* Each row holds a value large enough that the 10000-row total exceeds the
@@ -332,6 +334,17 @@ show trace;
 -- serial reference: must report the identical error
 select /*+ recompile no_parallel_scan */ sum(b) from ovfw;
 --+ server-message off
+
+
+evaluate 'Case 23: DATETIME column aggregates -> parallel heap scan (buildvalue)';
+-- the acceptance criteria name INT, VARCHAR and NUMERIC "and other data types";
+-- a temporal type is the one no other case touches. colt advances by one
+-- millisecond per row, so all 10000 values are distinct.
+select /*+ recompile */ count(colt), min(colt), max(colt), count(distinct colt) from bv;
+show trace;
+-- serial reference
+select /*+ recompile no_parallel_scan */ count(colt), min(colt), max(colt), count(distinct colt) from bv;
+show trace;
 
 
 set trace off;
