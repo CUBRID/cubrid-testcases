@@ -18,8 +18,9 @@
  * 6-8   NOLOGIN blocks a CALL-login switch before the password is
  *       checked, contrasted with a real password error, then LOGIN
  *       restores it
- * 9-11  DBA is denied in both directions; a DBA-group member is denied
- *       only when it targets itself, not when dba or another member does
+ * 9-11  DBA is denied in both directions, even from a DBA-group member;
+ *       a DBA-group member is denied only when it targets itself, not
+ *       when dba or another member does
  * 12    INFORMATION_SCHEMA denied both directions, stays NO
  * 13-14 PUBLIC is not protected; a grant made to it before it is switched
  *       to NOLOGIN keeps resolving afterward, same as one added after
@@ -87,9 +88,12 @@ SELECT current_user FROM db_root;
 CALL login('dba', '') ON CLASS db_user;
 
 -- 변경할 수 없는 사용자
-evaluate 'Case 9: ALTER USER dba NOLOGIN is denied, and so is the no-op LOGIN direction';
+evaluate 'Case 9: DBA is denied in both directions, even when the caller is a DBA-group member rather than DBA itself';
+CALL login('group_dbamem', 'pd') ON CLASS db_user;
 ALTER USER dba NOLOGIN;
 ALTER USER dba LOGIN;
+
+CALL login('dba', '') ON CLASS db_user;
 
 evaluate 'Case 10: a DBA-group member cannot target itself, even with DBA-group permission';
 CALL login('group_dbamem', 'pd') ON CLASS db_user;
