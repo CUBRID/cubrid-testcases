@@ -18,8 +18,8 @@
  * 6-8   NOLOGIN blocks a CALL-login switch before the password is
  *       checked, contrasted with a real password error, then LOGIN
  *       restores it
- * 9-11  DBA is denied in both directions, even from a DBA-group member;
- *       a DBA-group member is denied only when it targets itself, not
+ * 9-11  DBA is denied in both directions, even from a DBA-group member,
+ *       and a DBA-group member is denied only when it targets itself, not
  *       when dba or another member does
  * 12    INFORMATION_SCHEMA denied both directions, stays NO
  * 13-14 PUBLIC is not protected; a grant made to it before it is switched
