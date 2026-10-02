@@ -14,8 +14,8 @@ execute q using 'A';
 -- success
 execute q using 1; 
 
--- error : temporary
--- known bug
+-- develop failed here with -181: the previous execution's INT bind had converted the cached literal '' in place.
+-- CBRD-27510 converts a constant into a value of its own per execution, so the literal stays as it is.
 execute q using 'A'; 
 
 -- prepare required 
@@ -24,8 +24,7 @@ prepare p from 'select decode (?, '''', c, NULL, c, ''Z'') from table ({''X''}) 
 -- success
 execute p using 1;
 
--- error : temporary
--- known bug
+-- develop failed here with -181 for the same reason.
 execute p using 'A';
 
 -- success
