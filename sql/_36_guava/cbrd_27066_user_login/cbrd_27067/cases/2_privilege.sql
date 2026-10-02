@@ -38,7 +38,7 @@ CREATE USER group_dbamem PASSWORD 'pd' GROUPS dba;
 
 --+ server-message on
 
--- 변경 권한
+-- permission to change login capability
 evaluate 'Case 1: a plain user changing another user login capability is denied';
 CALL login('user_u1', 'p1') ON CLASS db_user;
 ALTER USER user_u2 NOLOGIN;
@@ -66,7 +66,7 @@ ALTER USER user_u2 LOGIN;
 
 CALL login('dba', '') ON CLASS db_user;
 
--- 로그인 차단
+-- login blocked by NOLOGIN
 evaluate 'Case 6: NOLOGIN blocks a CALL login switch, checked before the password';
 CREATE USER user_nologin PASSWORD 'pw' NOLOGIN;
 CREATE USER user_login PASSWORD 'pw' LOGIN;
@@ -87,7 +87,7 @@ SELECT current_user FROM db_root;
 
 CALL login('dba', '') ON CLASS db_user;
 
--- 변경할 수 없는 사용자
+-- users that cannot be targeted
 evaluate 'Case 9: DBA is denied in both directions, even when the caller is a DBA-group member rather than DBA itself';
 CALL login('group_dbamem', 'pd') ON CLASS db_user;
 ALTER USER dba NOLOGIN;
