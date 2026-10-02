@@ -2148,29 +2148,29 @@ a    c
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_t?_a_c (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t?.a, t?.c from t? t? where t?.c= ?:?  using index t?.i_t?_a_c order by ?
+/* ---> skip ORDER BY */
 ===================================================
 a    b    c    
 1     1       1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: s node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: s node[?]
+    index: i_t?_a_c 
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select s.a, s.b, s.c from t? s where s.c= ?:?  using index s.i_t?_a_c order by ?
+/* ---> skip ORDER BY */
 ===================================================
 a    c    
 1     1     
