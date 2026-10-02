@@ -9,7 +9,21 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
 100000
+===================================================
+0
+===================================================
+3000
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -107,6 +121,30 @@ Trace Statistics:
 
 ===================================================
     
+near-unique key, LEFT OUTER JOIN inner - expect: no MEMOIZE     
+
+===================================================
+count(*)    count(i.v)    sum(i.v)    
+100000     2970     148500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.near_uniq)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), count(i.v), sum(i.v) from [dba.t_outer] o left outer join [dba.t_inner] i on i.k=o.near_uniq
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
 low NDV key - expect: MEMOIZE     
 
 ===================================================
@@ -146,9 +184,9 @@ Query Plan:
     NESTED LOOPS (inner join)
       TABLE SCAN (o)
       INDEX SCAN (f.i_fan_oid) (key range: f.oid=o.id)
-    INDEX SCAN (i.i_inner_k) (key range: f.oid=i.k)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.u?)
 
-  rewritten query: select /*+ ORDERED USE_NL(f, i) PARALLEL(?) */ count(*), sum(f.v+i.v) from [dba.t_outer] o, [dba.t_fan] f, [dba.t_inner] i where f.oid=o.id and i.k=o.id
+  rewritten query: select /*+ ORDERED USE_NL(f, i) PARALLEL(?) */ count(*), sum(f.v+i.v) from [dba.t_outer] o, [dba.t_fan] f, [dba.t_inner] i where f.oid=o.id and i.k=o.u?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -156,6 +194,89 @@ Trace Statistics:
       SCAN (index: dba.t_fan.i_fan_oid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+fact joined to a dimension through its primary key - expect: MEMOIZE on t_dim only     
+
+===================================================
+count(*)    sum(d.attr+i.v)    
+3000     4510530     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (d.pk_t_dim_pk) (key range: d.pk=o.d_id)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.id)
+
+  rewritten query: select /*+ ORDERED USE_NL(d, i) PARALLEL(?) */ count(*), sum(d.attr+i.v) from [dba.t_outer] o, [dba.t_dim] d, [dba.t_inner] i where d.pk=o.d_id and i.k=o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_dim.pk_t_dim_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+dimension joined to the fact, each dimension row repeated 100 times - expect: MEMOIZE on t_inner     
+
+===================================================
+count(*)    sum(o.low_ndv+i.v)    
+100000     65340100     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (o.fk_t_outer_d_id) (key range: o.d_id=d.pk)
+    INDEX SCAN (i.i_inner_k) (key range: o.d_id=i.k)
+
+  rewritten query: select /*+ ORDERED USE_NL(o, i) PARALLEL(?) */ count(*), sum(o.low_ndv+i.v) from [dba.t_dim] d, [dba.t_outer] o, [dba.t_inner] i where o.d_id=d.pk and i.k=d.pk
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_dim), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_outer.fk_t_outer_d_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+a join that only removes rows of the outer table - expect: no MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+100     151500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.i_sel_k) (key range: s.k=o.id, covered: true)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.u?)
+
+  rewritten query: select /*+ ORDERED USE_NL(s, i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_outer] o, [dba.t_sel] s, [dba.t_inner] i where s.k=o.id and i.k=o.u?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sel.i_sel_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -173,6 +294,22 @@ count(*)    sum(f.v+i.v)
 30000     45180000     
 
 ===================================================
+count(*)    sum(d.attr+i.v)    
+3000     4510530     
+
+===================================================
+count(*)    sum(o.low_ndv+i.v)    
+100000     65340100     
+
+===================================================
+count(*)    sum(i.v)    
+100     151500     
+
+===================================================
+count(*)    count(i.v)    sum(i.v)    
+100000     2970     148500     
+
+===================================================
 0
 ===================================================
 count(*)    sum(i.v)    
@@ -182,6 +319,26 @@ count(*)    sum(i.v)
 count(*)    sum(f.v+i.v)    
 30000     45180000     
 
+===================================================
+count(*)    sum(d.attr+i.v)    
+3000     4510530     
+
+===================================================
+count(*)    sum(o.low_ndv+i.v)    
+100000     65340100     
+
+===================================================
+count(*)    sum(i.v)    
+100     151500     
+
+===================================================
+count(*)    count(i.v)    sum(i.v)    
+100000     2970     148500     
+
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
