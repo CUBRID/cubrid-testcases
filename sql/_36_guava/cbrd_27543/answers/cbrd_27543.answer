@@ -13,6 +13,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 1000
 ===================================================
 0
@@ -40,6 +44,14 @@
 3000
 ===================================================
 0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+3000
 ===================================================
 0
 ===================================================
@@ -280,6 +292,93 @@ Trace Statistics:
      
 
 ===================================================
+    
+partitioned outer, unique key - expect: no MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+3000     4501500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.u)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_part_outer] o, [dba.t_inner] i where i.k=o.u
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part_outer__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+partitioned inner, unique key - expect: no MEMOIZE     
+
+===================================================
+count(*)    sum(p.v)    
+3000     4501500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (p.pk_t_part_inner_k) (key range: p.k=o.u?)
+
+  rewritten query: select /*+ ORDERED USE_NL(p) PARALLEL(?) */ count(*), sum(p.v) from [dba.t_outer] o, [dba.t_part_inner] p where p.k=o.u?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_part_inner.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+a partitioned table follows the inner, unique key - expect: decided at run time, no MEMOIZE after it gives up     
+
+===================================================
+count(*)    sum(i.v+p.v)    
+3000     9003000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_inner_k) (key range: i.k=o.u?)
+    INDEX SCAN (p.pk_t_part_inner_k) (key range: p.k=i.k)
+
+  rewritten query: select /*+ ORDERED USE_NL(i, p) PARALLEL(?) */ count(*), sum(i.v+p.v) from [dba.t_outer] o, [dba.t_inner] i, [dba.t_part_inner] p where i.k=o.u? and p.k=i.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_part_inner.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
     
@@ -310,6 +409,18 @@ count(*)    count(i.v)    sum(i.v)
 100000     2970     148500     
 
 ===================================================
+count(*)    sum(i.v)    
+3000     4501500     
+
+===================================================
+count(*)    sum(p.v)    
+3000     4501500     
+
+===================================================
+count(*)    sum(i.v+p.v)    
+3000     9003000     
+
+===================================================
 0
 ===================================================
 count(*)    sum(i.v)    
@@ -335,6 +446,22 @@ count(*)    sum(i.v)
 count(*)    count(i.v)    sum(i.v)    
 100000     2970     148500     
 
+===================================================
+count(*)    sum(i.v)    
+3000     4501500     
+
+===================================================
+count(*)    sum(p.v)    
+3000     4501500     
+
+===================================================
+count(*)    sum(i.v+p.v)    
+3000     9003000     
+
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================

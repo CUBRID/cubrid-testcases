@@ -23,6 +23,8 @@ drop table if exists t_inner;
 drop table if exists t_outer_nostat;
 drop table if exists t_sel;
 drop table if exists t_dim;
+drop table if exists t_part_outer;
+drop table if exists t_part_inner;
 
 create table t_dim (pk int primary key, attr int);
 insert into t_dim select rownum, rownum % 7 from db_class a, db_class b, db_class c limit 1000;
@@ -48,7 +50,12 @@ create table t_inner (k int, v int);
 insert into t_inner select rownum, rownum from db_class a, db_class b, db_class c limit 3000;
 create index i_inner_k on t_inner (k);
 
-update statistics on t_outer, t_fan, t_inner, t_dim, t_sel with fullscan;
+create table t_part_outer (id int primary key, u int) partition by hash (id) partitions 4;
+insert into t_part_outer select id, id from t_outer where id <= 20000;
+create table t_part_inner (k int primary key, v int) partition by hash (k) partitions 4;
+insert into t_part_inner select k, v from t_inner;
+
+update statistics on t_outer, t_fan, t_inner, t_dim, t_sel, t_part_outer, t_part_inner with fullscan;
 
 set trace on;
 set system parameters 'memoize_memory_limit=64M';
@@ -89,6 +96,18 @@ evaluate 'a join that only removes rows of the outer table - expect: no MEMOIZE'
 select /*+ recompile parallel(0) ordered use_nl(s, i) */ count(*), sum(i.v) from t_outer o, t_sel s, t_inner i where s.k = o.id and i.k = o.u2;
 show trace;
 
+evaluate 'partitioned outer, unique key - expect: no MEMOIZE';
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_part_outer o, t_inner i where i.k = o.u;
+show trace;
+
+evaluate 'partitioned inner, unique key - expect: no MEMOIZE';
+select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
+show trace;
+
+evaluate 'a partitioned table follows the inner, unique key - expect: decided at run time, no MEMOIZE after it gives up';
+select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
+show trace;
+
 set trace off;
 
 evaluate 'results with memoize enabled and disabled';
@@ -98,6 +117,9 @@ select /*+ recompile parallel(0) ordered use_nl(d, i) */ count(*), sum(d.attr + 
 select /*+ recompile parallel(0) ordered use_nl(o, i) */ count(*), sum(o.low_ndv + i.v) from t_dim d, t_outer o, t_inner i where o.d_id = d.pk and i.k = d.pk;
 select /*+ recompile parallel(0) ordered use_nl(s, i) */ count(*), sum(i.v) from t_outer o, t_sel s, t_inner i where s.k = o.id and i.k = o.u2;
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), count(i.v), sum(i.v) from t_outer o left outer join t_inner i on i.k = o.near_uniq;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_part_outer o, t_inner i where i.k = o.u;
+select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
+select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_outer o, t_inner i where i.k = o.near_uniq;
 select /*+ recompile parallel(0) ordered use_nl(f, i) */ count(*), sum(f.v + i.v) from t_outer o, t_fan f, t_inner i where f.oid = o.id and i.k = o.u2;
@@ -106,6 +128,9 @@ select /*+ recompile parallel(0) ordered use_nl(d, i) */ count(*), sum(d.attr + 
 select /*+ recompile parallel(0) ordered use_nl(o, i) */ count(*), sum(o.low_ndv + i.v) from t_dim d, t_outer o, t_inner i where o.d_id = d.pk and i.k = d.pk;
 select /*+ recompile parallel(0) ordered use_nl(s, i) */ count(*), sum(i.v) from t_outer o, t_sel s, t_inner i where s.k = o.id and i.k = o.u2;
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), count(i.v), sum(i.v) from t_outer o left outer join t_inner i on i.k = o.near_uniq;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_part_outer o, t_inner i where i.k = o.u;
+select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
+select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
 
 set system parameters 'memoize_memory_limit=default';
 
@@ -115,3 +140,5 @@ drop table t_inner;
 drop table t_outer_nostat;
 drop table t_sel;
 drop table t_dim;
+drop table t_part_outer;
+drop table t_part_inner;
