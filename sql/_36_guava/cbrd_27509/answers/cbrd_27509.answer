@@ -1,0 +1,257 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the reported query, parallel hash aggregation; result = parallel(0)     
+
+===================================================
+grp    count(*)    mx    
+0     20000     555     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t)
+
+  rewritten query: select [dba.t].grp, count(*), max(case when [dba.t].flag=? then ? end) from [dba.t] [dba.t] group by [dba.t].grp
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+grp    count(*)    mx    
+0     20000     555     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     null     
+
+===================================================
+    
+Case 2: NO_HASH_AGGREGATE, sort aggregation after the gather; result = parallel(0)     
+
+===================================================
+grp    count(*)    mx    
+0     20000     555     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t)
+
+  rewritten query: select /*+ NO_HASH_AGGREGATE */ [dba.t].grp, count(*), max(case when [dba.t].flag=? then ? end) from [dba.t] [dba.t] group by [dba.t].grp
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+grp    count(*)    mx    
+0     20000     555     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     null     
+
+===================================================
+    
+Case 3: MIN, SUM, AVG, COUNT and a string MAX over the same operand, hash and sort; result = parallel(0)     
+
+===================================================
+grp    count(*)    mn    sm    av    cn    sx    
+0     20000     555     555     555.0     1     abc     
+1     20000     null     null     null     0     null     
+2     20000     null     null     null     0     null     
+3     20000     null     null     null     0     null     
+4     20000     null     null     null     0     null     
+5     20000     null     null     null     0     null     
+6     20000     null     null     null     0     null     
+7     20000     null     null     null     0     null     
+8     20000     null     null     null     0     null     
+9     20000     null     null     null     0     null     
+
+===================================================
+grp    count(*)    mn    sm    av    cn    sx    
+0     20000     555     555     555.0     1     abc     
+1     20000     null     null     null     0     null     
+2     20000     null     null     null     0     null     
+3     20000     null     null     null     0     null     
+4     20000     null     null     null     0     null     
+5     20000     null     null     null     0     null     
+6     20000     null     null     null     0     null     
+7     20000     null     null     null     0     null     
+8     20000     null     null     null     0     null     
+9     20000     null     null     null     0     null     
+
+===================================================
+grp    count(*)    mn    sm    av    cn    sx    
+0     20000     555     555     555.0     1     abc     
+1     20000     null     null     null     0     null     
+2     20000     null     null     null     0     null     
+3     20000     null     null     null     0     null     
+4     20000     null     null     null     0     null     
+5     20000     null     null     null     0     null     
+6     20000     null     null     null     0     null     
+7     20000     null     null     null     0     null     
+8     20000     null     null     null     0     null     
+9     20000     null     null     null     0     null     
+
+===================================================
+grp    count(*)    mn    sm    av    cn    sx    
+0     20000     555     555     555.0     1     abc     
+1     20000     null     null     null     0     null     
+2     20000     null     null     null     0     null     
+3     20000     null     null     null     0     null     
+4     20000     null     null     null     0     null     
+5     20000     null     null     null     0     null     
+6     20000     null     null     null     0     null     
+7     20000     null     null     null     0     null     
+8     20000     null     null     null     0     null     
+9     20000     null     null     null     0     null     
+
+===================================================
+    
+Case 4: unique group key, the workers give up hash aggregation before the row; result = parallel(0)     
+
+===================================================
+k    mx    
+199990     555     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tk)
+
+  rewritten query: select [dba.tk].k, max(case when [dba.tk].flag=? then ? end) from [dba.tk] [dba.tk] group by [dba.tk].k having max(case when [dba.tk].flag=? then ? end) is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tk), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    mx    
+199990     555     
+
+===================================================
+    
+Case 5: range partitioned table, only the second partition resolves the domain; result = parallel(0)     
+
+===================================================
+grp    count(*)    mx    
+0     20000     null     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     555     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tp)
+
+  rewritten query: select [dba.tp].grp, count(*), max(case when [dba.tp].flag=? then ? end) from [dba.tp] [dba.tp] group by [dba.tp].grp
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           PARTITION (table: dba.tp__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.tp__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+grp    count(*)    mx    
+0     20000     null     
+1     20000     null     
+2     20000     null     
+3     20000     null     
+4     20000     null     
+5     20000     null     
+6     20000     null     
+7     20000     null     
+8     20000     null     
+9     20000     555     
+
+===================================================
+0
