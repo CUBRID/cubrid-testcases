@@ -754,32 +754,23 @@ Query Plan:
 
   rewritten query: (select [dba.tleft].a, [dba.tright].y from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x)
 
-  SORT (distinct)
-    TABLE SCAN (dba.tright)
-
-  rewritten query: (select distinct [dba.tright].x from [dba.tright] [dba.tright])
-
   SORT (order by)
-    NESTED LOOPS (inner join)
+    NESTED LOOPS (semi join)
       TABLE SCAN (v)
-      TABLE SCAN (av?)
+      TABLE SCAN (dba.tright)
 
-  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b), (select distinct [dba.tright].x from [dba.tright] [dba.tright]) av? (av_?) where v.a=av?.av_? order by ?, ?
+  rewritten query: select v.a, v.b from (select [dba.tleft].a as [a], [dba.tright].y as [b] from [dba.tleft] [dba.tleft] left outer join [dba.tright] [dba.tright] on [dba.tleft].a=[dba.tright].x) v (a, b) semi join [dba.tright] [dba.tright] on v.a=[dba.tright].x order by ?, ?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 

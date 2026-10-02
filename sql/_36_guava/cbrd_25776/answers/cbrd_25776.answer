@@ -81,17 +81,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -99,12 +93,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -139,17 +128,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -157,12 +140,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -234,17 +212,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -252,12 +224,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -292,17 +259,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -310,12 +271,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1055,17 +1011,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte_b)
 
-  rewritten query: (select distinct cte_b.ca from [dba.ta] cte_b)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte_b.ca from [dba.ta] cte_b) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join [dba.ta] cte_b on [dba.tb].ca=cte_b.ca
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1073,12 +1023,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1113,17 +1058,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte_b)
 
-  rewritten query: (select distinct cte_b.ca from [dba.ta] cte_b)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select distinct cte_b.ca from [dba.ta] cte_b) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb] semi join [dba.ta] cte_b on [dba.tb].ca=cte_b.ca
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1131,12 +1070,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -3008,17 +2942,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -3026,12 +2954,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -3066,17 +2989,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.tb)
     TABLE SCAN (cte)
 
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte)
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb] from [dba.tb] [dba.tb] semi join [dba.ta] cte on [dba.tb].ca=cte.ca
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -3084,12 +3001,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -3692,17 +3604,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
-    INDEX SCAN (cte.ix_ca) (key range: (cte.ca<= ?:? ), covered: true)
-
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.tx] cte where (cte.ca<= ?:? ))
-
-  NESTED LOOPS (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
+    INDEX SCAN (cte.ix_ca) (key range: [dba.tb].ca=cte.ca, key filter: (cte.ca<= ?:? ), covered: true)
 
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.tx] cte where (cte.ca<= ?:? )) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join [dba.tx] cte on (cte.ca<= ?:? ) and [dba.tb].ca=cte.ca
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -3710,12 +3616,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.tx.ix_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (index: dba.tx.ix_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -3750,17 +3651,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
-    INDEX SCAN (cte.ix_ca) (key range: (cte.ca<= ?:? ), covered: true)
-
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.tx] cte where (cte.ca<= ?:? ))
-
-  NESTED LOOPS (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (dba.tb)
-    TABLE SCAN (av?)
+    INDEX SCAN (cte.ix_ca) (key range: [dba.tb].ca=cte.ca, key filter: (cte.ca<= ?:? ), covered: true)
 
-  rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.tx] cte where (cte.ca<= ?:? )) av? (av_?) where [dba.tb].ca=av?.av_?
-
+  rewritten query: select /*+ INLINE */ [dba.tb],class [dba.tb] from [dba.tb] [dba.tb] semi join [dba.tx] cte on (cte.ca<= ?:? ) and [dba.tb].ca=cte.ca
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -3768,12 +3663,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.tx.ix_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (index: dba.tx.ix_ca), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================

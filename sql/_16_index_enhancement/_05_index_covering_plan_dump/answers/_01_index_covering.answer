@@ -500,53 +500,35 @@ clno    fname
 40     jerry     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: firms node[?]
-                 index: idx_coverage_t? term[?] (covers)
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct firms.clno from firms firms where firms.city= ?:? )
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
+idx-join (semi join)
     outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: sscan
                class: clients node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: firms node[?]
+               index: idx_coverage_t? term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select clients.clno, clients.fname from clients clients, (select distinct firms.clno from firms firms where firms.city= ?:? ) av? (av_?) where clients.clno=av?.av_?
+select clients.clno, clients.fname from clients clients semi join firms firms on firms.city= ?:?  and clients.clno=firms.clno
 ===================================================
 clno    fname    
 40     jerry     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: firms node[?]
-                 index: idx_coverage_t? term[?] AND term[?] (covers)
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct firms.clno from firms firms where (firms.clno> ?:? ) and firms.city= ?:? )
-Query plan:
-nl-join (inner join)
+nl-join (semi join)
     edge:  term[?]
     outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: sscan
                class: clients node[?]
-               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: firms node[?]
+               index: idx_coverage_t? term[?] AND term[?] (covers)
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select clients.clno, clients.fname from clients clients, (select distinct firms.clno from firms firms where (firms.clno> ?:? ) and firms.city= ?:? ) av? (av_?) where clients.clno=av?.av_?
+select clients.clno, clients.fname from clients clients semi join firms firms on firms.city= ?:?  and (firms.clno> ?:? ) and clients.clno=firms.clno
 ===================================================
 id2    
 abc     

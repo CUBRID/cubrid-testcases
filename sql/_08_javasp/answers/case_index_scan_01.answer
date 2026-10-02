@@ -96,25 +96,18 @@ in
 10     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: tbl node[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct inttest(tbl.ord) from tbl tbl)
-Query plan:
-idx-join (inner join)
+nl-join (semi join)
+    edge:  term[?]
     outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
                class: tbl node[?]
-               index: i_tbl term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: tbl_? node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl, (select distinct inttest(tbl.ord) from tbl tbl) av? (av_?) where tbl.ord=av?.av_?
+select count(*) from tbl tbl semi join tbl tbl_? on tbl.ord=inttest(tbl_?.ord)
 ===================================================
 like    
 1     
