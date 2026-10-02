@@ -1,0 +1,194 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+near-unique key with statistics - expect: no MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+2970     148500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.near_uniq)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_outer] o, [dba.t_inner] i where i.k=o.near_uniq
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+near-unique key with statistics, parallel - expect: no MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+2970     148500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.near_uniq)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_outer] o, [dba.t_inner] i where i.k=o.near_uniq
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+near-unique key without statistics - expect: run-time decision, no MEMOIZE after it gives up     
+
+===================================================
+count(*)    sum(i.v)    
+2970     148500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.near_uniq)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_outer_nostat] o, [dba.t_inner] i where i.k=o.near_uniq
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer_nostat), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+low NDV key - expect: MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+99667     14940100     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.low_ndv)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_outer] o, [dba.t_inner] i where i.k=o.low_ndv
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+near-unique key repeated 10 times by join fan-out - expect: MEMOIZE on t_inner only     
+
+===================================================
+count(*)    sum(f.v+i.v)    
+30000     45180000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (f.i_fan_oid) (key range: f.oid=o.id)
+    INDEX SCAN (i.i_inner_k) (key range: f.oid=i.k)
+
+  rewritten query: select /*+ ORDERED USE_NL(f, i) PARALLEL(?) */ count(*), sum(f.v+i.v) from [dba.t_outer] o, [dba.t_fan] f, [dba.t_inner] i where f.oid=o.id and i.k=o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_fan.i_fan_oid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+    
+results with memoize enabled and disabled     
+
+===================================================
+count(*)    sum(i.v)    
+2970     148500     
+
+===================================================
+count(*)    sum(f.v+i.v)    
+30000     45180000     
+
+===================================================
+0
+===================================================
+count(*)    sum(i.v)    
+2970     148500     
+
+===================================================
+count(*)    sum(f.v+i.v)    
+30000     45180000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
