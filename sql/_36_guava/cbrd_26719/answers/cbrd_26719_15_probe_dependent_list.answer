@@ -1,0 +1,400 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+30000
+===================================================
+30000
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+0
+===================================================
+    
+Case 1: probe is a 3-way UNION ALL (dependent list chain) - parallel probe active     
+
+===================================================
+cnt    sval    
+72000     72360000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from ((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) a (ckey, cval), [dba.t_dl_build] b where a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same 3-way UNION ALL probe single-threaded - must match Case 1     
+
+===================================================
+cnt    sval    
+72000     72360000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from ((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) a (ckey, cval), [dba.t_dl_build] b where a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: deeper chain - 5-way UNION ALL probe - parallel probe active     
+
+===================================================
+cnt    sval    
+120000     120600000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from ((((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) union all select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]) union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) a (ckey, cval), [dba.t_dl_build] b where a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: same 5-way UNION ALL probe single-threaded - must match Case 3     
+
+===================================================
+cnt    sval    
+120000     120600000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from ((((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) union all select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]) union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) a (ckey, cval), [dba.t_dl_build] b where a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: LEFT OUTER with a dependent-list probe - 20 percent NULL-filled     
+
+===================================================
+total_rows    matched    null_filled    
+90000     72000     18000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey), count(case when b.ckey is null  then ? end) from ((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) a (ckey, cval) left outer join [dba.t_dl_build] b on a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: same dependent-list LEFT OUTER single-threaded - must match Case 5     
+
+===================================================
+total_rows    matched    null_filled    
+90000     72000     18000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_dl_pa)
+
+  rewritten query: select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa]
+
+  TABLE SCAN (dba.t_dl_pb)
+
+  rewritten query: select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]
+
+  TABLE SCAN (dba.t_dl_pc)
+
+  rewritten query: select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]
+
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey), count(case when b.ckey is null  then ? end) from ((select [dba.t_dl_pa].ckey, [dba.t_dl_pa].cval from [dba.t_dl_pa] [dba.t_dl_pa] union all select [dba.t_dl_pb].ckey, [dba.t_dl_pb].cval from [dba.t_dl_pb] [dba.t_dl_pb]) union all select [dba.t_dl_pc].ckey, [dba.t_dl_pc].cval from [dba.t_dl_pc] [dba.t_dl_pc]) a (ckey, cval) left outer join [dba.t_dl_build] b on a.cval=b.ckey
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_dl_pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_dl_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 7: row set equality both ways over the dependent-list probe     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0
+===================================================
+0

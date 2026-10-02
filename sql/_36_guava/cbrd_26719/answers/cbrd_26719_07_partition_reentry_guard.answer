@@ -1,0 +1,210 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: partition path - the parallel probe must not re-enter here     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_med), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 2: same query as JSON trace - partition path method string     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "HASH JOIN (inner join)": [
+      {
+        "TABLE SCAN": {
+          "table": "a"
+        }
+      },
+      {
+        "TABLE SCAN": {
+          "table": "b"
+        }
+      }
+    ],
+    "rewritten query": "select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        },
+        "parallel temp": {
+          "parallel_workers": ?,
+          "time": "?..?",
+          "readrows": "?..?",
+          "rows": "?..?",
+          "gather": "buildvalue"
+        }
+      },
+      "SUBQUERY (uncorrelated)": [
+        {
+          "HASHJOIN": {
+            "time": ?,
+            "fetch": ?,
+            "fetch_time": ?,
+            "ioread": ?,
+            "parallel workers": ?,
+            "split": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "partitions": ?
+            },
+            "parallel": {
+              "time": ?,
+              "build": {
+                "time": "?..?",
+                "fetch": ?,
+                "ioread": ?,
+                "rows": ?,
+                "method": "hybrid"
+              },
+              "probe": {
+                "time": "?..?",
+                "fetch": ?,
+                "ioread": ?,
+                "readrows": ?,
+                "readkeys": ?,
+                "rows": ?
+              }
+            },
+            "SUBQUERY (uncorrelated)": [
+              {
+                "parallel subquery execution": {
+                  "parallel_workers": ?,
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?
+                }
+              },
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_med)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    },
+                    "parallel heap": {
+                      "parallel_workers": ?,
+                      "time": "?..?",
+                      "readrows": "?..?",
+                      "rows": "?..?",
+                      "gather": "mergeable list"
+                    }
+                  }
+                }
+              },
+              {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_big)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    },
+                    "parallel heap": {
+                      "parallel_workers": ?,
+                      "time": "?..?",
+                      "readrows": "?..?",
+                      "rows": "?..?",
+                      "gather": "mergeable list"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
