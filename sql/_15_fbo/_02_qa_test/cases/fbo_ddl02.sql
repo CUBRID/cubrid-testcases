@@ -3419,6 +3419,13 @@ char_to_clob('abcdef1234567890987654321fedcba'),
 char_to_clob('abcdef1234567890987654321fedcba')	
 );
 
+-- OOS rejects the 1000 non-NULL LOB row above because its inline stubs still exceed the maximum record size.
+-- Insert a sparse row to continue verifying SELECT, UPDATE and DELETE on the 1000-column table.
+insert into allcolumn_t4 (b001, c001) values (
+bit_to_blob(X'abcdef1234567890987654321fedcba'),
+char_to_clob('abcdef1234567890987654321fedcba')
+);
+
 insert into allcolumn_t4 select * from allcolumn_t4;
 insert into allcolumn_t4 select * from allcolumn_t4;
 insert into allcolumn_t4 select * from allcolumn_t4;
