@@ -66,9 +66,13 @@ evaluate 'Case 10: constraint name exceeding 254 bytes - should error';
 drop table if exists tbl;
 create table tbl (id int, constraint c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___xx unique(id));
 
-evaluate 'Case 11: partition name exceeding 254 bytes - should error';
+evaluate 'Case 11: partition name 256 bytes - should error';
 drop table if exists tbl;
 create table tbl (col1 int, col2 int) partition by range (col2) (partition p_______10p_______20p_______30p_______40p_______50p_______60p_______70p_______80p_______90p______100p______110p______120p______130p______140p______150p______160p______170p______180p______190p______200p______210p______220p______230p______240p______250p_____ values less than (100));
+
+evaluate 'Case 11-1: partition name 255 bytes - should error';
+drop table if exists tbl;
+create table tbl (col1 int, col2 int) partition by range (col2) (partition p_______10p_______20p_______30p_______40p_______50p_______60p_______70p_______80p_______90p______100p______110p______120p______130p______140p______150p______160p______170p______180p______190p______200p______210p______220p______230p______240p______250p____ values less than (100));
 
 evaluate 'Case 12: column name with Korean chars 255 bytes - should error';
 drop table if exists tbl;
