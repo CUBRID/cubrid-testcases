@@ -44,15 +44,15 @@ n    min(n2)
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: foo node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+/* ---> skip GROUP BY */
 ===================================================
 n    min(n2)    
 0     0     
@@ -67,15 +67,15 @@ n    min(n2)
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: foo node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n using index foo.idx?
+/* ---> skip GROUP BY */
 ===================================================
 n    min(n2)    
 0     0     
@@ -90,15 +90,15 @@ n    min(n2)
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: foo node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+/* ---> skip GROUP BY */
 ===================================================
 n    min(n2)    
 0     0     
@@ -136,15 +136,15 @@ n    min(n2)
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: foo node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+/* ---> skip GROUP BY */
 ===================================================
 n    min(n2)    
 0     0     
@@ -159,15 +159,15 @@ n    min(n2)
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: foo node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: foo node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ NO_INDEX_LS */ foo.n, min(foo.n?) from  all foo foo where foo.n?= ?:?  group by foo.n
+/* ---> skip GROUP BY */
 ===================================================
 0
 ===================================================
@@ -246,15 +246,15 @@ n    min_n2
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: v? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: v? node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
 Query plan:
 sscan
     class: v? node[?]
@@ -275,15 +275,15 @@ n    min_n2
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: v? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: v? node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_INDEX_LS */ v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
 Query plan:
 sscan
     class: v? node[?]
@@ -308,15 +308,15 @@ n    min_n2
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: v? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: v? node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
 Query plan:
 sscan
     class: v? node[?]
@@ -337,15 +337,15 @@ n    min_n2
 9     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: v? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: v? node[?]
+    index: idx? (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 (select v?.n, min(v?.n?) from  all foo v? where (v?.n?= ?:? ) group by v?.n)
+/* ---> skip GROUP BY */
 Query plan:
 sscan
     class: v? node[?]
