@@ -557,3 +557,124 @@ count(*)
 0
 ===================================================
 0
+===================================================
+    
+Case 11: select-list subquery on a memoized anti inner whose outer rows survive; v = g * 10, result = memoize off     
+
+===================================================
+pk    g    v    
+1     1     10     
+2     2     20     
+4     1     10     
+5     2     20     
+7     1     10     
+8     2     20     
+10     1     10     
+11     2     20     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.g)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g)
+
+  SORT (order by)
+    NESTED LOOPS (anti join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (a.pk_cs_pk) (key range: a.pk=o?.g+?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.g, (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g) from [dba.cz] z, [dba.cy] o? anti join [dba.cs] a on a.pk=o?.g+? where z.nu=o?.nu using index o?.i_cy_nu order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+pk    g    v    
+1     1     10     
+2     2     20     
+4     1     10     
+5     2     20     
+7     1     10     
+8     2     20     
+10     1     10     
+11     2     20     
+
+===================================================
+0
+===================================================
+pk    g    v    
+1     1     10     
+2     2     20     
+4     1     10     
+5     2     20     
+7     1     10     
+8     2     20     
+10     1     10     
+11     2     20     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.g)
+
+  rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g)
+
+  SORT (order by)
+    NESTED LOOPS (anti join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (a.pk_cs_pk) (key range: a.pk=o?.g+?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.g, (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g) from [dba.cz] z, [dba.cy] o? anti join [dba.cs] a on a.pk=o?.g+? where z.nu=o?.nu using index o?.i_cy_nu order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+pk    g    v    
+1     1     10     
+2     2     20     
+4     1     10     
+5     2     20     
+7     1     10     
+8     2     20     
+10     1     10     
+11     2     20     
+
+===================================================
+0
+===================================================
+0

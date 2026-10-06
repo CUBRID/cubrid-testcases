@@ -25,6 +25,14 @@
  *  subquery runs again for it, while a subquery only the inner predicate reads
  *  does not run on replay.
  *
+ *  An outer row that survives an NL anti join (an unnested NOT EXISTS) goes
+ *  on without a row of the anti inner, from the scan or from a memoized "no
+ *  match", and it skipped the same reset (CBRD-26872). When the anti inner is
+ *  the innermost scan under a middle scan, a select-list subquery read for
+ *  consecutive surviving rows the result of an earlier one, with or without
+ *  memoize, and the subquery result cache stored that result under the new
+ *  key. The surviving row now resets them as a scanned row does.
+ *
  *  CTP runs SQL tests with test_mode=yes, which masks volatile trace values
  *  (time, hit / miss, size) to '?'. The assertions are therefore the MEMOIZE
  *  line under the inner scan (printed only when the memo had a hit) and the
@@ -43,6 +51,8 @@
  *    Case 9:  scalar subquery correlated only to the outer table, NULL for
  *             some outer rows
  *    Case 10: IN subquery correlated only to the outer table
+ *    Case 11: select-list subquery on a memoized anti inner whose outer rows
+ *             survive, result cache off and on
  */
 
 drop table if exists cz, cx, cy, cs;
@@ -154,6 +164,25 @@ show trace;
 set trace off;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs where cs.v <= o0.g + 1) using index o0.i_cy_nu, o1.i_cx_nu;
+set system parameters 'memoize_memory_limit=2M';
+set trace on;
+
+
+evaluate 'Case 11: select-list subquery on a memoized anti inner whose outer rows survive; v = g * 10, result = memoize off';
+-- NOT EXISTS becomes an NL anti join on cs a, the innermost scan, so the plan attaches the select-list subquery
+-- to it. a matches only g = 0 (a.pk = 4), so the rows with g = 1 and g = 2 survive in pairs under the one row of
+-- cz, and each must read its own subquery result: v = 10 for g = 1, v = 20 for g = 2
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, (select /*+ no_subquery_cache */ cs.v * 10 from cs where cs.pk = o0.g) v from cz z, cy o0 where z.nu = o0.nu and not exists (select 1 from cs a where a.pk = o0.g + 4) using index o0.i_cy_nu order by 1;
+show trace;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, (select /*+ no_subquery_cache */ cs.v * 10 from cs where cs.pk = o0.g) v from cz z, cy o0 where z.nu = o0.nu and not exists (select 1 from cs a where a.pk = o0.g + 4) using index o0.i_cy_nu order by 1;
+set system parameters 'memoize_memory_limit=2M';
+-- the same with the subquery result cache on: a result left over from another row must not be cached for this key
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, (select cs.v * 10 from cs where cs.pk = o0.g) v from cz z, cy o0 where z.nu = o0.nu and not exists (select 1 from cs a where a.pk = o0.g + 4) using index o0.i_cy_nu order by 1;
+show trace;
+set trace off;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, (select cs.v * 10 from cs where cs.pk = o0.g) v from cz z, cy o0 where z.nu = o0.nu and not exists (select 1 from cs a where a.pk = o0.g + 4) using index o0.i_cy_nu order by 1;
 
 
 set system parameters 'memoize_memory_limit=default';
