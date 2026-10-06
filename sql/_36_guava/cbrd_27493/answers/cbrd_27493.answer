@@ -375,3 +375,108 @@ count(*)
 
 ===================================================
 0
+===================================================
+    
+Case 10: partitioned driving table, a join that finds no match in its last block, then a following join with a single partition; result = NO_UNNEST     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (semi join)
+        NESTED LOOPS (inner join)
+          TABLE SCAN (d)
+          TABLE SCAN (m)
+        TABLE SCAN (s)
+      TABLE SCAN (f)
+
+  rewritten query: select /*+ ORDERED NO_USE_HASH PARALLEL(?) */ d.c?, f.c? from [dba.t_d?] d inner join [dba.t_m?] m on m.c?=d.c? semi join [dba.t_s?] s on s.c?=d.c? inner join [dba.t_f?] f on f.c?=d.c? where f.c?= ?:?  order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_d?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_d?__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_d?__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_m?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             PARTITION (table: dba.t_m?__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             PARTITION (table: dba.t_m?__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_s?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.t_f?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.t_f?__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+c1    c3    
+1     101     
+2     102     
+
+===================================================
+c1    c3    
+2     102     
+
+===================================================
+c1    c3    
+2     102     
+
+===================================================
+0

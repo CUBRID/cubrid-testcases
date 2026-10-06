@@ -12,7 +12,9 @@
  *  The fix drives a following join per outer row, like the semi / anti inner. It is
  *  rewound to its first partition for each outer row that reaches it, it walks all its
  *  partitions within that row, its memoize storage spans that walk, and the block
- *  iterator rewinds it when the driving table moves to its next partition.
+ *  iterator rewinds it when the driving table moves to its next partition. A following
+ *  join with a single partition left keeps its current scan for each outer row, and is
+ *  reopened on that partition after the block iterator has closed its scan.
  *
  *  Every unnested query is followed by the same query with the NO_UNNEST hint, and the
  *  two result blocks must match. CTP runs with test_mode=yes, which masks volatile
@@ -29,6 +31,8 @@
  *    Case 7:  repeated keys with memoize on and off
  *    Case 8:  left outer join to a partitioned table after the anti join
  *    Case 9:  driving table scanned in parallel, hash join ruled out, trace off
+ *    Case 10: partitioned driving table, a join that finds no match in its last block,
+ *             then a following join with a single partition left
  */
 
 drop table if exists t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp;
@@ -148,3 +152,39 @@ select /*+ recompile no_use_hash */ count(*) from outer_big o, t_w9 w where w.k 
 select /*+ recompile no_use_hash parallel(0) */ count(*) from outer_big o, t_w9 w where w.k = o.k and exists (select 1 from t_i9 s where s.k = o.k);
 select /*+ recompile no_use_hash */ count(*) from outer_big o, t_w9 w where w.k = o.k and exists (select /*+ NO_UNNEST */ 1 from t_i9 s where s.k = o.k);
 drop table outer_big, t_w9, t_i9;
+
+
+evaluate 'Case 10: partitioned driving table, a join that finds no match in its last block, then a following join with a single partition; result = NO_UNNEST';
+-- t_m10 has no match in its partition p1 for the row in partition p0 of t_d10, so the block iterator
+-- closes the scans after it, the following join included, before t_d10 moves to its partition p1
+drop table if exists t_d10, t_m10, t_u10, t_s10, t_f10, t_g10;
+create table t_d10 (c1 int, c2 int) partition by range (c1) (partition p0 values less than (2), partition p1 values less than maxvalue);
+insert into t_d10 values (1, 1), (2, 2);
+create table t_m10 (c1 int) partition by range (c1) (partition p0 values less than (2), partition p1 values less than maxvalue);
+insert into t_m10 values (1), (2);
+create table t_u10 (c1 int);
+insert into t_u10 values (2);
+create table t_s10 (c1 int);
+insert into t_s10 values (1), (2);
+-- pruned to its partition p0 by f.c1 = 0
+create table t_f10 (c1 int, c2 int, c3 int) partition by range (c1) (partition p0 values less than (1), partition p1 values less than maxvalue);
+insert into t_f10 values (0, 1, 101), (0, 2, 102);
+-- a single partition by definition
+create table t_g10 (c1 int, c2 int, c3 int) partition by range (c1) (partition p0 values less than maxvalue);
+insert into t_g10 values (0, 1, 101), (0, 2, 102);
+update statistics on t_d10, t_m10, t_u10, t_s10, t_f10, t_g10 with fullscan;
+set trace on;
+select /*+ recompile ordered no_use_hash parallel(0) */ d.c1, f.c3 from t_d10 d inner join t_m10 m on m.c1 = d.c2 semi join t_s10 s on s.c1 = d.c2 inner join t_f10 f on f.c2 = d.c2 where f.c1 = 0 order by 1, 2;
+show trace;
+set trace off;
+select /*+ recompile parallel(0) */ d.c1, f.c3 from t_d10 d, t_m10 m, t_f10 f where m.c1 = d.c2 and f.c2 = d.c2 and f.c1 = 0 and exists (select /*+ NO_UNNEST */ 1 from t_s10 s where s.c1 = d.c2) order by 1, 2;
+-- anti join: no row of t_s10 matches, so every outer row survives
+select /*+ recompile ordered no_use_hash parallel(0) */ d.c1, f.c3 from t_d10 d inner join t_m10 m on m.c1 = d.c2 anti join t_s10 s on s.c1 = d.c2 + 100 inner join t_f10 f on f.c2 = d.c2 where f.c1 = 0 order by 1, 2;
+select /*+ recompile parallel(0) */ d.c1, f.c3 from t_d10 d, t_m10 m, t_f10 f where m.c1 = d.c2 and f.c2 = d.c2 and f.c1 = 0 and not exists (select /*+ NO_UNNEST */ 1 from t_s10 s where s.c1 = d.c2 + 100) order by 1, 2;
+-- a following join with a single partition by definition
+select /*+ recompile ordered no_use_hash parallel(0) */ d.c1, g.c3 from t_d10 d inner join t_m10 m on m.c1 = d.c2 semi join t_s10 s on s.c1 = d.c2 inner join t_g10 g on g.c2 = d.c2 order by 1, 2;
+select /*+ recompile parallel(0) */ d.c1, g.c3 from t_d10 d, t_m10 m, t_g10 g where m.c1 = d.c2 and g.c2 = d.c2 and exists (select /*+ NO_UNNEST */ 1 from t_s10 s where s.c1 = d.c2) order by 1, 2;
+-- an unpartitioned join with no match for the row in partition p0 of t_d10 closes the scans after it the same way
+select /*+ recompile ordered no_use_hash parallel(0) */ d.c1, f.c3 from t_d10 d inner join t_u10 u on u.c1 = d.c2 semi join t_s10 s on s.c1 = d.c2 inner join t_f10 f on f.c2 = d.c2 where f.c1 = 0 order by 1, 2;
+select /*+ recompile parallel(0) */ d.c1, f.c3 from t_d10 d, t_u10 u, t_f10 f where u.c1 = d.c2 and f.c2 = d.c2 and f.c1 = 0 and exists (select /*+ NO_UNNEST */ 1 from t_s10 s where s.c1 = d.c2) order by 1, 2;
+drop table t_d10, t_m10, t_u10, t_s10, t_f10, t_g10;
