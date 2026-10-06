@@ -8,11 +8,6 @@
  *           fetched from the right file while the scan walks base + dependent list files.
  *           overflow_record covers overflow over a base list, sector_dependent_list covers a
  *           dependent-list chain without overflow; this case is their intersection.
- *           The chain is what makes the tracking falsifiable: qfile_collect_list_sector_info()
- *           records a tfile per sector, so tfiles[] holds more than one distinct file only when
- *           the input has a dependent_list_id chain. overflow_record's input is a single scan
- *           (no UNION ALL, and no_parallel_scan blocks the gather that would connect lists), so
- *           its tfiles[] is uniform and picking the wrong tfile there would still read correctly.
  * How verified: every parallel case is paired with a single-threaded (no_parallel_hash_join)
  *           run of the same query - the results must be identical. Both runs emit SQL Trace. The
  *           discriminators are the PARALLEL node (wrapping BUILD/PROBE) and the "parallel workers"
