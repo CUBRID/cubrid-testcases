@@ -10,12 +10,21 @@
  *           checksums. Every case emits SQL Trace so the answer file records which strategy each
  *           case actually used - a hint that silently failed to take effect would otherwise turn
  *           this into four copies of the same plan agreeing with itself.
- * Note: the dataset is deliberately small (2000 x 2000). NL is O(n*m) and the issue's own
+ * Note: the dataset is deliberately small (2400 x 2000). NL is O(n*m) and the issue's own
  *       performance table shows it is the worst strategy, so a 100000-row NL would be unusable
  *       in a regression suite. Correctness of the large parallel path is already covered by the
  *       other files; all this case needs to establish is logical equivalence.
  *       max_hash_list_scan_size is lowered to 4k for the partition/parallel cases so that even
  *       this small input is split, then restored for the single-hash case.
+ *       The row counts are deliberately UNEQUAL. The build side is picked by tuple_cnt first and
+ *       only falls back to page_cnt when the counts tie (hjoin_assign_build_probe); with both
+ *       tables at 2000 rows the choice rested on that tie-break, so BUILD flipped between
+ *       t_nla and t_nlb whenever the temp-file page count shifted (it did in CBRD-27365).
+ *       At 2400 vs 2000 the first comparison decides, and t_nlb is the build side whichever way
+ *       the optimizer orders the join. t_nla is the side that grew, so the build input keeps its
+ *       size and the parallel case keeps its margin; the extra 400 keys match nothing, which also
+ *       exercises the no-match path in all four strategies. t_nla is filled through a cross join
+ *       because the CTE itself cannot recurse past 2000 (ER_CTE_MAX_RECURSION_REACHED).
  * Source: own addition (not in the JIRA attachment) - closes the "or NL" half of A/C (2).
  */
 
@@ -30,7 +39,7 @@ create table t_nlb (ckey int, cval int);
 
 insert into t_nla
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
-  select n, mod (n, 7) from cte;
+  select rownum, mod (rownum, 7) from cte a, cte b limit 2400;
 
 insert into t_nlb
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
