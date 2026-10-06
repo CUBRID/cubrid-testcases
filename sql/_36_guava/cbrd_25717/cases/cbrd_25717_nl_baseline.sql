@@ -17,7 +17,7 @@
  *       max_hash_list_scan_size is lowered to 4k for the partition/parallel cases so that even
  *       this small input is split, then restored for the single-hash case.
  *       The row counts are deliberately UNEQUAL. The build side is picked by tuple_cnt first and
- *       only falls back to page_cnt when the counts tie (hjoin_assign_build_probe); with both
+ *       only falls back to page_cnt when the counts tie (hjoin_init_context); with both
  *       tables at 2000 rows the choice rested on that tie-break, so BUILD flipped between
  *       t_nla and t_nlb whenever the temp-file page count shifted (it did in CBRD-27365).
  *       At 2400 vs 2000 the first comparison decides, and t_nlb is the build side whichever way
