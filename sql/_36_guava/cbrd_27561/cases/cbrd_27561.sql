@@ -16,7 +16,10 @@
  *  statement has both a stored function or method call and a NEXTVAL. It also keeps a
  *  hash join serial when a PARALLEL_ENABLE function argument in its join predicates
  *  holds a NEXTVAL. A PARALLEL_ENABLE function without NEXTVAL, and NEXTVAL without a
- *  stored function, keep their parallel plans.
+ *  stored function, keep their parallel plans. The arguments of a function without
+ *  PARALLEL_ENABLE are checked too: that function also evaluates them after the
+ *  registration, so a NEXTVAL there runs the subqueries serially, and so does a
+ *  session variable there, as it does anywhere else in the statement.
  *
  *  The abort needs the two serials on different heap pages and two threads inside
  *  serial updates at the same moment, which a test case cannot arrange. The cases
@@ -35,6 +38,14 @@
  *             predicate, the hash join runs serially
  *    Case 6:  hash join predicate with the function over a column, or with NEXTVAL
  *             outside the function argument, the hash join stays parallel
+ *    Case 7:  NEXTVAL in the argument of a function without PARALLEL_ENABLE, the
+ *             subqueries run serially
+ *    Case 8:  a session variable in the argument of a function without
+ *             PARALLEL_ENABLE, the subqueries run serially
+ *
+ *  A function without PARALLEL_ENABLE inside a UNION ALL branch already keeps that
+ *  UNION ALL serial, so Cases 7 and 8 call it in an outer derived table, above a
+ *  UNION ALL that would otherwise run its branches in parallel.
  */
 
 drop table if exists t_u, t_h1, t_h2;
@@ -52,6 +63,11 @@ create table t_h2 (id int, v int);
 insert into t_h2 select rownum + 99000, mod (rownum, 100) from db_class a, db_class b, db_class c, db_class d limit 100000;
 
 create or replace function f_pe (x int) return int parallel_enable as
+begin
+  return x + 1;
+end;
+
+create or replace function f_npe (x int) return int as
 begin
   return x + 1;
 end;
@@ -101,9 +117,24 @@ show trace;
 
 
 set system parameters 'max_hash_list_scan_size=default';
+
+
+evaluate 'Case 7: NEXTVAL in the argument of a function without PARALLEL_ENABLE; no parallel workers';
+select /*+ recompile */ count(*), count(distinct y) from (select f_npe (s_a.nextval) as y from (select a as x from t_u where a between 1 and 2000 union all select a + 100000 as x from t_u where a between 2001 and 4000) u) v;
+show trace;
+
+
+evaluate 'Case 8: session variable in the argument of a function without PARALLEL_ENABLE; no parallel workers';
+set @v = 1;
+select /*+ recompile */ count(*), count(distinct y) from (select f_npe (@v) as y from (select a as x from t_u where a between 1 and 2000 union all select a + 100000 as x from t_u where a between 2001 and 4000) u) v;
+show trace;
+
+
 set trace off;
+deallocate variable @v;
 
 drop function f_pe;
+drop function f_npe;
 drop serial s_a;
 drop serial s_b;
 drop table t_u, t_h1, t_h2;

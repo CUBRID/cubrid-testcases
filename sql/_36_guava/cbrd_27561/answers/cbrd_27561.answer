@@ -27,6 +27,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
     
 Case 1: PARALLEL_ENABLE function over NEXTVAL in both UNION ALL branches; no parallel workers     
 
@@ -275,6 +277,100 @@ Trace Statistics:
             SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
+===================================================
+0
+===================================================
+    
+Case 7: NEXTVAL in the argument of a function without PARALLEL_ENABLE; no parallel workers     
+
+===================================================
+count(*)    count(distinct y)    
+4000     4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.t_u].a from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.t_u].a+? from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (u)
+
+  rewritten query: (select [dba.f_npe](serial_next_value([dba.s_a], ?)) from (select [dba.t_u].a as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.t_u].a+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x))
+
+  TABLE SCAN (v)
+
+  rewritten query: select count(*), count(distinct v.y) from (select [dba.f_npe](serial_next_value([dba.s_a], ?)) from (select [dba.t_u].a as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.t_u].a+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x)) v (y)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: session variable in the argument of a function without PARALLEL_ENABLE; no parallel workers     
+
+===================================================
+0
+===================================================
+count(*)    count(distinct y)    
+4000     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.t_u].a from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.t_u].a+? from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (u)
+
+  rewritten query: (select [dba.f_npe](@v) from (select [dba.t_u].a as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.t_u].a+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x))
+
+  TABLE SCAN (v)
+
+  rewritten query: select count(*), count(distinct v.y) from (select [dba.f_npe](@v) from (select [dba.t_u].a as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.t_u].a+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x)) v (y)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
