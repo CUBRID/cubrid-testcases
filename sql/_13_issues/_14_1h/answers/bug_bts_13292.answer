@@ -173,15 +173,15 @@ a    max(b)
 0     0     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers) (desc_index)
+    filtr: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_LS */ t?.a, max(t?.b) from t? t? where (t?.h> ?:? ) group by t?.a desc 
+/* ---> skip GROUP BY */
 ===================================================
 a    max(b)    
 1     1     
