@@ -47,7 +47,7 @@ set trace on;
 
 evaluate 'Case 1: partition path - the parallel probe must not re-enter here';
 
-select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
+select /*+ recompile use_hash ordered parallel(4) */
   count (*)
 from t_med a, t_big b where a.ckey = b.ckey;
 show trace;
@@ -56,7 +56,7 @@ evaluate 'Case 2: same query as JSON trace - partition path method string';
 
 set trace on output json;
 
-select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
+select /*+ recompile use_hash ordered parallel(4) */
   count (*)
 from t_med a, t_big b where a.ckey = b.ckey;
 show trace;

@@ -30,21 +30,25 @@ Query Plan:
     TABLE SCAN (a)
     TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
         PARALLEL (time: ?, fetch: ?, ioread: ?)
           BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: memory)
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_med), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
 ===================================================
@@ -73,7 +77,7 @@ trace
         }
       }
     ],
-    "rewritten query": "select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey"
+    "rewritten query": "select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.t_med] a, [dba.t_big] b where a.ckey=b.ckey"
   },
   "Trace Statistics": {
     "SELECT": {
@@ -89,6 +93,13 @@ trace
           "ioread": ?,
           "readrows": ?,
           "rows": ?
+        },
+        "parallel temp": {
+          "parallel_workers": ?,
+          "time": "?..?",
+          "readrows": "?..?",
+          "rows": "?..?",
+          "gather": "buildvalue"
         }
       },
       "SUBQUERY (uncorrelated)": [
@@ -125,6 +136,15 @@ trace
             },
             "SUBQUERY (uncorrelated)": [
               {
+                "parallel subquery execution": {
+                  "parallel_workers": ?,
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?
+                }
+              },
+              {
                 "SELECT": {
                   "time": ?,
                   "fetch": ?,
@@ -138,6 +158,13 @@ trace
                       "ioread": ?,
                       "readrows": ?,
                       "rows": ?
+                    },
+                    "parallel heap": {
+                      "parallel_workers": ?,
+                      "time": "?..?",
+                      "readrows": "?..?",
+                      "rows": "?..?",
+                      "gather": "mergeable list"
                     }
                   }
                 }
@@ -156,6 +183,13 @@ trace
                       "ioread": ?,
                       "readrows": ?,
                       "rows": ?
+                    },
+                    "parallel heap": {
+                      "parallel_workers": ?,
+                      "time": "?..?",
+                      "readrows": "?..?",
+                      "rows": "?..?",
+                      "gather": "mergeable list"
                     }
                   }
                 }

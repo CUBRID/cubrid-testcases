@@ -67,7 +67,7 @@ show trace;
 
 evaluate 'Case 3: RIGHT OUTER + during_join_pred - residual evaluated per worker';
 
---@queryplan
+--@joingraph
 select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as total_rows, count (b.ckey) as matched
 from t_ro_build b right outer join t_ro_probe a
@@ -77,7 +77,7 @@ show trace;
 
 evaluate 'Case 4: same RIGHT OUTER + during_join_pred single-threaded - must match Case 3';
 
---@queryplan
+--@joingraph
 select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
   count (*) as total_rows, count (b.ckey) as matched
 from t_ro_build b right outer join t_ro_probe a

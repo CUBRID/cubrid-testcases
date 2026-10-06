@@ -45,7 +45,7 @@ set trace on;
 
 evaluate 'Case 1: LEFT OUTER with an empty build side - every row NULL-filled, parallel probe bypassed';
 
-select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
+select /*+ recompile use_hash ordered parallel(4) */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a left outer join t_empty b on a.ckey = b.ckey;
@@ -53,7 +53,7 @@ show trace;
 
 evaluate 'Case 2: RIGHT OUTER preserving the EMPTY side - result must be 0 rows';
 
-select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
+select /*+ recompile use_hash ordered parallel(4) */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a right outer join t_empty b on a.ckey = b.ckey;
@@ -61,7 +61,7 @@ show trace;
 
 evaluate 'Case 3: same LEFT OUTER single-threaded - must match Case 1';
 
-select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
+select /*+ recompile use_hash ordered parallel(0) */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a left outer join t_empty b on a.ckey = b.ckey;

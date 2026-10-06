@@ -83,19 +83,20 @@ Case 3: RIGHT OUTER + during_join_pred - residual evaluated per worker
 total_rows    matched    
 100000     16500     
 
-Query plan:
-hash-join (right outer join)
-    edge:  term[?]
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: a node[?]
-               cost:  ? card ?
-    during:term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from t_ro_build b right outer join t_ro_probe a on  mod(a.cval, ?)=? and a.cval=b.ckey
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: ckey[0] (f)
+seg[2]: [1]
+seg[3]: cval[1]
+Join graph nodes:
+node[0]: dba.t_ro_build b(200/1) (loc 0)
+node[1]: dba.t_ro_probe a(100000/221) (outer-dep-set 0) (loc 1)
+Join graph equivalence classes:
+eqclass[0]: ckey[0] cval[1]
+Join graph edges:
+term[0]: a.cval=b.ckey (sel ?) (join term) (mergeable) (right-join) (loc 1)
+Join graph terms:
+term[1]:  mod(a.cval, 3)=0 (sel ?) (rank 2) (during join term) (not-join eligible) (loc 1)
 ===================================================
 trace    
 
@@ -127,19 +128,20 @@ Case 4: same RIGHT OUTER + during_join_pred single-threaded - must match Case 3
 total_rows    matched    
 100000     16500     
 
-Query plan:
-hash-join (right outer join)
-    edge:  term[?]
-    outer: sscan
-               class: b node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: a node[?]
-               cost:  ? card ?
-    during:term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.ckey) from t_ro_build b right outer join t_ro_probe a on  mod(a.cval, ?)=? and a.cval=b.ckey
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: ckey[0] (f)
+seg[2]: [1]
+seg[3]: cval[1]
+Join graph nodes:
+node[0]: dba.t_ro_build b(200/1) (loc 0)
+node[1]: dba.t_ro_probe a(100000/221) (outer-dep-set 0) (loc 1)
+Join graph equivalence classes:
+eqclass[0]: ckey[0] cval[1]
+Join graph edges:
+term[0]: a.cval=b.ckey (sel ?) (join term) (mergeable) (right-join) (loc 1)
+Join graph terms:
+term[1]:  mod(a.cval, 3)=0 (sel ?) (rank 2) (during join term) (not-join eligible) (loc 1)
 ===================================================
 trace    
 
