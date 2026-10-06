@@ -1,0 +1,559 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+30
+===================================================
+0
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: aggregate scalar subquery in the inner predicate; result = memoize off     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk, covered: true)
+
+  rewritten query: (select count(*) from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=(select count(*) from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)) using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+100     
+
+===================================================
+0
+===================================================
+    
+Case 2: Case 1 with the subquery result cache off; result = memoize off     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk, covered: true)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count(*) from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=(select /*+ NO_SUBQUERY_CACHE */ count(*) from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)) using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+100     
+
+===================================================
+0
+===================================================
+    
+Case 3: non-aggregate scalar subquery in the inner predicate; result = memoize off     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk), ?)) using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+100     
+
+===================================================
+0
+===================================================
+    
+Case 4: select-list subquery on the memoized inner, result cache off; result = memoize off     
+
+===================================================
+count(*)    sum(o1.pk)    sum((select /*+ NO_SUBQUERY_CACHE */ cs.v*10 from cs where cs.pk=o1.pk))    sum(o1.pk*(select /*+ NO_SUBQUERY_CACHE */ cs.v*10 from cs where cs.pk=o1.pk))    
+100     1450     500     1700     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(o?.pk), sum((select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)), sum(o?.pk*(select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(o1.pk)    sum((select /*+ NO_SUBQUERY_CACHE */ cs.v*10 from cs where cs.pk=o1.pk))    sum(o1.pk*(select /*+ NO_SUBQUERY_CACHE */ cs.v*10 from cs where cs.pk=o1.pk))    
+100     1450     500     1700     
+
+===================================================
+0
+===================================================
+pk    pk    v    
+1     1     10     
+1     4     40     
+1     7     null     
+1     10     null     
+1     13     null     
+1     16     null     
+1     19     null     
+1     22     null     
+1     25     null     
+1     28     null     
+4     1     10     
+4     4     40     
+4     7     null     
+4     10     null     
+4     13     null     
+4     16     null     
+4     19     null     
+4     22     null     
+4     25     null     
+4     28     null     
+7     1     10     
+7     4     40     
+7     7     null     
+7     10     null     
+7     13     null     
+7     16     null     
+7     19     null     
+7     22     null     
+7     25     null     
+7     28     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.pk, (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.pk<= ?:? ) using index o?.i_cx_nu, o?.i_cx_nu order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 5: Case 4 with the subquery result cache on; result = memoize off     
+
+===================================================
+count(*)    sum(o1.pk)    sum((select cs.v*10 from cs where cs.pk=o1.pk))    sum(o1.pk*(select cs.v*10 from cs where cs.pk=o1.pk))    
+100     1450     500     1700     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+
+  rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(o?.pk), sum((select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)), sum(o?.pk*(select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(o1.pk)    sum((select cs.v*10 from cs where cs.pk=o1.pk))    sum(o1.pk*(select cs.v*10 from cs where cs.pk=o1.pk))    
+100     1450     500     1700     
+
+===================================================
+0
+===================================================
+    
+Case 6: outer column only in the aggregate argument of the subquery; result = memoize off     
+
+===================================================
+count(*)    
+104     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.pk))
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v+o?.g*?) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and o?.nn+?>=(select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v+o?.g*?) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk)) using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+104     
+
+===================================================
+0
+===================================================
+    
+Case 7: outer column only in the HAVING of the subquery; result = memoize off     
+
+===================================================
+count(*)    
+84     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.pk))
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g+?)
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g+?), ?)) using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+84     
+
+===================================================
+0
+===================================================
+    
+Case 8: nested subquery inside the predicate subquery; result = memoize off     
+
+===================================================
+count(*)    
+80     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (c?)
+
+  rewritten query: (select max(c?.v) from [dba.cs] c? where (c?.v<= mod(o?.pk, ?)))
+
+  TABLE SCAN (dba.cs)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=(select max(c?.v) from [dba.cs] c? where (c?.v<= mod(o?.pk, ?)))))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cx_nu) (key range: z.nu=o?.nu, covered: true)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cx] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=(select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=(select max(c?.v) from [dba.cs] c? where (c?.v<= mod(o?.pk, ?)))))) using index o?.i_cx_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+80     
+
+===================================================
+0
+===================================================
+    
+Case 9: scalar subquery correlated only to the outer table, NULL for g = 0; result = memoize off     
+
+===================================================
+count(*)    
+108     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.cs)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g)), ?)) using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+108     
+
+===================================================
+0
+===================================================
+    
+Case 10: IN subquery correlated only to the outer table; result = memoize off     
+
+===================================================
+count(*)    
+24     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.cs)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g+?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (z)
+      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and o?.nn in (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g+?)) using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+24     
+
+===================================================
+0
+===================================================
+0
