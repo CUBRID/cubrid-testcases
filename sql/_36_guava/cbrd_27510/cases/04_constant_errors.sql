@@ -15,7 +15,8 @@
  *  variable is not a constant condition, because the statement or a stored procedure it calls may assign it.
  *
  *  The new answers are the statements of Case 1, Case 3 and Case 5 over no row (ce_e is empty) or behind a branch
- *  no row takes, and Case 9 - they fail before any row where develop answered without an error. The same statements
+ *  no row takes, Case 9, and the first two statements of Case 11 - they fail before any row where develop answered
+ *  without an error. The same statements
  *  over rows (Case 2, Case 4, Case 6) fail in develop too, and the guarded statements (Case 7, Case 8) and the
  *  conversions a row makes (Case 10) keep develop's answers.
  *
@@ -30,6 +31,8 @@
  *    Case 8: constant conditions holding CASE, IF, DECODE or an IN list over binds
  *    Case 9: a session variable condition, which is not a constant condition
  *    Case 10: values a row converts or compares - an assignment, a LEAD default, FIELD
+ *    Case 11: a type pair the operator refuses (-454) over binds the gate types, over no row, behind a branch no row
+ *             takes, and over rows
  */
 --+ holdcas on;
 drop table if exists ce_t;
@@ -232,6 +235,17 @@ prepare q from 'select a, field(concat(?, ''''), a, 2) from ce_e';
 execute q using 'abc';
 prepare q from 'select a, field(concat(?, ''''), a, 2) from ce_t order by a';
 execute q using 'abc';
+
+-- Case 11 [NEW]. An operator that takes no such type pair (DATE + DATE, DATE times a number) over binds whose types
+-- only the values give is refused before any row with -454, over no row and in a CASE branch no row takes, where
+-- develop answered without an error. Over rows develop refuses it too.
+evaluate 'Case 11: a type pair the operator refuses, over binds';
+prepare q from 'select ? + ? from ce_e';
+execute q using date'2024-01-02', date'2024-01-03';
+prepare q from 'select a, case when a = 99 then ? * ? else 0 end from ce_t order by a';
+execute q using date'2024-01-02', 2;
+prepare q from 'select ? + ? from ce_t';
+execute q using date'2024-01-02', date'2024-01-03';
 
 drop variable @ce_m;
 drop variable @ce_g;
