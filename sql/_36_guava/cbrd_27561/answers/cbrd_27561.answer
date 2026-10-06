@@ -1,0 +1,289 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: PARALLEL_ENABLE function over NEXTVAL in both UNION ALL branches; no parallel workers     
+
+===================================================
+count(*)    count(distinct x)    
+4000     4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.f_pe](serial_next_value([dba.s_a], ?)) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.f_pe](serial_next_value([dba.s_b], ?))+? from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (u)
+
+  rewritten query: select count(*), count(distinct u.x) from (select [dba.f_pe](serial_next_value([dba.s_a], ?)) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.f_pe](serial_next_value([dba.s_b], ?))+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: PARALLEL_ENABLE function over a column in both UNION ALL branches; parallel workers     
+
+===================================================
+count(*)    count(distinct x)    
+4000     4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.f_pe]([dba.t_u].a) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select [dba.f_pe]([dba.t_u].a)+? from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (u)
+
+  rewritten query: select count(*), count(distinct u.x) from (select [dba.f_pe]([dba.t_u].a) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select [dba.f_pe]([dba.t_u].a)+? as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: NEXTVAL without a stored function in both UNION ALL branches; parallel workers     
+
+===================================================
+count(*)    count(distinct x)    
+4000     4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select  cast(serial_next_value([dba.s_a], ?) as numeric) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>= ?:?  and [dba.t_u].a<= ?:? )
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select serial_next_value([dba.s_b], ?)+ cast(? as numeric) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>= ?:?  and [dba.t_u].a<= ?:? )
+
+  TABLE SCAN (u)
+
+  rewritten query: select count(*), count(distinct u.x) from (select  cast(serial_next_value([dba.s_a], ?) as numeric) as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>= ?:?  and [dba.t_u].a<= ?:? ) union all select serial_next_value([dba.s_b], ?)+ cast(? as numeric) as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>= ?:?  and [dba.t_u].a<= ?:? )) u (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: PARALLEL_ENABLE function in one branch and NEXTVAL in the other; no parallel workers     
+
+===================================================
+count(*)    count(distinct x)    
+4000     4000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select  cast([dba.f_pe]([dba.t_u].a) as numeric) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (dba.t_u)
+
+  rewritten query: select serial_next_value([dba.s_b], ?)+ cast(? as numeric) from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)
+
+  TABLE SCAN (u)
+
+  rewritten query: select count(*), count(distinct u.x) from (select  cast([dba.f_pe]([dba.t_u].a) as numeric) as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?) union all select serial_next_value([dba.s_b], ?)+ cast(? as numeric) as [x] from [dba.t_u] [dba.t_u] where ([dba.t_u].a>=? and [dba.t_u].a<=?)) u (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 5: NEXTVAL in a PARALLEL_ENABLE function argument of a hash join predicate; no parallel workers     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from [dba.t_h?] a, [dba.t_h?] b where a.id=b.id and a.v+b.v+?*[dba.f_pe](serial_next_value([dba.s_a], ?))>=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: hash join predicate with the function over a column, or with NEXTVAL outside the function; parallel workers     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from [dba.t_h?] a, [dba.t_h?] b where a.id=b.id and a.v+b.v+?*[dba.f_pe](a.v)>=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*) from [dba.t_h?] a, [dba.t_h?] b where a.id=b.id and  cast(a.v+b.v+?*[dba.f_pe](a.v) as numeric)+ cast(? as numeric)*serial_next_value([dba.s_a], ?)>=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
