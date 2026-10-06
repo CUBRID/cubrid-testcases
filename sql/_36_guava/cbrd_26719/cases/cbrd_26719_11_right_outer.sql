@@ -19,6 +19,11 @@
  *   - Case 5: both EXCEPT directions 0
  *   - a worker sub-line below PROBE in Cases 1 and 3 but not in Cases 2 and 4, and no SPLIT
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: own addition (not in the JIRA attachment)
  */
 
@@ -39,7 +44,8 @@ insert into t_ro_probe
 
 update statistics on t_ro_build, t_ro_probe with fullscan;
 
-set system parameters 'max_hash_list_scan_size=8M'; -- default value, so no partitioning
+-- default value, so no partitioning
+set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;
 
@@ -61,19 +67,21 @@ show trace;
 
 evaluate 'Case 3: RIGHT OUTER + during_join_pred - residual evaluated per worker';
 
+--@queryplan
 select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as total_rows, count (b.ckey) as matched
 from t_ro_build b right outer join t_ro_probe a
-  on a.cval = b.ckey and mod (b.cval, 3) = 0;
+  on a.cval = b.ckey and mod (a.cval, 3) = 0;
 
 show trace;
 
 evaluate 'Case 4: same RIGHT OUTER + during_join_pred single-threaded - must match Case 3';
 
+--@queryplan
 select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
   count (*) as total_rows, count (b.ckey) as matched
 from t_ro_build b right outer join t_ro_probe a
-  on a.cval = b.ckey and mod (b.cval, 3) = 0;
+  on a.cval = b.ckey and mod (a.cval, 3) = 0;
 
 show trace;
 

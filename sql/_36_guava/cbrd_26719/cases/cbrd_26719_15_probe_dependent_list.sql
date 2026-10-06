@@ -33,6 +33,11 @@
  * Not judgeable from the answer file:
  *   - the length of the dependent_list_id chain or the number of tfiles[] entries
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: own addition (not in the JIRA attachment)
  */
 
@@ -64,7 +69,8 @@ insert into t_dl_pc
 
 update statistics on t_dl_build, t_dl_pa, t_dl_pb, t_dl_pc with fullscan;
 
-set system parameters 'max_hash_list_scan_size=8M'; -- default value, so no partitioning
+-- default value, so no partitioning
+set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;
 
@@ -72,9 +78,9 @@ evaluate 'Case 1: probe is a 3-way UNION ALL (dependent list chain) - parallel p
 
 select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as cnt, sum (cast (b.cval as bigint)) as sval
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc) a,
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
      t_dl_build b
 where a.cval = b.ckey;
 
@@ -84,9 +90,9 @@ evaluate 'Case 2: same 3-way UNION ALL probe single-threaded - must match Case 1
 
 select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
   count (*) as cnt, sum (cast (b.cval as bigint)) as sval
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc) a,
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
      t_dl_build b
 where a.cval = b.ckey;
 
@@ -96,11 +102,11 @@ evaluate 'Case 3: deeper chain - 5-way UNION ALL probe - parallel probe active';
 
 select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as cnt, sum (cast (b.cval as bigint)) as sval
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc
-      union all select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb) a,
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb) a,
      t_dl_build b
 where a.cval = b.ckey;
 
@@ -110,11 +116,11 @@ evaluate 'Case 4: same 5-way UNION ALL probe single-threaded - must match Case 3
 
 select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
   count (*) as cnt, sum (cast (b.cval as bigint)) as sval
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc
-      union all select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb) a,
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb) a,
      t_dl_build b
 where a.cval = b.ckey;
 
@@ -126,9 +132,9 @@ select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_s
   count (*) as total_rows,
   count (b.ckey) as matched,
   count (case when b.ckey is null then 1 end) as null_filled
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc) a
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a
   left outer join t_dl_build b on a.cval = b.ckey;
 
 show trace;
@@ -139,9 +145,9 @@ select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_s
   count (*) as total_rows,
   count (b.ckey) as matched,
   count (case when b.ckey is null then 1 end) as null_filled
-from (select ckey, cval from t_dl_pa
-      union all select ckey, cval from t_dl_pb
-      union all select ckey, cval from t_dl_pc) a
+from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+      union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a
   left outer join t_dl_build b on a.cval = b.ckey;
 
 show trace;
@@ -153,16 +159,16 @@ evaluate 'Case 7: row set equality both ways over the dependent-list probe';
 select count (*) as parallel_minus_serial
 from (
     select /*+ use_hash ordered parallel(4) */ a.ckey, a.cval, b.cval as bcval
-    from (select ckey, cval from t_dl_pa
-          union all select ckey, cval from t_dl_pb
-          union all select ckey, cval from t_dl_pc) a,
+    from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
          t_dl_build b
     where a.cval = b.ckey
     except
     select /*+ use_hash ordered parallel(0) */ a.ckey, a.cval, b.cval as bcval
-    from (select ckey, cval from t_dl_pa
-          union all select ckey, cval from t_dl_pb
-          union all select ckey, cval from t_dl_pc) a,
+    from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
          t_dl_build b
     where a.cval = b.ckey
   );
@@ -170,16 +176,16 @@ from (
 select count (*) as serial_minus_parallel
 from (
     select /*+ use_hash ordered parallel(0) */ a.ckey, a.cval, b.cval as bcval
-    from (select ckey, cval from t_dl_pa
-          union all select ckey, cval from t_dl_pb
-          union all select ckey, cval from t_dl_pc) a,
+    from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
          t_dl_build b
     where a.cval = b.ckey
     except
     select /*+ use_hash ordered parallel(4) */ a.ckey, a.cval, b.cval as bcval
-    from (select ckey, cval from t_dl_pa
-          union all select ckey, cval from t_dl_pb
-          union all select ckey, cval from t_dl_pc) a,
+    from (select /*+ no_parallel_scan */ ckey, cval from t_dl_pa
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pb
+          union all select /*+ no_parallel_scan */ ckey, cval from t_dl_pc) a,
          t_dl_build b
     where a.cval = b.ckey
   );

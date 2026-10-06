@@ -21,6 +21,11 @@
  *     rests on method: skip, the absent worker sub-line and the result values
  *   - the "parallel workers" markers on SCAN and aggregate nodes are unrelated to this feature
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: JIRA attachment cbrd-26719_test-case_20260921.zip (ported to CTP)
  */
 
@@ -40,7 +45,7 @@ set trace on;
 
 evaluate 'Case 1: LEFT OUTER with an empty build side - every row NULL-filled, parallel probe bypassed';
 
-select /*+ recompile use_hash ordered parallel(4) */
+select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a left outer join t_empty b on a.ckey = b.ckey;
@@ -48,7 +53,7 @@ show trace;
 
 evaluate 'Case 2: RIGHT OUTER preserving the EMPTY side - result must be 0 rows';
 
-select /*+ recompile use_hash ordered parallel(4) */
+select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a right outer join t_empty b on a.ckey = b.ckey;
@@ -56,7 +61,7 @@ show trace;
 
 evaluate 'Case 3: same LEFT OUTER single-threaded - must match Case 1';
 
-select /*+ recompile use_hash ordered parallel(0) */
+select /*+ recompile use_hash ordered parallel(0) no_parallel_scan no_parallel_subquery */
   count (*) as outer_rows,
   count (b.ckey) as matched
 from t_full a left outer join t_empty b on a.ckey = b.ckey;

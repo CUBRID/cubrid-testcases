@@ -22,6 +22,11 @@
  * Not recorded in the answer file:
  *   - the conversion itself never appears in the trace
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: JIRA attachment cbrd-26719_test-case_20260921.zip (ported to CTP)
  */
 
@@ -41,6 +46,7 @@ insert into t_p_str
 
 update statistics on t_b_str, t_p_str with fullscan;
 
+-- default value, so no partitioning
 set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;

@@ -16,6 +16,11 @@
  *     which is partition parallelism
  *   - yet there is no worker sub-line below PROBE, and that is the evidence of no re-entry
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: JIRA attachment cbrd-26719_test-case_20260921.zip (ported to CTP)
  */
 
@@ -42,7 +47,7 @@ set trace on;
 
 evaluate 'Case 1: partition path - the parallel probe must not re-enter here';
 
-select /*+ recompile use_hash ordered parallel(4) */
+select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*)
 from t_med a, t_big b where a.ckey = b.ckey;
 show trace;
@@ -51,7 +56,7 @@ evaluate 'Case 2: same query as JSON trace - partition path method string';
 
 set trace on output json;
 
-select /*+ recompile use_hash ordered parallel(4) */
+select /*+ recompile use_hash ordered parallel(4) no_parallel_scan no_parallel_subquery */
   count (*)
 from t_med a, t_big b where a.ckey = b.ckey;
 show trace;

@@ -20,6 +20,11 @@
  * Not judgeable from the answer file:
  *   - the actual degree. Only the presence of the worker sub-line is judged, never the value
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: own addition (not in the JIRA attachment)
  */
 
@@ -46,7 +51,8 @@ insert into t_dg_big
 
 update statistics on t_dg_build, t_dg_small, t_dg_big with fullscan;
 
-set system parameters 'max_hash_list_scan_size=8M'; -- default value, so no partitioning
+-- default value, so no partitioning
+set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;
 

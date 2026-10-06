@@ -33,6 +33,11 @@
  *     Cases 7 and 8 judge it indirectly through matching results. The string coercion that
  *     allocates a tracked buffer is covered by 10_probe_key_coerce
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: own addition (not in the JIRA attachment)
  */
 
@@ -94,7 +99,8 @@ insert into t_kt_mprobe
 update statistics on t_kt_fbuild, t_kt_fprobe, t_kt_vbuild, t_kt_vprobe,
                      t_kt_cbuild, t_kt_cprobe, t_kt_mbuild, t_kt_mprobe with fullscan;
 
-set system parameters 'max_hash_list_scan_size=8M'; -- default value, so no partitioning
+-- default value, so no partitioning
+set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;
 

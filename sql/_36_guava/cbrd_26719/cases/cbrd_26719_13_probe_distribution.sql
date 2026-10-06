@@ -22,6 +22,11 @@
  *   - the amount emitted per worker. How the matching volume splits under skew is the point of
  *     this case, but it cannot be read from the answer file. The totals are compared instead
  *
+ * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
+ *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
+ *   compute_parallel_degree). Without it the probe lists here stay under 256 pages and the
+ *   parallel-probe cases fall back to a serial probe.
+ *
  * Source: own addition (not in the JIRA attachment)
  */
 
@@ -61,7 +66,8 @@ insert into t_pd_skew
 
 update statistics on t_pd_build, t_pd_null, t_pd_dup, t_pd_skew with fullscan;
 
-set system parameters 'max_hash_list_scan_size=8M'; -- default value, so no partitioning
+-- default value, so no partitioning
+set system parameters 'max_hash_list_scan_size=8M';
 
 set trace on;
 
