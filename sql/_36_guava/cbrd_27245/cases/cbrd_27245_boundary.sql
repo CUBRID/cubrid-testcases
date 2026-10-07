@@ -93,9 +93,8 @@ SELECT COUNT(*), MIN(id), MAX(id) FROM cbrd_27245_bulk_ins;
 SELECT LENGTH(val) FROM cbrd_27245_bulk_ins WHERE id = 2000;
 SELECT val FROM cbrd_27245_bulk_ins WHERE id = 1;
 SELECT val FROM cbrd_27245_bulk_ins WHERE id = 4000;
--- the four spot-checks above sample only 3 of the 4000 rows; a refill boundary
--- can land on any row in between, so this checks every row against its expected
--- pattern in one pass -- 0 is the correct, expected result (no mismatches found)
+-- checks every row's pattern, not just the 3 sampled above
+-- only mismatching rows are counted, so 0 is the expected result
 SELECT COUNT(*) FROM cbrd_27245_bulk_ins WHERE (id <> 2000 AND val <> 'row-' || LPAD(id, 5, '0') || '-' || REPEAT('abcdefghij', 6)) OR (id = 2000 AND val <> REPEAT('z', 20000));
 
 DROP TABLE IF EXISTS cbrd_27245_bulk_ins;
