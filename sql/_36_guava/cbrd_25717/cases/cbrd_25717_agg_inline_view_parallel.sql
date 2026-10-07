@@ -24,8 +24,16 @@ insert into t_agg
   )
   select rownum from cte a, cte b limit 100000;
 
--- lower the threshold so a partition hash join is triggered
-set system parameters 'max_hash_list_scan_size=256k';
+-- lower the threshold so a partition hash join is triggered.
+-- 64k, not 256k: the BUILD method must not sit on the memory/hybrid boundary. That choice is
+-- per partition (in_mem_size = slot_array + entries + page_cnt * DB_PAGESIZE vs this limit), and
+-- under a parallel split each worker flushes a partial page into the partition through
+-- qfile_append_list, which copies whole pages - so page_cnt per partition varies with worker
+-- scheduling. At 256k the partitions straddled the limit and the trace printed "memory+hybrid",
+-- which flipped to plain "memory" on roughly one CTP run in ten. Measured here: 64k and 128k give
+-- a uniform "hybrid", 256k straddles, 512k gives "memory". The variance only ever inflates
+-- page_cnt, so the hybrid side is the stable one and 64k keeps two steps of margin.
+set system parameters 'max_hash_list_scan_size=64k';
 
 set trace on;
 
