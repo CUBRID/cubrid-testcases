@@ -17,6 +17,9 @@
  *    Case 1: a filter predicate over a column the ALTER changes from INT to VARCHAR
  *    Case 2: a key column that the predicate reads too, changed from SMALLINT to CHAR
  *    Case 3: a function index over the column, changed from SMALLINT to VARCHAR
+ *    Case 4: a predicate whose constant does not convert to the new type - the ALTER fails naming the index, and
+ *            the column and the index stay as they were (develop, over the empty table, changed the column and kept
+ *            the old predicate)
  */
 --+ holdcas on;
 -- Case 1. The filter index on fr_t(id) keeps the rows where c + 1 = 1. The rows and the catalog's filter_expression
@@ -56,7 +59,22 @@ alter table fr_f modify c varchar(10);
 insert into fr_f values (3, '-7');
 select id, c from fr_f where abs (c) = 7 order by id;
 select index_name, have_function from db_index where class_name = 'fr_f';
+
+-- Case 4. The predicate compares the column with a string constant; INT cannot take 'a', so the recompile fails and
+-- the ALTER is refused with the index named. Nothing changed: the column type and the predicate are the old ones.
+-- The table is empty, so only the predicate stands in the way: develop changed the column and kept the old
+-- predicate text (with rows, develop's rebuild of the index failed on that stale predicate instead).
+evaluate 'Case 4: a predicate constant the new type does not take';
+drop table if exists fr_c;
+create table fr_c (a int not null, b varchar(10));
+create index i_fr_c on fr_c (a) where b > 'a';
+alter table fr_c modify b int;
+select data_type from db_attribute where class_name = 'fr_c' and attr_name = 'b';
+select index_name, filter_expression from db_index where class_name = 'fr_c';
+insert into fr_c values (1, 'b'), (2, 'a');
+select a, b from fr_c where a > 0 and b > 'a' using index i_fr_c(+) order by a;
 drop table fr_t;
 drop table fr_k;
 drop table fr_f;
+drop table fr_c;
 --+ holdcas off;
