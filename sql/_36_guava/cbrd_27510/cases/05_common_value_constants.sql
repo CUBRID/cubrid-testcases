@@ -19,6 +19,9 @@
  *    Case 4: a NULL result, an arithmetic NULL, a NULL literal, bare binds, a constant with a value
  *    Case 5: an operand a row gives, in both heap orders
  *    Case 6: a parallel heap scan whose term waits for its constant subtree (131072 rows)
+ *    Case 7: a plan reused with a bind of another type keeps nothing of the first execution: NULLIF (a, ?) with
+ *            '10' then 10, a GROUP BY key a * ? with 1 then 1.5 (develop kept the first execution's result type:
+ *            VARCHAR, and INT rounding -7.5 to -8)
  */
 --+ holdcas on;
 drop table if exists cv_t;
@@ -155,7 +158,26 @@ execute q using null, null, null, null, null, null;
 execute q using null, 1, null, 1, null, 1;
 
 deallocate prepare q;
+
+-- Case 7. The same statement text executed with a bind of another type: the result type follows this execution's
+-- bind. develop reused the plan with the first execution's type (VARCHAR for NULLIF, INT for the GROUP BY key, which
+-- rounded 1.5 * a). Review of PR 8022, soheejung-cs 6036164730.
+evaluate 'Case 7: a plan reused with a bind of another type';
+drop table if exists cv_u;
+create table cv_u (id int primary key, a int);
+insert into cv_u values (1, 10), (2, 20), (3, -5), (4, 7);
+prepare q from 'select nullif(a, ?), typeof(nullif(a, ?)) from cv_u order by id';
+execute q using '10', '10';
+execute q using 10, 10;
+execute q using '10', '10';
+prepare q from 'select a * ? k, typeof(a * ?) t, count(*) from cv_u group by a * ?, typeof(a * ?) order by 1';
+execute q using 1, 1, 1, 1;
+execute q using 1.5, 1.5, 1.5, 1.5;
+execute q using '1.5', '1.5', '1.5', '1.5';
+execute q using 1, 1, 1, 1;
+deallocate prepare q;
 drop table cv_t;
 drop table cv_r;
 drop table cv_p;
+drop table cv_u;
 --+ holdcas off;

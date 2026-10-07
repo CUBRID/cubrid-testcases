@@ -23,6 +23,8 @@
  *    Case 8: a session variable holding a string under SUM and AVG
  *    Case 9: the ORDERBY_NUM bound and LIMIT offset and count over binds
  *    Case 10: a filter index whose stream adds a string column to a number
+ *    Case 11: a date or datetime constant plus a bind inside UPDATE, DELETE and MERGE (SET value, WHERE term), with
+ *             an INT, string and DOUBLE bind - the same shapes the review of PR 8022 reported as refused at load
  */
 --+ holdcas on;
 drop table if exists pp_t;
@@ -115,6 +117,34 @@ create index pp_f_fi on pp_f (id) where s + 1 = 11;
 insert into pp_f values (4, '10'), (5, '40');
 select id from pp_f where id > 0 and s + 1 = 11 using index pp_f_fi(+) order by id;
 select id from pp_f where abs (s - 20) = 10 order by id;
+
+-- Case 11. DML over a date constant plus a bind: the constant subtree is computed once per execution and assigned or
+-- compared as in SELECT. The INT bind adds days; a string or DOUBLE bind converts first. Every answer is develop's.
+evaluate 'Case 11: a date constant plus a bind in UPDATE, DELETE and MERGE';
+drop table if exists pp_w, pp_m;
+create table pp_w (id int primary key, d date, dt datetime, n int);
+insert into pp_w values (1, date'2024-01-01', datetime'2024-01-01 00:00:00', 1), (2, date'2024-02-01', datetime'2024-02-01 00:00:00', 200);
+prepare q from 'update pp_w set d = date''2024-01-31'' + ? where id = 1';
+execute q using 1;
+execute q using '2';
+execute q using 3.0;
+prepare q from 'update pp_w set d = ? + date''2024-01-31'', dt = datetime''2024-01-31 00:00:00'' + (? * 2) where id = 1';
+execute q using 4, 1;
+prepare q from 'update pp_w set d = to_date(''2024-01-31'', ''YYYY-MM-DD'') + ? where id = 2';
+execute q using 1;
+select id, d, dt from pp_w order by id;
+prepare q from 'delete from pp_w where n > date''2024-01-31'' - date''2024-01-01'' + ?';
+execute q using 100;
+execute q using '100';
+select id, n from pp_w order by id;
+create table pp_m (id int primary key, d date);
+insert into pp_m values (1, date'2024-01-01'), (3, date'2024-03-01');
+prepare q from 'merge into pp_w w using pp_m m on (w.id = m.id) when matched then update set w.d = date''2024-01-31'' + ? when not matched then insert values (m.id, m.d + ?, null, 0)';
+execute q using 10, 20;
+select id, d from pp_w order by id;
+deallocate prepare q;
 drop table pp_f;
 drop table pp_t;
+drop table pp_w;
+drop table pp_m;
 --+ holdcas off;
