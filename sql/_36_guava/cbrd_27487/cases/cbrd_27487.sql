@@ -17,12 +17,18 @@
  *  show whether the MEMOIZE line is there, which needs at least one hit. Every result
  *  with memoize on must equal the same query with memoize off (memoize_memory_limit=0).
  *
+ *  Cases 6 and 7 depend on the order of the probes. The heap scan order is not the insert
+ *  order, so their outer reads the table through a NO_MERGE derived table ordered by its
+ *  primary key.
+ *
  *  Coverage:
- *    Case 1:  probe key NDV 400, 800, 1200 and 2000 under the default budget, memoize kept
+ *    Case 1:  probe key NDV 400, 800, 1200 and 2000 under the default budget, memoize kept,
+ *             and NDV 1200 through an EXISTS (the match-only memo of an NL semi join inner)
  *    Case 2:  nine probe keys in ten distinct, memoize still given up
  *    Case 3:  hot keys among many distinct cold keys, the budget runs out and hits go on
  *    Case 4:  three inner rows per key, the budget runs out while keys are being filled
- *    Case 5:  Cases 3 and 4 with the outer table scanned in parallel, trace off
+ *    Case 5:  Cases 3 and 4 with the outer table scanned in parallel, memoize kept in the
+ *             workers
  *    Case 6:  a key with 4000 inner rows fills the budget and is taken out, leaving the
  *             storage under 60%, then misses pile up - the hit ratio is still judged and
  *             the storage is released
@@ -63,13 +69,14 @@ insert into fat_in select 999, mod(rownum, 1000) from db_class a, db_class b, db
 insert into fat_in select rownum, rownum from db_class a, db_class b limit 50;
 create index idx_fat_in_k on fat_in (k);
 
--- 20000 probes on the 50 hot keys, one probe on key 999, then 49999 distinct keys without an inner row
+-- in primary key order: 20000 probes on the 50 hot keys, one probe on key 999, then 49999 distinct keys
+-- without an inner row
 create table fat_outer (a int primary key, k int);
 insert into fat_outer
 select rownum, case when rownum <= 20000 then mod(rownum, 50) + 1 when rownum = 20001 then 999 else 100000 + rownum end
   from db_class a, db_class b, db_class c, db_class d, db_class e limit 70000;
 
--- 40000 probes on the 50 hot keys, then 60000 distinct keys
+-- in primary key order: 40000 probes on the 50 hot keys, then 60000 distinct keys
 create table phase_outer (a int primary key, k int);
 insert into phase_outer
 select rownum, case when rownum <= 40000 then mod(rownum, 50) + 1 else 100000 + rownum end
@@ -79,7 +86,7 @@ update statistics on small, ndv_outer, big_in, multi, skew_outer, fat_in, fat_ou
 
 set trace on;
 
-evaluate 'Case 1: probe key NDV 400, 800, 1200 and 2000 under the default budget, memoize kept';
+evaluate 'Case 1: probe key NDV 400, 800, 1200 and 2000 under the default budget, and NDV 1200 through an EXISTS semi join, memoize kept';
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k400;
 show trace;
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k800;
@@ -87,6 +94,9 @@ show trace;
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k1200;
 show trace;
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k2000;
+show trace;
+-- the match-only memo of an NL semi join inner (CBRD-27465) is judged by the same rule
+select /*+ recompile parallel(0) */ count(*) from ndv_outer a where exists (select 1 from small s where s.col1 = a.k1200);
 show trace;
 
 evaluate 'Case 2: nine probe keys in ten distinct, memoize still given up; result = memoize off';
@@ -110,42 +120,43 @@ select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(m.v) from skew_
 show trace;
 set system parameters 'memoize_memory_limit=384K';
 select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(m.v) from skew_outer o, multi m where m.k = o.hot_cold;
+show trace;
 set system parameters 'memoize_memory_limit=512K';
 select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(m.v) from skew_outer o, multi m where m.k = o.hot_cold;
+show trace;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(m.v) from skew_outer o, multi m where m.k = o.hot_cold;
 set system parameters 'memoize_memory_limit=default';
 
-set trace off;
-
-evaluate 'Case 5: Cases 3 and 4 with the outer table scanned in parallel, trace off; result = memoize off';
+evaluate 'Case 5: Cases 3 and 4 with the outer table scanned in parallel, memoize kept in the workers; result = memoize off';
+-- the trace shows the parallel scan, and the MEMOIZE line merged from the workers is gone if any worker released its storage
 set system parameters 'memoize_memory_limit=256K';
 select /*+ recompile ordered use_nl */ count(*), sum(b.v) from skew_outer o, big_in b where b.id = o.hot_cold;
+show trace;
 set system parameters 'memoize_memory_limit=384K';
 select /*+ recompile ordered use_nl */ count(*), sum(m.v) from skew_outer o, multi m where m.k = o.hot_cold;
+show trace;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile ordered use_nl */ count(*), sum(b.v) from skew_outer o, big_in b where b.id = o.hot_cold;
 select /*+ recompile ordered use_nl */ count(*), sum(m.v) from skew_outer o, multi m where m.k = o.hot_cold;
 set system parameters 'memoize_memory_limit=default';
 
-set trace on;
-
 evaluate 'Case 6: a key with 4000 inner rows fills the budget and is taken out, then misses pile up and the storage is released; result = memoize off';
--- the budget must leave the storage under 60% once key 999 is taken out, whatever few distinct keys the heap
--- order puts before it, and key 999 alone must overflow it
+-- key 999 alone must overflow the budget, and once it is taken out the storage holds only the 50 hot keys,
+-- far under 60%
 set system parameters 'memoize_memory_limit=384K';
-select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(f.v) from fat_outer o, fat_in f where f.k = o.k;
+select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(f.v) from (select /*+ no_merge parallel(0) */ a, k from fat_outer order by a) o, fat_in f where f.k = o.k;
 show trace;
 set system parameters 'memoize_memory_limit=0';
-select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(f.v) from fat_outer o, fat_in f where f.k = o.k;
+select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(f.v) from (select /*+ no_merge parallel(0) */ a, k from fat_outer order by a) o, fat_in f where f.k = o.k;
 set system parameters 'memoize_memory_limit=default';
 
 evaluate 'Case 7: hot keys then only distinct keys, the storage is released once the hit ratio falls below half; result = memoize off';
 set system parameters 'memoize_memory_limit=256K';
-select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(b.v) from phase_outer o, big_in b where b.id = o.k;
+select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(b.v) from (select /*+ no_merge parallel(0) */ a, k from phase_outer order by a) o, big_in b where b.id = o.k;
 show trace;
 set system parameters 'memoize_memory_limit=0';
-select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(b.v) from phase_outer o, big_in b where b.id = o.k;
+select /*+ recompile parallel(0) ordered use_nl */ count(*), sum(b.v) from (select /*+ no_merge parallel(0) */ a, k from phase_outer order by a) o, big_in b where b.id = o.k;
 set system parameters 'memoize_memory_limit=default';
 
 set trace off;
