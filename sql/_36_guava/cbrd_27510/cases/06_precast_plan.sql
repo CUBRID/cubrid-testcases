@@ -24,7 +24,8 @@
  *    Case 9: the ORDERBY_NUM bound and LIMIT offset and count over binds
  *    Case 10: a filter index whose stream adds a string column to a number
  *    Case 11: a date or datetime constant plus a bind inside UPDATE, DELETE and MERGE (SET value, WHERE term), with
- *             an INT, string and DOUBLE bind - the same shapes the review of PR 8022 reported as refused at load
+ *             an INT, string and DOUBLE bind, and the same statements recompiled after an ALTER TABLE ADD COLUMN
+ *             between PREPARE and EXECUTE - the shape the review of PR 8022 reported as refused at load
  */
 --+ holdcas on;
 drop table if exists pp_t;
@@ -142,6 +143,19 @@ insert into pp_m values (1, date'2024-01-01'), (3, date'2024-03-01');
 prepare q from 'merge into pp_w w using pp_m m on (w.id = m.id) when matched then update set w.d = date''2024-01-31'' + ? when not matched then insert values (m.id, m.d + ?, null, 0)';
 execute q using 10, 20;
 select id, d from pp_w order by id;
+-- The statement recompiled after a schema change (PREPARE, ALTER TABLE ADD COLUMN, EXECUTE): the compiler then
+-- knows the bound value and folds the constant into a DATE literal whose regu keeps the bind's variable domain -
+-- the load takes the literal's own domain (review 4206540131: -1383 at load before).
+prepare q from 'update pp_w set d = date''2024-01-31'' + ? where id = 1';
+alter table pp_w add column z int;
+execute q using 1;
+prepare q from 'update pp_w set dt = timestamp''2024-01-31 00:00:00'' + ? where id = 1';
+alter table pp_w add column z2 int;
+execute q using 1;
+prepare q from 'select date''2024-01-31'' + ?, typeof(date''2024-01-31'' + ?) from pp_w where id = 1';
+alter table pp_w add column z3 int;
+execute q using 1, 1;
+select id, d, dt from pp_w where id = 1;
 deallocate prepare q;
 drop table pp_f;
 drop table pp_t;
