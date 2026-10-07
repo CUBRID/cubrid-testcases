@@ -372,8 +372,10 @@ count(*)
 Case 7: outer column only in the HAVING of the subquery; result = memoize off     
 
 ===================================================
-count(*)    
-84     
+g    count(*)    
+0     28     
+1     28     
+2     40     
 
 ===================================================
 trace    
@@ -381,15 +383,16 @@ trace
 Query Plan:
   INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.pk))
 
-  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g+?)
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g*?)
 
-  NESTED LOOPS (inner join)
+  SORT (group by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (z)
-      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
-    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
 
-  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g+?), ?)) using index o?.i_cy_nu, o?.i_cx_nu
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g*?), ?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
 
 
 Trace Statistics:
@@ -401,13 +404,16 @@ Trace Statistics:
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
 0
 ===================================================
-count(*)    
-84     
+g    count(*)    
+0     28     
+1     28     
+2     40     
 
 ===================================================
 0
@@ -468,8 +474,10 @@ count(*)
 Case 9: scalar subquery correlated only to the outer table, NULL for g = 0; result = memoize off     
 
 ===================================================
-count(*)    
-108     
+g    count(*)    
+0     40     
+1     36     
+2     32     
 
 ===================================================
 trace    
@@ -479,13 +487,14 @@ Query Plan:
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g))
 
-  NESTED LOOPS (inner join)
+  SORT (group by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (z)
-      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
-    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
 
-  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g)), ?)) using index o?.i_cy_nu, o?.i_cx_nu
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g)), ?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
 
 
 Trace Statistics:
@@ -497,13 +506,16 @@ Trace Statistics:
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
 0
 ===================================================
-count(*)    
-108     
+g    count(*)    
+0     40     
+1     36     
+2     32     
 
 ===================================================
 0
@@ -512,8 +524,10 @@ count(*)
 Case 10: IN subquery correlated only to the outer table; result = memoize off     
 
 ===================================================
-count(*)    
-24     
+g    count(*)    
+0     4     
+1     8     
+2     12     
 
 ===================================================
 trace    
@@ -524,13 +538,14 @@ Query Plan:
 
   rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g+?))
 
-  NESTED LOOPS (inner join)
+  SORT (group by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (z)
-      INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
-    INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
 
-  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and o?.nn in (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g+?)) using index o?.i_cy_nu, o?.i_cx_nu
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and o?.nn in (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] where ([dba.cs].v<=o?.g+?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
 
 
 Trace Statistics:
@@ -543,6 +558,7 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -550,8 +566,10 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-count(*)    
-24     
+g    count(*)    
+0     4     
+1     8     
+2     12     
 
 ===================================================
 0
@@ -673,6 +691,166 @@ pk    g    v
 8     2     20     
 10     1     10     
 11     2     20     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 12: outer column only in the rownum predicate of the subquery; result = memoize off     
+
+===================================================
+g    count(*)    
+0     40     
+1     36     
+2     32     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.cs)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where (case when o?.g=? then  cast(? as bigint) when o?.g=? then rownum else rownum- cast(? as bigint) end)<=?)
+
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=nvl((select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v) from [dba.cs] [dba.cs] where (case when o?.g=? then  cast(? as bigint) when o?.g=? then rownum else rownum- cast(? as bigint) end)<=?), ?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+g    count(*)    
+0     40     
+1     36     
+2     32     
+
+===================================================
+0
+===================================================
+    
+Case 13: outer column only in the orderby_num predicate of the subquery; result = memoize off     
+
+===================================================
+g    count(*)    
+0     24     
+1     28     
+2     32     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.cs)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v from [dba.cs] [dba.cs] order by ? desc  for (case when o?.g=? then orderby_num()+ cast(? as bigint) when o?.g=? then orderby_num()+ cast(? as bigint) else orderby_num()+ cast(? as bigint) end)=?)
+
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=(select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v from [dba.cs] [dba.cs] order by ? desc  for (case when o?.g=? then orderby_num()+ cast(? as bigint) when o?.g=? then orderby_num()+ cast(? as bigint) else orderby_num()+ cast(? as bigint) end)=?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+g    count(*)    
+0     24     
+1     28     
+2     32     
+
+===================================================
+0
+===================================================
+    
+Case 14: outer column only in the CONNECT BY clause of the subquery, not memoized; result = memoize off     
+
+===================================================
+g    count(*)    
+0     8     
+1     12     
+2     16     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk= ?:? )
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] start with [dba.cs].pk= ?:?  connect by  prior [dba.cs].pk=[dba.cs].pk-? and ([dba.cs].pk<=o?.g+?))
+
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and o?.nn in (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ distinct [dba.cs].v from [dba.cs] [dba.cs] start with [dba.cs].pk= ?:?  connect by  prior [dba.cs].pk=[dba.cs].pk-? and ([dba.cs].pk<=o?.g+?)) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+g    count(*)    
+0     8     
+1     12     
+2     16     
 
 ===================================================
 0

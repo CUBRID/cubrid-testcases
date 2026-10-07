@@ -18,12 +18,12 @@
  *
  *  The fix (engine PR #8114) keys a correlated subquery by its correlated
  *  references, the outer columns it reads (the same rule the subquery result
- *  cache uses), including those in aggregate arguments, HAVING and rownum
- *  predicates, never by a value the subquery computes. A subquery with GROUP
- *  BY, analytic functions or CONNECT BY is not memoized. A replayed row resets
- *  the inner's correlated subqueries as the scan does, so a select-list
- *  subquery runs again for it, while a subquery only the inner predicate reads
- *  does not run on replay.
+ *  cache uses), including those in aggregate arguments, HAVING, rownum and
+ *  orderby_num predicates, never by a value the subquery computes. A subquery
+ *  with GROUP BY, analytic functions or CONNECT BY is not memoized. A
+ *  replayed row resets the inner's correlated subqueries as the scan does, so
+ *  a select-list subquery runs again for it, while a subquery only the inner
+ *  predicate reads does not run on replay.
  *
  *  An outer row that survives an NL anti join (an unnested NOT EXISTS) goes
  *  on without a row of the anti inner, from the scan or from a memoized "no
@@ -35,9 +35,18 @@
  *
  *  CTP runs SQL tests with test_mode=yes, which masks volatile trace values
  *  (time, hit / miss, size) to '?'. The assertions are therefore the MEMOIZE
- *  line under the inner scan (printed only when the memo had a hit) and the
- *  result parity: every memoized query is followed by the same query with
- *  memoize_memory_limit=0 (no memo), and the two result blocks must match.
+ *  line under the inner scan (printed only when the memo had a hit, and absent
+ *  in Case 14) and the result parity: every memoized query is followed by the
+ *  same query with memoize_memory_limit=0 (no memo), and the two result blocks
+ *  must match. Where an outer column of cy is part of the key, the result is
+ *  counted per g, because a key without it replays the rows of the first outer
+ *  row (g = 1) and can keep the total.
+ *
+ *  rownum and orderby_num cannot share an expression with a column, so Cases
+ *  12 and 13 put the outer column in the condition of CASE. GROUP BY and
+ *  analytic subqueries are not covered: in an NL-join inner, a correlated
+ *  subquery of those shapes stops the optdebug server on develop, memoize or
+ *  not (CBRD-27572), and a HAVING subquery exists only with GROUP BY.
  *
  *  Coverage:
  *    Case 1:  the JIRA query, aggregate scalar subquery in the inner predicate
@@ -46,13 +55,18 @@
  *    Case 4:  select-list subquery on the memoized inner, result cache off
  *    Case 5:  Case 4 with the subquery result cache on
  *    Case 6:  outer column read only in the aggregate argument of the subquery
- *    Case 7:  outer column read only in the HAVING of the subquery
+ *    Case 7:  outer column read only in the HAVING of the subquery, per g
  *    Case 8:  nested subquery inside the predicate subquery
  *    Case 9:  scalar subquery correlated only to the outer table, NULL for
- *             some outer rows
- *    Case 10: IN subquery correlated only to the outer table
+ *             some outer rows, per g
+ *    Case 10: IN subquery correlated only to the outer table, per g
  *    Case 11: select-list subquery on a memoized anti inner whose outer rows
  *             survive, result cache off and on
+ *    Case 12: outer column only in the rownum predicate of the subquery, per g
+ *    Case 13: outer column only in the orderby_num predicate of the
+ *             subquery, per g
+ *    Case 14: outer column only in the CONNECT BY clause of the subquery, not
+ *             memoized, per g
  */
 
 drop table if exists cz, cx, cy, cs;
@@ -131,10 +145,12 @@ set system parameters 'memoize_memory_limit=2M';
 
 
 evaluate 'Case 7: outer column only in the HAVING of the subquery; result = memoize off';
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ count(cs.v) from cs where cs.pk <= o1.pk having count(cs.v) > o0.g + 1), 0) using index o0.i_cy_nu, o1.i_cx_nu;
+-- the subquery counts 1 row for o1.pk 1 and 4 rows for the others. HAVING count > o0.g * 2 keeps both counts for
+-- g = 0, only 4 for g = 1 and neither for g = 2, so 7 inner rows match for g = 0 and 1 and all 10 for g = 2
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ count(cs.v) from cs where cs.pk <= o1.pk having count(cs.v) > o0.g * 2), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 show trace;
 set system parameters 'memoize_memory_limit=0';
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ count(cs.v) from cs where cs.pk <= o1.pk having count(cs.v) > o0.g + 1), 0) using index o0.i_cy_nu, o1.i_cx_nu;
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ count(cs.v) from cs where cs.pk <= o1.pk having count(cs.v) > o0.g * 2), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 set system parameters 'memoize_memory_limit=2M';
 
 
@@ -148,22 +164,24 @@ set system parameters 'memoize_memory_limit=2M';
 
 evaluate 'Case 9: scalar subquery correlated only to the outer table, NULL for g = 0; result = memoize off';
 -- the subquery reads only o0.g, so the key is the join key and o0.g: 3 keys for the 12 outer rows. It is NULL
--- for g = 0, and the rows stored for g = 0 must not be replayed for another g
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where cs.v <= o0.g), 0) using index o0.i_cy_nu, o1.i_cx_nu;
+-- for g = 0, and the rows stored for g = 0 must not be replayed for another g. 10, 9 and 8 inner rows match for
+-- g = 0, 1 and 2, so the total equals 12 times the first outer row's 9: only the count per g shows a lost o0.g
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where cs.v <= o0.g), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 show trace;
 set system parameters 'memoize_memory_limit=0';
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where cs.v <= o0.g), 0) using index o0.i_cy_nu, o1.i_cx_nu;
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where cs.v <= o0.g), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 set system parameters 'memoize_memory_limit=2M';
 
 
 evaluate 'Case 10: IN subquery correlated only to the outer table; result = memoize off';
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs where cs.v <= o0.g + 1) using index o0.i_cy_nu, o1.i_cx_nu;
+-- 1, 2 and 3 inner rows match for g = 0, 1 and 2, so as in Case 9 only the count per g shows a lost o0.g
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs where cs.v <= o0.g + 1) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 show trace;
 -- trace goes off before the last query: the plan of a traced query that no show trace reads stays in the
 -- session, and the next case's first show trace over a cached plan would print it
 set trace off;
 set system parameters 'memoize_memory_limit=0';
-select /*+ recompile use_nl ordered */ count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs where cs.v <= o0.g + 1) using index o0.i_cy_nu, o1.i_cx_nu;
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs where cs.v <= o0.g + 1) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 set system parameters 'memoize_memory_limit=2M';
 set trace on;
 
@@ -183,6 +201,39 @@ show trace;
 set trace off;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile use_nl ordered */ o0.pk, o0.g, (select cs.v * 10 from cs where cs.pk = o0.g) v from cz z, cy o0 where z.nu = o0.nu and not exists (select 1 from cs a where a.pk = o0.g + 4) using index o0.i_cy_nu order by 1;
+
+set system parameters 'memoize_memory_limit=2M';
+set trace on;
+
+
+evaluate 'Case 12: outer column only in the rownum predicate of the subquery; result = memoize off';
+-- rownum next to a column is a semantic error, but the condition of CASE is not checked. The subquery reads no row
+-- for g = 0, 1 row for g = 1 and 2 rows for g = 2, so 10, 9 and 8 inner rows match
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where (case when o0.g = 0 then 99 when o0.g = 1 then rownum else rownum - 1 end) <= 1), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+show trace;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= nvl((select /*+ no_subquery_cache */ max(cs.v) from cs where (case when o0.g = 0 then 99 when o0.g = 1 then rownum else rownum - 1 end) <= 1), 0) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+set system parameters 'memoize_memory_limit=2M';
+
+
+evaluate 'Case 13: outer column only in the orderby_num predicate of the subquery; result = memoize off';
+-- as in Case 12 with orderby_num: the subquery returns the 1st, 2nd and 3rd largest v (4, 3, 2) for g = 0, 1
+-- and 2, so 6, 7 and 8 inner rows match
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= (select /*+ no_subquery_cache */ cs.v from cs order by cs.v desc for (case when o0.g = 0 then orderby_num() + 3 when o0.g = 1 then orderby_num() + 2 else orderby_num() + 1 end) = 4) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+show trace;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= (select /*+ no_subquery_cache */ cs.v from cs order by cs.v desc for (case when o0.g = 0 then orderby_num() + 3 when o0.g = 1 then orderby_num() + 2 else orderby_num() + 1 end) = 4) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+set system parameters 'memoize_memory_limit=2M';
+
+
+evaluate 'Case 14: outer column only in the CONNECT BY clause of the subquery, not memoized; result = memoize off';
+-- the key builder does not read CONNECT BY, so the engine does not memoize this inner and the trace has no MEMOIZE
+-- line. The hierarchy from cs.pk 1 stops at pk g + 2, so 2, 3 and 4 inner rows match for g = 0, 1 and 2
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs start with cs.pk = 1 connect by prior cs.pk = cs.pk - 1 and cs.pk <= o0.g + 2) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+show trace;
+set trace off;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs start with cs.pk = 1 connect by prior cs.pk = cs.pk - 1 and cs.pk <= o0.g + 2) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 
 
 set system parameters 'memoize_memory_limit=default';
