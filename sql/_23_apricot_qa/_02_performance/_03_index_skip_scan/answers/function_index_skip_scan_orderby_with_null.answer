@@ -2287,15 +2287,16 @@ k
 4672     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: idx 
+    filtr: term[?]
+    sargs: term[?]
     sort:  ? asc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_SS */ t.k, t.i, t.j from t t where (t.k> ?:? ) and t.s<>'x' order by ?, ? desc , ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 k    
 
