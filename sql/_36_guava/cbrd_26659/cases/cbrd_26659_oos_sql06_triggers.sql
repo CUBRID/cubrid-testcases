@@ -1,25 +1,23 @@
-/*
- * CBRD-26659: AFTER UPDATE log/mirror, BEFORE UPDATE rejection, and valid writes.
- * Reuses P09's trigger semantics with Ticket01/02's distinguishable four-row
- * fixture, built before triggers exist. Ticket02 observes a separate matching
- * CS baseline; it does not observe placement in this public JDBC execution.
- * All triggered UPDATE, mirror INSERT and triggered INSERT checks are logical
- * only. At source fb567a629, matching triggers reject server DML eligibility
- * (execute_statement.c:is_server_update_allowed/is_server_insert_allowed);
- * client object templates serialize through transform_cl.c:tf_mem_to_disk.
- * No triggered OOS placement, chain ownership/reuse, retry, recovery or reclaim
- * is claimed here. DISK_SIZE/OCTET_LENGTH would not prove physical placement.
- *
- * Payload lengths are 3000/4207/20003/33001 bytes, initial total60211. The
- * final valid row2 replacement is a1/b2/c3, 1403 bytes each, total4209 bytes;
- * final payload total60213. Tags are300 bytes. MD5(VARBIT) uses lowercase hex
- * text; answers are independently derived with hashlib.md5(hex.encode()).
- * BEFORE REJECT is ER_TR_REJECTED=-517 (error_code.h:609). The rejected update
- * changes no row/log/mirror; later valid writes must still execute. All SELECTs
- * have deterministic ordering. JDBC autocommit remains at its default true;
- * no session parameters are changed. Explicit final cleanup checks tables and
- * triggers; native attempt cleanup also removes the owned database on failures.
- */
+-- CBRD-26659: AFTER UPDATE log/mirror, BEFORE UPDATE rejection, and valid writes.
+-- Reuses P09's trigger semantics with Ticket01/02's distinguishable four-row
+-- fixture, built before triggers exist. Ticket02 observes a separate matching
+-- CS baseline; it does not observe placement in this public JDBC execution.
+-- All triggered UPDATE, mirror INSERT and triggered INSERT checks are logical
+-- only. At source fb567a629, matching triggers reject server DML eligibility
+-- (execute_statement.c:is_server_update_allowed/is_server_insert_allowed);
+-- client object templates serialize through transform_cl.c:tf_mem_to_disk.
+-- No triggered OOS placement, chain ownership/reuse, retry, recovery or reclaim
+-- is claimed here. DISK_SIZE/OCTET_LENGTH would not prove physical placement.
+--
+-- Payload lengths are 3000/4207/20003/33001 bytes, initial total60211. The
+-- final valid row2 replacement is a1/b2/c3, 1403 bytes each, total4209 bytes;
+-- final payload total60213. Tags are300 bytes. MD5(VARBIT) uses lowercase hex
+-- text; answers are independently derived with hashlib.md5(hex.encode()).
+-- BEFORE REJECT is ER_TR_REJECTED=-517 (error_code.h:609). The rejected update
+-- changes no row/log/mirror; later valid writes must still execute. All SELECTs
+-- have deterministic ordering. JDBC autocommit remains at its default true;
+-- no session parameters are changed. Explicit final cleanup checks tables and
+-- triggers; native attempt cleanup also removes the owned database on failures.
 drop table if exists t_oos06_inslog;
 
 drop table if exists t_oos06_ins;
