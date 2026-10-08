@@ -1,4 +1,4 @@
--- Ticket08 R06 accepted DEFAULT/PREFER_INLINE/FORCE_OUTLINE matrix. Fixed BIT is fixed; CHAR is eligible. Explicit unsupported-domain errors bind ER_PT_SEMANTIC=-494 to pinned source. FORCE_INLINE/fixed DEFAULT exceptions are proposals. Policy metadata and placement are independently asserted in shell.
+-- Ticket08 R06 accepted DEFAULT/PREFER_INLINE/FORCE_OUTLINE matrix. Fixed BIT is fixed; CHAR is eligible. External parser errors=-493 for shared/class; execution errors=-495 for fixed/view domains, from native interface reporting in db_vdb.c/query_result.c. FORCE_INLINE/fixed DEFAULT exceptions are proposals. Policy metadata and placement are independently asserted in shell.
 
 drop table if exists oos08_policy;
 drop table if exists oos08_like;
