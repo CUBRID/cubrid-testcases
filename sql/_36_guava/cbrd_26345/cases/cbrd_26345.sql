@@ -21,12 +21,11 @@
 drop table if exists outer_tbl;
 drop table if exists inner_tbl;
 
--- mid_ndv_varchar uses NDV=300, chosen relative to
--- MEMOIZE_FREE_ITERATION_LIMIT=1000 (memoize.hpp): with only 300 distinct
--- values, the runtime hit-ratio check is guaranteed a minimum hit ratio of
--- (limit-NDV)/limit = 70% within the first `limit` probes, regardless of
--- physical heap scan order. If this constant changes in the future, NDV
--- must be re-evaluated to keep (limit-NDV)/limit > 0.5.
+-- The runtime hit-ratio check (hit ratio below 50% -> the cache is released)
+-- runs only once the cache holds 60% of memoize_memory_limit (CBRD-27487).
+-- Under the 64M limit used below, the 300, 10000, 33333 and 49999 keys of the
+-- NDV columns never fill 60% of it, so memoize stays on whatever the physical
+-- heap scan order, and every repeated key is a hit.
 create table outer_tbl (uniq_int int, low_ndv_int int, mid_ndv_int int, mid_ndv_varchar varchar(20), high_ndv_numeric numeric(20,10), uniq_varchar varchar(20), half_ndv_varchar varchar(20), third_ndv_varchar varchar(20));
 insert into outer_tbl select
   rownum,
@@ -61,16 +60,16 @@ show trace;
 evaluate 'mid_ndv_varchar (VARCHAR, NDV=300) - expect: memoize enabled';
 select /*+ recompile parallel(0) ordered use_nl(inner_tbl) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.mid_ndv_varchar = inner_tbl.join_key;
 show trace;
-evaluate 'high_ndv_numeric (NUMERIC, NDV=10000) - expect: no memoize';
+evaluate 'high_ndv_numeric (NUMERIC, NDV=10000) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)';
 select /*+ recompile parallel(0) ordered use_nl(inner_tbl) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.high_ndv_numeric = inner_tbl.join_key;
 show trace;
 evaluate 'uniq_varchar (VARCHAR, NDV=100000, unique) - expect: no memoize';
 select /*+ recompile parallel(0) ordered use_nl(inner_tbl) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.uniq_varchar = inner_tbl.join_key;
 show trace;
-evaluate 'half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.50001 duplicate ratio is irrelevant to the current runtime check)';
+evaluate 'half_ndv_varchar (VARCHAR, NDV=49999) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)';
 select /*+ recompile parallel(0) ordered use_nl(inner_tbl) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.half_ndv_varchar = inner_tbl.join_key;
 show trace;
-evaluate 'third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.667 duplicate ratio is irrelevant to the current runtime check)';
+evaluate 'third_ndv_varchar (VARCHAR, NDV=33333) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)';
 select /*+ recompile parallel(0) ordered use_nl(inner_tbl) */ count(*) from outer_tbl inner join inner_tbl on outer_tbl.third_ndv_varchar = inner_tbl.join_key;
 show trace;
 
@@ -108,14 +107,13 @@ set system parameters 'memoize_memory_limit=default';
 
 -- additional scenarios covering the runtime-activation cases and constraints
 -- listed in the JIRA description.
--- cache-full -> enabled:false is intentionally excluded: only observable on
--- CUBRID builds between #6652(2025-12-01) and #6877(2026-03-09); unreproducible
--- on any current/future build, because clear_memoize_storage() (memoize.cpp,
--- called from storage::put()/put_nullptr() on disable) frees the storage and
--- resets the pointer to null the instant it would go disabled, and the trace
--- printer (query_dump.c) only emits the MEMOIZE line when the pointer is
--- non-null and hit > 0 - so a disabled cache produces no trace output at all
--- on these builds, identical to a cache that was simply never created.
+-- enabled:false is not covered: a cache released by the hit-ratio check is
+-- freed (clear_memoize_storage (), memoize.cpp) and its pointer reset to null,
+-- and the trace printer (query_dump.c) only emits the MEMOIZE line when the
+-- pointer is non-null and hit > 0 - so a released cache produces no trace
+-- output at all, identical to a cache that was simply never created.
+-- A cache that fills memoize_memory_limit is no longer released: it keeps
+-- answering hits and stops inserting (CBRD-27487, covered by cbrd_27487).
 --
 -- Note on the "expect: no memoize" scenarios in general: they cannot
 -- distinguish "memoize was never created for this scan" from "it was created
