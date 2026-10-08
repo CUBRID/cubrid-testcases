@@ -1,16 +1,15 @@
-/* CBRD-26659 Ticket07: complete values through supported relational reads.
- * Expected rows/digests come from an independent four-row Python model before
- * execution. MD5(VARBIT) hashes lowercase hexadecimal text, including the tail.
- * Rows contain 3000/4207/20003/33001-byte distinct VARBIT payloads and 300-byte
- * tags, with VARCHAR/NUMERIC/INT inline fields. Every result has a unique key.
- * USING INDEX NONE and named index(+) follow current repository conventions;
- * paired CS csql plans retain their execution/path proof separately from JDBC.
- * The paired shell has identical values/schema/16 KiB settings and positive
- * named SHOW/owned diagdb observations. It does not observe this SQL invocation.
- * CTAS/read/copy coverage does not establish utility raw-fetch consumers,
- * reclaim, snapshots, recovery, retry or internal cursor behavior.
- * Default JDBC autocommit=true; no session parameters are changed.
- */
+-- CBRD-26659 Ticket07: complete values through supported relational reads.
+-- Expected rows/digests come from an independent four-row Python model before
+-- execution. MD5(VARBIT) hashes lowercase hexadecimal text, including the tail.
+-- Rows contain 3000/4207/20003/33001-byte distinct VARBIT payloads and 300-byte
+-- tags, with VARCHAR/NUMERIC/INT inline fields. Every result has a unique key.
+-- USING INDEX NONE and named index(+) follow current repository conventions;
+-- paired CS csql plans retain their execution/path proof separately from JDBC.
+-- The paired shell has identical values/schema/16 KiB settings and positive
+-- named SHOW/owned diagdb observations. It does not observe this SQL invocation.
+-- CTAS/read/copy coverage does not establish utility raw-fetch consumers,
+-- reclaim, snapshots, recovery, retry or internal cursor behavior.
+-- Default JDBC autocommit=true; no session parameters are changed.
 
 drop view if exists oos07_view;
 
