@@ -1,19 +1,24 @@
 -- CBRD-27543: the optimizer skips NL join memoize when statistics show the outer key hardly repeats
 --
 -- The executor memoizes every NL inner and gives up at run time when the hit ratio stays low.
--- When an outer key column is near-unique in its table (NDV >= 90% of its rows) and the expected
--- hit ratio of the inner calls is under 10%, the optimizer marks the inner scan not to memoize.
+-- When an outer key column is unique (a NOT NULL unique index) or near-unique in its table (NDV >= 95%
+-- of its rows) and the expected hit ratio of the inner calls is under 10%, the optimizer marks the inner
+-- scan not to memoize.
 --
 -- near_uniq repeats only in the first 3000 rows (100 values) and is unique after them: NDV is 97100 of
--- 100000 rows. With statistics the optimizer skips memoize, so the repeated keys of the first 3000 rows
--- all reach the inner index (readkeys 3000 instead of 100; the trace counters are masked here). Without
--- statistics the run-time check memoizes them and gives up once the unique keys follow.
+-- 100000 rows. With statistics the optimizer skips memoize and no MEMOIZE line is printed. Without
+-- statistics the run-time check decides: the storage stays far below 60% of memoize_memory_limit (64M),
+-- so the run-time check keeps memoize and a MEMOIZE line is printed.
 --
 -- Covers:
 --   - near-unique outer key with statistics: no MEMOIZE (serial and parallel)
 --   - the same key without statistics: decided at run time
 --   - low NDV outer key: MEMOIZE printed
 --   - near-unique key as the outer of a LEFT OUTER JOIN inner: no MEMOIZE
+--   - a unique index that allows NULL, with the key NULL in 90% of the rows: MEMOIZE (the NULL key
+--     result is memoized and replayed, so the column is not taken as unique)
+--   - a class hierarchy outer (ALL super) whose classes hold the same keys: MEMOIZE (the summed NDV
+--     of the classes is not used)
 --   - near-unique key repeated by join fan-out in the outer: MEMOIZE printed on the last inner
 --   - results equal with memoize enabled and disabled
 
@@ -25,6 +30,10 @@ drop table if exists t_sel;
 drop table if exists t_dim;
 drop table if exists t_part_outer;
 drop table if exists t_part_inner;
+drop table if exists t_nul_uniq;
+drop table if exists t_nul_inner;
+drop table if exists t_hsub;
+drop table if exists t_hsup;
 
 create table t_dim (pk int primary key, attr int);
 insert into t_dim select rownum, rownum % 7 from db_class a, db_class b, db_class c limit 1000;
@@ -55,7 +64,21 @@ insert into t_part_outer select id, id from t_outer where id <= 20000;
 create table t_part_inner (k int primary key, v int) partition by hash (k) partitions 4;
 insert into t_part_inner select k, v from t_inner;
 
-update statistics on t_outer, t_fan, t_inner, t_dim, t_sel, t_part_outer, t_part_inner with fullscan;
+-- u is unique but NULL in 90% of the rows
+create table t_nul_uniq (id int primary key, u int unique);
+insert into t_nul_uniq select rownum, case when mod(rownum, 10) = 0 then rownum else null end
+from db_class a, db_class b, db_class c limit 20000;
+create table t_nul_inner (k int, v int);
+insert into t_nul_inner select rownum * 10, rownum from db_class a, db_class b, db_class c limit 500;
+
+-- the super and the sub class hold the same keys 1..500
+create table t_hsup (id int, k int);
+create table t_hsub under t_hsup (x int);
+insert into t_hsup select rownum, rownum from db_class a, db_class b limit 500;
+insert into t_hsub select rownum, rownum, 0 from db_class a, db_class b limit 500;
+
+update statistics on t_outer, t_fan, t_inner, t_dim, t_sel, t_part_outer, t_part_inner, t_nul_uniq, t_nul_inner,
+  t_hsup, t_hsub with fullscan;
 
 set trace on;
 set system parameters 'memoize_memory_limit=64M';
@@ -68,7 +91,7 @@ evaluate 'near-unique key with statistics, parallel - expect: no MEMOIZE';
 select /*+ recompile parallel(4) ordered use_nl(i) */ count(*), sum(i.v) from t_outer o, t_inner i where i.k = o.near_uniq;
 show trace;
 
-evaluate 'near-unique key without statistics - expect: run-time decision, no MEMOIZE after it gives up';
+evaluate 'near-unique key without statistics - expect: MEMOIZE (run-time decision)';
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_outer_nostat o, t_inner i where i.k = o.near_uniq;
 show trace;
 
@@ -104,8 +127,16 @@ evaluate 'partitioned inner, unique key - expect: no MEMOIZE';
 select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
 show trace;
 
-evaluate 'a partitioned table follows the inner, unique key - expect: decided at run time, no MEMOIZE after it gives up';
+evaluate 'a partitioned table follows the inner, unique key - expect: MEMOIZE on t_inner (run-time decision)';
 select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
+show trace;
+
+evaluate 'unique index that allows NULL, key NULL in 90% of the rows - expect: MEMOIZE';
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_nul_uniq x, t_nul_inner i where i.k = x.u;
+show trace;
+
+evaluate 'class hierarchy outer whose classes hold the same keys - expect: MEMOIZE';
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from all t_hsup o, t_inner i where i.k = o.k;
 show trace;
 
 set trace off;
@@ -120,6 +151,8 @@ select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), count(i.v), sum(
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_part_outer o, t_inner i where i.k = o.u;
 select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
 select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_nul_uniq x, t_nul_inner i where i.k = x.u;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from all t_hsup o, t_inner i where i.k = o.k;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_outer o, t_inner i where i.k = o.near_uniq;
 select /*+ recompile parallel(0) ordered use_nl(f, i) */ count(*), sum(f.v + i.v) from t_outer o, t_fan f, t_inner i where f.oid = o.id and i.k = o.u2;
@@ -131,6 +164,8 @@ select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), count(i.v), sum(
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_part_outer o, t_inner i where i.k = o.u;
 select /*+ recompile parallel(0) ordered use_nl(p) */ count(*), sum(p.v) from t_outer o, t_part_inner p where p.k = o.u2;
 select /*+ recompile parallel(0) ordered use_nl(i, p) */ count(*), sum(i.v + p.v) from t_outer o, t_inner i, t_part_inner p where i.k = o.u2 and p.k = i.k;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from t_nul_uniq x, t_nul_inner i where i.k = x.u;
+select /*+ recompile parallel(0) ordered use_nl(i) */ count(*), sum(i.v) from all t_hsup o, t_inner i where i.k = o.k;
 
 set system parameters 'memoize_memory_limit=default';
 
@@ -142,3 +177,7 @@ drop table t_sel;
 drop table t_dim;
 drop table t_part_outer;
 drop table t_part_inner;
+drop table t_nul_uniq;
+drop table t_nul_inner;
+drop table t_hsub;
+drop table t_hsup;

@@ -17,6 +17,14 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 1000
 ===================================================
 0
@@ -52,6 +60,22 @@
 0
 ===================================================
 3000
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+0
+===================================================
+500
+===================================================
+500
 ===================================================
 0
 ===================================================
@@ -109,7 +133,7 @@ Trace Statistics:
 
 ===================================================
     
-near-unique key without statistics - expect: run-time decision, no MEMOIZE after it gives up     
+near-unique key without statistics - expect: MEMOIZE (run-time decision)     
 
 ===================================================
 count(*)    sum(i.v)    
@@ -129,6 +153,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_outer_nostat), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -349,7 +374,7 @@ Trace Statistics:
 
 ===================================================
     
-a partitioned table follows the inner, unique key - expect: decided at run time, no MEMOIZE after it gives up     
+a partitioned table follows the inner, unique key - expect: MEMOIZE on t_inner (run-time decision)     
 
 ===================================================
 count(*)    sum(i.v+p.v)    
@@ -371,11 +396,63 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SCAN (index: dba.t_part_inner.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
                PARTITION (index: dba.t_part_inner__p__p?.pk_t_part_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+unique index that allows NULL, key NULL in 90% of the rows - expect: MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+500     125250     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from [dba.t_nul_uniq] x, [dba.t_nul_inner] i where i.k=x.u
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_nul_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_nul_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+class hierarchy outer whose classes hold the same keys - expect: MEMOIZE     
+
+===================================================
+count(*)    sum(i.v)    
+1000     250500     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (i.i_inner_k) (key range: i.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.v) from  all [dba.t_hsup] o, [dba.t_inner] i where i.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_hsub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (table: dba.t_hsup), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -421,6 +498,14 @@ count(*)    sum(i.v+p.v)
 3000     9003000     
 
 ===================================================
+count(*)    sum(i.v)    
+500     125250     
+
+===================================================
+count(*)    sum(i.v)    
+1000     250500     
+
+===================================================
 0
 ===================================================
 count(*)    sum(i.v)    
@@ -458,6 +543,22 @@ count(*)    sum(p.v)
 count(*)    sum(i.v+p.v)    
 3000     9003000     
 
+===================================================
+count(*)    sum(i.v)    
+500     125250     
+
+===================================================
+count(*)    sum(i.v)    
+1000     250500     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
