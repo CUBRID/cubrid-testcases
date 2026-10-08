@@ -1,4 +1,4 @@
-/* Ticket08 R14. Ported schema report; exact row and catalog model authored before runtime. SQL logical evidence only; private physical companion separately observes placement. Hard-default parameter restored to configured no. */
+-- Ticket08 R14. Ported schema report; exact row and catalog model authored before runtime. SQL logical evidence only; private physical companion separately observes placement. Hard-default parameter restored to configured no.
 
 drop table if exists oos08_schema;
 drop table if exists oos08_grow;

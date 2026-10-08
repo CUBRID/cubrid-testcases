@@ -1,4 +1,4 @@
-/* Ticket08 R15 logical routing/movement/reorganization only. Exact bytes are independently modeled; the separate correct destination-owner regression retains CBRD-27089 without converting logical equality into ownership credit. */
+-- Ticket08 R15 logical routing/movement/reorganization only. Exact bytes are independently modeled; the separate correct destination-owner regression retains CBRD-27089 without converting logical equality into ownership credit.
 
 drop table if exists oos08_part;
 create table oos08_part(id int primary key,payload bit varying) partition by range(id)(partition p0 values less than(10),partition p1 values less than maxvalue);
