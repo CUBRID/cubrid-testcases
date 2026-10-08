@@ -532,29 +532,17 @@ count(cola)
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
     TABLE SCAN (dba.tbl)
+    TABLE SCAN (dba.tbl_?)
 
-  rewritten query: (select distinct [dba.tbl].cola from [dba.tbl] [dba.tbl])
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tbl)
-    TABLE SCAN (av?)
-
-  rewritten query: select count([dba.tbl].cola) from [dba.tbl] [dba.tbl], (select distinct [dba.tbl].cola from [dba.tbl] [dba.tbl]) av? (av_?) where [dba.tbl].cola=av?.av_?
-
+  rewritten query: select count([dba.tbl].cola) from [dba.tbl] [dba.tbl] semi join [dba.tbl] [dba.tbl_?] on [dba.tbl].cola=[dba.tbl_?].cola
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1143,17 +1131,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.new_tbl)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.new_tbl)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
-
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl] semi join [dba.tbl] [dba.tbl] on ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ) and [dba.new_tbl].id=[dba.tbl].id
 
 Trace Statistics:
   UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1161,13 +1143,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+          SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -1180,17 +1156,11 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
+  NESTED LOOPS (semi join)
+    TABLE SCAN (dba.new_tbl)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.new_tbl)
-    TABLE SCAN (av?)
-
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
-
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl] semi join [dba.tbl] [dba.tbl] on ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ) and [dba.new_tbl].id=[dba.tbl].id
 
 Trace Statistics:
   DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1198,13 +1168,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+          SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

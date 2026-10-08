@@ -816,33 +816,24 @@ Query Plan:
 
   rewritten query: (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls])
 
-  SORT (distinct)
-    TABLE SCAN (dba.tmp_hls)
-
-  rewritten query: (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls])
-
   NESTED LOOPS (inner join)
-    NESTED LOOPS (inner join)
+    NESTED LOOPS (semi join)
       TABLE SCAN (aa)
-      TABLE SCAN (av?)
-    TABLE SCAN (av?_?)
+      TABLE SCAN (dba.tmp_hls)
+    TABLE SCAN (av?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c), (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?), (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls]) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c) semi join [dba.tmp_hls] [dba.tmp_hls] on aa.c=[dba.tmp_hls].c, (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?) where aa.a=av?.av_? and aa.b=av?.av_?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tmp_hls), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
