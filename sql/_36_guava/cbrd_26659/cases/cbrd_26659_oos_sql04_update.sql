@@ -1,15 +1,14 @@
-/*
- * CBRD-26659 Ticket04: compact update regression, derived from P05/P06.
- * Every snapshot checks all affected rows and untouched survivors in ID order.
- * The independent row model plus literal MD5 answers detects row/column swaps.
- * VARBIT MD5 hashes lowercase hexadecimal ASCII, computed outside CUBRID.
- * Payloads have distinct head/middle/tail patterns; tags are 300 bytes.
- * Public JDBC/autocommit proves logical values. Separate shell SA observations
- * qualify physical transitions only for that fixture/configuration.
- * No always-new-chain, chain reuse, commit notification, vacuum, ownership or
- * page reclamation expectation is encoded here (CBRD-27230 remains a gap).
- * No session/parameter changes; final catalog query proves fixture cleanup.
- */
+-- CBRD-26659 Ticket04: compact update regression, derived from P05/P06.
+-- Every snapshot checks all affected rows and untouched survivors in ID order.
+-- The independent row model plus literal MD5 answers detects row/column swaps.
+-- VARBIT MD5 hashes lowercase hexadecimal ASCII, computed outside CUBRID.
+-- Payloads have distinct head/middle/tail patterns; tags are 300 bytes.
+-- Public JDBC/autocommit proves logical values. Separate shell SA observations
+-- qualify physical transitions only for that fixture/configuration.
+-- No always-new-chain, chain reuse, commit notification, vacuum, ownership or
+-- page reclamation expectation is encoded here (CBRD-27230 remains a gap).
+-- No session/parameter changes; final catalog query proves fixture cleanup.
+
 
 drop table if exists t_oos04_update_source_model;
 
