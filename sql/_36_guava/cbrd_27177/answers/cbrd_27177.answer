@@ -1,0 +1,533 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4000
+===================================================
+0
+===================================================
+20000
+===================================================
+8
+===================================================
+10
+===================================================
+0
+===================================================
+10000
+===================================================
+36
+===================================================
+0
+===================================================
+300
+===================================================
+36
+===================================================
+0
+===================================================
+80000
+===================================================
+36
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: serial scan, hashing gives up at its first check, parallel GROUP BY sort; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     8     36     1     8     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_reject].k, count(*), sum([dba.t_reject].v), min([dba.t_reject].v), max([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by [dba.t_reject].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     8     36     1     8     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+
+===================================================
+    
+Case 2: serial scan, hashing kept, partial list sorted in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k, [dba.t_keep].pad having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+    
+Case 3: parallel heap scan, partial lists of the workers sorted in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k, [dba.t_keep].pad having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+    
+Case 4: hashing kept, GROUP BY sort and one-page partial list serial, no_hash_aggregate sorts in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+1     2     2     1     0     1     
+2     3     3     3     0     2     
+3     4     4     6     0     3     
+4     5     5     10     0     4     
+5     6     6     15     0     5     
+6     7     7     21     0     6     
+7     8     8     28     0     7     
+8     9     9     36     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_small)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_small].k, count(*), count([dba.t_small].pad), sum([dba.t_small].v), min([dba.t_small].v), max([dba.t_small].v) from [dba.t_small] [dba.t_small] group by [dba.t_small].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+1     2     2     1     0     1     
+2     3     3     3     0     2     
+3     4     4     6     0     3     
+4     5     5     10     0     4     
+5     6     6     15     0     5     
+6     7     7     21     0     6     
+7     8     8     28     0     7     
+8     9     9     36     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_small)
+
+  rewritten query: select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ [dba.t_small].k, count(*), count([dba.t_small].pad), sum([dba.t_small].v), min([dba.t_small].v), max([dba.t_small].v) from [dba.t_small] [dba.t_small] group by [dba.t_small].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+1     2     2     1     0     1     
+2     3     3     3     0     2     
+3     4     4     6     0     3     
+4     5     5     10     0     4     
+5     6     6     15     0     5     
+6     7     7     21     0     6     
+7     8     8     28     0     7     
+8     9     9     36     0     8     
+
+===================================================
+    
+Case 5: hashing gives up midway, partial results merged into the parallel sort; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     5     11     1     4     
+2     6     15     0     6     
+3     7     20     1     5     
+4     8     19     0     6     
+5     9     33     1     6     
+6     10     27     0     6     
+7     11     43     0     7     
+8     12     46     1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_mid)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_mid].k, count(*), sum([dba.t_mid].v), min([dba.t_mid].v), max([dba.t_mid].v) from [dba.t_mid] [dba.t_mid] group by [dba.t_mid].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     5     11     1     4     
+2     6     15     0     6     
+3     7     20     1     5     
+4     8     19     0     6     
+5     9     33     1     6     
+6     10     27     0     6     
+7     11     43     0     7     
+8     12     46     1     8     
+
+===================================================
+    
+Case 6: WITH ROLLUP after hashing gives up; result = no_hash_aggregate parallel(0)     
+
+===================================================
+m    k    count(*)    sum(v)    
+null     null     8     36     
+null     null     8     36     
+null     null     20018     56     
+0     null     6669     6     
+0     3     4     6     
+1     null     6672     11     
+1     1     2     1     
+1     4     5     10     
+2     null     6669     3     
+2     2     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_reject)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  mod([dba.t_reject].k, ?), [dba.t_reject].k, count(*), sum([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by  mod([dba.t_reject].k, ?), [dba.t_reject].k with rollup having count(*)>? order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+m    k    count(*)    sum(v)    
+null     null     8     36     
+null     null     8     36     
+null     null     20018     56     
+0     null     6669     6     
+0     3     4     6     
+1     null     6672     11     
+1     1     2     1     
+1     4     5     10     
+2     null     6669     3     
+2     2     3     3     
+
+===================================================
+    
+Case 7: parallel(1) keeps the GROUP BY sort serial, parallel(2) runs it in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     8     36     1     8     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ [dba.t_reject].k, count(*), sum([dba.t_reject].v), min([dba.t_reject].v), max([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by [dba.t_reject].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     8     36     1     8     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ [dba.t_reject].k, count(*), sum([dba.t_reject].v), min([dba.t_reject].v), max([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by [dba.t_reject].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     8     36     1     8     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+
+===================================================
+    
+Case 8: parallel(1) keeps the partial list sort serial, parallel(2) runs it in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k, [dba.t_keep].pad having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k, [dba.t_keep].pad having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+1     51     149     0     6     
+2     52     152     0     6     
+3     53     156     0     6     
+4     54     161     0     6     
+5     55     167     0     6     
+6     56     174     0     6     
+7     57     175     0     7     
+8     58     184     0     8     
+
+===================================================
+    
+Case 9: empty input and agg_hash_respect_order=no skip both sorts; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_small].k, count(*), count([dba.t_small].pad), sum([dba.t_small].v), min([dba.t_small].v), max([dba.t_small].v) from [dba.t_small] [dba.t_small] where ([dba.t_small].v< ?:? ) group by [dba.t_small].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+
+===================================================
+0
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+1     2     2     1     0     1     
+2     3     3     3     0     2     
+3     4     4     6     0     3     
+4     5     5     10     0     4     
+5     6     6     15     0     5     
+6     7     7     21     0     6     
+7     8     8     28     0     7     
+8     9     9     36     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_small)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_small].k, count(*), count([dba.t_small].pad), sum([dba.t_small].v), min([dba.t_small].v), max([dba.t_small].v) from [dba.t_small] [dba.t_small] group by [dba.t_small].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
+1     2     2     1     0     1     
+2     3     3     3     0     2     
+3     4     4     6     0     3     
+4     5     5     10     0     4     
+5     6     6     15     0     5     
+6     7     7     21     0     6     
+7     8     8     28     0     7     
+8     9     9     36     0     8     
+
+===================================================
+0
+===================================================
+0
