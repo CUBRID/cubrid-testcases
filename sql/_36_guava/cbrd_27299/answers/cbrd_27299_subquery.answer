@@ -1,0 +1,918 @@
+===================================================
+0
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: declared function in a derived table, three executions; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+2147581952     1250274500     50004     
+
+===================================================
+s    n    m    
+2147581952     1250274500     50004     
+
+===================================================
+s    n    m    
+2147581952     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jp]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.f_jp]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+2147581952     1250274500     50004     
+
+===================================================
+    
+Case 2: undeclared function in the first of three derived tables; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+34984452     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+34984452     1250274500     50004     
+
+===================================================
+    
+Case 3: one clean block left (2 of 3 dirty, 1 of 2 dirty): no parallel jobs; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+34984452     1250274500     50005     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.f_jn]([dba.t_mid].b)) from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.f_jn]([dba.t_mid].b)) as [m] from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?)) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+s    n    m    
+34984452     1250274500     50005     
+
+===================================================
+s    n    
+34984452     1250274500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    
+34984452     1250274500     
+
+===================================================
+    
+Case 4: undeclared function in a derived table nested in another; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+34984452     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select x.s from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) x (s))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select x.s from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) x (s)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+34984452     1250274500     50004     
+
+===================================================
+    
+Case 5: declared and undeclared in one block, declared over undeclared; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+69968904     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select (sum( cast([dba.f_jp]([dba.t_big].a) as bigint))+sum( cast([dba.f_jn]([dba.t_big].b) as bigint))) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select (sum( cast([dba.f_jp]([dba.t_big].a) as bigint))+sum( cast([dba.f_jn]([dba.t_big].b) as bigint))) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+69968904     1250274500     50004     
+
+===================================================
+s    n    m    
+34984988     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jp]([dba.f_jn]([dba.t_big].a)) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.f_jp]([dba.f_jn]([dba.t_big].a)) as bigint)) as [s] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+34984988     1250274500     50004     
+
+===================================================
+    
+Case 6: undeclared function in the root WHERE and select list; result = no_parallel_subquery     
+
+===================================================
+s    n    
+2147516416     1250274500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n) where [dba.f_jn](e.n mod  cast(? as bigint))>?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    
+2147516416     1250274500     
+
+===================================================
+f_jn(d.s mod 1000)    n    
+417     1250274500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.f_jn](d.s mod  cast(? as bigint)), e.n from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+f_jn(d.s mod 1000)    n    
+417     1250274500     
+
+===================================================
+    
+Case 7: undeclared PL/CSQL function with static SQL in an aggregate argument; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+8903852     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_code)
+
+  rewritten query: select count(*) from [dba.t_code] [dba.t_code] where [dba.t_code].c= mod( ?:? -?, ?)+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+8903852     1250274500     50004     
+
+===================================================
+    
+Case 8: undeclared function only in HAVING of a derived table; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+2147516416     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big] having [dba.f_jn](?)>?)
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big] having [dba.f_jn](?)>?) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+2147516416     1250274500     50004     
+
+===================================================
+    
+Case 9: undeclared function in a grouped aggregate below a derived table; result = no_parallel_subquery     
+
+===================================================
+s    g    n    m    
+34984452     7     1250274500     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) group by [dba.t_big].b mod ?)
+
+  TABLE SCAN (z)
+
+  rewritten query: (select sum(z.v), count(*) from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [v] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) group by [dba.t_big].b mod ?) z (v))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, d.g, e.n, f.m from (select sum(z.v) as [s], count(*) as [g] from (select sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) as [v] from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) group by [dba.t_big].b mod ?) z (v)) d (s, g), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    g    n    m    
+34984452     7     1250274500     50004     
+
+===================================================
+    
+Case 10: analytic PARTITION BY with undeclared and declared functions; result = no_parallel_subquery     
+
+===================================================
+max(r)    count(*)    
+60     300     
+
+===================================================
+max(r)    count(*)    
+60     300     
+
+===================================================
+max(r)    count(*)    
+60     300     
+
+===================================================
+s    n    
+500     1250274500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select rank() over (partition by ? order by ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.r) from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n from (select max(z.r) as [s] from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r)) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    
+500     1250274500     
+
+===================================================
+    
+Case 11: undeclared function in the middle derived table; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+2147516416     24878240     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.f_jn]([dba.t_mid].b) as bigint)) from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.f_jn]([dba.t_mid].b) as bigint)) as [n] from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?)) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+s    n    m    
+2147516416     24878240     50004     
+
+===================================================
+    
+Case 12: undeclared function in the last derived table; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+2147516416     1250274500     50005     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.f_jn]([dba.t_mid].b)) from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max([dba.f_jn]([dba.t_mid].b)) as [m] from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?)) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+s    n    m    
+2147516416     1250274500     50005     
+
+===================================================
+    
+Case 13: undeclared static-SQL function in a later derived table; result = no_parallel_subquery     
+
+===================================================
+s    n    m    
+2147516416     4995640     50004     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.f_sqlc]([dba.t_mid].b) as bigint)) from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.t_mid].b) from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.m from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.f_sqlc]([dba.t_mid].b) as bigint)) as [n] from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?)) e (n), (select max([dba.t_mid].b) as [m] from [dba.t_mid] [dba.t_mid]) f (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+s    n    m    
+2147516416     4995640     50004     
+
+===================================================
+0
+===================================================
+0

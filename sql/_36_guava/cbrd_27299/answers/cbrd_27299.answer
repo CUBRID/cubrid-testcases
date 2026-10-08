@@ -1,0 +1,358 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+    
+Case 1: Java FUNCTION with PARALLEL_ENABLE is created and callable     
+
+===================================================
+0
+===================================================
+g_pe(a)    
+2     
+3     
+4     
+
+===================================================
+sp_name    sp_type    lang    is_parallel_enabled    
+g_pe     FUNCTION     JAVA     YES     
+
+===================================================
+routine_name    routine_type    is_parallel_enabled    
+g_pe     FUNCTION     YES     
+
+===================================================
+    
+Case 2: option orders and combinations, directive 0 to 7 in both views     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+sp_name    authid    is_deterministic    is_parallel_enabled    
+g_a     CURRENT_USER     NO     NO     
+g_ad     CURRENT_USER     YES     NO     
+g_adp     CURRENT_USER     YES     YES     
+g_apd     CURRENT_USER     YES     YES     
+g_d     DEFINER     YES     NO     
+g_da     CURRENT_USER     YES     NO     
+g_dp     DEFINER     YES     YES     
+g_ndp     DEFINER     NO     YES     
+g_none     DEFINER     NO     NO     
+g_pa     CURRENT_USER     NO     YES     
+g_pad     CURRENT_USER     YES     YES     
+g_pd     DEFINER     YES     YES     
+g_pe     DEFINER     NO     YES     
+
+===================================================
+sp_name    directive    
+g_a     1     
+g_ad     3     
+g_adp     7     
+g_apd     7     
+g_d     2     
+g_da     3     
+g_dp     6     
+g_ndp     4     
+g_none     0     
+g_pa     5     
+g_pad     7     
+g_pd     6     
+g_pe     4     
+
+===================================================
+routine_name    is_deterministic    is_parallel_enabled    security_type    sql_data_access    
+g_a     NO     NO     INVOKER     null     
+g_ad     YES     NO     INVOKER     null     
+g_adp     YES     YES     INVOKER     null     
+g_apd     YES     YES     INVOKER     null     
+g_d     YES     NO     DEFINER     null     
+g_da     YES     NO     INVOKER     null     
+g_dp     YES     YES     DEFINER     null     
+g_ndp     NO     YES     DEFINER     null     
+g_none     NO     NO     DEFINER     null     
+g_pa     NO     YES     INVOKER     null     
+g_pad     YES     YES     INVOKER     null     
+g_pd     YES     YES     DEFINER     null     
+g_pe     NO     YES     DEFINER     null     
+
+===================================================
+    
+Case 3: a repeated option is refused with its message, nothing is created     
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: AUTHID option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: DETERMINISTIC option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: AUTHID option was duplicated. 
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE option was duplicated. 
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 4: PARALLEL_ENABLE or DETERMINISTIC on a PROCEDURE is refused     
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE can be specified only for FUNCTION 
+
+===================================================
+Error:-493
+Syntax: DETERMINISTIC can be specified only for FUNCTION 
+
+===================================================
+Error:-493
+Syntax: DETERMINISTIC can be specified only for FUNCTION 
+
+===================================================
+Error:-493
+Syntax: DETERMINISTIC can be specified only for FUNCTION 
+
+===================================================
+Error:-493
+Syntax: PARALLEL_ENABLE can be specified only for FUNCTION 
+
+===================================================
+Error:-493
+Syntax: DETERMINISTIC can be specified only for FUNCTION 
+
+===================================================
+0
+
+===================================================
+sp_name    sp_type    authid    is_deterministic    
+p_auth     PROCEDURE     CURRENT_USER     NO     
+
+===================================================
+    
+Case 5: only the exact keyword (any case) is the option     
+
+===================================================
+0
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+sp_name    is_parallel_enabled    
+k_mc     YES     
+
+===================================================
+    
+Case 6: CREATE OR REPLACE adds and removes the declaration     
+
+===================================================
+0
+===================================================
+0
+===================================================
+sp_name    is_parallel_enabled    
+g_none     YES     
+g_pe     NO     
+
+===================================================
+0
+===================================================
+sp_name    is_parallel_enabled    
+g_none     YES     
+g_pe     YES     
+
+===================================================
+    
+Case 7: return types SET(INT) and CURSOR take the option, a bare SET does not     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+sp_name    return_type    is_parallel_enabled    
+r_cur     CURSOR     YES     
+r_set     SET     YES     
+
+===================================================
+    
+Case 8: parallel_enable stays usable as an identifier in SQL     
+
+===================================================
+0
+===================================================
+3
+===================================================
+parallel_enable    
+1     
+2     
+3     
+
+===================================================
+0
+===================================================
+parallel_enable    
+1     
+2     
+3     
+
+===================================================
+0
+===================================================
+parallel_enable(parallel_enable)    
+2     
+3     
+4     
+
+===================================================
+is_parallel_enabled    
+YES     
+
+===================================================
+    
+Case 9: PL/CSQL FUNCTION: stored source and ALTER ... COMPILE keep the option     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+sp_name    lang    authid    is_deterministic    is_parallel_enabled    code    
+m_nd     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION m_nd(n IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
+begin return n; end     
+m_ord     PLCSQL     DEFINER     YES     YES     CREATE OR REPLACE FUNCTION m_ord(n IN integer) RETURN integer AUTHID OWNER DETERMINISTIC PARALLEL_ENABLE AS
+begin return n; end     
+m_plain     PLCSQL     DEFINER     NO     NO     CREATE OR REPLACE FUNCTION m_plain(n IN integer) RETURN integer AUTHID OWNER AS
+begin return n; end     
+m_pure     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION m_pure(n IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
+begin return n + 1; end     
+
+===================================================
+0
+===================================================
+m_pure(1)    m_ord(5)    m_nd(7)    m_plain(9)    
+2     5     7     9     
+
+===================================================
+sp_name    is_deterministic    is_parallel_enabled    
+m_ord     YES     YES     
+
+===================================================
+    
+Case 10: PARALLEL_ENABLE is reserved inside PL/CSQL     
+
+===================================================
+Error:-1360
+Stored procedure compile error: mismatched input 'parallel_enable'
+
+===================================================
+Error:-1360
+Stored procedure compile error: no viable alternative at input '(parallel_enable'
+
+===================================================
+0
+===================================================
+n_quoted(4)    
+4     
+
+===================================================
+sp_name    
+n_quoted     
+
+===================================================
+    
+Case 11: is_parallel_enabled follows is_deterministic in both views     
+
+===================================================
+attr_name    
+is_deterministic     
+is_parallel_enabled     
+target     
+
+===================================================
+attr_name    
+is_deterministic     
+is_parallel_enabled     
+sql_data_access     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

@@ -1,0 +1,776 @@
+===================================================
+0
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: declared Java function in an inner-join residual term, with and without owner; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_jp](x.b))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_jp](x.b))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+    
+Case 2: declared PL/CSQL function in an inner-join residual term; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_pp](x.b))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+    
+Case 3: declared function in the WHERE of an outer join; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x left outer join [dba.t_mid] y on x.a=y.a where (x.a<=?) and [dba.f_jp](x.b)>nvl(y.b, ?)+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+    
+Case 4: declared function in the ON of an outer join; result = no_parallel_hash_join     
+
+===================================================
+count(*)    count(y.a)    sum(x.a)    
+6000     60     282003000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count(y.a), sum(x.a) from [dba.t_big] x left outer join [dba.t_mid] y on (y.b<[dba.f_jp](x.b)) and (y.b<x.b) and x.a=y.a where (x.a>? and x.a<=?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    count(y.a)    sum(x.a)    
+6000     60     282003000     
+
+===================================================
+    
+Case 5: undeclared function in the ON of an outer join stays serial; result = no_parallel_hash_join     
+
+===================================================
+count(*)    count(y.a)    sum(x.a)    
+6000     60     282003000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count(y.a), sum(x.a) from [dba.t_big] x left outer join [dba.t_mid] y on (y.b<[dba.f_jn](x.b)) and (y.b<x.b) and x.a=y.a where (x.a>? and x.a<=?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    count(y.a)    sum(x.a)    
+6000     60     282003000     
+
+===================================================
+    
+Case 6: nested functions: only all-declared nesting is parallel; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jp]([dba.f_pp](x.b))>y.b+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jp]([dba.f_jn](x.b))>y.b+? and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jn]([dba.f_jp](x.b))>y.b+? and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 7: undeclared function in the hash key: the join stays parallel; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=[dba.f_jn](y.a)-? and (x.b>y.b+?) and (y.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 8: hints: parallel(1) is serial, no hint is parallel; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_jp](x.b))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_jp](x.b))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+500     12525000     
+
+===================================================
+    
+Case 9: CREATE OR REPLACE removes and restores the declaration; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_tg](x.b)) and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_tg](x.b)) and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_tg](x.b)) and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 10: undeclared function in an inner-join residual term stays serial; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and (y.b<[dba.f_jn](x.b)) and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 11: one undeclared among three residual terms (first, middle, last); result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jn](x.b)>y.b-? and (y.b<[dba.f_jp](x.b)) and [dba.f_pp](x.b)>y.b-? and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jp](x.b)>y.b-? and (y.b<[dba.f_jn](x.b)) and [dba.f_pp](x.b)>y.b-? and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x, [dba.t_mid] y where x.a=y.a and [dba.f_jp](x.b)>y.b-? and [dba.f_pp](x.b)>y.b-? and (y.b<[dba.f_jn](x.b)) and (x.a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 12: undeclared PL/CSQL function with static SQL in a residual term; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_code)
+
+  rewritten query: select count(*) from [dba.t_code] [dba.t_code] where [dba.t_code].c= mod( ?:? -?, ?)+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+    
+Case 13: undeclared function in the WHERE of an outer join stays serial; result = no_parallel_hash_join     
+
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), sum(x.a) from [dba.t_big] x left outer join [dba.t_mid] y on x.a=y.a where (x.a>? and x.a<=?) and [dba.f_jn](x.b)>nvl(y.b, ?)+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(x.a)    
+20     981000     
+
+===================================================
+0
+===================================================
+0
