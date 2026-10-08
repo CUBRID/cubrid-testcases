@@ -22,7 +22,7 @@
  *    Case 6:  nested functions: only all-declared nesting is parallel
  *    Case 7:  undeclared function in the hash key: the join stays parallel
  *    Case 8:  hints: parallel(1) is serial, no hint is parallel
- *    Case 9:  CREATE OR REPLACE removes and restores the declaration
+ *    Case 9:  CREATE OR REPLACE removes and restores the declaration of a cached plan
  *    Case 10: undeclared function in an inner-join residual term stays serial
  *    Case 11: one undeclared among three residual terms (first, middle, last)
  *    Case 12: undeclared PL/CSQL function with static SQL in a residual term
@@ -109,14 +109,16 @@ show trace;
 select /*+ recompile use_hash no_parallel_hash_join */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_jp(x.b) > y.b;
 
 
-evaluate 'Case 9: CREATE OR REPLACE removes and restores the declaration; result = no_parallel_hash_join';
-select /*+ recompile use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
+evaluate 'Case 9: CREATE OR REPLACE removes and restores the declaration of a cached plan; result = no_parallel_hash_join';
+-- no recompile: the three queries share one cached plan text, and each declaration change must
+-- drop it; a reused plan would keep PROBE parallel after the declaration is removed
+select /*+ use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
 show trace;
 create or replace function f_tg(x int) return int as language java name 'SpTest.testInt(int) return int';
-select /*+ recompile use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
+select /*+ use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
 show trace;
 create or replace function f_tg(x int) return int parallel_enable as language java name 'SpTest.testInt(int) return int';
-select /*+ recompile use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
+select /*+ use_hash parallel(4) */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
 show trace;
 select /*+ recompile use_hash no_parallel_hash_join */ count(*), sum(x.a) from t_big x, t_mid y where x.a = y.a and f_tg(x.b) > y.b and x.a > 48000;
 

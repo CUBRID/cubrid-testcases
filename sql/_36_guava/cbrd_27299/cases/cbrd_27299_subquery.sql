@@ -9,12 +9,12 @@
  *
  *  The line "(parallel workers: ...)" under SUBQUERY (uncorrelated) is printed when the
  *  statement runs its derived tables as parallel jobs. Every statement is followed by its
- *  no_parallel_subquery twin and the result blocks must match. Undeclared functions sit in a
- *  later derived table only in Cases 11 to 13, the shapes the pre-fix server aborted on.
+ *  no_parallel_subquery twin and the result blocks must match. The pre-fix server aborted on
+ *  an undeclared function in an aggregate of a later derived table (Cases 3, 11 to 13).
  *  Undeclared calls stay under 1000 per statement: each one sends rights to the broker.
  *
  *  Coverage:
- *    Case 1:  declared function in a derived table, three executions
+ *    Case 1:  declared function in a derived table, a cached plan run twice, then recompiled
  *    Case 2:  undeclared function in the first of three derived tables
  *    Case 3:  one clean block left (2 of 3 dirty, 1 of 2 dirty): no parallel jobs
  *    Case 4:  undeclared function in a derived table nested in another
@@ -23,7 +23,7 @@
  *    Case 7:  undeclared PL/CSQL function with static SQL in an aggregate argument
  *    Case 8:  undeclared function only in HAVING of a derived table
  *    Case 9:  undeclared function in a grouped aggregate below a derived table
- *    Case 10: analytic PARTITION BY with undeclared and declared functions
+ *    Case 10: analytic PARTITION BY: undeclared in the last of three derived tables, declared
  *    Case 11: undeclared function in the middle derived table
  *    Case 12: undeclared function in the last derived table
  *    Case 13: undeclared static-SQL function in a later derived table
@@ -49,9 +49,11 @@ create function f_sqlc(x int) return int as n int; begin select count(*) into n 
 set trace on;
 
 
-evaluate 'Case 1: declared function in a derived table, three executions; result = no_parallel_subquery';
-select /*+ recompile parallel(4) */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
-select /*+ recompile parallel(4) */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
+evaluate 'Case 1: declared function in a derived table, a cached plan run twice, then recompiled; result = no_parallel_subquery';
+-- no recompile on the first two: the second reuses the cached plan whose function signature the
+-- jobs of the first execution shared
+select /*+ parallel(4) */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
+select /*+ parallel(4) */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
 select /*+ recompile parallel(4) */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
 show trace;
 select /*+ recompile no_parallel_subquery */ d.s, e.n, f.m from (select sum(cast(f_jp(a) as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
@@ -114,10 +116,12 @@ show trace;
 select /*+ recompile no_parallel_subquery */ d.s, d.g, e.n, f.m from (select sum(z.v) s, count(*) g from (select b mod 7 k, sum(cast(f_jn(a) as bigint)) v from t_big where a > 65000 group by b mod 7) z) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(b) m from t_mid) f;
 
 
-evaluate 'Case 10: analytic PARTITION BY with undeclared and declared functions; result = no_parallel_subquery';
-select /*+ recompile parallel(4) */ max(r), count(*) from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z;
-select /*+ recompile parallel(4) */ max(r), count(*) from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z;
-select /*+ recompile parallel(4) */ max(r), count(*) from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z;
+evaluate 'Case 10: analytic PARTITION BY, undeclared in the last of three derived tables, declared; result = no_parallel_subquery';
+select /*+ recompile parallel(4) */ d.s, e.n, f.r, f.c from (select sum(cast(a as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(r) r, count(*) c from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z) f;
+select /*+ recompile parallel(4) */ d.s, e.n, f.r, f.c from (select sum(cast(a as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(r) r, count(*) c from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z) f;
+select /*+ recompile parallel(4) */ d.s, e.n, f.r, f.c from (select sum(cast(a as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(r) r, count(*) c from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z) f;
+show trace;
+select /*+ recompile no_parallel_subquery */ d.s, e.n, f.r, f.c from (select sum(cast(a as bigint)) s from t_big) d, (select sum(cast(b as bigint)) n from t_mid) e, (select max(r) r, count(*) c from (select rank() over (partition by f_jn(b) mod 5 order by a) r from t_big where a <= 300) z) f;
 select /*+ recompile parallel(4) */ d.s, e.n from (select max(r) s from (select rank() over (partition by f_jp(b) mod 6 order by a) r from t_big where a <= 3000) z) d, (select sum(cast(b as bigint)) n from t_mid) e;
 show trace;
 select /*+ recompile no_parallel_subquery */ d.s, e.n from (select max(r) s from (select rank() over (partition by f_jp(b) mod 6 order by a) r from t_big where a <= 3000) z) d, (select sum(cast(b as bigint)) n from t_mid) e;

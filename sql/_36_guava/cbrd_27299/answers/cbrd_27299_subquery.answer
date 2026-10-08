@@ -24,7 +24,7 @@
 0
 ===================================================
     
-Case 1: declared function in a derived table, three executions; result = no_parallel_subquery     
+Case 1: declared function in a derived table, a cached plan run twice, then recompiled; result = no_parallel_subquery     
 
 ===================================================
 s    n    m    
@@ -672,19 +672,77 @@ s    g    n    m
 
 ===================================================
     
-Case 10: analytic PARTITION BY with undeclared and declared functions; result = no_parallel_subquery     
+Case 10: analytic PARTITION BY, undeclared in the last of three derived tables, declared; result = no_parallel_subquery     
 
 ===================================================
-max(r)    count(*)    
-60     300     
+s    n    r    c    
+2147516416     1250274500     60     300     
 
 ===================================================
-max(r)    count(*)    
-60     300     
+s    n    r    c    
+2147516416     1250274500     60     300     
 
 ===================================================
-max(r)    count(*)    
-60     300     
+s    n    r    c    
+2147516416     1250274500     60     300     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum( cast([dba.t_big].a as bigint)) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select sum( cast([dba.t_mid].b as bigint)) from [dba.t_mid] [dba.t_mid])
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select rank() over (partition by ? order by ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.r), count(*) from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (d)
+      TABLE SCAN (e)
+    TABLE SCAN (f)
+
+  rewritten query: select /*+ PARALLEL(?) */ d.s, e.n, f.r, f.c from (select sum( cast([dba.t_big].a as bigint)) as [s] from [dba.t_big] [dba.t_big]) d (s), (select sum( cast([dba.t_mid].b as bigint)) as [n] from [dba.t_mid] [dba.t_mid]) e (n), (select max(z.r) as [r], count(*) as [c] from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r)) f (r, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+            ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+s    n    r    c    
+2147516416     1250274500     60     300     
 
 ===================================================
 s    n    
