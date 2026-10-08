@@ -3,26 +3,27 @@
  *  specifies for the byte-lockstep fast path of engine PR #7626.
  *
  *  1. The old LIKE loop keeps at most 100 backtracking points and fails with
- *  an error beyond that. The fast path recurses once per % group up to 256
- *  levels, so such patterns now return a result. Deeper patterns fall back to
- *  the old loop and fail as before.
- *  2. For invalid UTF-8 bytes in a UTF-8 value the LIKE result is not
- *  guaranteed. The fast path finds % candidates with memchr on the first
- *  pattern byte and compares bytes instead of decoded characters, so an
- *  overlong sequence no longer matches the ASCII letter it encodes and a
- *  letter after a broken lead byte can start a match.
+ *  an error beyond that. The fast path recurses once per % literal group up to
+ *  256 levels, so such patterns now return a result, and deeper ones fall back
+ *  to the old loop. 101 groups therefore show which LIKE takes the fast path.
+ *  2. For invalid UTF-8 bytes in a UTF-8 value the result is not guaranteed:
+ *  the fast path compares bytes and finds % candidates with memchr.
  *
  *  Each tested query is followed by a twin with ESCAPE '¶', a multi-byte escape
  *  that never occurs in the patterns, which sends the same LIKE to the old
- *  loop. The twin keeps the old result, so the two blocks differ where the
- *  specification changed, and this file fails on a pre-fix build by design.
- *  Invalid bytes are decoded by from_base64 at evaluation time and printed with hex.
+ *  loop. This file fails on a pre-fix build by design. Invalid bytes are
+ *  decoded by from_base64 at evaluation time and printed with hex.
  *
  *  Coverage:
  *    Case 1: a run of 120 % _ groups over 300 characters, twin = error
  *    Case 2: 150 % literal groups, no match and match, twin = error
  *    Case 3: 300 % literal groups fall back to the old loop, error on both
  *    Case 4: invalid UTF-8 targets and patterns (truncated, orphan, overlong, surrogate, out of range)
+ *    Case 5: 100 and 101 groups, the edge of the old loop
+ *    Case 6: 256 groups kept, 257 fall back, 257 over 256 characters, % _ runs add no level
+ *    Case 7: NOT LIKE, LIKE over two constants and JSON_SEARCH use the same matcher
+ *    Case 8: which collations take the fast path (101 groups)
+ *    Case 9: which ESCAPE takes the fast path (101 groups)
  */
 
 drop table if exists t_deep, t_bad, t_bad_pat;
@@ -34,6 +35,14 @@ insert into t_deep values
  (2, repeat('a', 600), repeat('%a', 150) || 'x'),
  (3, repeat('a', 600), repeat('%a', 150)),
  (4, repeat('a', 600), repeat('%a', 300) || 'x');
+-- the edge of the old loop: 100 and 101 groups, and 101 groups over a target one character short
+insert into t_deep values
+ (5, repeat('a', 100), repeat('%a', 100)), (6, repeat('a', 101), repeat('%a', 101)), (7, repeat('a', 100), repeat('%a', 101)),
+ (8, repeat('x', 100), repeat('%_', 100)), (9, repeat('x', 101), repeat('%_', 101)), (10, repeat('x', 100), repeat('%_', 101));
+-- the edge of the fast path: 256 and 257 groups, 257 groups over 256 characters, 300 % _ groups, 51 groups of % a % _
+insert into t_deep values
+ (11, repeat('a', 256), repeat('%a', 256)), (12, repeat('a', 257), repeat('%a', 257)), (13, repeat('a', 256), repeat('%a', 257)),
+ (14, repeat('x', 300), repeat('%_', 300)), (15, repeat('a', 102), repeat('%a%_', 51));
 
 -- invalid UTF-8 targets as base64, decoded by from_base64 at evaluation time: a varchar column drops a
 -- truncated last character on insert. 1 orphan continuation, 2-4 truncated 2/3/4-byte character,
@@ -70,5 +79,59 @@ select id, hex(from_base64(b)) from t_bad order by id;
 select id, hex(from_base64(b)) from t_bad_pat order by id;
 select p.id, group_concat(t.id order by t.id) from t_bad_pat p left outer join t_bad t on from_base64(t.b) like from_base64(p.b) group by p.id order by p.id;
 select p.id, group_concat(t.id order by t.id) from t_bad_pat p left outer join t_bad t on from_base64(t.b) like from_base64(p.b) escape '¶' group by p.id order by p.id;
+
+
+
+evaluate 'Case 5: 100 and 101 groups; fast path = 1 1 0 1 1 0, twin = the same up to 100 points and error at 101';
+select id, tgt like pat from t_deep where id between 5 and 10 order by id;
+select id, tgt like pat escape '¶' from t_deep where id in (5, 7, 8, 10) order by id;
+select id, tgt like pat escape '¶' from t_deep where id = 6;
+select id, tgt like pat escape '¶' from t_deep where id = 9;
+
+
+evaluate 'Case 6: 256 groups = 1, 257 fall back = error, 257 over 256 characters = 0, % _ runs = 1; twin = error';
+select id, tgt like pat from t_deep where id in (11, 13, 14, 15) order by id;
+select id, tgt like pat from t_deep where id = 12;
+select id, tgt like pat escape '¶' from t_deep where id = 11;
+select id, tgt like pat escape '¶' from t_deep where id = 12;
+select id, tgt like pat escape '¶' from t_deep where id = 13;
+select id, tgt like pat escape '¶' from t_deep where id = 14;
+select id, tgt like pat escape '¶' from t_deep where id = 15;
+
+
+evaluate 'Case 7: NOT LIKE, LIKE over two constants and JSON_SEARCH with 101 groups; twin or 257 groups = error';
+select id, tgt not like pat from t_deep where id = 6;
+select id, tgt not like pat escape '¶' from t_deep where id = 6;
+select repeat('a', 101) like repeat('%a', 101);
+select repeat('a', 101) like repeat('%a', 101) escape '¶';
+select json_search(json_array(repeat('a', 101)), 'one', repeat('%a', 101));
+select json_search(json_array(repeat('a', 257)), 'one', repeat('%a', 257));
+
+
+evaluate 'Case 8: 101 groups per collation; fast path = 1, old loop = error';
+select id, cast(tgt as varchar(1000) collate utf8_en_cs) like cast(pat as varchar(1000) collate utf8_en_cs) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_ko_cs) like cast(pat as varchar(1000) collate utf8_ko_cs) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate iso88591_bin) like cast(pat as varchar(1000) collate iso88591_bin) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate iso88591_en_cs) like cast(pat as varchar(1000) collate iso88591_en_cs) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate binary) like cast(pat as varchar(1000) collate binary) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_en_ci) like cast(pat as varchar(1000) collate utf8_en_ci) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_tr_cs) like cast(pat as varchar(1000) collate utf8_tr_cs) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate iso88591_en_ci) like cast(pat as varchar(1000) collate iso88591_en_ci) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate euckr_bin) like cast(pat as varchar(1000) collate euckr_bin) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_gen) like cast(pat as varchar(1000) collate utf8_gen) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_gen_ci) like cast(pat as varchar(1000) collate utf8_gen_ci) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_gen_ai_ci) like cast(pat as varchar(1000) collate utf8_gen_ai_ci) from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate utf8_de_exp_ai_ci) like cast(pat as varchar(1000) collate utf8_de_exp_ai_ci) from t_deep where id = 6;
+
+
+evaluate 'Case 9: 101 groups per ESCAPE; fast path = 1, old loop = error';
+select id, tgt like pat escape '!' from t_deep where id = 6;
+select id, tgt like pat escape null from t_deep where id = 6;
+select id, tgt like pat escape ' ' from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate binary) like cast(pat as varchar(1000) collate binary) escape ' ' from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate iso88591_bin) like cast(pat as varchar(1000) collate iso88591_bin) escape '!' from t_deep where id = 6;
+select id, cast(tgt as varchar(1000) collate iso88591_bin) like cast(pat as varchar(1000) collate iso88591_bin) escape ' ' from t_deep where id = 6;
+select id, tgt like pat escape 'é' from t_deep where id = 6;
+select id, tgt like pat escape '_' from t_deep where id = 6;
 
 drop table t_deep, t_bad, t_bad_pat;
