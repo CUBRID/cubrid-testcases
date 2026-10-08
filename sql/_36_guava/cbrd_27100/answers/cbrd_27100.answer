@@ -3,7 +3,11 @@
 ===================================================
 0
 ===================================================
-100000
+150000
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -20,6 +24,18 @@
 200
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+4000
+===================================================
+0
+===================================================
+0
+===================================================
+12500
 ===================================================
 0
 ===================================================
@@ -57,7 +73,7 @@ Case 2: a range bounded by a subquery has no histogram estimate and stays serial
 
 ===================================================
 count(*)    sum( cast(k as bigint))    
-99000     4999549500     
+149000     11249574500     
 
 ===================================================
 trace    
@@ -82,7 +98,7 @@ Trace Statistics:
 
 ===================================================
 count(*)    sum( cast(k as bigint))    
-99000     4999549500     
+149000     11249574500     
 
 ===================================================
     
@@ -157,10 +173,343 @@ Trace Statistics:
      
 
 ===================================================
-0
-===================================================
 count(*)    sum( char_length(s))    
 200     601600     
+
+===================================================
+    
+Case 6: a PARALLEL hint without a degree is not a hint and the narrow range stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].k< ?:? ), covered: true)
+
+  rewritten query: select count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].k< ?:? ) using index [dba.t_big].i_big
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+    
+Case 7: PARALLEL(1) asks for one thread and stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].k< ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].k< ?:? ) using index [dba.t_big].i_big
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+    
+Case 8: PARALLEL(2), the smallest parallel degree, runs in parallel; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].k< ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].k< ?:? ) using index [dba.t_big].i_big
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+199     19900     
+
+===================================================
+    
+Case 9: a range over a function index has no histogram estimate and stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+9422     695011920     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_fn) (key range: ( lower([dba.t_big].pad)< ?:? ))
+
+  rewritten query: select count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where ( lower([dba.t_big].pad)< ?:? ) using index [dba.t_big].i_fn
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_fn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+9422     695011920     
+
+===================================================
+    
+Case 10: an equality with a subquery has no histogram estimate and stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+75000     5625000000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dual)
+
+  rewritten query: (select ? from dual dual)
+
+  INDEX SCAN (dba.t_big.i_grp) (key range: [dba.t_big].g=(select ? from dual dual))
+
+  rewritten query: select count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where [dba.t_big].g=(select ? from dual dual) using index [dba.t_big].i_grp
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+75000     5625000000     
+
+===================================================
+    
+Case 11: an IN list with a subquery element has no histogram estimate and stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+150000     11250075000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dual)
+
+  rewritten query: (select ? from dual dual)
+
+  INDEX SCAN (dba.t_big.i_grp) (key range: (([dba.t_big].g=(select ? from dual dual)) or ([dba.t_big].g= ?:? )))
+
+  rewritten query: select count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where (([dba.t_big].g=(select ? from dual dual)) or ([dba.t_big].g= ?:? )) using index [dba.t_big].i_grp
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+150000     11250075000     
+
+===================================================
+    
+Case 12: an IN list over a column pair has no histogram estimate and stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+50000     3750025000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_grp) (key range: (({[dba.t_big].g, [dba.t_big].v}={?, ?}) or ({[dba.t_big].g, [dba.t_big].v}={?, ?})))
+
+  rewritten query: select count(*), sum( cast([dba.t_big].k as bigint)) from [dba.t_big] [dba.t_big] where (({[dba.t_big].g, [dba.t_big].v}={?, ?}) or ({[dba.t_big].g, [dba.t_big].v}={?, ?})) using index [dba.t_big].i_grp
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+50000     3750025000     
+
+===================================================
+    
+Case 13: the PARALLEL hint with a list result on the 3-page index stays serial; result = parallel(0)     
+
+===================================================
+k    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_small.i_small) (key range: ([dba.t_small].k< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_small].k, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].k< ?:? ) using index [dba.t_small].i_small(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_small.i_small), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+    
+Case 14: the PARALLEL hint with a list result on a large index runs in parallel; result = parallel(0)     
+
+===================================================
+k    g    
+2     0     
+4     0     
+1     1     
+3     1     
+5     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].k< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_big].k, [dba.t_big].g from [dba.t_big] [dba.t_big] where ([dba.t_big].k< ?:? ) using index [dba.t_big].i_big(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    g    
+2     0     
+4     0     
+1     1     
+3     1     
+5     1     
+
+===================================================
+    
+Case 15: the PARALLEL hint on partitions whose indexes are each under the threshold stays serial; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+4000     8002000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_part.i_part) (key range: ([dba.t_part].k> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_part].k as bigint)) from [dba.t_part] [dba.t_part] where ([dba.t_part].k> ?:? ) using index [dba.t_part].i_part
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_part.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pa.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pb.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pc.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pd.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pe.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pf.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pg.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__ph.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pi.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pj.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pk.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pl.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pm.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pn.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__po.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_part__p__pp.i_part), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+4000     8002000     
+
+===================================================
+    
+Case 16: the PARALLEL hint on partitions where one index is large runs in parallel; result = parallel(0)     
+
+===================================================
+count(*)    sum( cast(k as bigint))    
+12500     78131250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mix.i_mix) (key range: ([dba.t_mix].k> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_mix].k as bigint)) from [dba.t_mix] [dba.t_mix] where ([dba.t_mix].k> ?:? ) using index [dba.t_mix].i_mix
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mix.i_mix), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+           PARTITION (index: dba.t_mix__p__pa.i_mix), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_mix__p__pb.i_mix), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+           PARTITION (index: dba.t_mix__p__pc.i_mix), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(k as bigint))    
+12500     78131250     
 
 ===================================================
 0
