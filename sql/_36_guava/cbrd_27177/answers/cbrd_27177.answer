@@ -1,0 +1,167 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4000
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+20000
+===================================================
+10
+===================================================
+36
+===================================================
+0
+===================================================
+100000
+===================================================
+840
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: serial scan, hash aggregation gives up, parallel GROUP BY sort; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     10     55     1     10     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+5     6     15     0     5     
+6     7     21     0     6     
+7     8     28     0     7     
+8     9     36     0     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_reject].k, count(*), sum([dba.t_reject].v), min([dba.t_reject].v), max([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by [dba.t_reject].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+null     10     55     1     10     
+1     2     1     0     1     
+2     3     3     0     2     
+3     4     6     0     3     
+4     5     10     0     4     
+5     6     15     0     5     
+6     7     21     0     6     
+7     8     28     0     7     
+8     9     36     0     8     
+
+===================================================
+    
+Case 2: serial scan, hash aggregation kept, parallel partial-list sort; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+25001     70     2485     1     70     
+25002     80     3240     1     80     
+25003     90     4095     1     90     
+25004     100     5050     1     100     
+25005     110     6105     1     110     
+25006     120     7260     1     120     
+25007     130     8515     1     130     
+25008     140     9870     1     140     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+25001     70     2485     1     70     
+25002     80     3240     1     80     
+25003     90     4095     1     90     
+25004     100     5050     1     100     
+25005     110     6105     1     110     
+25006     120     7260     1     120     
+25007     130     8515     1     130     
+25008     140     9870     1     140     
+
+===================================================
+    
+Case 3: parallel heap scan, workers partial lists sorted in parallel; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+25001     70     2485     1     70     
+25002     80     3240     1     80     
+25003     90     4095     1     90     
+25004     100     5050     1     100     
+25005     110     6105     1     110     
+25006     120     7260     1     120     
+25007     130     8515     1     130     
+25008     140     9870     1     140     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_keep)
+
+  rewritten query: select [dba.t_keep].k, count(*), sum([dba.t_keep].v), min([dba.t_keep].v), max([dba.t_keep].v) from [dba.t_keep] [dba.t_keep] group by [dba.t_keep].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+k    count(*)    sum(v)    min(v)    max(v)    
+25001     70     2485     1     70     
+25002     80     3240     1     80     
+25003     90     4095     1     90     
+25004     100     5050     1     100     
+25005     110     6105     1     110     
+25006     120     7260     1     120     
+25007     130     8515     1     130     
+25008     140     9870     1     140     
+
+===================================================
+0
