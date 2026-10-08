@@ -9,6 +9,10 @@
 -- Effective JDBC/CS direct DML unique-error setting defaults to no and copied
 -- configuration does not override it: ER_BTREE_UNIQUE_FAILED=-670.
 -- Direct server NOT NULL uses ER_NULL_CONSTRAINT_VIOLATION=-631.
+-- Runtime NOT NULL UPDATE uses a row-dependent CASE expression: a literal
+-- NULL is rejected earlier by XASL generation and wrapped as semantic -494.
+-- HA profile rejects conflicting multi-row UNIQUE UPDATE with -975, while
+-- the single-row PK/secondary UNIQUE checks above use -670.
 -- Table-schema CHECK is parsed but ignored at this revision; it has no
 -- enforcement credit. Supported view WITH CHECK OPTION uses ER_PT_EXECUTE
 -- (-495). View writes take a client-template path, credited only logically.
@@ -18,7 +22,7 @@ drop view if exists v_oos05_check;
 
 drop table if exists t_oos05_constraints;
 
-create table t_oos05_constraints (id int primary key, payload bit varying not null, tag bit varying, uniq int unique, required int not null);
+create table t_oos05_constraints (id int primary key, payload bit varying not null, tag bit varying, uniq int unique, required int not null) dont_reuse_oid;
 
 insert into t_oos05_constraints values (1,cast(concat(repeat('12', 7001), repeat('34', 6501), repeat('56', 6501)) as bit varying),cast(repeat('11',300) as bit varying),100,1);
 
@@ -72,7 +76,7 @@ select count(*) as row_count from t_oos05_constraints;
 
 evaluate '[TEST 7] rejected NOT NULL UPDATE cancels eligible payload change';
 
-update t_oos05_constraints set required=null,payload=cast(concat(repeat('78', 11001), repeat('9a', 11000), repeat('bc', 11000)) as bit varying) where id=1;
+update t_oos05_constraints set required=case when uniq=100 then null else required end,payload=cast(concat(repeat('78', 11001), repeat('9a', 11000), repeat('bc', 11000)) as bit varying) where id in (1,2);
 
 select id, octet_length(payload) as payload_octets, disk_size(payload) as payload_disk, md5(payload) as payload_md5, octet_length(tag) as tag_octets, md5(tag) as tag_md5, uniq, required, case when id=1 and payload=cast(concat(repeat('12', 7001), repeat('34', 6501), repeat('56', 6501)) as bit varying) and tag=cast(repeat('11',300) as bit varying) and uniq=100 and required=1 then 1 when id=2 and payload=cast(concat(repeat('d1', 1401), repeat('e2', 1403), repeat('f3', 1403)) as bit varying) and tag=cast(repeat('22',300) as bit varying) and uniq=200 and required=2 then 1 else 0 end as value_ok from t_oos05_constraints order by id;
 
@@ -86,7 +90,7 @@ select id, octet_length(payload) as payload_octets, disk_size(payload) as payloa
 
 select count(*) as row_count from t_oos05_constraints;
 
-evaluate '[TEST 9] multi-row UNIQUE failure cancels all payload changes';
+evaluate '[TEST 9] HA guarded multi-row UNIQUE failure cancels all payload changes';
 
 update t_oos05_constraints set uniq=900,payload=cast(concat(repeat('78', 11001), repeat('9a', 11000), repeat('bc', 11000)) as bit varying) where id in (1,2);
 
