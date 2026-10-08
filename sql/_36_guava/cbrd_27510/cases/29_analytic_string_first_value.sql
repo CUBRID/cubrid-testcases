@@ -8,6 +8,8 @@
  *    Case 1: the analytic SUM / AVG over NVL, COALESCE, NULLIF of a date, time or datetime column with a string bind,
  *            and over a string constant expression
  *    Case 2: the aggregate SUM / AVG of the same shapes (the error they raised before), and a numeric string
+ *    Case 3: the analytic SUM DISTINCT (its list's domain) and STDDEV / VARIANCE (DOUBLE) over a string value they do
+ *            not take - the same silent empty result before, -181 now - and the aggregate forms
  */
 --+ holdcas on;
 drop table if exists sf_t;
@@ -37,6 +39,19 @@ prepare q from 'select sum(? + ?) from sf_t';
 execute q using 'B', 'a';
 prepare q from 'select id, sum(nvl(?, d)) over (partition by g) from sf_t order by id';
 execute q using '1.5';
+
+-- Case 3. DISTINCT and STDDEV / VARIANCE.
+evaluate 'Case 3: analytic SUM DISTINCT, STDDEV, VARIANCE over a string value';
+prepare q from 'select id, sum(distinct nvl(?, d)) over (partition by g) from sf_t order by id';
+execute q using '10:00:00';
+prepare q from 'select id, stddev(nvl(?, d)) over (partition by g), variance(nvl(?, d)) over () from sf_t order by id';
+execute q using 'zz', 'zz';
+prepare q from 'select id, stddev_pop(? + ?) over () from sf_t order by id';
+execute q using 'B', 'a';
+prepare q from 'select sum(distinct nvl(?, d)), stddev(nvl(?, d)) from sf_t';
+execute q using '10:00:00', 'zz';
+prepare q from 'select id, sum(distinct nvl(?, d)) over (partition by g), stddev(nvl(?, d)) over () from sf_t order by id';
+execute q using '1.5', '2';
 deallocate prepare q;
 drop table sf_t;
 --+ holdcas off;
