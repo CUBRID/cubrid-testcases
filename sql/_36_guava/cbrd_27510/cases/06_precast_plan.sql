@@ -26,6 +26,9 @@
  *    Case 11: a date or datetime constant plus a bind inside UPDATE, DELETE and MERGE (SET value, WHERE term), with
  *             an INT, string and DOUBLE bind, and the same statements recompiled after an ALTER TABLE ADD COLUMN
  *             between PREPARE and EXECUTE - the shape the review of PR 8022 reported as refused at load
+ *    Case 12: constant expressions over binds that meet a column or a subquery output, recompiled with the values
+ *             bound (a RECOMPILE hint, or an ALTER TABLE between PREPARE and EXECUTE): a bind plus a number into a
+ *             date column, a scalar subquery of binds in SET and WHERE, a bind sum as the key, a MERGE source column
  */
 --+ holdcas on;
 drop table if exists pp_t;
@@ -156,6 +159,35 @@ prepare q from 'select date''2024-01-31'' + ?, typeof(date''2024-01-31'' + ?) fr
 alter table pp_w add column z3 int;
 execute q using 1, 1;
 select id, d, dt from pp_w where id = 1;
+
+-- Case 12. Constant expressions over binds, compiled with the values bound.
+evaluate 'Case 12: constant expressions over binds recompiled with the values bound';
+prepare q from 'update /*+ RECOMPILE */ pp_w set d = ? + 1 where id = 1';
+execute q using date'2024-01-31';
+prepare q from 'update /*+ RECOMPILE */ pp_w set d = date''2024-01-31'' + ? where ? = 1';
+execute q using 1, 1;
+prepare q from 'update /*+ RECOMPILE */ pp_w set n = (select ? + ? from db_root) where id = 1';
+execute q using 1, 2;
+prepare q from 'update /*+ RECOMPILE */ pp_w set n = ? where id = (select ? + ? from db_root)';
+execute q using 5, 0, 1;
+prepare q from 'update /*+ RECOMPILE */ pp_w set n = 1 where id = ? + ?';
+execute q using 0, 1;
+prepare q from 'merge /*+ RECOMPILE */ into pp_w w using (select ? + ? k from db_root) s on (w.id = s.k) when matched then update set w.n = s.k + ? when not matched then insert (id, n) values (s.k, ?)';
+execute q using 0, 1, 1, 1;
+prepare q from 'update /*+ RECOMPILE */ pp_w set n = ? + ? where id = 1';
+execute q using 1, 2;
+prepare q from 'update /*+ RECOMPILE */ pp_w set n = 2 where ? + ? = 3 and id = 1';
+execute q using 1, 2;
+prepare q from 'delete /*+ RECOMPILE */ from pp_w where ? + ? > 1 and id = 99';
+execute q using 1, 2;
+select id, n, d from pp_w where id = 1;
+prepare q from 'update pp_w set d = ? + 1 where id = 1';
+alter table pp_w add column z4 int;
+execute q using date'2024-02-28';
+prepare q from 'update pp_w set n = 7 where id = ? + ?';
+alter table pp_w add column z5 int;
+execute q using 0, 1;
+select id, n, d from pp_w where id = 1;
 deallocate prepare q;
 drop table pp_f;
 drop table pp_t;

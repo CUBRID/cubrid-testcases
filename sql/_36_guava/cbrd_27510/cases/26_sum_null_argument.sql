@@ -9,6 +9,8 @@
  *            NVL, CASE, GROUP BY, an inline view, a UNION ALL branch, a parallel hint, INSERT ... SELECT, no row
  *    Case 2: the functions that answered: MAX, MIN, AVG, COUNT, STDDEV, MEDIAN over NULL, SUM over a NULL bind, the
  *            analytic SUM, a CASE with a column arm, SUM (a) + SUM (NULL)
+ *    Case 3: an arithmetic over NULL and a bind, folded to NULL by the compiler (SUM (NULL + ?)), with INT, string and
+ *            DOUBLE binds, in GROUP BY and in the analytic form
  */
 --+ holdcas on;
 drop table if exists sn_t, sn_s;
@@ -38,6 +40,21 @@ prepare q from 'select sum(?) from sn_t';
 execute q using null;
 select sum(null) over () from sn_t;
 select sum(case when a > 100 then a else null end), sum(a) + sum(null) from sn_t;
+
+-- Case 3. NULL plus a bind.
+evaluate 'Case 3: an arithmetic over NULL and a bind';
+prepare q from 'select sum(null + ?), typeof(sum(null + ?)) from sn_t';
+execute q using 1, 1;
+execute q using 'x', 'x';
+execute q using 1.5, 1.5;
+prepare q from 'select sum(cast(null as int) + ?), sum(? + null), sum(null * ?) from sn_t';
+execute q using 1, 1, 1;
+prepare q from 'select a, sum(null + ?) from sn_t group by a order by a';
+execute q using 1;
+prepare q from 'select avg(cast(null as int) + ?), max(null + ?), count(null + ?) from sn_t';
+execute q using 1, 1, 1;
+prepare q from 'select sum(null + ?) over () from sn_t';
+execute q using 1;
 deallocate prepare q;
 drop table sn_t, sn_s;
 --+ holdcas off;
