@@ -29,13 +29,13 @@
  *    Case 5:  partitioned semi / anti inner followed by a partitioned join
  *    Case 6:  partitioned driving table, anti join, then an unpartitioned or a partitioned join
  *    Case 7:  repeated keys with memoize on and off
- *    Case 8:  left outer join to a partitioned table after the anti join
- *    Case 9:  driving table scanned in parallel, hash join ruled out, trace off
+ *    Case 8:  left outer join to a partitioned table after the anti join, an outer row with no match
+ *    Case 9:  driving table scanned in parallel, hash join ruled out
  *    Case 10: partitioned driving table, a join that finds no match in its last block,
  *             then a following join with a single partition left
  */
 
-drop table if exists t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp;
+drop table if exists t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp, t_o8;
 
 create table t_o (id int primary key, k int);
 insert into t_o values (1, 1), (2, 2), (3, 3), (4, 1), (5, 2), (6, 3), (7, 4), (8, 5), (9, 1), (10, 3);
@@ -62,7 +62,12 @@ insert into t_op select id, k from t_o;
 create table t_wnp (k int, id int, primary key (k, id));
 insert into t_wnp select k, id from t_w;
 
-update statistics on t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp with fullscan;
+-- t_o plus k = 6, which passes the anti join and has no row in t_w (Case 8)
+create table t_o8 (id int primary key, k int);
+insert into t_o8 select id, k from t_o;
+insert into t_o8 values (11, 6);
+
+update statistics on t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp, t_o8 with fullscan;
 
 set trace on;
 
@@ -110,9 +115,7 @@ select /*+ recompile parallel(0) */ count(*) from t_op o, t_wnp w where w.k = o.
 show trace;
 select /*+ recompile parallel(0) */ count(*) from t_op o, t_wnp w where w.k = o.k and not exists (select /*+ NO_UNNEST */ 1 from t_i s where s.k = o.k);
 select /*+ recompile parallel(0) */ count(*) from t_op o, t_w w where w.k = o.k and not exists (select 1 from t_i s where s.k = o.k);
--- the reference drives with t_o, which holds the same rows unpartitioned: a partitioned driving table
--- joined to a partitioned table with memoize on is CBRD-27484 (PR #8009) whatever the subquery form
-select /*+ recompile parallel(0) */ count(*) from t_o o, t_w w where w.k = o.k and not exists (select /*+ NO_UNNEST */ 1 from t_i s where s.k = o.k);
+select /*+ recompile parallel(0) */ count(*) from t_op o, t_w w where w.k = o.k and not exists (select /*+ NO_UNNEST */ 1 from t_i s where s.k = o.k);
 
 
 evaluate 'Case 7: repeated keys with memoize on and off; result = NO_UNNEST';
@@ -126,17 +129,24 @@ select /*+ recompile parallel(0) */ o.k, count(*) from t_o o, t_w w, t_x x where
 set system parameters 'memoize_memory_limit=default';
 
 
-evaluate 'Case 8: left outer join to a partitioned table after the anti join; result = NO_UNNEST';
-select /*+ recompile parallel(0) */ count(*), count(w.id) from t_o o left join t_w w on w.k = o.k where not exists (select 1 from t_i s where s.k = o.k);
-select /*+ recompile parallel(0) */ count(*), count(w.id) from t_o o left join t_w w on w.k = o.k where not exists (select /*+ NO_UNNEST */ 1 from t_i s where s.k = o.k);
+evaluate 'Case 8: left outer join to a partitioned table after the anti join, an outer row with no match; result = NO_UNNEST';
+-- k = 6 of t_o8 passes the anti join and matches no row of t_w, so count(*) exceeds count(w.id) by one
+-- only if the outer join keeps that row with NULLs. The planner reads a partitioned inner of an outer
+-- join through a temp list (SORT (temp) in the trace), so this following join reads no partitions, and
+-- develop gives the same answer
+select /*+ recompile parallel(0) */ count(*), count(w.id) from t_o8 o left join t_w w on w.k = o.k where not exists (select 1 from t_i s where s.k = o.k);
+show trace;
+select /*+ recompile parallel(0) */ count(*), count(w.id) from t_o8 o left join t_w w on w.k = o.k where not exists (select /*+ NO_UNNEST */ 1 from t_i s where s.k = o.k);
 
 set trace off;
-drop table t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp;
+drop table t_o, t_i, t_w, t_r, t_x, t_ip, t_op, t_wnp, t_o8;
 
 
-evaluate 'Case 9: driving table scanned in parallel, hash join ruled out, trace off; result = parallel(0) = NO_UNNEST';
+evaluate 'Case 9: driving table scanned in parallel, hash join ruled out; result = parallel(0) = NO_UNNEST';
 -- outer_big is large enough to be scanned in parallel under test_mode (parallel_scan_page_threshold 32).
--- Trace stays off: a traced parallel scan over a partitioned inner needs CBRD-27484 (PR #8009).
+-- The trace shows the parallel scan of outer_big. A parallel trace prints only the first PARTITION line
+-- of the following join t_w9, and the partitions the workers walk add to its SCAN line, so the counts,
+-- not the trace, show the partition walk
 drop table if exists outer_big, t_w9, t_i9;
 create table outer_big (a int primary key, k int);
 insert into outer_big select rownum, mod (rownum, 6) from db_class a, db_class b, db_class c, db_class d limit 100000;
@@ -145,7 +155,10 @@ insert into t_w9 values (0, 1), (1, 10), (1, 11), (2, 20), (2, 21), (3, 30), (3,
 create table t_i9 (k int primary key);
 insert into t_i9 values (2);
 update statistics on outer_big, t_w9, t_i9 with fullscan;
+set trace on;
 select /*+ recompile no_use_hash */ count(*) from outer_big o, t_w9 w where w.k = o.k and not exists (select 1 from t_i9 s where s.k = o.k);
+show trace;
+set trace off;
 select /*+ recompile no_use_hash parallel(0) */ count(*) from outer_big o, t_w9 w where w.k = o.k and not exists (select 1 from t_i9 s where s.k = o.k);
 select /*+ recompile no_use_hash */ count(*) from outer_big o, t_w9 w where w.k = o.k and not exists (select /*+ NO_UNNEST */ 1 from t_i9 s where s.k = o.k);
 select /*+ recompile no_use_hash */ count(*) from outer_big o, t_w9 w where w.k = o.k and exists (select 1 from t_i9 s where s.k = o.k);

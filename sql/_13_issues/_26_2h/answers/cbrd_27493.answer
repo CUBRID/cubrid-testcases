@@ -35,6 +35,12 @@
 ===================================================
 0
 ===================================================
+10
+===================================================
+1
+===================================================
+0
+===================================================
 0
 ===================================================
     
@@ -315,15 +321,43 @@ k    count(*)
 0
 ===================================================
     
-Case 8: left outer join to a partitioned table after the anti join; result = NO_UNNEST     
+Case 8: left outer join to a partitioned table after the anti join, an outer row with no match; result = NO_UNNEST     
 
 ===================================================
 count(*)    count(w.id)    
-13     13     
+14     13     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
+    SORT (temp)
+      TABLE SCAN (w)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(w.id) from [dba.t_o?] o left outer join [dba.t_w] w on w.k=o.k anti join [dba.t_i] s on s.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_i.pk_t_i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_w), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_w__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_w__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_w__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
 
 ===================================================
 count(*)    count(w.id)    
-13     13     
+14     13     
 
 ===================================================
 0
@@ -331,7 +365,7 @@ count(*)    count(w.id)
 0
 ===================================================
     
-Case 9: driving table scanned in parallel, hash join ruled out, trace off; result = parallel(0) = NO_UNNEST     
+Case 9: driving table scanned in parallel, hash join ruled out; result = parallel(0) = NO_UNNEST     
 
 ===================================================
 0
@@ -350,9 +384,36 @@ Case 9: driving table scanned in parallel, hash join ruled out, trace off; resul
 ===================================================
 0
 ===================================================
+0
+===================================================
 count(*)    
 116667     
 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (s.pk_t_i?_k) (key range: s.k=o.k, covered: true)
+    INDEX SCAN (w.pk_t_w?_k_id) (key range: w.k=o.k, covered: true)
+
+  rewritten query: select /*+ NO_USE_HASH */ count(*) from [dba.outer_big] o, [dba.t_w?] w anti join [dba.t_i?] s on s.k=o.k where w.k=o.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.t_i?.pk_t_i?_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_w?.pk_t_w?_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+               PARTITION (index: dba.t_w?__p__p?.pk_t_w?_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
 ===================================================
 count(*)    
 116667     
