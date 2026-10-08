@@ -1,22 +1,18 @@
-/*
- * CBRD-26659 Ticket05: independent immediate transaction/error oracle.
- * Strengthens recovered P07/P08 and the current transaction/bigone units.
- * Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
- * Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
- * before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
- * SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
- * are a separate invocation, never observation of this public SQL execution.
- * No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
- */
-/*
- * Effective JDBC/CS direct DML unique-error setting defaults to no and copied
- * configuration does not override it: ER_BTREE_UNIQUE_FAILED=-670.
- * Direct server NOT NULL uses ER_NULL_CONSTRAINT_VIOLATION=-631.
- * Table-schema CHECK is parsed but ignored at this revision; it has no
- * enforcement credit. Supported view WITH CHECK OPTION uses ER_PT_EXECUTE
- * (-495). View writes take a client-template path, credited only logically.
- * Positive eligible payloads are separate from rejected NULL payloads.
- */
+-- CBRD-26659 Ticket05: independent immediate transaction/error oracle.
+-- Strengthens recovered P07/P08 and the current transaction/bigone units.
+-- Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
+-- Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
+-- before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
+-- SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
+-- are a separate invocation, never observation of this public SQL execution.
+-- No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
+-- Effective JDBC/CS direct DML unique-error setting defaults to no and copied
+-- configuration does not override it: ER_BTREE_UNIQUE_FAILED=-670.
+-- Direct server NOT NULL uses ER_NULL_CONSTRAINT_VIOLATION=-631.
+-- Table-schema CHECK is parsed but ignored at this revision; it has no
+-- enforcement credit. Supported view WITH CHECK OPTION uses ER_PT_EXECUTE
+-- (-495). View writes take a client-template path, credited only logically.
+-- Positive eligible payloads are separate from rejected NULL payloads.
 
 drop view if exists v_oos05_check;
 

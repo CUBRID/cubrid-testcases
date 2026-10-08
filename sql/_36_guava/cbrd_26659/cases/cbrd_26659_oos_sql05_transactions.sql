@@ -1,13 +1,11 @@
-/*
- * CBRD-26659 Ticket05: independent immediate transaction/error oracle.
- * Strengthens recovered P07/P08 and the current transaction/bigone units.
- * Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
- * Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
- * before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
- * SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
- * are a separate invocation, never observation of this public SQL execution.
- * No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
- */
+-- CBRD-26659 Ticket05: independent immediate transaction/error oracle.
+-- Strengthens recovered P07/P08 and the current transaction/bigone units.
+-- Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
+-- Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
+-- before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
+-- SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
+-- are a separate invocation, never observation of this public SQL execution.
+-- No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
 
 autocommit off;
 

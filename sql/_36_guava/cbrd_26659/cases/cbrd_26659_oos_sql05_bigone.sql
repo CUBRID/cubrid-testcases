@@ -1,21 +1,17 @@
-/*
- * CBRD-26659 Ticket05: independent immediate transaction/error oracle.
- * Strengthens recovered P07/P08 and the current transaction/bigone units.
- * Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
- * Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
- * before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
- * SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
- * are a separate invocation, never observation of this public SQL execution.
- * No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
- */
-/*
- * Current error: ER_HEAP_OOS_OVERPASS_MAXOBJ_SIZE=-1384 (error_code.h:1785).
- * BIT(140000) retains 17500 fixed bytes after VARBIT demotion, so OOS+bigone
- * INSERT/UPDATE must reject before writing chains. BIT(100000) retains 12500
- * bytes and is a legal slotted-record neighbor despite exceeding the OOS
- * inline target. Ordinary fixed BIT bigone with NULL/no eligible value works.
- * Historic -1375/-1382 and CBRD-27403 answers are not the current oracle.
- */
+-- CBRD-26659 Ticket05: independent immediate transaction/error oracle.
+-- Strengthens recovered P07/P08 and the current transaction/bigone units.
+-- Noncompressed VARBIT uses distinguishable head/middle/tail hex patterns.
+-- Answer sizes, full values and lowercase-hex MD5 were derived outside CUBRID
+-- before execution at engine fb567a629cdb390fff920542173fa36f454c74a0.
+-- SQL through JDBC proves logical outcomes only. Paired CS physical fixtures
+-- are a separate invocation, never observation of this public SQL execution.
+-- No vacuum completion, reclaim, chain ownership/reuse, recovery or HA claim.
+-- Current error: ER_HEAP_OOS_OVERPASS_MAXOBJ_SIZE=-1384 (error_code.h:1785).
+-- BIT(140000) retains 17500 fixed bytes after VARBIT demotion, so OOS+bigone
+-- INSERT/UPDATE must reject before writing chains. BIT(100000) retains 12500
+-- bytes and is a legal slotted-record neighbor despite exceeding the OOS
+-- inline target. Ordinary fixed BIT bigone with NULL/no eligible value works.
+-- Historic -1375/-1382 and CBRD-27403 answers are not the current oracle.
 
 drop table if exists t_oos05_bigone;
 
