@@ -1,0 +1,269 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: pure body (arithmetic, IF, local function, handler, self call) compiles and runs     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+k_pure(1)    k_ok(3)    k_ok(0)    k_rec(3)    
+2     6     -1     3     
+
+===================================================
+    
+Case 2: server-evaluated builtins, including CAST, EXTRACT, TRIM and SYSDATE     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: SYSDATE must be used without parentheses
+
+===================================================
+    
+Case 3: serial, cursor, FOR query loop, static SQL, OPEN FOR, CLOSE     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 4: static SQL on a missing table vs a cursor on a missing table     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Syntax: Unknown class "dba.no_such_tbl". select a from [dba.no_such_tbl]
+
+===================================================
+    
+Case 5: COMMIT, ROLLBACK, EXECUTE IMMEDIATE     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 6: calls to global functions and procedures, with and without owner     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 7: forbidden construct in an initializer, a dead branch, a handler, a local routine     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 8: an undeclared identifier is refused as a possible server call     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: undeclared identifier 'NO_SUCH_VAR'
+
+===================================================
+    
+Case 9: DBMS_OUTPUT calls give their own message     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 10: the first forbidden construct in the body decides the message     
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 11: PARALLEL_ENABLE and duplicate options on a local routine     
+
+===================================================
+Error:-1360
+Stored procedure compile error: illegal keyword PARALLEL_ENABLE for a local procedure/function
+
+===================================================
+Error:-1360
+Stored procedure compile error: illegal keyword AUTHID for a local procedure/function
+
+===================================================
+Error:-1360
+Stored procedure compile error: DETERMINISTIC is specified more than once
+
+===================================================
+0
+
+===================================================
+k_ldet(6)    
+6     
+
+===================================================
+    
+Case 12: nothing refused was created, the undeclared bodies still compile and run     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+
+===================================================
+u_sql(1)    u_commit(2)    u_abs(-3)    u_dbo(4)    
+4     2     3     4     
+
+
+x
+===================================================
+sp_name    is_parallel_enabled    
+k_ldet     NO     
+k_ok     YES     
+k_pure     YES     
+k_rec     YES     
+u_abs     NO     
+u_commit     NO     
+u_dbo     NO     
+u_sql     NO     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

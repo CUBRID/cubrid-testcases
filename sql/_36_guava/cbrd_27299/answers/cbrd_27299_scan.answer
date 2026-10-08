@@ -1,0 +1,459 @@
+===================================================
+0
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+65536
+===================================================
+65536
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: declared Java function in WHERE, gather buildvalue; result = no_parallel_scan     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.t_big].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+    
+Case 2: declared PL/CSQL function as the aggregate argument; result = no_parallel_scan     
+
+===================================================
+sum( cast(f_pp(a) as bigint))    max(f_pp(b))    
+2147581952     65537     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum( cast([dba.f_pp]([dba.t_big].a) as bigint)), max([dba.f_pp]([dba.t_big].b)) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum( cast(f_pp(a) as bigint))    max(f_pp(b))    
+2147581952     65537     
+
+===================================================
+    
+Case 3: declared function in the select list, gather mergeable list; result = no_parallel_scan     
+
+===================================================
+f_jp(a)    f_pp(b)    
+65534     65534     
+65535     65535     
+65536     65536     
+65537     65537     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.f_jp]([dba.t_big].a), [dba.f_pp]([dba.t_big].b) from [dba.t_big] [dba.t_big] where ([dba.t_big].b>?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+f_jp(a)    f_pp(b)    
+65534     65534     
+65535     65535     
+65536     65536     
+65537     65537     
+
+===================================================
+    
+Case 4: two declared functions in one predicate, and nested; result = no_parallel_scan     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.t_big].a)+[dba.f_pp]([dba.t_big].b)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+count(*)    
+65533     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.f_pp]([dba.t_big].a))>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+65533     
+
+===================================================
+    
+Case 5: declared over undeclared and undeclared over declared stay serial; result = no_parallel_scan     
+
+===================================================
+count(*)    
+532     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) and [dba.f_jp]([dba.f_jn]([dba.t_big].a))>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+532     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) and [dba.f_jn]([dba.f_jp]([dba.t_big].a))>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+532     
+
+===================================================
+    
+Case 6: undeclared in the select list with declared in WHERE, row by row; result = no_parallel_scan     
+
+===================================================
+f_jn(a)    
+65534     
+65535     
+65536     
+65537     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.f_jn]([dba.t_big].a) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.t_big].b)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+f_jn(a)    
+65534     
+65535     
+65536     
+65537     
+
+===================================================
+    
+Case 7: undeclared Java and PL/CSQL functions in WHERE stay serial; result = no_parallel_scan     
+
+===================================================
+count(*)    
+529     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) and [dba.f_jn]([dba.t_big].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+528     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?) and [dba.f_pn]([dba.t_big].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+528     
+
+===================================================
+    
+Case 8: undeclared function as the aggregate argument, row by row; result = no_parallel_scan     
+
+===================================================
+sum( cast(f_jn(a) as bigint))    
+34984452     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum( cast([dba.f_jn]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big] where ([dba.t_big].a>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+sum( cast(f_jn(a) as bigint))    
+34984452     
+
+===================================================
+    
+Case 9: hints: parallel(0) is serial, no hint is parallel; result = no_parallel_scan     
+
+===================================================
+count(*)    
+65527     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.t_big].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+65527     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where [dba.f_jp]([dba.t_big].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+65527     
+
+===================================================
+    
+Case 10: partitioned table, the scan reopens per partition; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(f_jp(b) as bigint))    
+131062     4295163839     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.f_jp]([dba.t_part].b) as bigint)) from [dba.t_part] [dba.t_part] where [dba.f_pp]([dba.t_part].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(f_jp(b) as bigint))    
+131062     4295163839     
+
+===================================================
+    
+Case 11: declared function in a correlated scalar subquery of the scan; result = no_parallel_scan     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select min([dba.f_jp](z.b)) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].b>(select min([dba.f_jp](z.b)) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+65534     
+
+===================================================
+    
+Case 12: declared function nested 15 deep in the workers; result = no_parallel_scan     
+
+===================================================
+count(*)    max(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(a))))))))))))))))    
+65536     65551     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), max([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.f_pp]([dba.t_big].a)))))))))))))))) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+count(*)    max(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(f_pp(a))))))))))))))))    
+65536     65551     
+
+===================================================
+0
+===================================================
+0
