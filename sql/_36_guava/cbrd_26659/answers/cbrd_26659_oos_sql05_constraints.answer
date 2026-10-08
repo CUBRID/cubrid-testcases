@@ -1,0 +1,234 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+[TEST 1] positive eligible constraint fixture     
+
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 2] rejected PK INSERT preserves all survivors     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 3] rejected PK UPDATE cancels payload and key changes     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 4] rejected secondary UNIQUE INSERT preserves all survivors     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 5] rejected secondary UNIQUE UPDATE cancels payload and key changes     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 6] rejected NULL payload INSERT is separate from positive OOS fixture     
+
+===================================================
+Error:-631
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 7] rejected NOT NULL UPDATE cancels eligible payload change     
+
+===================================================
+Error:-631
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 8] last-row PK failure cancels the whole multi-row INSERT     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 9] multi-row UNIQUE failure cancels all payload changes     
+
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+
+===================================================
+row_count    
+2     
+
+===================================================
+    
+[TEST 10] statement failure preserves earlier transaction work and permits follow-up     
+
+===================================================
+1
+===================================================
+Error:-670
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+3     33001     33008     ec5759eaa4472233734552dfd216c552     300     839fb02354e6e9ef73b9756b21aa0d11     300     3     1     
+
+===================================================
+row_count    
+3     
+
+===================================================
+1
+===================================================
+0
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+3     34003     34008     a89c11484aa04f04154a7f6a6b2052db     300     839fb02354e6e9ef73b9756b21aa0d11     300     30     1     
+
+===================================================
+row_count    
+3     
+
+===================================================
+    
+[TEST 11] supported view CHECK OPTION rejection preserves base rows     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+3     34003     34008     a89c11484aa04f04154a7f6a6b2052db     300     839fb02354e6e9ef73b9756b21aa0d11     300     30     1     
+
+===================================================
+row_count    
+3     
+
+===================================================
+Error:-495
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+3     34003     34008     a89c11484aa04f04154a7f6a6b2052db     300     839fb02354e6e9ef73b9756b21aa0d11     300     30     1     
+
+===================================================
+row_count    
+3     
+
+===================================================
+1
+===================================================
+id    payload_octets    payload_disk    payload_md5    tag_octets    tag_md5    uniq    required    value_ok    
+1     20003     20008     127967dc901ebb2776d754d2257cadf3     300     5f2bad4a0266eaa839079a2b275236f9     100     1     1     
+2     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     ab072376086d9d5a86b0ea2d56b6bfbc     200     2     1     
+3     34003     34008     a89c11484aa04f04154a7f6a6b2052db     300     839fb02354e6e9ef73b9756b21aa0d11     300     30     1     
+4     4207     4212     5a43433dc26414a3625551ee8fc23cd2     300     bccf5c627a7d59828fc8f26982cd5950     400     4     1     
+
+===================================================
+row_count    
+4     
+
+===================================================
+    
+[TEST 12] constraint schema and cleanup     
+
+===================================================
+attribute_count    not_null_count    
+5     3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+fixture_tables    
+0     
+
