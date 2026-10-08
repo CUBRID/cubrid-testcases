@@ -1,0 +1,1784 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+120000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: without a hint a wide range over a large index runs in parallel; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199904     20000695056     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_pad) (key range: ([dba.t_idx].id>= ?:? ))
+
+  rewritten query: select count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].id>= ?:? ) using index [dba.t_idx].i_pad
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_pad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199904     20000695056     
+
+===================================================
+count(*)    max(pad)    
+199904     n     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_pad) (key range: ([dba.t_idx].id>= ?:? ), covered: true)
+
+  rewritten query: select count(*), max([dba.t_idx].pad) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].id>= ?:? ) using index [dba.t_idx].i_pad
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_pad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    max(pad)    
+199904     n     
+
+===================================================
+count(*)    
+199904     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_pad) (key range: ([dba.t_idx].id>= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].id>= ?:? ) using index [dba.t_idx].i_pad
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_pad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+199904     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+29900     449980050     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_pad) (key range: ([dba.t_idx].id>= ?:? ))
+
+  rewritten query: select count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].id>= ?:? ) and ([dba.t_idx].e< ?:? ) using index [dba.t_idx].i_pad
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_pad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+29900     449980050     
+
+===================================================
+    
+Case 2: PARALLEL(4) runs smaller indexes in parallel; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+count(*)    max(b)    sum(a)    
+200001     6     399900005     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), max([dba.t_idx].b), sum([dba.t_idx].a) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    max(b)    sum(a)    
+200001     6     399900005     
+
+===================================================
+count(*)    
+200001     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+200001     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+29999     449985000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and ([dba.t_idx].e< ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+29999     449985000     
+
+===================================================
+    
+Case 3: rows are gathered as a mergeable list; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(x.id)    min(x.id)    max(x.id)    
+50     4903850     77     196077     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: [dba.t_idx].a= ?:? )
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].id from [dba.t_idx] [dba.t_idx] where [dba.t_idx].a= ?:?  using index [dba.t_idx].i_a(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.id), min(x.id), max(x.id) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].id from [dba.t_idx] [dba.t_idx] where [dba.t_idx].a= ?:?  using index [dba.t_idx].i_a(+)) x (id)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum(x.id)    min(x.id)    max(x.id)    
+50     4903850     77     196077     
+
+===================================================
+count(*)    sum(x.id)    sum(x.b)    max(x.id)    
+100     9988950     502     199777     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )))
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].id, [dba.t_idx].b from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )) using index [dba.t_idx].i_a(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.id), sum(x.b), max(x.id) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].id, [dba.t_idx].b from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )) using index [dba.t_idx].i_a(+)) x (id, b)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum(x.id)    sum(x.b)    max(x.id)    
+100     9988950     502     199777     
+
+===================================================
+b    count(*)    sum( cast(e as bigint))    
+0     1525     152517475     
+1     3050     305039525     
+2     6100     610097350     
+3     12206     1221412504     
+4     24584     2467824136     
+5     49285     4922302635     
+6     98250     9830458875     
+
+===================================================
+b    count(*)    sum( cast(e as bigint))    
+0     1525     152517475     
+1     3050     305039525     
+2     6100     610097350     
+3     12206     1221412504     
+4     24584     2467824136     
+5     49285     4922302635     
+6     98250     9830458875     
+
+===================================================
+    
+Case 4: each range operator and ranges below and above every key; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199450     19945997250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a> ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a> ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199450     19945997250     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199500     19950897750     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+199500     19950897750     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+501     49402252     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a< ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+501     49402252     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+551     54302752     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a<= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+551     54302752     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+50     4900500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: [dba.t_idx].a= ?:? )
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where [dba.t_idx].a= ?:?  using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+50     4900500     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+450     44106750     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a> ?:?  and [dba.t_idx].a< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a> ?:?  and [dba.t_idx].a< ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+450     44106750     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a> ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a> ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+0     null     
+
+===================================================
+    
+Case 5: IN lists with duplicates and absent values and overlapping OR ranges; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+151     14900752     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+151     14900752     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+50     4975000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+50     4975000     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+150     15174950     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? ) or ([dba.t_idx].a= ?:? )) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+150     15174950     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+14500     1441555250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+14500     1441555250     
+
+===================================================
+    
+Case 6: a descending index with a range, OR ranges and an IN list; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+189900     377901950     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e> ?:?  and [dba.t_idx].e<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e> ?:?  and [dba.t_idx].e<= ?:? ) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+189900     377901950     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+2991     4501455     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+2991     4501455     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+3     405     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: (([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? )) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+3     405     
+
+===================================================
+    
+Case 7: USE_DESC_IDX on an ascending and on a descending index; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+194950     19504747500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a> ?:? ), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a> ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+194950     19504747500     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+89001     177457500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+89001     177457500     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+2991     4501455     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+2991     4501455     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+3     405     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_e) (key range: (([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? )), desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? ) or ([dba.t_idx].e= ?:? )) using index [dba.t_idx].i_e
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(a as bigint))    
+3     405     
+
+===================================================
+    
+Case 8: a composite index skips NULL key parts and takes a second-column range and a key filter; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+501     49402252     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a< ?:? ) using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+501     49402252     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+6     120030     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: [dba.t_idx].a= ?:? key range: ([dba.t_idx].b< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].b< ?:? ) and [dba.t_idx].a= ?:?  using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+6     120030     
+
+===================================================
+count(*)    sum(b)    
+188976     995256     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), key filter: ([dba.t_idx].b> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum([dba.t_idx].b) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and ([dba.t_idx].b> ?:? ) using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    sum(b)    
+188976     995256     
+
+===================================================
+    
+Case 9: string, date and function index keys; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+4040     394506000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_s) (key range: ([dba.t_idx].s>= ?:?  and [dba.t_idx].s<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].s>= ?:?  and [dba.t_idx].s<= ?:? ) using index [dba.t_idx].i_s
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+4040     394506000     
+
+===================================================
+count(*)    min(s)    max(s)    
+200001     k     k04999     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_s) (key range: ([dba.t_idx].s>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min([dba.t_idx].s), max([dba.t_idx].s) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].s>= ?:? ) using index [dba.t_idx].i_s
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    min(s)    max(s)    
+200001     k     k04999     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+1550     152014700     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_d) (key range: ([dba.t_idx].d>= ?:?  and [dba.t_idx].d<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].d>= ?:?  and [dba.t_idx].d<= ?:? ) using index [dba.t_idx].i_d
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+1550     152014700     
+
+===================================================
+count(*)    min(d)    max(d)    
+200000     2026-01-01     2036-12-13     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_d) (key range: ([dba.t_idx].d>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), min([dba.t_idx].d), max([dba.t_idx].d) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].d>= ?:? ) using index [dba.t_idx].i_d
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    min(d)    max(d)    
+200000     2026-01-01     2036-12-13     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+20001     1955390002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_fn) (key range: ( lower([dba.t_idx].s)< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ( lower([dba.t_idx].s)< ?:? ) using index [dba.t_idx].i_fn
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_fn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+20001     1955390002     
+
+===================================================
+    
+Case 10: an index built by inserts holds fence keys, which are not rows, and a bulk-built one has none; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+100000     5000050000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_fence.i_fa) (key range: ([dba.t_fence].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_fence].id as bigint)) from [dba.t_fence] [dba.t_fence] where ([dba.t_fence].a>= ?:? ) using index [dba.t_fence].i_fa(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_fence.i_fa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+100000     5000050000     
+
+===================================================
+count(a)    max(a)    min(a)    
+100000     100002     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_fence.i_fa) (key range: ([dba.t_fence].a> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count([dba.t_fence].a), max([dba.t_fence].a), min([dba.t_fence].a) from [dba.t_fence] [dba.t_fence] where ([dba.t_fence].a> ?:? ) using index [dba.t_fence].i_fa(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_fence.i_fa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(a)    max(a)    min(a)    
+100000     100002     1     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+600     30080367     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_fence.i_fa) (key range: ([dba.t_fence].a<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_fence].id as bigint)) from [dba.t_fence] [dba.t_fence] where ([dba.t_fence].a<= ?:? ) using index [dba.t_fence].i_fa(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_fence.i_fa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+600     30080367     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+20001     1000061611     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_fence.i_fa) (key range: ([dba.t_fence].a>= ?:?  and [dba.t_fence].a<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_fence].id as bigint)) from [dba.t_fence] [dba.t_fence] where ([dba.t_fence].a>= ?:?  and [dba.t_fence].a<= ?:? ) using index [dba.t_fence].i_fa(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_fence.i_fa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+20001     1000061611     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+503     25140276     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_fence.i_fa) (key range: ([dba.t_fence].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_fence].id as bigint)) from [dba.t_fence] [dba.t_fence] where ([dba.t_fence].a>= ?:? ) using index [dba.t_fence].i_fa(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_fence.i_fa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+503     25140276     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+100000     5000050000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_bulk.i_ba) (key range: ([dba.t_bulk].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_bulk].id as bigint)) from [dba.t_bulk] [dba.t_bulk] where ([dba.t_bulk].a>= ?:? ) using index [dba.t_bulk].i_ba(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_bulk.i_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+100000     5000050000     
+
+===================================================
+    
+Case 11: a partitioned table with an empty partition, with and without pruning; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+120000     7200060000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_part.i_pa) (key range: ([dba.t_part].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_part].id as bigint)) from [dba.t_part] [dba.t_part] where ([dba.t_part].a>= ?:? ) using index [dba.t_part].i_pa
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_part.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+           PARTITION (index: dba.t_part__p__pa.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.t_part__p__pb.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.t_part__p__pc.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.t_part__p__pd.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+120000     7200060000     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+70000     5950035000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_part.i_pa) (key range: ([dba.t_part].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_part].id as bigint)) from [dba.t_part] [dba.t_part] where ([dba.t_part].a>= ?:? ) and ([dba.t_part].id> ?:? ) using index [dba.t_part].i_pa
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_part.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+           PARTITION (index: dba.t_part__p__pb.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.t_part__p__pc.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+           PARTITION (index: dba.t_part__p__pd.i_pa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+70000     5950035000     
+
+===================================================
+    
+Case 12: rows the open transaction deleted or updated, and aggregates that start at NULL values; result = no_parallel_scan     
+
+===================================================
+3004
+===================================================
+count(*)    sum( cast(e as bigint))    
+196999     19709508500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+196999     19709508500     
+
+===================================================
+count(*)    max(b)    sum(a)    
+196999     6     393400500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), max([dba.t_idx].b), sum([dba.t_idx].a) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    max(b)    sum(a)    
+196999     6     393400500     
+
+===================================================
+4900
+===================================================
+count(b)    sum(b)    round(avg(b), 2)    min(b)    max(b)    round(stddev(b), 2)    
+192099     971483     5.06     0     6     1.27     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count([dba.t_idx].b), sum([dba.t_idx].b),  round(avg([dba.t_idx].b), ?), min([dba.t_idx].b), max([dba.t_idx].b),  round(stddev([dba.t_idx].b), ?) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_ab
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(b)    sum(b)    round(avg(b), 2)    min(b)    max(b)    round(stddev(b), 2)    
+192099     971483     5.06     0     6     1.27     
+
+===================================================
+0
+===================================================
+    
+Case 13: a prepared statement executed with two ranges; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum( cast(e as bigint))    
+550     53908250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+550     53908250     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+180000     18035910000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+180000     18035910000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 14: an index scan in a derived table, as the outer and the inner of a join, in a UNION ALL arm; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(d.e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].a, [dba.t_idx].e from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a(+))
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum( cast(d.e as bigint)) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.t_idx].a, [dba.t_idx].e from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a(+)) d (a, e)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(d.e as bigint))    
+200001     20000300002     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (t.i_a) (key range: (t.a>= ?:? ))
+    TABLE SCAN (s)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(s.k) from [dba.t_idx] t, [dba.t_small] s where (t.a>= ?:? ) and s.g=t.b using index t.i_a(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (s)
+    INDEX SCAN (t.i_a) (key range: (t.a>= ?:? ))
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(s.k) from [dba.t_small] s, [dba.t_idx] t where (t.a>= ?:? ) and s.g=t.b using index t.i_a(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (s)
+      TABLE SCAN (x)
+    INDEX SCAN (t.i_a) (key range: (t.a>= ?:? ))
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(s.k) from [dba.t_small] s, [dba.t_small] x, [dba.t_idx] t where (t.a>= ?:? ) and s.g=x.g and x.g=t.b using index t.i_a(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(s.k)    
+99224     5055740     
+
+===================================================
+count(*)    
+200001     
+50     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+  INDEX SCAN (dba.t_idx.i_a) (key range: [dba.t_idx].a= ?:? , covered: true)
+
+  rewritten query: select count(*) from [dba.t_idx] [dba.t_idx] where [dba.t_idx].a= ?:?  using index [dba.t_idx].i_a
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+           (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+200001     
+50     
+
+===================================================
+    
+Case 15: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan     
+
+===================================================
+id    
+11     
+4011     
+8011     
+12011     
+16011     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a> ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].id from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a> ?:? ) using index [dba.t_idx].i_a keylimit  ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    
+11     
+4011     
+8011     
+12011     
+16011     
+
+===================================================
+min(a)    max(a)    
+0     3999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_idx)
+
+  rewritten query: select /*+ PARALLEL(?) */ min([dba.t_idx].a), max([dba.t_idx].a) from [dba.t_idx] [dba.t_idx]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_idx), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: i_a)
+     
+
+===================================================
+min(a)    max(a)    
+0     3999     
+
+===================================================
+a    b    
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), key filter: [dba.t_idx].b= ?:? , covered: true)
+  skip order by: true
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, [dba.t_idx].b from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and [dba.t_idx].b= ?:?  using index [dba.t_idx].i_ab order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+a    b    
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+3999     5     
+
+===================================================
+count(*)    
+5000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and (rownum<= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+5000     
+
+===================================================
+a    rank() over (order by a)    
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, rank() over (order by ?) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and [dba.t_idx].b= ?:?  using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+a    rank() over (order by a)    
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+3999     1     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+    
+Case 16: the JSON trace names the parallel index scan parallel index; result = Case 2     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(e as bigint))    
+200001     20000300002     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "INDEX SCAN": {
+      "table": "dba.t_idx",
+      "index": "i_a",
+      "key range": [
+        "([dba.t_idx].a>= ?:? )"
+      ]
+    },
+    "rewritten query": "select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "index (dba.t_idx.i_a)",
+        "btree": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readkeys": ?,
+          "filteredkeys": ?,
+          "rows": ?
+        },
+        "lookup": {
+          "time": ?,
+          "rows": ?
+        },
+        "parallel index": {
+          "parallel_workers": ?,
+          "time": "?..?",
+          "readkeys": "?..?",
+          "filteredkeys": "?..?",
+          "rows": "?..?",
+          "gather": "buildvalue",
+          "lookup": {
+            "time": "?..?",
+            "rows": "?..?"
+          }
+        }
+      }
+    }
+  }
+}     
+
+===================================================
+count(*)    max(b)    sum(a)    
+200001     6     399900005     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "INDEX SCAN": {
+      "table": "dba.t_idx",
+      "index": "i_ab",
+      "key range": [
+        "([dba.t_idx].a>= ?:? )"
+      ],
+      "covered": true
+    },
+    "rewritten query": "select /*+ PARALLEL(?) */ count(*), max([dba.t_idx].b), sum([dba.t_idx].a) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_ab"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "index (dba.t_idx.i_ab)",
+        "btree": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readkeys": ?,
+          "filteredkeys": ?,
+          "rows": ?
+        },
+        "covered": true,
+        "parallel index": {
+          "parallel_workers": ?,
+          "time": "?..?",
+          "readkeys": "?..?",
+          "filteredkeys": "?..?",
+          "rows": "?..?",
+          "gather": "buildvalue",
+          "covered": true
+        }
+      }
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
