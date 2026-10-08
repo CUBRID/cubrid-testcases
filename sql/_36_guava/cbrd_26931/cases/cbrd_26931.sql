@@ -105,6 +105,7 @@ show trace;
 update /*+ recompile */ t_target set b = b where b <= (select /*+ no_parallel_scan */ max(v) from t_big);
 insert into t_target select /*+ recompile */ g, v from t_small where v <= (select max(v) from t_big);
 show trace;
+select a, b from t_target order by a, b;
 delete from t_target where a < 10;
 insert into t_target select /*+ recompile */ g, v from t_small where v <= (select /*+ no_parallel_scan */ max(v) from t_big);
 select a, b from t_target order by a, b;
