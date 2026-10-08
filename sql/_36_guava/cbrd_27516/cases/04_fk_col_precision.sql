@@ -14,7 +14,7 @@
  * search key bytes are read with the searched index's column domains.
  */
 
--- Case 01: VARCHAR(20) parent, VARCHAR(10) child, (a DESC, b), CASCADE: children 10, 11 go
+-- Case 01: VARCHAR(10) parent, VARCHAR(20) child, (a DESC, b), CASCADE: children 10, 11 go
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -27,7 +27,7 @@ DELETE FROM fk27516_p WHERE a='1' AND b=1;
 SELECT 'R=p:' || NVL(GROUP_CONCAT(a || '/' || b ORDER BY 1), 'none') FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(fa,-1) || '/' || NVL(fb,-1) ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 02: NUMERIC(12,4) parent, NUMERIC(10,2) child, (a DESC, b), CASCADE: children 10, 11 go
+-- Case 02: NUMERIC(10,2) parent, NUMERIC(12,4) child, (a DESC, b), CASCADE: children 10, 11 go
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -40,7 +40,7 @@ DELETE FROM fk27516_p WHERE a=1.5 AND b=1;
 SELECT 'R=p:' || NVL(GROUP_CONCAT(a || '/' || b ORDER BY 1), 'none') FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(fa,-1) || '/' || NVL(fb,-1) ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 03: CHAR(8) parent, CHAR(4) child, (a DESC, b), CASCADE: children 10, 11 go
+-- Case 03: CHAR(4) parent, CHAR(8) child, (a DESC, b), CASCADE: children 10, 11 go
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -53,7 +53,7 @@ DELETE FROM fk27516_p WHERE a='1' AND b=1;
 SELECT 'R=p:' || NVL(GROUP_CONCAT(TRIM(a) || '/' || b ORDER BY 1), 'none') FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(TRIM(fa),'-') || '/' || NVL(fb,-1) ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 04: CHAR(8) parent, CHAR(4) child, RESTRICT, delete a parent with children then one without: restricted, then deleted
+-- Case 04: CHAR(4) parent, CHAR(8) child, RESTRICT, delete a parent with children then one without: restricted, then deleted
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -67,7 +67,7 @@ DELETE FROM fk27516_p WHERE a='3' AND b=3;
 SELECT 'R=p:' || NVL(GROUP_CONCAT(TRIM(a) || '/' || b ORDER BY 1), 'none') FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(TRIM(fa),'-') || '/' || NVL(fb,-1) ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 05: VARCHAR(20) parent, VARCHAR(10) child, all ASC, CASCADE (control)
+-- Case 05: VARCHAR(10) parent, VARCHAR(20) child, all ASC, CASCADE (control)
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -80,7 +80,7 @@ DELETE FROM fk27516_p WHERE a='1' AND b=1;
 SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(TO_CHAR(fb),'-') ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 06: CHAR(8) parent, CHAR(4) child, all ASC, RESTRICT (control)
+-- Case 06: CHAR(4) parent, CHAR(8) child, all ASC, RESTRICT (control)
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -94,7 +94,7 @@ DELETE FROM fk27516_p WHERE a='3' AND b=3;
 SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(TO_CHAR(fb),'-') ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 07: NUMERIC(12,4) parent, NUMERIC(10,2) child, all ASC, CASCADE (control)
+-- Case 07: NUMERIC(10,2) parent, NUMERIC(12,4) child, all ASC, CASCADE (control)
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -107,7 +107,7 @@ DELETE FROM fk27516_p WHERE a=1.5 AND b=1;
 SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(TO_CHAR(fb),'-') ORDER BY 1), 'none') FROM fk27516_c;
 
--- Case 08: BIT VARYING(8) parent, BIT VARYING(16) child, all ASC, CASCADE (control)
+-- Case 08: BIT VARYING(16) parent, BIT VARYING(8) child, all ASC, CASCADE (control)
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;

@@ -89,7 +89,7 @@ SELECT 'R=p:' || NVL(GROUP_CONCAT(a || '/' || b ORDER BY 1), 'none') FROM fk2751
 SELECT 'R=c:' || NVL(GROUP_CONCAT(id || '/' || NVL(fa,-1) || '/' || NVL(fb,-1) ORDER BY 1), 'none') FROM fk27516_c;
 SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
 
--- Case 06: CHAR(8) parent, CHAR(4) child, (a DESC, b): created, then 10, 11 cascade
+-- Case 06: CHAR(4) parent, CHAR(8) child, (a DESC, b): created, then 10, 11 cascade
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;

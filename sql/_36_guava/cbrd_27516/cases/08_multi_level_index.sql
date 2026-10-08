@@ -27,7 +27,7 @@ DELETE FROM fk27516_p WHERE a=1 AND b=1;
 SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
 SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL THEN 1 ELSE 0 END) FROM fk27516_c;
 
--- Case 02: same data, SET NULL: the foreign keys of the 3,000 children become NULL
+-- Case 02: same data, SET NULL: both foreign key columns of the 3,000 children become NULL, the other 2,999 keep theirs
 DROP TABLE IF EXISTS fk27516_c2;
 DROP TABLE IF EXISTS fk27516_c;
 DROP TABLE IF EXISTS fk27516_p;
@@ -39,7 +39,7 @@ INSERT INTO fk27516_c SELECT 10000 + LEVEL, LEVEL + 1, LEVEL + 1, 'x' FROM db_ro
 COMMIT;
 DELETE FROM fk27516_p WHERE a=1 AND b=1;
 SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
-SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL THEN 1 ELSE 0 END) FROM fk27516_c;
+SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL AND fb IS NULL THEN 1 ELSE 0 END) || '/' || SUM(CASE WHEN fa IS NULL OR fb IS NULL THEN 1 ELSE 0 END) || '/' || SUM(CASE WHEN fa = id - 9999 AND fb = fa THEN 1 ELSE 0 END) FROM fk27516_c;
 
 -- Case 03: RESTRICT, delete (1,1) without children, then update the key of (3000,3000) with children: deleted, then restricted
 DROP TABLE IF EXISTS fk27516_c2;
