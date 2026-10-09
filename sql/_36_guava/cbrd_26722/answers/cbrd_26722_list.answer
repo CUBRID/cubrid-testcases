@@ -1,0 +1,910 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+60
+===================================================
+0
+===================================================
+0
+===================================================
+40
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: aggregates over a derived table run in parallel with gather buildvalue; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(d.v)    min(d.id)    max(d.id)    
+100000     49950000     1     100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum(d.v), min(d.id), max(d.id) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    min(d.id)    max(d.id)    
+100000     49950000     1     100000     
+
+===================================================
+    
+Case 2: every aggregate the buildvalue gather supports; result = no_parallel_scan     
+
+===================================================
+count(*)    count(d.v)    sum(d.v)    round(avg(d.v), 2)    min(d.pad)    max(d.pad)    round(stddev(d.v), 2)    round(variance(d.v), 2)    
+100000     100000     49950000     499.5     0001C5F286E893870251D0B798B3C6C3EAC36BF9D234ACA12EEF02AC3EB7EDC2B9DDCB906BE704BC8C4B13562FDFF4F4EF8A616BF478CAB600E9D1604C665FCB     FFFE98E281C172B322211DFB734728E0FA8AC7E1B0DCAA100328FEDE1CAEA3C43B81787635BB242B6033348A0B599794806D895BC14A708B61195B2FB0800041     288.67     83333.25     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), count(d.v), sum(d.v),  round(avg(d.v), ?), min(d.pad), max(d.pad),  round(stddev(d.v), ?),  round(variance(d.v), ?) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    count(d.v)    sum(d.v)    round(avg(d.v), 2)    min(d.pad)    max(d.pad)    round(stddev(d.v), 2)    round(variance(d.v), 2)    
+100000     100000     49950000     499.5     0001C5F286E893870251D0B798B3C6C3EAC36BF9D234ACA12EEF02AC3EB7EDC2B9DDCB906BE704BC8C4B13562FDFF4F4EF8A616BF478CAB600E9D1604C665FCB     FFFE98E281C172B322211DFB734728E0FA8AC7E1B0DCAA100328FEDE1CAEA3C43B81787635BB242B6033348A0B599794806D895BC14A708B61195B2FB0800041     288.67     83333.25     
+
+===================================================
+    
+Case 3: COUNT(*) alone over a derived table; result = no_parallel_scan     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+    
+Case 4: a UNION ALL derived table and a view over UNION ALL; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(d.v)    min(d.id)    max(d.id)    
+200000     99900000     1     100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum(d.v), min(d.id), max(d.id) from (select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap] union all select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    min(d.id)    max(d.id)    
+200000     99900000     1     100000     
+
+===================================================
+0
+===================================================
+count(*)    sum(v)    
+200000     99900000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.v_union)
+
+  rewritten query: select [dba.v_union].v, [dba.v_union].id, [dba.v_union].g, [dba.v_union].pad from [dba.t_heap] [dba.v_union]
+
+  TABLE SCAN (dba.v_union)
+
+  rewritten query: select [dba.v_union].v, [dba.v_union].id, [dba.v_union].g, [dba.v_union].pad from [dba.t_heap] [dba.v_union]
+
+  TABLE SCAN (dba.v_union)
+
+  rewritten query: select count(*), sum([dba.v_union].v) from (select [dba.v_union].v, [dba.v_union].id, [dba.v_union].g, [dba.v_union].pad from [dba.t_heap] [dba.v_union] union all select [dba.v_union].v, [dba.v_union].id, [dba.v_union].g, [dba.v_union].pad from [dba.t_heap] [dba.v_union]) [dba.v_union] (v, id, g, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+200000     99900000     
+
+===================================================
+0
+===================================================
+    
+Case 5: rows are gathered as a mergeable list; result = no_parallel_scan     
+
+===================================================
+id    g    v    
+50007     5     7     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PUSH_PRED */ d.id, d.g, d.v from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad) where d.id= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+id    g    v    
+50007     5     7     
+
+===================================================
+1    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  SORT (distinct)
+    TABLE SCAN (d)
+
+  rewritten query: select distinct ? from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+1    
+1     
+
+===================================================
+g    count(*)    sum(d.v)    
+0     1587     791914     
+1     3176     1585592     
+2     6352     3172240     
+3     12704     6346704     
+4     25397     12694238     
+5     50784     25359312     
+
+===================================================
+g    count(*)    sum(d.v)    
+0     1587     791914     
+1     3176     1585592     
+2     6352     3172240     
+3     12704     6346704     
+4     25397     12694238     
+5     50784     25359312     
+
+===================================================
+    
+Case 6: a filter on the list is evaluated by the workers; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(d.v)    
+50000     12475000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PUSH_PRED */ count(*), sum(d.v) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad) where (d.v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    
+50000     12475000     
+
+===================================================
+count(*)    sum(d.v)    
+3     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PUSH_PRED */ count(*), sum(d.v) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad) where ((d.id= ?:? ) or (d.id= ?:? ) or (d.id= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    
+3     1     
+
+===================================================
+count(*)    sum(d.v)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PUSH_PRED */ count(*), sum(d.v) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad) where (d.v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    
+0     null     
+
+===================================================
+    
+Case 7: the list drives a nested loop join with a heap inner and with a list inner; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(s.k)    
+100000     5095000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (d)
+    TABLE SCAN (s)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(s.k) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad), [dba.t_small] s where d.g=s.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(s.k)    
+100000     5095000     
+
+===================================================
+count(*)    sum(e.k)    
+1000000     31190220     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_mid].g, [dba.t_mid].k from [dba.t_mid] [dba.t_mid])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(e.k) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad), (select /*+ NO_MERGE */ [dba.t_mid].g, [dba.t_mid].k from [dba.t_mid] [dba.t_mid]) e (g, k) where d.g=e.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(e.k)    
+1000000     31190220     
+
+===================================================
+    
+Case 8: a materialized CTE and the result of a recursive CTE; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(v)    max(id)    
+100000     49950000     100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select count(*), sum([dba.c].v), max([dba.c].id) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    max(id)    
+100000     49950000     100000     
+
+===================================================
+count(*)    sum(n)    max(p)    
+2000     2001000     FFC35B098FA131C9FDF6AB0B8CC6DE89D482D6BB6D90513ACE4075A775DF1DD9CFE13E393D8F007591E81B6FD1C58C740C7ED6C6D9670E472F730296E3F5CE26892C559A45D7BFD7C09FB875418C4BD18FCD809470238FF046E31A67C0D2D4053517592CDB64D1C3F4CDCE53E5C3D240913CDD635058116F70001F5B8E81E0B4D0D7CC0CBF21D971606685C15F896BBFD6B1F99E1C2A3FA8381C622F57FAB8877EF56D8F88F634829ADEA9088DB05326EAF6FB9253554DD873B11B59B341F09B679462DFD3AF7B8D94DBE943E14907B2BED5A5531D2860187204DD049E344A81E36D16393DCCDA4D94E3F654450DBB9C7145A88682DE779202806DB5B751E183     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: select ?,  cast( cast( concat( sha?( cast(? as varchar), ?),  sha?( cast(-? as varchar), ?),  sha?( cast(? as varchar), ?),  sha?( cast(-? as varchar), ?)) as varchar) as varchar) from db_root db_root
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: select [dba.r].n+?,  concat( sha?( cast([dba.r].n+? as varchar), ?),  sha?( cast(-[dba.r].n-? as varchar), ?),  sha?( cast([dba.r].n+? as varchar), ?),  sha?( cast(-[dba.r].n-? as varchar), ?)) from [dba.r] [dba.r] where ([dba.r].n< ?:? )
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: with recursive r(n, p) as (select ?,  cast( cast( concat( sha?( cast(? as varchar), ?),  sha?( cast(-? as varchar), ?),  sha?( cast(? as varchar), ?),  sha?( cast(-? as varchar), ?)) as varchar) as varchar) from db_root db_root union all select [dba.r].n+?,  concat( sha?( cast([dba.r].n+? as varchar), ?),  sha?( cast(-[dba.r].n-? as varchar), ?),  sha?( cast([dba.r].n+? as varchar), ?),  sha?( cast(-[dba.r].n-? as varchar), ?)) from [dba.r] [dba.r] where ([dba.r].n< ?:? ))select count(*), sum([dba.r].n), max([dba.r].p) from [dba.r] [dba.r]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(n)    max(p)    
+2000     2001000     FFC35B098FA131C9FDF6AB0B8CC6DE89D482D6BB6D90513ACE4075A775DF1DD9CFE13E393D8F007591E81B6FD1C58C740C7ED6C6D9670E472F730296E3F5CE26892C559A45D7BFD7C09FB875418C4BD18FCD809470238FF046E31A67C0D2D4053517592CDB64D1C3F4CDCE53E5C3D240913CDD635058116F70001F5B8E81E0B4D0D7CC0CBF21D971606685C15F896BBFD6B1F99E1C2A3FA8381C622F57FAB8877EF56D8F88F634829ADEA9088DB05326EAF6FB9253554DD873B11B59B341F09B679462DFD3AF7B8D94DBE943E14907B2BED5A5531D2860187204DD049E344A81E36D16393DCCDA4D94E3F654450DBB9C7145A88682DE779202806DB5B751E183     
+
+===================================================
+    
+Case 9: rows longer than a page alone, at the start and end, and in the middle of the list; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( char_length(d.w))    min(d.id)    max(d.id)    
+40     819200     1     40     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_wide)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum( char_length(d.w)), min(d.id), max(d.id) from (select /*+ NO_MERGE */ [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide]) d (id, w)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( char_length(d.w))    min(d.id)    max(d.id)    
+40     819200     1     40     
+
+===================================================
+count(*)    sum( char_length(d.w))    sum(d.id)    
+5040     1459200     12503320     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_wide)
+
+  rewritten query: select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].id<= ?:? )
+
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? )
+
+  TABLE SCAN (dba.t_wide)
+
+  rewritten query: select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].id> ?:? )
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum( char_length(d.w)), sum(d.id) from ((select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].id<= ?:? ) union all select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) as [pad] from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? )) union all select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].id> ?:? )) d (id, w)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( char_length(d.w))    sum(d.id)    
+5040     1459200     12503320     
+
+===================================================
+count(*)    sum( char_length(d.w))    sum(d.id)    
+6040     1587200     300003820     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? )
+
+  TABLE SCAN (dba.t_wide)
+
+  rewritten query: select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide]
+
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id> ?:? )
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum( char_length(d.w)), sum(d.id) from ((select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) as [w] from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? ) union all select [dba.t_wide].id, [dba.t_wide].w from [dba.t_wide] [dba.t_wide]) union all select [dba.t_heap].id,  cast([dba.t_heap].pad as varchar(?)) as [pad] from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id> ?:? )) d (id, w)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum( char_length(d.w))    sum(d.id)    
+6040     1587200     300003820     
+
+===================================================
+    
+Case 10: a small list, ROWNUM, CONNECT BY and a CTE read by scalar subqueries keep the list scan serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(d.v)    
+1000     499500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].v from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? ))
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), sum(d.v) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].v from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].id<= ?:? )) d (id, v)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(d.v)    
+1000     499500     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad) where (rownum<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].v from [dba.t_heap] [dba.t_heap])
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].v from [dba.t_heap] [dba.t_heap]) d (id, v) start with d.id= ?:?  connect by nocycle  prior d.id=d.v
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+cnt    total    
+50000     12475000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].v< ?:? )
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select sum([dba.c].v) from [dba.c] [dba.c])
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select count(*) from [dba.c] [dba.c])
+
+  TABLE SCAN (db_root)
+
+  rewritten query: with c(id, g, v, pad) as (select [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap] where ([dba.t_heap].v< ?:? ))select (select count(*) from [dba.c] [dba.c]), (select sum([dba.c].v) from [dba.c] [dba.c]) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    total    
+50000     12475000     
+
+===================================================
+    
+Case 11: the JSON trace names the parallel list scan parallel temp; result = Case 1     
+
+===================================================
+0
+===================================================
+count(*)    sum(d.v)    min(d.id)    max(d.id)    
+100000     49950000     1     100000     
+
+===================================================
+trace    
+{
+  "Query Plan": [
+    {
+      "TABLE SCAN": {
+        "table": "dba.t_heap"
+      },
+      "rewritten query": "(select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])"
+    },
+    {
+      "TABLE SCAN": {
+        "table": "d"
+      },
+      "rewritten query": "select count(*), sum(d.v), min(d.id), max(d.id) from (select /*+ NO_MERGE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]) d (id, g, v, pad)"
+    }
+  ],
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        },
+        "parallel temp": {
+          "parallel_workers": ?,
+          "time": "?..?",
+          "readrows": "?..?",
+          "rows": "?..?",
+          "gather": "buildvalue"
+        }
+      },
+      "SUBQUERY (uncorrelated)": [
+        {
+          "SELECT": {
+            "time": ?,
+            "fetch": ?,
+            "fetch_time": ?,
+            "ioread": ?,
+            "SCAN": {
+              "access": "table (dba.t_heap)",
+              "heap": {
+                "time": ?,
+                "fetch": ?,
+                "ioread": ?,
+                "readrows": ?,
+                "rows": ?
+              },
+              "parallel heap": {
+                "parallel_workers": ?,
+                "time": "?..?",
+                "readrows": "?..?",
+                "rows": "?..?",
+                "gather": "mergeable list"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
