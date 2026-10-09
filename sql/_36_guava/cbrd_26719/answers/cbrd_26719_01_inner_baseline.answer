@@ -1,0 +1,181 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: INNER join, parallel probe active - text trace     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_p] a, [dba.t_b] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same query as JSON trace - single-context num_parallel_threads branch     
+
+===================================================
+0
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+{
+  "Query Plan": {
+    "HASH JOIN (inner join)": [
+      {
+        "TABLE SCAN": {
+          "table": "a"
+        }
+      },
+      {
+        "TABLE SCAN": {
+          "table": "b"
+        }
+      }
+    ],
+    "rewritten query": "select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.t_p] a, [dba.t_b] b where a.cval=b.ckey"
+  },
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "temp",
+        "temp": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        }
+      },
+      "SUBQUERY (uncorrelated)": [
+        {
+          "HASHJOIN": {
+            "time": ?,
+            "fetch": ?,
+            "fetch_time": ?,
+            "ioread": ?,
+            "build": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "rows": ?,
+              "method": "memory",
+              "input": {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_b)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              }
+            },
+            "probe": {
+              "time": ?,
+              "fetch": ?,
+              "ioread": ?,
+              "readrows": ?,
+              "readkeys": ?,
+              "rows": ?,
+              "parallel": {
+                "parallel workers": ?,
+                "time": "?..?",
+                "readrows": "?..?",
+                "readkeys": "?..?",
+                "rows": "?..?"
+              },
+              "input": {
+                "SELECT": {
+                  "time": ?,
+                  "fetch": ?,
+                  "fetch_time": ?,
+                  "ioread": ?,
+                  "SCAN": {
+                    "access": "table (dba.t_p)",
+                    "heap": {
+                      "time": ?,
+                      "fetch": ?,
+                      "ioread": ?,
+                      "readrows": ?,
+                      "rows": ?
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+    
+Case 3: trace is off from here - row set equality both ways, each result must be 0     
+
+===================================================
+parallel_minus_serial    
+0     
+
+===================================================
+serial_minus_parallel    
+0     
+
+===================================================
+0
+===================================================
+0
