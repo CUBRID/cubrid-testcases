@@ -293,15 +293,17 @@ select /*+ recompile no_parallel_scan */ id from t_idx where a > 10 using index 
 select /*+ recompile parallel(4) */ min(a), max(a) from t_idx;
 show trace;
 select /*+ recompile no_parallel_scan */ min(a), max(a) from t_idx;
-select /*+ recompile parallel(4) */ a, b from t_idx where a >= 3999 and b = 5 using index i_ab order by a, b;
+-- every 400th key over the whole index: keys 1, 401, 1601, 2801 and 3201 hold 2, 7, 7, 7 and 5 rows with
+-- b <= 2, and b runs from 0 to 2 inside a key, so rows out of index order or ranks over them show
+select /*+ recompile parallel(4) */ a, b from t_idx where a >= 0 and mod(a, 400) = 1 and b <= 2 using index i_ab order by a, b;
 show trace;
-select /*+ recompile no_parallel_scan */ a, b from t_idx where a >= 3999 and b = 5 using index i_ab order by a, b;
+select /*+ recompile no_parallel_scan */ a, b from t_idx where a >= 0 and mod(a, 400) = 1 and b <= 2 using index i_ab order by a, b;
 select /*+ recompile parallel(4) */ count(*) from t_idx where a >= 0 and rownum <= 5000 using index i_a;
 show trace;
 select /*+ recompile no_parallel_scan */ count(*) from t_idx where a >= 0 and rownum <= 5000 using index i_a;
-select /*+ recompile parallel(4) */ a, rank() over (order by a) from t_idx where a >= 3999 and b = 5 using index i_a;
+select /*+ recompile parallel(4) */ a, rank() over (order by a) from t_idx where a >= 0 and mod(a, 400) = 1 and b <= 2 using index i_a;
 show trace;
-select /*+ recompile no_parallel_scan */ a, rank() over (order by a) from t_idx where a >= 3999 and b = 5 using index i_a;
+select /*+ recompile no_parallel_scan */ a, rank() over (order by a) from t_idx where a >= 0 and mod(a, 400) = 1 and b <= 2 using index i_a;
 select /*+ recompile parallel(1) */ count(*), sum(cast(e as bigint)) from t_idx where a >= 0 using index i_a;
 show trace;
 select /*+ recompile no_parallel_scan parallel(4) */ count(*), sum(cast(e as bigint)) from t_idx where a >= 0 using index i_a;

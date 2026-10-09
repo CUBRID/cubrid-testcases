@@ -1456,40 +1456,43 @@ min(a)    max(a)
 
 ===================================================
 a    b    
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
+1     0     
+1     1     
+401     0     
+401     1     
+401     1     
+401     2     
+401     2     
+401     2     
+401     2     
+1601     0     
+1601     1     
+1601     1     
+1601     2     
+1601     2     
+1601     2     
+1601     2     
+2801     0     
+2801     1     
+2801     1     
+2801     2     
+2801     2     
+2801     2     
+2801     2     
+3201     1     
+3201     2     
+3201     2     
+3201     2     
+3201     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), key filter: [dba.t_idx].b= ?:? , covered: true)
+  INDEX SCAN (dba.t_idx.i_ab) (key range: ([dba.t_idx].a>= ?:? ), key filter:  mod([dba.t_idx].a, ?)=?, key filter: ([dba.t_idx].b<= ?:? ), covered: true)
   skip order by: true
 
-  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, [dba.t_idx].b from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and [dba.t_idx].b= ?:?  using index [dba.t_idx].i_ab order by ?
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, [dba.t_idx].b from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and  mod([dba.t_idx].a, ?)=? and ([dba.t_idx].b<= ?:? ) using index [dba.t_idx].i_ab order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1498,31 +1501,34 @@ Trace Statistics:
 
 ===================================================
 a    b    
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
-3999     5     
+1     0     
+1     1     
+401     0     
+401     1     
+401     1     
+401     2     
+401     2     
+401     2     
+401     2     
+1601     0     
+1601     1     
+1601     1     
+1601     2     
+1601     2     
+1601     2     
+1601     2     
+2801     0     
+2801     1     
+2801     1     
+2801     2     
+2801     2     
+2801     2     
+2801     2     
+3201     1     
+3201     2     
+3201     2     
+3201     2     
+3201     2     
 
 ===================================================
 count(*)    
@@ -1547,39 +1553,42 @@ count(*)
 
 ===================================================
 a    rank() over (order by a)    
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
+1     1     
+1     1     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+3201     24     
+3201     24     
+3201     24     
+3201     24     
+3201     24     
 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ))
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ), key filter:  mod([dba.t_idx].a, ?)=?)
 
-  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, rank() over (order by ?) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and [dba.t_idx].b= ?:?  using index [dba.t_idx].i_a
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].a, rank() over (order by ?) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) and  mod([dba.t_idx].a, ?)=? and ([dba.t_idx].b<= ?:? ) using index [dba.t_idx].i_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1589,31 +1598,34 @@ Trace Statistics:
 
 ===================================================
 a    rank() over (order by a)    
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
-3999     1     
+1     1     
+1     1     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+401     3     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+1601     10     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+2801     17     
+3201     24     
+3201     24     
+3201     24     
+3201     24     
+3201     24     
 
 ===================================================
 count(*)    sum( cast(e as bigint))    
