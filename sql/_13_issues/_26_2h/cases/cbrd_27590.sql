@@ -10,8 +10,9 @@
  *  Each tested query reads t_upd with IGNORE INDEX (heap scan) and its reference twin reads the
  *  same rows with FORCE INDEX, which fetches every row from the live page on every build. Every
  *  twin reads a.v, so the index scan cannot answer from the keys it gathered before the function
- *  ran. The two result blocks must be equal. The data is restored before every query. db_serial
- *  has no index this query can use, so Case 10 has no twin and pins literal values instead.
+ *  ran, and Case 12 tests that covering read itself. The two result blocks must be equal. The data
+ *  is restored before every query. db_serial has no index this query can use, so Case 10 pins
+ *  literal values instead of a twin.
  *
  *  Coverage:
  *    Case 1:  function in the select list deletes the next row; result = index twin
@@ -25,6 +26,7 @@
  *    Case 9:  INSERT SELECT whose select calls the deleting function; result = index twin
  *    Case 10: db_serial read while NEXT_VALUE advances the other serial; result = literal values
  *    Case 11: the same statement run twice from the plan cache; result = Case 1 rows
+ *    Case 12: covering index read of the outer table; result = index twin with a data filter
  */
 
 drop table if exists t_seed, t_upd, t_one, t_out, t_part;
@@ -166,6 +168,18 @@ truncate table t_upd;
 insert into t_upd select n, n from t_seed;
 select /*+ ordered use_nl */ a.id, f_del (a.id) from t_upd a ignore index (i_upd_id), t_one o where a.id > 0 order by a.id;
 
+
+evaluate 'Case 12: covering index read of the outer table; result = index twin with a data filter';
+-- the select list reads only the index column, so the plan covers t_upd with i_upd_id; the twin adds
+-- a.v > 0, which no covering read can answer, so it fetches every row from the heap
+truncate table t_upd;
+insert into t_upd select n, n from t_seed;
+select /*+ recompile ordered use_nl */ a.id, f_del (a.id) from t_upd a force index (i_upd_id), t_one o where a.id > 0 order by a.id;
+select id from t_upd order by id;
+truncate table t_upd;
+insert into t_upd select n, n from t_seed;
+select /*+ recompile ordered use_nl */ a.id, f_del (a.id) from t_upd a force index (i_upd_id), t_one o where a.id > 0 and a.v > 0 order by a.id;
+select id from t_upd order by id;
 
 drop serial s_first;
 drop serial s_second;
