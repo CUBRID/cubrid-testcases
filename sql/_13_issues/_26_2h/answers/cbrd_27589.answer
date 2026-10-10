@@ -5,6 +5,8 @@
 ===================================================
 14
 ===================================================
+2
+===================================================
     
 Case 1: issue repro with ESCAPE _, text longer than the match and text equal to it     
 
@@ -83,6 +85,15 @@ Case 8: constant LIKE expressions in the select list
 ===================================================
 cast('a%b_' as varchar(16) collate binary) like  cast('a_%b_' as varchar(16) collate binary) escape '_'    _binary'a%b_' like _binary'a_%b_' escape '_'    
 1     1     
+
+===================================================
+    
+Case 9: multi-byte ESCAPE, binary collation uses the first byte of the escape as the escape byte     
+
+===================================================
+id    hex(s)    hex(p)    s like p escape 'é'    
+15     612562C3     61C32562C3     1     
+16     612562C378     61C32562C3     0     
 
 ===================================================
 0

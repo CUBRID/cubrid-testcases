@@ -8,10 +8,10 @@
  *  on an assert. Release builds returned the right results. The fix steps over an escape only when
  *  a character follows it.
  *
- *  ESCAPE '_' and '%' take the LIKE loop that calls the collation matcher, while other single-byte
- *  escapes go to the CBRD-27181 fast path. No hint or parameter selects another matcher, so the
- *  expected values are literal: they equal the release build before and after the fix, and the
- *  pre-fix debug build aborts on Case 1.
+ *  ESCAPE '_', '%' and multi-byte escapes take the LIKE loop that calls the collation matcher, while
+ *  other single-byte escapes go to the CBRD-27181 fast path. No hint or parameter selects another
+ *  matcher, so the expected values are literal: they equal the release build before and after the
+ *  fix, and the pre-fix debug build aborts on Case 1.
  *
  *  Coverage:
  *    Case 1:  issue repro with ESCAPE _, text longer than the match and text equal to it
@@ -22,6 +22,7 @@
  *    Case 6:  trailing escape whose literal run has no escaped character
  *    Case 7:  LIKE as a WHERE condition, pattern from the column and a constant pattern
  *    Case 8:  constant LIKE expressions in the select list
+ *    Case 9:  multi-byte ESCAPE, binary collation uses the first byte of the escape as the escape byte
  */
 
 drop table if exists t_bin;
@@ -34,6 +35,10 @@ insert into t_bin values
  (8, 'a_b%', 'a%_b%'), (9, 'a_b%x', 'a%_b%'), (10, 'axb%', 'a%_b%'),
  (11, 'a__', 'a___'), (12, 'a%b_', 'a_%b__'),
  (13, 'ab_', 'ab_'), (14, 'a%xyzb_', 'a_%x%b_');
+-- rows 15, 16 hold byte C3, the first byte of é in utf8; with ESCAPE é the pattern a C3 % b C3 is the literal a%b C3
+insert into t_bin values
+ (15, _binary'a%b' || chr(195 using binary), _binary'a' || chr(195 using binary) || _binary'%b' || chr(195 using binary)),
+ (16, _binary'a%b' || chr(195 using binary) || _binary'x', _binary'a' || chr(195 using binary) || _binary'%b' || chr(195 using binary));
 
 
 evaluate 'Case 1: issue repro with ESCAPE _, text longer than the match and text equal to it';
@@ -67,6 +72,10 @@ select id from t_bin where s like _binary'a_%b_' escape '_' order by id;
 
 evaluate 'Case 8: constant LIKE expressions in the select list';
 select cast('a%b_' as varchar(16) collate binary) like cast('a_%b_' as varchar(16) collate binary) escape '_', _binary'a%b_' like _binary'a_%b_' escape '_';
+
+
+evaluate 'Case 9: multi-byte ESCAPE, binary collation uses the first byte of the escape as the escape byte';
+select id, hex(s), hex(p), s like p escape 'é' from t_bin where id in (15, 16) order by id;
 
 
 drop table t_bin;
