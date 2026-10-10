@@ -99,8 +99,8 @@ count(*)
 Query plan:
 iscan
     class: tbl node[?]
-    index: idx?_tbl term[?] (covers)
-    filtr: term[?]
+    index: idx?_tbl term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl tbl where tbl.b like  cast(fn_int(?) as varchar)|| cast('%' as varchar) and (tbl.b>= like_match_lower_bound( cast(fn_int(?) as varchar)|| cast('%' as varchar)) and tbl.b< like_match_upper_bound( cast(fn_int(?) as varchar)|| cast('%' as varchar)))
