@@ -1,0 +1,1820 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+1
+===================================================
+0
+===================================================
+150000
+===================================================
+1
+===================================================
+0
+===================================================
+300000
+===================================================
+1
+===================================================
+0
+===================================================
+300000
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+    
+TC-1-05-01: ta SEMI JOIN tb     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+25000     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+25000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+25000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-02: ta ANTI JOIN tb     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+75001     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+75001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+75001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-03: tc SEMI JOIN td     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+75000     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+75000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+75000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-05-04: tc ANTI JOIN td     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+225001     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+225001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+225001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-05-05: ta SEMI JOIN tb, ON clause term on the outer table only     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.ta].ca<= ?:? ) and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.ta].ca<= ?:? ) and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-06: ta ANTI JOIN tb, ON clause term on the outer table only     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.ta].ca<= ?:? ) and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.ta].ca<= ?:? ) and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-07: tc SEMI JOIN td, ON clause term on the outer table only     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.tc].ca<= ?:? ) and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.tc].ca<= ?:? ) and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-05-08: tc ANTI JOIN td, ON clause term on the outer table only     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.tc].ca<= ?:? ) and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.tc].ca<= ?:? ) and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-05-09: ta SEMI JOIN tb, ON clause term on both tables     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on  mod( cast([dba.ta].ca as integer)+ cast([dba.tb].ca as integer), ?)=? and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+12500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on  mod( cast([dba.ta].ca as integer)+ cast([dba.tb].ca as integer), ?)=? and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-10: ta ANTI JOIN tb, ON clause term on both tables     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on  mod( cast([dba.ta].ca as integer)+ cast([dba.tb].ca as integer), ?)=? and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    
+87501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on  mod( cast([dba.ta].ca as integer)+ cast([dba.tb].ca as integer), ?)=? and [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result     
+
+===================================================
+single_minus_parallel_probe    
+0     
+
+===================================================
+    
+rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result     
+
+===================================================
+parallel_probe_minus_single    
+0     
+
+===================================================
+    
+TC-1-05-11: tc SEMI JOIN td, ON clause term on both tables     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on  mod( cast([dba.tc].ca as integer)+ cast([dba.td].ca as integer), ?)=? and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+37500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on  mod( cast([dba.tc].ca as integer)+ cast([dba.td].ca as integer), ?)=? and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-05-12: tc ANTI JOIN td, ON clause term on both tables     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on  mod( cast([dba.tc].ca as integer)+ cast([dba.td].ca as integer), ?)=? and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+262501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on  mod( cast([dba.tc].ca as integer)+ cast([dba.td].ca as integer), ?)=? and [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result     
+
+===================================================
+partition_minus_parallel    
+0     
+
+===================================================
+    
+rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result     
+
+===================================================
+parallel_minus_partition    
+0     
+
+===================================================
+    
+TC-1-06-01: ta LEFT OUTER JOIN tb     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    count(tb.ca)    
+225001     150000     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    count(tb.ca)    
+225001     150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count([dba.tb].ca) from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    count(tb.ca)    
+225001     150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.tb].ca) from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+TC-1-06-02: ta RIGHT OUTER JOIN tb     
+
+===================================================
+    
+SINGLE mode, result     
+
+===================================================
+count(*)    count(ta.ca)    
+150001     150000     
+
+===================================================
+    
+SINGLE mode, trace     
+
+===================================================
+count(*)    count(ta.ca)    
+150001     150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count([dba.ta].ca) from [dba.ta] [dba.ta] right outer join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL_PROBE mode, result and trace     
+
+===================================================
+count(*)    count(ta.ca)    
+150001     150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.ta].ca) from [dba.ta] [dba.ta] right outer join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+TC-1-06-03: tc LEFT OUTER JOIN td     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    count(td.ca)    
+525001     300000     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    count(td.ca)    
+525001     300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count([dba.td].ca) from [dba.tc] [dba.tc] left outer join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    count(td.ca)    
+525001     300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.td].ca) from [dba.tc] [dba.tc] left outer join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+TC-1-06-04: tc RIGHT OUTER JOIN td     
+
+===================================================
+    
+PARTITION mode, result     
+
+===================================================
+count(*)    count(tc.ca)    
+300001     300000     
+
+===================================================
+    
+PARTITION mode, trace     
+
+===================================================
+count(*)    count(tc.ca)    
+300001     300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*), count([dba.tc].ca) from [dba.tc] [dba.tc] right outer join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    count(tc.ca)    
+300001     300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.tc].ca) from [dba.tc] [dba.tc] right outer join [dba.td] [dba.td] on [dba.td].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+TC-1-07-01: SEMI JOIN, partitions without inner rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+300000
+===================================================
+1
+===================================================
+0
+===================================================
+    
+PARTITION mode, result and trace     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.te)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.te] [dba.te] on [dba.te].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.te)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.te] [dba.te] on [dba.te].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+    
+TC-1-07-02: ANTI JOIN, partitions without inner rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+300000
+===================================================
+1
+===================================================
+0
+===================================================
+    
+PARTITION mode, result and trace     
+
+===================================================
+count(*)    
+300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.te)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.te] [dba.te] on [dba.te].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+PARALLEL mode, result and trace     
+
+===================================================
+count(*)    
+300000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.te)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.te] [dba.te] on [dba.te].ca=[dba.tc].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+    
+TC-1-07-03: SEMI JOIN, larger outer input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+    
+hash join, result and trace     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on [dba.tb].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+TC-1-07-04: ANTI JOIN, larger outer input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+    
+hash join     
+
+===================================================
+count(*)    
+47     
+
+===================================================
+0
+===================================================
+0
