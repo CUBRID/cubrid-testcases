@@ -1,0 +1,88 @@
+===================================================
+0
+===================================================
+0
+===================================================
+14
+===================================================
+    
+Case 1: issue repro with ESCAPE _, text longer than the match and text equal to it     
+
+===================================================
+id    s like p escape '_'    
+1     0     
+2     1     
+
+===================================================
+    
+Case 2: same pattern, text ends before the trailing escape, differs at it, trailing space     
+
+===================================================
+id    s like p escape '_'    
+3     0     
+4     0     
+5     1     
+
+===================================================
+    
+Case 3: leading percent before the escaped run, match and longer text     
+
+===================================================
+id    s like p escape '_'    
+6     1     
+7     0     
+
+===================================================
+    
+Case 4: ESCAPE %, match, longer text and a different escaped character     
+
+===================================================
+id    s like p escape '%'    
+8     1     
+9     0     
+10     0     
+
+===================================================
+    
+Case 5: doubled escape before the trailing escape, pattern ending in an escaped character     
+
+===================================================
+id    s like p escape '_'    
+11     1     
+12     1     
+
+===================================================
+    
+Case 6: trailing escape whose literal run has no escaped character     
+
+===================================================
+id    s like p escape '_'    
+13     1     
+14     1     
+
+===================================================
+    
+Case 7: LIKE as a WHERE condition, pattern from the column and a constant pattern     
+
+===================================================
+id    
+2     
+5     
+6     
+
+===================================================
+id    
+2     
+5     
+12     
+
+===================================================
+    
+Case 8: constant LIKE expressions in the select list     
+
+===================================================
+cast('a%b_' as varchar(16) collate binary) like  cast('a_%b_' as varchar(16) collate binary) escape '_'    _binary'a%b_' like _binary'a_%b_' escape '_'    
+1     1     
+
+===================================================
+0
