@@ -135,6 +135,61 @@ FROM (
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
 
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-4-01-03: INNER JOIN + ANTI JOIN, ON term reading two outer tables
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-4-01-03: INNER JOIN + ANTI JOIN, ON term reading two outer tables';
+
+DROP TABLE IF EXISTS tc, tb, ta;
+CREATE TABLE ta (ca INT, cb INT, cc INT);
+CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE tc (ca INT, cb INT);
+INSERT INTO ta VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, NULL, 4), (5, 5, 5), (6, 6, 6), (7, 1, 7);
+INSERT INTO tb VALUES (1, 1), (2, 20), (3, 3), (4, 4), (5, 50), (6, 6), (7, 70);
+INSERT INTO tc VALUES (1, 0), (1, 5), (1, 9), (2, 100), (NULL, 999), (5, 0), (6, 7);
+UPDATE STATISTICS ON ta, tb, tc;
+
+-- hash join
+evaluate 'hash join';
+SELECT /*+ RECOMPILE USE_HASH */ ta.ca
+FROM ta
+  JOIN tb ON tb.ca = ta.ca
+  ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
+ORDER BY 1;
+
+-- rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
+FROM (
+  SELECT /*+ USE_HASH */ ta.ca
+  FROM ta
+    JOIN tb ON tb.ca = ta.ca
+    ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
+  EXCEPT ALL
+  SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
+  FROM ta
+    JOIN tb ON tb.ca = ta.ca
+    ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
+) x;
+
+-- rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
+FROM (
+  SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
+  FROM ta
+    JOIN tb ON tb.ca = ta.ca
+    ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
+  EXCEPT ALL
+  SELECT /*+ USE_HASH */ ta.ca
+  FROM ta
+    JOIN tb ON tb.ca = ta.ca
+    ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
+) x;
+
+-- cleanup
+DROP TABLE IF EXISTS tc, tb, ta;
+
 -- =====================================================================================================================
 -- TC-4-02: ANTI hash join evaluates WHERE terms on unmatched outer rows
 -- =====================================================================================================================
