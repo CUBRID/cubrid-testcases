@@ -46,7 +46,9 @@
  *    Case 11: user KEYLIMIT with an offset: LEAST(count, 1) keeps the offset,
  *             so EXISTS holds only for keys with more entries than the offset,
  *             a merge that dropped the user limit would match every key
- *    Case 12: unique inner: memoize gives up (hit ratio 0), result unchanged
+ *    Case 12: unique inner, each of the 5000 probe keys comes four times: memoize
+ *             kept (the hit ratio is judged only from 60% of the budget, CBRD-27487),
+ *             result unchanged
  *    Case 13: memoize_memory_limit=0: falls back, no MEMOIZE line, result unchanged
  *    Case 14: partitioned inner: one memo across the partitions (CBRD-24541 shape)
  *    Case 15: partitioned outer x partitioned inner, a key present in two
@@ -205,7 +207,7 @@ drop table klim_outer;
 drop table klim_inner;
 
 
-evaluate 'Case 12: unique inner: memoize gives up (hit ratio 0), result unchanged';
+evaluate 'Case 12: unique inner, each of the 5000 probe keys comes four times: memoize kept (the hit ratio is judged only from 60% of the budget, CBRD-27487), result unchanged';
 select /*+ recompile parallel(0) USE_NL */ count(*) from subquery_big a where exists (select 1 from subquery_small where col1=a.col1);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select /*+ NO_UNNEST */ 1 from subquery_small where col1=a.col1);
