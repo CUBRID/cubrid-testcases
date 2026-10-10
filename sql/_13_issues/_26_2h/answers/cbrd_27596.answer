@@ -1,0 +1,628 @@
+===================================================
+0
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: subquery select list, also under an outer GROUP BY, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    
+8     
+
+===================================================
+count(*)    
+8     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+8     
+
+===================================================
+g    sum(a)    
+0     28     
+1     24     
+
+===================================================
+g    sum(a)    
+0     28     
+1     24     
+
+===================================================
+    
+Case 2: subquery aggregate, GROUP BY, HAVING, ORDER BY LIMIT, PARTITION BY, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select min([dba.f_pn](z.b)) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select min([dba.f_pn](z.b)) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+    
+Case 3: subquery key range, later NL table, hash join and UNION ALL, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.f_pn]( mod([dba.t_big].a, ?)))
+
+  rewritten query: (select z.b from [dba.t_small] z where z.a=[dba.f_pn]( mod([dba.t_big].a, ?)))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select z.b from [dba.t_small] z where z.a=[dba.f_pn]( mod([dba.t_big].a, ?))))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+    INDEX SCAN (y.pk_t_small_a) (key range: y.a=z.a)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a= mod([dba.t_big].a, ?)+? and y.a=z.a and [dba.f_pn](y.b)>?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select /*+ ORDERED USE_NL */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a= mod([dba.t_big].a, ?)+? and y.a=z.a and [dba.f_pn](y.b)>?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+count(*)    sum(a)    
+5     34     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+    
+Case 4: nested subquery, derived table and IN subquery inside the subquery, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (y.pk_t_small_a) (key range: y.a=z.a)
+
+  rewritten query: (select [dba.f_pn](y.b) from [dba.t_small] y where y.a=z.a)
+
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?, covered: true)
+
+  rewritten query: (select (select [dba.f_pn](y.b) from [dba.t_small] y where y.a=z.a) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select (select [dba.f_pn](y.b) from [dba.t_small] y where y.a=z.a) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+    
+Case 5: subquery in the outer select list or aggregate argument, row by row; result = no_parallel_scan     
+
+===================================================
+a    v    
+1     3     
+2     4     
+3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].a, (select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    v    
+1     3     
+2     4     
+3     2     
+
+===================================================
+a    v    
+1     3     
+2     4     
+3     2     
+
+===================================================
+max((select f_pn(z.b) from t_small z where z.a= mod(t_big.a, 3)+1))    sum(a)    
+4     55     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select max((select [dba.f_pn](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+max((select f_pn(z.b) from t_small z where z.a= mod(t_big.a, 3)+1))    sum(a)    
+4     55     
+
+===================================================
+g    m    count(*)    
+0     2     3     
+1     3     4     
+2     4     3     
+
+===================================================
+g    m    count(*)    
+0     2     3     
+1     3     4     
+2     4     3     
+
+===================================================
+    
+Case 6: key range of the inner table of an outer NL join, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_big)
+    INDEX SCAN (y.pk_t_small_a) (key range: y.a=[dba.f_pn]( mod([dba.t_big].a, ?)), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big], [dba.t_small] y where ([dba.t_big].a<=?) and y.a=[dba.f_pn]( mod([dba.t_big].a, ?))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+    
+Case 7: uncorrelated scalar subquery, with ROWNUM and with the select list; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    
+8     
+
+===================================================
+count(*)    
+8     
+
+===================================================
+a    f_pn(b)    
+3     4     
+
+===================================================
+a    f_pn(b)    
+3     4     
+
+===================================================
+    
+Case 8: the declared function in the same places keeps the parallel plans; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select [dba.f_pp](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select [dba.f_pp](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+max((select f_pp(z.b) from t_small z where z.a= mod(t_big.a, 3)+1))    sum(a)    
+4     55     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select [dba.f_pp](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select max((select [dba.f_pp](z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+max((select f_pp(z.b) from t_small z where z.a= mod(t_big.a, 3)+1))    sum(a)    
+4     55     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_big)
+    INDEX SCAN (y.pk_t_small_a) (key range: y.a=[dba.f_pp]( mod([dba.t_big].a, ?)), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big], [dba.t_small] y where ([dba.t_big].a<=?) and y.a=[dba.f_pp]( mod([dba.t_big].a, ?))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+    
+Case 9: subqueries without a function keep their parallel plans; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select z.b,  abs(z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+? order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (d?)
+
+  rewritten query: (select d?.a_? from (select z.b,  abs(z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+? order by ? for orderby_num()<= ?:? ) d? (a_?, a_?))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and ([dba.t_big].b>(select d?.a_? from (select z.b,  abs(z.b) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+? order by ? for orderby_num()<= ?:? ) d? (a_?, a_?)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_big)
+    INDEX SCAN (y.pk_t_small_a) (key range: y.a= abs( mod([dba.t_big].a, ?))+?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big], [dba.t_small] y where ([dba.t_big].a<= ?:? ) and y.a= abs( mod([dba.t_big].a, ?))+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum(t_big.a)    
+10     55     
+
+===================================================
+    
+Case 10: function in the predicate of the subquery first table, serial as before; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select z.b from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+? and [dba.f_pn](z.b)>?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select z.b from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+? and [dba.f_pn](z.b)>?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+0
+===================================================
+0
