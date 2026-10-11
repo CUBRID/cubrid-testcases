@@ -121,7 +121,7 @@ Trace Statistics:
 
 ===================================================
     
-high_ndv_numeric (NUMERIC, NDV=10000) - expect: no memoize     
+high_ndv_numeric (NUMERIC, NDV=10000) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)     
 
 ===================================================
 count(*)    
@@ -141,6 +141,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -169,7 +170,7 @@ Trace Statistics:
 
 ===================================================
     
-half_ndv_varchar (VARCHAR, NDV=49999) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.50001 duplicate ratio is irrelevant to the current runtime check)     
+half_ndv_varchar (VARCHAR, NDV=49999) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)     
 
 ===================================================
 count(*)    
@@ -189,11 +190,12 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
     
-third_ndv_varchar (VARCHAR, NDV=33333) - expect: no memoize (NDV exceeds the 1000-probe free-iteration limit; the 0.667 duplicate ratio is irrelevant to the current runtime check)     
+third_ndv_varchar (VARCHAR, NDV=33333) - expect: memoize enabled (its keys stay under 60% of the limit, so the hit ratio is never judged)     
 
 ===================================================
 count(*)    
@@ -213,6 +215,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.outer_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.inner_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
