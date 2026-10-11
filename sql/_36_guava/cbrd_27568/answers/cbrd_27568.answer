@@ -1,0 +1,188 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the reported query, SUM over the subquery; result = parallel(0)     
+
+===================================================
+count(*)    sum(o.v)    sum((select sum(s.v) from s where s.k<o.v))    
+3     3     13510     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.o)
+
+  rewritten query: select count(*), sum([dba.o].v), sum((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))) from [dba.o] [dba.o] where ([dba.o].v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+count(*)    sum(o.v)    sum((select sum(s.v) from s where s.k<o.v))    
+3     3     13510     
+
+===================================================
+    
+Case 2: MAX, MIN, AVG, COUNT and COUNT DISTINCT over the subquery; result = parallel(0)     
+
+===================================================
+max((select sum(s.v) from s where s.k<o.v))    min((select sum(s.v) from s where s.k<o.v))    avg((select sum(s.v) from s where s.k<o.v))    count((select sum(s.v) from s where s.k<o.v))    count(distinct (select sum(s.v) from s where s.k<o.v))    
+9010     4500     6755.0     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.o)
+
+  rewritten query: select max((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))), min((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))), avg((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))), count((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))), count(distinct (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))) from [dba.o] [dba.o] where ([dba.o].v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+max((select sum(s.v) from s where s.k<o.v))    min((select sum(s.v) from s where s.k<o.v))    avg((select sum(s.v) from s where s.k<o.v))    count((select sum(s.v) from s where s.k<o.v))    count(distinct (select sum(s.v) from s where s.k<o.v))    
+9010     4500     6755.0     2     2     
+
+===================================================
+    
+Case 3: JSON_OBJECTAGG with the subquery as its value operand; result = parallel(0)     
+
+===================================================
+json_extract(json_objectagg( cast(o.v as varchar(10)), (select sum(s.v) from s where s.k<o.v)), '$."0"', '$."1"', '$."2"')    
+[null,4500,9010]     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))
+
+  TABLE SCAN (dba.o)
+
+  rewritten query: select json_extract(json_objectagg( cast([dba.o].v as varchar(?)), (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<[dba.o].v))), '$."?"', '$."?"', '$."?"') from [dba.o] [dba.o] where ([dba.o].v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+json_extract(json_objectagg( cast(o.v as varchar(10)), (select sum(s.v) from s where s.k<o.v)), '$."0"', '$."1"', '$."2"')    
+[null,4500,9010]     
+
+===================================================
+    
+Case 4: the subquery in a derived table merged into the query; result = parallel(0)     
+
+===================================================
+count(*)    sum(t.x)    
+3     13510     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.s)
+
+  rewritten query: (select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<t.v))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*), sum((select sum([dba.s].v) from [dba.s] [dba.s] where ([dba.s].k<t.v))) from [dba.o] t where (t.v< ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(t.x)    
+3     13510     
+
+===================================================
+0
