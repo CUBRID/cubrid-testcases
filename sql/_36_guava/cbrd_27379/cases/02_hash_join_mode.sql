@@ -43,7 +43,7 @@
  *    20  TC-1-07-04  ta ANTI JOIN tb         outer input larger than the inner
  *
  *  TC-1-05 compares the two modes on the same tables by EXCEPT ALL in both directions. Both counts must be 0.
- *  CTP runs with test_mode=yes, so time, fetch and row values in "show trace" are masked.
+ *  CTP masks the numbers in a SHOW TRACE output, so time, fetch and row values are not compared.
  *  The trace asserts the presence of the SPLIT line, and of the parallel workers line on HASHJOIN or under PROBE.
  */
 

@@ -27,7 +27,7 @@
  *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
  *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
  *
- *  CTP runs with test_mode=yes, so the estimated rows (card) in a --@queryplan output are masked.
+ *  CTP masks the numbers in a --@queryplan output, so the estimated rows (card) are not compared.
  *  This file asserts the result rows and the plan shape. The estimate itself is not asserted here.
  */
 

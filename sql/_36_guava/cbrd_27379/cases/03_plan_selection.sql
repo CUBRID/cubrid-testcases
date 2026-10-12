@@ -22,7 +22,7 @@
  *    4   TC-2-01-04  EXISTS / NOT EXISTS subquery  index on tb.ca: no hint, USE_HASH, USE_HASH(tb)
  *    5   TC-2-01-05  EXISTS / NOT EXISTS subquery  no index on tb.ca: no hint, NO_USE_HASH, NO_USE_HASH(tb)
  *
- *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
+ *  CTP masks the numbers in a --@queryplan output, so cost and cardinality are not compared.
  *  Each step asserts the result rows and the plan: the join method, the join type and the scans.
  */
 

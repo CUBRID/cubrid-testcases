@@ -38,7 +38,7 @@
  *
  *  TC-1-03 and the two-column key cases of TC-1-04 compare the hash join result with the nested loop join result
  *  by EXCEPT ALL in both directions. Both counts must be 0. Each sub-case recreates its tables.
- *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
+ *  CTP masks the numbers in a --@queryplan output, so cost and cardinality are not compared.
  *  The plans of TC-1-01-03 to TC-1-01-06 assert that the unnested query runs as
  *  hash-join (semi join) / hash-join (anti join) and the NO_UNNEST query keeps its subquery.
  */
