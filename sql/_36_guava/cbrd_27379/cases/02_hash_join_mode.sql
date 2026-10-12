@@ -16,6 +16,29 @@
  *    TC-1-06: LEFT / RIGHT OUTER JOIN in the four modes
  *    TC-1-07: partitions without inner rows, and an outer input larger than the inner
  *
+ *  Sub-cases:
+ *    No  Sub-case    Query                   Case
+ *    1   TC-1-05-01  ta SEMI JOIN tb         SINGLE, PARALLEL_PROBE
+ *    2   TC-1-05-02  ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE
+ *    3   TC-1-05-03  tc SEMI JOIN td         PARTITION, PARALLEL
+ *    4   TC-1-05-04  tc ANTI JOIN td         PARTITION, PARALLEL
+ *    5   TC-1-05-05  ta SEMI JOIN tb         SINGLE, PARALLEL_PROBE, ON term on the outer table
+ *    6   TC-1-05-06  ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE, ON term on the outer table
+ *    7   TC-1-05-07  tc SEMI JOIN td         PARTITION, PARALLEL, ON term on the outer table
+ *    8   TC-1-05-08  tc ANTI JOIN td         PARTITION, PARALLEL, ON term on the outer table
+ *    9   TC-1-05-09  ta SEMI JOIN tb         SINGLE, PARALLEL_PROBE, ON term on both tables
+ *    10  TC-1-05-10  ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE, ON term on both tables
+ *    11  TC-1-05-11  tc SEMI JOIN td         PARTITION, PARALLEL, ON term on both tables
+ *    12  TC-1-05-12  tc ANTI JOIN td         PARTITION, PARALLEL, ON term on both tables
+ *    13  TC-1-06-01  ta LEFT OUTER JOIN tb   SINGLE, PARALLEL_PROBE
+ *    14  TC-1-06-02  ta RIGHT OUTER JOIN tb  SINGLE, PARALLEL_PROBE
+ *    15  TC-1-06-03  tc LEFT OUTER JOIN td   PARTITION, PARALLEL
+ *    16  TC-1-06-04  tc RIGHT OUTER JOIN td  PARTITION, PARALLEL
+ *    17  TC-1-07-01  tc SEMI JOIN te         PARTITION, PARALLEL, partitions without inner rows
+ *    18  TC-1-07-02  tc ANTI JOIN te         PARTITION, PARALLEL, partitions without inner rows
+ *    19  TC-1-07-03  ta SEMI JOIN tb         outer input larger than the inner
+ *    20  TC-1-07-04  ta ANTI JOIN tb         outer input larger than the inner
+ *
  *  TC-1-05 compares the two modes on the same tables by EXCEPT ALL in both directions. Both counts must be 0.
  *  CTP runs with test_mode=yes, so time, fetch and row values in "show trace" are masked.
  *  The trace asserts the presence of the SPLIT and parallel workers lines.
@@ -35,14 +58,14 @@ DROP TABLE IF EXISTS ta, tb, tc, td, te;
 --   Stored: 100001 rows, keys 1 .. 100000 with 1 row per key, and 1 NULL
 CREATE TABLE ta (ca CHAR(200));
 INSERT INTO ta
-WITH RECURSIVE cte (n) AS (
-  SELECT 1
-  UNION ALL
-  SELECT n + 1 FROM cte WHERE n < 400
-)
-SELECT LPAD (ROWNUM, 200, '0')
-FROM cte x, cte y
-WHERE ROWNUM <= 100000;
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 400
+  )
+  SELECT LPAD (ROWNUM, 200, '0')
+  FROM cte x, cte y
+  WHERE ROWNUM <= 100000;
 INSERT INTO ta VALUES (NULL);
 
 -- tb: 150000 rows of LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0'), and one NULL row
@@ -57,14 +80,14 @@ INSERT INTO ta VALUES (NULL);
 --   Stored: 150001 rows, 25000 keys 4 .. 100000 (multiples of 4) with 6 rows per key, and 1 NULL
 CREATE TABLE tb (ca CHAR(200));
 INSERT INTO tb
-WITH RECURSIVE cte (n) AS (
-  SELECT 1
-  UNION ALL
-  SELECT n + 1 FROM cte WHERE n < 400
-)
-SELECT LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0')
-FROM cte x, cte y
-WHERE ROWNUM <= 150000;
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 400
+  )
+  SELECT LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0')
+  FROM cte x, cte y
+  WHERE ROWNUM <= 150000;
 INSERT INTO tb VALUES (NULL);
 
 -- tc: 300000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row
@@ -76,14 +99,14 @@ INSERT INTO tb VALUES (NULL);
 --   Stored: 300001 rows, keys 1 .. 300000 with 1 row per key, and 1 NULL
 CREATE TABLE tc (ca CHAR(200));
 INSERT INTO tc
-WITH RECURSIVE cte (n) AS (
-  SELECT 1
-  UNION ALL
-  SELECT n + 1 FROM cte WHERE n < 600
-)
-SELECT LPAD (ROWNUM, 200, '0')
-FROM cte x, cte y
-WHERE ROWNUM <= 300000;
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 600
+  )
+  SELECT LPAD (ROWNUM, 200, '0')
+  FROM cte x, cte y
+  WHERE ROWNUM <= 300000;
 INSERT INTO tc VALUES (NULL);
 
 -- td: 300000 rows of LPAD (MOD (ROWNUM - 1, 75000) * 4 + 4, 200, '0'), and one NULL row
@@ -98,14 +121,14 @@ INSERT INTO tc VALUES (NULL);
 --   Stored: 300001 rows, 75000 keys 4 .. 300000 (multiples of 4) with 4 rows per key, and 1 NULL
 CREATE TABLE td (ca CHAR(200));
 INSERT INTO td
-WITH RECURSIVE cte (n) AS (
-  SELECT 1
-  UNION ALL
-  SELECT n + 1 FROM cte WHERE n < 600
-)
-SELECT LPAD (MOD (ROWNUM - 1, 75000) * 4 + 4, 200, '0')
-FROM cte x, cte y
-WHERE ROWNUM <= 300000;
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 600
+  )
+  SELECT LPAD (MOD (ROWNUM - 1, 75000) * 4 + 4, 200, '0')
+  FROM cte x, cte y
+  WHERE ROWNUM <= 300000;
 INSERT INTO td VALUES (NULL);
 
 -- te: 300000 rows of LPAD (2, 200, '0'), and one NULL row
@@ -116,14 +139,14 @@ INSERT INTO td VALUES (NULL);
 --   Stored: 300001 rows, key 2 in 300000 rows, and 1 NULL
 CREATE TABLE te (ca CHAR(200));
 INSERT INTO te
-WITH RECURSIVE cte (n) AS (
-  SELECT 1
-  UNION ALL
-  SELECT n + 1 FROM cte WHERE n < 600
-)
-SELECT LPAD (2, 200, '0')
-FROM cte x, cte y
-WHERE ROWNUM <= 300000;
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 600
+  )
+  SELECT LPAD (2, 200, '0')
+  FROM cte x, cte y
+  WHERE ROWNUM <= 300000;
 INSERT INTO te VALUES (NULL);
 
 UPDATE STATISTICS ON ta, tb, tc, td, te WITH FULLSCAN;

@@ -17,6 +17,26 @@
  *             the NL join checks them in insertion order, the hash join checks the last inserted row first
  *    TC-4-04: path expression in the WHERE, the select list or the left operand of an [NOT] EXISTS / [NOT] IN subquery
  *
+ *  Sub-cases:
+ *    No  Sub-case    Query                               Case
+ *    1   TC-4-01-01  ta ANTI JOIN tb ANTI JOIN tc        outer-only ON terms
+ *    2   TC-4-01-02  ta LEFT OUTER JOIN tc ANTI JOIN tb  outer-only ON term
+ *    3   TC-4-01-03  ta JOIN tb ANTI JOIN tc             ON term reading ta and tb
+ *    4   TC-4-02-01  ta LEFT OUTER JOIN tc ANTI JOIN tb  WHERE term tc.cb IS NULL
+ *    5   TC-4-02-02  ta ANTI JOIN tb                     WHERE term with a host variable, true and false
+ *    6   TC-4-02-03  ta ANTI JOIN tb                     WHERE term with an uncorrelated subquery, true and false
+ *    7   TC-4-03-01  ta JOIN tb SEMI JOIN tc             tc order (1, 10), (1, 20)
+ *    8   TC-4-03-02  ta JOIN tb ANTI JOIN tc             tc order (1, 10), (1, 20)
+ *    9   TC-4-03-03  ta JOIN tb SEMI JOIN tc             tc order (1, 20), (1, 10)
+ *    10  TC-4-03-04  ta JOIN tb ANTI JOIN tc             tc order (1, 20), (1, 10)
+ *    11  TC-4-04-01  EXISTS subquery                     path expression in the WHERE
+ *    12  TC-4-04-02  NOT EXISTS subquery                 path expression in the WHERE
+ *    13  TC-4-04-03  IN subquery                         path expression in the select list
+ *    14  TC-4-04-04  IN subquery                         path expression in the left operand
+ *    15  TC-4-04-05  NOT IN subquery                     path expression in the left operand
+ *    16  TC-4-04-06  EXISTS subquery                     path expression in the select list
+ *    17  TC-4-04-07  NOT IN subquery                     path expression in the select list
+ *
  *  TC-4-01, TC-4-02-01 and TC-4-03 compare the hash join result with the nested loop join result
  *  by EXCEPT ALL in both directions. Both counts must be 0.
  */
@@ -32,11 +52,13 @@ evaluate 'TC-4-01-01: two ANTI JOINs';
 
 DROP TABLE IF EXISTS tc, tb, ta;
 CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE tb (ca INT);
+CREATE TABLE tc (ca INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL), (4, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100), (4, 5);
-INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100), (4, 0);
+INSERT INTO tb VALUES (1), (1), (1), (2), (4);
+INSERT INTO tc VALUES (1), (2), (3), (4);
+CREATE INDEX i_tb_ca ON tb (ca);
+CREATE INDEX i_tc_ca ON tc (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -87,12 +109,14 @@ DROP TABLE IF EXISTS tc, tb, ta;
 evaluate 'TC-4-01-02: LEFT OUTER JOIN + ANTI JOIN';
 
 DROP TABLE IF EXISTS tc, tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-CREATE TABLE tc (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
+CREATE TABLE ta (ca INT, cc INT);
+CREATE TABLE tb (ca INT);
+CREATE TABLE tc (ca INT);
+INSERT INTO ta VALUES (1, 1), (2, 2), (3, NULL);
+INSERT INTO tb VALUES (1), (1), (1), (2);
+INSERT INTO tc VALUES (1), (2), (3);
+CREATE INDEX i_tc_ca ON tc (ca);
+CREATE INDEX i_tb_ca ON tb (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -145,10 +169,12 @@ evaluate 'TC-4-01-03: INNER JOIN + ANTI JOIN, ON term reading two outer tables';
 DROP TABLE IF EXISTS tc, tb, ta;
 CREATE TABLE ta (ca INT, cb INT, cc INT);
 CREATE TABLE tb (ca INT, cb INT);
-CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE tc (ca INT);
 INSERT INTO ta VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, NULL, 4), (5, 5, 5), (6, 6, 6), (7, 1, 7);
 INSERT INTO tb VALUES (1, 1), (2, 20), (3, 3), (4, 4), (5, 50), (6, 6), (7, 70);
-INSERT INTO tc VALUES (1, 0), (1, 5), (1, 9), (2, 100), (NULL, 999), (5, 0), (6, 7);
+INSERT INTO tc VALUES (1), (1), (1), (2), (NULL), (5), (6);
+CREATE INDEX i_tb_ca ON tb (ca);
+CREATE INDEX i_tc_ca ON tc (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -203,12 +229,14 @@ DROP TABLE IF EXISTS tc, tb, ta;
 evaluate 'TC-4-02-01: LEFT OUTER JOIN + ANTI JOIN, WHERE filters the LEFT OUTER JOIN result';
 
 DROP TABLE IF EXISTS tc, tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
 CREATE TABLE tc (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
+INSERT INTO ta VALUES (1), (2), (3);
+INSERT INTO tb VALUES (1), (1), (1), (2);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
+CREATE INDEX i_tc_ca ON tc (ca);
+CREATE INDEX i_tb_ca ON tb (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -273,10 +301,10 @@ DROP TABLE IF EXISTS tc, tb, ta;
 evaluate 'TC-4-02-02: ANTI JOIN, host variable term';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+INSERT INTO tb VALUES (1), (1), (1), (2);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
@@ -299,12 +327,12 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-4-02-03: ANTI JOIN, uncorrelated subquery term';
 
 DROP TABLE IF EXISTS tc, tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-CREATE TABLE tc (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+CREATE TABLE tc (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+INSERT INTO tb VALUES (1), (1), (1), (2);
+INSERT INTO tc VALUES (1), (2), (3);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -344,7 +372,6 @@ INSERT INTO ta VALUES (0, 0), (1, 20), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (
 INSERT INTO tb VALUES (0, 0, 0), (1, 1, 0), (2, 2, 0), (3, 3, 0), (4, 4, 0), (5, 5, 0), (6, 6, 0), (7, 7, 0), (8, 8, 0), (9, 9, 0), (10, 1, 0);
 INSERT INTO tc VALUES (1, 10);
 INSERT INTO tc VALUES (1, 20);
-CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
 
@@ -403,7 +430,6 @@ INSERT INTO ta VALUES (0, 0), (1, 20), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (
 INSERT INTO tb VALUES (0, 0, 0), (1, 1, 0), (2, 2, 0), (3, 3, 0), (4, 4, 0), (5, 5, 0), (6, 6, 0), (7, 7, 0), (8, 8, 0), (9, 9, 0), (10, 1, 0);
 INSERT INTO tc VALUES (1, 10);
 INSERT INTO tc VALUES (1, 20);
-CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
 
@@ -462,7 +488,6 @@ INSERT INTO ta VALUES (0, 0), (1, 20), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (
 INSERT INTO tb VALUES (0, 0, 0), (1, 1, 0), (2, 2, 0), (3, 3, 0), (4, 4, 0), (5, 5, 0), (6, 6, 0), (7, 7, 0), (8, 8, 0), (9, 9, 0), (10, 1, 0);
 INSERT INTO tc VALUES (1, 20);
 INSERT INTO tc VALUES (1, 10);
-CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
 
@@ -521,7 +546,6 @@ INSERT INTO ta VALUES (0, 0), (1, 20), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (
 INSERT INTO tb VALUES (0, 0, 0), (1, 1, 0), (2, 2, 0), (3, 3, 0), (4, 4, 0), (5, 5, 0), (6, 6, 0), (7, 7, 0), (8, 8, 0), (9, 9, 0), (10, 1, 0);
 INSERT INTO tc VALUES (1, 20);
 INSERT INTO tc VALUES (1, 10);
-CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
 
@@ -577,18 +601,15 @@ DROP TABLE IF EXISTS tc, tb, ta;
 evaluate 'TC-4-04-01: WHERE of an EXISTS subquery';
 
 DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+CREATE TABLE tc (cb INT) DONT_REUSE_OID;
+CREATE TABLE tb (ca INT, cr tc) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT) DONT_REUSE_OID;
+INSERT INTO tc VALUES (100), (200);
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 100;
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 200;
+INSERT INTO tb (ca, cr) VALUES (2, NULL);
+INSERT INTO tb (ca, cr) SELECT 3, c FROM tc c WHERE c.cb = 100;
+INSERT INTO ta VALUES (1), (2), (3), (4);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -609,18 +630,15 @@ DROP TABLE IF EXISTS ta, tb, tc;
 evaluate 'TC-4-04-02: WHERE of a NOT EXISTS subquery';
 
 DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+CREATE TABLE tc (cb INT) DONT_REUSE_OID;
+CREATE TABLE tb (ca INT, cr tc) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT) DONT_REUSE_OID;
+INSERT INTO tc VALUES (100), (200);
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 100;
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 200;
+INSERT INTO tb (ca, cr) VALUES (2, NULL);
+INSERT INTO tb (ca, cr) SELECT 3, c FROM tc c WHERE c.cb = 100;
+INSERT INTO ta VALUES (1), (2), (3), (4);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -641,18 +659,15 @@ DROP TABLE IF EXISTS ta, tb, tc;
 evaluate 'TC-4-04-03: select list of an IN subquery';
 
 DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+CREATE TABLE tc (cb INT) DONT_REUSE_OID;
+CREATE TABLE tb (ca INT, cr tc) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT, cb INT) DONT_REUSE_OID;
+INSERT INTO tc VALUES (100), (200);
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 100;
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 200;
+INSERT INTO tb (ca, cr) VALUES (2, NULL);
+INSERT INTO tb (ca, cr) SELECT 3, c FROM tc c WHERE c.cb = 100;
+INSERT INTO ta VALUES (1, 100), (2, 200), (3, 7), (4, 0);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -672,21 +687,16 @@ DROP TABLE IF EXISTS ta, tb, tc;
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-04-04: left operand of IN';
 
-DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+DROP TABLE IF EXISTS ta, tb;
+CREATE TABLE tb (ca INT, cb INT) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT, cr tb) DONT_REUSE_OID;
+INSERT INTO tb VALUES (1, 5), (1, 15), (2, 100), (3, 7);
+INSERT INTO ta (ca, cr) SELECT 1, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
+INSERT INTO ta (ca, cr) SELECT 2, b FROM tb b WHERE b.ca = 2;
+INSERT INTO ta (ca, cr) SELECT 3, b FROM tb b WHERE b.ca = 3;
+INSERT INTO ta (ca, cr) VALUES (4, NULL);
 
-UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-4-04-04-01: IN left operand, result and plan
 evaluate 'TC-4-04-04-01: IN left operand, result and plan';
@@ -697,30 +707,25 @@ WHERE ta.cr.cb /* path expression */ IN (SELECT tb.cb FROM tb WHERE tb.ca = ta.c
 ORDER BY 1;
 
 -- cleanup
-DROP TABLE IF EXISTS ta, tb, tc;
+DROP TABLE IF EXISTS ta, tb;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-4-04-05: left operand of NOT IN
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-04-05: left operand of NOT IN';
 
-DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
+DROP TABLE IF EXISTS ta, tb;
+CREATE TABLE tb (ca INT, cb INT) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT, cr tb) DONT_REUSE_OID;
+INSERT INTO tb VALUES (1, 5), (1, 15), (2, 100), (3, 7);
+INSERT INTO ta (ca, cr) SELECT 1, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
+INSERT INTO ta (ca, cr) SELECT 2, b FROM tb b WHERE b.ca = 2;
+INSERT INTO ta (ca, cr) SELECT 3, b FROM tb b WHERE b.ca = 3;
 -- ta 5 references tb (1, 15) instead of NULL, unlike ta 4 of TC-4-04-04:
 -- no tb row has ca 5, so NOT IN is true and ta 5 is the row in the result
-INSERT INTO ta (ca, cb, cr) SELECT 5, 0, b FROM tb b WHERE b.ca = 1 AND b.cb = 15;
+INSERT INTO ta (ca, cr) SELECT 5, b FROM tb b WHERE b.ca = 1 AND b.cb = 15;
 
-UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-4-04-05-01: NOT IN left operand, result and plan
 evaluate 'TC-4-04-05-01: NOT IN left operand, result and plan';
@@ -731,7 +736,7 @@ WHERE ta.cr.cb /* path expression */ NOT IN (SELECT tb.cb FROM tb WHERE tb.ca = 
 ORDER BY 1;
 
 -- cleanup
-DROP TABLE IF EXISTS ta, tb, tc;
+DROP TABLE IF EXISTS ta, tb;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-4-04-06: select list of an EXISTS subquery
@@ -739,18 +744,15 @@ DROP TABLE IF EXISTS ta, tb, tc;
 evaluate 'TC-4-04-06: select list of an EXISTS subquery';
 
 DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+CREATE TABLE tc (cb INT) DONT_REUSE_OID;
+CREATE TABLE tb (ca INT, cr tc) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT) DONT_REUSE_OID;
+INSERT INTO tc VALUES (100), (200);
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 100;
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 200;
+INSERT INTO tb (ca, cr) VALUES (2, NULL);
+INSERT INTO tb (ca, cr) SELECT 3, c FROM tc c WHERE c.cb = 100;
+INSERT INTO ta VALUES (1), (2), (3), (4);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -771,18 +773,15 @@ DROP TABLE IF EXISTS ta, tb, tc;
 evaluate 'TC-4-04-07: select list of a NOT IN subquery';
 
 DROP TABLE IF EXISTS ta, tb, tc;
-CREATE TABLE tc (ca INT, cb INT) DONT_REUSE_OID;
-CREATE TABLE tb (ca INT, cb INT, cr tc) DONT_REUSE_OID;
-CREATE TABLE ta (ca INT, cb INT, cr tb) DONT_REUSE_OID;
-INSERT INTO tc VALUES (1, 100), (2, 200);
-INSERT INTO tb (ca, cb, cr) SELECT 1, 5, c FROM tc c WHERE c.ca = 1;
-INSERT INTO tb (ca, cb, cr) SELECT 1, 15, c FROM tc c WHERE c.ca = 2;
-INSERT INTO tb (ca, cb, cr) VALUES (2, 100, NULL);
-INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
-INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
-INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
-INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
-INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
+CREATE TABLE tc (cb INT) DONT_REUSE_OID;
+CREATE TABLE tb (ca INT, cr tc) DONT_REUSE_OID;
+CREATE TABLE ta (ca INT, cb INT) DONT_REUSE_OID;
+INSERT INTO tc VALUES (100), (200);
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 100;
+INSERT INTO tb (ca, cr) SELECT 1, c FROM tc c WHERE c.cb = 200;
+INSERT INTO tb (ca, cr) VALUES (2, NULL);
+INSERT INTO tb (ca, cr) SELECT 3, c FROM tc c WHERE c.cb = 100;
+INSERT INTO ta VALUES (1, 100), (2, 200), (3, 7), (4, 0);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 

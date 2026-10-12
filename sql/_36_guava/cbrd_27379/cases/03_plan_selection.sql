@@ -14,6 +14,14 @@
  *    TC-2-01-05:       EXISTS / NOT EXISTS without an index on tb.ca, without a hint and with NO_USE_HASH
  *                      in the outer query, NO_USE_HASH or NO_USE_HASH(tb) in the subquery
  *
+ *  Sub-cases:
+ *    No  Sub-case    Query                         Case
+ *    1   TC-2-01-01  ta SEMI JOIN tb               USE_HASH, NO_USE_HASH
+ *    2   TC-2-01-02  ta ANTI JOIN tb               USE_HASH, NO_USE_HASH
+ *    3   TC-2-01-03  NOT IN subquery               USE_HASH
+ *    4   TC-2-01-04  EXISTS / NOT EXISTS subquery  index on tb.ca: no hint, USE_HASH, USE_HASH(tb)
+ *    5   TC-2-01-05  EXISTS / NOT EXISTS subquery  no index on tb.ca: no hint, NO_USE_HASH, NO_USE_HASH(tb)
+ *
  *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
  *  The plan lines assert the join method and join type.
  */
@@ -28,10 +36,10 @@
 evaluate 'TC-2-01-01: SEMI JOIN';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+INSERT INTO tb VALUES (1), (1), (1), (2);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
@@ -58,10 +66,10 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-02: ANTI JOIN';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+INSERT INTO tb VALUES (1), (1), (1), (2);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
@@ -111,10 +119,10 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-04: index on tb.ca, USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT, cb INT);
-CREATE TABLE tb (ca INT, cb INT);
-INSERT INTO ta SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 2000;
-INSERT INTO tb SELECT MOD (ROWNUM, 500), ROWNUM FROM db_class a, db_class b LIMIT 2000;
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta SELECT ROWNUM FROM db_class a, db_class b LIMIT 2000;
+INSERT INTO tb SELECT MOD (ROWNUM, 500) FROM db_class a, db_class b LIMIT 2000;
 CREATE INDEX i_tb_ca ON tb (ca);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
@@ -184,10 +192,10 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-05: no index on tb.ca, NO_USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT, cb INT);
-CREATE TABLE tb (ca INT, cb INT);
-INSERT INTO ta SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 2000;
-INSERT INTO tb SELECT MOD (ROWNUM, 500), ROWNUM FROM db_class a, db_class b LIMIT 2000;
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta SELECT ROWNUM FROM db_class a, db_class b LIMIT 2000;
+INSERT INTO tb SELECT MOD (ROWNUM, 500) FROM db_class a, db_class b LIMIT 2000;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
