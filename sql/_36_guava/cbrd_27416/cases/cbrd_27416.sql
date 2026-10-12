@@ -8,17 +8,17 @@ create user u_mem groups cub_select_catalog;
 create table t (a int);
 
 call login('u_mem', '') on class db_user;
--- 1. select on dba.t as u_mem: error -494
+-- 1. u_mem cannot SELECT dba.t
 select * from dba.t;
--- 2. select on _db_class as u_mem: error -494
+-- 2. u_mem cannot SELECT the catalog class _db_class
 select count(*) from _db_class;
 
 call login('dba', '') on class db_user;
--- 3. drop user cub_select_catalog: error -169
+-- 3. cub_select_catalog cannot be dropped
 drop user cub_select_catalog;
--- 4. alter user cub_select_catalog login: error -1378
+-- 4. cub_select_catalog cannot be made loginable
 alter user cub_select_catalog login;
--- 5. login as cub_select_catalog: error -1369
+-- 5. no one can log in as cub_select_catalog
 call login('cub_select_catalog', '') on class db_user;
 
 drop table t;
