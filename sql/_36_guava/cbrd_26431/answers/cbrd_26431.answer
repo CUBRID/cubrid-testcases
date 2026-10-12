@@ -1,0 +1,325 @@
+===================================================
+0
+===================================================
+0
+===================================================
+16696
+===================================================
+0
+===================================================
+    
+Case 1: RECOMPILE hint - count(alias) on expression alias (parallel path)     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count((x.col?+x.col?)), count((x.col?+x.col?)), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 2: RECOMPILE parallel(0) on outer query (parallel)     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ PARALLEL(?) */ count((x.col?+x.col?)), count((x.col?+x.col?)), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 3: RECOMPILE parallel(0) inside subquery (serial path)     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ PARALLEL(?) */ count((x.col?+x.col?)), count((x.col?+x.col?)), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: different arithmetic expression (multiplication)     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count((x.col?*?)), count((x.col?*?)), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 5: mixed expression and plain column aliases     
+
+===================================================
+count(x.s)    count(x.c)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count((x.col?+x.col?)), count(x.col?), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 6: other aggregates on expression alias - SUM and AVG     
+
+===================================================
+sum(x.s)    avg(x.s)    
+6     2.0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select sum((x.col?+?)), avg((x.col?+?)) from [dba.tbl] x where (x.col?<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 7: nested subquery with expression alias     
+
+===================================================
+count(y.v)    
+16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (y)
+
+  rewritten query: select count(((y.col?+y.col?)+?)) from [dba.tbl] y
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 8: NULL-producing expression alias - COUNT skips NULLs correctly     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16695     16695     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count((case when x.col?=? then null else x.col?+x.col? end)), count((case when x.col?=? then null else x.col?+x.col? end)), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 9: simple column alias control - no arithmetic expression     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count(x.col?), count(x.col?), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 10: BIGINT expression alias under parallel scan     
+
+===================================================
+count(x.s)    count(s)    count(*)    
+16696     16696     16696     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count(( cast(x.col? as bigint)* cast(? as bigint))), count(( cast(x.col? as bigint)* cast(? as bigint))), count(*) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 11: NUMERIC(38,10) expression alias under parallel scan     
+
+===================================================
+count(x.s)    sum(x.s)    
+3     2.000000000000000000000000000000000000000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count(( cast(x.col? as numeric(?,?))/ cast(? as numeric))), sum(( cast(x.col? as numeric(?,?))/ cast(? as numeric))) from [dba.tbl] x where (x.col?<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 12: GROUP BY on expression alias, count(expr) per group (parallel list-gather path)     
+
+===================================================
+g    count(x.s)    
+0     4174     
+1     4174     
+2     4174     
+3     4174     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (x)
+
+  rewritten query: select (x.col? mod ?), count((x.col?+x.col?)) from [dba.tbl] x group by (x.col? mod ?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 13: count(distinct expression alias)     
+
+===================================================
+count(distinct x.s)    
+100     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select count(distinct (x.col? mod ?)) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+    
+Case 14: MIN and MAX on expression alias under parallel scan     
+
+===================================================
+min(x.s)    max(x.s)    
+2     33392     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select min((x.col?+x.col?)), max((x.col?+x.col?)) from [dba.tbl] x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+0
