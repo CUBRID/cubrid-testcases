@@ -1,0 +1,118 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+20000
+===================================================
+10000
+===================================================
+0
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+    
+[1] selective non-covering predicate: iscan on i_ic_fact_grp     
+
+===================================================
+count(pad)    
+400     
+
+Query plan:
+iscan
+    class: ic_fact node[?]
+    index: i_ic_fact_grp term[?]
+    cost:  ? card ?
+Query stmt:
+select count(ic_fact.pad) from ic_fact ic_fact where ic_fact.grp= ?:? 
+===================================================
+    
+[2] non-selective predicate: sscan     
+
+===================================================
+count(pad)    
+16000     
+
+Query plan:
+sscan
+    class: ic_fact node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(ic_fact.pad) from ic_fact ic_fact where (ic_fact.grp>= ?:?  and ic_fact.grp<= ?:? )
+===================================================
+    
+[3] NL join: idx-join with outer sscan ic_dim and inner iscan ic_fact (i_ic_fact_dim)     
+
+===================================================
+count(ft.pad)    
+400     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: dm node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ft node[?]
+               index: i_ic_fact_dim term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(ft.pad) from ic_dim dm, ic_fact ft where dm.id=ft.dim_id and dm.grp= ?:? 
+===================================================
+    
+[4] chain dim -> fact -> sub: inner iscan i_ic_fact_dim then inner iscan i_ic_sub_fact     
+
+===================================================
+count(sb.pad)    
+400     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: dm node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: ft node[?]
+                          index: i_ic_fact_dim term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: sb node[?]
+               index: i_ic_sub_fact term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(sb.pad) from ic_dim dm, ic_fact ft, ic_sub sb where dm.id=ft.dim_id and ft.id=sb.fact_id and dm.grp= ?:? 
+===================================================
+0
