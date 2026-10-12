@@ -289,14 +289,12 @@ Query plan:
 temp(order by)
     subplan: hash-join (anti join)
                  edge:  term[?]
-                 outer: iscan
+                 outer: sscan
                             class: ta node[?]
-                            index: pk_ta_ca 
                             cost:  ? card ?
                  inner: sscan
                             class: tb node[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -319,15 +317,15 @@ temp(distinct)
 Query stmt:
 (select /*+ NO_UNNEST */ distinct tb.ca from tb tb)
 Query plan:
-iscan
-    class: ta node[?]
-    index: pk_ta_ca 
-    sargs: term[?]
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select ta.ca from ta ta where ta.cb not in (select /*+ NO_UNNEST */ distinct tb.ca from tb tb) order by ?
-/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

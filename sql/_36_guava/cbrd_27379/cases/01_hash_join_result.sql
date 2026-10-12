@@ -39,8 +39,8 @@
  *  TC-1-03 and the two-column key cases of TC-1-04 compare the hash join result with the nested loop join result
  *  by EXCEPT ALL in both directions. Both counts must be 0. Each sub-case recreates its tables.
  *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
- *  The plan lines of TC-1-01-03 to TC-1-01-06 assert the join method and join type
- *  (hash-join (semi join) / hash-join (anti join)).
+ *  The plans of TC-1-01-03 to TC-1-01-06 assert that the unnested query runs as
+ *  hash-join (semi join) / hash-join (anti join) and the NO_UNNEST query keeps its subquery.
  */
 
 -- =====================================================================================================================
@@ -197,7 +197,7 @@ evaluate 'TC-1-01-06: NOT IN subquery';
 -- NOT IN is unnested only when both join columns are NOT NULL or PRIMARY KEY,
 -- so this sub-case has neither NULL keys nor duplicate inner keys
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT PRIMARY KEY, cb INT NOT NULL);
+CREATE TABLE ta (ca INT, cb INT NOT NULL);
 CREATE TABLE tb (ca INT PRIMARY KEY);
 INSERT INTO ta VALUES (1, 1000), (2, 2000), (3, 1000), (4, 9999), (5, 1000);
 INSERT INTO tb VALUES (1000), (2000);
@@ -276,12 +276,12 @@ DROP TABLE IF EXISTS tb, ta;
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-03: SEMI JOIN, empty outer table';
 
-DROP TABLE IF EXISTS ta, tb;
-CREATE TABLE tb (ca INT);
+DROP TABLE IF EXISTS tb, ta;
 CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
 INSERT INTO tb VALUES (1), (1), (1), (2);
 
-UPDATE STATISTICS ON tb, ta WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-1-02-03-01: hash join
 evaluate 'TC-1-02-03-01: hash join';
@@ -291,19 +291,19 @@ FROM ta
 ORDER BY 1;
 
 -- cleanup
-DROP TABLE IF EXISTS ta, tb;
+DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-04: ANTI JOIN, empty outer table
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-04: ANTI JOIN, empty outer table';
 
-DROP TABLE IF EXISTS ta, tb;
-CREATE TABLE tb (ca INT);
+DROP TABLE IF EXISTS tb, ta;
 CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
 INSERT INTO tb VALUES (1), (1), (1), (2);
 
-UPDATE STATISTICS ON tb, ta WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-1-02-04-01: hash join
 evaluate 'TC-1-02-04-01: hash join';
@@ -313,7 +313,7 @@ FROM ta
 ORDER BY 1;
 
 -- cleanup
-DROP TABLE IF EXISTS ta, tb;
+DROP TABLE IF EXISTS tb, ta;
 
 -- =====================================================================================================================
 -- TC-1-03: ON clause with terms other than the equi-join term
@@ -351,7 +351,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > ta.cb AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- TC-1-03-01-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-03-01-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -364,7 +364,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > ta.cb AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -401,7 +401,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > ta.cb AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- TC-1-03-02-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-03-02-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -414,7 +414,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > ta.cb AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -451,7 +451,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > 20
-) x;
+) r;
 
 -- TC-1-03-03-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-03-03-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -464,7 +464,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > 20
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -501,7 +501,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > 20
-) x;
+) r;
 
 -- TC-1-03-04-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-03-04-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -514,7 +514,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > 20
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -544,7 +544,7 @@ FROM (
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca
   WHERE ROWNUM <= 1
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -570,7 +570,7 @@ FROM (
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca
   LIMIT 1
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -646,7 +646,7 @@ evaluate 'TC-1-04-05-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca, ta.cb
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-ORDER BY 1 NULLS FIRST, 2 NULLS FIRST;
+ORDER BY 1, 2;
 
 -- TC-1-04-05-02: rows in the hash join result EXCEPT ALL the NL join result
 evaluate 'TC-1-04-05-02: rows in the hash join result EXCEPT ALL the NL join result';
@@ -659,7 +659,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, ta.cb
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-) x;
+) r;
 
 -- TC-1-04-05-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-04-05-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -672,7 +672,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca, ta.cb
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -696,7 +696,7 @@ evaluate 'TC-1-04-06-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca, ta.cb
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-ORDER BY 1 NULLS FIRST, 2 NULLS FIRST;
+ORDER BY 1, 2;
 
 -- TC-1-04-06-02: rows in the hash join result EXCEPT ALL the NL join result
 evaluate 'TC-1-04-06-02: rows in the hash join result EXCEPT ALL the NL join result';
@@ -709,7 +709,7 @@ FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, ta.cb
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-) x;
+) r;
 
 -- TC-1-04-06-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-1-04-06-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -722,7 +722,7 @@ FROM (
   SELECT /*+ USE_HASH */ ta.ca, ta.cb
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb = ta.cb
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;

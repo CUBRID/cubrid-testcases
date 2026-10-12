@@ -122,9 +122,9 @@ INSERT INTO ta
 CREATE TABLE tb (ca INT);
 INSERT INTO tb SELECT ca FROM ta WHERE ca <= 100;
 
--- tc: 10000 rows, a copy of ta
+-- tc: 10000 rows, a copy of ta, read only by the WHERE term (SELECT MAX (ca) FROM tc) = 5
 --   1, 2, ..., 10000
---   Stored: 10000 rows, keys 1 .. 10000
+--   Stored: 10000 rows, keys 1 .. 10000, so MAX (ca) is 10000 and the WHERE term is false
 CREATE TABLE tc (ca INT);
 INSERT INTO tc SELECT ca FROM ta;
 
@@ -261,7 +261,7 @@ DROP TABLE IF EXISTS tb, ta, td;
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-02: ANTI JOIN, inner input tc';
 
-DROP TABLE IF EXISTS tc, tb, ta, td;
+DROP TABLE IF EXISTS tc, ta, td;
 
 -- td: 10000 rows of x.n * 100 + y.n + 1, x.n and y.n = 0 .. 99
 --   x.n 0,  y.n 0   -> 1
@@ -285,17 +285,11 @@ INSERT INTO td
 CREATE TABLE ta (ca INT);
 INSERT INTO ta SELECT MOD (ca, 100) FROM td WHERE ca <= 1000;
 
--- tb: 1000 rows of MOD (ca, 10) of td where ca <= 1000, 100 rows per key 0 .. 9
---   1, 2, ..., 9, 0, 1, ..., 0
---   Stored: 1000 rows, 10 keys 0 .. 9 with 100 rows per key
-CREATE TABLE tb (ca INT);
-INSERT INTO tb SELECT MOD (ca, 10) FROM td WHERE ca <= 1000;
-
--- tc: 10 rows, one per distinct key of tb
+-- tc: 10 rows of the distinct MOD (ca, 10) of td where ca <= 1000, the keys of tb of TC-3-03-01
 --   0, 1, ..., 9
 --   Stored: 10 rows, keys 0 .. 9
 CREATE TABLE tc (ca INT);
-INSERT INTO tc SELECT DISTINCT ca FROM tb;
+INSERT INTO tc SELECT DISTINCT MOD (ca, 10) FROM td WHERE ca <= 1000;
 
 UPDATE STATISTICS ON ta, tc WITH FULLSCAN;
 
@@ -307,7 +301,7 @@ FROM ta
   ANTI JOIN tc ON tc.ca = ta.ca;
 
 -- cleanup
-DROP TABLE IF EXISTS tc, tb, ta, td;
+DROP TABLE IF EXISTS tc, ta, td;
 
 -- =====================================================================================================================
 -- TC-3-04: an ON term that does not read the inner input is decided once per outer row
@@ -516,7 +510,7 @@ INSERT INTO ta
 --   m 4     -> (NULL, 4)
 --   ...
 --   m 9999  -> (99, 9)
---   Stored: 10000 rows, a is NULL in the 2500 rows where MOD (m, 4) = 0
+--   Stored: 10000 rows, a is NULL in the 2500 rows of m 0, 4, 8, ...
 CREATE TABLE tb (a INT, b INT, FOREIGN KEY (a, b) REFERENCES ta (a, b));
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (
@@ -574,7 +568,7 @@ INSERT INTO ta
 --   m 4     -> (4, NULL, 4)
 --   ...
 --   m 9999  -> (9999, 99, 9)
---   Stored: 10000 rows, a is NULL in the 2500 rows where MOD (id, 4) = 0
+--   Stored: 10000 rows, a is NULL in the 2500 rows of m 0, 4, 8, ...
 CREATE TABLE tb (id INT, a INT, b INT, FOREIGN KEY (a, b) REFERENCES ta (a, b));
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (

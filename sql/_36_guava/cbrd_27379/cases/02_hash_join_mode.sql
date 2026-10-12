@@ -9,7 +9,10 @@
  *    PARALLEL        tc, td with PARALLEL(4): SPLIT line, parallel workers on HASHJOIN
  *  ta, tb (100001 rows on the smaller side) stay below the split threshold of the default max_hash_list_scan_size,
  *  and tc, td (300001 rows each) exceed it.
- *  The join key is CHAR(200) so that the input lists reach parallel_hash_join_page_threshold.
+ *  The join key is CHAR(200) so that the input lists reach parallel_hash_join_page_threshold even at its default value.
+ *  Run this file with test_mode=yes, as CTP does, for the parallel modes:
+ *  test_mode lowers parallel_scan_page_threshold to 32, and parallel_hash_join_page_threshold
+ *  and parallel_sort_page_threshold to 0, when they keep their default values.
  *
  *  Coverage:
  *    TC-1-05: SEMI JOIN / ANTI JOIN in the four modes, also with an ON clause term on the outer table or on both tables
@@ -41,7 +44,7 @@
  *
  *  TC-1-05 compares the two modes on the same tables by EXCEPT ALL in both directions. Both counts must be 0.
  *  CTP runs with test_mode=yes, so time, fetch and row values in "show trace" are masked.
- *  The trace asserts the presence of the SPLIT and parallel workers lines.
+ *  The trace asserts the presence of the SPLIT line, and of the parallel workers line on HASHJOIN or under PROBE.
  */
 
 -- =====================================================================================================================
@@ -188,7 +191,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca
-) x;
+) r;
 
 -- TC-1-05-01-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-01-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -201,7 +204,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-02: ta ANTI JOIN tb
@@ -233,7 +236,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca
-) x;
+) r;
 
 -- TC-1-05-02-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-02-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -246,7 +249,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-03: tc SEMI JOIN td
@@ -278,7 +281,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca
-) x;
+) r;
 
 -- TC-1-05-03-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-03-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -291,7 +294,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-04: tc ANTI JOIN td
@@ -323,7 +326,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca
-) x;
+) r;
 
 -- TC-1-05-04-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-04-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -336,7 +339,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-05: ta SEMI JOIN tb, ON clause term on the outer table only
@@ -368,7 +371,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0')
-) x;
+) r;
 
 -- TC-1-05-05-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-05-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -381,7 +384,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0')
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-06: ta ANTI JOIN tb, ON clause term on the outer table only
@@ -413,7 +416,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0')
-) x;
+) r;
 
 -- TC-1-05-06-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-06-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -426,7 +429,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0')
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-07: tc SEMI JOIN td, ON clause term on the outer table only
@@ -458,7 +461,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0')
-) x;
+) r;
 
 -- TC-1-05-07-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-07-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -471,7 +474,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0')
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-08: tc ANTI JOIN td, ON clause term on the outer table only
@@ -503,7 +506,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0')
-) x;
+) r;
 
 -- TC-1-05-08-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-08-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -516,7 +519,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0')
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-09: ta SEMI JOIN tb, ON clause term on both tables
@@ -548,7 +551,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- TC-1-05-09-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-09-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -561,7 +564,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     SEMI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-10: ta ANTI JOIN tb, ON clause term on both tables
@@ -593,7 +596,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- TC-1-05-10-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
 evaluate 'TC-1-05-10-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result';
@@ -606,7 +609,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-11: tc SEMI JOIN td, ON clause term on both tables
@@ -638,7 +641,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- TC-1-05-11-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-11-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -651,7 +654,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     SEMI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-12: tc ANTI JOIN td, ON clause term on both tables
@@ -683,7 +686,7 @@ FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- TC-1-05-12-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
 evaluate 'TC-1-05-12-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result';
@@ -696,7 +699,7 @@ FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
     ANTI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0
-) x;
+) r;
 
 -- =====================================================================================================================
 -- TC-1-06: LEFT/RIGHT OUTER JOIN in four hash join modes

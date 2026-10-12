@@ -23,7 +23,7 @@
  *    5   TC-2-01-05  EXISTS / NOT EXISTS subquery  no index on tb.ca: no hint, NO_USE_HASH, NO_USE_HASH(tb)
  *
  *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
- *  The plan lines assert the join method and join type.
+ *  Each step asserts the result rows and the plan: the join method, the join type and the scans.
  */
 
 -- =====================================================================================================================
@@ -96,7 +96,7 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-03: NOT IN';
 
 DROP TABLE IF EXISTS tb, ta;
-CREATE TABLE ta (ca INT PRIMARY KEY, cb INT NOT NULL);
+CREATE TABLE ta (ca INT, cb INT NOT NULL);
 CREATE TABLE tb (ca INT PRIMARY KEY);
 INSERT INTO ta VALUES (1, 1000), (2, 2000), (3, 1000), (4, 9999), (5, 1000);
 INSERT INTO tb VALUES (1000), (2000);
@@ -119,10 +119,31 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-04: index on tb.ca, USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
+-- ta: 2000 rows of ROWNUM
+--   Stored: 2000 rows, keys 1 .. 2000 with 1 row per key
 CREATE TABLE ta (ca INT);
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 50
+  )
+  SELECT ROWNUM
+  FROM cte x, cte y
+  WHERE ROWNUM <= 2000;
+
+-- tb: 2000 rows of MOD (ROWNUM, 500)
+--   Stored: 2000 rows, keys 0 .. 499 with 4 rows per key
 CREATE TABLE tb (ca INT);
-INSERT INTO ta SELECT ROWNUM FROM db_class a, db_class b LIMIT 2000;
-INSERT INTO tb SELECT MOD (ROWNUM, 500) FROM db_class a, db_class b LIMIT 2000;
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 50
+  )
+  SELECT MOD (ROWNUM, 500)
+  FROM cte x, cte y
+  WHERE ROWNUM <= 2000;
 CREATE INDEX i_tb_ca ON tb (ca);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
@@ -192,10 +213,31 @@ DROP TABLE IF EXISTS tb, ta;
 evaluate 'TC-2-01-05: no index on tb.ca, NO_USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
+-- ta: 2000 rows of ROWNUM
+--   Stored: 2000 rows, keys 1 .. 2000 with 1 row per key
 CREATE TABLE ta (ca INT);
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 50
+  )
+  SELECT ROWNUM
+  FROM cte x, cte y
+  WHERE ROWNUM <= 2000;
+
+-- tb: 2000 rows of MOD (ROWNUM, 500)
+--   Stored: 2000 rows, keys 0 .. 499 with 4 rows per key
 CREATE TABLE tb (ca INT);
-INSERT INTO ta SELECT ROWNUM FROM db_class a, db_class b LIMIT 2000;
-INSERT INTO tb SELECT MOD (ROWNUM, 500) FROM db_class a, db_class b LIMIT 2000;
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 50
+  )
+  SELECT MOD (ROWNUM, 500)
+  FROM cte x, cte y
+  WHERE ROWNUM <= 2000;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 

@@ -10,7 +10,8 @@
  *
  *  Coverage:
  *    TC-4-01: ANTI JOIN with an outer-only ON term, joined with other tables
- *    TC-4-02: WHERE terms on outer rows that an ANTI hash join outputs unmatched (host variable, uncorrelated subquery)
+ *    TC-4-02: WHERE terms on outer rows that an ANTI hash join outputs unmatched
+ *             (LEFT OUTER JOIN column, host variable, uncorrelated subquery)
  *    TC-4-03: ON clause that reads three tables, so ta and tb are joined before the SEMI / ANTI JOIN with tc.
  *             tc holds two rows with the same join key, inserted in both orders,
  *             since a wrong join order loses a row only when the row checked first fails the ON clause:
@@ -83,7 +84,7 @@ FROM (
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
     ANTI JOIN tc ON tc.ca = ta.ca AND ta.cb > 35
-) x;
+) r;
 
 -- TC-4-01-01-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-01-01-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -98,7 +99,7 @@ FROM (
   FROM ta
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
     ANTI JOIN tc ON tc.ca = ta.ca AND ta.cb > 35
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -115,8 +116,8 @@ CREATE TABLE tc (ca INT);
 INSERT INTO ta VALUES (1, 1), (2, 2), (3, NULL);
 INSERT INTO tb VALUES (1), (1), (1), (2);
 INSERT INTO tc VALUES (1), (2), (3);
-CREATE INDEX i_tc_ca ON tc (ca);
 CREATE INDEX i_tb_ca ON tb (ca);
+CREATE INDEX i_tc_ca ON tc (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -141,7 +142,7 @@ FROM (
   FROM ta
     LEFT JOIN tc ON tc.ca = ta.ca
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- TC-4-01-02-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-01-02-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -156,7 +157,7 @@ FROM (
   FROM ta
     LEFT JOIN tc ON tc.ca = ta.ca
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -199,7 +200,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.ca = ta.ca
     ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
-) x;
+) r;
 
 -- TC-4-01-03-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-01-03-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -214,7 +215,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.ca = ta.ca
     ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -235,8 +236,8 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1), (2), (3);
 INSERT INTO tb VALUES (1), (1), (1), (2);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
-CREATE INDEX i_tc_ca ON tc (ca);
 CREATE INDEX i_tb_ca ON tb (ca);
+CREATE INDEX i_tc_ca ON tc (ca);
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
@@ -247,7 +248,7 @@ FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
   ANTI JOIN tb ON tb.ca = ta.ca
 WHERE tc.cb IS NULL
-ORDER BY ta.ca;
+ORDER BY 1;
 
 -- TC-4-02-01-02: rows in the hash join result EXCEPT ALL the NL join result
 evaluate 'TC-4-02-01-02: rows in the hash join result EXCEPT ALL the NL join result';
@@ -264,7 +265,7 @@ FROM (
     LEFT JOIN tc ON tc.ca = ta.ca
     ANTI JOIN tb ON tb.ca = ta.ca
   WHERE tc.cb IS NULL
-) x;
+) r;
 
 -- TC-4-02-01-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-02-01-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -281,7 +282,7 @@ FROM (
     LEFT JOIN tc ON tc.ca = ta.ca
     ANTI JOIN tb ON tb.ca = ta.ca
   WHERE tc.cb IS NULL
-) x;
+) r;
 
 -- TC-4-02-01-04: ORDERED hash join
 evaluate 'TC-4-02-01-04: ORDERED hash join';
@@ -290,7 +291,7 @@ FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
   ANTI JOIN tb ON tb.ca = ta.ca
 WHERE tc.cb IS NULL
-ORDER BY ta.ca;
+ORDER BY 1;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -397,7 +398,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- TC-4-03-01-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-03-01-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -412,7 +413,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -455,7 +456,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- TC-4-03-02-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-03-02-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -470,7 +471,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -513,7 +514,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- TC-4-03-03-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-03-03-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -528,7 +529,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
@@ -571,7 +572,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- TC-4-03-04-03: rows in the NL join result EXCEPT ALL the hash join result
 evaluate 'TC-4-03-04-03: rows in the NL join result EXCEPT ALL the hash join result';
@@ -586,7 +587,7 @@ FROM (
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
-) x;
+) r;
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
