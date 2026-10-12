@@ -1,0 +1,125 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    count(*)    
+1     8990     
+5     1000     
+7     10     
+
+===================================================
+count(*)    
+500     
+
+===================================================
+    
+[1] a = 7 and b < 500 -> iscan ix_floor_a (10 rows), not ix_floor_b     
+
+===================================================
+count(pad)    
+10     
+
+Query plan:
+iscan
+    class: t_floor node[?]
+    index: ix_floor_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor.pad) from t_floor t_floor where (t_floor.b< ?:? ) and t_floor.a= ?:? 
+===================================================
+    
+[2] a = 7 alone -> iscan ix_floor_a, not sscan     
+
+===================================================
+count(pad)    
+10     
+
+Query plan:
+iscan
+    class: t_floor node[?]
+    index: ix_floor_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor.pad) from t_floor t_floor where t_floor.a= ?:? 
+===================================================
+    
+[3] a = 9 (not in the histogram) and b < 500 -> iscan ix_floor_a (one-row floor)     
+
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_floor node[?]
+    index: ix_floor_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor.pad) from t_floor t_floor where (t_floor.b< ?:? ) and t_floor.a= ?:? 
+===================================================
+    
+[4] controls: a = 1 (90%) and a = 5 (10%) with b < 500 must not use ix_floor_a     
+
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_floor node[?]
+    index: ix_floor_b term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor.pad) from t_floor t_floor where (t_floor.b< ?:? ) and t_floor.a= ?:? 
+===================================================
+count(pad)    
+490     
+
+Query plan:
+iscan
+    class: t_floor node[?]
+    index: ix_floor_b term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor.pad) from t_floor t_floor where (t_floor.b< ?:? ) and t_floor.a= ?:? 
+===================================================
+    
+[5] histogram-less twin keeps the 1/pkeys floor: a = 7 and b < 500 must not use ix_floor_nh_a     
+
+===================================================
+count(pad)    
+10     
+
+Query plan:
+iscan
+    class: t_floor_nh node[?]
+    index: ix_floor_nh_b term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_floor_nh.pad) from t_floor_nh t_floor_nh where (t_floor_nh.b< ?:? ) and t_floor_nh.a= ?:? 
+===================================================
+0
