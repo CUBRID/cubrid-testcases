@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  Part 1 of 5 -- results of the hash join (TC-1-01 to TC-1-04).
+ *  AC-1: results of the hash join (TC-1-01 to TC-1-04).
  *
  *  Before the fix, SEMI JOIN and ANTI JOIN ran only as a nested loop join. The fix adds a hash join path for both:
  *  SEMI stops probing at the first match of an outer row, ANTI outputs an outer row only when no inner row matches.

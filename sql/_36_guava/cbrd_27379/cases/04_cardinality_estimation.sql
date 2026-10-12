@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  Part 4 of 5 -- result size estimation (TC-3-01 to TC-3-06).
+ *  AC-3: result size estimation (TC-3-01 to TC-3-06).
  *
  *  The fix estimates the rows of a SEMI / ANTI JOIN from the probability that an outer row finds a matching inner row,
  *  instead of the inner join estimate.

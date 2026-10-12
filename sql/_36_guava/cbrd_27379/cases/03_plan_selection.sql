@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  Part 3 of 5 -- plan selection (TC-2-01).
+ *  AC-2: plan selection (TC-2-01).
  *
  *  Before the fix, the planner skipped hash join costing for SEMI / ANTI JOIN. Now a hash join is a candidate for them,
  *  and USE_HASH / NO_USE_HASH decide the join method whether the hint is written in the outer query

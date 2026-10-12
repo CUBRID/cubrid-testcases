@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  Part 5 of 5 -- classification of ON clause terms and join order (TC-4-01 to TC-4-04).
+ *  AC-4: classification of ON clause terms and join order (TC-4-01 to TC-4-04).
  *
  *  An ON clause term of an ANTI JOIN that reads only the outer table decides the match,
  *  so it must not become a filter of the outer scan. The fix classifies it as a during-join term.

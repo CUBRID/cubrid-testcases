@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  Part 2 of 5 -- hash join execution modes, outer joins, empty partitions (TC-1-05 to TC-1-07).
+ *  AC-1: hash join execution modes, outer joins, empty partitions (TC-1-05 to TC-1-07).
  *
  *  The hash join runs in one of four modes:
  *    SINGLE          ta, tb with NO_PARALLEL_HASH_JOIN: no SPLIT line, no parallel workers on HASHJOIN or PROBE
