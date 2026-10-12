@@ -60,3 +60,7 @@ The complete 20-failure table, reasons, evidence and verification state are main
 The agreed execution plan is maintained alongside it at `cbrd-26659/ci-repair/plan.md`.
 
 Update that table after each verified attempt, preserving the run/revision identity and recording unresolved outcomes. Update this summary when the agreed scope changes. The README documents decisions; the runner's execution configuration determines actual selection.
+
+## JIRA4774943 schema coverage
+
+[Schema coverage and physical evidence](schema-coverage.md) records the added SA/CS companions, source-confirmed hard-default ALTER materialization, independent controls, native artifacts and remaining limits. [Materialization SQL](cases/cbrd_26659_oos_schema_materialize.sql) separates this ALTER from literal DEFAULT and later UPDATE assertions.
