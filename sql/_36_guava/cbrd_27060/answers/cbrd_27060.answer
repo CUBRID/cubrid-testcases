@@ -1,0 +1,248 @@
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Plan: key range on the filtered index -> parallel index scan     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+30000     450015000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].id as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+    
+Plan: WHERE is the filter only -> parallel index scan with no key range     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+40000     795521500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt) ()
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].grp as bigint)) from [dba.ft] [dba.ft] where [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+    
+Plan: descending filtered index, partial key range     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+18000     197009000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt_desc) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].id as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt_desc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt_desc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+    
+Plan: multi-column filtered index, range on the nullable first column     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+18288     365749713     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt_mc) (key range: ([dba.ft].grp?<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].id as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp?<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt_mc(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt_mc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 1: key range, non-covering     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 2: key range, covering, vs heap     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 3: partial key range, descending filtered index     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 4: full range, covering, vs serial and heap     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 5: full range, descending filtered index     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 6: full range, multi-column filtered index     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 7: multi-column filtered index, NULLs in the first key column     
+
+===================================================
+result    
+PASS     
+
+===================================================
+4000
+===================================================
+0
+===================================================
+    
+Plan after the UPDATE: full range on the filtered index is still a parallel index scan     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+36000     715978600     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt) ()
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].grp as bigint)) from [dba.ft] [dba.ft] where [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 8: key range, non-covering, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 9: key range, covering, vs heap, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 10: partial key range, descending filtered index, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 11: full range, covering, vs serial and heap, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 12: full range, descending filtered index, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 13: full range, multi-column filtered index, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 14: multi-column filtered index, NULLs in the first key column, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0
