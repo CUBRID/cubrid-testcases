@@ -1,6 +1,6 @@
 -- verified the CBRD-27556
--- an alias of the select list in GROUP BY / HAVING of a static SQL.
--- a name in GROUP BY / HAVING / ORDER BY is resolved in the order of a column, an alias and a PL/CSQL variable.
+evaluate 'an alias of the select list in GROUP BY / HAVING of a static SQL.';
+evaluate 'a name in GROUP BY / HAVING / ORDER BY is resolved in the order of a column, an alias and a PL/CSQL variable.';
 
 --+ server-message on
 
@@ -10,7 +10,7 @@ insert into t1 values (1, 10), (2, 20), (2, 21), (3, 30);
 create table t2 (c int);
 insert into t2 values (1), (2);
 
--- alias in GROUP BY
+evaluate 'alias in GROUP BY';
 create or replace procedure p_g01 as
     sr sys_refcursor;
     a int;
@@ -27,7 +27,7 @@ end;
 
 call p_g01();
 
--- alias in HAVING
+evaluate 'alias in HAVING';
 create or replace procedure p_g02 as
     sr sys_refcursor;
     a int;
@@ -44,7 +44,7 @@ end;
 
 call p_g02();
 
--- alias in ORDER BY (resolved by the parser)
+evaluate 'alias in ORDER BY (resolved by the parser)';
 create or replace procedure p_g03 as
     sr sys_refcursor;
     a int;
@@ -60,7 +60,7 @@ end;
 
 call p_g03();
 
--- a column with the same name as an alias wins: grouped by t1.c (3 groups), not by d (4 groups)
+evaluate 'a column with the same name as an alias wins: grouped by t1.c (3 groups), not by d (4 groups)';
 create or replace procedure p_g04 as
     sr sys_refcursor;
     a int;
@@ -77,7 +77,7 @@ end;
 
 call p_g04();
 
--- an alias wins over a PL/CSQL variable with the same name: 2 rows (alias), not 0 rows (k = 1)
+evaluate 'an alias wins over a PL/CSQL variable with the same name: 2 rows (alias), not 0 rows (k = 1)';
 create or replace procedure p_g05 as
     sr sys_refcursor;
     a int;
@@ -95,7 +95,7 @@ end;
 
 call p_g05();
 
--- alias of an expression with a PL/CSQL variable
+evaluate 'alias of an expression with a PL/CSQL variable';
 create or replace procedure p_g06(p int) as
     sr sys_refcursor;
     a int;
@@ -112,7 +112,7 @@ end;
 
 call p_g06(10);
 
--- PL/CSQL variable in a GROUP BY expression
+evaluate 'PL/CSQL variable in a GROUP BY expression';
 create or replace procedure p_g11 as
     sr sys_refcursor;
     a int;
@@ -130,7 +130,7 @@ end;
 
 call p_g11();
 
--- PL/CSQL variable as an argument of HAVING
+evaluate 'PL/CSQL variable as an argument of HAVING';
 create or replace procedure p_g12 as
     sr sys_refcursor;
     a int;
@@ -148,7 +148,7 @@ end;
 
 call p_g12();
 
--- PL/CSQL variable in a function of HAVING
+evaluate 'PL/CSQL variable in a function of HAVING';
 create or replace procedure p_g13 as
     sr sys_refcursor;
     a int;
@@ -166,7 +166,7 @@ end;
 
 call p_g13();
 
--- PL/CSQL variable in a subquery of HAVING
+evaluate 'PL/CSQL variable in a subquery of HAVING';
 create or replace procedure p_g14 as
     sr sys_refcursor;
     a int;
@@ -184,7 +184,7 @@ end;
 
 call p_g14();
 
--- PL/CSQL variable in an ORDER BY expression
+evaluate 'PL/CSQL variable in an ORDER BY expression';
 create or replace procedure p_g15 as
     sr sys_refcursor;
     a int;
@@ -202,7 +202,7 @@ end;
 
 call p_g15();
 
--- rec.field in HAVING
+evaluate 'rec.field in HAVING';
 create or replace procedure p_g16 as
     sr sys_refcursor;
     a int;
@@ -221,7 +221,7 @@ end;
 
 call p_g16();
 
--- PL/CSQL variables in the select list, WHERE, HAVING and LIMIT
+evaluate 'PL/CSQL variables in the select list, WHERE, HAVING and LIMIT';
 create or replace procedure p_g21 as
     sr sys_refcursor;
     a int;
@@ -242,7 +242,7 @@ end;
 
 call p_g21();
 
--- alias and PL/CSQL variable in GROUP BY, HAVING and ORDER BY
+evaluate 'alias and PL/CSQL variable in GROUP BY, HAVING and ORDER BY';
 create or replace procedure p_g22 as
     sr sys_refcursor;
     a int;
@@ -260,7 +260,7 @@ end;
 
 call p_g22();
 
--- alias in GROUP BY of a subquery in HAVING
+evaluate 'alias in GROUP BY of a subquery in HAVING';
 create or replace procedure p_g23(p int) as
     sr sys_refcursor;
     a int;
@@ -277,7 +277,7 @@ end;
 
 call p_g23(2);
 
--- alias in SELECT INTO
+evaluate 'alias in SELECT INTO';
 create or replace procedure p_select_into as
     a int;
     b int;
@@ -288,7 +288,7 @@ end;
 
 call p_select_into();
 
--- alias in a cursor declaration with a parameter, FOR loop
+evaluate 'alias in a cursor declaration with a parameter, FOR loop';
 create or replace procedure p_cursor_for_loop as
     cursor cur(p int) is select c as k, count(*) cnt from t1 group by k having k >= p order by 1;
 begin
@@ -299,7 +299,7 @@ end;
 
 call p_cursor_for_loop();
 
--- alias in a subquery of DELETE
+evaluate 'alias in a subquery of DELETE';
 create or replace procedure p_delete as
     n int;
 begin
@@ -310,7 +310,7 @@ end;
 
 call p_delete();
 
--- the same aliases out of PL/CSQL
+evaluate 'the same aliases out of PL/CSQL';
 select c as k, count(*) from t1 group by k order by 1;
 select c as k, count(*) cnt from t1 group by c having k > 1 order by 1;
 select d as c, count(*) from t1 group by c order by 1;
