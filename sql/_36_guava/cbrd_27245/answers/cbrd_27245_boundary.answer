@@ -2,7 +2,7 @@
 0
 ===================================================
     
-Case 1: pad=0 bytes, escaped quote pair (') control, no padding     
+Case 1: escaped quote pair (') control     
 
 ===================================================
 'a''b'    'END_QUOTE'    
@@ -10,7 +10,7 @@ a'b     END_QUOTE
 
 ===================================================
     
-Case 2: pad=0 bytes, escaped backslash pair (\) control, no padding     
+Case 2: escaped backslash pair (\) control     
 
 ===================================================
 'a\'    'END_BACKSLASH'    
@@ -18,7 +18,7 @@ a\     END_BACKSLASH
 
 ===================================================
     
-Case 3: pad=0 bytes, backslash-n escape (\n) control, no padding     
+Case 3: backslash-n escape (\n) control     
 
 ===================================================
 '
@@ -28,7 +28,7 @@ Case 3: pad=0 bytes, backslash-n escape (\n) control, no padding
 
 ===================================================
     
-Case 4: pad=8183 bytes, escaped quote pair (') exactly on the first refill boundary (byte offset 8192), splitting the pair     
+Case 4: escaped quote pair (') exactly on the first refill boundary (8192 byte), splitting the pair     
 
 ===================================================
 case4    'END_QUOTE'    
@@ -36,7 +36,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ===================================================
     
-Case 5: pad=8183 bytes, escaped backslash pair (\) exactly on the first refill boundary (byte offset 8192), splitting the pair, closing quote right after     
+Case 5: escaped backslash pair (\) exactly on the first refill boundary (8192 byte), splitting the pair, closing quote right after     
 
 ===================================================
 case5    'END_BACKSLASH'    
@@ -44,7 +44,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ===================================================
     
-Case 6: pad=8183 bytes, backslash-n escape (\n) exactly on the first refill boundary (byte offset 8192), splitting the pair     
+Case 6: backslash-n escape (\n) exactly on the first refill boundary (8192 byte), splitting the pair     
 
 ===================================================
 case6    'END_NEWLINE'    
@@ -53,7 +53,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ===================================================
     
-Case 7: pad=16375 bytes, escaped quote pair (') exactly on the nominal buffer-size offset (byte offset 16384), splitting the pair     
+Case 7: escaped quote pair (') exactly on the nominal buffer-size offset (16384 byte), splitting the pair     
 
 ===================================================
 case7    'END_QUOTE'    
@@ -61,7 +61,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ===================================================
     
-Case 8: pad=16375 bytes, escaped backslash pair (\) exactly on the nominal buffer-size offset (byte offset 16384), splitting the pair, closing quote right after     
+Case 8: escaped backslash pair (\) exactly on the nominal buffer-size offset (16384 byte), splitting the pair, closing quote right after     
 
 ===================================================
 case8    'END_BACKSLASH'    
@@ -69,7 +69,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ===================================================
     
-Case 9: pad=16375 bytes, backslash-n escape (\n) exactly on the nominal buffer-size offset (byte offset 16384), splitting the pair     
+Case 9: backslash-n escape (\n) exactly on the nominal buffer-size offset (16384 byte), splitting the pair     
 
 ===================================================
 case9    'END_NEWLINE'    
