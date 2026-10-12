@@ -1,0 +1,231 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct a)    count(distinct b)    min(c)    max(c)    
+20000     10     100     1     20000     
+
+===================================================
+    
+[1] a IN (1,2,3) ORDER BY c LIMIT 10 -> (multi_range_opt)     
+
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+3     13     
+1     21     
+2     22     
+3     23     
+1     31     
+
+Query plan:
+iscan
+    class: mro_t node[?]
+    index: idx_mro_ac term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+    
+[2] a IN (1,2,3) ORDER BY c DESC LIMIT 5 -> (multi_range_opt)     
+
+===================================================
+a    c    
+3     19993     
+2     19992     
+1     19991     
+3     19983     
+2     19982     
+
+Query plan:
+iscan
+    class: mro_t node[?]
+    index: idx_mro_ac term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? desc  for orderby_num()<= ?:? 
+===================================================
+    
+[3] a = 1 AND b IN (10,20,30) ORDER BY c LIMIT 10 -> (multi_range_opt)     
+
+===================================================
+a    b    c    
+1     10     101     
+1     20     201     
+1     30     301     
+1     10     1101     
+1     20     1201     
+1     30     1301     
+1     10     2101     
+1     20     2201     
+1     30     2301     
+1     10     3101     
+
+Query plan:
+iscan
+    class: mro_t node[?]
+    index: idx_mro_abc term[?] AND term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.b, mro_t.c from mro_t mro_t where ((mro_t.b= ?:? ) or (mro_t.b= ?:? ) or (mro_t.b= ?:? )) and mro_t.a= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+    
+[4] aggregate: GROUP BY a with MAX(c) -> no (multi_range_opt)     
+
+===================================================
+a    max_c    cnt    
+1     19991     2000     
+2     19992     2000     
+3     19993     2000     
+
+Query plan:
+iscan
+    class: mro_t node[?]
+    index: idx_mro_ac term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, max(mro_t.c), count(*) from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) group by mro_t.a having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+    
+[5] DISTINCT -> no (multi_range_opt)     
+
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+3     13     
+1     21     
+2     22     
+3     23     
+1     31     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: mro_t node[?]
+                 index: idx_mro_ac term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select distinct mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+    
+[6] no LIMIT -> no (multi_range_opt)     
+
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+3     13     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: mro_t node[?]
+                 index: idx_mro_ac term[?] AND term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) and (mro_t.c<= ?:? ) order by ?
+===================================================
+    
+[7] LIMIT 10 with multi_range_optimization_limit=5 -> no (multi_range_opt); LIMIT 5 -> (multi_range_opt)     
+
+===================================================
+0
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+3     13     
+1     21     
+2     22     
+3     23     
+1     31     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: mro_t node[?]
+                 index: idx_mro_ac term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+
+Query plan:
+iscan
+    class: mro_t node[?]
+    index: idx_mro_ac term[?] (covers) (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+    
+[8] NO_MULTI_RANGE_OPT hint -> no (multi_range_opt)     
+
+===================================================
+a    c    
+1     1     
+2     2     
+3     3     
+1     11     
+2     12     
+3     13     
+1     21     
+2     22     
+3     23     
+1     31     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: mro_t node[?]
+                 index: idx_mro_ac term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_MULTI_RANGE_OPT */ mro_t.a, mro_t.c from mro_t mro_t where ((mro_t.a= ?:? ) or (mro_t.a= ?:? ) or (mro_t.a= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+0
