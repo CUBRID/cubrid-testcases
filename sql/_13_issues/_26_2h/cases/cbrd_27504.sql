@@ -19,7 +19,7 @@
  *    Case 4:  INT, NUMERIC, DOUBLE, DATE and BIT values bound to the format
  *    Case 5:  string formats keep their results, an empty string and NULL included
  *    Case 6:  formats in the query text are cast at compile time and keep their results
- *    Case 7:  a session variable and an expression of a host variable as the format
+ *    Case 7:  a session variable, an expression of a host variable and a scalar subquery as the format
  *    Case 8:  INT, DOUBLE, DATE and VARCHAR values bound through the JDBC driver
  */
 
@@ -94,7 +94,7 @@ select to_char(dtt, fmt), to_char(dtt) from t_dt where id = 1;
 select to_char(dtt, g) from t_dt where id = 1;
 
 
-evaluate 'Case 7: a session variable and an expression of a host variable as the format';
+evaluate 'Case 7: a session variable, an expression of a host variable and a scalar subquery as the format';
 set @fmt_bigint = 9007199254740993;
 select to_char(dtt, @fmt_bigint) from t_dt where id = 1;
 select to_char(g, @fmt_bigint) from t_dt where id = 1;
@@ -102,6 +102,8 @@ set @fmt_bigint = 'YYYY';
 select to_char(dtt, @fmt_bigint) from t_dt where id = 1;
 prepare s from 'select to_char(dtt, ? + 0) from t_dt where id = 1';
 execute s using 1;
+prepare s from 'select to_char(dtt, (select ? from db_root)) from t_dt where id = 1';
+execute s using 9007199254740993;
 deallocate variable @fmt_bigint;
 
 
