@@ -47,7 +47,7 @@ After publishing the scoped repair, run one final CI qualification and report it
 
 All 14 target cases passed separately on fresh databases with native cubrid-testkit JDBC/CQT, Debug `1ef86a7`, HA enabled, requested `en_US` and effective `en_US.utf8`, and unchanged answers/assertions. Every artifact verification and owned cleanup passed. Retained attempts: `/home/vimkim/tmp/s332-final-01` through `s332-final-14`; runtime identities and per-case evidence are in the companion repair results document.
 
-The full partition/routing/schema/constraints selection also passed 4/4 after the shared-cause repair. This logical result does not claim to resolve destination physical ownership or every excluded partition defect. The original 72-case order and the one final CI qualification are in progress. The local native runner recovered differently from the historical CI runtime, so local evidence is not described as CI-equivalent.
+The full partition/routing/schema/constraints selection also passed 4/4 after the shared-cause repair. This logical result does not claim to resolve destination physical ownership or every excluded partition defect. The original 72-case `_36_guava` order passed 72/72 at `/home/vimkim/tmp/s332-f72`, including full partition at position 43 and all 14 targets at positions 44–57. The manifest and execution log agree on identity and order; complete XML agrees on case identity and golden verdict, and owned cleanup passed. The one final CI qualification follows publication and review. The local native runner recovered differently from the historical CI runtime, so local evidence is not described as CI-equivalent.
 
 No SQL case, answer, fixture or discovery setting was changed by this repair.
 
