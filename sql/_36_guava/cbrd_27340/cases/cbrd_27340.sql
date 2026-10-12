@@ -37,6 +37,22 @@
  *   Case 2: /*+ USE_NL *\/ (nested loop join)
  *   Case 3: /*+ USE_IDX *\/ (index join)
  *   Case 4: /*+ USE_MERGE *\/ (sort-merge join)
+ *
+ * Cases 5-8 cover a second path to the same kind of bug: an INNER JOIN
+ * condition that depends on a preceding RIGHT OUTER JOIN can still seed an
+ * *inferred* join condition that does not carry that dependency.
+ *
+ * jtbl2_a RIGHT JOIN jtbl2_b ON jtbl2_a.id = jtbl2_b.id, then INNER JOIN
+ * jtbl2_c ON jtbl2_a.x = jtbl2_c.x, then INNER JOIN jtbl2_d ON
+ * jtbl2_c.x = jtbl2_d.x. The optimizer can infer jtbl2_a.x = jtbl2_d.x by
+ * transitivity from the other two equalities; that inferred condition does
+ * not know it must wait for jtbl2_b, so the planner could join jtbl2_a and
+ * jtbl2_d (then jtbl2_c) before jtbl2_b -- count(*) must still be 2.
+ *
+ *   Case 5: hintless
+ *   Case 6: /*+ USE_NL *\/
+ *   Case 7: /*+ USE_IDX *\/
+ *   Case 8: /*+ USE_MERGE *\/
  */
 drop table if exists jtbl_a, jtbl_b, jtbl_c;
 
@@ -67,3 +83,39 @@ select /*+ USE_MERGE */ count(*) from jtbl_a right outer join jtbl_b on jtbl_a.j
   inner join jtbl_c on jtbl_c.k = jtbl_a.k;
 
 drop table jtbl_a, jtbl_b, jtbl_c;
+
+drop table if exists jtbl2_a, jtbl2_b, jtbl2_c, jtbl2_d;
+
+create table jtbl2_a (id int primary key, x int);
+create table jtbl2_b (id int);
+create table jtbl2_c (x int primary key, v int);
+create table jtbl2_d (x int primary key, w int);
+
+insert into jtbl2_a values (1, 10), (2, 20);
+insert into jtbl2_b values (1), (2), (9);
+insert into jtbl2_c values (10, 100), (20, 200);
+insert into jtbl2_d values (10, 1000), (20, 2000);
+
+update statistics on jtbl2_a, jtbl2_b, jtbl2_c, jtbl2_d with fullscan;
+
+-- Case 5
+select count(*) from jtbl2_a right outer join jtbl2_b on jtbl2_a.id = jtbl2_b.id
+  inner join jtbl2_c on jtbl2_a.x = jtbl2_c.x
+  inner join jtbl2_d on jtbl2_c.x = jtbl2_d.x;
+
+-- Case 6
+select /*+ USE_NL */ count(*) from jtbl2_a right outer join jtbl2_b on jtbl2_a.id = jtbl2_b.id
+  inner join jtbl2_c on jtbl2_a.x = jtbl2_c.x
+  inner join jtbl2_d on jtbl2_c.x = jtbl2_d.x;
+
+-- Case 7
+select /*+ USE_IDX */ count(*) from jtbl2_a right outer join jtbl2_b on jtbl2_a.id = jtbl2_b.id
+  inner join jtbl2_c on jtbl2_a.x = jtbl2_c.x
+  inner join jtbl2_d on jtbl2_c.x = jtbl2_d.x;
+
+-- Case 8
+select /*+ USE_MERGE */ count(*) from jtbl2_a right outer join jtbl2_b on jtbl2_a.id = jtbl2_b.id
+  inner join jtbl2_c on jtbl2_a.x = jtbl2_c.x
+  inner join jtbl2_d on jtbl2_c.x = jtbl2_d.x;
+
+drop table jtbl2_a, jtbl2_b, jtbl2_c, jtbl2_d;
