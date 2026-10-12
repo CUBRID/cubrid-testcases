@@ -1,6 +1,8 @@
-/*
- * Verify CBRD-27416: a member of the system user cub_select_catalog still cannot read a table it has no privilege
- * on or the catalog classes, and cub_select_catalog cannot be dropped, made loginable, or logged in as.
+/**
+ *  This test case verifies CBRD-27416: a member of the system user
+ *  cub_select_catalog still cannot read a table it has no privilege on or the
+ *  catalog classes, and cub_select_catalog cannot be dropped, made loginable,
+ *  or logged in as.
  */
 create user u_mem groups cub_select_catalog;
 create table t (a int);
