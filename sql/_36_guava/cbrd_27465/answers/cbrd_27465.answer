@@ -538,7 +538,7 @@ k    count(*)
 0
 ===================================================
     
-Case 12: unique inner: memoize gives up (hit ratio 0), result unchanged     
+Case 12: unique inner, each of the 5000 probe keys comes four times: memoize kept (the hit ratio is judged only from 60% of the budget, CBRD-27487), result unchanged     
 
 ===================================================
 count(*)    
@@ -558,6 +558,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.subquery_small.pk_subquery_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
