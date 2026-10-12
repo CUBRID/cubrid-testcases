@@ -1,0 +1,457 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+110000
+===================================================
+0
+===================================================
+90000
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+4000
+===================================================
+50
+===================================================
+0
+===================================================
+0
+===================================================
+70000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: probe key NDV 400, 800, 1200 and 2000 under the default budget, and NDV 1200 through an EXISTS semi join, memoize kept     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.ndv_outer] a semi join [dba.small] s on s.col?=a.k?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+    
+Case 2: nine probe keys in ten distinct, memoize still given up; result = memoize off     
+
+===================================================
+count(*)    sum(b.v)    
+100000     4329757     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.pk_big_in_id) (key range: b.id=a.mu)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(b.v) from [dba.ndv_outer] a, [dba.big_in] b where b.id=a.mu
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.big_in.pk_big_in_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+100000     4329757     
+
+===================================================
+0
+===================================================
+    
+Case 3: hot keys among many distinct cold keys, the budget runs out and hits go on; result = memoize off     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+100000     3125045     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (b.pk_big_in_id) (key range: b.id=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(b.v) from [dba.skew_outer] o, [dba.big_in] b where b.id=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.big_in.pk_big_in_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+100000     3125045     
+
+===================================================
+0
+===================================================
+    
+Case 4: three inner rows per key, the budget runs out while keys are being filled; result = memoize off     
+
+===================================================
+0
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (m.idx_multi_k) (key range: m.k=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(m.v) from [dba.skew_outer] o, [dba.multi] m where m.k=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.multi.idx_multi_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (m.idx_multi_k) (key range: m.k=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(m.v) from [dba.skew_outer] o, [dba.multi] m where m.k=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.multi.idx_multi_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (m.idx_multi_k) (key range: m.k=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(m.v) from [dba.skew_outer] o, [dba.multi] m where m.k=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.multi.idx_multi_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+0
+===================================================
+    
+Case 5: Cases 3 and 4 with the outer table scanned in parallel, memoize kept in the workers; result = memoize off     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+100000     3125045     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (b.pk_big_in_id) (key range: b.id=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(b.v) from [dba.skew_outer] o, [dba.big_in] b where b.id=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.big_in.pk_big_in_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (m.idx_multi_k) (key range: m.k=o.hot_cold)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(m.v) from [dba.skew_outer] o, [dba.multi] m where m.k=o.hot_cold
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.skew_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.multi.idx_multi_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+100000     3125045     
+
+===================================================
+count(*)    sum(m.v)    
+247425     28330875     
+
+===================================================
+0
+===================================================
+    
+Case 6: a key with 4000 inner rows fills the budget and is taken out, then misses pile up and the storage is released; result = memoize off     
+
+===================================================
+0
+===================================================
+count(*)    sum(f.v)    
+24000     2508000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.fat_outer)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.fat_outer].a, [dba.fat_outer].k from [dba.fat_outer] [dba.fat_outer] order by ?)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (f.idx_fat_in_k) (key range: f.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(f.v) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.fat_outer].a, [dba.fat_outer].k from [dba.fat_outer] [dba.fat_outer] order by ?) o (a, k), [dba.fat_in] f where f.k=o.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.fat_in.idx_fat_in_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.fat_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(f.v)    
+24000     2508000     
+
+===================================================
+0
+===================================================
+    
+Case 7: hot keys then only distinct keys, the storage is released once the hit ratio falls below half; result = memoize off     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+40000     1020000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.phase_outer)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.phase_outer].a, [dba.phase_outer].k from [dba.phase_outer] [dba.phase_outer] order by ?)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (b.pk_big_in_id) (key range: b.id=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*), sum(b.v) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.phase_outer].a, [dba.phase_outer].k from [dba.phase_outer] [dba.phase_outer] order by ?) o (a, k), [dba.big_in] b where b.id=o.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.big_in.pk_big_in_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.phase_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(b.v)    
+40000     1020000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
