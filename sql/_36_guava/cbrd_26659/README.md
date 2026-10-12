@@ -33,7 +33,9 @@ These files failed at initial DDL following the partition assertion in the recor
 
 An exclusion records repair scope. Test execution remains enabled and expected answers remain intact. Expected SQL errors asserted inside a passing testcase remain required checks. Source-tree equality with the baseline does not automatically exclude newly added testcase failures.
 
-Hypothesis patches may be used for diagnosis. A final repair requires correct answers/assertions, evidence explaining the failing path, and meaningful before/after controls. How to contain an excluded testcase's effect on in-scope cases remains a separate decision.
+Hypothesis patches may be used for diagnosis. A final repair requires correct answers/assertions, evidence explaining the failing path, and meaningful before/after controls.
+
+If the excluded partition defect is demonstrated to cause cascading failures in the 14 in-scope SQL cases, repair of the shared cause needed to restore those cases is allowed. This does not require resolving every retained partition defect or extend the repair scope to other excluded cases.
 
 ## Tracking
 
