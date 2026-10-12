@@ -12,10 +12,10 @@
  */
 
 evaluate 'Case 1: multi-byte UTF-8 character inside a string literal (control)';
-SELECT '𡡡', OCTET_LENGTH('𡡡') FROM db_root;
+SELECT '𡡡', OCTET_LENGTH('𡡡') FROM dual;
 
 evaluate 'Case 2: multi-byte UTF-8 character as an alias, outside any literal';
-SELECT 1 AS t𡡡 FROM db_root;
+SELECT 1 AS t𡡡 FROM dual;
 
 evaluate 'Case 3: multi-byte UTF-8 character followed by another byte in an alias';
-SELECT 1 AS t𡡡x FROM db_root;
+SELECT 1 AS t𡡡x FROM dual;

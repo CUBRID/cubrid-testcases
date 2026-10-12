@@ -15,13 +15,13 @@
 DROP TABLE IF EXISTS 한글테이블;
 
 evaluate 'Case 1: Korean string literal with LENGTH/OCTET_LENGTH/CHARSET';
-SELECT '한글', LENGTH('한글'), OCTET_LENGTH('한글'), CHARSET('한글') FROM db_root;
+SELECT '한글', LENGTH('한글'), OCTET_LENGTH('한글'), CHARSET('한글') FROM dual;
 
 evaluate 'Case 2: Han character and emoji (multi-byte UTF-8) literal';
-SELECT '漢字', '😀', LENGTH('😀'), OCTET_LENGTH('😀') FROM db_root;
+SELECT '漢字', '😀', LENGTH('😀'), OCTET_LENGTH('😀') FROM dual;
 
 evaluate 'Case 3: full-width space literal, LENGTH vs OCTET_LENGTH';
-SELECT '전각　공백', LENGTH('　'), OCTET_LENGTH('　') FROM db_root;
+SELECT '전각　공백', LENGTH('　'), OCTET_LENGTH('　') FROM dual;
 
 CREATE TABLE 한글테이블 (한글열 INT, "따옴표 열" INT, [대괄호열] INT, `역따옴표열` INT);
 INSERT INTO 한글테이블 VALUES (1, 2, 3, 4);
@@ -30,24 +30,24 @@ evaluate 'Case 4: multilingual, double-quoted, bracketed, and backtick-quoted id
 SELECT 한글열 AS 별칭한글, "따옴표 열", [대괄호열], `역따옴표열` FROM 한글테이블;
 
 evaluate 'Case 5: doubled quote, empty string, embedded double quote';
-SELECT '중복''따옴표', '', '문자열 안 " 큰따옴표' FROM db_root;
+SELECT '중복''따옴표', '', '문자열 안 " 큰따옴표' FROM dual;
 
 evaluate 'Case 6: semicolon and comment markers inside a string literal';
-SELECT 'semi;colon 문자열', '-- 주석 아님', '/* 주석 아님 */' FROM db_root;
+SELECT 'semi;colon 문자열', '-- 주석 아님', '/* 주석 아님 */' FROM dual;
 
 evaluate 'Case 7: multi-line string literal';
 SELECT '여러
-줄 문자열' FROM db_root;
+줄 문자열' FROM dual;
 
 evaluate 'Case 8: line comment containing a quote and multilingual text';
 -- 줄 주석: '따옴표' 와 한글
-SELECT 1 FROM db_root;
+SELECT 1 FROM dual;
 
 evaluate 'Case 9: block comment containing a quote and multilingual text';
 /* 블록 주석: "따옴표" 와 한글 */
-SELECT 1 FROM db_root;
+SELECT 1 FROM dual;
 
 evaluate 'Case 10: two statements on one line';
-SELECT 1 FROM db_root; SELECT 2 FROM db_root;
+SELECT 1 FROM dual; SELECT 2 FROM dual;
 
 DROP TABLE IF EXISTS 한글테이블;
