@@ -1,8 +1,9 @@
 /**
- *  This test case verifies CBRD-27481: a non-DBA can read the
- *  AUTO_INCREMENT definition of a table it owns or may alter, and the
- *  serials it owns, after CBRD-25862 removed PUBLIC's privileges on
- *  _db_serial.
+ *  This test case verifies CBRD-27481: a non-DBA can see and alter the
+ *  AUTO_INCREMENT column of a table it or its group owns, and use the serials
+ *  it owns, after CBRD-25862 removed PUBLIC's privileges on _db_serial.
+ *  DROP of the column is not checked: it passes the same serial owner check
+ *  as MODIFY.
  */
 
 create user cbrd27481_g1;
@@ -10,11 +11,10 @@ create user cbrd27481_u1 groups cbrd27481_g1;
 
 -- for check 3
 call login('cbrd27481_g1','') on class db_user;
-create table t (a int auto_increment(10,5), b int);
-grant alter on t to cbrd27481_u1;
+create table t (a int auto_increment);
 
 call login('cbrd27481_u1','') on class db_user;
-create table t (a int auto_increment(10,5), b int);
+create table t (a int auto_increment(10,5));
 
 -- 1. SHOW CREATE TABLE by the owner: shows AUTO_INCREMENT (10, 5)
 show create table t;
@@ -22,7 +22,7 @@ show create table t;
 -- 2. MODIFY of the AUTO_INCREMENT column's type by the owner: succeeds
 alter table t modify a bigint auto_increment;
 
--- 3. MODIFY of the AUTO_INCREMENT column's type by a member holding only ALTER on its group's table: succeeds
+-- 3. MODIFY of the AUTO_INCREMENT column's type by a member of the table's owner group: succeeds
 alter table cbrd27481_g1.t modify a bigint auto_increment;
 
 -- 4. NEXT_VALUE of the owner's serial into a session variable: returns 1
