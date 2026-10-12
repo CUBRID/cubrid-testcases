@@ -66,7 +66,7 @@ create or replace procedure p_g04 as
     a int;
     b int;
 begin
-    open sr for select d as c, count(*) cnt from t1 group by c order by 1;
+    open sr for select min(d) as c, count(*) cnt from t1 group by c order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
@@ -313,7 +313,7 @@ call p_delete();
 evaluate 'the same aliases out of PL/CSQL';
 select c as k, count(*) from t1 group by k order by 1;
 select c as k, count(*) cnt from t1 group by c having k > 1 order by 1;
-select d as c, count(*) from t1 group by c order by 1;
+select min(d) as c, count(*) from t1 group by c order by 1;
 select c as k, d, count(*) from t1 group by k, d order by 1, 2;
 
 
