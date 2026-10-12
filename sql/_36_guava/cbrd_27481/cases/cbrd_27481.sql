@@ -1,10 +1,9 @@
-/* Verify CBRD-27481: a non-DBA can read the AUTO_INCREMENT definition of a table it owns or may
-   alter, and the serials it owns, after CBRD-25862 removed PUBLIC's privileges on _db_serial.
-   1. SHOW CREATE TABLE by the owner shows AUTO_INCREMENT (10, 5)
-   2. MODIFY of the AUTO_INCREMENT column's type by the owner succeeds
-   3. MODIFY of the same column by a member holding only ALTER on its group's table succeeds
-   4. NEXT_VALUE of the owner's serial into a session variable returns 1
-*/
+/**
+ *  This test case verifies CBRD-27481: a non-DBA can read the
+ *  AUTO_INCREMENT definition of a table it owns or may alter, and the
+ *  serials it owns, after CBRD-25862 removed PUBLIC's privileges on
+ *  _db_serial.
+ */
 
 create user cbrd27481_g1;
 create user cbrd27481_u1 groups cbrd27481_g1;
