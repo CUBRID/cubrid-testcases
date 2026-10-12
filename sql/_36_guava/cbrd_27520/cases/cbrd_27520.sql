@@ -17,11 +17,13 @@
  *    Case 5:  table of another user, qualified with its owner
  *    Case 6:  SP name without an owner (owned by the current user)
  *    Case 7:  the owner creates its own SP
- *    Case 8:  call the SPs and check the stored parameter and return types
+ *    Case 8:  tables of the same name for dba and adam, with different column types:
+ *             the types of adam.tbl must be used
+ *    Case 9:  call the SPs and check the stored parameter and return types
  */
 
 call login('dba', '') on class db_user;
-drop table if exists only_dba, t_dba;
+drop table if exists tbl, only_dba, t_dba;
 
 create user adam;
 create table adam.tbl (i int, s varchar(20));
@@ -55,21 +57,25 @@ create or replace procedure p11(i tbl.i%type) as begin null; end;
 create or replace procedure adam.p12(i tbl.i%type) as begin null; end;
 call login('dba', '') on class db_user;
 
-evaluate 'Case 8: call the SPs and check the stored types';
+evaluate 'Case 8: dba.tbl has the same name as adam.tbl but different column types. The types of adam.tbl (int, varchar) must be used.';
+create table tbl (i varchar(10), s double);
+create or replace function adam.f9(a tbl.i%type) return tbl.s%type as begin return 'a' || a; end;
+
+evaluate 'Case 9: call the SPs and check the stored types';
 call adam.p1(10);
-select adam.f2(5), adam.f3(1, 'abc');
+select adam.f2(5), adam.f3(1, 'abc'), adam.f9(7);
 
 select sp_name, owner.name, return_type
   from _db_stored_procedure
- where owner.name in ('ADAM', 'DBA') and sp_name in ('p1', 'f2', 'f3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p11', 'p12')
+ where owner.name in ('ADAM', 'DBA') and sp_name in ('p1', 'f2', 'f3', 'p4', 'p5', 'p6', 'p7', 'p8', 'f9', 'p11', 'p12')
  order by 2, 1;
 
 select sp_of.sp_name, arg_name, data_type
   from _db_stored_procedure_args
- where sp_of.owner.name in ('ADAM', 'DBA') and sp_of.sp_name in ('p1', 'f2', 'f3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p11', 'p12')
+ where sp_of.owner.name in ('ADAM', 'DBA') and sp_of.sp_name in ('p1', 'f2', 'f3', 'p4', 'p5', 'p6', 'p7', 'p8', 'f9', 'p11', 'p12')
  order by 1, 2;
 
 drop procedure adam.p1, adam.p4, adam.p5, adam.p7, adam.p11, adam.p12, p8;
-drop function adam.f2, adam.f3;
-drop table adam.tbl, only_dba, t_dba;
+drop function adam.f2, adam.f3, adam.f9;
+drop table adam.tbl, tbl, only_dba, t_dba;
 drop user adam;
