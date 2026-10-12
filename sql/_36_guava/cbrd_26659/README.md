@@ -29,7 +29,7 @@ The 14 in-scope SQL files are:
 - [LOB maximum columns](cases/cbrd_26659_oos_sql09_lob_maxcols.sql)
 - [Storage policy](cases/cbrd_26659_oos_storage_policy.sql)
 
-These files failed at initial DDL following the partition assertion in the recorded run. Cascading failure is suspected; the cause and repair remain unverified. The representation testcase above belongs to the intended passing selection and is distinct from the separately retained representation target reproducer.
+These files failed at initial DDL following the partition assertion in the recorded historical CI run. Work item 332 reproduced the HA/JDBC crash and proved that source DELETE consumed OOS insertion LSAs after the destination INSERT had drained the queue. Engine commit `1ef86a7efa34002e971b1b30bcf5d451e9db441b` restricts OOS post-image replication to INSERT while preserving primary-key DELETE replication and the queue assertion. The representation testcase above belongs to the intended passing selection and is distinct from the separately retained representation target reproducer.
 
 An exclusion records repair scope. Test execution remains enabled and expected answers remain intact. Expected SQL errors asserted inside a passing testcase remain required checks. Source-tree equality with the baseline does not automatically exclude newly added testcase failures.
 
@@ -42,6 +42,14 @@ If the excluded partition defect is demonstrated to cause cascading failures in 
 Shared understanding was confirmed on 2026-10-12. All 14 in-scope cases must pass independently on fresh databases and also pass in the original 72-case `sql/_36_guava` execution order, including the partition testcase. Retain actual logs, golden-answer comparisons, execution identities and artifact verdicts for both kinds of validation. Record excluded failures separately.
 
 After publishing the scoped repair, run one final CI qualification and report its terminal result, the 14 target outcomes, excluded/remaining failures and the TC Merge Gate state. Then wait for human direction. A remaining in-scope failure is not a completed repair.
+
+## Local qualification (2026-10-13)
+
+All 14 target cases passed separately on fresh databases with native cubrid-testkit JDBC/CQT, Debug `1ef86a7`, HA enabled, requested `en_US` and effective `en_US.utf8`, and unchanged answers/assertions. Every artifact verification and owned cleanup passed. Retained attempts: `/home/vimkim/tmp/s332-final-01` through `s332-final-14`; runtime identities and per-case evidence are in the companion repair results document.
+
+The full partition/routing/schema/constraints selection also passed 4/4 after the shared-cause repair. This logical result does not claim to resolve destination physical ownership or every excluded partition defect. The original 72-case order and the one final CI qualification are in progress. The local native runner recovered differently from the historical CI runtime, so local evidence is not described as CI-equivalent.
+
+No SQL case, answer, fixture or discovery setting was changed by this repair.
 
 ## Tracking
 
