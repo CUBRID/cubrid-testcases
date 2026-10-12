@@ -16,7 +16,7 @@ TC-2-01-01: SEMI JOIN
 0
 ===================================================
     
-USE_HASH, plan     
+TC-2-01-01-01: USE_HASH, result and plan     
 
 ===================================================
 ca    
@@ -37,7 +37,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-NO_USE_HASH, plan     
+TC-2-01-01-02: NO_USE_HASH, result and plan     
 
 ===================================================
 ca    
@@ -77,7 +77,7 @@ TC-2-01-02: ANTI JOIN
 0
 ===================================================
     
-USE_HASH, plan     
+TC-2-01-02-01: USE_HASH, result and plan     
 
 ===================================================
 ca    
@@ -97,7 +97,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NO_USE_HASH, plan     
+TC-2-01-02-02: NO_USE_HASH, result and plan     
 
 ===================================================
 ca    
@@ -136,7 +136,7 @@ TC-2-01-03: NOT IN
 0
 ===================================================
     
-USE_HASH, plan     
+TC-2-01-03-01: USE_HASH, result and plan     
 
 ===================================================
 ca    
@@ -158,7 +158,7 @@ select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on ta.cb=tb.ca
 0
 ===================================================
     
-TC-2-01-04: index on tb.ca     
+TC-2-01-04: index on tb.ca, USE_HASH     
 
 ===================================================
 0
@@ -176,7 +176,7 @@ TC-2-01-04: index on tb.ca
 0
 ===================================================
     
-EXISTS, no hint, plan     
+TC-2-01-04-01: EXISTS, no hint, result and plan     
 
 ===================================================
 count(*)    
@@ -196,7 +196,7 @@ Query stmt:
 select count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, outer query USE_HASH, plan     
+TC-2-01-04-02: EXISTS, outer query USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -216,7 +216,7 @@ Query stmt:
 select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, subquery USE_HASH, plan     
+TC-2-01-04-03: EXISTS, subquery USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -236,7 +236,7 @@ Query stmt:
 select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, subquery USE_HASH(tb), plan     
+TC-2-01-04-04: EXISTS, subquery USE_HASH(tb), result and plan     
 
 ===================================================
 count(*)    
@@ -256,7 +256,7 @@ Query stmt:
 select /*+ USE_HASH(tb) */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, no hint, plan     
+TC-2-01-04-05: NOT EXISTS, no hint, result and plan     
 
 ===================================================
 count(*)    
@@ -276,7 +276,7 @@ Query stmt:
 select count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, outer query USE_HASH, plan     
+TC-2-01-04-06: NOT EXISTS, outer query USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -296,7 +296,7 @@ Query stmt:
 select /*+ USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, subquery USE_HASH, plan     
+TC-2-01-04-07: NOT EXISTS, subquery USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -316,7 +316,7 @@ Query stmt:
 select /*+ USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, subquery USE_HASH(tb), plan     
+TC-2-01-04-08: NOT EXISTS, subquery USE_HASH(tb), result and plan     
 
 ===================================================
 count(*)    
@@ -338,7 +338,7 @@ select /*+ USE_HASH(tb) */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 0
 ===================================================
     
-TC-2-01-05: no index on tb.ca     
+TC-2-01-05: no index on tb.ca, NO_USE_HASH     
 
 ===================================================
 0
@@ -353,12 +353,8 @@ TC-2-01-05: no index on tb.ca
 ===================================================
 0
 ===================================================
-0
-===================================================
-0
-===================================================
     
-EXISTS, no hint, plan     
+TC-2-01-05-01: EXISTS, no hint, result and plan     
 
 ===================================================
 count(*)    
@@ -378,7 +374,7 @@ Query stmt:
 select count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, outer query NO_USE_HASH, plan     
+TC-2-01-05-02: EXISTS, outer query NO_USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -399,7 +395,7 @@ Query stmt:
 select /*+ NO_USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, subquery NO_USE_HASH, plan     
+TC-2-01-05-03: EXISTS, subquery NO_USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -420,7 +416,7 @@ Query stmt:
 select /*+ NO_USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-EXISTS, subquery NO_USE_HASH(tb), plan     
+TC-2-01-05-04: EXISTS, subquery NO_USE_HASH(tb), result and plan     
 
 ===================================================
 count(*)    
@@ -441,7 +437,7 @@ Query stmt:
 select /*+ NO_USE_HASH(tb) */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, no hint, plan     
+TC-2-01-05-05: NOT EXISTS, no hint, result and plan     
 
 ===================================================
 count(*)    
@@ -461,7 +457,7 @@ Query stmt:
 select count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, outer query NO_USE_HASH, plan     
+TC-2-01-05-06: NOT EXISTS, outer query NO_USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -482,7 +478,7 @@ Query stmt:
 select /*+ NO_USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, subquery NO_USE_HASH, plan     
+TC-2-01-05-07: NOT EXISTS, subquery NO_USE_HASH, result and plan     
 
 ===================================================
 count(*)    
@@ -503,7 +499,7 @@ Query stmt:
 select /*+ NO_USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
     
-NOT EXISTS, subquery NO_USE_HASH(tb), plan     
+TC-2-01-05-08: NOT EXISTS, subquery NO_USE_HASH(tb), result and plan     
 
 ===================================================
 count(*)    

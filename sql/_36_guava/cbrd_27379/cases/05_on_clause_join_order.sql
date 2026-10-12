@@ -37,18 +37,19 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL), (4, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100), (4, 5);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100), (4, 0);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- hash join
-evaluate 'hash join';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-01-01-01: hash join
+evaluate 'TC-4-01-01-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
   ANTI JOIN tc ON tc.ca = ta.ca AND ta.cb > 35
 ORDER BY 1;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-01-01-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-01-01-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ ta.ca
@@ -62,8 +63,8 @@ FROM (
     ANTI JOIN tc ON tc.ca = ta.ca AND ta.cb > 35
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-01-01-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-01-01-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
@@ -92,18 +93,19 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- hash join
-evaluate 'hash join';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-01-02-01: hash join
+evaluate 'TC-4-01-02-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
   ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
 ORDER BY 1;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-01-02-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-01-02-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ ta.ca
@@ -117,8 +119,8 @@ FROM (
     ANTI JOIN tb ON tb.ca = ta.ca AND ta.cc IS NOT NULL
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-01-02-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-01-02-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
@@ -147,18 +149,19 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, NULL, 4), (5, 5, 5), (6, 6, 6), (7, 1, 7);
 INSERT INTO tb VALUES (1, 1), (2, 20), (3, 3), (4, 4), (5, 50), (6, 6), (7, 70);
 INSERT INTO tc VALUES (1, 0), (1, 5), (1, 9), (2, 100), (NULL, 999), (5, 0), (6, 7);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- hash join
-evaluate 'hash join';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-01-03-01: hash join
+evaluate 'TC-4-01-03-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   JOIN tb ON tb.ca = ta.ca
   ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
 ORDER BY 1;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-01-03-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-01-03-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ ta.ca
@@ -172,8 +175,8 @@ FROM (
     ANTI JOIN tc ON tc.ca = ta.cb AND ta.cc = tb.cb
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-01-03-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-01-03-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
@@ -206,10 +209,11 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- hash join
-evaluate 'hash join';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-02-01-01: hash join
+evaluate 'TC-4-02-01-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
@@ -217,8 +221,8 @@ FROM ta
 WHERE tc.cb IS NULL
 ORDER BY ta.ca;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-02-01-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-02-01-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ ta.ca
@@ -234,8 +238,8 @@ FROM (
   WHERE tc.cb IS NULL
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-02-01-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-02-01-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
   SELECT /*+ NO_USE_HASH USE_NL */ ta.ca
@@ -251,8 +255,8 @@ FROM (
   WHERE tc.cb IS NULL
 ) x;
 
--- ORDERED hash join
-evaluate 'ORDERED hash join';
+-- TC-4-02-01-04: ORDERED hash join
+evaluate 'TC-4-02-01-04: ORDERED hash join';
 SELECT /*+ RECOMPILE ORDERED USE_HASH */ ta.ca
 FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
@@ -273,16 +277,16 @@ CREATE TABLE ta (ca INT, cb INT, cc INT);
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-UPDATE STATISTICS ON ta, tb;
 
--- condition true
-evaluate 'condition true';
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-4-02-02-01: condition true
+evaluate 'TC-4-02-02-01: condition true';
 PREPARE st FROM 'SELECT /*+ RECOMPILE USE_HASH */ ta.ca FROM ta ANTI JOIN tb ON tb.ca = ta.ca WHERE ? = 1 ORDER BY 1';
 EXECUTE st USING 1;
 
--- condition false
-evaluate 'condition false';
-PREPARE st FROM 'SELECT /*+ RECOMPILE USE_HASH */ ta.ca FROM ta ANTI JOIN tb ON tb.ca = ta.ca WHERE ? = 1 ORDER BY 1';
+-- TC-4-02-02-02: condition false
+evaluate 'TC-4-02-02-02: condition false';
 EXECUTE st USING 2;
 
 -- cleanup
@@ -290,9 +294,9 @@ DEALLOCATE PREPARE st;
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-4-02-03: ANTI JOIN, uncorrelated subquery term is true
+-- TC-4-02-03: ANTI JOIN, uncorrelated subquery term
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-4-02-03: ANTI JOIN, uncorrelated subquery term is true';
+evaluate 'TC-4-02-03: ANTI JOIN, uncorrelated subquery term';
 
 DROP TABLE IF EXISTS tc, tb, ta;
 CREATE TABLE ta (ca INT, cb INT, cc INT);
@@ -301,35 +305,19 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
 INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- hash join
-evaluate 'hash join';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-02-03-01: condition true
+evaluate 'TC-4-02-03-01: condition true';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca
 WHERE (SELECT COUNT (*) FROM tc) > 0
 ORDER BY 1;
 
--- cleanup
-DROP TABLE IF EXISTS tc, tb, ta;
-
--- ---------------------------------------------------------------------------------------------------------------------
--- TC-4-02-04: ANTI JOIN, uncorrelated subquery term is false
--- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-4-02-04: ANTI JOIN, uncorrelated subquery term is false';
-
-DROP TABLE IF EXISTS tc, tb, ta;
-CREATE TABLE ta (ca INT, cb INT, cc INT);
-CREATE TABLE tb (ca INT, cb INT);
-CREATE TABLE tc (ca INT, cb INT);
-INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
-INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-INSERT INTO tc VALUES (1, NULL), (2, 100), (3, 100);
-UPDATE STATISTICS ON ta, tb, tc;
-
--- hash join
-evaluate 'hash join';
+-- TC-4-02-03-02: condition false
+evaluate 'TC-4-02-03-02: condition false';
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca
@@ -359,17 +347,18 @@ INSERT INTO tc VALUES (1, 20);
 CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
+
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- hash join
-evaluate 'hash join';
+-- TC-4-03-01-01: hash join
+evaluate 'TC-4-03-01-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   JOIN tb ON tb.x = ta.x
   SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-03-01-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-03-01-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ tb.x
@@ -377,17 +366,17 @@ FROM (
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
   EXCEPT ALL
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-03-01-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-03-01-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
@@ -417,17 +406,18 @@ INSERT INTO tc VALUES (1, 20);
 CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
+
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- hash join
-evaluate 'hash join';
+-- TC-4-03-02-01: hash join
+evaluate 'TC-4-03-02-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   JOIN tb ON tb.x = ta.x
   ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-03-02-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-03-02-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ tb.x
@@ -435,17 +425,17 @@ FROM (
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
   EXCEPT ALL
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-03-02-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-03-02-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
@@ -475,17 +465,18 @@ INSERT INTO tc VALUES (1, 10);
 CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
+
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- hash join
-evaluate 'hash join';
+-- TC-4-03-03-01: hash join
+evaluate 'TC-4-03-03-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   JOIN tb ON tb.x = ta.x
   SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-03-03-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-03-03-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ tb.x
@@ -493,17 +484,17 @@ FROM (
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
   EXCEPT ALL
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-03-03-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-03-03-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     SEMI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
@@ -533,17 +524,18 @@ INSERT INTO tc VALUES (1, 10);
 CREATE INDEX i_ta_x ON ta (x);
 CREATE INDEX i_tb_x ON tb (x);
 CREATE INDEX i_tc_a ON tc (a);
+
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- hash join
-evaluate 'hash join';
+-- TC-4-03-04-01: hash join
+evaluate 'TC-4-03-04-01: hash join';
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   JOIN tb ON tb.x = ta.x
   ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b;
 
--- rows in the hash join result EXCEPT ALL the NL join result
-evaluate 'rows in the hash join result EXCEPT ALL the NL join result';
+-- TC-4-03-04-02: rows in the hash join result EXCEPT ALL the NL join result
+evaluate 'TC-4-03-04-02: rows in the hash join result EXCEPT ALL the NL join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS hash_minus_nl
 FROM (
   SELECT /*+ USE_HASH */ tb.x
@@ -551,17 +543,17 @@ FROM (
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
   EXCEPT ALL
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
 ) x;
 
--- rows in the NL join result EXCEPT ALL the hash join result
-evaluate 'rows in the NL join result EXCEPT ALL the hash join result';
+-- TC-4-03-04-03: rows in the NL join result EXCEPT ALL the hash join result
+evaluate 'TC-4-03-04-03: rows in the NL join result EXCEPT ALL the hash join result';
 SELECT /*+ RECOMPILE */ COUNT (*) AS nl_minus_hash
 FROM (
-  SELECT /*+ USE_NL */ tb.x
+  SELECT /*+ NO_USE_HASH USE_NL */ tb.x
   FROM ta
     JOIN tb ON tb.x = ta.x
     ANTI JOIN tc ON tc.a = tb.a AND tc.b = ta.b + tb.b
@@ -597,10 +589,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- EXISTS subquery WHERE, result and plan
-evaluate 'EXISTS subquery WHERE, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-01-01: EXISTS subquery WHERE, result and plan
+evaluate 'TC-4-04-01-01: EXISTS subquery WHERE, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -628,10 +621,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- NOT EXISTS subquery WHERE, result and plan
-evaluate 'NOT EXISTS subquery WHERE, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-02-01: NOT EXISTS subquery WHERE, result and plan
+evaluate 'TC-4-04-02-01: NOT EXISTS subquery WHERE, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -659,10 +653,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- IN subquery select list, result and plan
-evaluate 'IN subquery select list, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-03-01: IN subquery select list, result and plan
+evaluate 'TC-4-04-03-01: IN subquery select list, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -690,10 +685,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- IN left operand, result and plan
-evaluate 'IN left operand, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-04-01: IN left operand, result and plan
+evaluate 'TC-4-04-04-01: IN left operand, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -720,11 +716,14 @@ INSERT INTO tb (ca, cb, cr) SELECT 3, 7, c FROM tc c WHERE c.ca = 1;
 INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb = 5;
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
+-- ta 5 references tb (1, 15) instead of NULL, unlike ta 4 of TC-4-04-04:
+-- no tb row has ca 5, so NOT IN is true and ta 5 is the row in the result
 INSERT INTO ta (ca, cb, cr) SELECT 5, 0, b FROM tb b WHERE b.ca = 1 AND b.cb = 15;
-UPDATE STATISTICS ON ta, tb, tc;
 
--- NOT IN left operand, result and plan
-evaluate 'NOT IN left operand, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-05-01: NOT IN left operand, result and plan
+evaluate 'TC-4-04-05-01: NOT IN left operand, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -752,10 +751,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- EXISTS subquery select list, result and plan
-evaluate 'EXISTS subquery select list, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-06-01: EXISTS subquery select list, result and plan
+evaluate 'TC-4-04-06-01: EXISTS subquery select list, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta
@@ -783,10 +783,11 @@ INSERT INTO ta (ca, cb, cr) SELECT 1, 100, b FROM tb b WHERE b.ca = 1 AND b.cb =
 INSERT INTO ta (ca, cb, cr) SELECT 2, 200, b FROM tb b WHERE b.ca = 2;
 INSERT INTO ta (ca, cb, cr) SELECT 3, 7, b FROM tb b WHERE b.ca = 3;
 INSERT INTO ta (ca, cb, cr) VALUES (4, 0, NULL);
-UPDATE STATISTICS ON ta, tb, tc;
 
--- NOT IN subquery select list, result and plan
-evaluate 'NOT IN subquery select list, result and plan';
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-4-04-07-01: NOT IN subquery select list, result and plan
+evaluate 'TC-4-04-07-01: NOT IN subquery select list, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca
 FROM ta

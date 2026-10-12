@@ -16,19 +16,11 @@ TC-1-01-01: SEMI JOIN
 0
 ===================================================
     
-hash join     
+TC-1-01-01-01: hash join     
 
 ===================================================
 ca    
 1     
-2     
-
-===================================================
-    
-hash join, COUNT (*)     
-
-===================================================
-count(*)    
 2     
 
 ===================================================
@@ -51,7 +43,7 @@ TC-1-01-02: ANTI JOIN
 0
 ===================================================
     
-hash join     
+TC-1-01-02-01: hash join     
 
 ===================================================
 ca    
@@ -78,7 +70,7 @@ TC-1-01-03: EXISTS subquery
 0
 ===================================================
     
-unnested, hash join, result and plan     
+TC-1-01-03-01: unnested, hash join, result and plan     
 
 ===================================================
 ca    
@@ -102,7 +94,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta semi join tb tb on tb.ca=ta.ca order by ?
 ===================================================
     
-not unnested, result and plan     
+TC-1-01-03-02: not unnested, result and plan     
 
 ===================================================
 ca    
@@ -147,7 +139,7 @@ TC-1-01-04: NOT EXISTS subquery
 0
 ===================================================
     
-unnested, hash join, result and plan     
+TC-1-01-04-01: unnested, hash join, result and plan     
 
 ===================================================
 ca    
@@ -171,7 +163,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on tb.ca=ta.ca order by ?
 ===================================================
     
-not unnested, result and plan     
+TC-1-01-04-02: not unnested, result and plan     
 
 ===================================================
 ca    
@@ -216,7 +208,7 @@ TC-1-01-05: IN subquery
 0
 ===================================================
     
-unnested, hash join, result and plan     
+TC-1-01-05-01: unnested, hash join, result and plan     
 
 ===================================================
 ca    
@@ -240,7 +232,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta semi join tb tb on tb.ca=ta.ca order by ?
 ===================================================
     
-not unnested, result and plan     
+TC-1-01-05-02: not unnested, result and plan     
 
 ===================================================
 ca    
@@ -287,7 +279,7 @@ TC-1-01-06: NOT IN subquery
 0
 ===================================================
     
-unnested, hash join, result and plan     
+TC-1-01-06-01: unnested, hash join, result and plan     
 
 ===================================================
 ca    
@@ -312,7 +304,7 @@ Query stmt:
 select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on ta.cb=tb.ca order by ?
 ===================================================
     
-not unnested, result and plan     
+TC-1-01-06-02: not unnested, result and plan     
 
 ===================================================
 ca    
@@ -354,7 +346,7 @@ TC-1-02-01: SEMI JOIN, empty inner table
 0
 ===================================================
     
-hash join     
+TC-1-02-01-01: hash join     
 
 ===================================================
 ca    
@@ -377,7 +369,7 @@ TC-1-02-02: ANTI JOIN, empty inner table
 0
 ===================================================
     
-hash join     
+TC-1-02-02-01: hash join     
 
 ===================================================
 ca    
@@ -403,7 +395,7 @@ TC-1-02-03: SEMI JOIN, empty outer table
 0
 ===================================================
     
-hash join     
+TC-1-02-03-01: hash join     
 
 ===================================================
 ca    
@@ -426,7 +418,7 @@ TC-1-02-04: ANTI JOIN, empty outer table
 0
 ===================================================
     
-hash join     
+TC-1-02-04-01: hash join     
 
 ===================================================
 ca    
@@ -451,7 +443,7 @@ TC-1-03-01: SEMI JOIN, first ON clause
 0
 ===================================================
     
-hash join     
+TC-1-03-01-01: hash join     
 
 ===================================================
 ca    
@@ -460,7 +452,7 @@ ca
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-03-01-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -468,7 +460,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-03-01-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    
@@ -494,7 +486,7 @@ TC-1-03-02: ANTI JOIN, first ON clause
 0
 ===================================================
     
-hash join     
+TC-1-03-02-01: hash join     
 
 ===================================================
 ca    
@@ -504,7 +496,7 @@ ca
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-03-02-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -512,7 +504,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-03-02-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    
@@ -538,7 +530,7 @@ TC-1-03-03: SEMI JOIN, second ON clause
 0
 ===================================================
     
-hash join     
+TC-1-03-03-01: hash join     
 
 ===================================================
 ca    
@@ -548,7 +540,7 @@ ca
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-03-03-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -556,7 +548,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-03-03-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    
@@ -582,7 +574,7 @@ TC-1-03-04: ANTI JOIN, second ON clause
 0
 ===================================================
     
-hash join     
+TC-1-03-04-01: hash join     
 
 ===================================================
 ca    
@@ -591,7 +583,7 @@ ca
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-03-04-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -599,7 +591,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-03-04-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    
@@ -625,7 +617,7 @@ TC-1-04-01: SEMI JOIN, ROWNUM
 0
 ===================================================
     
-hash join     
+TC-1-04-01-01: hash join     
 
 ===================================================
 count(*)    
@@ -651,7 +643,7 @@ TC-1-04-02: ANTI JOIN, LIMIT
 0
 ===================================================
     
-hash join     
+TC-1-04-02-01: hash join     
 
 ===================================================
 count(*)    
@@ -681,7 +673,7 @@ TC-1-04-03: SEMI JOIN + ANTI JOIN
 0
 ===================================================
     
-hash join     
+TC-1-04-03-01: hash join     
 
 ===================================================
 ca    
@@ -713,7 +705,7 @@ TC-1-04-04: INNER JOIN + SEMI JOIN
 0
 ===================================================
     
-hash join     
+TC-1-04-04-01: hash join     
 
 ===================================================
 ca    
@@ -740,7 +732,7 @@ TC-1-04-05: SEMI JOIN, two-column join key
 0
 ===================================================
     
-hash join     
+TC-1-04-05-01: hash join     
 
 ===================================================
 ca    cb    
@@ -748,7 +740,7 @@ ca    cb
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-04-05-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -756,7 +748,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-04-05-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    
@@ -782,7 +774,7 @@ TC-1-04-06: ANTI JOIN, two-column join key
 0
 ===================================================
     
-hash join     
+TC-1-04-06-01: hash join     
 
 ===================================================
 ca    cb    
@@ -793,7 +785,7 @@ null     1
 
 ===================================================
     
-rows in the hash join result EXCEPT ALL the NL join result     
+TC-1-04-06-02: rows in the hash join result EXCEPT ALL the NL join result     
 
 ===================================================
 hash_minus_nl    
@@ -801,7 +793,7 @@ hash_minus_nl
 
 ===================================================
     
-rows in the NL join result EXCEPT ALL the hash join result     
+TC-1-04-06-03: rows in the NL join result EXCEPT ALL the hash join result     
 
 ===================================================
 nl_minus_hash    

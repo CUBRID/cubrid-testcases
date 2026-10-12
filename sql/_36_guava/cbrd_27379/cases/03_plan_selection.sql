@@ -9,8 +9,10 @@
  *  Coverage:
  *    TC-2-01-01, 02:   SEMI JOIN and ANTI JOIN with USE_HASH and with NO_USE_HASH
  *    TC-2-01-03:       unnested NOT IN with USE_HASH
- *    TC-2-01-04, 05:   EXISTS / NOT EXISTS without a hint and with USE_HASH, USE_HASH(tb), NO_USE_HASH, NO_USE_HASH(tb)
- *                      in the outer query or in the subquery, with and without an index on tb.ca
+ *    TC-2-01-04:       EXISTS / NOT EXISTS with an index on tb.ca, without a hint and with USE_HASH
+ *                      in the outer query, USE_HASH or USE_HASH(tb) in the subquery
+ *    TC-2-01-05:       EXISTS / NOT EXISTS without an index on tb.ca, without a hint and with NO_USE_HASH
+ *                      in the outer query, NO_USE_HASH or NO_USE_HASH(tb) in the subquery
  *
  *  CTP runs with test_mode=yes, so cost and cardinality in a --@queryplan output are masked.
  *  The plan lines assert the join method and join type.
@@ -30,17 +32,18 @@ CREATE TABLE ta (ca INT, cb INT, cc INT);
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-UPDATE STATISTICS ON ta, tb;
 
--- USE_HASH, plan
-evaluate 'USE_HASH, plan';
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-2-01-01-01: USE_HASH, result and plan
+evaluate 'TC-2-01-01-01: USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
 
--- NO_USE_HASH, plan
-evaluate 'NO_USE_HASH, plan';
+-- TC-2-01-01-02: NO_USE_HASH, result and plan
+evaluate 'TC-2-01-01-02: NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca
 FROM ta
@@ -59,17 +62,18 @@ CREATE TABLE ta (ca INT, cb INT, cc INT);
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 10, 1), (2, 20, 2), (3, 30, NULL);
 INSERT INTO tb VALUES (1, 5), (1, 15), (1, 25), (2, 100);
-UPDATE STATISTICS ON ta, tb;
 
--- USE_HASH, plan
-evaluate 'USE_HASH, plan';
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-2-01-02-01: USE_HASH, result and plan
+evaluate 'TC-2-01-02-01: USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 
--- NO_USE_HASH, plan
-evaluate 'NO_USE_HASH, plan';
+-- TC-2-01-02-02: NO_USE_HASH, result and plan
+evaluate 'TC-2-01-02-02: NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca
 FROM ta
@@ -88,10 +92,11 @@ CREATE TABLE ta (ca INT PRIMARY KEY, cb INT NOT NULL);
 CREATE TABLE tb (ca INT PRIMARY KEY);
 INSERT INTO ta VALUES (1, 1000), (2, 2000), (3, 1000), (4, 9999), (5, 1000);
 INSERT INTO tb VALUES (1000), (2000);
-UPDATE STATISTICS ON ta, tb;
 
--- USE_HASH, plan
-evaluate 'USE_HASH, plan';
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-2-01-03-01: USE_HASH, result and plan
+evaluate 'TC-2-01-03-01: USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
@@ -101,9 +106,9 @@ WHERE ta.cb NOT IN (SELECT ca FROM tb);
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-2-01-04: index on tb.ca
+-- TC-2-01-04: index on tb.ca, USE_HASH
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-2-01-04: index on tb.ca';
+evaluate 'TC-2-01-04: index on tb.ca, USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
 CREATE TABLE ta (ca INT, cb INT);
@@ -111,59 +116,60 @@ CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO ta SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 2000;
 INSERT INTO tb SELECT MOD (ROWNUM, 500), ROWNUM FROM db_class a, db_class b LIMIT 2000;
 CREATE INDEX i_tb_ca ON tb (ca);
+
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- EXISTS, no hint, plan
-evaluate 'EXISTS, no hint, plan';
+-- TC-2-01-04-01: EXISTS, no hint, result and plan
+evaluate 'TC-2-01-04-01: EXISTS, no hint, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, outer query USE_HASH, plan
-evaluate 'EXISTS, outer query USE_HASH, plan';
+-- TC-2-01-04-02: EXISTS, outer query USE_HASH, result and plan
+evaluate 'TC-2-01-04-02: EXISTS, outer query USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, subquery USE_HASH, plan
-evaluate 'EXISTS, subquery USE_HASH, plan';
+-- TC-2-01-04-03: EXISTS, subquery USE_HASH, result and plan
+evaluate 'TC-2-01-04-03: EXISTS, subquery USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT /*+ USE_HASH */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, subquery USE_HASH(tb), plan
-evaluate 'EXISTS, subquery USE_HASH(tb), plan';
+-- TC-2-01-04-04: EXISTS, subquery USE_HASH(tb), result and plan
+evaluate 'TC-2-01-04-04: EXISTS, subquery USE_HASH(tb), result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT /*+ USE_HASH(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, no hint, plan
-evaluate 'NOT EXISTS, no hint, plan';
+-- TC-2-01-04-05: NOT EXISTS, no hint, result and plan
+evaluate 'TC-2-01-04-05: NOT EXISTS, no hint, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, outer query USE_HASH, plan
-evaluate 'NOT EXISTS, outer query USE_HASH, plan';
+-- TC-2-01-04-06: NOT EXISTS, outer query USE_HASH, result and plan
+evaluate 'TC-2-01-04-06: NOT EXISTS, outer query USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, subquery USE_HASH, plan
-evaluate 'NOT EXISTS, subquery USE_HASH, plan';
+-- TC-2-01-04-07: NOT EXISTS, subquery USE_HASH, result and plan
+evaluate 'TC-2-01-04-07: NOT EXISTS, subquery USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT /*+ USE_HASH */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, subquery USE_HASH(tb), plan
-evaluate 'NOT EXISTS, subquery USE_HASH(tb), plan';
+-- TC-2-01-04-08: NOT EXISTS, subquery USE_HASH(tb), result and plan
+evaluate 'TC-2-01-04-08: NOT EXISTS, subquery USE_HASH(tb), result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
@@ -173,70 +179,69 @@ WHERE NOT EXISTS (SELECT /*+ USE_HASH(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-2-01-05: no index on tb.ca
+-- TC-2-01-05: no index on tb.ca, NO_USE_HASH
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-2-01-05: no index on tb.ca';
+evaluate 'TC-2-01-05: no index on tb.ca, NO_USE_HASH';
 
 DROP TABLE IF EXISTS tb, ta;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO ta SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 2000;
 INSERT INTO tb SELECT MOD (ROWNUM, 500), ROWNUM FROM db_class a, db_class b LIMIT 2000;
-CREATE INDEX i_tb_ca ON tb (ca);
-UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
-DROP INDEX i_tb_ca ON tb;
 
--- EXISTS, no hint, plan
-evaluate 'EXISTS, no hint, plan';
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-2-01-05-01: EXISTS, no hint, result and plan
+evaluate 'TC-2-01-05-01: EXISTS, no hint, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, outer query NO_USE_HASH, plan
-evaluate 'EXISTS, outer query NO_USE_HASH, plan';
+-- TC-2-01-05-02: EXISTS, outer query NO_USE_HASH, result and plan
+evaluate 'TC-2-01-05-02: EXISTS, outer query NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, subquery NO_USE_HASH, plan
-evaluate 'EXISTS, subquery NO_USE_HASH, plan';
+-- TC-2-01-05-03: EXISTS, subquery NO_USE_HASH, result and plan
+evaluate 'TC-2-01-05-03: EXISTS, subquery NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT /*+ NO_USE_HASH */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- EXISTS, subquery NO_USE_HASH(tb), plan
-evaluate 'EXISTS, subquery NO_USE_HASH(tb), plan';
+-- TC-2-01-05-04: EXISTS, subquery NO_USE_HASH(tb), result and plan
+evaluate 'TC-2-01-05-04: EXISTS, subquery NO_USE_HASH(tb), result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT /*+ NO_USE_HASH(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, no hint, plan
-evaluate 'NOT EXISTS, no hint, plan';
+-- TC-2-01-05-05: NOT EXISTS, no hint, result and plan
+evaluate 'TC-2-01-05-05: NOT EXISTS, no hint, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, outer query NO_USE_HASH, plan
-evaluate 'NOT EXISTS, outer query NO_USE_HASH, plan';
+-- TC-2-01-05-06: NOT EXISTS, outer query NO_USE_HASH, result and plan
+evaluate 'TC-2-01-05-06: NOT EXISTS, outer query NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, subquery NO_USE_HASH, plan
-evaluate 'NOT EXISTS, subquery NO_USE_HASH, plan';
+-- TC-2-01-05-07: NOT EXISTS, subquery NO_USE_HASH, result and plan
+evaluate 'TC-2-01-05-07: NOT EXISTS, subquery NO_USE_HASH, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT /*+ NO_USE_HASH */ 1 FROM tb WHERE tb.ca = ta.ca);
 
--- NOT EXISTS, subquery NO_USE_HASH(tb), plan
-evaluate 'NOT EXISTS, subquery NO_USE_HASH(tb), plan';
+-- TC-2-01-05-08: NOT EXISTS, subquery NO_USE_HASH(tb), result and plan
+evaluate 'TC-2-01-05-08: NOT EXISTS, subquery NO_USE_HASH(tb), result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta

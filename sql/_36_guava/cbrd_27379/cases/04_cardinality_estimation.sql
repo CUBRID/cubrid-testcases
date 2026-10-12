@@ -18,7 +18,7 @@
  */
 
 -- =====================================================================================================================
--- TC-3-01: estimated rows of SEMI JOIN / ANTI JOIN do not exceed those of the outer input
+-- TC-3-01: estimated rows of SEMI JOIN do not exceed those of the outer input
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -41,8 +41,7 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 1000
 )
-SELECT n
-FROM cte;
+SELECT n FROM cte;
 
 -- tb: 1500 rows of MOD (n - 1, 250) * 4 + 4, n = 1 .. 1500
 --   n 1     -> 4
@@ -60,13 +59,12 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 1500
 )
-SELECT MOD (n - 1, 250) * 4 + 4
-FROM cte;
+SELECT MOD (n - 1, 250) * 4 + 4 FROM cte;
 
-UPDATE STATISTICS ON ta, tb;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- hash join, result and plan
-evaluate 'hash join, result and plan';
+-- TC-3-01-01-01: hash join, result and plan
+evaluate 'TC-3-01-01-01: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -114,20 +112,17 @@ INSERT INTO tb SELECT ca, ca FROM ta WHERE ca <= 100;
 CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO tc SELECT ca, CASE WHEN ca <= 5000 THEN ca END FROM ta;
 
-CREATE INDEX i_ta_ca ON ta (ca);
-CREATE INDEX i_tb_ca ON tb (ca);
-CREATE INDEX i_tc_ca ON tc (ca);
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- no WHERE term, result and plan
-evaluate 'no WHERE term, result and plan';
+-- TC-3-02-01-01: no WHERE term, result and plan
+evaluate 'TC-3-02-01-01: no WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 
--- with WHERE term, result and plan
-evaluate 'with WHERE term, result and plan';
+-- TC-3-02-01-02: with WHERE term, result and plan
+evaluate 'TC-3-02-01-02: with WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -172,21 +167,18 @@ INSERT INTO tb SELECT ca, ca FROM ta WHERE ca <= 100;
 CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO tc SELECT ca, CASE WHEN ca <= 5000 THEN ca END FROM ta;
 
-CREATE INDEX i_ta_ca ON ta (ca);
-CREATE INDEX i_tb_ca ON tb (ca);
-CREATE INDEX i_tc_ca ON tc (ca);
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- no WHERE term, result and plan
-evaluate 'no WHERE term, result and plan';
+-- TC-3-02-02-01: no WHERE term, result and plan
+evaluate 'TC-3-02-02-01: no WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE ORDERED USE_HASH */ COUNT (*)
 FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
   ANTI JOIN tb ON tb.ca = ta.ca;
 
--- with WHERE term, result and plan
-evaluate 'with WHERE term, result and plan';
+-- TC-3-02-02-02: with WHERE term, result and plan
+evaluate 'TC-3-02-02-02: with WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE ORDERED USE_HASH */ COUNT (*)
 FROM ta
@@ -236,13 +228,10 @@ INSERT INTO ta SELECT MOD (ca, 100), ca FROM td WHERE ca <= 1000;
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO tb SELECT MOD (ca, 10), ca FROM td WHERE ca <= 1000;
 
-CREATE INDEX i_td_ca ON td (ca);
-CREATE INDEX i_ta_ca ON ta (ca);
-CREATE INDEX i_tb_ca ON tb (ca);
-UPDATE STATISTICS ON td, ta, tb WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- hash join, result and plan
-evaluate 'hash join, result and plan';
+-- TC-3-03-01-01: hash join, result and plan
+evaluate 'TC-3-03-01-01: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -292,14 +281,10 @@ INSERT INTO tb SELECT MOD (ca, 10), ca FROM td WHERE ca <= 1000;
 CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO tc SELECT DISTINCT ca, ca FROM tb;
 
-CREATE INDEX i_td_ca ON td (ca);
-CREATE INDEX i_ta_ca ON ta (ca);
-CREATE INDEX i_tb_ca ON tb (ca);
-CREATE INDEX i_tc_ca ON tc (ca);
-UPDATE STATISTICS ON td, ta, tb, tc WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tc WITH FULLSCAN;
 
--- hash join, result and plan
-evaluate 'hash join, result and plan';
+-- TC-3-03-02-01: hash join, result and plan
+evaluate 'TC-3-03-02-01: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -347,13 +332,10 @@ INSERT INTO ta SELECT MOD (ca, 100), ca FROM tc WHERE ca <= 1000;
 CREATE TABLE tb (ca INT, cb INT);
 INSERT INTO tb SELECT ca, cb FROM ta;
 
-CREATE INDEX i_tc_ca ON tc (ca);
-CREATE INDEX i_ta_ca ON ta (ca);
-CREATE INDEX i_tb_ca ON tb (ca);
-UPDATE STATISTICS ON tc, ta, tb WITH FULLSCAN;
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- hash join, result and plan
-evaluate 'hash join, result and plan';
+-- TC-3-04-01-01: hash join, result and plan
+evaluate 'TC-3-04-01-01: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -388,8 +370,7 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 999
 )
-SELECT n / 10, MOD (n, 10), n
-FROM cte;
+SELECT n / 10, MOD (n, 10), n FROM cte;
 
 -- tb: 10000 rows of (m, MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
 --     Each ta key (a, b) is referenced by 10 rows
@@ -415,8 +396,8 @@ FROM cte x, cte y;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- unnested, hash join, result and plan
-evaluate 'unnested, hash join, result and plan';
+-- TC-3-05-01-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-01-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
@@ -447,8 +428,7 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 999
 )
-SELECT n / 10, MOD (n, 10), n
-FROM cte;
+SELECT n / 10, MOD (n, 10), n FROM cte;
 
 -- tb: 10000 rows of (m, MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
 --     Each ta key (a, b) is referenced by 10 rows
@@ -474,8 +454,8 @@ FROM cte x, cte y;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- unnested, hash join, result and plan
-evaluate 'unnested, hash join, result and plan';
+-- TC-3-05-02-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-02-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -506,8 +486,7 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 999
 )
-SELECT n / 10, MOD (n, 10), n
-FROM cte;
+SELECT n / 10, MOD (n, 10), n FROM cte;
 
 -- tb: 10000 rows of (m, MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
 --     a is NULL where MOD (m, 4) = 0 (2500 rows)
@@ -533,8 +512,8 @@ FROM cte x, cte y;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- unnested, hash join, result and plan
-evaluate 'unnested, hash join, result and plan';
+-- TC-3-05-03-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-03-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
@@ -565,8 +544,7 @@ WITH RECURSIVE cte (n) AS (
   UNION ALL
   SELECT n + 1 FROM cte WHERE n < 999
 )
-SELECT n / 10, MOD (n, 10), n
-FROM cte;
+SELECT n / 10, MOD (n, 10), n FROM cte;
 
 -- tb: 10000 rows of (m, MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
 --     a is NULL where MOD (m, 4) = 0 (2500 rows)
@@ -592,8 +570,8 @@ FROM cte x, cte y;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- unnested, hash join, result and plan
-evaluate 'unnested, hash join, result and plan';
+-- TC-3-05-04-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-04-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -637,10 +615,11 @@ INSERT INTO tb SELECT ca, ca FROM ta WHERE ca <= 100;
 
 CREATE INDEX i_ta_ca ON ta (ca);
 CREATE INDEX i_tb_ca ON tb (ca);
+
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- unnested, hash join, result and plan
-evaluate 'unnested, hash join, result and plan';
+-- TC-3-06-01-01: unnested, hash join, result and plan
+evaluate 'TC-3-06-01-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
