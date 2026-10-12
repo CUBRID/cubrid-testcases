@@ -31,7 +31,11 @@
  *  the innermost scan under a middle scan, a select-list subquery read for
  *  consecutive surviving rows the result of an earlier one, with or without
  *  memoize, and the subquery result cache stored that result under the new
- *  key. The surviving row now resets them as a scanned row does.
+ *  key. The surviving row now resets them as a scanned row does. The same
+ *  reset runs a derived table correlated to the outer row, which the plan
+ *  attaches to the scan before it: after an explicit ANTI JOIN that scan is
+ *  the anti inner, and the derived table had no row for any surviving outer
+ *  row.
  *
  *  CTP runs SQL tests with test_mode=yes, which masks volatile trace values
  *  (time, hit / miss, size) to '?'. The assertions are therefore the MEMOIZE
@@ -40,7 +44,8 @@
  *  same query with memoize_memory_limit=0 (no memo), and the two result blocks
  *  must match. Where an outer column of cy is part of the key, the result is
  *  counted per g, because a key without it replays the rows of the first outer
- *  row (g = 1) and can keep the total.
+ *  row (g = 1) and can keep the total. Case 15 is not memoized; its rows are
+ *  the expected values given in its evaluate line.
  *
  *  rownum and orderby_num cannot share an expression with a column, so Cases
  *  12 and 13 put the outer column in the condition of CASE. GROUP BY and
@@ -67,6 +72,10 @@
  *             subquery, per g
  *    Case 14: outer column only in the CONNECT BY clause of the subquery, not
  *             memoized, per g
+ *    Case 15: derived table correlated to the outer row right after an ANTI
+ *             JOIN inner, not memoized
+ *    Case 16: outer column only in the index key range of the predicate
+ *             subquery, per g
  */
 
 drop table if exists cz, cx, cy, cs;
@@ -234,6 +243,28 @@ show trace;
 set trace off;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs start with cs.pk = 1 connect by prior cs.pk = cs.pk - 1 and cs.pk <= o0.g + 2) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+
+set system parameters 'memoize_memory_limit=2M';
+set trace on;
+
+
+evaluate 'Case 15: derived table correlated to the outer row right after an ANTI JOIN inner; cnt = 2 for g = 1 and 3 for g = 2';
+-- the plan attaches d, which reads o0, to the scan before it, here the anti inner cs a. a matches only g = 0
+-- (a.pk = 4), so the rows with g = 1 and g = 2 survive and each must run d for itself. Before the fix no surviving
+-- row ran d and the query returned no row. d is not a scalar subquery, so the anti inner is not memoized
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, d.cnt from cy o0 anti join cs a on a.pk = o0.g + 4, (select count(*) cnt from cs x where x.pk <= o0.g + 1) d order by 1;
+show trace;
+
+
+evaluate 'Case 16: outer column only in the index key range of the predicate subquery; result = memoize off';
+-- cs.pk <= o0.g + 1 is the key range of the subquery's index scan and leaves its key filter and predicate, so the
+-- key builder finds o0.g only in the copy of the range the scan keeps for MVCC re-evaluation. The subquery counts
+-- 1, 2 and 3 rows for g = 0, 1 and 2, so 9, 8 and 7 inner rows match
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= (select /*+ no_subquery_cache */ count(*) from cs where cs.pk <= o0.g + 1) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
+show trace;
+set trace off;
+set system parameters 'memoize_memory_limit=0';
+select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn >= (select /*+ no_subquery_cache */ count(*) from cs where cs.pk <= o0.g + 1) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 
 
 set system parameters 'memoize_memory_limit=default';

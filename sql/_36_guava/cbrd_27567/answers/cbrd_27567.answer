@@ -856,3 +856,100 @@ g    count(*)
 0
 ===================================================
 0
+===================================================
+    
+Case 15: derived table correlated to the outer row right after an ANTI JOIN inner; cnt = 2 for g = 1 and 3 for g = 2     
+
+===================================================
+pk    g    cnt    
+1     1     2     
+2     2     3     
+4     1     2     
+5     2     3     
+7     1     2     
+8     2     3     
+10     1     2     
+11     2     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (x.pk_cs_pk) (key range: (x.pk<=o?.g+?), covered: true)
+
+  rewritten query: (select count(*) from [dba.cs] x where (x.pk<=o?.g+?))
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (anti join)
+      INDEX SCAN (o?.pk_cy_pk) ()
+      INDEX SCAN (a.pk_cs_pk) (key range: a.pk=o?.g+?, covered: true)
+    TABLE SCAN (d)
+  skip order by: true
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.g, d.cnt from [dba.cy] o? anti join [dba.cs] a on a.pk=o?.g+?, (select count(*) from [dba.cs] x where (x.pk<=o?.g+?)) d (cnt) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.cy.pk_cy_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+Case 16: outer column only in the index key range of the predicate subquery; result = memoize off     
+
+===================================================
+g    count(*)    
+0     36     
+1     32     
+2     28     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.g+?), covered: true)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count(*) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.g+?))
+
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (z)
+        INDEX SCAN (o?.i_cy_nu) (key range: z.nu=o?.nu)
+      INDEX SCAN (o?.i_cx_nu) (key range: o?.nu=o?.nu)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o?.g, count(*) from [dba.cz] z, [dba.cy] o?, [dba.cx] o? where z.nu=o?.nu and o?.nu=o?.nu and (o?.nn>=(select /*+ NO_SUBQUERY_CACHE */ count(*) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.g+?))) group by o?.g using index o?.i_cy_nu, o?.i_cx_nu
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+g    count(*)    
+0     36     
+1     32     
+2     28     
+
+===================================================
+0
+===================================================
+0
