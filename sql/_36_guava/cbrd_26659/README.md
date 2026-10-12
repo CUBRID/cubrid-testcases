@@ -37,10 +37,18 @@ Hypothesis patches may be used for diagnosis. A final repair requires correct an
 
 If the excluded partition defect is demonstrated to cause cascading failures in the 14 in-scope SQL cases, repair of the shared cause needed to restore those cases is allowed. This does not require resolving every retained partition defect or extend the repair scope to other excluded cases.
 
+## Agreed completion criteria
+
+Shared understanding was confirmed on 2026-10-12. All 14 in-scope cases must pass independently on fresh databases and also pass in the original 72-case `sql/_36_guava` execution order, including the partition testcase. Retain actual logs, golden-answer comparisons, execution identities and artifact verdicts for both kinds of validation. Record excluded failures separately.
+
+After publishing the scoped repair, run one final CI qualification and report its terminal result, the 14 target outcomes, excluded/remaining failures and the TC Merge Gate state. Then wait for human direction. A remaining in-scope failure is not a completed repair.
+
 ## Tracking
 
 The complete 20-failure table, reasons, evidence and verification state are maintained in the companion `my-cubrid-docs` checkout at:
 
 `cbrd-26659/ci-repair/README.md`
+
+The agreed execution plan is maintained alongside it at `cbrd-26659/ci-repair/plan.md`.
 
 Update that table after each verified attempt, preserving the run/revision identity and recording unresolved outcomes. Update this summary when the agreed scope changes. The README documents decisions; the runner's execution configuration determines actual selection.
