@@ -617,10 +617,196 @@ Trace Statistics:
      
 
 ===================================================
-0
+count(*)    sum(a)    
+8     52     
+
+===================================================
+    
+Case 11: function in the input or the WHERE of JSON_TABLE and TABLE () in the subquery, serial; result = no_parallel_scan     
+
 ===================================================
 count(*)    sum(a)    
 8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (j)
+
+  rewritten query: (select max(j.c) from (json_table (json_array([dba.f_pn]( mod([dba.t_big].a, ?))), '$[*]' columns (c integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as j))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select max(j.c) from (json_table (json_array([dba.f_pn]( mod([dba.t_big].a, ?))), '$[*]' columns (c integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as j)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+7     49     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (j)
+
+  rewritten query: (select max(j.c) from (json_table ('[?, ?, ?]', '$[*]' columns (c integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as j) where [dba.f_pn](j.c)> mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select max(j.c) from (json_table ('[?, ?, ?]', '$[*]' columns (c integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as j) where [dba.f_pn](j.c)> mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+7     49     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (s)
+
+  rewritten query: (select max(s.c) from table({[dba.f_pn]( mod([dba.t_big].a, ?)), ?}) s (c))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select max(s.c) from table({[dba.f_pn]( mod([dba.t_big].a, ?)), ?}) s (c)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     52     
+
+===================================================
+count(*)    sum(a)    
+7     49     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (s)
+
+  rewritten query: (select max(s.c) from table({?, ?, ?}) s (c) where [dba.f_pn](s.c)> mod([dba.t_big].a, ?)+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select max(s.c) from table({?, ?, ?}) s (c) where [dba.f_pn](s.c)> mod([dba.t_big].a, ?)+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+7     49     
+
+===================================================
+    
+Case 12: function in the ratio of PERCENTILE_CONT/DISC, in the subquery and over the parallel scan; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+9     54     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: (z.a<= mod([dba.t_big].a, ?)+?))
+
+  rewritten query: (select percentile_cont( cast( cast([dba.f_pn](?) as numeric)/?.? as double)) within group (order by z.b) from [dba.t_small] z where (z.a<= mod([dba.t_big].a, ?)+?))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select percentile_cont( cast( cast([dba.f_pn](?) as numeric)/?.? as double)) within group (order by z.b) from [dba.t_small] z where (z.a<= mod([dba.t_big].a, ?)+?)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+9     54     
+
+===================================================
+percentile_disc( cast(f_pn(0)/10.0 as double)) within group (order by a)    count(*)    
+6554     65536     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select percentile_disc( cast( cast([dba.f_pn](?) as numeric)/?.? as double)) within group (order by [dba.t_big].a), count(*) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+0
+===================================================
+percentile_disc( cast(f_pn(0)/10.0 as double)) within group (order by a)    count(*)    
+6554     65536     
 
 ===================================================
 0

@@ -25,6 +25,8 @@
  *    Case 8:  the declared function in the same places keeps the parallel plans
  *    Case 9:  subqueries without a function keep their parallel plans
  *    Case 10: function in the predicate of the first table of the subquery, serial as before
+ *    Case 11: function in the input or the WHERE of JSON_TABLE and TABLE () in the subquery, serial
+ *    Case 12: function in the ratio of PERCENTILE_CONT/DISC, in the subquery and over the parallel scan
  */
 
 drop table if exists t_big, t_small;
@@ -144,10 +146,38 @@ select /*+ recompile ordered use_nl no_parallel_scan */ count(*), sum (t_big.a) 
 evaluate 'Case 10: function in the predicate of the subquery first table, serial as before; result = no_parallel_scan';
 select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select z.b from t_small z where z.a = mod (t_big.a, 3) + 1 and f_pn (z.b) > 0);
 show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select z.b from t_small z where z.a = mod (t_big.a, 3) + 1 and f_pn (z.b) > 0);
+
+
+evaluate 'Case 11: function in the input or the WHERE of JSON_TABLE and TABLE () in the subquery, serial; result = no_parallel_scan';
+-- the scan of the subquery evaluates its JSON document or set when it opens, and its WHERE per row
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select max (j.c) from json_table (json_array (f_pn (mod (t_big.a, 3))), '$[*]' columns (c int path '$')) as j);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select max (j.c) from json_table (json_array (f_pn (mod (t_big.a, 3))), '$[*]' columns (c int path '$')) as j);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select max (j.c) from json_table ('[1, 2, 3]', '$[*]' columns (c int path '$')) as j where f_pn (j.c) > mod (t_big.a, 3) + 1);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select max (j.c) from json_table ('[1, 2, 3]', '$[*]' columns (c int path '$')) as j where f_pn (j.c) > mod (t_big.a, 3) + 1);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select max (s.c) from table ({f_pn (mod (t_big.a, 3)), 0}) as s (c));
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select max (s.c) from table ({f_pn (mod (t_big.a, 3)), 0}) as s (c));
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select max (s.c) from table ({1, 2, 3}) as s (c) where f_pn (s.c) > mod (t_big.a, 3) + 1);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select max (s.c) from table ({1, 2, 3}) as s (c) where f_pn (s.c) > mod (t_big.a, 3) + 1);
+
+
+evaluate 'Case 12: function in the ratio of PERCENTILE_CONT/DISC, in the subquery and over the parallel scan; result = no_parallel_scan';
+-- the ratio is evaluated with the operands for every row, by a worker too when the parallel scan
+-- aggregates in its workers. Over t_big the scan stays parallel, but the main thread aggregates its
+-- rows (gather: row by row)
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select percentile_cont (f_pn (0) / 10.0) within group (order by z.b) from t_small z where z.a <= mod (t_big.a, 3) + 1);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select percentile_cont (f_pn (0) / 10.0) within group (order by z.b) from t_small z where z.a <= mod (t_big.a, 3) + 1);
+select /*+ recompile */ percentile_disc (f_pn (0) / 10.0) within group (order by a), count(*) from t_big;
+show trace;
 -- trace goes off before the last query that no show trace reads: its plan would stay in the
 -- session and the next case's first show trace over a cached plan would print it
 set trace off;
-select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select z.b from t_small z where z.a = mod (t_big.a, 3) + 1 and f_pn (z.b) > 0);
+select /*+ recompile no_parallel_scan */ percentile_disc (f_pn (0) / 10.0) within group (order by a), count(*) from t_big;
 
 drop function f_pn, f_pp, f_sq;
 drop table t_big, t_small;
