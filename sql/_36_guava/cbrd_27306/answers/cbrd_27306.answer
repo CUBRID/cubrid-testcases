@@ -110,10 +110,40 @@ select count(*), sum(l.price) from orl_l l, orl_p p where p.id=l.pid and (((p.br
 revenue_l_outer    
 1932.67     
 
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: l node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: p node[?]
+               index: pk_orl_p_id term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) and l.inst= ?:?  and l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ?
 ===================================================
 revenue_hash    
 1932.67     
 
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: l node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: p node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) and l.inst= ?:?  and l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ?
 ===================================================
     
 [5] two-branch control below the CNF threshold: orl_p drives through ordinary sargs     

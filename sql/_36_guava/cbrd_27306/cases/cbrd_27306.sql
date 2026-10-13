@@ -35,15 +35,21 @@
  *           IN list (the probe counts of the fixed and the old extraction).
  *   Case 3: two OR factors over disjoint orl_p columns, each compensated
  *           against its own origin -> same shape as Case 1.
- *   Case 4: the Case 1 result under forced join orders / hash join must be
- *           identical (the compensation changes costs, never results).
+ *   Case 4: the Case 1 result under a forced orl_l-driven NL join and a hash
+ *           join must be identical (the compensation changes costs, never
+ *           results); the plans are printed so the hints are seen to apply.
  *   Case 5: two-branch control below the CNF threshold: the OR is distributed
  *           and the orl_p conditions are ordinary sargs -> same shape.
  *   Case 6: LIKE with a retained residual ('aa%0' keeps the LIKE and adds the
- *           prefix range): single-table lookup uses i_orl_s_a, the join with
- *           orl_t is driven by the LIKE-filtered orl_s (idx-join, outer iscan
- *           orl_s, inner iscan orl_t on i_orl_t_sid). A regression that drops
- *           or double-counts the derived range shows orl_t driving.
+ *           prefix range). The fix only moved where the derived range is
+ *           reconciled with its LIKE (a per-plan divide-back in
+ *           qo_iscan_cost () before, the node-level compensation now); the
+ *           orl_s cardinality is the LIKE's share either way, so this join
+ *           order does not depend on the fix. The case pins the shape the
+ *           shared compensation path must keep producing for the LIKE pair:
+ *           single-table lookup = iscan on i_orl_s_a with the range as key
+ *           range and the LIKE as filter, join = idx-join driven by orl_s
+ *           (outer iscan orl_s, inner iscan orl_t on i_orl_t_sid).
  */
 drop table if exists orl_t, orl_s, orl_l, orl_p, orl_d;
 
@@ -132,11 +138,13 @@ where p.id = l.pid
 
 -- Case 4: Case 1 result must not depend on the join order or method
 evaluate '[4] forced orl_l-driven NL join and hash join return the same revenue as Case 1';
+--@queryplan
 select /*+ recompile ordered use_nl */ sum(l.price * (1 - l.disc)) as revenue_l_outer
 from orl_l l, orl_p p
 where ( p.id = l.pid and p.brand = 'B12' and p.container in ('C01','C02','C03','C04') and l.qty >= 1 and l.qty <= 11 and p.sz between 1 and 10 and l.mode in ('AIR','AIR REG') and l.inst = 'DELIVER IN PERSON' )
    or ( p.id = l.pid and p.brand = 'B20' and p.container in ('C11','C12','C13','C14') and l.qty >= 10 and l.qty <= 20 and p.sz between 1 and 20 and l.mode in ('AIR','AIR REG') and l.inst = 'DELIVER IN PERSON' )
    or ( p.id = l.pid and p.brand = 'B03' and p.container in ('C21','C22','C23','C24') and l.qty >= 20 and l.qty <= 30 and p.sz between 1 and 30 and l.mode in ('AIR','AIR REG') and l.inst = 'DELIVER IN PERSON' );
+--@queryplan
 select /*+ recompile use_hash */ sum(l.price * (1 - l.disc)) as revenue_hash
 from orl_l l, orl_p p
 where ( p.id = l.pid and p.brand = 'B12' and p.container in ('C01','C02','C03','C04') and l.qty >= 1 and l.qty <= 11 and p.sz between 1 and 10 and l.mode in ('AIR','AIR REG') and l.inst = 'DELIVER IN PERSON' )
