@@ -98,3 +98,16 @@ insert into uuid_dml_t select uuid(null) from db_root;
 insert into uuid_dml_t(a) values (uuid(cast(null as int)));
 select count(*) stays_empty from uuid_dml_t;
 drop table uuid_dml_t;
+
+evaluate '[TEST 9] column-sourced numeric version arguments follow the same coercion rules as literals';
+drop table if exists uuid_arg_col_t;
+create table uuid_arg_col_t (id int, ver numeric(10, 3));
+insert into uuid_arg_col_t values (1, 0), (2, 3.9), (3, 4.111), (4, 6.5), (5, 7.321);
+select id, substr(uuid_format(uuid(ver)), 15, 1) version_nibble
+from uuid_arg_col_t
+order by id;
+ 
+evaluate '[TEST 10] column-sourced value that rounds to an unsupported version errors the same as a literal';
+insert into uuid_arg_col_t values (6, 4.9);
+select uuid(ver) from uuid_arg_col_t where id = 6;
+drop table uuid_arg_col_t;

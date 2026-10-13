@@ -1,0 +1,54 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9900
+===================================================
+50
+===================================================
+50
+===================================================
+0
+===================================================
+0
+===================================================
+count(col_b)    
+9900     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: col_b[0] (f)
+seg[2]: col_a[0]
+Join graph nodes:
+node[0]: dba.tenum dba.tenum(10000/25) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.tenum].col_a='red' (sel ?) (sarg term) (not-join eligible) (indexable col_a[0]) (loc 0)
+Query plan:
+sscan
+    class: tenum node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(tenum.col_b) from tenum tenum where tenum.col_a= ?:? 
+===================================================
+count(col_b)    
+50     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: col_b[0] (f)
+seg[2]: col_a[0]
+Join graph nodes:
+node[0]: dba.tenum te(10000/25) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: te.col_a='blue' (sel ?) (sarg term) (not-join eligible) (indexable col_a[0]) (loc 0)
+Query plan:
+iscan
+    class: te node[?]
+    index: i_tenum_cola term[?]
+    cost:  ? card ?
+Query stmt:
+select count(te.col_b) from tenum te where te.col_a= ?:? 
+===================================================
+0
