@@ -40,3 +40,26 @@ deallocate prepare p2;
 deallocate prepare p3;
 deallocate prepare p4;
 drop table rt;
+-- NUMERIC -> INT bind order on a filter with a typed literal (review 2026-10-07): the first execution
+-- binds a NUMERIC so the comparison "n * ? > 15" is planned on NUMERIC, the next binds an INT; the
+-- program must be recompiled for the INT plan and the literal must be read in its own domain
+drop table if exists rt;
+create table rt (id int, n int);
+insert into rt values (1, 5), (2, 7), (3, NULL), (4, 40), (5, 8);
+prepare p5 from 'select id, n from rt where n * ? > 15 order by id';
+execute p5 using 1.0;
+execute p5 using 2;
+execute p5 using 1.0;
+execute p5 using 2;
+prepare p6 from 'select count(*) from rt where n + ? > 15';
+execute p6 using 1.5;
+execute p6 using 1;
+execute p6 using 1.5;
+prepare p7 from 'select id, n from rt where n * ? > 15 order by id';
+execute p7 using 2;
+execute p7 using 1.0;
+execute p7 using 2;
+deallocate prepare p5;
+deallocate prepare p6;
+deallocate prepare p7;
+drop table rt;
