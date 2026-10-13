@@ -502,14 +502,14 @@ Q009     9     9
 Q009     10     10     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: tbl_a node[?]
-                 cost:  ? card ?
+iscan
+    class: tbl_a node[?]
+    index: i?_colb_cola (covers)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl_a tbl_a order by ?, ?
+/* ---> skip ORDER BY */
 Query plan:
 sscan
     simple CTE:q node[?]
@@ -521,8 +521,8 @@ with q(colb, cola) as (select /*+ MATERIALIZE */ tbl_a.colb, tbl_a.cola from tbl
 trace    
 
 Query Plan:
-  SORT (order by)
-    TABLE SCAN (dba.tbl_a)
+  INDEX SCAN (dba.tbl_a.i?_colb_cola) (covered: true)
+  skip order by: true
 
   rewritten query: select /*+ MATERIALIZE */ [dba.tbl_a].colb, [dba.tbl_a].cola from [dba.tbl_a] [dba.tbl_a] order by ?, ?
 
@@ -537,9 +537,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+          SCAN (index: dba.tbl_a.i?_colb_cola), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
