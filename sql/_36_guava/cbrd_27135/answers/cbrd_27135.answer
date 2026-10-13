@@ -163,7 +163,42 @@ Trace Statistics:
 
 ===================================================
     
-Case 5: WHERE ROWNUM folded into an aggregate -> not mergeable list, count exact     
+Case 5: WHERE ROWNUM < 5 -> numbers 1..4     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (t)
+
+  rewritten query: select t.rn from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (rn, id) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 6: WHERE ROWNUM folded into an aggregate -> not mergeable list, count exact     
 
 ===================================================
 result    
@@ -193,7 +228,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 6: fractional WHERE ROWNUM bounds vs serial     
+Case 7: fractional WHERE ROWNUM bounds vs serial     
 
 ===================================================
 result    
@@ -313,7 +348,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 7: ROWNUM + 1 -> stays row by row, result vs serial     
+Case 8: ROWNUM + 1 -> stays row by row, result vs serial     
 
 ===================================================
 result    
@@ -367,7 +402,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 8: ROWNUM in a CASE condition -> stays row by row, result vs serial     
+Case 9: ROWNUM in a CASE condition -> stays row by row, result vs serial     
 
 ===================================================
 result    
@@ -421,7 +456,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 9: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact     
+Case 10: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact     
 
 ===================================================
 result    
@@ -460,7 +495,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 10: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial     
+Case 11: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial     
 
 ===================================================
 result    
@@ -532,7 +567,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 11: partitioned table, numbers stay 1..N across partitions     
+Case 12: partitioned table, numbers stay 1..N across partitions     
 
 ===================================================
 result    
@@ -590,7 +625,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 12: partitioned table, the WHERE ROWNUM quota is global     
+Case 13: partitioned table, the WHERE ROWNUM quota is global     
 
 ===================================================
 rn    
@@ -624,6 +659,64 @@ Trace Statistics:
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
                PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 14: partitioned table, WHERE ROWNUM <= 10005 needs rows of both partitions     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id))
+
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.d<=>s.d and p.mn<=>s.mn and p.mx<=>s.mx and p.c=? and p.d=? and p.mn=? and p.mx=? then 'PASS' else 'FAIL' end from (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id)) p (c, d, mn, mx), (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id)) s (c, d, mn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

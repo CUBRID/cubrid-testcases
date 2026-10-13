@@ -40,14 +40,17 @@
  *   Case 2:  20 qualifying rows spread over the workers -> numbers 1..20
  *   Case 3:  all rows: count/sum/min/max/count distinct of ROWNUM vs serial
  *   Case 4:  WHERE ROWNUM <= 5 -> numbers 1..5, mergeable list
- *   Case 5:  WHERE ROWNUM folded into an aggregate -> stays off, count exact
- *   Case 6:  fractional bounds (<= 0.6, < 1.4, <= 2.5) vs serial
- *   Case 7:  ROWNUM + 1 (expression) -> stays row by row, result vs serial
- *   Case 8:  ROWNUM in a CASE condition -> stays row by row, result vs serial
- *   Case 9:  ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact
- *   Case 10: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial
- *   Case 11: partitioned table -> numbers stay 1..N across partitions
- *   Case 12: partitioned table -> the WHERE ROWNUM quota is global
+ *   Case 5:  WHERE ROWNUM < 5 -> numbers 1..4, mergeable list
+ *   Case 6:  WHERE ROWNUM folded into an aggregate -> stays off, count exact
+ *   Case 7:  fractional bounds (<= 0.6, < 1.4, <= 2.5) vs serial
+ *   Case 8:  ROWNUM + 1 (expression) -> stays row by row, result vs serial
+ *   Case 9:  ROWNUM in a CASE condition -> stays row by row, result vs serial
+ *   Case 10: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact
+ *   Case 11: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial
+ *   Case 12: partitioned table -> numbers stay 1..N across partitions
+ *   Case 13: partitioned table -> the WHERE ROWNUM quota is global
+ *   Case 14: partitioned table, WHERE ROWNUM <= 10005 (more rows than one partition
+ *            holds) -> numbers 1..10005 vs serial
  */
 
 drop table if exists px_rn;
@@ -81,12 +84,17 @@ select /*+ recompile */ rn
 from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_rn where rownum <= 5) t order by rn;
 show trace;
 
-evaluate 'Case 5: WHERE ROWNUM folded into an aggregate -> not mergeable list, count exact';
+evaluate 'Case 5: WHERE ROWNUM < 5 -> numbers 1..4';
+select /*+ recompile */ rn
+from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_rn where rownum < 5) t order by rn;
+show trace;
+
+evaluate 'Case 6: WHERE ROWNUM folded into an aggregate -> not mergeable list, count exact';
 select /*+ recompile */ case when (select count(*) from (select /*+ PARALLEL(8) */ id from px_rn where rownum <= 3) t) = 3
        then 'PASS' else 'FAIL' end as result;
 show trace;
 
-evaluate 'Case 6: fractional WHERE ROWNUM bounds vs serial';
+evaluate 'Case 7: fractional WHERE ROWNUM bounds vs serial';
 select /*+ recompile */ case when p1.c<=>s1.c and p2.c<=>s2.c and p3.c<=>s3.c then 'PASS' else 'FAIL' end as result
 from (select count(*) c from (select /*+ PARALLEL(8) NO_MERGE */ id from px_rn where rownum <= 0.6) t) p1,
      (select count(*) c from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ id from px_rn where rownum <= 0.6) t) s1,
@@ -96,7 +104,7 @@ from (select count(*) c from (select /*+ PARALLEL(8) NO_MERGE */ id from px_rn w
      (select count(*) c from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ id from px_rn where rownum <= 2.5) t) s3;
 show trace;
 
-evaluate 'Case 7: ROWNUM + 1 -> stays row by row, result vs serial';
+evaluate 'Case 8: ROWNUM + 1 -> stays row by row, result vs serial';
 select /*+ recompile */ case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end as result
 from (select count(*) c, min(r) mn, max(r) mx
       from (select /*+ PARALLEL(8) NO_MERGE */ rownum + 1 r, id from px_rn) t) p,
@@ -104,7 +112,7 @@ from (select count(*) c, min(r) mn, max(r) mx
       from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ rownum + 1 r, id from px_rn) t) s;
 show trace;
 
-evaluate 'Case 8: ROWNUM in a CASE condition -> stays row by row, result vs serial';
+evaluate 'Case 9: ROWNUM in a CASE condition -> stays row by row, result vs serial';
 -- unblocked, every worker would tag its own first row as first
 select /*+ recompile */ case when p.c<=>s.c and p.f<=>s.f then 'PASS' else 'FAIL' end as result
 from (select count(*) c, sum(case tag when 'first' then 1 else 0 end) f
@@ -115,14 +123,14 @@ from (select count(*) c, sum(case tag when 'first' then 1 else 0 end) f
             from px_rn) t) s;
 show trace;
 
-evaluate 'Case 9: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact';
+evaluate 'Case 10: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact';
 -- count(distinct rn) keeps ROWNUM referenced, otherwise it is folded to a constant
 select /*+ recompile */ case when (select count(distinct rn)
                                    from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_rn order by id limit 3) t) = 3
        then 'PASS' else 'FAIL' end as result;
 show trace;
 
-evaluate 'Case 10: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial';
+evaluate 'Case 11: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial';
 select /*+ recompile */ case when p.g<=>s.g and p.tot<=>s.tot and p.gmx<=>s.gmx then 'PASS' else 'FAIL' end as result
 from (select count(*) g, sum(cnt) tot, max(mr) gmx
       from (select /*+ PARALLEL(8) */ val, count(*) cnt, max(rownum) mr from px_rn group by val) t) p,
@@ -146,7 +154,7 @@ from db_class a, db_class b, db_class c, db_class d, db_class e limit 20000;
 
 set trace on;
 
-evaluate 'Case 11: partitioned table, numbers stay 1..N across partitions';
+evaluate 'Case 12: partitioned table, numbers stay 1..N across partitions';
 select /*+ recompile */ case when p.c<=>s.c and p.d<=>s.d and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end as result
 from (select count(*) c, count(distinct rn) d, min(rn) mn, max(rn) mx
       from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_pt) t) p,
@@ -154,9 +162,19 @@ from (select count(*) c, count(distinct rn) d, min(rn) mn, max(rn) mx
       from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ rownum rn, id from px_pt) t) s;
 show trace;
 
-evaluate 'Case 12: partitioned table, the WHERE ROWNUM quota is global';
+evaluate 'Case 13: partitioned table, the WHERE ROWNUM quota is global';
 select /*+ recompile */ rn
 from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_pt where rownum <= 5) t order by rn;
+show trace;
+
+evaluate 'Case 14: partitioned table, WHERE ROWNUM <= 10005 needs rows of both partitions';
+select /*+ recompile */ case when p.c<=>s.c and p.d<=>s.d and p.mn<=>s.mn and p.mx<=>s.mx
+                              and p.c = 10005 and p.d = 10005 and p.mn = 1 and p.mx = 10005
+            then 'PASS' else 'FAIL' end as result
+from (select count(*) c, count(distinct rn) d, min(rn) mn, max(rn) mx
+      from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, id from px_pt where rownum <= 10005) t) p,
+     (select count(*) c, count(distinct rn) d, min(rn) mn, max(rn) mx
+      from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ rownum rn, id from px_pt where rownum <= 10005) t) s;
 show trace;
 
 set trace off;
