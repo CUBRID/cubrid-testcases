@@ -189,6 +189,38 @@ PASS
 Case 8: session variable write inside the derived table stays serial; sum = 45150     
 
 ===================================================
+0
+===================================================
+sum(d.av)    
+45150     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.ix_i?_k) (key range: i.k=o.k)
+
+  rewritten query: (select (@v? := i.v) from [dba.i?] i where i.k=o.k)
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (o.ix_o?) (key range: (o.k<= ?:? ), covered: true)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum(d.av) from [dba.o?] o, (select (@v? := i.v) from [dba.i?] i where i.k=o.k) d (av) where (o.k<= ?:? ) using index o.ix_o?(+)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.o?.ix_o?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.i?.ix_i?_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
 case8    
 PASS     
 
@@ -198,6 +230,40 @@ PASS
     
 Case 9: PL function call inside the derived table stays serial; sum = 45450     
 
+===================================================
+0
+===================================================
+sum(d.fv)    
+45450     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.ix_i?_k) (key range: i.k=o.k)
+
+  rewritten query: (select [dba.f?](i.v) from [dba.i?] i where i.k=o.k)
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (o.ix_o?) (key range: (o.k<=?), covered: true)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum(d.fv) from [dba.o?] o, (select [dba.f?](i.v) from [dba.i?] i where i.k=o.k) d (fv) where (o.k<=?) using index o.ix_o?(+)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (index: dba.o?.ix_o?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.i?.ix_i?_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 case9    
 PASS     
@@ -249,6 +315,41 @@ PASS
     
 Case 11: the same sort GROUP BY as a correlated derived table; parallel = serial     
 
+===================================================
+0
+===================================================
+count(*)    sum(d.mv)    
+3000     31501500     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (i.ix_i?_k?) (key range: i.k?=o.k, covered: true)
+
+  rewritten query: (select /*+ NO_HASH_AGGREGATE */ max(i.v) from [dba.i?] i where i.k?=o.k group by  mod(i.g, ?))
+
+  NESTED LOOPS (inner join)
+    INDEX SCAN (o.ix_o?) (key range: (o.k<= ?:? ), covered: true)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum(d.mv) from [dba.o?] o, (select /*+ NO_HASH_AGGREGATE */ max(i.v) from [dba.i?] i where i.k?=o.k group by  mod(i.g, ?)) d (mv) where (o.k<= ?:? ) using index o.ix_o?(+)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.o?.ix_o?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.i?.ix_i?_k?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 case11    
 PASS     
