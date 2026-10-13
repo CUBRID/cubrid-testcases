@@ -48,7 +48,6 @@ insert into t27292 select level, (select v from h27292) from db_root connect by 
 create table rp27292 (one int);
 create table rs27292 (one int);
 
-
 evaluate 'Case 1: constant output over a heap scan, mergeable list; parallel = serial';
 set trace on;
 insert into rp27292 select /*+ recompile parallel(4) */ 1 from t27292;
@@ -62,7 +61,6 @@ select case when (select count(*) from rp27292) = 1000
             then 'PASS' else 'FAIL' end as case1;
 delete from rp27292;
 delete from rs27292;
-
 
 evaluate 'Case 2: constant output over a list scan, mergeable list; parallel = serial';
 set trace on;
@@ -78,7 +76,6 @@ select case when (select count(*) from rp27292) = 1000
 delete from rp27292;
 delete from rs27292;
 
-
 evaluate 'Case 3: BUILDVALUE without aggregate (HAVING sys_timestamp), row by row; one row valued 1';
 set trace on;
 select /*+ recompile parallel(4) */ 1 from t27292 having sys_timestamp is not null;
@@ -90,7 +87,6 @@ select case when p.c = 1 and p.v <=> 1 and s.c = 1 and s.v <=> 1 then 'PASS' els
        (select count(*) c, max(x.one) v
           from (select /*+ recompile no_parallel_scan */ 1 one from t27292 having sys_timestamp is not null) x) s;
 
-
 evaluate 'Case 4: BUILDVALUE without aggregate (WHERE id > 0 HAVING 1=1), row by row; one row valued 1';
 set trace on;
 select /*+ recompile parallel(4) */ 1 from t27292 where id > 0 having 1=1;
@@ -101,6 +97,5 @@ select case when p.c = 1 and p.v <=> 1 and s.c = 1 and s.v <=> 1 then 'PASS' els
           from (select /*+ recompile parallel(4) */ 1 one from t27292 where id > 0 having 1=1) x) p,
        (select count(*) c, max(x.one) v
           from (select /*+ recompile no_parallel_scan */ 1 one from t27292 where id > 0 having 1=1) x) s;
-
 
 drop table if exists t27292, h27292, rp27292, rs27292;
