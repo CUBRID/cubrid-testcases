@@ -3,10 +3,10 @@
  *  a subquery of a parallel heap scan no longer runs in the scan workers.
  *
  *  Before the fix the parallel scan checker looked only at the predicates of the first table of the
- *  subquery. A function in its select list, aggregate, GROUP BY, ORDER BY, key range, later join table
- *  or nested block ran in a worker: one that runs SQL never returned, and an optdebug server
- *  aborted at the first call. Now such a scan is serial, or row by row when the subquery is in the
- *  outer select list or an aggregate argument, the rule a function written there follows.
+ *  subquery. A function in its select list, aggregate, GROUP BY, ORDER BY, key range, later join table,
+ *  nested block or hierarchical query ran in a worker: one that runs SQL never returned, and an
+ *  optdebug server aborted at the first call. Now such a scan is serial, or row by row when the
+ *  subquery is in the outer select list or an aggregate argument, the rule a function written there follows.
  *
  *  Every tested query is followed by its no_parallel_scan twin and the result blocks must match.
  *  The subqueries read a one-page table, so the hint on the outer block is the whole twin. f_pn and
@@ -27,6 +27,7 @@
  *    Case 10: function in the predicate of the first table of the subquery, serial as before
  *    Case 11: function in the input or the WHERE of JSON_TABLE and TABLE () in the subquery, serial
  *    Case 12: function in the ratio of PERCENTILE_CONT/DISC, in the subquery and over the parallel scan
+ *    Case 13: function in START WITH, CONNECT BY or the WHERE of a hierarchical subquery, serial
  */
 
 drop table if exists t_big, t_small;
@@ -174,10 +175,31 @@ show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select percentile_cont (f_pn (0) / 10.0) within group (order by z.b) from t_small z where z.a <= mod (t_big.a, 3) + 1);
 select /*+ recompile */ percentile_disc (f_pn (0) / 10.0) within group (order by a), count(*) from t_big;
 show trace;
+select /*+ recompile no_parallel_scan */ percentile_disc (f_pn (0) / 10.0) within group (order by a), count(*) from t_big;
+
+
+evaluate 'Case 13: function in START WITH, CONNECT BY or the WHERE of a hierarchical subquery, serial; result = no_parallel_scan';
+-- these sit on the CONNECT BY node of the subquery: START WITH of a join, CONNECT BY with and without
+-- PRIOR, and the WHERE. The chain 1 -> 2 -> 3 starts at mod (t_big.a, 3) + 1; the last subquery has no
+-- function and stays parallel. count (z.b), since count(*) here counts the START WITH rows (CBRD-27461)
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z, t_small y where y.a = z.a start with f_pn (z.a) = mod (t_big.a, 3) + 2 connect by prior z.a + 1 = z.a);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z, t_small y where y.a = z.a start with f_pn (z.a) = mod (t_big.a, 3) + 2 connect by prior z.a + 1 = z.a);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a = f_pn (z.a) - 2);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a = f_pn (z.a) - 2);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a and f_pn (z.b) > 0);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a and f_pn (z.b) > 0);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z where f_sq (z.b) > 2 start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z where f_sq (z.b) > 2 start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a);
+select /*+ recompile */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a);
+show trace;
 -- trace goes off before the last query that no show trace reads: its plan would stay in the
 -- session and the next case's first show trace over a cached plan would print it
 set trace off;
-select /*+ recompile no_parallel_scan */ percentile_disc (f_pn (0) / 10.0) within group (order by a), count(*) from t_big;
+select /*+ recompile no_parallel_scan */ count(*), sum (a) from t_big where a <= 10 and b > (select count (z.b) from t_small z start with z.a = mod (t_big.a, 3) + 1 connect by prior z.a + 1 = z.a);
 
 drop function f_pn, f_pp, f_sq;
 drop table t_big, t_small;

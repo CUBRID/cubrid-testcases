@@ -803,10 +803,185 @@ Trace Statistics:
      
 
 ===================================================
-0
-===================================================
 percentile_disc( cast(f_pn(0)/10.0 as double)) within group (order by a)    count(*)    
 6554     65536     
+
+===================================================
+    
+Case 13: function in START WITH, CONNECT BY or the WHERE of a hierarchical subquery, serial; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (z)
+    INDEX SCAN (y.pk_t_small_a) (key range: y.a=z.a, covered: true)
+
+  rewritten query: (select count(z.b) from [dba.t_small] z, [dba.t_small] y where y.a=z.a start with [dba.f_pn](z.a)= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select count(z.b) from [dba.t_small] z, [dba.t_small] y where y.a=z.a start with [dba.f_pn](z.a)= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by  prior z.a=[dba.f_pn](z.a)-?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by  prior z.a=[dba.f_pn](z.a)-?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+? and [dba.f_pn](z.b)>?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+? and [dba.f_pn](z.b)>?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+count(*)    sum(a)    
+9     54     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select count(z.b) from [dba.t_small] z where [dba.f_sq](z.b)>? start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) and ([dba.t_big].b>(select count(z.b) from [dba.t_small] z where [dba.f_sq](z.b)>? start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(a)    
+9     54     
+
+===================================================
+count(*)    sum(a)    
+8     51     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+
+  rewritten query: (select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].a) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and ([dba.t_big].b>(select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by z.a= prior z.a+?))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(a)    
+8     51     
 
 ===================================================
 0
