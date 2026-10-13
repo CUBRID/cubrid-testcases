@@ -1,20 +1,25 @@
 /*
  * This test case verifies CBRD-27505 : a join read through a hash list scan
  * failed with a coercion error or missed rows when the two join keys had
- * different types or a key had host variable arithmetic.
+ * different domains or a key had host variable arithmetic.
  *
- * Bug: the hash list scan hashes each build key in its probe key's domain.
- * (1) A build value with no counterpart in that domain (BIGINT beyond INT,
- *     a VARCHAR longer than a CHAR(n)) failed the whole query with -181,
- *     although such a value simply equals no probe value.
- * (2) A probe key over a host variable (a.i + ?) has a variable domain until
- *     it is computed, so every build value failed to coerce into it (-181),
- *     or, with both keys over host variables, the probe hashed by its own
- *     type and missed the build keys (rows lost).
+ * Bug: the hash list scan hashed each build key after converting it into the
+ * probe key's domain, and hashed equal types as they were.
+ * (1) A build value with no image in the narrower probe domain (BIGINT beyond
+ *     INT, a VARCHAR longer than a CHAR(n)) failed the whole query with -181.
+ * (2) A probe key over a host variable (a.i + ?) has a variable compiled
+ *     domain, so every build value failed to coerce into it (-181), or, with
+ *     both keys over host variables, the two sides hashed by different types
+ *     and rows were lost.
+ * (3) Two NUMERIC keys of different precision or scale hashed their digits
+ *     unscaled (1.50 as 150, 1.5000 as 15000) and no row matched.
  *
- * Fix: a build value that does not fit the probe domain makes that scan open
- * read the list without the hash table (as NO_HASH_LIST_SCAN does), and a
- * probe key whose domain is still variable does not use the hash table.
+ * Fix: both keys of a pair are hashed in one domain chosen from the domain the
+ * comparison of the pair coerces into, which never narrows a side: INT and
+ * BIGINT as BIGINT, CHAR and VARCHAR as they are (the string hash ignores
+ * trailing spaces), NUMERIC pairs as DOUBLE. The probe key's domain is the one
+ * the execution resolved for it before any row (a host variable's arithmetic
+ * too). The hash scan is kept in every case below.
  *
  * Every hash statement is followed by the same statement with
  * NO_HASH_LIST_SCAN, and the two must give the same answer.
@@ -22,14 +27,17 @@
  *   Case 2: CHAR(3) outer key, VARCHAR(20) key holding 'abcdefgh' -> (1, 1)
  *   Case 3: outer key a.i + ? bound to 0, 1 and NULL
  *   Case 4: both keys over host variables (0 and 0e0), also in a correlated
- *           subquery whose first open has the probe domain still variable
- *           -> (1, 1), (2, 1), (3, 2), (4, 0)
- *   Case 5: keys that convert (DOUBLE into INT with rounding, INT into DOUBLE,
+ *           subquery -> (1, 1), (2, 1), (3, 2), (4, 0)
+ *   Case 5: keys of other types (DOUBLE against INT, INT against DOUBLE,
  *           CHAR with trailing spaces) keep the hash scan answer
- *   Case 6: a build value the probe domain cannot parse (VARCHAR into DATE)
+ *   Case 6: a build value the probe domain cannot parse (VARCHAR against DATE)
  *           raises the same error as the list scan
+ *   Case 7: NUMERIC(10,2) against NUMERIC(12,4), NUMERIC(20,6) and INT
+ *           -> (1, 1), (2, 1)
+ *   Case 8: TIMESTAMP against DATETIME, with a DATETIME past the TIMESTAMP
+ *           range
  */
-drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i;
+drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i, nm_o, nm_i, tm_o, tm_i;
 
 evaluate '[1] INT key joined with a BIGINT key beyond the INT range';
 create table hk_r (k int, i int);
@@ -114,4 +122,28 @@ select /*+ NO_HASH_LIST_SCAN */ a.k, b.n from dt_o a, (select v, count(*) n from
 delete from dt_i where k = 2;
 select a.k, b.n from dt_o a, (select v, count(*) n from dt_i group by v) b where a.d = b.v order by 1, 2;
 
-drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i;
+evaluate '[7] NUMERIC keys of different precision and scale';
+create table nm_o (k int, n numeric(10,2));
+create table nm_i (k int, n numeric(12,4), m numeric(20,6));
+insert into nm_o values (1, 1.50), (2, 2.00), (3, null);
+insert into nm_i values (1, 1.5, 1.5), (2, 2, 2), (3, 2.5, 7);
+
+select a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.n = b.n order by 1, 2;
+select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.n = b.n order by 1, 2;
+select a.k, b.c from nm_o a, (select m, count(*) c from nm_i group by m) b where a.n = b.m order by 1, 2;
+select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select m, count(*) c from nm_i group by m) b where a.n = b.m order by 1, 2;
+select a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.k = b.n order by 1, 2;
+select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.k = b.n order by 1, 2;
+
+evaluate '[8] TIMESTAMP against DATETIME';
+create table tm_o (k int, ts timestamp, dt datetime);
+create table tm_i (k int, ts timestamp, dt datetime);
+insert into tm_o values (1, timestamp'2026-01-01 10:00:00', datetime'2026-01-01 10:00:00'), (2, timestamp'2030-05-05 00:00:00', datetime'2100-01-01 00:00:00'), (3, null, null);
+insert into tm_i values (1, timestamp'2026-01-01 10:00:00', datetime'2026-01-01 10:00:00'), (2, timestamp'2030-05-05 00:00:00', datetime'2100-01-01 00:00:00'), (3, timestamp'2031-01-01 00:00:00', datetime'2030-05-05 00:00:00');
+
+select a.k, b.c from tm_o a, (select dt, count(*) c from tm_i group by dt) b where a.ts = b.dt order by 1, 2;
+select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from tm_o a, (select dt, count(*) c from tm_i group by dt) b where a.ts = b.dt order by 1, 2;
+select a.k, b.c from tm_o a, (select ts, count(*) c from tm_i group by ts) b where a.dt = b.ts order by 1, 2;
+select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from tm_o a, (select ts, count(*) c from tm_i group by ts) b where a.dt = b.ts order by 1, 2;
+
+drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i, nm_o, nm_i, tm_o, tm_i;
