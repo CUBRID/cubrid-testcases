@@ -496,7 +496,7 @@ count(*)    sum( cast(e as bigint))
 
 ===================================================
     
-Case 5: IN lists with duplicates and absent values and overlapping OR ranges; result = no_parallel_scan     
+Case 5: IN lists with duplicates and absent values and overlapping OR ranges in host variables; result = no_parallel_scan     
 
 ===================================================
 count(*)    sum( cast(e as bigint))    
@@ -565,6 +565,10 @@ count(*)    sum( cast(e as bigint))
 150     15174950     
 
 ===================================================
+0
+===================================================
+0
+===================================================
 count(*)    sum( cast(e as bigint))    
 14500     1441555250     
 
@@ -572,9 +576,9 @@ count(*)    sum( cast(e as bigint))
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )))
+  INDEX SCAN (dba.t_idx.i_a) (key range: (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )))
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )) using index [dba.t_idx].i_a
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.t_idx].e as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a>= ?:?  and [dba.t_idx].a<= ?:? ) or ([dba.t_idx].a> ?:? )) using index [dba.t_idx].i_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -586,6 +590,10 @@ Trace Statistics:
 count(*)    sum( cast(e as bigint))    
 14500     1441555250     
 
+===================================================
+0
+===================================================
+0
 ===================================================
     
 Case 6: a descending index with a range, OR ranges and an IN list; result = no_parallel_scan     
@@ -658,7 +666,7 @@ count(*)    sum( cast(a as bigint))
 
 ===================================================
     
-Case 7: USE_DESC_IDX on an ascending and on a descending index; result = no_parallel_scan     
+Case 7: USE_DESC_IDX on an ascending and on a descending index, also over overlapping OR ranges in host variables; result = no_parallel_scan     
 
 ===================================================
 count(*)    sum( cast(e as bigint))    
@@ -705,6 +713,10 @@ count(*)    sum( cast(a as bigint))
 89001     177457500     
 
 ===================================================
+0
+===================================================
+0
+===================================================
 count(*)    sum( cast(a as bigint))    
 2991     4501455     
 
@@ -712,9 +724,9 @@ count(*)    sum( cast(a as bigint))
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ), desc_index forced: true)
+  INDEX SCAN (dba.t_idx.i_e) (key range: (([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) or ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? )), desc_index forced: true)
 
-  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) using index [dba.t_idx].i_e
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), sum( cast([dba.t_idx].a as bigint)) from [dba.t_idx] [dba.t_idx] where (([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? ) or ([dba.t_idx].e>= ?:?  and [dba.t_idx].e<= ?:? )) using index [dba.t_idx].i_e
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -726,6 +738,10 @@ Trace Statistics:
 count(*)    sum( cast(a as bigint))    
 2991     4501455     
 
+===================================================
+0
+===================================================
+0
 ===================================================
 count(*)    sum( cast(a as bigint))    
 3     405     
@@ -1441,13 +1457,13 @@ min(a)    max(a)
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.t_idx)
+  INDEX SCAN (dba.t_idx.i_a) (key range: ([dba.t_idx].a>= ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ min([dba.t_idx].a), max([dba.t_idx].a) from [dba.t_idx] [dba.t_idx]
+  rewritten query: select /*+ PARALLEL(?) */ min([dba.t_idx].a), max([dba.t_idx].a) from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].a>= ?:? ) using index [dba.t_idx].i_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_idx), (noscan time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: i_a)
+    SCAN (index: dba.t_idx.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
      
 
 ===================================================

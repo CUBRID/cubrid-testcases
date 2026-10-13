@@ -15,9 +15,9 @@
  *    Case 2:  PARALLEL(4) on smaller indexes: lookup, covering, count only, data filter
  *    Case 3:  rows gathered as a mergeable list for a derived table: equality, IN list, GROUP BY
  *    Case 4:  each range operator and ranges below and above every key
- *    Case 5:  IN lists with duplicates and absent values, overlapping OR ranges
+ *    Case 5:  IN lists with duplicates and absent values, overlapping OR ranges in host variables
  *    Case 6:  a descending index: a range, OR ranges, an IN list
- *    Case 7:  USE_DESC_IDX on an ascending and on a descending index
+ *    Case 7:  USE_DESC_IDX on an ascending and on a descending index, overlapping OR ranges
  *    Case 8:  a composite index: NULL key parts, a range on the second column, a key filter
  *    Case 9:  string, date and function index keys
  *    Case 10: an index built by inserts, whose leaves hold fence keys, and one built by bulk load
@@ -136,7 +136,7 @@ show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t_idx where a > 3999 using index i_a;
 
 
-evaluate 'Case 5: IN lists with duplicates and absent values and overlapping OR ranges; result = no_parallel_scan';
+evaluate 'Case 5: IN lists with duplicates and absent values and overlapping OR ranges in host variables; result = no_parallel_scan';
 select /*+ recompile parallel(4) */ count(*), sum(cast(e as bigint)) from t_idx where a in (7, 3, 7, 5, 3) using index i_a;
 show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t_idx where a in (7, 3, 7, 5, 3) using index i_a;
@@ -146,9 +146,14 @@ select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t
 select /*+ recompile parallel(4) */ count(*), sum(cast(e as bigint)) from t_idx where a in (0, 1500, 3999) using index i_a;
 show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t_idx where a in (0, 1500, 3999) using index i_a;
-select /*+ recompile parallel(4) */ count(*), sum(cast(e as bigint)) from t_idx where (a between 10 and 100 or a between 50 and 200 or a > 3900) using index i_a;
+-- the client merges overlapping constant ranges before the plan, host variables reach the server as they are
+prepare st_par from 'select /*+ recompile parallel(4) */ count(*), sum(cast(e as bigint)) from t_idx where (a between ? and ? or a between ? and ? or a > ?) using index i_a';
+prepare st_ser from 'select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t_idx where (a between ? and ? or a between ? and ? or a > ?) using index i_a';
+execute st_par using 10, 100, 50, 200, 3900;
 show trace;
-select /*+ recompile no_parallel_scan */ count(*), sum(cast(e as bigint)) from t_idx where (a between 10 and 100 or a between 50 and 200 or a > 3900) using index i_a;
+execute st_ser using 10, 100, 50, 200, 3900;
+deallocate prepare st_par;
+deallocate prepare st_ser;
 
 
 evaluate 'Case 6: a descending index with a range, OR ranges and an IN list; result = no_parallel_scan';
@@ -163,16 +168,20 @@ show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(cast(a as bigint)) from t_idx where e in (300, 5, 100, 5) using index i_e;
 
 
-evaluate 'Case 7: USE_DESC_IDX on an ascending and on a descending index; result = no_parallel_scan';
+evaluate 'Case 7: USE_DESC_IDX on an ascending and on a descending index, also over overlapping OR ranges in host variables; result = no_parallel_scan';
 select /*+ recompile parallel(4) use_desc_idx */ count(*), sum(cast(e as bigint)) from t_idx where a > 100 using index i_a;
 show trace;
 select /*+ recompile no_parallel_scan use_desc_idx */ count(*), sum(cast(e as bigint)) from t_idx where a > 100 using index i_a;
 select /*+ recompile parallel(4) use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where e between 1000 and 90000 using index i_e;
 show trace;
 select /*+ recompile no_parallel_scan use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where e between 1000 and 90000 using index i_e;
-select /*+ recompile parallel(4) use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where (e between 10 and 1000 or e between 500 and 3000) using index i_e;
+prepare st_par from 'select /*+ recompile parallel(4) use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where (e between ? and ? or e between ? and ?) using index i_e';
+prepare st_ser from 'select /*+ recompile no_parallel_scan use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where (e between ? and ? or e between ? and ?) using index i_e';
+execute st_par using 10, 1000, 500, 3000;
 show trace;
-select /*+ recompile no_parallel_scan use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where (e between 10 and 1000 or e between 500 and 3000) using index i_e;
+execute st_ser using 10, 1000, 500, 3000;
+deallocate prepare st_par;
+deallocate prepare st_ser;
 select /*+ recompile parallel(4) use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where e in (300, 5, 100, 5) using index i_e;
 show trace;
 select /*+ recompile no_parallel_scan use_desc_idx */ count(*), sum(cast(a as bigint)) from t_idx where e in (300, 5, 100, 5) using index i_e;
@@ -290,9 +299,10 @@ evaluate 'Case 15: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) 
 select /*+ recompile parallel(4) */ id from t_idx where a > 10 using index i_a keylimit 5;
 show trace;
 select /*+ recompile no_parallel_scan */ id from t_idx where a > 10 using index i_a keylimit 5;
-select /*+ recompile parallel(4) */ min(a), max(a) from t_idx;
+-- without a range MIN and MAX are read by an aggregate lookup on the index, not by an index scan
+select /*+ recompile parallel(4) */ min(a), max(a) from t_idx where a >= 0 using index i_a;
 show trace;
-select /*+ recompile no_parallel_scan */ min(a), max(a) from t_idx;
+select /*+ recompile no_parallel_scan */ min(a), max(a) from t_idx where a >= 0 using index i_a;
 -- every 400th key over the whole index: keys 1, 401, 1601, 2801 and 3201 hold 2, 7, 7, 7 and 5 rows with
 -- b <= 2, and b runs from 0 to 2 inside a key, so rows out of index order or ranks over them show
 select /*+ recompile parallel(4) */ a, b from t_idx where a >= 0 and mod(a, 400) = 1 and b <= 2 using index i_ab order by a, b;
