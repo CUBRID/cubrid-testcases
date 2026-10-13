@@ -71,11 +71,9 @@ create or replace function f27205 (x int) return int as begin return x + 1; end;
 
 update statistics on o27205, i27205 with fullscan;
 
-
 evaluate 'Case 1: fixture row counts';
 select case when (select count(*) from o27205) = 6000 and (select count(*) from i27205) = 12000
             then 'PASS' else 'FAIL' end as case1;
-
 
 evaluate 'Case 2: count(*) over the correlated derived table; parallel = serial = 3000';
 set trace on;
@@ -92,7 +90,6 @@ select case when p.c <=> s.c and p.c = 3000 then 'PASS' else 'FAIL' end as case2
           from o27205 o, (select * from i27205 i where i.k = o.k) d
          where o.k <= 3000 using index ix_o27205(+)) s;
 
-
 evaluate 'Case 3: row-returning derived table; parallel = serial';
 select case when p.c <=> s.c and p.sm <=> s.sm and p.mn <=> s.mn and p.mx <=> s.mx and p.c = 3000
             then 'PASS' else 'FAIL' end as case3
@@ -102,7 +99,6 @@ select case when p.c <=> s.c and p.sm <=> s.sm and p.mn <=> s.mn and p.mx <=> s.
        (select /*+ recompile no_parallel_scan */ count(d.v) c, sum(d.v) sm, min(d.v) mn, max(d.v) mx
           from o27205 o, (select i.v from i27205 i where i.k = o.k) d
          where o.k <= 3000 using index ix_o27205(+)) s;
-
 
 evaluate 'Case 4: join inside the derived table; parallel = serial';
 select case when p.c <=> s.c and p.sm <=> s.sm and p.c = 3000 then 'PASS' else 'FAIL' end as case4
@@ -114,7 +110,6 @@ select case when p.c <=> s.c and p.sm <=> s.sm and p.c = 3000 then 'PASS' else '
           from o27205 o, (select i1.v v1, i2.v v2 from i27205 i1, i27205 i2
                            where i1.k = o.k and i2.k = i1.k) d
          where o.k <= 3000 using index ix_o27205(+)) s;
-
 
 evaluate 'Case 5: sort GROUP BY inside the derived table; parallel = serial';
 set trace on;
@@ -134,7 +129,6 @@ select case when p.c <=> s.c and p.sc <=> s.sc and p.sv <=> s.sv and p.sc = 1200
                            where i.k2 = o.k group by mod(i.v, 7)) d
          where o.k <= 3000 using index ix_o27205(+)) s;
 
-
 evaluate 'Case 6: scalar aggregate inside the derived table; parallel = serial';
 select case when p.sv <=> s.sv and p.sc <=> s.sc and p.sc = 12000 then 'PASS' else 'FAIL' end as case6
   from (select /*+ recompile parallel(4) */ sum(d.sv) sv, sum(d.c) sc
@@ -143,7 +137,6 @@ select case when p.sv <=> s.sv and p.sc <=> s.sc and p.sc = 12000 then 'PASS' el
        (select /*+ recompile no_parallel_scan */ sum(d.sv) sv, sum(d.c) sc
           from o27205 o, (select sum(i.v) sv, count(*) c from i27205 i where i.k2 = o.k) d
          where o.k <= 3000 using index ix_o27205(+)) s;
-
 
 evaluate 'Case 7: serial NEXT_VALUE inside the derived table stays serial; row count = 300';
 set trace on;
@@ -159,7 +152,6 @@ select case when p.c <=> s.c and p.c = 300 then 'PASS' else 'FAIL' end as case7
        (select /*+ recompile no_parallel_scan */ count(d.nv) c
           from o27205 o, (select i.v + s27205.next_value nv from i27205 i where i.k = o.k) d
          where o.k <= 300 using index ix_o27205(+)) s;
-
 
 evaluate 'Case 8: session variable write inside the derived table stays serial; sum = 45150';
 set trace on;
@@ -177,7 +169,6 @@ select case when p.sm <=> s.sm and p.sm = 45150 then 'PASS' else 'FAIL' end as c
          where o.k <= 300 using index ix_o27205(+)) s;
 deallocate variable @v27205;
 
-
 evaluate 'Case 9: PL function call inside the derived table stays serial; sum = 45450';
 set trace on;
 select /*+ recompile parallel(4) */ sum(d.fv)
@@ -192,7 +183,6 @@ select case when p.sm <=> s.sm and p.sm = 45450 then 'PASS' else 'FAIL' end as c
        (select /*+ recompile no_parallel_scan */ sum(d.fv) sm
           from o27205 o, (select f27205(i.v) fv from i27205 i where i.k = o.k) d
          where o.k <= 300 using index ix_o27205(+)) s;
-
 
 evaluate 'Case 10: select-list sort GROUP BY subquery, parallel heap scan; rows equal, sum = 31501500';
 set trace on;
@@ -214,7 +204,6 @@ select case when (select count(*) from rp27205 p, rs27205 s where p.k = s.k and 
              and (select sum(mv) from rs27205) = 31501500
             then 'PASS' else 'FAIL' end as case10;
 
-
 evaluate 'Case 11: the same sort GROUP BY as a correlated derived table; parallel = serial';
 set trace on;
 select /*+ recompile parallel(4) */ count(*), sum(d.mv)
@@ -234,7 +223,6 @@ select case when p.c <=> s.c and p.cm <=> s.cm and p.sm <=> s.sm and p.mn <=> s.
           from o27205 o, (select /*+ no_hash_aggregate */ max(i.v) mv from i27205 i
                            where i.k2 = o.k group by mod(i.g, 4)) d
          where o.k <= 3000 using index ix_o27205(+)) s;
-
 
 drop function f27205;
 drop serial if exists s27205;
