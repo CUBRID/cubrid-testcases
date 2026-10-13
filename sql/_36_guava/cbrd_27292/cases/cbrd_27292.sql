@@ -58,6 +58,7 @@ insert into rs27292 select /*+ recompile no_parallel_scan */ 1 from t27292;
 select case when (select count(*) from rp27292) = 1000
              and (select count(*) from rs27292) = 1000
              and (select count(*) from rp27292 where one <=> 1) = 1000
+             and (select count(*) from rs27292 where one <=> 1) = 1000
             then 'PASS' else 'FAIL' end as case1;
 delete from rp27292;
 delete from rs27292;
@@ -72,6 +73,7 @@ insert into rs27292 select /*+ recompile no_parallel_scan */ 1 from (select /*+ 
 select case when (select count(*) from rp27292) = 1000
              and (select count(*) from rs27292) = 1000
              and (select count(*) from rp27292 where one <=> 1) = 1000
+             and (select count(*) from rs27292 where one <=> 1) = 1000
             then 'PASS' else 'FAIL' end as case2;
 delete from rp27292;
 delete from rs27292;
