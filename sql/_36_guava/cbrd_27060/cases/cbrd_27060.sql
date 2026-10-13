@@ -37,12 +37,16 @@
  * grp2 = id % 15, NULL when id % 7 = 0 (nullable first column of the
  * multi-column index).
  *
+ * Covering: a WHERE del = 0 needs del, so idx_flt (grp) never covers it and
+ * every scan on it does a heap lookup. idx_flt_cov (grp, del) carries del in
+ * the key and covers Case 2 / 9. A stale entry there still holds del = 0 in
+ * its key, so only the entry-level MVCC check can drop it.
+ *
  * Coverage (no stale entries / after the filter-exit UPDATE):
  *   Case 1 / 8:   key range, WHERE absorbed by the filter, non-covering
- *   Case 2 / 9:   key range, covering (only the entry-level check can drop
- *                 stale entries), also vs heap
+ *   Case 2 / 9:   key range, covering (idx_flt_cov), also vs heap
  *   Case 3 / 10:  partial key range on a descending filtered index
- *   Case 4 / 11:  full range (no key range at all), covering, vs serial and heap
+ *   Case 4 / 11:  full range (no key range at all), vs serial and heap
  *   Case 5 / 12:  full range on the descending filtered index
  *   Case 6 / 13:  full range on the multi-column filtered index
  *   Case 7 / 14:  multi-column index, range on a nullable first column
@@ -57,6 +61,7 @@ from db_class a, db_class b, db_class c, db_class d, db_class e limit 40000;
 create index idx_flt on ft (grp) where del = 0;
 create index idx_flt_desc on ft (grp desc) where del = 0;
 create index idx_flt_mc on ft (grp2, grp) where del = 0;
+create index idx_flt_cov on ft (grp, del) where del = 0;
 commit;
 
 set trace on;
@@ -93,9 +98,9 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1, sum(cast
 evaluate 'Case 2: key range, covering, vs heap';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3
-      from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) p,
+      from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3
-      from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) s,
+      from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index none) h;
 
@@ -145,6 +150,11 @@ select /*+ recompile PARALLEL(8) */ count(*), sum(cast(grp as bigint))
 from ft where del = 0 using index idx_flt(+);
 show trace;
 
+evaluate 'Plan after the UPDATE: key range on the covering filtered index is a covered parallel index scan';
+select /*+ recompile PARALLEL(8) */ count(*), sum(cast(grp as bigint))
+from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+);
+show trace;
+
 set trace off;
 
 evaluate 'Case 8: key range, non-covering, after the UPDATE';
@@ -157,9 +167,9 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1, sum(cast
 evaluate 'Case 9: key range, covering, vs heap, after the UPDATE';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3
-      from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) p,
+      from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3
-      from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) s,
+      from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index none) h;
 

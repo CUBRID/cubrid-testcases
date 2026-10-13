@@ -13,6 +13,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
     
 Plan: key range on the filtered index -> parallel index scan     
 
@@ -182,6 +184,28 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
          (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+    
+Plan after the UPDATE: key range on the covering filtered index is a covered parallel index scan     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+27000     400971600     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt_cov) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ), key filter: [dba.ft].del= ?:? , covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].grp as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt_cov(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt_cov), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
      
 
 ===================================================
