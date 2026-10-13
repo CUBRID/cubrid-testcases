@@ -1048,14 +1048,21 @@ drop table if exists test_table_null;
 create table test_table_null (id int, val int);
 create index nidx_01 on test_table_null (val, id);
 
--- val is NULL on every 10th row (100 NULLs), otherwise n % 10.
+-- val is NULL on every 10th id (800 NULLs), otherwise id % 10.
+-- 8000 rows: under test_mode the analytic sort runs in parallel only when
+-- its input spans two or more temp list pages. With the compact temp tuple
+-- format (CBRD-27365) 1000 rows fit in one page and case 111 sorted serially.
+-- cte_max_recursions (default 2000) caps the recursive CTE, so the ids are
+-- 1000 CTE rows times 8 blocks.
 insert into test_table_null (id, val)
 with recursive cte (n) as (
   select 1
   union all
   select n + 1 from cte where n < 1000
 )
-select n, case when n % 10 = 0 then null else n % 10 end from cte;
+select a.n + 1000 * (b.n - 1), case when a.n % 10 = 0 then null else a.n % 10 end
+from cte a, cte b
+where b.n <= 8;
 
 set trace on;
 
