@@ -18,8 +18,14 @@
  *   Case 2: list inputs (GROUP BY derived tables materialized to temp lists)
  *           -> trace shows parallel workers under both temp scans of the
  *              MERGELIST inputs; result equals the hash join
- *   Case 3: index inputs on a nullable join key (NULLs must not join)
+ *   Case 3: index inputs on a nullable join key; the key range of each input
+ *           excludes the NULL keys
  *           -> result equals the serial-scan merge and the per-key count truth
+ *   Case 4: list inputs grouped on the nullable key, so the NULL group enters
+ *           both merge inputs and must not join
+ *           -> trace shows parallel workers under both temp scans of the
+ *              MERGELIST inputs; result equals the hash join and the count of
+ *              distinct non-NULL keys
  *
  * Sizing: the CTP server runs with test_mode=yes, which lowers
  * parallel_scan_page_threshold to 32 pages. That threshold is also the
@@ -29,9 +35,10 @@
  * and the index stays below the gate. The derived tables select the pad column
  * so their temp lists stay above 32 pages.
  *
- * NO_PARALLEL_SUBQUERY keeps the two merge inputs on the main thread. When
- * they are built concurrently, an input built by a subquery worker skips the
- * parallel scan whenever the leader happens to be inside a system operation
+ * NO_PARALLEL_SUBQUERY keeps the two merge inputs on the main thread, and in
+ * the outer SELECT of each comparison it keeps the compared joins there too.
+ * When they are built concurrently, an input built by a subquery worker skips
+ * the parallel scan whenever the leader happens to be inside a system operation
  * (for example while creating a temp file), so the trace would vary per run.
  */
 drop table if exists mj;
@@ -55,7 +62,7 @@ where a.k = b.k and a.k between 100 and 29900 and b.k between 100 and 29900;
 show trace;
 set trace off;
 
-select case when p.c <=> s.c and p.s <=> s.s and p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
+select /*+ NO_PARALLEL_SUBQUERY */ case when p.c <=> s.c and p.s <=> s.s and p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
 from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(cast(a.k as bigint) + b.k) s
       from mj a force index (i_mj_k), mj b force index (i_mj_k)
       where a.k = b.k and a.k between 100 and 29900 and b.k between 100 and 29900) p,
@@ -73,7 +80,7 @@ where d1.g = d2.g;
 show trace;
 set trace off;
 
-select case when p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
+select /*+ NO_PARALLEL_SUBQUERY */ case when p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
 from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(length(d1.p) + length(d2.p)) s
       from (select g, max(pad) p from mj where g < 20000 group by g) d1, (select g, min(pad) p from mj where g < 20000 group by g) d2
       where d1.g = d2.g) p,
@@ -82,7 +89,7 @@ from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(l
       where d1.g = d2.g) n;
 
 -- Case 3
-select case when p.c <=> s.c and p.s <=> s.s and p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
+select /*+ NO_PARALLEL_SUBQUERY */ case when p.c <=> s.c and p.s <=> s.s and p.c <=> n.c and p.s <=> n.s then 'PASS' else 'FAIL' end as result
 from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(cast(a.kn as bigint) + b.kn) s
       from mj a force index (i_mj_kn), mj b force index (i_mj_kn)
       where a.kn = b.kn and a.kn between 100 and 29900 and b.kn between 100 and 29900) p,
@@ -91,5 +98,26 @@ from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(c
       where a.kn = b.kn and a.kn between 100 and 29900 and b.kn between 100 and 29900) s,
      (select sum(cast(c as bigint) * c) c, sum(cast(c as bigint) * c * 2 * kn) s
       from (select kn, count(*) c from mj where kn between 100 and 29900 group by kn) x) n;
+
+-- Case 4
+set trace on;
+select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*), sum(length(d1.p) + length(d2.p))
+from (select kn, max(pad) p from mj group by kn) d1, (select kn, min(pad) p from mj group by kn) d2
+where d1.kn = d2.kn;
+show trace;
+set trace off;
+
+select /*+ NO_PARALLEL_SUBQUERY */ case when p.c <=> n.c and p.s <=> n.s and p.ks <=> n.ks
+             and p.c <=> t.c and p.ks <=> t.ks and t.nul = 1 then 'PASS' else 'FAIL' end as result
+from (select /*+ USE_MERGE PARALLEL(4) NO_PARALLEL_SUBQUERY */ count(*) c, sum(length(d1.p) + length(d2.p)) s,
+             sum(cast(d1.kn as bigint) + d2.kn) ks
+      from (select kn, max(pad) p from mj group by kn) d1, (select kn, min(pad) p from mj group by kn) d2
+      where d1.kn = d2.kn) p,
+     (select /*+ USE_HASH NO_PARALLEL_SCAN */ count(*) c, sum(length(d1.p) + length(d2.p)) s,
+             sum(cast(d1.kn as bigint) + d2.kn) ks
+      from (select kn, max(pad) p from mj group by kn) d1, (select kn, min(pad) p from mj group by kn) d2
+      where d1.kn = d2.kn) n,
+     (select count(kn) c, sum(cast(kn as bigint) * 2) ks, count(*) - count(kn) nul
+      from (select kn from mj group by kn) x) t;
 
 drop table mj;

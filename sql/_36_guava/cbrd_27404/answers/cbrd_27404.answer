@@ -120,3 +120,67 @@ PASS
 
 ===================================================
 0
+===================================================
+count(*)    sum( char_length(d1.p)+ char_length(d2.p))    
+29802     1907328     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.mj)
+
+  rewritten query: (select max([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn)
+
+  SORT (group by)
+    TABLE SCAN (dba.mj)
+
+  rewritten query: (select min([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn)
+
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        TABLE SCAN (d?)
+      SORT (temp)
+        TABLE SCAN (d?)
+
+  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( char_length(d?.p)+ char_length(d?.p)) from (select max([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn) d? (p, kn), (select min([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn) d? (p, kn) where d?.kn=d?.kn
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.mj), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.mj), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+result    
+PASS     
+
+===================================================
+0
