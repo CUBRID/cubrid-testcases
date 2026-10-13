@@ -4,7 +4,7 @@
  * 1-3  - no padding (control): parses correctly nowhere near a boundary
  * 4-6  - padding exactly on the first refill boundary (offset 8192)
  * 7-9  - padding exactly on the nominal buffer size (offset 16384), the
- *        second refill boundary; confirmed via gdb to be a genuine split
+ *        second refill boundary. Confirmed via gdb to be a genuine split
  *        point between two separate copy calls
  * 10   - semicolon inside a literal followed by a second statement same line
  * 11-12 - the UTF-8 character from cbrd_27245_utf8fix.sql, in a literal and as
