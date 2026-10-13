@@ -1,0 +1,183 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+    
+[1] both sides fixed to the same constant: count = 3     
+
+===================================================
+count(*)    max(t_pk.region)    
+3     KR     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk, t_pk t_pk where t_fk.id=t_pk.id and t_pk.region= ?:?  and t_fk.region= ?:? 
+===================================================
+    
+[2] join term plus a constant on one side: count = 3     
+
+===================================================
+count(*)    max(t_pk.region)    
+3     KR     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk, t_pk t_pk where t_fk.id=t_pk.id and t_pk.region= ?:?  and t_fk.region= ?:?  and t_fk.region=t_pk.region
+===================================================
+    
+[3] different constants on each side, floor not applied: count = 0     
+
+===================================================
+count(*)    max(t_pk.region)    
+0     null     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk, t_pk t_pk where t_fk.id=t_pk.id and t_pk.region= ?:?  and t_fk.region= ?:? 
+===================================================
+    
+[4] trailing space differs in a VARCHAR column, floor not applied: count = 0     
+
+===================================================
+count(*)    max(t_pk.region)    
+0     null     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk, t_pk t_pk where t_fk.id=t_pk.id and t_pk.region= ?:?  and t_fk.region= ?:? 
+===================================================
+    
+[5] constant longer than the column, floor not applied: count = 0     
+
+===================================================
+count(*)    max(t_pk.region)    
+0     null     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk, t_pk t_pk where t_fk.id=t_pk.id and t_pk.region= ?:?  and t_fk.region= ?:? 
+===================================================
+    
+[6] pk constant in the ON condition of a left join, floor not applied: count = 3     
+
+===================================================
+count(*)    max(t_pk.region)    
+3     KR     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pk.region) from t_fk t_fk left outer join t_pk t_pk on t_pk.region= ?:?  and t_fk.id=t_pk.id where t_fk.region= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+[7] trailing space is ignored in a CHAR column: count = 2     
+
+===================================================
+count(*)    max(t_pkc.region)    
+2     KR       
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_pkc node[?]
+               index: pk_t_pkc_region_id term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_fkc node[?]
+               index: fk_t_fkc_region_id term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pkc.region) from t_fkc t_fkc, t_pkc t_pkc where t_fkc.id=t_pkc.id and t_pkc.region= ?:?  and t_fkc.region= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
