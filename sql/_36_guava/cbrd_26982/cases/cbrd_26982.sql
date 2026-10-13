@@ -37,6 +37,8 @@
  *   Case 6: SUM(a), none HAVING SUM(a) < 0           (1 / 2), no row
  *   Case 7: COUNT(*), MAX(a), tag over no matching row (2 / 3)
  *   Case 8: MEDIAN(a) * 2, MAX(b) - MIN(a), group_concat length (5 / 3)
+ *   Case 9: SUM(a), big HAVING SUM(a) > 50000        (1 / 2), one row: true only for
+ *           the final sum 55000, never for a worker's partial sum
  */
 
 drop table if exists tg;
@@ -88,6 +90,16 @@ select /*+ recompile PARALLEL(8) */ cast(median(a) * 2 as int), max(b) - min(a),
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ cast(median(a) * 2 as int), max(b) - min(a),
        length(group_concat(distinct b order by b separator ',')) + count(*) from tg;
+
+evaluate 'Case 9: HAVING true only for the final sum (55000 > 50000)';
+select /*+ recompile PARALLEL(8) */ sum(a), 'big' from tg having sum(a) > 50000;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ sum(a), 'big' from tg having sum(a) > 50000;
+select case when (select count(*) from (select /*+ recompile PARALLEL(8) */ sum(a) sa from tg having sum(a) > 50000) p
+                   where p.sa = 55000) = 1
+             and (select count(*) from (select /*+ recompile NO_PARALLEL_SCAN */ sum(a) sa from tg having sum(a) > 50000) s
+                   where s.sa = 55000) = 1
+            then 'PASS' else 'FAIL' end as case9;
 
 set trace off;
 

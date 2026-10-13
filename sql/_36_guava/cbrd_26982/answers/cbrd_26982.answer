@@ -213,6 +213,36 @@ cast(median(a)*2 as integer)    max(b)-min(a)    char_length(group_concat(distin
 11     9     10020     
 
 ===================================================
+    
+Case 9: HAVING true only for the final sum (55000 > 50000)     
+
+===================================================
+sum(a)    'big'    
+55000     big     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a), 'big' from [dba.tg] [dba.tg] having sum([dba.tg].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)    'big'    
+55000     big     
+
+===================================================
+case9    
+PASS     
+
+===================================================
 0
 ===================================================
 0
