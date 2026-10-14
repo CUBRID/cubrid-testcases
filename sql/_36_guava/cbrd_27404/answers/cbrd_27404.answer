@@ -3,7 +3,7 @@
 ===================================================
 0
 ===================================================
-40000
+120000
 ===================================================
 0
 ===================================================
@@ -14,7 +14,7 @@
 0
 ===================================================
 count(*)    
-59504     
+178504     
 
 ===================================================
 trace    
@@ -55,8 +55,8 @@ PASS
 ===================================================
 0
 ===================================================
-count(*)    sum( char_length(d1.p)+ char_length(d2.p))    
-20000     1280000     
+count(*)    sum( cast(d1.g as bigint)+d2.g)    count(case when d1.p=d2.p then 1 end)    
+40000     1599960000     40000     
 
 ===================================================
 trace    
@@ -65,12 +65,12 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (dba.mj)
 
-  rewritten query: (select max([dba.mj].pad), [dba.mj].g from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g)
+  rewritten query: (select [dba.mj].g, max([dba.mj].pad) from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g)
 
   SORT (group by)
     TABLE SCAN (dba.mj)
 
-  rewritten query: (select min([dba.mj].pad), [dba.mj].g from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g)
+  rewritten query: (select [dba.mj].g, min([dba.mj].pad) from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g)
 
   SORT (temp)
     MERGE JOIN (inner join)
@@ -79,7 +79,7 @@ Query Plan:
       SORT (temp)
         TABLE SCAN (d?)
 
-  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( char_length(d?.p)+ char_length(d?.p)) from (select max([dba.mj].pad) as [p], [dba.mj].g from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g) d? (p, g), (select min([dba.mj].pad) as [p], [dba.mj].g from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g) d? (p, g) where d?.g=d?.g
+  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(d?.g as bigint)+ cast(d?.g as bigint)), count(case when d?.p=d?.p then ? end) from (select [dba.mj].g, max([dba.mj].pad) as [p] from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g) d? (g, p), (select [dba.mj].g, min([dba.mj].pad) as [p] from [dba.mj] [dba.mj] where ([dba.mj].g< ?:? ) group by [dba.mj].g) d? (g, p) where d?.g=d?.g
 
 
 Trace Statistics:
@@ -115,14 +115,52 @@ result
 PASS     
 
 ===================================================
+0
+===================================================
+count(*)    
+176146     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (a.i_mj_kn) (key range: (a.kn>= ?:?  and a.kn<= ?:? ), covered: true)
+      SORT (temp)
+        INDEX SCAN (b.i_mj_kn) (key range: (b.kn>= ?:?  and b.kn<= ?:? ), covered: true)
+
+  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.mj] a, [dba.mj] b where a.kn=b.kn and (a.kn>= ?:?  and a.kn<= ?:? ) and (b.kn>= ?:?  and b.kn<= ?:? ) using index a.i_mj_kn(+), b.i_mj_kn(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.mj.i_mj_kn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.mj.i_mj_kn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+               (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
 result    
 PASS     
 
 ===================================================
 0
 ===================================================
-count(*)    sum( char_length(d1.p)+ char_length(d2.p))    
-29802     1907328     
+count(*)    count(case when d1.p=d2.p then 1 end)    
+30000     595     
 
 ===================================================
 trace    
@@ -131,12 +169,12 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (dba.mj)
 
-  rewritten query: (select max([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn)
+  rewritten query: (select max([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] where (([dba.mj].kn< ?:? ) or [dba.mj].kn is null ) group by [dba.mj].kn)
 
   SORT (group by)
     TABLE SCAN (dba.mj)
 
-  rewritten query: (select min([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn)
+  rewritten query: (select min([dba.mj].pad), [dba.mj].kn from [dba.mj] [dba.mj] where (([dba.mj].kn< ?:? ) or [dba.mj].kn is null ) group by [dba.mj].kn)
 
   SORT (temp)
     MERGE JOIN (inner join)
@@ -145,7 +183,7 @@ Query Plan:
       SORT (temp)
         TABLE SCAN (d?)
 
-  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( char_length(d?.p)+ char_length(d?.p)) from (select max([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn) d? (p, kn), (select min([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] group by [dba.mj].kn) d? (p, kn) where d?.kn=d?.kn
+  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(case when d?.p=d?.p then ? end) from (select max([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] where (([dba.mj].kn< ?:? ) or [dba.mj].kn is null ) group by [dba.mj].kn) d? (p, kn), (select min([dba.mj].pad) as [p], [dba.mj].kn from [dba.mj] [dba.mj] where (([dba.mj].kn< ?:? ) or [dba.mj].kn is null ) group by [dba.mj].kn) d? (p, kn) where d?.kn=d?.kn
 
 
 Trace Statistics:
@@ -172,6 +210,48 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(a.g as bigint)+b.g)    
+38804     3961888400     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (a.i_mj_k) (key range: (a.k>= ?:?  and a.k<= ?:? ))
+      SORT (temp)
+        INDEX SCAN (b.i_mj_k) (key range: (b.k>= ?:?  and b.k<= ?:? ))
+
+  rewritten query: select /*+ USE_MERGE NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(a.g as bigint)+ cast(b.g as bigint)) from [dba.mj] a, [dba.mj] b where a.k=b.k and (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) using index a.i_mj_k(+), b.i_mj_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.mj.i_mj_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.mj.i_mj_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
