@@ -9,6 +9,9 @@
  * 1 - the character inside a string literal (always correct, control case)
  * 2 - the character alone as an identifier alias (outside a literal)
  * 3 - the character followed by another identifier byte in the same alias
+ * 4 - the character as a column name, persisted via CREATE TABLE and looked
+ *     up again by name, exercising identifier storage/comparison rather
+ *     than just a single statement's alias display
  */
 
 evaluate 'Case 1: multi-byte UTF-8 character inside a string literal (control)';
@@ -19,3 +22,12 @@ SELECT 1 AS t𡡡 FROM dual;
 
 evaluate 'Case 3: multi-byte UTF-8 character followed by another byte in an alias';
 SELECT 1 AS t𡡡x FROM dual;
+
+drop table if exists t27245;
+
+evaluate 'Case 4: the character as a column name, stored and looked up again';
+create table t27245 (c𡡡 int);
+insert into t27245 values (1);
+select c𡡡 from t27245;
+
+drop table if exists t27245;
