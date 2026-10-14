@@ -59,14 +59,19 @@ end;
 
 call p_force_alias();
 
-evaluate 'USING INDEX in UPDATE and DELETE';
+evaluate 'USING INDEX in UPDATE and DELETE: 3 rows updated (sum(d) 84), 1 row deleted (3 rows left)';
 create or replace procedure p_dml as
-    v int := 100;
+    v int := 2;
+    n int;
 begin
-    update t1 set d = d + 1 where c > v using index i1(+);
+    update t1 set d = d + 1 where c >= v using index i1(+);
     dbms_output.put_line(sql%rowcount);
+    select sum(d) into n from t1;
+    dbms_output.put_line(n);
     delete from t1 where c > v using index i1(-);
     dbms_output.put_line(sql%rowcount);
+    select count(*) into n from t1;
+    dbms_output.put_line(n);
 end;
 
 call p_dml();

@@ -57,12 +57,15 @@ end;
 
 call p_dt_nested();
 
-evaluate 'a PL/CSQL variable in ORDER BY of a derived table: 8 (all rows)';
+evaluate 'a PL/CSQL variable in ORDER BY of a derived table: 3 (top 2 rows c = 1, 2 for v = 1), 5 (c = 3, 2 for v = 3)';
 create or replace procedure p_dt_order as
     v int := 1;
     n int;
 begin
-    select sum(c) into n from (select c from t1 order by abs(c - v)) d;
+    select sum(c) into n from (select c from t1 order by abs(c - v) limit 2) d;
+    dbms_output.put_line(n);
+    v := 3;
+    select sum(c) into n from (select c from t1 order by abs(c - v) limit 2) d;
     dbms_output.put_line(n);
 end;
 
@@ -97,7 +100,7 @@ evaluate 'the same queries out of PL/CSQL';
 select m from (select count(*) m from t1 having 1 > 0) d;
 select m from (select count(*) m from t1 having abs(1) > 0) d;
 select sum(m) from (select c, count(*) m from t1 group by c having count(*) > 1) d;
-select sum(c) from (select c from t1 order by abs(c - 1)) d;
+select sum(c) from (select c from t1 order by abs(c - 1) limit 2) d;
 with w as (select count(*) m from t1 having 1 > 0) select m from w;
 
 
