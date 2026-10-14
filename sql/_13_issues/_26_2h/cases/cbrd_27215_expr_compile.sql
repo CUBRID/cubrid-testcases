@@ -366,7 +366,7 @@ select /*+ NO_HASH_AGGREGATE */ g, k, sum(n) from t group by g, k with rollup ha
 set system parameters 'agg_hash_respect_order=yes';
 select g, sum(k * 2), sum(n), count(k) from t group by g order by g;
 select g, sum(k * 2), sum(n), count(k) from t group by g order by g;
-set system parameters 'agg_hash_respect_order=no';
+set system parameters 'agg_hash_respect_order=yes';
 
 -- index-driven sorted group by (qexec_groupby_index) uses the same dimension copy
 create index i_t_g on t (g);
@@ -379,7 +379,8 @@ drop table t;
 -- rollup totals are 39-40 digit NUMERICs; no 38-digit overflow since the sum domain is widened);
 -- the HAVING statement raises ER_QPROC_ZERO_DIVIDE (-539, "Attempt to divide by zero") on both.
 -- Generate the .answer on the develop baseline (empty .answer -> .result, as for the other cbrd_27215_* cases).
--- Note: agg_hash_respect_order is PRM_FOR_SERVER|PRM_USER_CHANGE (server-wide, dba); the case resets it.
+-- Note: agg_hash_respect_order is PRM_FOR_SERVER|PRM_USER_CHANGE (server-wide, dba) and defaults to yes; the case
+-- restores yes (restoring 'no' left every later case of the run on the hash-order shortcut: GROUPBY sort: false, rows unsorted).
 -- max_agg_hash_size is PRM_TEST_CHANGE only, so a forced spill cannot be scripted in a TC.
 drop table if exists t;
 
