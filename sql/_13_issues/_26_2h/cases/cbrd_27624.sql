@@ -1,9 +1,9 @@
 /**
- *  This test case verifies CBRD-27510 (engine PR #8159): after a parallel scan whose worker lists are
+ *  This test case verifies CBRD-27624 (engine PR #8159): after a parallel scan whose worker lists are
  *  gathered as a mergeable list, the statement returns the serial answer even when the gathered block
  *  calls a PARALLEL_ENABLE Java function that takes an int, and the function runs only for the rows.
  *
- *  Before the fix the leader evaluated the gathered block's select list once more over empty column
+ *  Since CBRD-27510 the leader evaluated the gathered block's select list once more over empty column
  *  values, so the Java function got NULL for its int parameter and failed with -889. The error was
  *  ignored but stayed set: a later stored function call of the same statement then failed with -889,
  *  and on a debug build the next parallel heap scan open asserted and the server stopped. A function
