@@ -131,5 +131,5 @@ select /*+ recompile use_nl ordered */ count(*), sum(o1.pk)
 select /*+ recompile */ count(*), sum(j.opk) from j
  where j.onn1 >= nvl((select /*+ no_subquery_cache */ max(cs.v + j.onn) from cs where cs.pk <= j.opk), 0);
 
-set system parameters 'memoize_memory_limit=2M';
+set system parameters 'memoize_memory_limit=default';
 drop table cz, cx, cs, j;
