@@ -204,11 +204,11 @@ trace
 Query Plan:
   INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_MERGE */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
+  rewritten query: select count(*) from [dba.tbl_a] a where  exists (select /*+ ORDERED NO_UNNEST */ ? from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and (b.col_c= ?:? ) and inst_num()<= ?:? )
 
 
 Trace Statistics:
@@ -288,11 +288,11 @@ Query Plan:
   SORT (distinct)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.tbl_a] a where a.col_b in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_b in (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
 
 
 Trace Statistics:
@@ -348,11 +348,11 @@ Query Plan:
   SORT (distinct)
     INDEX SCAN (b.pk_tbl_b_col_a) (key range: b.col_a=a.col_a)
 
-  rewritten query: (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+  rewritten query: (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select count(*) from [dba.tbl_a] a where a.col_a in (select /*+ ORDERED NO_MERGE */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
+  rewritten query: select count(*) from [dba.tbl_a] a where a.col_a in (select /*+ ORDERED NO_UNNEST */ distinct b.col_b from [dba.tbl_b] b where b.col_a=a.col_a and ?=? and b.col_c= ?:? )
 
 
 Trace Statistics:
@@ -538,7 +538,6 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -588,7 +587,6 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
