@@ -51,7 +51,7 @@ MC: wait until C1 ready;
 
 /* expected end state */
 /* expect 0 */
-C1: SELECT COUNT(*) FROM t27034_child c WHERE NOT EXISTS (SELECT 1 FROM t27034_parent p WHERE p.id = c.pid) AND EXISTS (SELECT 1 FROM db_index i WHERE i.class_name = 't27034_child' AND i.is_foreign_key = 'YES');
+C1: SELECT (SELECT COUNT(*) FROM t27034_child c WHERE NOT EXISTS (SELECT 1 FROM t27034_parent p WHERE p.id = c.pid)) * (SELECT COUNT(*) FROM db_index i WHERE i.class_name = 't27034_child' AND i.is_foreign_key = 'YES') FROM db_root;
 MC: wait until C1 ready;
 /* expect 0 */
 C1: SELECT COUNT(*) FROM db_index i WHERE i.class_name = 't27034_child' AND i.is_foreign_key = 'YES';
