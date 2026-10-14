@@ -79,3 +79,5 @@ drop procedure p_force_alias;
 drop procedure p_dml;
 
 drop table t1;
+
+--+ server-message off
