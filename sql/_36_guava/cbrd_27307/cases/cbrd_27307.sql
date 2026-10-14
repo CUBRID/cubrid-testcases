@@ -26,6 +26,8 @@
  *    Case 5:  LEFT OUTER join falls back to the serial merge
  *    Case 6:  PARALLEL(0) runs the merge serially
  *    Case 7:  PARALLEL(2) runs the parallel merge
+ *    Case 8:  a merge join under an index join follows the PARALLEL hint
+ *             (PARALLEL(0) serial, PARALLEL(2) parallel)
  */
 
 drop table if exists t1, t2;
@@ -150,5 +152,26 @@ from (select /*+ USE_MERGE PARALLEL(2) */ count(*) c0, sum(t1.id) + sum(t2.id) c
      (select /*+ USE_HASH */ count(*) c0, sum(t1.id) + sum(t2.id) c1,
              sum(cast(t1.id as bigint) * t2.id) c2
       from t1, t2 where t1.k = t2.k) h;
+
+-- Case 8: merge join as the outer of an index join; PARALLEL(0) has no parallel merge workers, PARALLEL(2) has them
+set trace on;
+select /*+ ORDERED USE_MERGE(b) USE_IDX(c) PARALLEL(0) */ count(*) from t1 a, t2 b, t1 c where a.k = b.k and b.id = c.id;
+show trace;
+select /*+ ORDERED USE_MERGE(b) USE_IDX(c) PARALLEL(2) */ count(*) from t1 a, t2 b, t1 c where a.k = b.k and b.id = c.id;
+show trace;
+set trace off;
+
+select case when m0.c0 <=> h.c0 and m0.c1 <=> h.c1 and m0.c2 <=> h.c2
+             and m2.c0 <=> h.c0 and m2.c1 <=> h.c1 and m2.c2 <=> h.c2 and h.c0 <=> 40000
+       then 'PASS' else 'FAIL' end as case8_nested_parallel_hint
+from (select /*+ ORDERED USE_MERGE(b) USE_IDX(c) PARALLEL(0) */ count(*) c0, sum(a.id) + sum(b.id) c1,
+             sum(cast(a.id as bigint) * c.id) c2
+      from t1 a, t2 b, t1 c where a.k = b.k and b.id = c.id) m0,
+     (select /*+ ORDERED USE_MERGE(b) USE_IDX(c) PARALLEL(2) */ count(*) c0, sum(a.id) + sum(b.id) c1,
+             sum(cast(a.id as bigint) * c.id) c2
+      from t1 a, t2 b, t1 c where a.k = b.k and b.id = c.id) m2,
+     (select /*+ USE_HASH */ count(*) c0, sum(a.id) + sum(b.id) c1,
+             sum(cast(a.id as bigint) * c.id) c2
+      from t1 a, t2 b, t1 c where a.k = b.k and b.id = c.id) h;
 
 drop table if exists t1, t2;

@@ -291,3 +291,86 @@ PASS
 
 ===================================================
 0
+===================================================
+count(*)    
+40000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          TABLE SCAN (a)
+        SORT (temp)
+          TABLE SCAN (b)
+    INDEX SCAN (c.pk_t?_id) (key range: b.id=c.id, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_IDX(c) USE_MERGE(b) PARALLEL(?) */ count(*) from [dba.t?] a, [dba.t?] b, [dba.t?] c where a.k=b.k and b.id=c.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?.pk_t?_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          MERGELIST
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+40000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          TABLE SCAN (a)
+        SORT (temp)
+          TABLE SCAN (b)
+    INDEX SCAN (c.pk_t?_id) (key range: b.id=c.id, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_IDX(c) USE_MERGE(b) PARALLEL(?) */ count(*) from [dba.t?] a, [dba.t?] b, [dba.t?] c where a.k=b.k and b.id=c.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t?.pk_t?_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          MERGELIST (parallel merge workers: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                      (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                      (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+case8_nested_parallel_hint    
+PASS     
+
+===================================================
+0
