@@ -71,6 +71,12 @@ execute s1 using 1;
 execute s1 using null;
 deallocate prepare s1;
 
+prepare s1n from 'select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from hk_o a, (select i, count(*) c from hk_i group by i) b where a.i + ? = b.i order by 1, 2';
+execute s1n using 0;
+execute s1n using 1;
+execute s1n using null;
+deallocate prepare s1n;
+
 prepare s2 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + ? = b.i order by 1, 2';
 execute s2 using 0;
 execute s2 using null;
@@ -78,6 +84,7 @@ deallocate prepare s2;
 
 prepare s2n from 'select /*+ ordered NO_HASH_LIST_SCAN */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + ? = b.i order by 1, 2';
 execute s2n using 0;
+execute s2n using null;
 deallocate prepare s2n;
 
 evaluate '[4] both keys with host variable arithmetic';
