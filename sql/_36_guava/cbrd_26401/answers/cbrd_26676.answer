@@ -1,0 +1,82 @@
+===================================================
+    
+Case 1: db_attribute/_db_attribute default_value column width is 2048     
+
+===================================================
+class_name    prec    
+_db_attribute     2048     
+db_attribute     2048     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 2: a 256-char table column DEFAULT round-trips in full through db_attribute.default_value     
+
+===================================================
+char_length(default_value)    
+256     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 3: a 2048-char table column DEFAULT round-trips in full through db_attribute.default_value, and db_attribute/_db_attribute agree on the value     
+
+===================================================
+char_length(default_value)    
+2048     
+
+===================================================
+(select default_value from db_attribute where class_name='t2' and attr_name='c2')=(select default_value from _db_attribute where class_of.class_name='t2' and attr_name='c2')    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 4: a 2049-char DEFAULT is accepted, but the catalog display truncates to 2048 while the real default value keeps its full length     
+
+===================================================
+char_length(default_value)    
+2048     
+
+===================================================
+1
+===================================================
+char_length(c2)    
+2049     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: db_stored_procedure_args/_db_stored_procedure_args default_value column width is 2048     
+
+===================================================
+class_name    prec    
+_db_stored_procedure_args     2048     
+db_stored_procedure_args     2048     
+
+===================================================
+0
+===================================================
+    
+Case 6: a PL/CSQL parameter DEFAULT of exactly 2048 chars round-trips in full through db_stored_procedure_args.default_value     
+
+===================================================
+char_length(default_value)    
+2048     
+
+===================================================
+0

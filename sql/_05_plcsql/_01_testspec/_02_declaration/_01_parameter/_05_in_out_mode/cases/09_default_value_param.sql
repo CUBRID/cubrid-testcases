@@ -199,6 +199,20 @@ call demo_default_value12();
 --error drop
 drop procedure demo_default_value12;
 
+-- default value length exactly at the limit (CBRD-26676)
+evaluate 'Default parameter length 2048';
+create or replace procedure demo_default_value13 (
+    a in varchar:= rpad('a', 2048, 'a')
+) as
+begin
+    DBMS_OUTPUT.put_line('length : ' || length(a) || ', a = ' || a);
+end;
+
+call demo_default_value13();
+
+--error drop
+drop procedure demo_default_value13;
+
 -- default value overflow : length over 2048 (CBRD-26676)
 evaluate 'error test, data overflow';
 create or replace procedure demo_default_overflow (
