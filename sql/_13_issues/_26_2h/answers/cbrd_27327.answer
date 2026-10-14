@@ -1,0 +1,300 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the reported query, MIN and MAX of a string column over four partitions; result = parallel(0)     
+
+===================================================
+min(col)    max(col)    
+row-000000000001     row-000000200000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select min([dba.t_part].col), max([dba.t_part].col) from [dba.t_part] [dba.t_part]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+min(col)    max(col)    
+row-000000000001     row-000000200000     
+
+===================================================
+    
+Case 2: COUNT, string MIN and MAX, SUM, AVG, STDDEV and VARIANCE family, BIT aggregates; result = parallel(0)     
+
+===================================================
+count(*)    count(col)    min(grp)    max(grp)    sum(v)    round(avg(v), 2)    round(stddev(v), 2)    round(stddev_pop(v), 2)    round(stddev_samp(v), 2)    round(variance(v), 2)    round(var_pop(v), 2)    round(var_samp(v), 2)    bit_and(v)    bit_or(v)    bit_xor(v)    
+200000     200000     aa     dd     99900000     499.5     288.67     288.67     288.68     83333.25     83333.25     83333.67     0     1023     0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select count(*), count([dba.t_part].col), min([dba.t_part].grp), max([dba.t_part].grp), sum([dba.t_part].v),  round(avg([dba.t_part].v), ?),  round(stddev([dba.t_part].v), ?),  round(stddev_pop([dba.t_part].v), ?),  round(stddev_samp([dba.t_part].v), ?),  round(variance([dba.t_part].v), ?),  round(var_pop([dba.t_part].v), ?),  round(var_samp([dba.t_part].v), ?), bit_and([dba.t_part].v), bit_or([dba.t_part].v), bit_xor([dba.t_part].v) from [dba.t_part] [dba.t_part]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(col)    min(grp)    max(grp)    sum(v)    round(avg(v), 2)    round(stddev(v), 2)    round(stddev_pop(v), 2)    round(stddev_samp(v), 2)    round(variance(v), 2)    round(var_pop(v), 2)    round(var_samp(v), 2)    bit_and(v)    bit_or(v)    bit_xor(v)    
+200000     200000     aa     dd     99900000     499.5     288.67     288.67     288.68     83333.25     83333.25     83333.67     0     1023     0     
+
+===================================================
+    
+Case 3: GROUP_CONCAT without ORDER BY and the JSON aggregates, compared by length; result = parallel(0)     
+
+===================================================
+char_length(group_concat(col separator '<<>>'))    char_length( replace(group_concat(col separator '<<>>'), '<<>>', ''))    json_length(json_arrayagg(col))    json_length(json_objectagg(col, v))    
+796     640     40     40     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select  char_length(group_concat([dba.t_part].col separator '<<>>')),  char_length( replace(group_concat([dba.t_part].col separator '<<>>'), '<<>>', '')), json_length(json_arrayagg([dba.t_part].col)), json_length(json_objectagg([dba.t_part].col, [dba.t_part].v)) from [dba.t_part] [dba.t_part] where  mod([dba.t_part].id, ?)=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+char_length(group_concat(col separator '<<>>'))    char_length( replace(group_concat(col separator '<<>>'), '<<>>', ''))    json_length(json_arrayagg(col))    json_length(json_objectagg(col, v))    
+796     640     40     40     
+
+===================================================
+    
+Case 4: MEDIAN, PERCENTILE, CUME_DIST, PERCENT_RANK, DISTINCT and sorted GROUP_CONCAT; result = parallel(0)     
+
+===================================================
+round(median(v), 2)    round(percentile_cont( cast(0.25 as double)) within group (order by v), 2)    percentile_disc( cast(0.75 as double)) within group (order by v)    round(cume_dist(500) within group(order by v), 4)    round(percent_rank(500) within group(order by v), 4)    count(distinct grp)    sum(distinct v)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+499.5     249.75     749     0.501     0.5     4     499500     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select  round(median([dba.t_part].v), ?),  round(percentile_cont( cast(?.? as double)) within group (order by [dba.t_part].v), ?), percentile_disc( cast(?.? as double)) within group (order by [dba.t_part].v),  round(cume_dist(?) within group(order by [dba.t_part].v), ?),  round(percent_rank(?) within group(order by [dba.t_part].v), ?), count(distinct [dba.t_part].grp), sum(distinct [dba.t_part].v), min([dba.t_part].col), max([dba.t_part].col), group_concat(distinct [dba.t_part].grp order by ? separator '-|-') from [dba.t_part] [dba.t_part]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+round(median(v), 2)    round(percentile_cont( cast(0.25 as double)) within group (order by v), 2)    percentile_disc( cast(0.75 as double)) within group (order by v)    round(cume_dist(500) within group(order by v), 4)    round(percent_rank(500) within group(order by v), 4)    count(distinct grp)    sum(distinct v)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+499.5     249.75     749     0.501     0.5     4     499500     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+    
+Case 5: the qualifying row in one partition only, then no qualifying row; result = parallel(0)     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')    
+1     row-000000000007     row-000000000007     cc     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select count(*), min([dba.t_part].col), max([dba.t_part].col), group_concat([dba.t_part].grp separator '<<>>') from [dba.t_part] [dba.t_part] where [dba.t_part].col= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')    
+1     row-000000000007     row-000000000007     cc     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')    
+0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select count(*), min([dba.t_part].col), max([dba.t_part].col), group_concat([dba.t_part].grp separator '<<>>') from [dba.t_part] [dba.t_part] where [dba.t_part].col= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')    
+0     null     null     null     
+
+===================================================
+    
+Case 6: the same aggregates on a table without partitions, scanned in one pass; result = parallel(0)     
+
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    round(stddev(v), 2)    round(variance(v), 2)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     288.67     83333.25     aa-|-bb-|-cc-|-dd     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_flat)
+
+  rewritten query: select min([dba.t_flat].col), max([dba.t_flat].col), min([dba.t_flat].grp), max([dba.t_flat].grp), count(*), sum([dba.t_flat].v),  round(stddev([dba.t_flat].v), ?),  round(variance([dba.t_flat].v), ?), group_concat(distinct [dba.t_flat].grp order by ? separator '-|-') from [dba.t_flat] [dba.t_flat]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_flat), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    round(stddev(v), 2)    round(variance(v), 2)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     288.67     83333.25     aa-|-bb-|-cc-|-dd     
+
+===================================================
+    
+Case 7: one statement three times without recompile, reusing the cached plan; result = parallel(0)     
+
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    group_concat(distinct grp order by grp separator '-|-')    
+row-000000000001     row-000000200000     aa     dd     200000     99900000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+    
+Case 8: a division by zero inside the parallel scan of the table without partitions, then the same statement without it; result = parallel(0)     
+
+===================================================
+1
+===================================================
+Error:-539
+===================================================
+Error:-539
+===================================================
+1
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+1
+===================================================
+Error:-539
+===================================================
+1
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+    
+Case 9: the same division by zero on the partitioned table, then the same statement without it; result = parallel(0)     
+
+===================================================
+1
+===================================================
+Error:-539
+===================================================
+Error:-539
+===================================================
+1
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+1
+===================================================
+Error:-539
+===================================================
+1
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
+100     row-000000000001     row-000000200000     aa-|-bb-|-cc-|-dd     
+
+===================================================
+0
