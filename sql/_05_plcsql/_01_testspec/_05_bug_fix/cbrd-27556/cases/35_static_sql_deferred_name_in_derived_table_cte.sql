@@ -110,3 +110,5 @@ drop procedure p_cte;
 drop procedure p_cte_recursive;
 
 drop table t1;
+
+--+ server-message off
