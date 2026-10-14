@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 100000
 ===================================================
 0
@@ -56,14 +58,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
-    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+    INDEX SCAN (s.idx_small_col?) (key range: s.col?=a.k?, covered: true)
 
   rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      SCAN (index: dba.small.idx_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
@@ -77,14 +79,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
-    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+    INDEX SCAN (s.idx_small_col?) (key range: s.col?=a.k?, covered: true)
 
   rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      SCAN (index: dba.small.idx_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
@@ -98,14 +100,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
-    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+    INDEX SCAN (s.idx_small_col?) (key range: s.col?=a.k?, covered: true)
 
   rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      SCAN (index: dba.small.idx_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
@@ -119,14 +121,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
-    INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
+    INDEX SCAN (s.idx_small_col?) (key range: s.col?=a.k?, covered: true)
 
   rewritten query: select /*+ ORDERED USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.small.pk_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      SCAN (index: dba.small.idx_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
@@ -138,22 +140,17 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (a)
-    TABLE SCAN (s)
+    INDEX SCAN (s.idx_small_col?) (key range: s.col?=a.k?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.ndv_outer] a, [dba.small] s where s.col?=a.k?
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.ndv_outer] a semi join [dba.small] s on s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.ndv_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.small.idx_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================

@@ -30,24 +30,17 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (a)
-    SORT (distinct)
-      TABLE SCAN (dba.subquery_small)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -213,24 +206,17 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (a)
-    SORT (distinct)
-      TABLE SCAN (dba.subquery_small)
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -257,24 +243,17 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (a)
-    SORT (distinct)
-      INDEX SCAN (dba.subquery_small.pk_subquery_small_col?) (key range: ([dba.subquery_small].col?< ?:? ))
+    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.subquery_small.pk_subquery_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -418,13 +397,12 @@ trace
 
 Query Plan:
   HASH JOIN (inner join)
-    HASH JOIN (inner join)
+    NESTED LOOPS (semi join)
       TABLE SCAN (a)
-      TABLE SCAN (b)
-    SORT (distinct)
-      TABLE SCAN (c)
+      INDEX SCAN (c.idx_col?_col?_col?) (key range: c.col?=a.col?, covered: true)
+    TABLE SCAN (b)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] c on c.col?=a.col?, [dba.subquery_small] b where a.col?=b.col? and b.col?= ?:? 
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] c on c.col?=a.col?, [dba.subquery_small] b where a.col?=b.col? and b.col?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -433,17 +411,11 @@ Trace Statistics:
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================

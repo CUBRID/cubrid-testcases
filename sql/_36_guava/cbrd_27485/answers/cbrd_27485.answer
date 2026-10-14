@@ -41,24 +41,11 @@ trace
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.part_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -85,33 +72,19 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (o)
-    SORT (distinct)
-      TABLE SCAN (s)
+    INDEX SCAN (s.pk_part_inner_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner] s on s.k=o.k
+  rewritten query: select /*+ ORDERED */ count(*) from [dba.outer_big] o semi join [dba.part_inner] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.part_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner__p__p?.pk_part_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -145,32 +118,19 @@ count(*)
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  NESTED LOOPS (semi join)
     TABLE SCAN (o)
-    SORT (distinct)
-      TABLE SCAN (s)
+    INDEX SCAN (s.pk_part_inner_r_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner_r] s on s.k=o.k
+  rewritten query: select /*+ ORDERED */ count(*) from [dba.outer_big] o semi join [dba.part_inner_r] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.part_inner_r), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner_r__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner_r__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                   PARTITION (table: dba.part_inner_r__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SCAN (table: dba.outer_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.part_inner_r.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             PARTITION (index: dba.part_inner_r__p__p?.pk_part_inner_r_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================

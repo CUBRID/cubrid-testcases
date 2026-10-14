@@ -80,7 +80,8 @@ set system parameters 'memoize_memory_limit=2M';
 
 
 evaluate 'Case 1: EXISTS, unnested -> NL semi join with a MEMOIZE line; result = NO_UNNEST';
-select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select 'X' from subquery_small where col2=a.col4);
+-- ORDERED keeps the NL semi join under test: since CBRD-27397 the inner may be read with DISTINCT and hash joined
+select /*+ recompile parallel(0) ordered */ count(*) from subquery_big a where exists (select 'X' from subquery_small where col2=a.col4);
 show trace;
 -- nested reference: result must match the block above
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select /*+ NO_UNNEST */ 'X' from subquery_small where col2=a.col4);
@@ -124,7 +125,7 @@ drop table in_inner;
 evaluate 'Case 5: data filter on a non-index column: memoized, no key limit; result = NO_UNNEST';
 -- col6 is not in idx_col2_col1_col3, so the inner keeps a data filter that can reject the first key;
 -- the key limit of 1 is withheld for such an inner, the memoize still applies.
-select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select 1 from subquery_small where col2=a.col4 and col6=3);
+select /*+ recompile parallel(0) ordered */ count(*) from subquery_big a where exists (select 1 from subquery_small where col2=a.col4 and col6=3);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select /*+ NO_UNNEST */ 1 from subquery_small where col2=a.col4 and col6=3);
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where not exists (select 1 from subquery_small where col2=a.col4 and col6=3);
@@ -132,7 +133,7 @@ select /*+ recompile parallel(0) */ count(*) from subquery_big a where not exist
 
 
 evaluate 'Case 6: key filter that rejects every key: semi = 0, anti = all rows, memoized in both';
-select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select 1 from subquery_small where col2=a.col4 and col1 < 0);
+select /*+ recompile parallel(0) ordered */ count(*) from subquery_big a where exists (select 1 from subquery_small where col2=a.col4 and col1 < 0);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where not exists (select 1 from subquery_small where col2=a.col4 and col1 < 0);
 show trace;
@@ -168,7 +169,7 @@ delete from subquery_big where col5 in (30001, 30002);
 
 
 evaluate 'Case 9: semi / anti inner followed by another join';
-select /*+ recompile parallel(0) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and exists (select 1 from subquery_small c where c.col2=a.col4);
+select /*+ recompile parallel(0) ordered */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and exists (select 1 from subquery_small c where c.col2=a.col4);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and exists (select /*+ NO_UNNEST */ 1 from subquery_small c where c.col2=a.col4);
 select /*+ recompile parallel(0) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and not exists (select 1 from subquery_small c where c.col2=a.col4);

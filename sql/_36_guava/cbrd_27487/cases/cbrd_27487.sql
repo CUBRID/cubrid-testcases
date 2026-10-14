@@ -38,8 +38,10 @@
 
 drop table if exists small, ndv_outer, big_in, multi, skew_outer, fat_in, fat_outer, phase_outer;
 
-create table small (col1 int primary key, col2 char(1));
+-- no primary key: since CBRD-27397 an EXISTS equated on the inner's key is rewritten to an inner join, leaving no semi join to memoize
+create table small (col1 int, col2 char(1));
 insert into small select rownum, chr(65 + mod(rownum, 26)) from db_class a, db_class b, db_class c, db_class d limit 5000;
+create index idx_small_col1 on small (col1);
 
 create table ndv_outer (a int primary key, k400 int, k800 int, k1200 int, k2000 int, mu int);
 insert into ndv_outer
@@ -96,7 +98,7 @@ show trace;
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k2000;
 show trace;
 -- the match-only memo of an NL semi join inner (CBRD-27465) is judged by the same rule
-select /*+ recompile parallel(0) */ count(*) from ndv_outer a where exists (select 1 from small s where s.col1 = a.k1200);
+select /*+ recompile parallel(0) ordered */ count(*) from ndv_outer a where exists (select 1 from small s where s.col1 = a.k1200);
 show trace;
 
 evaluate 'Case 2: nine probe keys in ten distinct, memoize still given up; result = memoize off';
