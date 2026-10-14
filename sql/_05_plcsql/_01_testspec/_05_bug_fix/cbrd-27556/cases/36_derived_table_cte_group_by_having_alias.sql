@@ -30,8 +30,8 @@ with recursive w (x, y) as (
     select x + 1 as nx, y from w where x < 3 group by nx, y having nx < 3)
 select * from w order by 1;
 
-evaluate 'a column with the same name as an alias wins in a derived table: 4 (grouped by t1.c)';
-select sum(m) from (select d as c, count(*) m from t1 group by c) d;
+evaluate 'a column with the same name as an alias wins in a derived table: 3 groups (grouped by t1.c), not 4 (grouped by d)';
+select count(*) from (select d as c, count(*) m from t1 group by c) d;
 
 evaluate 'a view with an alias in HAVING of a derived table: 3';
 create view v1 as select sum(m) s from (select c as k, count(*) m from t1 group by k having k > 1) d;
