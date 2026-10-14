@@ -12,7 +12,7 @@ alter table t1 owner to u1;
 alter table t2 owner to u1;
 select class_of, unique_name, class_name, owner.name from _db_class where (is_system_class | flags) % 8 = 0 order by unique_name, class_name;
 select unique_name, name, owner.name, target_class, action_definition from _db_trigger;
--- Known issue: the trigger action compiled in this session still points to
+-- Known issue (CBRD-27618): the trigger action compiled in this session still points to
 -- dba.t2 (now u1.t2), so it inserts 2 into u1.t2. A new session resolves
 -- dba.t2 by name and fails with "Unknown class".
 insert into u1.t1 values (2);
