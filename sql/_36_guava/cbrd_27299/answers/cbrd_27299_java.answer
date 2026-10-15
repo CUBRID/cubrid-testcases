@@ -1,0 +1,193 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: caught Exception: declared NULL, undeclared reads db_class     
+
+===================================================
+j_sp() is null    j_spu() is null    
+1     0     
+
+===================================================
+j_jc()    
+0     
+
+===================================================
+    
+Case 2: caught SQLException: declared 0, undeclared reads the table     
+
+===================================================
+j_spt('t_one')    j_sptu('t_one')    
+0     1     
+
+===================================================
+    
+Case 3: the same refusals inside parallel workers     
+
+===================================================
+0
+===================================================
+sum(j_spt('t_one')+1)    count(j_sp())    
+65536     0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.j_spt]('t_one')+?), count([dba.j_sp]()) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(j_spt('t_one')+1)    count(j_sp())    
+65536     0     
+
+===================================================
+    
+Case 4: OID argument passes through a declared function     
+
+===================================================
+j_oida(t)=t    j_oidb(t)    
+1          
+
+===================================================
+    
+Case 5: uncaught Java exception, serial and in workers, then the session goes on     
+
+===================================================
+j_bad(1, '2')    
+3     
+
+===================================================
+Error:-889
+Stored procedure execute error: For input string: "x"
+
+===================================================
+Error:-889
+Stored procedure execute error: For input string: "x"
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.j_bad]([dba.t_big].a, 'x')) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum( cast(j_pe(a) as bigint))    
+2147581952     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum( cast([dba.j_pe]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum( cast(j_pe(a) as bigint))    
+2147581952     
+
+===================================================
+    
+Case 6: AUTHID CALLER declared function     
+
+===================================================
+j_caller(1)    j_definer(1)    
+2     2     
+
+===================================================
+sum( cast(j_caller(a) as bigint))    
+2147581952     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum( cast([dba.j_caller]([dba.t_big].a) as bigint)) from [dba.t_big] [dba.t_big]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+sum( cast(j_caller(a) as bigint))    
+2147581952     
+
+===================================================
+    
+Case 7: declared and undeclared calls alternate in one session     
+
+===================================================
+j_sp() is null    j_spu() is null    j_sp() is null    j_spt('t_one')    j_sptu('t_one')    j_spt('t_one')    
+1     0     1     0     1     0     
+
+===================================================
+0
+===================================================
+0
