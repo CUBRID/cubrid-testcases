@@ -42,8 +42,10 @@
 6
 ===================================================
     
-[7] w: trailing key c3 is schema NOT NULL and unreferenced in the query: ORDER BY skip without any IS NOT NULL     
+[7] w: trailing key c3 is schema NOT NULL and unreferenced in the query: ORDER BY skip without any IS NOT NULL; c2 added as a tiebreaker so row order is fully determined     
 
+===================================================
+0
 ===================================================
 c1    c2    
 null     null     
@@ -53,6 +55,22 @@ null     22
 1     11     
 2     null     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true)
+  skip order by: true
+
+  rewritten query: select [dba.w].c?, [dba.w].c? from [dba.w] [dba.w] order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
 ===================================================
     
 [7-control] same query, index forced off: ground truth for [7]     
@@ -68,7 +86,7 @@ null     22
 
 ===================================================
     
-[7g] t: where c2 > 0 order by c1: term proves c2 NOT NULL, c1 may still be NULL, must survive skip     
+[7g] t: where c2 > 0 order by c1: term proves c2 NOT NULL, c1 may still be NULL, must survive skip; c2 added as a tiebreaker     
 
 ===================================================
 c1    c2    
@@ -111,11 +129,30 @@ c1    c2
 [7b] w: same as [7], under GROUP BY skip, NULL group must survive     
 
 ===================================================
+0
+===================================================
 c1    count(*)    
 null     3     
 1     2     
 2     1     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true)
+  group by nosort: true
+
+  rewritten query: select [dba.w].c?, count(*) from [dba.w] [dba.w] group by [dba.w].c?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
     
 [7b-control] same query, index forced off: ground truth for [7b]     
@@ -193,11 +230,30 @@ null     3
 [7d] w: same as [7b], descending index scan path (no extra sort node)     
 
 ===================================================
+0
+===================================================
 c1    count(*)    
 2     1     
 1     2     
 null     3     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.w].c?, count(*) from [dba.w] [dba.w] group by [dba.w].c? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
     
 [7d-control] same query, index forced off: ground truth for [7d]     
@@ -213,6 +269,8 @@ null     3
 [7e] w: same as [7], descending index scan path (qo_check_orderby_skip_descending, a separate function from [7d]s); c2 added as a tiebreaker so row order is fully determined     
 
 ===================================================
+0
+===================================================
 c1    c2    
 2     null     
 1     11     
@@ -221,6 +279,22 @@ null     22
 null     21     
 null     null     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true, desc_index: true)
+  skip order by: true
+
+  rewritten query: select [dba.w].c?, [dba.w].c? from [dba.w] [dba.w] order by ? desc , ? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
 ===================================================
     
 [7e-control] same query, index forced off: ground truth for [7e]     
@@ -278,12 +352,12 @@ c1    c2
 1
 ===================================================
     
-[1] c2 = all (empty subquery): (NULL,NULL) must survive ORDER BY skip     
+[1] c2 = all (empty subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker so row order is fully determined     
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -293,19 +367,19 @@ null     null
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
 ===================================================
     
-[1b] c2 not in (empty subquery): (NULL,NULL) must survive ORDER BY skip     
+[1b] c2 not in (empty subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -315,8 +389,8 @@ null     null
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -370,14 +444,14 @@ i    i    j
 
 ===================================================
     
-[1c] c2 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip     
+[1c] c2 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
 
 ===================================================
 0
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -389,19 +463,19 @@ null     null
 0
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
 ===================================================
     
-[1d] c2 = all {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip     
+[1d] c2 = all {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -411,19 +485,19 @@ null     null
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
 ===================================================
     
-[1e] c2 not in {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip     
+[1e] c2 not in {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -433,8 +507,8 @@ null     null
 
 ===================================================
 c1    c2    
-null     5     
 null     null     
+null     5     
 2     null     
 3     1     
 
@@ -527,8 +601,10 @@ i    i    j
 4
 ===================================================
     
-[8] te: c2 in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622)     
+[8] te: c2 in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622); c2 added as a tiebreaker so row order is fully determined     
 
+===================================================
+0
 ===================================================
 c1    c2    
 null     Mon     
@@ -536,6 +612,22 @@ null     Tue
 1     Wed     
 2     Thu     
 
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.te.i_te_c?_c?) (key filter: (([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? )), covered: true)
+  skip order by: true
+
+  rewritten query: select [dba.te].c?, [dba.te].c? from [dba.te] [dba.te] where (([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? )) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.te.i_te_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
 ===================================================
     
 [8-control] same query, index forced off: ground truth for [8]     
