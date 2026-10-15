@@ -2,8 +2,6 @@
  *  This test case verifies CBRD-27481: a non-DBA can see and alter the
  *  AUTO_INCREMENT column of a table it or its group owns, and use the serials
  *  it owns, after CBRD-25862 removed PUBLIC's privileges on _db_serial.
- *  DROP of the column is not checked: it passes the same serial owner check
- *  as MODIFY.
  */
 
 create user cbrd27481_g1;
@@ -29,6 +27,9 @@ alter table cbrd27481_g1.t modify a bigint auto_increment;
 create serial s;
 set @a = s.next_value;
 select @a;
+
+-- 5. the owner can DROP the AUTO_INCREMENT column of its table
+alter table t drop column a;
 
 drop variable @a;
 drop serial s;
