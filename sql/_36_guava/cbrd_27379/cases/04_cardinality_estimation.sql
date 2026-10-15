@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  AC-3: result size estimation (TC-3-01 to TC-3-07).
+ *  AC-3: result size estimation (TC-3-01 to TC-3-08).
  *
  *  The fix estimates the rows of a SEMI / ANTI JOIN from the probability that an outer row finds a matching inner row,
  *  instead of the inner join estimate.
@@ -13,6 +13,7 @@
  *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter
  *    TC-3-06: equi-join and non-equi terms together
  *    TC-3-07: NULL outer keys, with unique inner keys and with another equi-join term
+ *    TC-3-08: an equality on an expression, whose NDV ratio is unknown, so there is no key
  *
  *  Sub-cases:
  *    No  Sub-case    Query                               Case
@@ -28,6 +29,7 @@
  *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
  *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
  *    12  TC-3-07-01  EXISTS subquery                     NULL outer keys
+ *    13  TC-3-08-01  NOT EXISTS subquery                 equality on an expression, no key
  *
  *  CTP masks the numbers in a --@queryplan output, so the estimated rows (card) are not compared.
  *  This file asserts the result rows and the plan shape. The estimate itself is not asserted here.
@@ -714,3 +716,59 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca AND tb.cb = ta.cb);
 
 -- cleanup
 DROP TABLE IF EXISTS tc, tb, ta;
+
+-- =====================================================================================================================
+-- TC-3-08: without a key, every inner row is a candidate and the match probability does not saturate
+-- =====================================================================================================================
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-3-08-01: NOT EXISTS, equality on an expression
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-3-08-01: NOT EXISTS, equality on an expression';
+
+DROP TABLE IF EXISTS tb, ta;
+
+-- ta: 10000 rows of (MOD (n, 100), MOD (n / 100, 2) * 100 + 1), n = x.n * 100 + y.n = 0 .. 9999
+--   n 0     -> (0, 1)
+--   n 1     -> (1, 1)
+--   ...
+--   n 99    -> (99, 1)
+--   n 100   -> (0, 101)
+--   ...
+--   n 9999  -> (99, 101)
+--   Stored: 10000 rows, ca + cb is 1 .. 100 in 5000 rows and 101 .. 200 in 5000 rows
+CREATE TABLE ta (ca INT, cb INT);
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 99
+  )
+  SELECT MOD (x.n * 100 + y.n, 100), MOD ((x.n * 100 + y.n) / 100, 2) * 100 + 1
+  FROM cte x, cte y;
+
+-- tb: 100 rows of n, n = 1 .. 100
+--   1, 2, ..., 100
+--   Stored: 100 rows, keys 1 .. 100 with 1 row per key
+CREATE TABLE tb (ca INT);
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 100
+  )
+  SELECT n
+  FROM cte;
+CREATE INDEX i_tb_ca ON tb (ca);
+
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-3-08-01-01: unnested, hash join, result and plan
+evaluate 'TC-3-08-01-01: unnested, hash join, result and plan';
+--@queryplan
+SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
+FROM ta
+WHERE NOT EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca + ta.cb);
+
+-- cleanup
+DROP TABLE IF EXISTS tb, ta;
