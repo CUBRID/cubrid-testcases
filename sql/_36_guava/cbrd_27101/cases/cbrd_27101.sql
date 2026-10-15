@@ -70,6 +70,7 @@ $out:integer,$NULL,$integer,$10;
 ? = call f_add(?);
 
 -- Case 7: block comment between "?" and "="
+--   before fix : passes (the first "=" is the real separator; coverage only)
 $out:integer,$NULL,$integer,$10;
 ? /* c */ =
 call f_add(?);
