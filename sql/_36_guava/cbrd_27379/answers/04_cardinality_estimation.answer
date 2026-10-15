@@ -501,3 +501,65 @@ Query stmt:
 select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on (tb.cb>ta.cb) and tb.ca=ta.ca
 ===================================================
 0
+===================================================
+    
+TC-3-07-01: EXISTS, NULL outer keys     
+
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+    
+TC-3-07-01-01: unique inner keys, unnested, hash join, result and plan     
+
+===================================================
+count(*)    
+1000     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tc node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta semi join tc tc on tc.ca=ta.ca
+===================================================
+    
+TC-3-07-01-02: another equi-join term, unnested, hash join, result and plan     
+
+===================================================
+count(*)    
+1000     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on tb.cb=ta.cb and tb.ca=ta.ca
+===================================================
+0

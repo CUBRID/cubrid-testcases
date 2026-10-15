@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  AC-3: result size estimation (TC-3-01 to TC-3-06).
+ *  AC-3: result size estimation (TC-3-01 to TC-3-07).
  *
  *  The fix estimates the rows of a SEMI / ANTI JOIN from the probability that an outer row finds a matching inner row,
  *  instead of the inner join estimate.
@@ -12,6 +12,7 @@
  *    TC-3-04: an ON term that does not read the inner input
  *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter
  *    TC-3-06: equi-join and non-equi terms together
+ *    TC-3-07: NULL outer keys, with unique inner keys and with another equi-join term
  *
  *  Sub-cases:
  *    No  Sub-case    Query                               Case
@@ -26,6 +27,7 @@
  *    9   TC-3-05-03  EXISTS subquery                     nullable FK, FK table outer
  *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
  *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
+ *    12  TC-3-07-01  EXISTS subquery                     NULL outer keys
  *
  *  CTP masks the numbers in a --@queryplan output, so the estimated rows (card) are not compared.
  *  This file asserts the result rows and the plan shape. The estimate itself is not asserted here.
@@ -637,3 +639,78 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca AND tb.cb > ta.cb);
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
+
+-- =====================================================================================================================
+-- TC-3-07: NULL outer keys are counted once, so they do not shrink the inner rows that share a key
+-- =====================================================================================================================
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-3-07-01: EXISTS, NULL outer keys
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-3-07-01: EXISTS, NULL outer keys';
+
+DROP TABLE IF EXISTS tc, tb, ta;
+
+-- ta: 10000 rows of (n / 10 + 1 or NULL, MOD (n / 10, 10) + 1), n = x.n * 100 + y.n = 0 .. 9999.
+--     ca is NULL unless MOD (n, 10) = 0
+--   n 0     -> (1, 1)
+--   n 1     -> (NULL, 1)
+--   ...
+--   n 10    -> (2, 2)
+--   ...
+--   n 9990  -> (1000, 10)
+--   Stored: 10000 rows, ca 1 .. 1000 in 1000 rows and NULL in 9000 rows, cb 1 .. 10
+CREATE TABLE ta (ca INT, cb INT);
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 99
+  )
+  SELECT CASE WHEN MOD (x.n * 100 + y.n, 10) = 0 THEN (x.n * 100 + y.n) / 10 + 1 END,
+         MOD ((x.n * 100 + y.n) / 10, 10) + 1
+  FROM cte x, cte y;
+
+-- tb: 10000 rows of (MOD (m, 1000) + 1, m / 1000 + 1), m = x.n * 100 + y.n = 0 .. 9999
+--   m 0     -> (1, 1)
+--   m 1     -> (2, 1)
+--   ...
+--   m 999   -> (1000, 1)
+--   m 1000  -> (1, 2)    the same keys repeat with the next cb
+--   ...
+--   m 9999  -> (1000, 10)
+--   Stored: 10000 rows, 1000 keys ca with 10 rows per key, cb 1 .. 10 within each key
+CREATE TABLE tb (ca INT, cb INT);
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 99
+  )
+  SELECT MOD (x.n * 100 + y.n, 1000) + 1, (x.n * 100 + y.n) / 1000 + 1
+  FROM cte x, cte y;
+
+-- tc: 1000 rows of ca of tb where cb = 1
+--   1, 2, ..., 1000
+--   Stored: 1000 rows, keys 1 .. 1000 with 1 row per key
+CREATE TABLE tc (ca INT);
+INSERT INTO tc SELECT ca FROM tb WHERE cb = 1;
+
+UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
+
+-- TC-3-07-01-01: unique inner keys, unnested, hash join, result and plan
+evaluate 'TC-3-07-01-01: unique inner keys, unnested, hash join, result and plan';
+--@queryplan
+SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
+FROM ta
+WHERE EXISTS (SELECT 1 FROM tc WHERE tc.ca = ta.ca);
+
+-- TC-3-07-01-02: another equi-join term, unnested, hash join, result and plan
+evaluate 'TC-3-07-01-02: another equi-join term, unnested, hash join, result and plan';
+--@queryplan
+SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
+FROM ta
+WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca AND tb.cb = ta.cb);
+
+-- cleanup
+DROP TABLE IF EXISTS tc, tb, ta;
