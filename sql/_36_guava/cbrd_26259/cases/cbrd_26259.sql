@@ -64,7 +64,7 @@
 -- For outer join cases, unmatched NULL-padding rows must remain in the result;
 -- the LEFT OUTER JOIN must not be incorrectly reduced to an INNER JOIN.
 --
--- [7]/[7g]/[7b]/[7d]/[7e]/[8]: traced with show trace so a regression that
+-- [7]/[7b]/[7d]/[7e]/[8]: traced with show trace so a regression that
 -- silently stops skipping (but happens to still return the right rows) is
 -- caught. [7]/[7g]/[1]/[1b]/[1c]/[1d]/[1e]/[8] add c2 as an ORDER BY
 -- tiebreaker: ORDER BY c1 alone does not fully determine row order when c1
