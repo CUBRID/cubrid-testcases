@@ -15,14 +15,14 @@
  *    Case 1:  binary charset literal and column, where the loop steps over raw bytes
  *    Case 2:  euckr full-width space, one two-byte char that the loop trims
  *    Case 3:  tab and newline, trimmed like the space
- *    Case 4:  strings longer than the 65-byte copy, trailing spaces trimmed after the cut
+ *    Case 4:  strings longer than 65 bytes, trailing spaces trimmed whatever the length
  *    Case 5:  a sign or the 0x prefix without digits
  *    Case 6:  return_null_on_function_errors gives NULL for the empty string and its twin
  */
 
 drop table if exists t_src, t_bin, t_ws;
 
--- strings read by the server: the empty string and its twin, a tab, strings longer than the copy
+-- strings read by the server: the empty string and its twin, a tab, strings longer than 65 bytes
 create table t_src (k varchar(10), s varchar(200));
 insert into t_src values ('empty', ''), ('bad', '~'), ('tab', chr(9)), ('tabbad', concat('~', chr(9))), ('long', concat('ff', repeat(' ', 100))), ('blank', repeat(' ', 100)), ('blankbad', concat('~', repeat(' ', 99)));
 -- binary charset strings: the empty value, its twin, a lone space and values with trailing spaces
@@ -69,13 +69,13 @@ select conv(s, 16, 10) as v from t_src where k = 'tabbad';
 select conv(concat('ff', chr(9)), 16, 10) as tab_end, conv(concat('ff', chr(10), chr(13)), 16, 10) as newline_end;
 
 
-evaluate 'Case 4: strings longer than the 65-byte copy; spaces after the cut are trimmed, blanks only give the error of the twin';
+evaluate 'Case 4: strings longer than 65 bytes; trailing spaces are trimmed, blanks only give the error of the twin';
 select k, octet_length(s) as byte_cnt, conv(s, 16, 10) as v from t_src where k = 'long' order by k;
 select conv(s, 16, 10) as v from t_src where k = 'blank';
 select conv(s, 16, 10) as v from t_src where k = 'blankbad';
 select conv(repeat(' ', 100), 16, 10) as v;
 select conv(concat('~', repeat(' ', 99)), 16, 10) as v;
-select conv(concat(repeat('0', 63), 'ff'), 16, 10) as full_copy, conv(concat(repeat('0', 63), 'ff', ' '), 16, 10) as cut_space, conv(concat('ff', repeat(' ', 100)), 16, 10) as long_pad;
+select conv(concat(repeat('0', 63), 'ff'), 16, 10) as fits, conv(concat(repeat('0', 63), 'ff', ' '), 16, 10) as one_blank_more, conv(concat('ff', repeat(' ', 100)), 16, 10) as long_pad;
 
 
 evaluate 'Case 5: a sign or the 0x prefix without digits gives the error of the twin, with digits the value';
