@@ -124,7 +124,7 @@ select conv('ff~', 16, 10) as v;
 select conv(concat(repeat('0', 64), 'f~f'), 16, 10) as v;
 select conv('f~f', 16, 10) as v;
 select conv(concat(repeat('0', 997), 'ff~'), 16, 10) as v;
-select conv('ff~', 16, 10) as v;
+select conv(substr(concat(repeat('0', 997), 'ff~'), 998), 16, 10) as v;
 select conv(concat(repeat('0', 62), 'ff~'), 16, 10) as v;
 select conv('ff~', 16, 10) as v;
 select conv(concat(repeat('0', 64), '1ffffffffffffffff'), 16, 10) as v;
