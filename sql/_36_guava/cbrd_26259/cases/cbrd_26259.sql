@@ -49,6 +49,14 @@
 --      [6]   j IS UNKNOWN, outer join
 --      [6b]  same as [6], through an inline view
 --
+--    Regression (follow-up, e0d5fc622, found via CI, 2026-09-18):
+--      [8]   ENUM column IN (nonempty literal list): the list is rewritten to a
+--            PT_FUNCTION by pt_fix_enumeration_comparison() and was wrongly
+--            treated as possibly-empty, the opposite misclassification direction
+--            from [1]/[1b]/[1c]/[1d]/[1e] (a genuinely nonempty set wrongly
+--            disqualified as NOT NULL proof, instead of a possibly-empty one
+--            wrongly accepted)
+--
 -- For ORDER BY/GROUP BY skip cases, each [N-control] executes the same query
 -- with USING INDEX NONE. The normal query and its control must return the
 -- same result, including rows whose index key contains NULL.
@@ -248,6 +256,16 @@ evaluate '[6b] same as [6], through an inline view on the inner side';
 select oa.i, d.i, d.j from oa left outer join (select i, j from ob) d on oa.i = d.i
 where (d.j > 0) is unknown order by oa.i;
 
+create table te (c1 int, c2 enum('Mon','Tue','Wed','Thu','Fri'));
+create index i_te_c1_c2 on te (c1, c2);
+insert into te values (NULL,'Mon'), (NULL,'Tue'), (1,'Wed'), (2,'Thu');
+
+evaluate '[8] te: c2 in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622)';
+select c1, c2 from te where c2 in ('Mon','Tue','Wed','Thu') order by c1;
+
+evaluate '[8-control] same query, index forced off: ground truth for [8]';
+select c1, c2 from te where c2 in ('Mon','Tue','Wed','Thu') using index none order by c1;
+
 drop table if exists w;
 drop table if exists w0;
 drop table if exists w2;
@@ -256,3 +274,4 @@ drop table if exists u;
 drop table if exists v;
 drop table if exists oa;
 drop table if exists ob;
+drop table if exists te;
