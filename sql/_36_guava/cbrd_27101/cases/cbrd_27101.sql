@@ -85,7 +85,21 @@ $out:integer,$NULL,$integer,$10;
 /* c */ ? = /* d */
 call f_add(?);
 
--- Case 10: hint style comment before CALL
+-- Case 10: "?:1 = call" form (numbered marker before "=")
+--   the "=" scan now advances one position at a time, skipping comments;
+--   ":1" must still be passed over to reach the separator
+--   before fix : passes (regression check)
+$out:integer,$NULL,$integer,$10;
+?:1 =
+call f_add(?);
+
+-- Case 11: "?:1" with a block comment before "="
+--   before fix : passes (regression check)
+$out:integer,$NULL,$integer,$10;
+?:1 /* c */ =
+call f_add(?);
+
+-- Case 12: hint style comment before CALL
 --   the skip treats a hint comment like any other comment
 $out:integer,$NULL;
 /*+ RECOMPILE */
@@ -94,12 +108,12 @@ call p_count(?);
 
 -- Negative cases: must still be rejected with -10023 after the fix
 
--- Case 11: not a CALL statement although prepared as a call
+-- Case 13: not a CALL statement although prepared as a call
 --   the "call (?)" part is inside the block comment
 select a from t_call /*
 call (?) */;
 
--- Case 12: "?" with no "="
+-- Case 14: "?" with no "="
 $out:integer,$NULL,$integer,$10;
 ?
 call f_add(?);
@@ -109,7 +123,7 @@ drop function f_add;
 drop procedure p_count;
 drop table t_call;
 
--- Case 13: unterminated block comment swallows the whole statement
+-- Case 15: unterminated block comment swallows the whole statement
 --   the skip must stop at the end of the text
 --   kept as the last statement: CTP keeps its comment state after this
 /* c
