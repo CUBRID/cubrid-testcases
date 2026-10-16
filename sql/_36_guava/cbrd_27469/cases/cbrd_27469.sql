@@ -18,7 +18,8 @@
  *  2. USING INDEX hint without a key-range condition is honored
  *  3. Several analytic functions - the index-ordered one runs first and skips its sort,
  *     functions on index-prefix keys share one sort group, and sort keys that are also
- *     in the select list (written as positions after semantic check)
+ *     in the select list (written as positions after semantic check). A covered key that
+ *     shares one sort with a longer key the index does not cover gives no index candidate
  *  4. ORDER BY of the query is still sorted after the analytic evaluation
  *  5. Nullable partition column - a multi-column index whose other key column is NOT NULL
  *     holds the NULL partition and is used; a single-column index does not hold the
@@ -27,9 +28,11 @@
  *     started a new partition at every NULL row before CBRD-27469)
  *  6. Cases that keep TABLE SCAN - non-covering index on a large table (index lookup costs
  *     more than the sort it saves), DESC order on an ASC index, GROUP BY, join,
- *     partitioned table
- *  7. NULL partition key on the key-range sort-skip path of CBRD-26473 (wrong result before
- *     CBRD-27469: every NULL row started a new partition)
+ *     partitioned table, and USE_DESC_IDX (the backward scan serves DESC keys only)
+ *  7. Key-range sort-skip path of CBRD-26473 - NULL partition keys form one partition and a
+ *     selected ROWNUM is numbered (wrong results before CBRD-27469: every NULL row started
+ *     a new partition, and ROWNUM was 0). Trace is turned off before the last query so no
+ *     query plan is left in the session for the next test case.
  */
 
 drop table if exists t27469;
@@ -129,6 +132,12 @@ select /*+ recompile */ col2, col1, dense_rank() over (partition by col2 order b
 where rownum <= 5;
 show trace;
 
+evaluate '3-4. a covered key shares the sort of a longer key the index does not cover - no analytic index scan';
+select /*+ recompile */ count(*), sum(r1), sum(r2) from (
+  select row_number() over (partition by col2) r1,
+         row_number() over (partition by col2 order by col3) r2 from t27469) x;
+show trace;
+
 --
 -- 4. ORDER BY of the query
 --
@@ -173,9 +182,9 @@ show trace;
 
 evaluate '5-2v. same value as the sequential scan';
 select count(*) from (
-  select id, rank() over (order by grp) r from t27469_null) a,
-  (select id, rank() over (order by grp) r from t27469_null using index none) b
-where a.id = b.id and a.r = b.r;
+  select id, rank() over (order by grp) r, dense_rank() over (order by grp) dr from t27469_null) a,
+  (select id, rank() over (order by grp) r, dense_rank() over (order by grp) dr from t27469_null using index none) b
+where a.id = b.id and a.r = b.r and a.dr = b.dr;
 
 drop index idx_grp_id on t27469_null;
 create index idx_grp on t27469_null (grp);
@@ -210,6 +219,22 @@ select /*+ recompile */ count(*), sum(d) from (
   from t27469 a, t27469_null b where a.col1 = b.id) x;
 show trace;
 
+evaluate '6-5. USE_DESC_IDX - DESC keys follow the backward index scan, sort skipped';
+select /*+ recompile */ count(*), sum(d) from (
+  select /*+ use_desc_idx */ dense_rank() over (partition by col2 desc order by col1 desc) d from t27469) x;
+show trace;
+
+evaluate '6-5v. same value as the sequential scan';
+select count(*) from (
+  select /*+ use_desc_idx */ col1, dense_rank() over (partition by col2 desc order by col1 desc) d from t27469) a,
+  (select col1, dense_rank() over (partition by col2 desc order by col1 desc) d from t27469 using index none) b
+where a.col1 = b.col1 and a.d = b.d;
+
+evaluate '6-6. USE_DESC_IDX - ASC keys do not follow the backward index scan, TABLE SCAN + sort';
+select /*+ recompile */ count(*), sum(d) from (
+  select /*+ use_desc_idx */ dense_rank() over (partition by col2 order by col1) d from t27469) x;
+show trace;
+
 drop table if exists t27469_part;
 create table t27469_part (col1 int not null, col2 char(1), col3 int)
 partition by hash (col1) partitions 3;
@@ -217,12 +242,12 @@ insert into t27469_part select col1, col2, col3 from t27469;
 create index idx_part_col2_col1 on t27469_part (col2, col1);
 update statistics on t27469_part with fullscan;
 
-evaluate '6-5. partitioned table - partitions are scanned one by one, no analytic index scan';
+evaluate '6-7. partitioned table - partitions are scanned one by one, no analytic index scan';
 select /*+ recompile */ count(*), sum(d) from (
   select dense_rank() over (partition by col2 order by col1) d from t27469_part) x;
 show trace;
 
-evaluate '6-5v. same value as the sequential scan';
+evaluate '6-7v. same value as the sequential scan';
 select count(*) from (
   select col1, dense_rank() over (partition by col2 order by col1) d from t27469_part) a,
   (select col1, dense_rank() over (partition by col2 order by col1) d from t27469_part using index none) b
@@ -243,13 +268,19 @@ select /*+ recompile */ id, a, grp,
 from t27469_range where a = 1 using index idx_a_grp_id(+);
 show trace;
 
-evaluate '7-1v. same rows forced onto the sequential scan';
+evaluate '7-2. ROWNUM selected on the sort-skip path - numbered in output order';
+select /*+ recompile */ rownum, id, a, grp,
+  row_number() over (partition by a, grp order by id) r
+from t27469_range where a = 1 using index idx_a_grp_id(+);
+show trace;
+
+set trace off;
+
+evaluate '7-3. 7-1 forced onto the sequential scan - same rows';
 select /*+ recompile */ id, a, grp,
   row_number() over (partition by a, grp order by id) r,
   count(*) over (partition by a, grp) c
 from t27469_range where a = 1 using index none order by id;
-
-set trace off;
 
 drop table t27469_range;
 drop table t27469_part;

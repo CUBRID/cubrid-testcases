@@ -262,6 +262,39 @@ Trace Statistics:
 
 ===================================================
     
+3-4. a covered key shares the sort of a longer key the index does not cover - no analytic index scan     
+
+===================================================
+count(*)    sum(r1)    sum(r2)    
+50000     48101924     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select row_number() over (partition by ?), row_number() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r?), sum(x.r?) from (select row_number() over (partition by ?) as [r?], row_number() over (partition by ? order by ?) as [r?] from [dba.t?] [dba.t?]) x (r?, r?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
 4-1. analytic sort skipped, query ORDER BY still sorted     
 
 ===================================================
@@ -585,6 +618,76 @@ Trace Statistics:
      
 
 ===================================================
+    
+6-5. USE_DESC_IDX - DESC keys follow the backward index scan, sort skipped     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true, desc_index forced: true)
+
+  rewritten query: (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? desc  order by ? desc ) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? desc  order by ? desc ) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+6-5v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+6-6. USE_DESC_IDX - ASC keys do not follow the backward index scan, TABLE SCAN + sort     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
 0
 ===================================================
 0
@@ -596,7 +699,7 @@ Trace Statistics:
 0
 ===================================================
     
-6-5. partitioned table - partitions are scanned one by one, no analytic index scan     
+6-7. partitioned table - partitions are scanned one by one, no analytic index scan     
 
 ===================================================
 count(*)    sum(d)    
@@ -631,7 +734,7 @@ Trace Statistics:
 
 ===================================================
     
-6-5v. same value as the sequential scan     
+6-7v. same value as the sequential scan     
 
 ===================================================
 count(*)    
@@ -674,7 +777,36 @@ Trace Statistics:
 
 ===================================================
     
-7-1v. same rows forced onto the sequential scan     
+7-2. ROWNUM selected on the sort-skip path - numbered in output order     
+
+===================================================
+rownum    id    a    grp    r    
+1     1     1     null     1     
+2     2     1     null     2     
+3     3     1     null     3     
+4     4     1     1     1     
+5     5     1     1     2     
+6     6     1     2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_range.idx_a_grp_id) (key range: [dba.t?_range].a= ?:? , covered: true)
+
+  rewritten query: select rownum, [dba.t?_range].id, [dba.t?_range].a, [dba.t?_range].grp, row_number() over (partition by ?, ? order by ?) from [dba.t?_range] [dba.t?_range] where [dba.t?_range].a= ?:?  using index [dba.t?_range].idx_a_grp_id(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_range.idx_a_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
+     
+
+===================================================
+0
+===================================================
+    
+7-3. 7-1 forced onto the sequential scan - same rows     
 
 ===================================================
 id    a    grp    r    c    
@@ -685,8 +817,6 @@ id    a    grp    r    c
 5     1     1     2     2     
 6     1     2     1     1     
 
-===================================================
-0
 ===================================================
 0
 ===================================================
