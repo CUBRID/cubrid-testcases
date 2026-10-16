@@ -455,6 +455,33 @@ test10     1010     2
 test10     2010     3     
 test10     9010     0     
 
+Query plan:
+iscan
+    class: t? node[?]
+    index: cix_cub? term[?] (covers)
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+select t?.c, t?.a, row_number() over (partition by ? order by ?) from tbl? t? where (t?.a< ?:? )
+Query plan:
+iscan
+    class: t? node[?]
+    index: cix_cub? term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: T node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.c, T.a, T.rnum from (select t?.c, t?.a, row_number() over (partition by ? order by ?) as [rnum] from tbl? t? where (t?.a< ?:? ) union all select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )) T (c, a, rnum) where T.c= ?:?  order by ?
 ===================================================
 c    a    rnum    
 test10     10     1     
@@ -472,6 +499,31 @@ a    max_rnum
 2     10     
 3     10     
 
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select row_number() over (partition by ? order by ?), t?.c from tbl? t?)
+Query plan:
+sscan
+    class: T node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select max(T.rnum) from (select row_number() over (partition by ? order by ?) as [rnum], t?.c from tbl? t?) T (rnum, c) where T.c=t?.c)
+Query plan:
+iscan
+    class: t? node[?]
+    index: cix_cub? term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, (select max(T.rnum) from (select row_number() over (partition by ? order by ?) as [rnum], t?.c from tbl? t?) T (rnum, c) where T.c=t?.c) from tbl? t? where ((t?.a= ?:? ) or (t?.a= ?:? ) or (t?.a= ?:? )) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 a    max_rnum    
 1     10     
@@ -506,6 +558,268 @@ id    ci    cnt
 ===================================================
 id    c    cnt    
 1     a     1     
+
+===================================================
+    
+Q13. non-deterministic term     
+
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+g    count(*)    min(T.cnt)    max(T.cnt)    
+0     34     42     42     
+1     34     43     43     
+2     35     43     43     
+3     34     43     43     
+4     35     43     43     
+5     34     43     43     
+6     34     43     43     
+
+Query plan:
+sscan
+    class: e? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select e?.g, count(*) over (partition by ?), e?.x from e? e?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.g, count(*), min(T.cnt), max(T.cnt) from (select e?.g, count(*) over (partition by ?) as [cnt], e?.x from e? e?) T (g, cnt, x) where (T.x> drandom()) group by T.g
+===================================================
+g    count(*)    min(T.cnt)    max(T.cnt)    
+0     34     42     42     
+1     34     43     43     
+2     35     43     43     
+3     34     43     43     
+4     35     43     43     
+5     34     43     43     
+6     34     43     43     
+
+===================================================
+    
+Q14. PARTITION BY expression which matches no select list item     
+
+===================================================
+e    cnt    
+p     43     
+p     43     
+p     43     
+
+===================================================
+j    cnt    
+{"x":0}     42     
+{"x":0}     42     
+{"x":0}     42     
+
+===================================================
+g    x    cnt    
+1     0     43     
+1     0     43     
+1     0     43     
+
+===================================================
+    
+Q15. deterministic expression on keys of an exact type     
+
+===================================================
+g    count(*)    max(T.cnt)    
+0     42     42     
+1     43     43     
+3     43     43     
+6     43     43     
+
+Query plan:
+sscan
+    class: e? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select e?.g, count(*) over (partition by ?) from e? e? where ( mod(e?.g, ?)=? or e?.g+?=?))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.g, count(*), max(T.cnt) from (select e?.g, count(*) over (partition by ?) as [cnt] from e? e? where ( mod(e?.g, ?)=? or e?.g+?=?)) T (g, cnt) group by T.g
+===================================================
+g    count(*)    max(T.cnt)    
+0     42     42     
+1     43     43     
+3     43     43     
+6     43     43     
+
+===================================================
+d    count(*)    max(T.cnt)    max(T.rn)    
+2024-01-08     30     30     30     
+2024-01-09     30     30     30     
+
+Query plan:
+sscan
+    class: e? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: row_number partition by (? asc nulls first) order by (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select e?.d, count(*) over (partition by ?), row_number() over (partition by ? order by ?) from e? e? where  to_char(e?.d, 'YYYYMMDD') between '?' ge_lt '?' and  day(e?.d)>?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.d, count(*), max(T.cnt), max(T.rn) from (select e?.d, count(*) over (partition by ?) as [cnt], row_number() over (partition by ? order by ?) as [rn] from e? e? where  to_char(e?.d, 'YYYYMMDD') between '?' ge_lt '?' and  day(e?.d)>?) T (d, cnt, rn) group by T.d
+===================================================
+d    count(*)    max(T.cnt)    max(T.rn)    
+2024-01-08     30     30     30     
+2024-01-09     30     30     30     
+
+===================================================
+n    count(*)    max(T.cnt)    
+0.50     75     75     
+
+Query plan:
+sscan
+    class: e? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select e?.n, count(*) over (partition by ?) from e? e? where e?.n* cast(? as numeric)=?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.n, count(*), max(T.cnt) from (select e?.n, count(*) over (partition by ?) as [cnt] from e? e? where e?.n* cast(? as numeric)=?) T (n, cnt) group by T.n
+===================================================
+n    count(*)    max(T.cnt)    
+0.50     75     75     
+
+===================================================
+    
+Q16. expression on a non-key, a time zone value or a floating point value     
+
+===================================================
+g    count(*)    max(T.cnt)    
+0     8     42     
+1     8     43     
+2     9     43     
+3     9     43     
+
+Query plan:
+sscan
+    class: e? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select e?.g, count(*) over (partition by ?), e?.x from e? e?)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.g, count(*), max(T.cnt) from (select e?.g, count(*) over (partition by ?) as [cnt], e?.x from e? e?) T (g, cnt, x) where T.g+T.x=? group by T.g
+===================================================
+g    count(*)    max(T.cnt)    
+0     8     42     
+1     8     43     
+2     9     43     
+3     9     43     
+
+===================================================
+count(*)    min(T.cnt)    max(T.cnt)    
+150     300     300     
+
+===================================================
+count(*)    min(T.cnt)    max(T.cnt)    
+150     300     300     
+
+===================================================
+count(*)    min(T.cnt)    max(T.cnt)    
+200     200     200     
+
+===================================================
+count(*)    min(T.cnt)    max(T.cnt)    
+200     200     200     
+
+===================================================
+    
+Q17. LIKE on a case insensitive collation key     
+
+===================================================
+3
+===================================================
+id    ci    cnt    
+1     A     2     
+2     a     2     
+4     Ab     2     
+5     aB     2     
+
+Query plan:
+sscan
+    class: h? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+Query stmt:
+(select h?.id, h?.ci, count(*) over (partition by ?) from h? h? where (h?.ci>= ?:?  and h?.ci< ?:? ))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: T node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.id, T.ci, T.cnt from (select h?.id, h?.ci, count(*) over (partition by ?) as [cnt] from h? h? where (h?.ci>= ?:?  and h?.ci< ?:? )) T (id, ci, cnt) where T.ci like  ?:?  order by ?
+===================================================
+id    ci    cnt    
+1     A     2     
+2     a     2     
+4     Ab     2     
+5     aB     2     
 
 ===================================================
 0
