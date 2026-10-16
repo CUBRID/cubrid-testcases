@@ -26,10 +26,20 @@ select i, median(@u := s) over () m from tm;
 select i, median(@u := s) over () m from tm order by i;
 delete from tm where i = 6;
 
---test: [2] mixed with other analytic functions: the query ORDER BY (desc) is honored and the
---test: assignment runs in the window order, so lag () sees the running count 1..4
+--test: [2] mixed with other analytic functions: the query ORDER BY (desc) is honored, and lag ()
+--test: sees the running count 1..4
 set @u = 0;
 select i, row_number() over (order by i) rn, lag(@u := @u + 1) over (order by i) l from tm order by i desc;
+select @u;
+
+--test: [2b] the window order differs from the input order: the argument is evaluated while the rows
+--test: are read (i = 1..5 get 1..5), before the window sort, so lag () over (order by i desc) gives
+--test: i = 4 the value of i = 5. The ORDER BY form must match the plain form, which develop already
+--test: evaluated this way.
+set @u = 0;
+select i, lag(@u := @u + 1) over (order by i desc) l from tm;
+set @u = 0;
+select i, lag(@u := @u + 1) over (order by i desc) l from tm order by i;
 select @u;
 
 --test: [3] the assignment beside the analytic function, not inside it: only the assignment is
