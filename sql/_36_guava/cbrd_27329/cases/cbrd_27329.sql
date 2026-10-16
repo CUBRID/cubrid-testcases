@@ -39,6 +39,24 @@
  *   the parent key's type: it failed with "Cannot coerce value of domain" on
  *   the child keys 100000 and 'abcdef' and missed the child of
  *   9007199254740993 whose key 9007199254740992 is equal as DOUBLE.
+ *
+ * Case 6: LEVEL generator (CONNECT BY without PRIOR) over a one-row table
+ *   whose CONNECT BY assigns a session variable, directly or inside the
+ *   condition of CASE, IF, DECODE or a predicate. The condition changes at each
+ *   level, so the generator fast-path, which evaluates the child scan once,
+ *   must not be taken. Each check compares the count with develop (4 or 2),
+ *   while evaluating the child scan once returns 10. Case 6-7 is a
+ *   deterministic CONNECT BY LEVEL <= 5 that may take the fast-path (5 rows).
+ *
+ * Case 7: CONNECT BY PRIOR id = pid AND grp = 7, grp IN (7, 8) and
+ *   (grp = 7 OR grp = 8) with an index on (grp, pid). The index serves the
+ *   child lookup, so the plan must keep the single-table hierarchical
+ *   iteration (index scan on i_gt) as in develop. An earlier revision moved
+ *   these queries to the hash list scan. The rows are the same either way,
+ *   so the plan is checked: iscan on i_gt for the single-table plan, sscan
+ *   for the hash list scan. The last query is the negative control: with
+ *   index (grp, x, pid) and x not fixed by the CONNECT BY, the hash list scan
+ *   is used.
  */
 drop table if exists tc_pk;
 drop table if exists tj;
@@ -50,6 +68,9 @@ drop table if exists tn4;
 drop table if exists tt1;
 drop table if exists tt2;
 drop table if exists tt3;
+drop table if exists t1row;
+drop table if exists gt;
+drop table if exists gx;
 
 -- Case 1
 create table tc_pk (id int primary key, pid int);
@@ -136,6 +157,57 @@ insert into tt3 values (9007199254740993, null, 1), (2, 9007199254740992, 2), (3
 select n, level lv from tt3 start with n = 1 connect by prior id = pid order siblings by n;
 select /*+ NO_HASH_LIST_SCAN */ n, level lv from tt3 start with n = 1 connect by prior id = pid order siblings by n;
 
+-- Case 6
+create table t1row (c int);
+insert into t1row values (1);
+
+set @w = 0;
+select 'case 6-1' as tc, x.c, case when x.c = 4 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by (@w := @w + 1) + level * 0 > 0 and c + @w < 4 and level <= 10) x;
+
+set @w = 0;
+select 'case 6-2' as tc, x.c, case when x.c = 4 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 10 and case when c + (@w := @w + 1) <= 4 then 1 else 0 end = 1) x;
+
+set @w = 0;
+select 'case 6-3' as tc, x.c, case when x.c = 2 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 10 and case c + (@w := @w + 1) when 2 then 1 when 3 then 1 when 4 then 1 else 0 end = 1) x;
+
+set @w = 0;
+select 'case 6-4' as tc, x.c, case when x.c = 4 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 10 and if (c + (@w := @w + 1) <= 4, 1, 0) = 1) x;
+
+set @w = 0;
+select 'case 6-5' as tc, x.c, case when x.c = 2 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 10 and decode (c + (@w := @w + 1), 2, 1, 3, 1, 4, 1, 0) = 1) x;
+
+set @w = 0;
+select 'case 6-6' as tc, x.c, case when x.c = 4 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 10 and (c + (@w := @w + 1) <= 4) + 0 = 1) x;
+
+set @w = 0;
+select 'case 6-7' as tc, x.c, case when x.c = 5 then 'PASS' else 'FAIL' end as result
+from (select count(*) c from t1row connect by level <= 5) x;
+
+-- Case 7
+create table gt (id int, pid int, grp int, x int);
+insert into gt values (1, null, 7, 0), (2, 1, 7, 0), (3, 1, 7, 0), (4, 2, 7, 0),
+  (11, null, 8, 0), (12, 11, 8, 0), (13, 12, 8, 0), (21, null, 9, 0), (22, 21, 9, 0);
+create index i_gt on gt (grp, pid);
+create table gx (id int, pid int, grp int, x int);
+insert into gx select * from gt;
+create index i_gx on gx (grp, x, pid);
+update statistics on gt, gx with fullscan;
+
+--@queryplan
+select /*+ recompile */ id, level lv from gt start with pid is null and grp = 7 connect by prior id = pid and grp = 7 order siblings by id;
+--@queryplan
+select /*+ recompile */ id, level lv from gt start with pid is null and grp in (7, 8) connect by prior id = pid and grp in (7, 8) order siblings by id;
+--@queryplan
+select /*+ recompile */ id, level lv from gt start with pid is null and grp in (7, 8) connect by prior id = pid and (grp = 7 or grp = 8) order siblings by id;
+--@queryplan
+select /*+ recompile */ id, level lv from gx start with pid is null and grp = 7 connect by prior id = pid and grp = 7 order siblings by id;
+
 drop table tc_pk;
 drop table tj;
 drop table tj2;
@@ -146,3 +218,6 @@ drop table tn4;
 drop table tt1;
 drop table tt2;
 drop table tt3;
+drop table t1row;
+drop table gt;
+drop table gx;
