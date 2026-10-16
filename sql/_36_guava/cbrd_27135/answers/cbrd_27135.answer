@@ -1,0 +1,725 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+    
+Case 1: SELECT ROWNUM with no qualifying row -> gather: mergeable list     
+
+===================================================
+rownum    id    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: select /*+ PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where ([dba.px_rn].id> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 2: 20 qualifying rows over all workers -> numbers 1..20     
+
+===================================================
+rownum    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+11     
+12     
+13     
+14     
+15     
+16     
+17     
+18     
+19     
+20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_rn)
+
+  rewritten query: select /*+ PARALLEL(?) */ rownum from [dba.px_rn] [dba.px_rn] where [dba.px_rn].val= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 3: all rows, ROWNUM statistics vs serial     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(t.rn), min(t.rn), max(t.rn), count(distinct t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(t.rn), min(t.rn), max(t.rn), count(distinct t.rn) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.sm<=>s.sm and p.mn<=>s.mn and p.mx<=>s.mx and p.dc<=>s.dc then 'PASS' else 'FAIL' end from (select count(*) as [c], sum(t.rn) as [sm], min(t.rn) as [mn], max(t.rn) as [mx], count(distinct t.rn) as [dc] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, id)) p (c, sm, mn, mx, dc), (select count(*) as [c], sum(t.rn) as [sm], min(t.rn) as [mn], max(t.rn) as [mx], count(distinct t.rn) as [dc] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, id)) s (c, sm, mn, mx, dc)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: WHERE ROWNUM <= 5 -> numbers 1..5     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (t)
+
+  rewritten query: select t.rn from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (rn, id) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 5: WHERE ROWNUM < 5 -> numbers 1..4     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (t)
+
+  rewritten query: select t.rn from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (rn, id) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Case 6: WHERE ROWNUM folded into an aggregate -> not mergeable list, count exact     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (t)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*) from [dba.px_rn] t where (rownum<= ?:? ))
+
+  TABLE SCAN (dual)
+
+  rewritten query: select case when (select /*+ PARALLEL(?) */ count(*) from [dba.px_rn] t where (rownum<= ?:? ))=? then 'PASS' else 'FAIL' end from dual dual
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+    
+Case 7: fractional WHERE ROWNUM bounds vs serial     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id))
+
+  NESTED LOOPS (cross join)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (cross join)
+        NESTED LOOPS (cross join)
+          NESTED LOOPS (cross join)
+            TABLE SCAN (p?)
+            TABLE SCAN (s?)
+          TABLE SCAN (p?)
+        TABLE SCAN (s?)
+      TABLE SCAN (p?)
+    TABLE SCAN (s?)
+
+  rewritten query: select case when p?.c<=>s?.c and p?.c<=>s?.c and p?.c<=>s?.c then 'PASS' else 'FAIL' end from (select count(*) as [c] from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id)) p? (c), (select count(*) as [c] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id)) s? (c), (select count(*) as [c] from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (id)) p? (c), (select count(*) as [c] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum< ?:? )) t (id)) s? (c), (select count(*) as [c] from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id)) p? (c), (select count(*) as [c] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_rn].id from [dba.px_rn] [dba.px_rn] where (rownum<= ?:? )) t (id)) s? (c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: ROWNUM + 1 -> stays row by row, result vs serial     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), min(t.r), max(t.r) from (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), min(t.r), max(t.r) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end from (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx] from (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id)) p (c, mn, mx), (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id)) s (c, mn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 9: ROWNUM in a CASE condition -> stays row by row, result vs serial     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, case when rownum=? then 'first' else 'other' end, [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(case t.tag when 'first' then ? else ? end) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], case when rownum=? then 'first' else 'other' end as [tag], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, tag, id))
+
+  TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, case when rownum=? then 'first' else 'other' end, [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(case t.tag when 'first' then ? else ? end) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], case when rownum=? then 'first' else 'other' end as [tag], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, tag, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.f<=>s.f then 'PASS' else 'FAIL' end from (select count(*) as [c], sum(case t.tag when 'first' then ? else ? end) as [f] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], case when rownum=? then 'first' else 'other' end as [tag], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, tag, id)) p (c, f), (select count(*) as [c], sum(case t.tag when 'first' then ? else ? end) as [f] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], case when rownum=? then 'first' else 'other' end as [tag], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, tag, id)) s (c, f)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_rn].id from [dba.px_rn] [dba.px_rn] order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(distinct t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn] order by ? for orderby_num()<= ?:? ) t (rn, id))
+
+  TABLE SCAN (dual)
+
+  rewritten query: select case when (select count(distinct t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_rn].id from [dba.px_rn] [dba.px_rn] order by ? for orderby_num()<= ?:? ) t (rn, id))=? then 'PASS' else 'FAIL' end from dual dual
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+            ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+    
+Case 11: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), max(rownum) from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val)
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(t.cnt), max(t.mr) from (select /*+ PARALLEL(?) */ count(*) as [cnt], max(rownum) as [mr] from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val) t (cnt, mr))
+
+  SORT (group by)
+    TABLE SCAN (dba.px_rn)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*), max(rownum) from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val)
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), sum(t.cnt), max(t.mr) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [cnt], max(rownum) as [mr] from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val) t (cnt, mr))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.g<=>s.g and p.tot<=>s.tot and p.gmx<=>s.gmx then 'PASS' else 'FAIL' end from (select count(*) as [g], sum(t.cnt) as [tot], max(t.mr) as [gmx] from (select /*+ PARALLEL(?) */ count(*) as [cnt], max(rownum) as [mr] from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val) t (cnt, mr)) p (g, tot, gmx), (select count(*) as [g], sum(t.cnt) as [tot], max(t.mr) as [gmx] from (select /*+ NO_PARALLEL_SCAN */ count(*) as [cnt], max(rownum) as [mr] from [dba.px_rn] [dba.px_rn] group by [dba.px_rn].val) t (cnt, mr)) s (g, tot, gmx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_rn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+    
+Case 12: partitioned table, numbers stay 1..N across partitions     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt]) t (rn, id))
+
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt])
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt]) t (rn, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.d<=>s.d and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end from (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt]) t (rn, id)) p (c, d, mn, mx), (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt]) t (rn, id)) s (c, d, mn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 13: partitioned table, the WHERE ROWNUM quota is global     
+
+===================================================
+rn    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (t)
+
+  rewritten query: select t.rn from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+               PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 14: partitioned table, WHERE ROWNUM <= 10005 needs rows of both partitions     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id))
+
+  TABLE SCAN (dba.px_pt)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? ))
+
+  TABLE SCAN (t)
+
+  rewritten query: (select count(*), count(distinct t.rn), min(t.rn), max(t.rn) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.c<=>s.c and p.d<=>s.d and p.mn<=>s.mn and p.mx<=>s.mx and p.c=? and p.d=? and p.mn=? and p.mx=? then 'PASS' else 'FAIL' end from (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id)) p (c, d, mn, mx), (select count(*) as [c], count(distinct t.rn) as [d], min(t.rn) as [mn], max(t.rn) as [mx] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], [dba.px_pt].id from [dba.px_pt] [dba.px_pt] where (rownum<= ?:? )) t (rn, id)) s (c, d, mn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.px_pt__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
