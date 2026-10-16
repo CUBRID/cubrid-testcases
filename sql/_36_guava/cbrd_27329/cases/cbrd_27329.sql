@@ -30,6 +30,15 @@
  *   reverse. 3 rows each, same as develop and as the NO_HASH_LIST_SCAN hint.
  *   An earlier revision moved these queries to the hash list scan, which
  *   hashes NUMERIC by its unscaled digits, and returned only the root.
+ *
+ * Case 5: keys of different types on a single table without an index,
+ *   SMALLINT parent key against INT child key, CHAR(3) against VARCHAR(10)
+ *   and BIGINT against DOUBLE. Each query returns the same rows as develop
+ *   and as the NO_HASH_LIST_SCAN hint (3, 3 and 3 rows). An earlier revision
+ *   moved these queries to the hash list scan, which coerces the child keys to
+ *   the parent key's type: it failed with "Cannot coerce value of domain" on
+ *   the child keys 100000 and 'abcdef' and missed the child of
+ *   9007199254740993 whose key 9007199254740992 is equal as DOUBLE.
  */
 drop table if exists tc_pk;
 drop table if exists tj;
@@ -38,6 +47,9 @@ drop table if exists tj3;
 drop table if exists m3;
 drop table if exists tn;
 drop table if exists tn4;
+drop table if exists tt1;
+drop table if exists tt2;
+drop table if exists tt3;
 
 -- Case 1
 create table tc_pk (id int primary key, pid int);
@@ -108,6 +120,22 @@ insert into tn values (1, null, 1), (2, 1.0, 2), (3, 2.0000, 3);
 select n, level lv from tn start with n = 1 connect by prior k = pk order siblings by n;
 select /*+ NO_HASH_LIST_SCAN */ n, level lv from tn start with n = 1 connect by prior k = pk order siblings by n;
 
+-- Case 5
+create table tt1 (id smallint, pid int, n int);
+insert into tt1 values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
+select n, level lv from tt1 start with n = 1 connect by prior id = pid order siblings by n;
+select /*+ NO_HASH_LIST_SCAN */ n, level lv from tt1 start with n = 1 connect by prior id = pid order siblings by n;
+
+create table tt2 (id char(3), pid varchar(10), n int);
+insert into tt2 values ('abc', null, 1), ('def', 'abc', 2), ('x', 'abcdef', 3), ('y', 'def', 4);
+select n, level lv from tt2 start with n = 1 connect by prior id = pid order siblings by n;
+select /*+ NO_HASH_LIST_SCAN */ n, level lv from tt2 start with n = 1 connect by prior id = pid order siblings by n;
+
+create table tt3 (id bigint, pid double, n int);
+insert into tt3 values (9007199254740993, null, 1), (2, 9007199254740992, 2), (3, 2, 3);
+select n, level lv from tt3 start with n = 1 connect by prior id = pid order siblings by n;
+select /*+ NO_HASH_LIST_SCAN */ n, level lv from tt3 start with n = 1 connect by prior id = pid order siblings by n;
+
 drop table tc_pk;
 drop table tj;
 drop table tj2;
@@ -115,3 +143,6 @@ drop table tj3;
 drop table m3;
 drop table tn;
 drop table tn4;
+drop table tt1;
+drop table tt2;
+drop table tt3;
