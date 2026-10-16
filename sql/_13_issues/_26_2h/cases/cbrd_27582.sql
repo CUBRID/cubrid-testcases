@@ -15,8 +15,8 @@
  * Fix: the SELECT is translated with the host variables unbound, as PREPARE
  * does, so the cached XASL does not depend on the bound values.
  *
- * Every case PREPAREs, runs ALTER TABLE ADD COLUMN to drop the cached plan,
- * then EXECUTEs with different values.
+ * Cases 1-7 PREPARE, run ALTER TABLE ADD COLUMN to drop the cached plan,
+ * then EXECUTE with different values.
  *   Case 1: UPDATE SET d = DATE'2024-01-31' + ? (1, 2.0, 5)
  *           -> 02/01/2024, 02/02/2024, 02/05/2024 (bug: 02/01/2024 three times)
  *   Case 2: UPDATE SET n = 10 + ? (1, 7) -> 11, 17 (bug: 11, 11)
@@ -29,9 +29,13 @@
  *   Case 6: MERGE WHEN NOT MATCHED INSERT VALUES (k, 10 + ?) -> 11, 17, 15
  *   Case 7: a new statement prepared with the text of case 2 after case 2 ran
  *           (it gets the cached plan) -> 15, 18 (bug: 11, 11)
+ *   Case 8: no ALTER TABLE. On a table with statistics the first execution
+ *           of a driver-bound statement replans under the bound values
+ *           (bind peek, CBRD-26959), which is the same value-bound
+ *           compilation -> 11, 17 (bug: 11, 11)
  */
 
-drop table if exists t27582_w, t27582_d, t27582_m, t27582_mi;
+drop table if exists t27582_w, t27582_d, t27582_m, t27582_mi, t27582_j;
 
 evaluate '[1] UPDATE SET d = DATE + ? after ALTER TABLE';
 create table t27582_w (id int primary key, d date, n int);
@@ -102,4 +106,14 @@ execute s7 using 8;
 select n from t27582_w;
 deallocate prepare s7;
 
-drop table t27582_w, t27582_d, t27582_m, t27582_mi;
+evaluate '[8] driver-bound UPDATE on a table with statistics, no ALTER TABLE';
+create table t27582_j (id int primary key, n int);
+insert into t27582_j select rownum, 0 from db_class a, db_class b limit 300;
+update statistics on t27582_j with fullscan;
+$int,$1,$int,$1;
+update t27582_j set n = 10 + ? where id = ?;
+$int,$7,$int,$2;
+update t27582_j set n = 10 + ? where id = ?;
+select id, n from t27582_j where id <= 2 order by id;
+
+drop table t27582_w, t27582_d, t27582_m, t27582_mi, t27582_j;
