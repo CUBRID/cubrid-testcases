@@ -1,0 +1,159 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: constant output over a heap scan, mergeable list; parallel = serial     
+
+===================================================
+0
+===================================================
+1000
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select /*+ PARALLEL(?) */ ? from [dba.t?] [dba.t?]
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+1000
+===================================================
+case1    
+PASS     
+
+===================================================
+1000
+===================================================
+1000
+===================================================
+    
+Case 2: constant output over a list scan, mergeable list; parallel = serial     
+
+===================================================
+0
+===================================================
+1000
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t?].id, [dba.t?].pad from [dba.t?] [dba.t?])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ ? from (select /*+ NO_MERGE */ [dba.t?].id, [dba.t?].pad from [dba.t?] [dba.t?]) d (id, pad)
+
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+1000
+===================================================
+case2    
+PASS     
+
+===================================================
+1000
+===================================================
+1000
+===================================================
+    
+Case 3: BUILDVALUE without aggregate (HAVING sys_timestamp), row by row; one row valued 1     
+
+===================================================
+0
+===================================================
+1    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select /*+ PARALLEL(?) */ ? from [dba.t?] [dba.t?] having  SYS_TIMESTAMP  is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+0
+===================================================
+case3    
+PASS     
+
+===================================================
+    
+Case 4: BUILDVALUE without aggregate (WHERE id > 0 HAVING 1=1), row by row; one row valued 1     
+
+===================================================
+0
+===================================================
+1    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: select /*+ PARALLEL(?) */ ? from [dba.t?] [dba.t?] where ([dba.t?].id> ?:? ) having ? <> ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+0
+===================================================
+case4    
+PASS     
+
+===================================================
+0
