@@ -1,0 +1,659 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+    
+[7] w: trailing key c3 is schema NOT NULL and unreferenced in the query: ORDER BY skip without any IS NOT NULL; c2 added as a tiebreaker so row order is fully determined     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     null     
+null     21     
+null     22     
+1     10     
+1     11     
+2     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true)
+  skip order by: true
+
+  rewritten query: select [dba.w].c?, [dba.w].c? from [dba.w] [dba.w] order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+[7-control] same query, index forced off: ground truth for [7]     
+
+===================================================
+c1    c2    
+null     null     
+null     21     
+null     22     
+1     10     
+1     11     
+2     null     
+
+===================================================
+    
+[7g] t: where c2 > 0 order by c1: term proves c2 NOT NULL, c1 may still be NULL, must survive skip; c2 added as a tiebreaker     
+
+===================================================
+c1    c2    
+null     5     
+3     1     
+3     7     
+
+===================================================
+    
+[7g-control] same query, index forced off: ground truth for [7g]     
+
+===================================================
+c1    c2    
+null     5     
+3     1     
+3     7     
+
+===================================================
+    
+[7h] t: where c1 = 3 order by c2: equality on the leading key permits scanning ordered by c2     
+
+===================================================
+c1    c2    
+3     null     
+3     1     
+3     7     
+
+===================================================
+    
+[7h-control] same query, index forced off: ground truth for [7h]     
+
+===================================================
+c1    c2    
+3     null     
+3     1     
+3     7     
+
+===================================================
+    
+[7b] w: same as [7], under GROUP BY skip, NULL group must survive     
+
+===================================================
+0
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true)
+  group by nosort: true
+
+  rewritten query: select [dba.w].c?, count(*) from [dba.w] [dba.w] group by [dba.w].c?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+[7b-control] same query, index forced off: ground truth for [7b]     
+
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+
+===================================================
+    
+[7i] t: where c1 = 3 or c2 = 1 order by c1: OR breaks the NOT NULL proof, must NOT skip     
+
+===================================================
+c1    c2    
+3     1     
+3     null     
+3     7     
+
+===================================================
+    
+[7i-control] same query, index forced off: ground truth for [7i]     
+
+===================================================
+c1    c2    
+3     1     
+3     null     
+3     7     
+
+===================================================
+    
+[7j] w: group by c1 with rollup: WITH ROLLUP must NOT skip     
+
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+null     6     
+
+===================================================
+    
+[7j-control] same query, index forced off: ground truth for [7j]     
+
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+null     6     
+
+===================================================
+    
+[7c] w2: single-column index on a nullable column must NOT skip GROUP BY     
+
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+
+===================================================
+    
+[7c-control] same query, index forced off: ground truth for [7c]     
+
+===================================================
+c1    count(*)    
+null     3     
+1     2     
+2     1     
+
+===================================================
+    
+[7d] w: same as [7b], descending index scan path (no extra sort node)     
+
+===================================================
+0
+===================================================
+c1    count(*)    
+2     1     
+1     2     
+null     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.w].c?, count(*) from [dba.w] [dba.w] group by [dba.w].c? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+[7d-control] same query, index forced off: ground truth for [7d]     
+
+===================================================
+c1    count(*)    
+2     1     
+1     2     
+null     3     
+
+===================================================
+    
+[7e] w: same as [7], descending index scan path (qo_check_orderby_skip_descending, a separate function from [7d]s); c2 added as a tiebreaker so row order is fully determined     
+
+===================================================
+0
+===================================================
+c1    c2    
+2     null     
+1     11     
+1     10     
+null     22     
+null     21     
+null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.w.i_w_c?_c?_c?) (covered: true, desc_index: true)
+  skip order by: true
+
+  rewritten query: select [dba.w].c?, [dba.w].c? from [dba.w] [dba.w] order by ? desc , ? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.w.i_w_c?_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+[7e-control] same query, index forced off: ground truth for [7e]     
+
+===================================================
+c1    c2    
+2     null     
+1     11     
+1     10     
+null     22     
+null     21     
+null     null     
+
+===================================================
+    
+[7f] w0: same query as [7], but no NULLs anywhere in the data: regression baseline     
+
+===================================================
+c1    c2    
+1     10     
+1     11     
+2     20     
+2     21     
+3     30     
+
+===================================================
+    
+[7f-control] same query, index forced off: ground truth for [7f]     
+
+===================================================
+c1    c2    
+1     10     
+1     11     
+2     20     
+2     21     
+3     30     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+1
+===================================================
+    
+[1] c2 = all (empty subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker so row order is fully determined     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1-control] same query, index forced off: ground truth for [1]     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1b] c2 not in (empty subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1b-control] same query, index forced off: ground truth for [1b]     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[2] not exists (correlated subquery with no match against a NULL column): (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[2-control] same query, index forced off: ground truth for [2]     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[3] left outer join + j = all (empty subquery): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     null     null     
+3     null     null     
+
+===================================================
+    
+[3b] left outer join + j not in (empty subquery): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     null     null     
+3     null     null     
+
+===================================================
+    
+[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+1     1     10     
+2     null     null     
+3     null     null     
+
+===================================================
+    
+[1c] c2 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1c-control] same query, index forced off: ground truth for [1c]     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1d] c2 = all {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1d-control] same query, index forced off: ground truth for [1d]     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1e] c2 not in {} (empty set literal, not a subquery): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[1e-control] same query, index forced off: ground truth for [1e]     
+
+===================================================
+c1    c2    
+null     null     
+null     5     
+2     null     
+3     1     
+
+===================================================
+    
+[4] (c2 > 0) is not true: (NULL,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[4-control] same query, index forced off: ground truth for [4]     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[3d] left outer join + j <=> null (NULLSAFE_EQ): padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+2     null     null     
+3     null     null     
+
+===================================================
+    
+[5] (c2 > 0) is unknown: (NULL,NULL) and (2,NULL) must survive ORDER BY skip     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[5-control] same query, index forced off: ground truth for [5]     
+
+===================================================
+c1    c2    
+null     null     
+2     null     
+
+===================================================
+    
+[5b] (c2 > 0) is unknown, group by c1: (NULL,NULL) and (2,NULL) groups must survive GROUP BY skip     
+
+===================================================
+c1    count(*)    
+null     1     
+2     1     
+
+===================================================
+    
+[5b-control] same query, index forced off: ground truth for [5b]     
+
+===================================================
+c1    count(*)    
+null     1     
+2     1     
+
+===================================================
+    
+[6] left outer join + j is unknown: padding rows must survive, join must stay outer     
+
+===================================================
+i    i    j    
+2     null     null     
+3     null     null     
+
+===================================================
+    
+[6b] same as [6], through an inline view on the inner side     
+
+===================================================
+i    i    j    
+2     null     null     
+3     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+    
+[8] te: c2 in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622); c2 added as a tiebreaker so row order is fully determined     
+
+===================================================
+0
+===================================================
+c1    c2    
+null     Mon     
+null     Tue     
+1     Wed     
+2     Thu     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.te.i_te_c?_c?) (key filter: (([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? )), covered: true)
+  skip order by: true
+
+  rewritten query: select [dba.te].c?, [dba.te].c? from [dba.te] [dba.te] where (([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? ) or ([dba.te].c?= ?:? )) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.te.i_te_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+[8-control] same query, index forced off: ground truth for [8]     
+
+===================================================
+c1    c2    
+null     Mon     
+null     Tue     
+1     Wed     
+2     Thu     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
