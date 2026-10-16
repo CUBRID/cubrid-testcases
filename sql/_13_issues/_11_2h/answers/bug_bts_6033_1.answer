@@ -22,26 +22,21 @@ col_a    col_b    col_c    col_d
 1     null     aaa001     2010-09-20 00:00:00.0     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: ty node[?]
-                 index: i_ty_col_c term[?] (covers)
+temp(order by)
+    subplan: idx-join (semi join)
+                 outer: sscan
+                            class: tx node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ty node[?]
+                            index: i_ty_col_c term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select distinct ty.col_c from ty ty where (ty.col_c>= ?:?  and ty.col_c<= ?:? ))
-Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tx node[?]
-               index: i_tx_col_c_col_d_d_col_a_col_b term[?] (covers) (multi_range_opt)
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select tx.col_a, tx.col_b, tx.col_c, tx.col_d from tx tx, (select distinct ty.col_c from ty ty where (ty.col_c>= ?:?  and ty.col_c<= ?:? )) av? (av_?) where tx.col_c=av?.av_? using index tx.i_tx_col_c_col_d_d_col_a_col_b(+) order by ? desc  for orderby_num()<= ?:? 
+select tx.col_a, tx.col_b, tx.col_c, tx.col_d from tx tx semi join ty ty on (ty.col_c>= ?:?  and ty.col_c<= ?:? ) and tx.col_c=ty.col_c using index tx.i_tx_col_c_col_d_d_col_a_col_b(+) order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 col_a    col_b    col_c    col_d    
 1     null     aaa011     2010-09-30 00:00:00.0     
@@ -60,26 +55,21 @@ char_length(col_c)    col_d
 6     2010-09-20 00:00:00.0     
 
 Query plan:
-temp(distinct)
-    subplan: iscan
-                 class: ty node[?]
-                 index: i_ty_col_c term[?] (covers)
+temp(order by)
+    subplan: idx-join (semi join)
+                 outer: sscan
+                            class: tx node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: ty node[?]
+                            index: i_ty_col_c term[?] (covers)
+                            filtr: term[?]
+                            cost:  ? card ?
                  cost:  ? card ?
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
-(select distinct ty.col_c from ty ty where (ty.col_c>= ?:?  and ty.col_c<= ?:? ))
-Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tx node[?]
-               index: i_tx_col_c_col_d_d_col_a_col_b term[?] (covers) (multi_range_opt)
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select  char_length(tx.col_c), tx.col_d from tx tx, (select distinct ty.col_c from ty ty where (ty.col_c>= ?:?  and ty.col_c<= ?:? )) av? (av_?) where tx.col_c=av?.av_? using index tx.i_tx_col_c_col_d_d_col_a_col_b(+) order by ? desc  for orderby_num()<= ?:? 
+select  char_length(tx.col_c), tx.col_d from tx tx semi join ty ty on (ty.col_c>= ?:?  and ty.col_c<= ?:? ) and tx.col_c=ty.col_c using index tx.i_tx_col_c_col_d_d_col_a_col_b(+) order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 char_length(col_c)    col_d    
 6     2010-09-30 00:00:00.0     

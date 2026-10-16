@@ -40,20 +40,21 @@ insert into outer_big select rownum, mod (rownum, 6) from db_class a, db_class b
 update statistics on outer_big, part_inner, part_inner_r with fullscan;
 
 -- Case 1
-select count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
+-- ORDERED keeps the NL semi join under test: since CBRD-27397 the inner may be read with DISTINCT and hash joined
+select /*+ ordered */ count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
 
 -- Case 2
 select count(*) from outer_big o where not exists (select 1 from part_inner s where s.k = o.k);
 
 -- Case 3
-select count(*) from outer_big o where exists (select 1 from part_inner_r s where s.k = o.k);
+select /*+ ordered */ count(*) from outer_big o where exists (select 1 from part_inner_r s where s.k = o.k);
 
 -- Case 4
 select count(*) from outer_big o where not exists (select 1 from part_inner_r s where s.k = o.k);
 
 -- Case 5
 set trace on;
-select count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
+select /*+ ordered */ count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
 show trace;
 select count(*) from outer_big o where not exists (select 1 from part_inner s where s.k = o.k);
 show trace;
@@ -61,11 +62,11 @@ show trace;
 -- Case 6
 -- Keep Case 5 on the cached plans to cover trace after an untraced execution.
 -- Recompile here because those cached plans do not contain Query Plan text.
-select /*+ recompile */ count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
+select /*+ recompile ordered */ count(*) from outer_big o where exists (select 1 from part_inner s where s.k = o.k);
 show trace;
 select /*+ recompile */ count(*) from outer_big o where not exists (select 1 from part_inner s where s.k = o.k);
 show trace;
-select /*+ recompile */ count(*) from outer_big o where exists (select 1 from part_inner_r s where s.k = o.k);
+select /*+ recompile ordered */ count(*) from outer_big o where exists (select 1 from part_inner_r s where s.k = o.k);
 show trace;
 select /*+ recompile */ count(*) from outer_big o where not exists (select 1 from part_inner_r s where s.k = o.k);
 show trace;

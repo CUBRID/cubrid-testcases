@@ -819,7 +819,7 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tmp_hls)
 
-  rewritten query: (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls])
+  rewritten query: (select /*+ NO_UNNEST */ distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls])
 
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
@@ -827,7 +827,7 @@ Query Plan:
       TABLE SCAN (av?)
     TABLE SCAN (av?_?)
 
-  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c), (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?), (select distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls]) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
+  rewritten query: select /*+ ORDERED */ aa.a, aa.b, aa.c from (select /*+ NO_MERGE */ b.a, b.b, b.c from [dba.tmp_hls] b where (b.c>= ?:? )) aa (a, b, c), (select distinct [dba.tmp_hls].a, [dba.tmp_hls].b from [dba.tmp_hls] [dba.tmp_hls]) av? (av_?, av_?), (select /*+ NO_UNNEST */ distinct [dba.tmp_hls].c from [dba.tmp_hls] [dba.tmp_hls]) av?_? (av_?) where aa.a=av?.av_? and aa.b=av?.av_? and aa.c=av?_?.av_?
 
 
 Trace Statistics:
