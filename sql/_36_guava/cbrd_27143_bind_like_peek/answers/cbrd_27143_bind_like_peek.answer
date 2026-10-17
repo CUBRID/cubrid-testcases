@@ -1,0 +1,235 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7200
+===================================================
+800
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+7200     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_lpeek)
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_lpeek), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(pad)    
+800     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_lpeek), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+7200     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+720     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_lpeek), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+0     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(pad)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+7200     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_lpeek)
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s not like  ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_lpeek), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+800
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+8000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+8000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+7200     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_nostat.i_t_nostat_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+800     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(pad)    
+800     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
