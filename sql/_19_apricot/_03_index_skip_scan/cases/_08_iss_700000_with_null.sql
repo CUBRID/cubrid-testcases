@@ -29,6 +29,10 @@ select /*+ recompile  */ count(*) from (select /*+ recompile index_ss NO_MERGE *
 -- select count(*) from answer;
 -- drop table answer;
 
-
+select /*+ recompile  */ count(*) from (select /*+ recompile NO_MERGE */ * from t where j between 2 and 50) tt;
+select /*+ recompile  */ count(*) from (select /*+ recompile */ * from t where j between 2 and 50) tt;
+select /*+ recompile index_ss NO_MERGE */ count(*) from t where j between 2 and 50;
+select /*+ recompile NO_MERGE */ count(*) from t where j between 2 and 50;
+select /*+ recompile  */ count(*) from t where j between 2 and 50;
 
 drop table t;
