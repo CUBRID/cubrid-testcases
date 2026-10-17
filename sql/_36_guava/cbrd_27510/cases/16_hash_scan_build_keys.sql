@@ -9,7 +9,8 @@
  *  derived table kept as a list by NO_MERGE and its WHERE clause, the probe side is the outer table, and the trace
  *  of each query shows the hash list scan.
  *
- *  Every answer here is the develop answer, including build values the conversion refuses.
+ *  The a.n0 = b.n answer shows the rows the hash list scan finds since NUMERIC keys of different scales are
+ *  coerced before hashing; every other answer is the develop answer, including build values the conversion refuses.
  *
  *  Coverage:
  *    Case 1: one query per pair of key types the compiler fixes
