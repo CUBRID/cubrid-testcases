@@ -1,0 +1,211 @@
+/* 1. MUL Fixed NUMERIC success */
+
+-- ===========================================================================
+-- Section 1: NUMERIC(38,0)
+-- ===========================================================================
+
+evaluate '1. MUL Fixed NUMERIC(38,0): boundary multiply, and Float promotion when the product exceeds 38 digits';
+
+DROP TABLE IF EXISTS t_mul_succ_38_0;
+DROP TABLE IF EXISTS t_mul_succ_38_m84;
+DROP TABLE IF EXISTS t_mul_succ_38_127;
+DROP TABLE IF EXISTS t_mul_null_succ;
+CREATE TABLE t_mul_succ_38_0 (
+  id INT,
+  a  NUMERIC(38,0),
+  b  NUMERIC(38,0),
+  -- expected is Float NUMERIC: a * b promotes to Float and may exceed 38 digits
+  expected NUMERIC
+);
+
+-- (MAX) * 1 = MAX
+INSERT INTO t_mul_succ_38_0 VALUES
+  (1,
+   99999999999999999999999999999999999999,
+   1,
+   99999999999999999999999999999999999999);
+
+-- (-MAX) * 1 = -MAX
+INSERT INTO t_mul_succ_38_0 VALUES
+  (2,
+   -99999999999999999999999999999999999999,
+   1,
+   -99999999999999999999999999999999999999);
+
+-- (-MAX) * 0 = 0
+INSERT INTO t_mul_succ_38_0 VALUES
+  (3,
+   -99999999999999999999999999999999999999,
+   0,
+   0);
+
+-- 20-digit * 20-digit = 39-digit product (exceeds 38, promotes to Float, no overflow)
+INSERT INTO t_mul_succ_38_0 VALUES
+  (4,
+   12345678901234567890,
+   10000000000000000000,
+   123456789012345678900000000000000000000);
+
+-- negative variant: 39-digit product, no overflow
+INSERT INTO t_mul_succ_38_0 VALUES
+  (5,
+   -12345678901234567890,
+   10000000000000000000,
+   -123456789012345678900000000000000000000);
+
+-- Promotion shows up as a type change: a_type is numeric (38, 0) (Fixed) while
+-- result_type is bare numeric (Float), for every row including id 1-3 whose product fits in 38 digits.
+SELECT id, a, b, a * b AS actual, expected,
+       TYPEOF(a) AS a_type, TYPEOF(a * b) AS result_type,
+       CASE WHEN a * b = expected THEN 'PASS' ELSE 'FAIL' END AS result
+FROM t_mul_succ_38_0
+ORDER BY id;
+
+evaluate '1-rt. Round-trip: store the result into a Fixed(38,0) column with no loss (fitting rows id 1-3)';
+-- Same shape as t_mul_succ_38_0, but expected is Fixed NUMERIC(38,0) and is populated by
+-- storing a * b into it (Float result -> Fixed(38,0) conversion). For a fitting result the
+-- stored value equals the recomputed a * b, so PASS means the round-trip is lossless.
+-- Rows 4-5 (39 digits) would overflow on insert, so only id 1-3 are stored here
+DROP TABLE IF EXISTS t_mul_rt_38_0;
+CREATE TABLE t_mul_rt_38_0 (
+  id INT,
+  a  NUMERIC(38,0),
+  b  NUMERIC(38,0),
+  expected NUMERIC(38,0)
+);
+INSERT INTO t_mul_rt_38_0
+SELECT id, a, b, a * b FROM t_mul_succ_38_0 WHERE id <= 3;
+
+SELECT id, a, b, a * b AS actual, expected,
+       TYPEOF(a) AS a_type, TYPEOF(a * b) AS result_type,
+       CASE WHEN a * b = expected THEN 'PASS' ELSE 'FAIL' END AS result
+FROM t_mul_rt_38_0
+ORDER BY id;
+DROP TABLE IF EXISTS t_mul_rt_38_0;
+
+
+-- ===========================================================================
+-- Section 2: NUMERIC(38,-84)
+-- ===========================================================================
+
+evaluate '2. MUL Fixed NUMERIC(38,-84): coercion to 0 on scale overflow';
+
+DROP TABLE IF EXISTS t_mul_succ_38_m84;
+CREATE TABLE t_mul_succ_38_m84 (
+  id INT,
+  a  NUMERIC(38,-84),
+  b  NUMERIC(38,-84),
+  expected NUMERIC(38,-84)
+);
+
+-- MAX * 1 = 0
+-- (1 -> 0), (38,-84) * 0 = 0
+INSERT INTO t_mul_succ_38_m84 VALUES
+  (1,
+   99999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+   1,
+   0);
+
+-- MAX * 0 = 0
+INSERT INTO t_mul_succ_38_m84 VALUES
+  (2,
+   99999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+   0,
+   0);
+
+SELECT id, a, b, cast(a * b as numeric(38,-84)) AS actual, expected,
+       CASE WHEN cast(a * b as numeric(38,-84)) = expected THEN 'PASS' ELSE 'FAIL' END AS result
+FROM t_mul_succ_38_m84
+ORDER BY id;
+
+
+-- MAX * 2 = 0
+-- (2 -> 0) , (38,-84) * 0 = 0
+SELECT CAST(
+  CAST(99999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS NUMERIC(38,-84))
+  *
+  CAST(2 AS NUMERIC(38,-84))
+AS NUMERIC(38,-84));
+
+-- MIN * 2 = 0
+-- (2 -> 0) , (38,-84) * 0 = 0
+SELECT CAST(
+  CAST(-99999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS NUMERIC(38,-84))
+  *
+  CAST(2 AS NUMERIC(38,-84))
+AS NUMERIC(38,-84));
+
+select CAST(99999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS NUMERIC(38,-84)) * CAST(20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 AS NUMERIC(38,-84));
+
+-- ===========================================================================
+-- Section 3: NUMERIC(38,127)
+-- ===========================================================================
+
+evaluate '3. MUL Fixed NUMERIC(38,127): positive scale boundary';
+
+DROP TABLE IF EXISTS t_mul_succ_38_127;
+CREATE TABLE t_mul_succ_38_127 (
+  id INT,
+  a  NUMERIC(38,127),
+  b  NUMERIC(38,127),
+  expected NUMERIC(38,127)
+);
+
+-- MAX_FRAC * 1 = MAX_FRAC
+-- a * b = (40,219) -> (38,127) -> 0.000000000000000000...0
+-- 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009999999999999999999999999999999999999900
+INSERT INTO t_mul_succ_38_127 VALUES
+  (1,
+   0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000099999999999999999999999999999999999999,
+   0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,
+   0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
+
+-- MAX_FRAC * 0 = 0
+INSERT INTO t_mul_succ_38_127 VALUES
+  (2,
+   0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000099999999999999999999999999999999999999,
+   0,
+   0);
+
+SELECT id, a, b, cast(a * b as numeric(38,127)) AS actual, expected,
+       CASE WHEN cast(a * b as numeric(38,127)) = expected THEN 'PASS' ELSE 'FAIL' END AS result
+FROM t_mul_succ_38_127
+ORDER BY id;
+
+
+-- ===========================================================================
+-- Section 4: NULL propagation (minimal)
+-- ===========================================================================
+
+evaluate '4. MUL Fixed NUMERIC: NULL propagation';
+
+DROP TABLE IF EXISTS t_mul_null_succ;
+CREATE TABLE t_mul_null_succ (
+  id INT,
+  actual NUMERIC(38,0),
+  expected_is_null INT
+);
+
+-- 1 * NULL -> NULL
+INSERT INTO t_mul_null_succ
+SELECT 1,
+       CAST(1 AS NUMERIC(38,0)) * CAST(NULL AS NUMERIC(38,0)),
+       1;
+
+-- NULL * 2 -> NULL
+INSERT INTO t_mul_null_succ
+SELECT 2,
+       CAST(NULL AS NUMERIC(38,0)) * CAST(2 AS NUMERIC(38,0)),
+       1;
+
+SELECT id,
+       CASE WHEN actual IS NULL THEN 1 ELSE 0 END AS actual_is_null,
+       expected_is_null,
+       CASE WHEN (CASE WHEN actual IS NULL THEN 1 ELSE 0 END) = expected_is_null THEN 'PASS' ELSE 'FAIL' END AS result
+FROM t_mul_null_succ
+ORDER BY id;
+
+DROP TABLE IF EXISTS t_mul_null_succ;
+DROP TABLE IF EXISTS t_mul_succ_38_0;
+DROP TABLE IF EXISTS t_mul_succ_38_m84;
+DROP TABLE IF EXISTS t_mul_succ_38_127;
