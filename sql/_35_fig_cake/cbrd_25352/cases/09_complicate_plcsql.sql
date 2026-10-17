@@ -167,9 +167,6 @@ EXCEPTION
         RETURN -1;
 END;
 
-evaluate 'select public.fibonacci2';
-select public.fibonacci2(3);
-
 
 evaluate 'connect to dba & create function public.fibonacci';
 call login('dba','') on class db_user;
@@ -235,7 +232,6 @@ DROP PROCEDURE delete_athlete;
 DROP FUNCTION fibonacci;
 DROP FUNCTION fibonacci2;
 DROP FUNCTION public.fibonacci;
-DROP FUNCTION public.fibonacci2;
 drop user u1;
 drop table athlete;
 

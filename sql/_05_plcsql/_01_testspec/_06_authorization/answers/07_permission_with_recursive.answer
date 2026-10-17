@@ -2,12 +2,12 @@
 0
 
 ===================================================
-0
+Error:-1360
+Stored procedure compile error: EXECUTE authorization failure.
 
 ===================================================
 unique_name    sp_name    owner.name    
 dba.fibonacci     fibonacci     DBA     
-public.fibonacci     fibonacci     PUBLIC     
 
 
 ===================================================
@@ -31,25 +31,6 @@ WHEN OTHERS THEN
 DBMS_OUTPUT.put_line('unknown exception');
 RETURN -1;
 END     CREATE     
-Func_FIBONACCI     PUBLIC     CREATE OR REPLACE FUNCTION fibonacci(n IN integer) RETURN integer AUTHID OWNER AS
-invalid_input EXCEPTION;
-BEGIN
-IF n <= 0 THEN
-RAISE invalid_input;
-END IF;
-IF n = 1 OR n = 2 THEN
-RETURN 1;
-ELSE
-RETURN dba.fibonacci(n-1) + dba.fibonacci(n-2);
-END IF;
-EXCEPTION
-WHEN invalid_input THEN
-DBMS_OUTPUT.put_line('invalid input: ' || n);
-RETURN -1;
-WHEN OTHERS THEN
-DBMS_OUTPUT.put_line('unknown exception');
-RETURN -1;
-END     CREATE     
 
 
 ===================================================
@@ -58,11 +39,8 @@ dba fibonacci: succ
 
 
 ===================================================
-public fibonacci: fail    
--1     
+0
 
-
-unknown exception
 ===================================================
 0
 
