@@ -96,7 +96,7 @@ show trace;
 select /*+ recompile parallel(0) ordered use_nl */ count(*) from ndv_outer a, small s where s.col1 = a.k2000;
 show trace;
 -- the match-only memo of an NL semi join inner (CBRD-27465) is judged by the same rule
-select /*+ recompile parallel(0) */ count(*) from ndv_outer a where exists (select 1 from small s where s.col1 = a.k1200);
+select /*+ recompile parallel(0) USE_NL */ count(*) from ndv_outer a where exists (select 1 from small s where s.col1 = a.k1200);
 show trace;
 
 evaluate 'Case 2: nine probe keys in ten distinct, memoize still given up; result = memoize off';
