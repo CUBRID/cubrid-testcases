@@ -1,0 +1,125 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+25
+===================================================
+10000
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Q1. 12 driving rows: hash join over a parallel scan of t_27474_b     
+
+===================================================
+count(*)    sum(b.v)    
+14400     709200     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*), sum(b.v) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Q2. same query, parallel execution off: serial nested loop, same result     
+
+===================================================
+count(*)    sum(b.v)    
+14400     709200     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    INDEX SCAN (b.i_?_b_m) (key range: b.m_id=m.id)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_HASH_JOIN */ count(*), sum(b.v) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_b.i_?_b_m), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Q3. one driving row: nested loop is cheaper even against the parallel discount     
+
+===================================================
+count(*)    sum(b.v)    
+1200     70200     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    INDEX SCAN (b.i_?_b_m) (key range: b.m_id=m.id)
+
+  rewritten query: select count(*), sum(b.v) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where m.d_id=d.id and b.m_id=m.id and d.[name]= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_b.i_?_b_m), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
