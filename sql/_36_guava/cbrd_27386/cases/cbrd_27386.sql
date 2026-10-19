@@ -34,9 +34,10 @@
  *   Case 4: RND-2640 shape: sq_big has only the subquery term as its sarg
  *           and joins the 100-row sq_small -> sq_small must drive (idx-join,
  *           outer sscan sq_small, inner iscan sq_big on its primary key).
- *           Guards the multiplier against under-charging: with a lower
- *           bound per probe or a too-small multiplier the 20,000-row sq_big
- *           would drive and run the subquery for every row.
+ *           Checks only that the RND-2640 plan is kept. It does not guard the
+ *           subquery cost itself: the plan is decided by the join cost of the
+ *           100-row sq_small outer, so it stays the same even when the
+ *           subquery cost is forced to 0 (an under-charging regression).
  */
 drop table if exists sq_small, sq_child, sq_big, sq_d;
 
