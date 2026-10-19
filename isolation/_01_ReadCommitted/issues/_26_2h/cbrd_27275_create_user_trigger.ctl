@@ -45,7 +45,7 @@ C1: ROLLBACK;
 MC: wait until C1 ready;
 
 /* neither name should have an orphan row */
-C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name IN ('dba.user_trg_holder', 'dba.user_trg_victim') ORDER BY 1,2;
+C2: SELECT name, action_definition FROM db_trigger WHERE name IN ('user_trg_holder', 'user_trg_victim') ORDER BY 1,2;
 MC: wait until C2 ready;
 
 C2: SET TRANSACTION LOCK TIMEOUT INFINITE;
