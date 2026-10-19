@@ -1717,7 +1717,7 @@ k    count(*)
 
 ===================================================
     
-Case 11: COUNT DISTINCT, GROUP_CONCAT and MEDIAN stay serial; result = no_parallel_scan     
+Case 11: COUNT DISTINCT, GROUP_CONCAT (with SEPARATOR), MEDIAN and PERCENTILE stay serial; result = no_parallel_scan     
 
 ===================================================
 g    count(distinct v)    
@@ -1838,6 +1838,124 @@ k    group_concat(distinct  mod(v, 7) order by 1)
 2     0,1,2,3,4,5,6     
 
 ===================================================
+k    group_concat(v order by v desc  separator '|')    
+0     390|351|312|273|234|195|156|117|78|39     
+1     364|325|286|247|208|169|130|91|52|13     
+2     377|338|299|260|221|182|143|104|65|26     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_few.i_k) (key range: ([dba.t_few].k>= ?:? ))
+  group by nosort: true
+
+  rewritten query: select [dba.t_few].k, group_concat([dba.t_few].v order by ? desc  separator '|') from [dba.t_few] [dba.t_few] where ([dba.t_few].k>= ?:? ) and ([dba.t_few].id<= ?:? ) group by [dba.t_few].k using index [dba.t_few].i_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_few.i_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+k    group_concat(v order by v desc  separator '|')    
+0     390|351|312|273|234|195|156|117|78|39     
+1     364|325|286|247|208|169|130|91|52|13     
+2     377|338|299|260|221|182|143|104|65|26     
+
+===================================================
+g    group_concat(s order by s separator ', ')    
+0     s5, s9     
+1     s1, s10     
+2     s11, s2     
+3     s12, s3     
+4     s0, s4     
+5     s1, s5     
+6     s2, s6     
+7     s3, s7     
+8     s4, s8     
+9     s5, s9     
+10     s10, s6     
+11     s11, s7     
+12     s12, s8     
+13     s0, s9     
+14     s1, s10     
+15     s11, s2     
+16     s12, s3     
+17     s0, s4     
+18     s1, s5     
+19     s2, s6     
+20     s3, s7     
+21     s4, s8     
+22     s5, s9     
+23     s10, s6     
+24     s11, s7     
+25     s12, s8     
+26     s0, s9     
+27     s1, s10     
+28     s11, s2     
+29     s12, s3     
+30     s0, s4     
+31     s1, s5     
+32     s2, s6     
+33     s3, s7     
+34     s4, s8     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, group_concat([dba.t_main].s order by ? separator ', ') from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) and ([dba.t_main].id<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    group_concat(s order by s separator ', ')    
+0     s5, s9     
+1     s1, s10     
+2     s11, s2     
+3     s12, s3     
+4     s0, s4     
+5     s1, s5     
+6     s2, s6     
+7     s3, s7     
+8     s4, s8     
+9     s5, s9     
+10     s10, s6     
+11     s11, s7     
+12     s12, s8     
+13     s0, s9     
+14     s1, s10     
+15     s11, s2     
+16     s12, s3     
+17     s0, s4     
+18     s1, s5     
+19     s2, s6     
+20     s3, s7     
+21     s4, s8     
+22     s5, s9     
+23     s10, s6     
+24     s11, s7     
+25     s12, s8     
+26     s0, s9     
+27     s1, s10     
+28     s11, s2     
+29     s12, s3     
+30     s0, s4     
+31     s1, s5     
+32     s2, s6     
+33     s3, s7     
+34     s4, s8     
+
+===================================================
 k    median(v)    
 0     488.0     
 1     488.0     
@@ -1863,6 +1981,97 @@ k    median(v)
 0     488.0     
 1     488.0     
 2     488.0     
+
+===================================================
+g    round(percentile_cont( cast(g/100.0 as double)) within group (order by v), 4)    percentile_disc( cast(g/100.0 as double)) within group (order by v)    
+0     0.0     0     
+1     12.0     12     
+2     20.4     19     
+3     26.0     26     
+4     38.0     38     
+5     45.0     45     
+6     57.0     57     
+7     69.0     69     
+8     76.0     76     
+9     88.0     88     
+10     95.0     95     
+11     107.0     107     
+12     119.0     119     
+13     126.0     126     
+14     138.0     138     
+15     145.0     145     
+16     157.4     157     
+17     169.0     169     
+18     176.0     176     
+19     190.35     188     
+20     195.0     195     
+21     210.65     207     
+22     223.3     224     
+23     226.0     226     
+24     238.6     238     
+25     246.25     245     
+26     258.9     257     
+27     274.0     274     
+28     281.0     281     
+29     291.85     293     
+30     300.0     300     
+31     312.0     312     
+32     324.0     324     
+33     331.0     331     
+34     343.0     343     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g,  round(percentile_cont( cast( cast([dba.t_main].g as numeric)/?.? as double)) within group (order by [dba.t_main].v), ?), percentile_disc( cast( cast([dba.t_main].g as numeric)/?.? as double)) within group (order by [dba.t_main].v) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    round(percentile_cont( cast(g/100.0 as double)) within group (order by v), 4)    percentile_disc( cast(g/100.0 as double)) within group (order by v)    
+0     0.0     0     
+1     12.0     12     
+2     20.4     19     
+3     26.0     26     
+4     38.0     38     
+5     45.0     45     
+6     57.0     57     
+7     69.0     69     
+8     76.0     76     
+9     88.0     88     
+10     95.0     95     
+11     107.0     107     
+12     119.0     119     
+13     126.0     126     
+14     138.0     138     
+15     145.0     145     
+16     157.4     157     
+17     169.0     169     
+18     176.0     176     
+19     190.35     188     
+20     195.0     195     
+21     210.65     207     
+22     223.3     224     
+23     226.0     226     
+24     238.6     238     
+25     246.25     245     
+26     258.9     257     
+27     274.0     274     
+28     281.0     281     
+29     291.85     293     
+30     300.0     300     
+31     312.0     312     
+32     324.0     324     
+33     331.0     331     
+34     343.0     343     
 
 ===================================================
     

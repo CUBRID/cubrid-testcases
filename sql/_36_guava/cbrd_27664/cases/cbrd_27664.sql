@@ -19,7 +19,7 @@
  *    Case 8:  ORDER BY an aggregate or the key descending, with LIMIT, inside a derived table
  *    Case 9:  a prefix of a two-column index, with a filter on the second column
  *    Case 10: three keys on long overflow chains that several workers read
- *    Case 11: COUNT DISTINCT, GROUP_CONCAT and MEDIAN stay serial
+ *    Case 11: COUNT DISTINCT, GROUP_CONCAT (with SEPARATOR), MEDIAN, PERCENTILE stay serial
  *    Case 12: an empty range, GROUP BY DESC and a small index stay serial
  *    Case 13: ORDER BY the key with LIMIT stops at the first, a middle, the last group and after
  *    Case 14: index_scan_in_oid_order keeps the index order of the scan (develop split groups)
@@ -164,16 +164,27 @@ show trace;
 select /*+ recompile no_parallel_scan */ k, count(*) from t_few where k >= 0 group by k order by k;
 
 
-evaluate 'Case 11: COUNT DISTINCT, GROUP_CONCAT and MEDIAN stay serial; result = no_parallel_scan';
+evaluate 'Case 11: COUNT DISTINCT, GROUP_CONCAT (with SEPARATOR), MEDIAN and PERCENTILE stay serial; result = no_parallel_scan';
 select /*+ recompile */ g, count(distinct v) from t_main where g between 0 and 34 group by g order by g;
 show trace;
 select /*+ recompile no_parallel_scan */ g, count(distinct v) from t_main where g between 0 and 34 group by g order by g;
 select /*+ recompile */ k, group_concat(distinct mod(v, 7) order by 1) from t_few force index (i_k) where k >= 0 group by k order by k;
 show trace;
 select /*+ recompile no_parallel_scan */ k, group_concat(distinct mod(v, 7) order by 1) from t_few force index (i_k) where k >= 0 group by k order by k;
+-- a SEPARATOR is no column of the scan: an int and a string operand, groups small enough to print
+select /*+ recompile */ k, group_concat(v order by v desc separator '|') from t_few force index (i_k) where k >= 0 and id <= 30 group by k order by k;
+show trace;
+select /*+ recompile no_parallel_scan */ k, group_concat(v order by v desc separator '|') from t_few force index (i_k) where k >= 0 and id <= 30 group by k order by k;
+select /*+ recompile */ g, group_concat(s order by s separator ', ') from t_main force index (i_g) where g between 0 and 34 and id <= 70 group by g order by g;
+show trace;
+select /*+ recompile no_parallel_scan */ g, group_concat(s order by s separator ', ') from t_main force index (i_g) where g between 0 and 34 and id <= 70 group by g order by g;
 select /*+ recompile */ k, median(v) from t_few force index (i_k) where k >= 0 group by k order by k;
 show trace;
 select /*+ recompile no_parallel_scan */ k, median(v) from t_few force index (i_k) where k >= 0 group by k order by k;
+-- a PERCENTILE argument that is no constant (here from the group key) is read from the scan too
+select /*+ recompile */ g, round(percentile_cont(g / 100.0) within group (order by v), 4), percentile_disc(g / 100.0) within group (order by v) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
+show trace;
+select /*+ recompile no_parallel_scan */ g, round(percentile_cont(g / 100.0) within group (order by v), 4), percentile_disc(g / 100.0) within group (order by v) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
 
 
 evaluate 'Case 12: an empty range, GROUP BY DESC and a small index stay serial; result = no_parallel_scan';
