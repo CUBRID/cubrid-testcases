@@ -620,19 +620,14 @@ Query stmt:
 select t?.s from t? t? where t?.s<>'Saturday'
 Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: t? node[?]
-                            index: idx? term[?]
-                            cost:  ? card ?
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t?, (select t?.s from t? t? where t?.s= ?:?  union select t?.s from t? t? where t?.s<>'Saturday') av? (av_?) where t?.e?=av?.av_? order by ?
+select t?.e?, t?.i from t? t? where t?.e? in (select t?.s from t? t? where t?.s= ?:?  union select t?.s from t? t? where t?.s<>'Saturday') order by ?
 ===================================================
 e1    
 

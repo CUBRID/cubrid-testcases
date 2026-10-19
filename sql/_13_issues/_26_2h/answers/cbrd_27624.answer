@@ -1,0 +1,449 @@
+===================================================
+0
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+262144
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: analytic PARTITION BY over a parallel heap scan, an undeclared function outside; result = no_parallel_scan     
+
+===================================================
+f_pin_jn(d.s)    c    
+501     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select rank() over (partition by ? order by ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.r), count(*) from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r))
+
+  TABLE SCAN (d)
+
+  rewritten query: select [dba.f_pin_jn](d.s), d.c from (select max(z.r) as [s], count(*) as [c] from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r)) d (s, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+f_pin_jn(d.s)    c    
+501     3000     
+
+===================================================
+    
+Case 2: the same block, a declared function outside; result = no_parallel_scan     
+
+===================================================
+f_pin_jp(d.s)    c    
+501     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select rank() over (partition by ? order by ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.r), count(*) from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r))
+
+  TABLE SCAN (d)
+
+  rewritten query: select [dba.f_pin_jp](d.s), d.c from (select max(z.r) as [s], count(*) as [c] from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r)) d (s, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+f_pin_jp(d.s)    c    
+501     3000     
+
+===================================================
+    
+Case 3: a plain select list over a parallel heap scan; result = no_parallel_scan     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select ([dba.f_pin_jp]([dba.t_big].b) mod ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.x), count(*) from (select ([dba.f_pin_jp]([dba.t_big].b) mod ?) as [x] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (x))
+
+  TABLE SCAN (d)
+
+  rewritten query: select [dba.f_pin_jn](d.m), d.c from (select max(z.x) as [m], count(*) as [c] from (select ([dba.f_pin_jp]([dba.t_big].b) mod ?) as [x] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (x)) d (m, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+    
+Case 4: a select list over the parallel temp scan of a materialized CTE; result = no_parallel_scan     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_wide)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_wide].a, [dba.t_wide].b from [dba.t_wide] [dba.t_wide]
+
+  TABLE SCAN (dba.w)
+
+  rewritten query: (select [dba.f_pin_jp]([dba.w].b) mod ? from [dba.w] [dba.w] where ([dba.w].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.x), count(*) from (select [dba.f_pin_jp]([dba.w].b) mod ? as [x] from [dba.w] [dba.w] where ([dba.w].a<=?)) z (x))
+
+  TABLE SCAN (d)
+
+  rewritten query: with w(a, b) as (select /*+ MATERIALIZE */ [dba.t_wide].a, [dba.t_wide].b from [dba.t_wide] [dba.t_wide])select [dba.f_pin_jn](d.m), d.c from (select max(z.x) as [m], count(*) as [c] from (select [dba.f_pin_jp]([dba.w].b) mod ? as [x] from [dba.w] [dba.w] where ([dba.w].a<=?)) z (x)) d (m, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+    
+Case 5: a select list over a parallel index scan; result = no_parallel_scan     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_wide.i_wide_a) (key range: ([dba.t_wide].a>?))
+
+  rewritten query: (select ([dba.f_pin_jp]([dba.t_wide].b) mod ?) from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].a>?) and ([dba.t_wide].b<=?) using index [dba.t_wide].i_wide_a)
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.x), count(*) from (select ([dba.f_pin_jp]([dba.t_wide].b) mod ?) as [x] from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].a>?) and ([dba.t_wide].b<=?) using index [dba.t_wide].i_wide_a) z (x))
+
+  TABLE SCAN (d)
+
+  rewritten query: select [dba.f_pin_jn](d.m), d.c from (select max(z.x) as [m], count(*) as [c] from (select ([dba.f_pin_jp]([dba.t_wide].b) mod ?) as [x] from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].a>?) and ([dba.t_wide].b<=?) using index [dba.t_wide].i_wide_a) z (x)) d (m, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (index: dba.t_wide.i_wide_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+    
+Case 6: a select list over a parallel heap scan joined to an inner table; result = no_parallel_scan     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (k)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ ([dba.f_pin_jp](t.b) mod ?) from [dba.t_big] t, [dba.t_code] k where (t.a<=?) and k.c= mod(t.a, ?)+?)
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.x), count(*) from (select /*+ ORDERED USE_NL */ ([dba.f_pin_jp](t.b) mod ?) as [x] from [dba.t_big] t, [dba.t_code] k where (t.a<=?) and k.c= mod(t.a, ?)+?) z (x))
+
+  TABLE SCAN (d)
+
+  rewritten query: select [dba.f_pin_jn](d.m), d.c from (select max(z.x) as [m], count(*) as [c] from (select /*+ ORDERED USE_NL */ ([dba.f_pin_jp](t.b) mod ?) as [x] from [dba.t_big] t, [dba.t_code] k where (t.a<=?) and k.c= mod(t.a, ?)+?) z (x)) d (m, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SCAN (table: dba.t_code), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+f_pin_jn(d.m)    c    
+6     3000     
+
+===================================================
+    
+Case 7: a UNION ALL arm that calls a function after the gathered arm; result = no_parallel_scan     
+
+===================================================
+count(*)    max(v)    
+3005     6     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.f_pin_jp]([dba.t_big].b) mod ? from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)
+
+  TABLE SCAN (dba.t_code)
+
+  rewritten query: select [dba.f_pin_jn]([dba.t_code].c) from [dba.t_code] [dba.t_code]
+
+  TABLE SCAN (u)
+
+  rewritten query: select count(*), max(u.v) from (select [dba.f_pin_jp]([dba.t_big].b) mod ? as [v] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?) union all select [dba.f_pin_jn]([dba.t_code].c) from [dba.t_code] [dba.t_code]) u (v)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+          SCAN (table: dba.t_code), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    max(v)    
+3005     6     
+
+===================================================
+    
+Case 8: no row qualifies, so a function that accepts NULL never runs; result = no_parallel_scan     
+
+===================================================
+count(*)    max(x)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select [dba.f_pin_pp]([dba.t_big].b) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<?))
+
+  TABLE SCAN (z)
+
+  rewritten query: select count(*), max(z.x) from (select [dba.f_pin_pp]([dba.t_big].b) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<?)) z (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    max(x)    
+0     null     
+
+===================================================
+    
+Case 9: a later derived table that calls a function over its own parallel heap scan; result = no_parallel_scan     
+
+===================================================
+s    m    
+500     50005     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select rank() over (partition by ? order by ?) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?))
+
+  TABLE SCAN (z)
+
+  rewritten query: (select max(z.r) from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r))
+
+  TABLE SCAN (dba.t_mid)
+
+  rewritten query: (select max([dba.f_pin_jn]([dba.t_mid].b)) from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (d)
+    TABLE SCAN (e)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ d.s, e.m from (select max(z.r) as [s] from (select rank() over (partition by ? order by ?) as [r] from [dba.t_big] [dba.t_big] where ([dba.t_big].a<=?)) z (r)) d (s), (select max([dba.f_pin_jn]([dba.t_mid].b)) as [m] from [dba.t_mid] [dba.t_mid] where ([dba.t_mid].a>?)) e (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+            ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                    (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+0
+===================================================
+s    m    
+500     50005     
+
+===================================================
+0
+===================================================
+0

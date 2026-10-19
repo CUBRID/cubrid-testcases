@@ -4,34 +4,34 @@
  *  CBRD-26872 unnests WHERE [NOT] EXISTS / [NOT] IN into an NL semi / anti join whose inner
  *  is searched once per outer row and stays behind the side it depends on. This fix adds,
  *  for a SEMI inner joined by equalities on plain columns, a DISTINCT form that may come
- *  first and probe the outer by index, or be the build of a hash join or an input of a
- *  merge join; rewrites the SEMI JOIN to an INNER JOIN when the equalities cover the
+ *  first and probe the outer by index, or be an input of a merge join; rewrites the SEMI
+ *  JOIN to an INNER JOIN when the equalities cover the
  *  inner's PRIMARY KEY or a NOT NULL UNIQUE key; unnests a NOT IN whose operands the WHERE
  *  keeps non-NULL; rewrites an uncorrelated IN to a SEMI JOIN before the derived-table
  *  rewrite; and lets the DISTINCT form come ahead of its dependency only when every outer
  *  join node is already placed. ORDERED / LEADING leave no DISTINCT form, and a user
  *  KEYLIMIT keeps the subquery as written.
  *
- *  A query with the NO_UNNEST hint that follows an unnested one gives the reference result;
- *  the two must match. Every query is followed by show trace, which shows the plan shape
+ *  A query with the NO_UNNEST hint that follows an unnested one gives the reference result
+ *  and the two must match. Every query is followed by show trace, which shows the plan shape
  *  (semi / anti / inner join, SORT (distinct) and where it sits) and the rewritten query.
  *
  *  Coverage:
  *    Case 1:  SEMI inner read with DISTINCT and placed first, the outer probed by index
- *    Case 2:  DISTINCT input of a hash join on one join column and of a merge join on two
+ *    Case 2:  DISTINCT input of a merge join on two join columns
  *    Case 3:  a plain join before the SEMI inner, the DISTINCT inner attached after it as
- *             the hash build
+ *             the merge input
  *    Case 4:  SEMI -> INNER JOIN on a PRIMARY KEY and on a NOT NULL UNIQUE key; no rewrite
  *             on half of a composite key or on a key compared through a CAST
  *    Case 5:  uncorrelated IN -> SEMI JOIN, inner without and with an index
- *    Case 6:  ORDERED and LEADING: NL semi join, outer first; KEYLIMIT: subquery kept, no
- *             INNER rewrite
+ *    Case 6:  ORDERED and LEADING: the outer first, no DISTINCT form; KEYLIMIT: subquery
+ *             kept, no INNER rewrite
  *    Case 7:  SEMI ON reads the null-supplying side of a LEFT OUTER JOIN: the SEMI inner
  *             stays behind the outer join
  *    Case 8:  the same with a RIGHT OUTER JOIN, the ON reading the RIGHT OUTER node and the
  *             null-supplying side
  *    Case 9:  SEMI ON reads only the preserved side: an outer join in the query does not take the
- *             DISTINCT form away, it is still the hash build after its dependency
+ *             DISTINCT form away, it is still the merge input after its dependency
  *    Case 10: NOT IN -> ANTI JOIN on a column the WHERE keeps non-NULL, also beside a NOT IN
  *             on a LIMIT subquery that stays nested; no rewrite when the WHERE (<> ALL on a
  *             set column) excludes no NULL
@@ -60,14 +60,12 @@ select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ N
 show trace;
 
 
-evaluate 'Case 2: DISTINCT input of a hash join (one join column) and of a merge join (two)';
-select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ use_hash(t_i) */ 1 from t_i where t_i.k = t_o.k);
-show trace;
+evaluate 'Case 2: DISTINCT input of a merge join on two join columns';
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ use_merge(t_i) */ 1 from t_i where t_i.k = t_o.k and t_i.g = t_o.g);
 show trace;
 
 
-evaluate 'Case 3: a plain join before the SEMI inner, the DISTINCT inner attached after it as the hash build';
+evaluate 'Case 3: a plain join before the SEMI inner, the DISTINCT inner attached after it as the merge input';
 -- t_d 5 rows joined on g; the SEMI reads t_o.g alone, which no index covers, so the 200-value DISTINCT does not come first
 drop table if exists t_d;
 create table t_d (g int primary key, v int);
@@ -76,7 +74,7 @@ update statistics on t_d with fullscan;
 select /*+ recompile parallel(0) */ count(*), sum(t_d.v)
   from t_o, t_d
  where t_d.g = t_o.g and t_d.v <= 20
-   and exists (select /*+ use_hash(t_i) */ 1 from t_i where t_i.g = t_o.g);
+   and exists (select /*+ use_merge(t_i) */ 1 from t_i where t_i.g = t_o.g);
 show trace;
 select /*+ recompile parallel(0) */ count(*), sum(t_d.v)
   from t_o, t_d
@@ -96,20 +94,16 @@ insert into t_ck select mod(rownum, 20) + 1, mod(rownum, 5) + 1 from db_class a,
 create table t_vc (c varchar(10) primary key);
 insert into t_vc select to_char(rownum) from db_class limit 20;
 update statistics on t_pk, t_ck, t_vc with fullscan;
--- PRIMARY KEY equality: rewritten to an inner join
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_pk where t_pk.id = t_o.id);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ NO_UNNEST */ 1 from t_pk where t_pk.id = t_o.id);
 show trace;
--- NOT NULL UNIQUE equality: rewritten to an inner join
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_pk where t_pk.u = t_o.id);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ NO_UNNEST */ 1 from t_pk where t_pk.u = t_o.id);
 show trace;
--- half of a composite key: semi join kept
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_ck where t_ck.k = t_o.k);
 show trace;
--- VARCHAR key compared to INT (cast on the key): semi join kept
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_vc where t_vc.c = t_o.k);
 show trace;
 drop table t_ck, t_vc;
@@ -120,7 +114,6 @@ select /*+ recompile parallel(0) */ count(*) from t_o where t_o.k in (select t_i
 show trace;
 select /*+ recompile parallel(0) */ count(*) from t_o where t_o.k in (select /*+ NO_UNNEST */ t_i.k from t_i);
 show trace;
--- with an index on the inner, same result
 create index i_t_i_k on t_i (k);
 update statistics on t_i with fullscan;
 select /*+ recompile parallel(0) */ count(*) from t_o where t_o.k in (select t_i.k from t_i);
@@ -128,12 +121,11 @@ show trace;
 drop index i_t_i_k on t_i;
 
 
-evaluate 'Case 6: ORDERED and LEADING: NL semi join, outer first; KEYLIMIT: the subquery is kept, no INNER rewrite';
+evaluate 'Case 6: ORDERED and LEADING: the outer first, no DISTINCT form; KEYLIMIT: the subquery is kept, no INNER rewrite';
 select /*+ recompile parallel(0) ordered */ count(*) from t_o where exists (select 1 from t_i where t_i.k = t_o.k);
 show trace;
 select /*+ recompile parallel(0) leading(t_o) */ count(*) from t_o where exists (select 1 from t_i where t_i.k = t_o.k);
 show trace;
--- KEYLIMIT: no unnest, so no INNER rewrite either
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_pk where t_pk.id = t_o.id using index pk_t_pk_id keylimit 1);
 show trace;
 drop table t_o, t_i, t_pk;
@@ -172,8 +164,8 @@ select /*+ recompile parallel(0) */ count(*)
 show trace;
 
 
-evaluate 'Case 9: SEMI ON reads only the preserved side; an outer join in the query does not take the DISTINCT form away, it is still the hash build after its dependency';
-select /*+ recompile parallel(0) */ count(*)
+evaluate 'Case 9: SEMI ON reads only the preserved side; an outer join in the query does not take the DISTINCT form away, it is still the merge input after its dependency';
+select /*+ recompile parallel(0) use_merge(t_s) */ count(*)
   from t_o left outer join t_p on t_o.id = t_p.id
        semi join t_s on t_s.m = t_o.m;
 show trace;
@@ -205,7 +197,6 @@ show trace;
 select /*+ recompile parallel(0) */ a from t_n
  where a is not null and a not in (select /*+ NO_UNNEST */ x from t_nn) and a not in (select /*+ NO_UNNEST */ y from t_ne limit 1) order by 1;
 show trace;
--- <> ALL on a set column excludes no NULL: NOT IN kept
 select /*+ recompile parallel(0) */ a from t_ns where a <> all (s) and a not in (select x from t_nn) order by 1;
 show trace;
 select /*+ recompile parallel(0) */ a from t_ns where a <> all (s) and a not in (select /*+ NO_UNNEST */ x from t_nn) order by 1;
