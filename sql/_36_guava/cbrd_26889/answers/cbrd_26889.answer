@@ -7,28 +7,22 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
-30000
+20000
 ===================================================
 0
 ===================================================
-10000
+0
 ===================================================
-count(*)    
-40000     
-
-===================================================
-count(*)    
-1     
+count(*)    count(distinct k)    
+20000     200     
 
 ===================================================
     
-[1] stale statistics (NDV 10), non-covering lookup: iscan on i_oa_t_k     
+[1] 15% range, non-covering: iscan on i_oa_t_k     
 
 ===================================================
-id    pad    
-35000     q                                                                                                        
+count(pad)    
+3000     
 
 Query plan:
 iscan
@@ -36,38 +30,41 @@ iscan
     index: i_oa_t_k term[?]
     cost:  ? card ?
 Query stmt:
-select oa_t.id, oa_t.pad from oa_t oa_t where oa_t.k= ?:? 
+select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
 ===================================================
     
-[2] stale statistics, covering lookup: iscan (covers)     
+[2] 50% range, non-covering: sscan     
 
 ===================================================
-k    
-35000     
+count(pad)    
+10000     
 
 Query plan:
-iscan
+sscan
     class: oa_t node[?]
-    index: i_oa_t_k term[?] (covers)
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select oa_t.k from oa_t oa_t where oa_t.k= ?:? 
+select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
 ===================================================
 0
 ===================================================
     
-[3] fresh statistics, non-covering lookup: iscan on i_oa_t_k     
+[3] 15% range with cost_heap_fetch_per_oid=20: sscan     
 
 ===================================================
-id    pad    
-35000     q                                                                                                        
+count(pad)    
+3000     
 
 Query plan:
-iscan
+Cost parameters: cost_seq_page ?, cost_random_page ?, cost_cpu_tuples_per_page ?, cost_effective_cache_pages ?, cost_heap_fetch_per_oid ?
+sscan
     class: oa_t node[?]
-    index: i_oa_t_k term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select oa_t.id, oa_t.pad from oa_t oa_t where oa_t.k= ?:? 
+select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
+===================================================
+0
 ===================================================
 0
