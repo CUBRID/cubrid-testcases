@@ -60,7 +60,7 @@ select /*+ recompile */ count(*), max(t_pkc.region) from t_fkc, t_pkc
 where t_fkc.id = t_pkc.id and t_fkc.region = 'KR ' and t_pkc.region = 'KR';
 
 /*
- * [8]-[12] check the plan instead of the count: cost and card are masked in the answer,
+ * [8]-[14] check the plan instead of the count: cost and card are masked in the answer,
  * so the join order shows whether the floor raised the FK-PK join estimate.
  * Each PK table has 2,000 rows in 100 regions and each FK table 20,000 rows; the region
  * constant keeps 200 FK rows, but without the floor the FK-PK join is estimated at 2 rows.
@@ -72,6 +72,8 @@ drop table if exists t_fkv;
 drop table if exists t_pkv;
 drop table if exists t_fkch;
 drop table if exists t_pkch;
+drop table if exists t_fki;
+drop table if exists t_pki;
 
 create table t_pkv (region varchar(8), id int, pad varchar(20), primary key (region, id));
 insert into t_pkv select 'R' || mod (level, 100), level, 'p' || level from db_root connect by level <= 2000;
@@ -83,11 +85,16 @@ insert into t_pkch select region, id, pad from t_pkv;
 create table t_fkch (fid int primary key, region char(4), id int, foreign key (region, id) references t_pkch (region, id));
 insert into t_fkch select fid, region, id from t_fkv;
 
+create table t_pki (region int, id int, pad varchar(20), primary key (region, id));
+insert into t_pki select mod (level, 100), level, 'p' || level from db_root connect by level <= 2000;
+create table t_fki (fid int primary key, region int, id int, foreign key (region, id) references t_pki (region, id));
+insert into t_fki select level, mod (mod (level, 2000) + 1, 100), mod (level, 2000) + 1 from db_root connect by level <= 20000;
+
 create table t_x (k int primary key, v int, w int);
 insert into t_x select level, mod (level, 100), mod (level / 100, 10) from db_root connect by level <= 20000;
 create index ix_x_vw on t_x (v, w);
 
-update statistics on t_pkv, t_fkv, t_pkch, t_fkch, t_x with fullscan;
+update statistics on t_pkv, t_fkv, t_pkch, t_fkch, t_pki, t_fki, t_x with fullscan;
 
 evaluate '[8] both sides fixed to the same constant, t_x drives the join: count = 60';
 --@queryplan
@@ -119,7 +126,21 @@ select /*+ recompile */ count(*), max(t_pkv.pad) from t_fkv, t_pkv, t_x
 where t_fkv.id = t_pkv.id and t_fkv.region = 'R5 ' and t_pkv.region = 'R5'
 and t_x.k = t_fkv.fid and t_x.v = 4 and t_x.w < 3;
 
+evaluate '[13] the same number of different types on each side, t_x drives the join: count = 60';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pki.pad) from t_fki, t_pki, t_x
+where t_fki.id = t_pki.id and t_fki.region = 5 and t_pki.region = 5.0
+and t_x.k = t_fki.fid and t_x.v = 4 and t_x.w < 3;
+
+evaluate '[14] different numbers on each side, floor not applied, t_x is probed: count = 0';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pki.pad) from t_fki, t_pki, t_x
+where t_fki.id = t_pki.id and t_fki.region = 5 and t_pki.region = 5.5
+and t_x.k = t_fki.fid and t_x.v = 4 and t_x.w < 3;
+
 drop table t_x;
+drop table t_fki;
+drop table t_pki;
 drop table t_fkch;
 drop table t_pkch;
 drop table t_fkv;

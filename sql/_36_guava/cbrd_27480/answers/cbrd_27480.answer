@@ -186,6 +186,18 @@ select count(*), max(t_pkc.region) from t_fkc t_fkc, t_pkc t_pkc where t_fkc.id=
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
 2000
 ===================================================
 0
@@ -347,6 +359,66 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*), max(t_pkv.pad) from t_fkv t_fkv, t_pkv t_pkv, t_x t_x where t_fkv.id=t_pkv.id and t_x.k=t_fkv.fid and (t_x.w< ?:? ) and t_x.v= ?:?  and t_pkv.region= ?:?  and t_fkv.region= ?:? 
+===================================================
+    
+[13] the same number of different types on each side, t_x drives the join: count = 60     
+
+===================================================
+count(*)    max(t_pki.pad)    
+60     p5     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: t_x node[?]
+                          index: ix_x_vw term[?] AND term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_fki node[?]
+                          index: pk_t_fki_fid term[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_pki node[?]
+               index: pk_t_pki_region_id term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pki.pad) from t_fki t_fki, t_pki t_pki, t_x t_x where t_fki.id=t_pki.id and t_x.k=t_fki.fid and (t_x.w< ?:? ) and t_x.v= ?:?  and t_pki.region= ?:?  and t_fki.region= ?:? 
+===================================================
+    
+[14] different numbers on each side, floor not applied, t_x is probed: count = 0     
+
+===================================================
+count(*)    max(t_pki.pad)    
+0     null     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: t_pki node[?]
+                          index: pk_t_pki_region_id term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_fki node[?]
+                          index: fk_t_fki_region_id term[?] AND term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_x node[?]
+               index: pk_t_x_k term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), max(t_pki.pad) from t_fki t_fki, t_pki t_pki, t_x t_x where t_fki.id=t_pki.id and t_x.k=t_fki.fid and (t_x.w< ?:? ) and t_x.v= ?:?  and t_pki.region= ?:?  and t_fki.region= ?:? 
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
