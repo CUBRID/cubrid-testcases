@@ -59,6 +59,71 @@ evaluate '[7] trailing space is ignored in a CHAR column: count = 2';
 select /*+ recompile */ count(*), max(t_pkc.region) from t_fkc, t_pkc
 where t_fkc.id = t_pkc.id and t_fkc.region = 'KR ' and t_pkc.region = 'KR';
 
+/*
+ * [8]-[12] check the plan instead of the count: cost and card are masked in the answer,
+ * so the join order shows whether the floor raised the FK-PK join estimate.
+ * Each PK table has 2,000 rows in 100 regions and each FK table 20,000 rows; the region
+ * constant keeps 200 FK rows, but without the floor the FK-PK join is estimated at 2 rows.
+ * t_x keeps 60 rows. With the floor (200 rows) t_x drives the join; without it the
+ * FK-PK join drives it and probes t_x.
+ */
+drop table if exists t_x;
+drop table if exists t_fkv;
+drop table if exists t_pkv;
+drop table if exists t_fkch;
+drop table if exists t_pkch;
+
+create table t_pkv (region varchar(8), id int, pad varchar(20), primary key (region, id));
+insert into t_pkv select 'R' || mod (level, 100), level, 'p' || level from db_root connect by level <= 2000;
+create table t_fkv (fid int primary key, region varchar(8), id int, foreign key (region, id) references t_pkv (region, id));
+insert into t_fkv select level, 'R' || mod (mod (level, 2000) + 1, 100), mod (level, 2000) + 1 from db_root connect by level <= 20000;
+
+create table t_pkch (region char(4), id int, pad varchar(20), primary key (region, id));
+insert into t_pkch select region, id, pad from t_pkv;
+create table t_fkch (fid int primary key, region char(4), id int, foreign key (region, id) references t_pkch (region, id));
+insert into t_fkch select fid, region, id from t_fkv;
+
+create table t_x (k int primary key, v int, w int);
+insert into t_x select level, mod (level, 100), mod (level / 100, 10) from db_root connect by level <= 20000;
+create index ix_x_vw on t_x (v, w);
+
+update statistics on t_pkv, t_fkv, t_pkch, t_fkch, t_x with fullscan;
+
+evaluate '[8] both sides fixed to the same constant, t_x drives the join: count = 60';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pkv.pad) from t_fkv, t_pkv, t_x
+where t_fkv.id = t_pkv.id and t_fkv.region = 'R5' and t_pkv.region = 'R5'
+and t_x.k = t_fkv.fid and t_x.v = 4 and t_x.w < 3;
+
+evaluate '[9] join term plus a constant on one side, t_x drives the join: count = 60';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pkv.pad) from t_fkv, t_pkv, t_x
+where t_fkv.region = t_pkv.region and t_fkv.id = t_pkv.id and t_fkv.region = 'R5'
+and t_x.k = t_fkv.fid and t_x.v = 4 and t_x.w < 3;
+
+evaluate '[10] trailing space is ignored in a CHAR column, t_x drives the join: count = 60';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pkch.pad) from t_fkch, t_pkch, t_x
+where t_fkch.id = t_pkch.id and t_fkch.region = 'R5 ' and t_pkch.region = 'R5'
+and t_x.k = t_fkch.fid and t_x.v = 4 and t_x.w < 3;
+
+evaluate '[11] different constants on each side, floor not applied, t_x is probed: count = 0';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pkv.pad) from t_fkv, t_pkv, t_x
+where t_fkv.id = t_pkv.id and t_fkv.region = 'R5' and t_pkv.region = 'R6'
+and t_x.k = t_fkv.fid and t_x.v = 4 and t_x.w < 3;
+
+evaluate '[12] trailing space differs in a VARCHAR column, floor not applied, t_x is probed: count = 0';
+--@queryplan
+select /*+ recompile */ count(*), max(t_pkv.pad) from t_fkv, t_pkv, t_x
+where t_fkv.id = t_pkv.id and t_fkv.region = 'R5 ' and t_pkv.region = 'R5'
+and t_x.k = t_fkv.fid and t_x.v = 4 and t_x.w < 3;
+
+drop table t_x;
+drop table t_fkch;
+drop table t_pkch;
+drop table t_fkv;
+drop table t_pkv;
 drop table t_fkc;
 drop table t_pkc;
 drop table t_fk;
