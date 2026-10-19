@@ -39,7 +39,7 @@ select
     = (select default_value from _db_attribute where class_of.class_name = 't2' and attr_name = 'c2');
 
 drop table if exists t3;
-create table t3 (c1 int, c2 varchar(3000) default rpad('a', 2049, 'a'));
+create table t3 (c1 int, c2 varchar(3000) default rpad('abcd', 2049, 'abcd'));
 
 evaluate 'Case 4: a 2049-char DEFAULT is accepted, but the catalog display truncates to 2048 while the real default value keeps its full length';
 select char_length(default_value), default_value from db_attribute where class_name = 't3' and attr_name = 'c2';
