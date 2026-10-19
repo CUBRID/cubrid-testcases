@@ -783,8 +783,10 @@ Trace Statistics:
 0
 ===================================================
     
-Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN; the SEMI inner stays behind the outer join     
+Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN through an INNER JOIN node; the SEMI inner stays behind the outer join     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -798,6 +800,8 @@ Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN; the SEMI inn
 ===================================================
 20
 ===================================================
+20
+===================================================
 3
 ===================================================
 0
@@ -806,12 +810,494 @@ Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN; the SEMI inn
 ===================================================
 0
 ===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: idx-join (left outer join)
+                          outer: sscan
+                                     class: t_o node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: t_p node[?]
+                                     index: i_t_p_id term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: temp(distinct)
+                          subplan: sscan
+                                       class: t_s node[?]
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_q node[?]
+               index: i_t_q_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o left outer join t_p t_p on t_o.id=t_p.id inner join t_q t_q on t_q.id=t_p.id semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_q.k
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (dba.t_o)
+        INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id, covered: true)
+      SORT (distinct)
+        TABLE SCAN (dba.t_s)
+    INDEX SCAN (dba.t_q.i_t_q_id) (key range: [dba.t_q].id=[dba.t_p].id)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] left outer join [dba.t_p] [dba.t_p] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_q].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_q.i_t_q_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: t_s node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_q.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+Query plan:
+idx-join (inner join)
+    outer: idx-join (left outer join)
+               outer: sscan
+                          class: t_o node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_p node[?]
+                          index: i_t_p_id term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_q node[?]
+               index: i_t_q_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o left outer join t_p t_p on t_o.id=t_p.id inner join t_q t_q on t_q.id=t_p.id where  exists (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_q.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_s)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.t_o)
+      INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id, covered: true)
+    INDEX SCAN (dba.t_q.i_t_q_id) (key range: [dba.t_q].id=[dba.t_p].id)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] left outer join [dba.t_p] [dba.t_p] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_q.i_t_q_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: the same with a RIGHT OUTER JOIN     
+
+===================================================
 count(*)    
 2     
 
 Query plan:
 hash-join (semi join)
     edge:  term[?] AND term[?]
+    outer: hash-join (right outer join)
+               edge:  term[?]
+               outer: idx-join (inner join)
+                          outer: sscan
+                                     class: t_q node[?]
+                                     cost:  ? card ?
+                          inner: iscan
+                                     class: t_p node[?]
+                                     index: i_t_p_id term[?] (covers)
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_o node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id inner join t_q t_q on t_q.id=t_p.id semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_q.k
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    HASH JOIN (right outer join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (dba.t_q)
+        INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_q].id=[dba.t_p].id, covered: true)
+      TABLE SCAN (dba.t_o)
+    TABLE SCAN (dba.t_s)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_q].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.t_q), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: t_s node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_q.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: t_q node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_p node[?]
+                          index: i_t_p_id term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id inner join t_q t_q on t_q.id=t_p.id where  exists (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_q.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_s)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
+
+  HASH JOIN (right outer join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_q)
+      INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_q].id=[dba.t_p].id, covered: true)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_q), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+    
+Case 9: an uncorrelated IN reads the null-supplying side; the SEMI ON rejects NULL, so the outer join becomes an inner join, and where it does not the SEMI stays behind the RIGHT OUTER JOIN     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: temp(distinct)
+                          subplan: sscan
+                                       class: t_s node[?]
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_p node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o inner join t_p t_p semi join t_s t_s on t_p.k=t_s.k where t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      SORT (distinct)
+        TABLE SCAN (dba.t_s)
+      TABLE SCAN (dba.t_p)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] inner join [dba.t_p] [dba.t_p] semi join [dba.t_s] [dba.t_s] on [dba.t_p].k=[dba.t_s].k where [dba.t_o].id=[dba.t_p].id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t_s node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: av? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_p node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o, t_p t_p, (select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s) av? (av_?) where t_p.k=av?.av_? and t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.t_s)
+
+  rewritten query: (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s])
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (av?)
+      TABLE SCAN (dba.t_p)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o], [dba.t_p] [dba.t_p], (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s]) av? (av_?) where [dba.t_p].k=av?.av_? and [dba.t_o].id=[dba.t_p].id
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: temp(distinct)
+                          subplan: sscan
+                                       class: t_s node[?]
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_p node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_p t_p inner join t_o t_o semi join t_s t_s on t_p.k=t_s.k where t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      SORT (distinct)
+        TABLE SCAN (dba.t_s)
+      TABLE SCAN (dba.t_p)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] inner join [dba.t_o] [dba.t_o] semi join [dba.t_s] [dba.t_s] on [dba.t_p].k=[dba.t_s].k where [dba.t_o].id=[dba.t_p].id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t_s node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: av? node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_p node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_p t_p, t_o t_o, (select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s) av? (av_?) where t_p.k=av?.av_? and t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.t_s)
+
+  rewritten query: (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s])
+
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (av?)
+      TABLE SCAN (dba.t_p)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p], [dba.t_o] [dba.t_o], (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s]) av? (av_?) where [dba.t_p].k=av?.av_? and [dba.t_o].id=[dba.t_p].id
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
     outer: idx-join (left outer join)
                outer: sscan
                           class: t_o node[?]
@@ -826,7 +1312,7 @@ hash-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o left outer join t_p t_p on t_o.id=t_p.id semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_p.k
+select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id semi join t_s t_s on t_s.k=coalesce(t_p.k, -?)
 ===================================================
 trace    
 
@@ -837,7 +1323,7 @@ Query Plan:
       INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id)
     TABLE SCAN (dba.t_s)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] left outer join [dba.t_p] [dba.t_p] on [dba.t_o].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_p].k
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].k=coalesce([dba.t_p].k, -?)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -854,156 +1340,59 @@ Trace Statistics:
 
 ===================================================
 count(*)    
-2     
+12     
 
 Query plan:
-sscan
-    class: t_s node[?]
-    sargs: term[?] AND term[?] AND term[?]
+temp(distinct)
+    subplan: sscan
+                 class: t_s node[?]
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+(select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s)
 Query plan:
-nl-join (inner join)
-    edge:  term[?] AND term[?]
+idx-join (left outer join)
     outer: sscan
-               class: t_p node[?]
-               cost:  ? card ?
-    inner: sscan
                class: t_o node[?]
-               sargs: term[?] AND term[?]
                cost:  ? card ?
-    subqs: ?
+    inner: iscan
+               class: t_p node[?]
+               index: i_t_p_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o, t_p t_p where  exists (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? ) and t_o.id=t_p.id
+select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id where coalesce(t_p.k, -?) in (select /*+ NO_UNNEST */ distinct t_s.k from t_s t_s)
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.t_s)
-
-  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.t_p)
-    TABLE SCAN (dba.t_o)
-
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o], [dba.t_p] [dba.t_p] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? ) and [dba.t_o].id=[dba.t_p].id
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-    
-Case 8: RIGHT OUTER JOIN, SEMI ON reads the RIGHT OUTER node and the null-supplying side     
-
-===================================================
-count(*)    
-2     
-
-Query plan:
-hash-join (semi join)
-    edge:  term[?] AND term[?]
-    outer: idx-join (left outer join)
-               outer: sscan
-                          class: t_o node[?]
-                          cost:  ? card ?
-               inner: iscan
-                          class: t_p node[?]
-                          index: i_t_p_id term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: t_s node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_p.k
-===================================================
-trace    
-
-Query Plan:
-  HASH JOIN (semi join)
-    NESTED LOOPS (left outer join)
-      TABLE SCAN (dba.t_o)
-      INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id)
+  SORT (distinct)
     TABLE SCAN (dba.t_s)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_p].k
+  rewritten query: (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s])
 
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-     
-
-===================================================
-count(*)    
-2     
-
-Query plan:
-sscan
-    class: t_s node[?]
-    sargs: term[?] AND term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
-Query plan:
-nl-join (inner join)
-    edge:  term[?] AND term[?]
-    outer: sscan
-               class: t_p node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t_o node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_p t_p, t_o t_o where  exists (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? ) and t_o.id=t_p.id
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t_s)
-
-  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
-
-  NESTED LOOPS (inner join)
-    TABLE SCAN (dba.t_p)
+  NESTED LOOPS (left outer join)
     TABLE SCAN (dba.t_o)
+    INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p], [dba.t_o] [dba.t_o] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? ) and [dba.t_o].id=[dba.t_p].id
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id where coalesce([dba.t_p].k, -?) in (select /*+ NO_UNNEST */ distinct [dba.t_s].k from [dba.t_s] [dba.t_s])
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SUBQUERY (correlated)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
     
-Case 9: SEMI ON reads only the preserved side; an outer join in the query does not take the DISTINCT form away, it is still the merge input after its dependency     
+Case 10: SEMI ON reads only the preserved side; an outer join in the query does not take the DISTINCT form away, it is still the merge input after its dependency     
 
 ===================================================
 count(*)    
@@ -1121,7 +1510,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 10: NOT IN -> ANTI JOIN on a column the WHERE keeps non-NULL; no rewrite when the NULL exclusion would not hold     
+Case 11: NOT IN -> ANTI JOIN on a column the WHERE keeps non-NULL; no rewrite when the NULL exclusion would not hold     
 
 ===================================================
 0
