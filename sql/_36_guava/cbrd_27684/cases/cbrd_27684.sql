@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27684 : Carry whole tuples in sort records to avoid re-fetching originals after sort
- *  A sort record carries a short tuple (128 bytes or less) when the sorted tuples are scattered over the input
+ *  A sort record carries a short tuple (256 bytes or less) when the sorted tuples are scattered over the input
  *  (decided on a sample of the first 8K input tuples), and points back to a longer one.
  *  Sorted results must be the same for short, long and overflow tuples mixed in one sort,
  *  with NULL keys and ties, for analytic functions, ORDER BY and GROUP BY.
@@ -11,7 +11,7 @@ drop table if exists t27684_o;
 create table t27684 (id int primary key, g int, k varchar(10), v varchar(30000));
 
 -- k: NULL for every 11th row, many ties otherwise, in no relation to the row order
--- v: overflow tuple for every 2000th row, longer than 128 bytes for every 3rd row, NULL for every 13th row, short otherwise
+-- v: overflow tuple for every 2000th row, 200 to 600 bytes (both sides of 256) for every 3rd row, NULL for every 13th row, short otherwise
 insert into t27684
   select rownum, mod(rownum, 5),
          case when mod(rownum, 11) = 0 then null else lpad(to_char(mod(rownum * 37, 101)), 5, '0') end,
