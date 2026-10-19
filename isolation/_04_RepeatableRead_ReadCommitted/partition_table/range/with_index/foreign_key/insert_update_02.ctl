@@ -34,8 +34,9 @@ MC: wait until C1 ready;
 /* test case */
 C1: insert into child values(1,'mm');
 MC: wait until C1 ready;
+/* CBRD-27463: C1's child INSERT leaves no lock on the parent row, so the UPDATE does not wait; it fails on the partition range before it changes the key */
 C2: update father set id=200 where id=1;
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C1: rollback;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
