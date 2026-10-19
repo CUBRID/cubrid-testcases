@@ -63,8 +63,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
-            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge partitions: ?, groups (est.): ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -115,17 +114,9 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
+        "hash_merge_partitions": ?,
         "rows": ?,
         "readrows": ?
-      },
-      "PARALLEL GROUPBY": {
-        "parallel workers": ?,
-        "min time": ?,
-        "max time": ?,
-        "min pages": ?,
-        "max pages": ?,
-        "min ioreads": ?,
-        "max ioreads": ?
       }
     }
   }
@@ -169,17 +160,9 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
+        "hash_merge_partitions": ?,
         "rows": ?,
         "readrows": ?
-      },
-      "PARALLEL GROUPBY": {
-        "parallel workers": ?,
-        "min time": ?,
-        "max time": ?,
-        "min pages": ?,
-        "max pages": ?,
-        "min ioreads": ?,
-        "max ioreads": ?
       }
     }
   }
@@ -231,17 +214,9 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
+        "hash_merge_partitions": ?,
         "rows": ?,
         "readrows": ?
-      },
-      "PARALLEL GROUPBY": {
-        "parallel workers": ?,
-        "min time": ?,
-        "max time": ?,
-        "min pages": ?,
-        "max pages": ?,
-        "min ioreads": ?,
-        "max ioreads": ?
       }
     }
   }
@@ -293,17 +268,9 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
+        "hash_merge_partitions": ?,
         "rows": ?,
         "readrows": ?
-      },
-      "PARALLEL GROUPBY": {
-        "parallel workers": ?,
-        "min time": ?,
-        "max time": ?,
-        "min pages": ?,
-        "max pages": ?,
-        "min ioreads": ?,
-        "max ioreads": ?
       }
     }
   }
