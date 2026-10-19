@@ -10,7 +10,8 @@
 -- order (0 rows differ) and find as many rows.
 --
 -- Rows: 6000 strings of signed numbers with a suffix, in four shapes of 1500 (scattered, ascending,
--- descending, few distinct values), upper case, Latin-1 and Korean letters mixed in, a NULL every 101st row.
+-- descending, few distinct values), Latin-1 and Korean letters mixed in, a NULL every 101st row. f9 is
+-- upper case in every third row, so LOWER () folds keys that differ in case.
 --
 -- Covers: VARCHAR(300) and VARCHAR(64) under utf8_bin, VARCHAR(30) under euckr_bin, utf8_ko_cs and
 -- utf8_tr_cs, STRING, VARCHAR(255) under iso88591_bin; a function index on ABS () and on LOWER ();
@@ -36,7 +37,8 @@ create table t_r (id int,
                   f7 varchar(255) collate iso88591_bin, f8 int, f9 varchar(30) collate utf8_bin);
 
 insert into t_r
-  select n, concat (repeat ('r', mod (n, 250)), s), s, s, s, s, concat (repeat ('t', mod (n, 300)), s), s, v, s
+  select n, concat (repeat ('r', mod (n, 250)), s), s, s, s, s, concat (repeat ('t', mod (n, 300)), s), s, v,
+         case mod (n, 3) when 0 then upper (s) else s end
   from (select n, v,
                case mod (n, 4) when 0 then upper (x.s) when 1 then concat (x.s, 'é') when 2 then concat (x.s, '가') else x.s end as s
         from (select n, v, concat (v, substr ('abcdefghij', 1, mod (n, 4))) as s from g) x) y
@@ -86,12 +88,12 @@ select 'f6', count(*) from ((select rownum, f6 from t_r where f6 >= '' using ind
   difference (select rownum, f6 from t_c where f6 >= '' using index i_c6)) x;
 select 'f7', count(*) from ((select rownum, f7 from t_r where f7 >= '' using index i_r7)
   difference (select rownum, f7 from t_c where f7 >= '' using index i_c7)) x;
--- the ABS () index is read as its key: a key holds f8 and -f8, whose rows lie in OID order, which may
--- differ between the two tables
+-- the ABS () and LOWER () indexes are read as their keys: a key holds f8 and -f8, or f9 in both cases,
+-- whose rows lie in OID order, which may differ between the two tables
 select 'abs (f8)', count(*) from ((select rownum, abs (f8) from t_r where abs (f8) >= 0 using index i_r8)
   difference (select rownum, abs (f8) from t_c where abs (f8) >= 0 using index i_c8)) x;
-select 'lower (f9)', count(*) from ((select rownum, f9 from t_r where lower (f9) >= '' using index i_r9)
-  difference (select rownum, f9 from t_c where lower (f9) >= '' using index i_c9)) x;
+select 'lower (f9)', count(*) from ((select rownum, lower (f9) from t_r where lower (f9) >= '' using index i_r9)
+  difference (select rownum, lower (f9) from t_c where lower (f9) >= '' using index i_c9)) x;
 select 'f8 > 0', count(*) from ((select rownum, f8 from t_r where f8 > 0 using index i_r10)
   difference (select rownum, f8 from t_c where f8 > 0 using index i_c10)) x;
 
