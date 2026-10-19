@@ -86,12 +86,12 @@ count(*)    max(t_pk.region)
 Query plan:
 idx-join (inner join)
     outer: iscan
-               class: t_pk node[?]
-               index: pk_t_pk_region_id term[?] (covers)
+               class: t_fk node[?]
+               index: fk_t_fk_region_id term[?] (covers)
                cost:  ? card ?
     inner: iscan
-               class: t_fk node[?]
-               index: fk_t_fk_region_id term[?] AND term[?] (covers)
+               class: t_pk node[?]
+               index: pk_t_pk_region_id term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -343,12 +343,12 @@ Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
                outer: iscan
-                          class: t_pkv node[?]
-                          index: pk_t_pkv_region_id term[?]
+                          class: t_fkv node[?]
+                          index: fk_t_fkv_region_id term[?]
                           cost:  ? card ?
                inner: iscan
-                          class: t_fkv node[?]
-                          index: fk_t_fkv_region_id term[?] AND term[?]
+                          class: t_pkv node[?]
+                          index: pk_t_pkv_region_id term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
