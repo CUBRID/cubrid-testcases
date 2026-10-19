@@ -1,0 +1,346 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: UNION ALL in an uncorrelated subquery; result = no_parallel_scan     
+
+===================================================
+count(*)    
+99997     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].b from [dba.t_small] [dba.t_small]
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select ? from db_root db_root
+
+  TABLE SCAN (u)
+
+  rewritten query: (select max(u.v) from (select [dba.t_small].b as [v] from [dba.t_small] [dba.t_small] union all select ? from db_root db_root) u (v))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].b>(select max(u.v) from (select [dba.t_small].b as [v] from [dba.t_small] [dba.t_small] union all select ? from db_root db_root) u (v)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+99997     
+
+===================================================
+    
+Case 2: hash join in a correlated subquery; result = no_parallel_scan     
+
+===================================================
+a    b    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
+    TABLE SCAN (y)
+
+  rewritten query: (select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a and z.a=[dba.t_big].a)
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].a, [dba.t_big].b from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and ([dba.t_big].b>=(select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a and z.a=[dba.t_big].a)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+a    b    
+1     1     
+2     2     
+3     3     
+
+===================================================
+    
+Case 3: EXCEPT in a correlated subquery; result = no_parallel_scan     
+
+===================================================
+a    b    
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
+
+  rewritten query: select z.b from [dba.t_small] z where z.a=[dba.t_big].a
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select ? from db_root db_root
+
+  TABLE SCAN (u)
+
+  rewritten query: (select count(*) from (select z.b as [v] from [dba.t_small] z where z.a=[dba.t_big].a except select ? from db_root db_root) u (v))
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].a, [dba.t_big].b from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and ([dba.t_big].b>(select count(*) from (select z.b as [v] from [dba.t_small] z where z.a=[dba.t_big].a except select ? from db_root db_root) u (v))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+a    b    
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+===================================================
+    
+Case 4: INTERSECT in a correlated subquery; result = no_parallel_scan     
+
+===================================================
+a    b    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
+
+  rewritten query: select z.b from [dba.t_small] z where z.a=[dba.t_big].a
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select ? from db_root db_root
+
+  TABLE SCAN (u)
+
+  rewritten query: (select count(*)* cast(? as bigint) from (select z.b as [v] from [dba.t_small] z where z.a=[dba.t_big].a intersect select ? from db_root db_root) u (v))
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].a, [dba.t_big].b from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and ([dba.t_big].b>(select count(*)* cast(? as bigint) from (select z.b as [v] from [dba.t_small] z where z.a=[dba.t_big].a intersect select ? from db_root db_root) u (v))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+a    b    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+
+===================================================
+    
+Case 5: UNION ALL in a subquery on the inner table of a nested loop join; result = no_parallel_scan     
+
+===================================================
+a    b    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (z.pk_t_small_a) (key range: z.a=y.a)
+
+  rewritten query: select z.b from [dba.t_small] z where z.a=y.a
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select ? from db_root db_root
+
+  TABLE SCAN (u)
+
+  rewritten query: (select max(u.v) from (select z.b as [v] from [dba.t_small] z where z.a=y.a union all select ? from db_root db_root) u (v))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_big)
+      INDEX SCAN (y.pk_t_small_a) (key range: y.a=[dba.t_big].a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ [dba.t_big].a, y.b from [dba.t_big] [dba.t_big], [dba.t_small] y where ([dba.t_big].a<= ?:? ) and y.a=[dba.t_big].a and (y.b>=(select max(u.v) from (select z.b as [v] from [dba.t_small] z where z.a=y.a union all select ? from db_root db_root) u (v))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    
+1     1     
+2     2     
+3     3     
+
+===================================================
+    
+Case 6: hash join in an uncorrelated subquery; result = no_parallel_scan     
+
+===================================================
+count(*)    
+99997     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (z)
+    TABLE SCAN (y)
+
+  rewritten query: (select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].b>(select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+99997     
+
+===================================================
+0
