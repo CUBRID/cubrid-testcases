@@ -1,0 +1,447 @@
+===================================================
+0
+===================================================
+0
+===================================================
+150000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Q1. GROUP BY expression, ORDER BY aggregate DESC -> parallel index scan     
+
+===================================================
+p    c    
+Char000     3000     
+Char001     3000     
+Char002     3000     
+Char003     3000     
+Char004     3000     
+Char005     3000     
+Char006     3000     
+Char007     3000     
+Char008     3000     
+Char009     3000     
+Char010     3000     
+Char011     3000     
+Char012     3000     
+Char013     3000     
+Char014     3000     
+Char015     3000     
+Char016     3000     
+Char017     3000     
+Char018     3000     
+Char019     3000     
+Char020     3000     
+Char021     3000     
+Char022     3000     
+Char023     3000     
+Char024     3000     
+Char025     3000     
+Char026     3000     
+Char027     3000     
+Char028     3000     
+Char029     3000     
+Char030     3000     
+Char031     3000     
+Char032     3000     
+Char033     3000     
+Char034     3000     
+Char035     3000     
+Char036     3000     
+Char037     3000     
+Char038     3000     
+Char039     3000     
+Char040     3000     
+Char041     3000     
+Char042     3000     
+Char043     3000     
+Char044     3000     
+Char045     3000     
+Char046     3000     
+Char047     3000     
+Char048     3000     
+Char049     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ), covered: true)
+
+  rewritten query: select  substr([dba.t_?].[name], ?, ?), count(*) from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ) group by  substr([dba.t_?].[name], ?, ?) order by ? desc , ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+p    c    
+Char000     3000     
+Char001     3000     
+Char002     3000     
+Char003     3000     
+Char004     3000     
+Char005     3000     
+Char006     3000     
+Char007     3000     
+Char008     3000     
+Char009     3000     
+Char010     3000     
+Char011     3000     
+Char012     3000     
+Char013     3000     
+Char014     3000     
+Char015     3000     
+Char016     3000     
+Char017     3000     
+Char018     3000     
+Char019     3000     
+Char020     3000     
+Char021     3000     
+Char022     3000     
+Char023     3000     
+Char024     3000     
+Char025     3000     
+Char026     3000     
+Char027     3000     
+Char028     3000     
+Char029     3000     
+Char030     3000     
+Char031     3000     
+Char032     3000     
+Char033     3000     
+Char034     3000     
+Char035     3000     
+Char036     3000     
+Char037     3000     
+Char038     3000     
+Char039     3000     
+Char040     3000     
+Char041     3000     
+Char042     3000     
+Char043     3000     
+Char044     3000     
+Char045     3000     
+Char046     3000     
+Char047     3000     
+Char048     3000     
+Char049     3000     
+
+===================================================
+    
+Q2. same query, ORDER BY aggregate ASC -> parallel index scan (unchanged)     
+
+===================================================
+p    c    
+Char000     3000     
+Char001     3000     
+Char002     3000     
+Char003     3000     
+Char004     3000     
+Char005     3000     
+Char006     3000     
+Char007     3000     
+Char008     3000     
+Char009     3000     
+Char010     3000     
+Char011     3000     
+Char012     3000     
+Char013     3000     
+Char014     3000     
+Char015     3000     
+Char016     3000     
+Char017     3000     
+Char018     3000     
+Char019     3000     
+Char020     3000     
+Char021     3000     
+Char022     3000     
+Char023     3000     
+Char024     3000     
+Char025     3000     
+Char026     3000     
+Char027     3000     
+Char028     3000     
+Char029     3000     
+Char030     3000     
+Char031     3000     
+Char032     3000     
+Char033     3000     
+Char034     3000     
+Char035     3000     
+Char036     3000     
+Char037     3000     
+Char038     3000     
+Char039     3000     
+Char040     3000     
+Char041     3000     
+Char042     3000     
+Char043     3000     
+Char044     3000     
+Char045     3000     
+Char046     3000     
+Char047     3000     
+Char048     3000     
+Char049     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ), covered: true)
+
+  rewritten query: select  substr([dba.t_?].[name], ?, ?), count(*) from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ) group by  substr([dba.t_?].[name], ?, ?) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Q3. ORDER BY group key DESC, not skipped -> parallel index scan     
+
+===================================================
+p    c    
+Char049     3000     
+Char048     3000     
+Char047     3000     
+Char046     3000     
+Char045     3000     
+Char044     3000     
+Char043     3000     
+Char042     3000     
+Char041     3000     
+Char040     3000     
+Char039     3000     
+Char038     3000     
+Char037     3000     
+Char036     3000     
+Char035     3000     
+Char034     3000     
+Char033     3000     
+Char032     3000     
+Char031     3000     
+Char030     3000     
+Char029     3000     
+Char028     3000     
+Char027     3000     
+Char026     3000     
+Char025     3000     
+Char024     3000     
+Char023     3000     
+Char022     3000     
+Char021     3000     
+Char020     3000     
+Char019     3000     
+Char018     3000     
+Char017     3000     
+Char016     3000     
+Char015     3000     
+Char014     3000     
+Char013     3000     
+Char012     3000     
+Char011     3000     
+Char010     3000     
+Char009     3000     
+Char008     3000     
+Char007     3000     
+Char006     3000     
+Char005     3000     
+Char004     3000     
+Char003     3000     
+Char002     3000     
+Char001     3000     
+Char000     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ), covered: true)
+
+  rewritten query: select  substr([dba.t_?].[name], ?, ?), count(*) from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ) group by  substr([dba.t_?].[name], ?, ?) order by ? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+p    c    
+Char049     3000     
+Char048     3000     
+Char047     3000     
+Char046     3000     
+Char045     3000     
+Char044     3000     
+Char043     3000     
+Char042     3000     
+Char041     3000     
+Char040     3000     
+Char039     3000     
+Char038     3000     
+Char037     3000     
+Char036     3000     
+Char035     3000     
+Char034     3000     
+Char033     3000     
+Char032     3000     
+Char031     3000     
+Char030     3000     
+Char029     3000     
+Char028     3000     
+Char027     3000     
+Char026     3000     
+Char025     3000     
+Char024     3000     
+Char023     3000     
+Char022     3000     
+Char021     3000     
+Char020     3000     
+Char019     3000     
+Char018     3000     
+Char017     3000     
+Char016     3000     
+Char015     3000     
+Char014     3000     
+Char013     3000     
+Char012     3000     
+Char011     3000     
+Char010     3000     
+Char009     3000     
+Char008     3000     
+Char007     3000     
+Char006     3000     
+Char005     3000     
+Char004     3000     
+Char003     3000     
+Char002     3000     
+Char001     3000     
+Char000     3000     
+
+===================================================
+    
+Q4. GROUP BY expression DESC, not skipped -> parallel index scan     
+
+===================================================
+m    c    
+2     49950     
+1     49950     
+0     50100     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]>= ?:? ))
+
+  rewritten query: select  mod([dba.t_?].v, ?), count(*) from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]>= ?:? ) group by  mod([dba.t_?].v, ?) desc  using index [dba.t_?].i_?_name
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+m    c    
+2     49950     
+1     49950     
+0     50100     
+
+===================================================
+    
+Q5. ORDER BY skipped by a descending index scan -> serial, rows in descending order     
+
+===================================================
+name    
+Char049999_0000149999     
+Char049999_0000099999     
+Char049999_0000049999     
+Char049998_0000149998     
+Char049998_0000099998     
+Char049998_0000049998     
+Char049997_0000149997     
+Char049997_0000099997     
+Char049997_0000049997     
+Char049996_0000149996     
+Char049996_0000099996     
+Char049996_0000049996     
+Char049995_0000149995     
+Char049995_0000099995     
+Char049995_0000049995     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]> ?:? ), covered: true, desc_index: true)
+  skip order by: true
+
+  rewritten query: select [dba.t_?].[name] from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]> ?:? ) order by ? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Q6. GROUP BY skipped by a descending index scan -> serial, groups in descending order     
+
+===================================================
+name    count(*)    
+Char049999_0000149999     1     
+Char049999_0000099999     1     
+Char049999_0000049999     1     
+Char049998_0000149998     1     
+Char049998_0000099998     1     
+Char049998_0000049998     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]> ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_?].[name], count(*) from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]> ?:? ) group by [dba.t_?].[name] desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
