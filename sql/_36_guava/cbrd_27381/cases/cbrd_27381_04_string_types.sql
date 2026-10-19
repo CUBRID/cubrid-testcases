@@ -125,11 +125,20 @@ select 's10', count(*) from ((select rownum, upper (s10) from t_r where z >= 0 u
 select 's3 desc', count(*) from ((select rownum, upper (s3) from t_r where z >= 0 using index i_rz3d)
   difference (select rownum, upper (s3) from t_c where z >= 0 using index i_cz3d)) x;
 
--- rows each radix-built index finds: all but the NULL ones (all rows for the (z, column) indexes)
+-- rows each radix-built index finds: all but the NULL ones (all rows for the (z, column) indexes). With 0
+-- rows differing above, the same count means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where s1 >= '' using index i_r1;
+select count(*) from t_r where s2 >= '' using index i_r2;
+select count(*) from t_r where s4 >= '' using index i_r4;
+select count(*) from t_r where s6 >= '' using index i_r6;
 select count(*) from t_r where s8 >= '' using index i_r8;
+select count(*) from t_r where s9 >= '' using index i_r9;
+select count(*) from t_r where s4 >= '' using index i_r4d;
 select count(*) from t_r where z >= 0 using index i_rz3;
+select count(*) from t_r where z >= 0 using index i_rz5;
+select count(*) from t_r where z >= 0 using index i_rz7;
 select count(*) from t_r where z >= 0 using index i_rz10;
+select count(*) from t_r where z >= 0 using index i_rz3d;
 
 -- keys the padding of a CHAR makes equal
 select count(*) from t_r where s4 = 'a' using index i_r4;

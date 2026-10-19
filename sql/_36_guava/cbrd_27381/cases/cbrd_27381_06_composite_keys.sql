@@ -11,6 +11,10 @@
 -- Rows: 6000 rows in four shapes of 1500 (scattered, ascending, descending, few distinct values),
 -- NULL in the first column every 101st row and in the middle columns every 13th and 17th row.
 --
+-- A range on the first column skips the keys whose first column is NULL. To read those too, two keys
+-- are also indexed behind z, which is 0 in every row: a NULL column orders first, and last in a
+-- descending column.
+--
 -- Covers:
 --   - (INT, VARCHAR) with few distinct values in the first column
 --   - (INT, VARCHAR utf8_en_ci DESC): a query does not read an index led by a case-insensitive column
@@ -19,6 +23,7 @@
 --   - (VARCHAR(1000), INT): no radix key in the first column, the compare sort
 --   - (CHAR(100) x 5 iso88591_bin, INT): the radix columns stop past 64 words
 --   - (BIGINT DESC, TIMESTAMP, ENUM)
+--   - (z, DATE, DOUBLE, CHAR(4)) and (z, BIGINT DESC, TIMESTAMP, ENUM): every key, NULL columns included
 
 drop table if exists g;
 drop table if exists t_r;
@@ -42,7 +47,7 @@ create table t_r (id int,
                   f1 varchar(1000) collate utf8_bin, f2 int,
                   w1 char(100) collate iso88591_bin, w2 char(100) collate iso88591_bin, w3 char(100) collate iso88591_bin,
                   w4 char(100) collate iso88591_bin, w5 char(100) collate iso88591_bin, w6 int,
-                  h1 bigint, h2 timestamp, h3 enum('red', 'green', 'blue', 'cyan'));
+                  h1 bigint, h2 timestamp, h3 enum('red', 'green', 'blue', 'cyan'), z int);
 
 insert into t_r
   select n,
@@ -54,7 +59,8 @@ insert into t_r
          s, mod (n * 3, 19),
          lpad (mod (v, 9), 90, 'w'), lpad (mod (n, 5), 90, 'w'), lpad (mod (n, 3), 90, 'w'), lpad (mod (n, 2), 90, 'w'),
          lpad (mod (n * 7, 11), 90, 'w'), mod (n * 11, 23),
-         cast (mod (v, 60) as bigint) * 100000000000, timestamp'2010-06-01 12:00:00' + mod (n, 9) * 3600, mod (n, 4) + 1
+         cast (mod (v, 60) as bigint) * 100000000000, timestamp'2010-06-01 12:00:00' + mod (n, 9) * 3600, mod (n, 4) + 1,
+         0
   from (select n, v, concat (v, substr ('abcdefghij', 1, mod (n, 4))) as s from g) x
   order by n;
 
@@ -70,6 +76,8 @@ create index i_rd on t_r (d1, d2);
 create index i_rf on t_r (f1, f2);
 create index i_rw on t_r (w1, w2, w3, w4, w5, w6);
 create index i_rh on t_r (h1 desc, h2, h3);
+create index i_rzc on t_r (z, c1, c2, c3);
+create index i_rzh on t_r (z, h1 desc, h2, h3);
 set system parameters 'index_sort_method=compare';
 create index i_ca on t_c (a1, a2);
 create index i_cb on t_c (b2, b1 desc);
@@ -78,6 +86,8 @@ create index i_cd on t_c (d1, d2);
 create index i_cf on t_c (f1, f2);
 create index i_cw on t_c (w1, w2, w3, w4, w5, w6);
 create index i_ch on t_c (h1 desc, h2, h3);
+create index i_czc on t_c (z, c1, c2, c3);
+create index i_czh on t_c (z, h1 desc, h2, h3);
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
@@ -96,12 +106,26 @@ select 'w', count(*) from ((select rownum, w1, w2, w3, w4, w5, w6 from t_r where
   difference (select rownum, w1, w2, w3, w4, w5, w6 from t_c where w1 >= '' using index i_cw)) x;
 select 'h', count(*) from ((select rownum, h1, h2, h3 from t_r where h1 >= -9000000000000000000 using index i_rh)
   difference (select rownum, h1, h2, h3 from t_c where h1 >= -9000000000000000000 using index i_ch)) x;
+select 'zc', count(*) from ((select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_r where z >= 0 using index i_rzc)
+  difference (select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_c where z >= 0 using index i_czc)) x;
+select 'zh', count(*) from ((select rownum, nvl (h1, -1), h2, h3 from t_r where z >= 0 using index i_rzh)
+  difference (select rownum, nvl (h1, -1), h2, h3 from t_c where z >= 0 using index i_czh)) x;
 
--- rows each radix-built index finds: all with a first column
+-- rows each radix-built index finds: all with a first column, and every row behind z. With 0 rows differing
+-- above, the same count means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where a1 >= -100 using index i_ra;
+select count(*) from t_r where b2 >= 0 using index i_rb;
 select count(*) from t_r where c1 >= date'0001-01-01' using index i_rc;
+select count(*) from t_r where d1 >= -100 using index i_rd;
+select count(*) from t_r where f1 >= '' using index i_rf;
 select count(*) from t_r where w1 >= '' using index i_rw;
 select count(*) from t_r where h1 >= -9000000000000000000 using index i_rh;
+select count(*) from t_r where z >= 0 using index i_rzc;
+select count(*) from t_r where z >= 0 using index i_rzh;
+
+-- the rows whose first column is NULL come first behind z, and last when that column is descending
+select count(*) from (select rownum as r, c1 from t_r where z >= 0 using index i_rzc) x where c1 is null and r <= 59;
+select count(*) from (select rownum as r, h1 from t_r where z >= 0 using index i_rzh) x where h1 is null and r > 5941;
 
 drop table g;
 drop table t_r;

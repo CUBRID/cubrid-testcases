@@ -15,6 +15,15 @@
 --   - TIMESTAMPTZ: one instant in Asia/Seoul and in UTC
 --   - composite (INT, VARCHAR): distinct pairs, a pair with a NULL column repeated, a pair repeated
 --   - ALTER TABLE ... ADD PRIMARY KEY over a repeated key, and over distinct keys
+--   - keys the compare function calls equal though their bytes differ, each repeated once:
+--     - FLOAT -0.0 and 0.0
+--     - MONETARY 12.50 in dollars and in won (the amount alone is compared)
+--     - NUMERIC without a precision 1.5 and 1.50
+--     - DATETIMETZ one instant in Asia/Seoul and in UTC
+--     - VARCHAR iso88591_en_ci 'abc' and 'ABC'
+--     - CHAR(5) utf8_en_ci 'abc' and 'ABC  '
+--     - composite (INT, VARCHAR utf8_en_ci) (42, 'xyz') and (42, 'XYZ')
+--   - VARCHAR utf8_en_ci 'abc' and 'ABC ': a VARCHAR keeps its trailing space, so they are distinct
 
 drop table if exists g;
 drop table if exists t_int;
@@ -23,6 +32,12 @@ drop table if exists t_dbl;
 drop table if exists t_tz;
 drop table if exists t_mk;
 drop table if exists t_pk;
+drop table if exists t_flt;
+drop table if exists t_mon;
+drop table if exists t_num;
+drop table if exists t_dtz;
+drop table if exists t_ci;
+drop table if exists t_mkci;
 
 create table g (n int);
 insert into g select rownum from db_class a, db_class b, db_class c limit 6000;
@@ -126,6 +141,67 @@ set system parameters 'index_sort_method=radix';
 alter table t_pk add constraint pk_r primary key (k);
 select count(*) from t_pk where k >= 0 using index pk_r;
 
+-- FLOAT: negative and positive zero
+create table t_flt (id int, k float);
+insert into t_flt select n, (n - 3000) / 7.0 from g where n <> 3000 order by n;
+insert into t_flt values (7001, cast (-0.0e0 as float)), (7002, cast (0.0e0 as float));
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_flt (k);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_flt (k);
+
+-- MONETARY: one amount in two currencies
+create table t_mon (id int, k monetary);
+insert into t_mon select n, cast ((n - 3000) / 7.0 as monetary) from g order by n;
+insert into t_mon values (7001, $12.50), (7002, \12.50);
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_mon (k);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_mon (k);
+
+-- NUMERIC without a precision: one value at two scales
+create table t_num (id int, k numeric);
+insert into t_num select n, n * 3 + 0.25 from g order by n;
+insert into t_num values (7001, 1.5), (7002, 1.50);
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_num (k);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_num (k);
+
+-- DATETIMETZ: one instant written in two zones
+create table t_dtz (id int, k datetimetz);
+insert into t_dtz
+  select n, cast (concat (to_char (datetime'2010-06-01 12:00:00.000' + cast (n as bigint) * 61007, 'YYYY-MM-DD HH24:MI:SS.FF'), ' UTC') as datetimetz)
+  from g order by n;
+insert into t_dtz values (7001, datetimetz'2020-01-01 09:00:00.000 Asia/Seoul'), (7002, datetimetz'2020-01-01 00:00:00.000 UTC');
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_dtz (k);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_dtz (k);
+
+-- case variants under iso88591_en_ci and a CHAR under utf8_en_ci, and a VARCHAR whose trailing space keeps it apart
+create table t_ci (id int, iso varchar(20) collate iso88591_en_ci, chc char(5) collate utf8_en_ci, vcc varchar(20) collate utf8_en_ci);
+insert into t_ci select n, concat ('k', n), lpad (n, 5, '0'), concat ('k', n) from g order by n;
+insert into t_ci values (7001, 'abc', 'abc', 'abc'), (7002, 'ABC', 'ABC  ', 'ABC ');
+set system parameters 'index_sort_method=radix';
+create unique index u_r_iso on t_ci (iso);
+create unique index u_r_chc on t_ci (chc);
+create unique index u_r_vcc on t_ci (vcc);
+set system parameters 'index_sort_method=compare';
+create unique index u_c_iso on t_ci (iso);
+create unique index u_c_chc on t_ci (chc);
+create unique index u_c_vcc on t_ci (vcc);
+select index_name from db_index where class_name = 't_ci' order by 1;
+
+-- composite: case variants in the en_ci column of a pair
+create table t_mkci (id int, a int, b varchar(10) collate utf8_en_ci);
+insert into t_mkci select n, mod (n, 100), concat ('b', n / 100) from g order by n;
+insert into t_mkci values (7001, 42, 'xyz'), (7002, 42, 'XYZ');
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_mkci (a, b);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_mkci (a, b);
+
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
@@ -136,3 +212,9 @@ drop table t_dbl;
 drop table t_tz;
 drop table t_mk;
 drop table t_pk;
+drop table t_flt;
+drop table t_mon;
+drop table t_num;
+drop table t_dtz;
+drop table t_ci;
+drop table t_mkci;

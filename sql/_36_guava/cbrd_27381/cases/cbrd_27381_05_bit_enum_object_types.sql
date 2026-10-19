@@ -84,10 +84,14 @@ select 'b5', count(*) from ((select rownum, b5 from t_r where b5 >= X'' using in
 select 'b3 desc', count(*) from ((select rownum, b3 from t_r where b3 >= X'' using index i_r3d)
   difference (select rownum, b3 from t_c where b3 >= X'' using index i_c3d)) x;
 
--- rows each radix-built index finds: all but the NULL ones
+-- rows each radix-built index finds: all but the NULL ones. With 0 rows differing above, the same count
+-- means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where b1 >= X'000' using index i_r1;
+select count(*) from t_r where b2 >= X'0000000000000000' using index i_r2;
+select count(*) from t_r where b3 >= X'' using index i_r3;
 select count(*) from t_r where b4 >= X'' using index i_r4;
 select count(*) from t_r where b5 >= X'' using index i_r5;
+select count(*) from t_r where b3 >= X'' using index i_r3d;
 
 -- ENUM and object reference: values whose count through the radix-built index differs from the count without
 -- an index (0), and the rows the radix-built index finds

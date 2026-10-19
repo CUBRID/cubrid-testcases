@@ -107,10 +107,18 @@ select 'd4 desc', count(*) from ((select rownum, d4 from t_r where d4 >= datetim
 select 'd5 desc', count(*) from ((select rownum, d5 from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5d)
   difference (select rownum, d5 from t_c where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_c5d)) x;
 
--- rows each radix-built index finds: all but the NULL ones
+-- rows each radix-built index finds: all but the NULL ones. With 0 rows differing above, the same count
+-- means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where d1 >= date'0001-01-01' using index i_r1;
+select count(*) from t_r where d2 >= time'00:00:00' using index i_r2;
+select count(*) from t_r where d3 >= timestamp'1970-06-01 00:00:00' using index i_r3;
+select count(*) from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4;
 select count(*) from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5;
+select count(*) from t_r where d6 >= timestampltz'1970-06-01 00:00:00 UTC' using index i_r6;
+select count(*) from t_r where d7 >= datetimetz'1800-01-01 00:00:00.000 UTC' using index i_r7;
 select count(*) from t_r where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' using index i_r8;
+select count(*) from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4d;
+select count(*) from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5d;
 
 -- the instant written in three zones is one key: three rows each
 select count(*) from t_r where d5 = timestamptz'2015-03-01 00:00:00 UTC' using index i_r5;

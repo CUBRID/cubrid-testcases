@@ -86,16 +86,24 @@ select 'f6', count(*) from ((select rownum, f6 from t_r where f6 >= '' using ind
   difference (select rownum, f6 from t_c where f6 >= '' using index i_c6)) x;
 select 'f7', count(*) from ((select rownum, f7 from t_r where f7 >= '' using index i_r7)
   difference (select rownum, f7 from t_c where f7 >= '' using index i_c7)) x;
-select 'abs (f8)', count(*) from ((select rownum, f8 from t_r where abs (f8) >= 0 using index i_r8)
-  difference (select rownum, f8 from t_c where abs (f8) >= 0 using index i_c8)) x;
+-- the ABS () index is read as its key: a key holds f8 and -f8, whose rows lie in OID order, which may
+-- differ between the two tables
+select 'abs (f8)', count(*) from ((select rownum, abs (f8) from t_r where abs (f8) >= 0 using index i_r8)
+  difference (select rownum, abs (f8) from t_c where abs (f8) >= 0 using index i_c8)) x;
 select 'lower (f9)', count(*) from ((select rownum, f9 from t_r where lower (f9) >= '' using index i_r9)
   difference (select rownum, f9 from t_c where lower (f9) >= '' using index i_c9)) x;
 select 'f8 > 0', count(*) from ((select rownum, f8 from t_r where f8 > 0 using index i_r10)
   difference (select rownum, f8 from t_c where f8 > 0 using index i_c10)) x;
 
--- rows each index of t_r finds
+-- rows each index of t_r finds. With 0 rows differing above, the same count means the index holds exactly
+-- the rows of its twin
 select count(*) from t_r where f1 >= '' using index i_r1;
+select count(*) from t_r where f2 >= '' using index i_r2;
 select count(*) from t_r where f3 >= '' using index i_r3;
+select count(*) from t_r where f4 >= '' using index i_r4;
+select count(*) from t_r where f5 >= '' using index i_r5;
+select count(*) from t_r where f6 >= '' using index i_r6;
+select count(*) from t_r where f7 >= '' using index i_r7;
 select count(*) from t_r where abs (f8) >= 0 using index i_r8;
 select count(*) from t_r where lower (f9) >= '' using index i_r9;
 select count(*) from t_r where f8 > 0 using index i_r10;
