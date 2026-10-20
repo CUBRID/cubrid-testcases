@@ -26,9 +26,10 @@
  *    Case 12: a view over VALUES with a NULL first row
  *    Case 13: IN over a set operation with a VALUES argument whose first row is NULL
  *    Case 14: ENUM, SET and bit string columns, which the fix leaves as they were
+ *    Case 15: the generated name of an unaliased NULL first column (t_1, c_1, null), also in CTAS and a view
  */
 
-drop table if exists t_src, t_probe, t_ins, t_ins_ref, t_kinds;
+drop table if exists t_src, t_probe, t_ins, t_ins_ref, t_kinds, t_ctas;
 
 -- three source rows and three probe rows sharing 1 and 2, so a lost value changes the IN result
 create table t_src (i int);
@@ -158,5 +159,18 @@ select x from (select null x union all select cast(X'0f' as bit varying(8))) t o
 select x from (select cast(X'0f' as bit varying(8)) x union all select null) t order by 1;
 select x from (select null x union all select cast(b'00011' as bit(8))) t order by 1;
 select x from (select cast(b'00011' as bit(8)) x union all select null) t order by 1;
+
+
+evaluate 'Case 15: an unaliased NULL first column keeps its name; result = names t_1, t_2, c_1, null, rows NULL and 2';
+select * from (values (null), (2)) t order by 1;
+select t.t_1, t_2 from (values (null, null), (2, 'b')) t order by 1;
+with c as (values (null), (2)) select c_1 from c order by 1;
+select "null" from (select null union all select 2) t order by 1;
+create table t_ctas as select * from (values (null), (2)) t;
+select t_1 from t_ctas order by 1;
+create view v_names as select * from (values (null), (2)) t;
+select t_1 from v_names order by 1;
+drop view v_names;
+drop table t_ctas;
 
 drop table t_src, t_probe, t_ins, t_ins_ref, t_kinds;
