@@ -106,15 +106,15 @@ insert into t_sel select rownum, 0 from db_class a, db_class b limit 300;
 update t_sel set n = 10 + mod (id, 10);
 update statistics on t_sel with fullscan;
 $int,$0,$int,$1;
-select count (*) from t_sel where id > ? and n = 10 + ?;
+select count (*), min (n), max (n) from t_sel where id > ? and n = 10 + ?;
 $int,$0,$int,$7;
-select count (*) from t_sel where id > ? and n = 10 + ?;
+select count (*), min (n), max (n) from t_sel where id > ? and n = 10 + ?;
 $int,$0,$double,$2.0;
-select count (*) from t_sel where id > ? and n = 10 + ?;
+select count (*), min (n), max (n) from t_sel where id > ? and n = 10 + ?;
 $int,$0,$varchar,$3;
-select count (*) from t_sel where id > ? and n = 10 + ?;
+select count (*), min (n), max (n) from t_sel where id > ? and n = 10 + ?;
 $int,$100,$int,$7;
-select count (*) from t_sel where id > ? and n = 10 + ?;
+select count (*), min (n), max (n) from t_sel where id > ? and n = 10 + ?;
 
 
 evaluate 'Case 6: INSERT ... SELECT ... WHERE n = 10 + ? and UPDATE ... WHERE n = 10 + ?';
