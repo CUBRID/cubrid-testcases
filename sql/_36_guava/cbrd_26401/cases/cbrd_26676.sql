@@ -7,7 +7,8 @@
  * 2-3 - a 256/2048-char table column DEFAULT round-trips in full through
  *       db_attribute.default_value; 3 also cross-checks against _db_attribute
  * 4   - a 2049-char DEFAULT is accepted, but the catalog display truncates
- *       to 2048 while the stored value keeps its full length
+ *       to 2048 (db_attribute/_db_attribute agree on the truncated value)
+ *       while the stored value keeps its full length
  * 5   - db_stored_procedure_args/_db_stored_procedure_args.default_value
  *       column width is 2048
  * 6   - a 2048-char PL/CSQL parameter DEFAULT round-trips in full through
@@ -41,8 +42,11 @@ select
 drop table if exists t3;
 create table t3 (c1 int, c2 varchar(3000) default rpad('abcd', 2049, 'abcd'));
 
-evaluate 'Case 4: a 2049-char DEFAULT is accepted, but the catalog display truncates to 2048 while the real default value keeps its full length';
+evaluate 'Case 4: a 2049-char DEFAULT is accepted, but the catalog display truncates to 2048 while the real default value keeps its full length, and db_attribute/_db_attribute agree on the truncated value';
 select char_length(default_value), default_value from db_attribute where class_name = 't3' and attr_name = 'c2';
+select
+    (select default_value from db_attribute where class_name = 't3' and attr_name = 'c2')
+    = (select default_value from _db_attribute where class_of.class_name = 't3' and attr_name = 'c2');
 insert into t3 (c1) values (1);
 select char_length(c2), c2 from t3;
 
