@@ -34,7 +34,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -63,7 +63,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -210,7 +210,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -247,7 +247,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -268,7 +268,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -402,7 +402,7 @@ Query Plan:
       TABLE SCAN (b)
     INDEX SCAN (c.idx_col?_col?_col?) (key range: c.col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a, [dba.subquery_small] b semi join [dba.subquery_small] c on c.col?=a.col? where a.col?=b.col? and b.col?= ?:? 
+  rewritten query: select /*+ USE_NL USE_HASH(b) PARALLEL(?) */ count(*) from [dba.subquery_big] a, [dba.subquery_small] b semi join [dba.subquery_small] c on c.col?=a.col? where a.col?=b.col? and b.col?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -552,7 +552,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.pk_subquery_small_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -583,7 +583,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

@@ -1,0 +1,522 @@
+===================================================
+    
+TC-2-01-01: SEMI JOIN     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+4
+===================================================
+0
+===================================================
+    
+TC-2-01-01-01: USE_HASH, result and plan     
+
+===================================================
+ca    
+1     
+2     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ta.ca from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-01-02: NO_USE_HASH, result and plan     
+
+===================================================
+ca    
+1     
+2     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+0
+===================================================
+    
+TC-2-01-02: ANTI JOIN     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+4
+===================================================
+0
+===================================================
+    
+TC-2-01-02-01: USE_HASH, result and plan     
+
+===================================================
+ca    
+3     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-02-02: NO_USE_HASH, result and plan     
+
+===================================================
+ca    
+3     
+
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+0
+===================================================
+    
+TC-2-01-03: NOT IN     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+2
+===================================================
+0
+===================================================
+    
+TC-2-01-03-01: USE_HASH, result and plan     
+
+===================================================
+ca    
+4     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ ta.ca from ta ta anti join tb tb on ta.cb=tb.ca
+===================================================
+0
+===================================================
+    
+TC-2-01-04: index on tb.ca, USE_HASH     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+TC-2-01-04-01: EXISTS, no hint, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+idx-join (semi join)
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-02: EXISTS, outer query USE_HASH, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-03: EXISTS, subquery USE_HASH, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-04: EXISTS, subquery USE_HASH(tb), result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tb) */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-05: NOT EXISTS, no hint, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+idx-join (anti join)
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-06: NOT EXISTS, outer query USE_HASH, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-07: NOT EXISTS, subquery USE_HASH, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-04-08: NOT EXISTS, subquery USE_HASH(tb), result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(tb) */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+0
+===================================================
+    
+TC-2-01-05: no index on tb.ca, NO_USE_HASH     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+    
+TC-2-01-05-01: EXISTS, no hint, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-02: EXISTS, outer query NO_USE_HASH, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-03: EXISTS, subquery NO_USE_HASH, result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-04: EXISTS, subquery NO_USE_HASH(tb), result and plan     
+
+===================================================
+count(*)    
+499     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(tb) */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-05: NOT EXISTS, no hint, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-06: NOT EXISTS, outer query NO_USE_HASH, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-07: NOT EXISTS, subquery NO_USE_HASH, result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-05-08: NOT EXISTS, subquery NO_USE_HASH(tb), result and plan     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(tb) */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+0
