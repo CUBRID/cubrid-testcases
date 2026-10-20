@@ -23,9 +23,13 @@
  * query once with hashing disabled and parallelism off
  * (NO_HASH_AGGREGATE PARALLEL(1): the plain serial sort GROUP BY reference)
  * and once with the default hash GROUP BY on the automatic parallel degree,
- * and prints order-independent checksums of the groups. The two must match
- * and equal the values that follow from the data definition. SHOW TRACE is
- * deliberately not used (timings are not masked).
+ * and prints order-independent checksums of the groups. Besides the plain
+ * totals, wsum_cnt = sum(key * count) and wsum_v = sum(key * sum(v)) weight
+ * every group by its own key, so counts or sums attributed to the wrong key
+ * (two groups exchanging their aggregates) change the checksum even when the
+ * totals stay the same. The two runs must match and equal the values that
+ * follow from the data definition. SHOW TRACE is deliberately not used
+ * (timings are not masked).
  *
  * Data: hg_t 20,000 rows, about 160 heap pages (100-byte pad) so the heap is
  *       scanned in parallel under test_mode (threshold 32 pages) and each
@@ -63,53 +67,54 @@ select count(*), count(distinct k_uniq), count(distinct k_few), count(distinct k
 select count(*), count(distinct key_s), min(length(key_s)), max(length(key_s)) from hg_wide;
 
 -- Case 1: 1,500 rows, unique key (fewer than 2,000 tuples: the very-high-selectivity check never fires)
---         expected: 1500 groups, 1500 rows, sum k 15014250, sum v 624750
+--         expected: 1500 groups, 1500 rows, sum k 15014250, sum v 624750, wsum cnt 15014250, wsum v 6249544750
 evaluate '[1] 1,500 rows, unique key: sort reference / hash GROUP BY';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ k_uniq kk, count(*) cnt, sum(v) sv from hg_t where id <= 1500 group by k_uniq) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v
   from (select k_uniq kk, count(*) cnt, sum(v) sv from hg_t where id <= 1500 group by k_uniq) d;
 
 -- Case 2: 1,500 rows, 50 keys (30 rows each)
---         expected: 50 groups, 1500 rows, sum k 1225, sum v 624750, every group count 30
+--         expected: 50 groups, 1500 rows, sum k 1225, sum v 624750, wsum cnt 36750, wsum v 15606500, every group count 30
 evaluate '[2] 1,500 rows, 50 keys: sort reference / hash GROUP BY';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ k_few kk, count(*) cnt, sum(v) sv from hg_t where id <= 1500 group by k_few) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select k_few kk, count(*) cnt, sum(v) sv from hg_t where id <= 1500 group by k_few) d;
 
 -- Case 3: 1,500 rows with 2,000-character unique keys: the 2MB hash budget is exceeded before 2,000 tuples
---         expected: 1500 groups, 1500 rows, key length sum 3000000, sum v 624750, key tails 000001 / 001500
+--         expected: 1500 groups, 1500 rows, key length sum 3000000, sum v 624750, wsum cnt 1125750, wsum v 499875250
+--                   (weighted by the numeric key tail), key tails 000001 / 001500
 evaluate '[3] 1,500 rows, 2KB unique keys (budget exceeded below 2,000 tuples): sort reference / single hash context / parallel';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, sum(cast(substr(ks, 1995, 6) as int) * cnt) wsum_cnt, sum(cast(substr(ks, 1995, 6) as int) * sv) wsum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ key_s ks, count(*) cnt, sum(v) sv from hg_wide group by key_s) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, sum(cast(substr(ks, 1995, 6) as int) * cnt) wsum_cnt, sum(cast(substr(ks, 1995, 6) as int) * sv) wsum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
   from (select /*+ NO_PARALLEL_SCAN */ key_s ks, count(*) cnt, sum(v) sv from hg_wide group by key_s) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(length(ks)) sum_key_len, sum(sv) sum_v, sum(cast(substr(ks, 1995, 6) as int) * cnt) wsum_cnt, sum(cast(substr(ks, 1995, 6) as int) * sv) wsum_v, substr(min(ks), 1995, 6) min_key_tail, substr(max(ks), 1995, 6) max_key_tail
   from (select key_s ks, count(*) cnt, sum(v) sv from hg_wide group by key_s) d;
 
 -- Case 4: 20,000 rows, unique key: abandoned at the first check (ratio 1.0 > 0.95)
---         expected: 20000 groups, 20000 rows, sum k 199990000, sum v 9990000
+--         expected: 20000 groups, 20000 rows, sum k 199990000, sum v 9990000, wsum cnt 199990000, wsum v 99894330000
 evaluate '[4] 20,000 rows, unique key (abandoned at 2,000 tuples): sort reference / hash GROUP BY';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ k_uniq kk, count(*) cnt, sum(v) sv from hg_t group by k_uniq) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v
   from (select k_uniq kk, count(*) cnt, sum(v) sv from hg_t group by k_uniq) d;
 
 -- Case 5: 20,000 rows, 50 keys (400 rows each): hash kept
---         expected: 50 groups, 20000 rows, sum k 1225, sum v 9990000, every group count 400
+--         expected: 50 groups, 20000 rows, sum k 1225, sum v 9990000, wsum cnt 490000, wsum v 248920000, every group count 400
 evaluate '[5] 20,000 rows, 50 keys (hash kept): sort reference / hash GROUP BY';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ k_few kk, count(*) cnt, sum(v) sv from hg_t group by k_few) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select k_few kk, count(*) cnt, sum(v) sv from hg_t group by k_few) d;
 
 -- Case 6: 20,000 rows, 5,000 scattered keys (3 to 5 rows each): ratio about 0.87 at 2,000 tuples -> kept under the new cutoff
---         expected: 5000 groups, 20000 rows, sum k 12497500, sum v 9990000, group counts 3 .. 5
+--         expected: 5000 groups, 20000 rows, sum k 12497500, sum v 9990000, wsum cnt 49941268, wsum v 24945568744, group counts 3 .. 5
 evaluate '[6] 20,000 rows, 5,000 scattered keys (kept under the decaying cutoff): sort reference / hash GROUP BY';
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select /*+ NO_HASH_AGGREGATE PARALLEL(1) */ k_mid kk, count(*) cnt, sum(v) sv from hg_t group by k_mid) d;
-select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, min(cnt) min_cnt, max(cnt) max_cnt
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v, sum(kk * cnt) wsum_cnt, sum(cast(kk as bigint) * sv) wsum_v, min(cnt) min_cnt, max(cnt) max_cnt
   from (select k_mid kk, count(*) cnt, sum(v) sv from hg_t group by k_mid) d;
 
 -- Case 7: HAVING + ORDER BY + LIMIT on the 50-key GROUP BY, actual rows
