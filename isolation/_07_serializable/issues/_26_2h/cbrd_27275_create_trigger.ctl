@@ -49,7 +49,7 @@ MC: wait until C2 ready;
 C1: ROLLBACK;
 MC: wait until C1 ready;
 
-C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, action_definition FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 C2: SELECT name, owner.name FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 MC: wait until C2 ready;
 
@@ -58,7 +58,7 @@ C2: CREATE TRIGGER t1 AFTER INSERT ON tbl EXECUTE PRINT 'NEW';
 C2: COMMIT;
 MC: wait until C2 ready;
 
-C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, action_definition FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 C2: SELECT name, owner.name FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 C2: INSERT INTO tbl VALUES (2);
 C2: COMMIT;
@@ -68,7 +68,7 @@ MC: wait until C2 ready;
 C2: SET TRANSACTION LOCK TIMEOUT INFINITE;
 C2: DROP TRIGGER t1;
 C2: COMMIT;
-C2: SELECT unique_name, action_definition FROM db_trigger WHERE unique_name = 'dba.t1' ORDER BY 1,2;
+C2: SELECT name, action_definition FROM db_trigger WHERE name = 't1' ORDER BY 1,2;
 MC: wait until C2 ready;
 
 C1: DROP TABLE IF EXISTS tbl;
