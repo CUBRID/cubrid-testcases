@@ -362,3 +362,59 @@ count(*)    sum( mod(c_all.id, 7))    max(x.cnt)
 
 ===================================================
 0
+===================================================
+    
+Case 8: a recursive member with SELECT DISTINCT, whose sort stays serial; result = no_parallel_scan in the CTE body and parallel(1) in the recursive member     
+
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20001     59999     
+3     10001     30000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select [dba.t_src].id, ? from [dba.t_src] [dba.t_src]
+
+  SORT (distinct)
+    TABLE SCAN (dba.r)
+
+  rewritten query: select distinct [dba.r].id- mod([dba.r].id, [dba.r].lvl*?), [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? )
+
+  SORT (group by)
+    TABLE SCAN (dba.r)
+
+  rewritten query: with recursive r(id, lvl) as (select [dba.t_src].id, ? from [dba.t_src] [dba.t_src] union all select distinct [dba.r].id- mod([dba.r].id, [dba.r].lvl*?), [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ))select [dba.r].lvl, count(*), sum( mod([dba.r].id, ?)) from [dba.r] [dba.r] group by [dba.r].lvl
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20001     59999     
+3     10001     30000     
+
+===================================================
+0

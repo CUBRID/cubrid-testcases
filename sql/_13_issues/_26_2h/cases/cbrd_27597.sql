@@ -8,8 +8,15 @@
  *  worker file only, so the outer query over a recursive CTE and a CTE that reads another
  *  CTE lost rows without an error. The fix gives both list ids the chain.
  *
+ *  A parallel sort chains its worker files the same way. Each iteration of a recursive CTE
+ *  copies the result of the recursive member into a list id that takes no chain, so a
+ *  recursive member that sorts, as SELECT DISTINCT does, failed the copy with an assertion.
+ *  The fix runs the sort and hash join of the recursive member serially, and the CTE body
+ *  and the outer query keep their parallel scans.
+ *
  *  Every tested query is followed by the same query with no_parallel_scan in the CTE body,
- *  which leaves a single list file, and the two result blocks must match. CTP runs with
+ *  which leaves a single list file, and the two result blocks must match. The twin of
+ *  Case 8 also sorts serially with parallel(1) in the recursive member. CTP runs with
  *  test_mode=yes, which masks volatile trace values to '?'. The traces show the parallel
  *  heap scan of the CTE body and the parallel temp scan of the CTE result.
  *
@@ -21,6 +28,7 @@
  *    Case 5:  the outer query and another CTE read the same materialized CTE
  *    Case 6:  a materialized CTE groups a recursive CTE, which was read in full before the fix
  *    Case 7:  the CTE runs as a parallel subquery job before the outer query reads it
+ *    Case 8:  a recursive member with SELECT DISTINCT, whose sort stays serial
  */
 
 drop table if exists t_digit, t_src;
@@ -78,9 +86,20 @@ with recursive r (id, pad, lvl) as (select /*+ no_parallel_scan */ id, pad, 1 fr
 evaluate 'Case 7: the CTE runs as a parallel subquery job before the outer query reads it; result = no_parallel_scan in the CTE body';
 with c_all as (select /*+ materialize */ id, pad from t_src) select /*+ recompile */ count(*), sum (mod (c_all.id, 7)), max (x.cnt) from c_all, (select /*+ no_merge */ count(*) cnt from t_digit) x;
 show trace;
--- trace goes off before the last query that no show trace reads: its plan would stay in the
+-- trace goes off before a query that no show trace reads: its plan would stay in the
 -- session and the next case's first show trace over a cached plan would print it
 set trace off;
 with c_all as (select /*+ materialize no_parallel_scan */ id, pad from t_src) select /*+ recompile */ count(*), sum (mod (c_all.id, 7)), max (x.cnt) from c_all, (select /*+ no_merge */ count(*) cnt from t_digit) x;
+
+
+-- DISTINCT keeps 40000, 20001 and 10001 rows at the three levels: the recursive member sorts
+-- 40000 and then 20001 rows, each more than ten times the parallel sort threshold of test_mode
+-- (2 pages), and the trace shows the ORDERBY of the recursive part without a parallel workers line
+set trace on;
+evaluate 'Case 8: a recursive member with SELECT DISTINCT, whose sort stays serial; result = no_parallel_scan in the CTE body and parallel(1) in the recursive member';
+with recursive r (id, lvl) as (select id, 1 from t_src union all select distinct id - mod (id, lvl * 2), lvl + 1 from r where lvl < 3) select /*+ recompile */ lvl, count(*), sum (mod (id, 7)) from r group by lvl order by lvl;
+show trace;
+set trace off;
+with recursive r (id, lvl) as (select /*+ no_parallel_scan */ id, 1 from t_src union all select /*+ parallel(1) */ distinct id - mod (id, lvl * 2), lvl + 1 from r where lvl < 3) select /*+ recompile */ lvl, count(*), sum (mod (id, 7)) from r group by lvl order by lvl;
 
 drop table t_digit, t_src;
