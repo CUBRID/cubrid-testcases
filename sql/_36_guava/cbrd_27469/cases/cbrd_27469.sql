@@ -16,10 +16,11 @@
  *
  *  1. No condition - PARTITION BY + ORDER BY, PARTITION BY only, ORDER BY only (PK index)
  *  2. USING INDEX hint without a key-range condition is honored
- *  3. Several analytic functions - the index-ordered one runs first and skips its sort,
- *     functions on index-prefix keys share one sort group, and sort keys that are also
- *     in the select list (written as positions after semantic check). A covered key that
- *     shares one sort with a longer key the index does not cover gives no index candidate
+ *  3. Several analytic functions - functions on index-prefix keys share one sort group and
+ *     skip it, sort keys that are also in the select list (written as positions after
+ *     semantic check). XASL generation may merge sort lists (PARTITION BY keys compared as
+ *     sets), so when any function has a sort list the index order does not cover, no
+ *     index candidate is generated (3-1, 3-4, 3-5)
  *  4. ORDER BY of the query is still sorted after the analytic evaluation
  *  5. Nullable partition column - a multi-column index whose other key column is NOT NULL
  *     holds the NULL partition and is used; a single-column index does not hold the
@@ -99,7 +100,7 @@ show trace;
 --
 -- 3. Several analytic functions
 --
-evaluate '3-1. index-ordered function written second - runs first (#1 sort skipped), the other sorts (#2)';
+evaluate '3-1. another function whose key the index does not cover - no analytic index scan, both sort';
 select /*+ recompile */ count(*), sum(r3), sum(d2) from (
   select rank() over (order by col3) r3,
          dense_rank() over (partition by col2 order by col1) d2 from t27469) x;
@@ -137,6 +138,39 @@ select /*+ recompile */ count(*), sum(r1), sum(r2) from (
   select row_number() over (partition by col2) r1,
          row_number() over (partition by col2 order by col3) r2 from t27469) x;
 show trace;
+
+drop table if exists t27469_merge;
+create table t27469_merge (a int not null, b int, c int);
+create index idx_merge_a_b on t27469_merge (a, b);
+insert into t27469_merge
+with recursive cte (k) as (
+  select 1
+  union all
+  select k + 1 from cte where k < 1000
+)
+select mod(n, 7), mod(n, 11), n
+from (select (b.k - 1) * 1000 + a.k as n from cte a, cte b where b.k <= 20) t;
+update statistics on t27469_merge with fullscan;
+
+evaluate '3-5. PARTITION BY a, b merges into the (b, a, c) sort of another function - no analytic index scan';
+select /*+ recompile */ count(*), max(s), sum(r) from (
+  select sum(c) over (partition by a, b) s,
+         row_number() over (partition by b order by a, c) r from t27469_merge) x;
+show trace;
+
+evaluate '3-6. (a) and (a, b) on index (a, b) merge into an index prefix - INDEX SCAN, sort skipped';
+select /*+ recompile */ count(*), sum(c1), sum(d2) from (
+  select count(*) over (partition by a) c1,
+         dense_rank() over (partition by a order by b) d2 from t27469_merge) x;
+show trace;
+
+evaluate '3-6v. same value as the sequential scan';
+select count(*) from (
+  select c, count(*) over (partition by a) c1,
+         dense_rank() over (partition by a order by b) d2 from t27469_merge) a1,
+  (select c, count(*) over (partition by a) c1,
+         dense_rank() over (partition by a order by b) d2 from t27469_merge using index none) b1
+where a1.c = b1.c and a1.c1 = b1.c1 and a1.d2 = b1.d2;
 
 --
 -- 4. ORDER BY of the query
@@ -283,6 +317,7 @@ select /*+ recompile */ id, a, grp,
 from t27469_range where a = 1 using index none order by id;
 
 drop table t27469_range;
+drop table t27469_merge;
 drop table t27469_part;
 drop table t27469_null;
 drop table t27469;

@@ -156,7 +156,7 @@ Trace Statistics:
 
 ===================================================
     
-3-1. index-ordered function written second - runs first (#1 sort skipped), the other sorts (#2)     
+3-1. another function whose key the index does not cover - no analytic index scan, both sort     
 
 ===================================================
 count(*)    sum(r3)    sum(d2)    
@@ -166,7 +166,7 @@ count(*)    sum(r3)    sum(d2)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+  TABLE SCAN (dba.t?)
 
   rewritten query: (select rank() over (order by ?), dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
 
@@ -181,8 +181,10 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
         ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -292,6 +294,86 @@ Trace Statistics:
         ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+    
+3-5. PARTITION BY a, b merges into the (b, a, c) sort of another function - no analytic index scan     
+
+===================================================
+count(*)    max(s)    sum(r)    
+20000     2607410     18191819     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?_merge)
+
+  rewritten query: (select sum([dba.t?_merge].c) over (partition by ?, ?), row_number() over (partition by ? order by ?, ?) from [dba.t?_merge] [dba.t?_merge])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), max(x.s), sum(x.r) from (select sum([dba.t?_merge].c) over (partition by ?, ?) as [s], row_number() over (partition by ? order by ?, ?) as [r] from [dba.t?_merge] [dba.t?_merge]) x (s, r)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?_merge), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+3-6. (a) and (a, b) on index (a, b) merge into an index prefix - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(c1)    sum(d2)    
+20000     57142858     119993     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_merge.idx_merge_a_b) (covered: true)
+
+  rewritten query: (select count(*) over (partition by ?), dense_rank() over (partition by ? order by ?) from [dba.t?_merge] [dba.t?_merge])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.c?), sum(x.d?) from (select count(*) over (partition by ?) as [c?], dense_rank() over (partition by ? order by ?) as [d?] from [dba.t?_merge] [dba.t?_merge]) x (c?, d?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?_merge.idx_merge_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+3-6v. same value as the sequential scan     
+
+===================================================
+count(*)    
+20000     
 
 ===================================================
     
@@ -817,6 +899,8 @@ id    a    grp    r    c
 5     1     1     2     2     
 6     1     2     1     1     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
