@@ -34,19 +34,19 @@ update statistics on t_27474_d, t_27474_m, t_27474_b with fullscan;
 set trace on;
 
 evaluate 'Q1. 12 driving rows: hash join over a parallel scan of t_27474_b';
-select /*+ recompile */ count (*), sum (b.v)
+select /*+ recompile */ count (*), sum (b.v), max (b.pad)
 from t_27474_d d, t_27474_m m, t_27474_b b
 where d.name in ('N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10', 'N11', 'N12') and m.d_id = d.id and b.m_id = m.id;
 show trace;
 
 evaluate 'Q2. same query, parallel execution off: serial nested loop, same result';
-select /*+ recompile NO_PARALLEL_SCAN NO_PARALLEL_HASH_JOIN */ count (*), sum (b.v)
+select /*+ recompile NO_PARALLEL_SCAN NO_PARALLEL_HASH_JOIN */ count (*), sum (b.v), max (b.pad)
 from t_27474_d d, t_27474_m m, t_27474_b b
 where d.name in ('N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10', 'N11', 'N12') and m.d_id = d.id and b.m_id = m.id;
 show trace;
 
 evaluate 'Q3. one driving row: nested loop is cheaper even against the parallel discount';
-select /*+ recompile */ count (*), sum (b.v)
+select /*+ recompile */ count (*), sum (b.v), max (b.pad)
 from t_27474_d d, t_27474_m m, t_27474_b b
 where d.name = 'N1' and m.d_id = d.id and b.m_id = m.id;
 show trace;
