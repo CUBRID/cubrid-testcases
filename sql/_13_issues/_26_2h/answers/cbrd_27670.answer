@@ -11,13 +11,47 @@ Case 1: issue repro, p2 and p4 empty; expected 1, 25
 ===================================================
 3
 ===================================================
+0
+===================================================
 min(i)    max(i)    
 1     25     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.pt)
+
+  rewritten query: select min([dba.pt].i), max([dba.pt].i) from [dba.pt] [dba.pt]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: i_pt_i)
+     
 
 ===================================================
 min(i)    max(i)    
 1     25     
 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.pt)
+
+  rewritten query: select min([dba.pt].i), max([dba.pt].i) from [dba.pt] [dba.pt] where [dba.pt].i is not null 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pt), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pt__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pt__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pt__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pt__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
     
 Case 2: issue repro, p2 empty; expected 1, 35     
@@ -185,9 +219,26 @@ Case 9: several MIN/MAX on different indexes, a descending index; expected 1, 25
 ===================================================
 3
 ===================================================
+0
+===================================================
 min(a)    max(a)    min(b)    max(b)    
 1     25     10     30     
 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.pm)
+
+  rewritten query: select min([dba.pm].a), max([dba.pm].a), min([dba.pm].b), max([dba.pm].b) from [dba.pm] [dba.pm]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.pm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: i_pm_a, i_pm_b)
+     
+
+===================================================
+0
 ===================================================
 min(a)    max(a)    
 1     25     
@@ -198,12 +249,24 @@ min(b)    max(b)
 
 ===================================================
     
-Case 10: NULLs and values in one partition, an all-NULL partition after it; expected 2, 9     
+Case 10: NULLs and values in one partition, all-NULL partitions after it; expected 2, 9 twice     
 
 ===================================================
 2
 ===================================================
 6
+===================================================
+min(i)    max(i)    
+2     9     
+
+===================================================
+min(i)    max(i)    
+2     9     
+
+===================================================
+6
+===================================================
+5
 ===================================================
 min(i)    max(i)    
 2     9     

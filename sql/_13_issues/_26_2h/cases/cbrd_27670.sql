@@ -9,7 +9,9 @@
  *  partition result.
  *
  *  Each MIN/MAX is checked against the same aggregate with "where <col> is not null", which
- *  reads the rows and is not merged per partition.
+ *  reads the rows and is not merged per partition. The trace of Case 1 and Case 9 shows the
+ *  indexes the aggregates are read from (agl) and no partition scan, so the cases keep checking
+ *  the merge; the trace of the reference query shows the partition scans.
  *
  *  Coverage:
  *    Case 1:  issue repro, range partitions, the second and the last one empty
@@ -21,7 +23,8 @@
  *    Case 7:  hash partitions with empty partitions
  *    Case 8:  negative values, MAX with an empty partition after the maximum
  *    Case 9:  several MIN/MAX on different indexes in one select, a descending index
- *    Case 10: NULLs and values in one partition, an all-NULL partition after it
+ *    Case 10: NULLs and values in one partition, an all-NULL partition after it, then all-NULL
+ *             partitions after the only partition with values
  */
 
 drop table if exists pt, pn, pl, ph, pm;
@@ -32,8 +35,12 @@ create table pt (i int) partition by range (i)
    partition p3 values less than (30), partition p4 values less than maxvalue);
 create index i_pt_i on pt (i);
 insert into pt values (1), (5), (25);
+set trace on;
 select min(i), max(i) from pt;
+show trace;
 select min(i), max(i) from pt where i is not null;
+show trace;
+set trace off;
 
 
 evaluate 'Case 2: issue repro, p2 empty; expected 1, 35';
@@ -109,14 +116,21 @@ create table pm (a int, b int, k int) partition by range (k)
 create index i_pm_a on pm (a);
 create index i_pm_b on pm (b desc);
 insert into pm values (1, null, 1), (null, 10, 15), (25, 30, 25);
+set trace on;
 select min(a), max(a), min(b), max(b) from pm;
+show trace;
+set trace off;
 select min(a), max(a) from pm where a is not null;
 select min(b), max(b) from pm where b is not null;
 
 
-evaluate 'Case 10: NULLs and values in one partition, an all-NULL partition after it; expected 2, 9';
+evaluate 'Case 10: NULLs and values in one partition, all-NULL partitions after it; expected 2, 9 twice';
 delete from pn;
 insert into pn values (null, 1), (2, 2), (null, 15), (null, 16), (null, 25), (9, 26);
+select min(i), max(i) from pn;
+select min(i), max(i) from pn where i is not null;
+delete from pn;
+insert into pn values (null, 1), (2, 2), (9, 3), (null, 15), (null, 25);
 select min(i), max(i) from pn;
 select min(i), max(i) from pn where i is not null;
 
