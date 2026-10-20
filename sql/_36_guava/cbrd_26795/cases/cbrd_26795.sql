@@ -30,6 +30,12 @@
  * filler columns). The filler columns keep the estimated ORDER BY ... LIMIT
  * result (88 bytes x 32,000 rows) above the 2MB top-N buffer so that the
  * external sort with limit really runs instead of the in-memory top-N heap.
+ * Cases 3 and 4 reference every filler column and pad in the outer checksum:
+ * an unreferenced select-list item of the non-mergeable inline view is pruned
+ * by the rewriter (mq_remove_select_list_for_inline_view), which would shrink
+ * the sorted tuple to (k, id) and send the query to the top-N heap instead.
+ * count(distinct ...) catches a lost row paired with a duplicated one whose
+ * values happen to keep the sums unchanged.
  * The answer never contains a worker count or degree, so it does not depend
  * on the number of cores.
  *
@@ -86,27 +92,32 @@ select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
   from (select k kk, count(*) cnt, sum(v) sv from px_sort_t group by k having count(*) = 1) d;
 
 -- Case 3: ORDER BY k, id LIMIT 32000 (unique key, result estimate above the 2MB top-N buffer)
---         expected: 32000 rows, k = 0..31999 (sum 511984000), pad length sum 3200000
+--         expected: 32000 rows, 32000 distinct k = 0..31999 (sum 511984000), sum_x = 8 * sum_id, pad length sum 3200000
 evaluate '[3] ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT): serial reference';
-select count(*) cnt, sum(k) sum_k, min(k) min_k, max(k) max_k, sum(id) sum_id, sum(length(pad)) sum_pad
+select count(*) cnt, count(distinct k) dist_k, sum(k) sum_k, min(k) min_k, max(k) max_k, sum(id) sum_id,
+       sum(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8) sum_x, sum(length(pad)) sum_pad
   from (select /*+ PARALLEL(1) */ id, grp, k, v, x1, x2, x3, x4, x5, x6, x7, x8, pad
           from px_sort_t order by k, id limit 32000) d;
 
 evaluate '[3] ORDER BY unique key LIMIT 32000 (SORT_ORDER_WITH_LIMIT): parallel';
-select count(*) cnt, sum(k) sum_k, min(k) min_k, max(k) max_k, sum(id) sum_id, sum(length(pad)) sum_pad
+select count(*) cnt, count(distinct k) dist_k, sum(k) sum_k, min(k) min_k, max(k) max_k, sum(id) sum_id,
+       sum(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8) sum_x, sum(length(pad)) sum_pad
   from (select id, grp, k, v, x1, x2, x3, x4, x5, x6, x7, x8, pad
           from px_sort_t order by k, id limit 32000) d;
 
 -- Case 4: ORDER BY grp, id LIMIT 32000: grp has ties (412/413 rows per value), id breaks them
---         expected: 32000 rows, grp 0..77 (grp 77 only partially: 240 rows, last id 23260), see NOTES
+--         expected: 32000 rows, 32000 distinct id, grp 0..77 (grp 77 only partially: 240 rows, last id 23260),
+--                   sum_x = 8 * sum_id, pad length sum 3200000
 evaluate '[4] ORDER BY key with ties + id tiebreak, LIMIT 32000: serial reference';
-select count(*) cnt, sum(grp) sum_grp, max(grp) max_grp, sum(id) sum_id, sum(k) sum_k,
+select count(*) cnt, count(distinct id) dist_id, sum(grp) sum_grp, max(grp) max_grp, sum(id) sum_id, sum(k) sum_k,
+       sum(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8) sum_x, sum(length(pad)) sum_pad,
        sum(case when grp = 77 then 1 else 0 end) rows_in_last_grp, max(case when grp = 77 then id else 0 end) max_id_in_last_grp
   from (select /*+ PARALLEL(1) */ id, grp, k, v, x1, x2, x3, x4, x5, x6, x7, x8, pad
           from px_sort_t order by grp, id limit 32000) d;
 
 evaluate '[4] ORDER BY key with ties + id tiebreak, LIMIT 32000: parallel';
-select count(*) cnt, sum(grp) sum_grp, max(grp) max_grp, sum(id) sum_id, sum(k) sum_k,
+select count(*) cnt, count(distinct id) dist_id, sum(grp) sum_grp, max(grp) max_grp, sum(id) sum_id, sum(k) sum_k,
+       sum(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8) sum_x, sum(length(pad)) sum_pad,
        sum(case when grp = 77 then 1 else 0 end) rows_in_last_grp, max(case when grp = 77 then id else 0 end) max_id_in_last_grp
   from (select id, grp, k, v, x1, x2, x3, x4, x5, x6, x7, x8, pad
           from px_sort_t order by grp, id limit 32000) d;
