@@ -8,14 +8,16 @@
  * If Au_disable leaks (stays true), the read succeeds and 777 is shown.
  * The baseline read before any DML shows the check is on to begin with.
  *
- * Without the CBRD-26821 fix, Case 1, 2, 13 and 14 leak. With the CBRD-26821 fix but
- * without the CBRD-26823 fix, only Case 14 leaks. Case 3 - 12 do not leak in either.
+ * Without the CBRD-26821 fix, Case 1, 2 and 13 - 16 leak. With the CBRD-26821 fix but
+ * without the CBRD-26823 fix, Case 14 leaks. Case 3 - 12 do not leak in either.
  * A leak stays for the rest of the session, so every later case also shows 777
  * and the first case that shows 777 is the one that leaked. To see whether a later
  * case leaks by itself, run it in its own session.
  *
  * Coverage:
  * Case 1, 2, 13 - reproduce CBRD-26821
+ * Case 15, 16   - the CBRD-26821 path ending in an error after the subquery ran
+ *                 (Case 15 fails on the client, Case 16 fails at the server)
  * Case 14       - reproduce CBRD-26823 (an INSERT expression inside UPDATE is
  *                 accepted only in a trigger action)
  * Case 3 - 7    - prepared statements (do_execute_*)
@@ -38,6 +40,8 @@
  * 12 - DELETE with an object label and a subquery in WHERE
  * 13 - UPDATE OBJECT by dba, then login as u_26821
  * 14 - INSERT expression in UPDATE CLASS, run by a trigger
+ * 15 - UPDATE OBJECT whose subquery returns more than one row
+ * 16 - UPDATE OBJECT that violates a unique index
  */
 
 drop table if exists t_secret;
@@ -132,6 +136,14 @@ select * from dba.t_secret;
 
 evaluate 'Case 14: INSERT expression in UPDATE CLASS, run by a trigger';
 update t6 set a = 1;
+select * from dba.t_secret;
+
+evaluate 'Case 15: UPDATE OBJECT whose subquery returns more than one row';
+update object :o2 set b = (select x from t2);
+select * from dba.t_secret;
+
+evaluate 'Case 16: UPDATE OBJECT that violates a unique index';
+update object :o2 set a = (select min(x) from t2) + 20;
 select * from dba.t_secret;
 
 drop table t1, t2, t3, t4, t6, t7;
