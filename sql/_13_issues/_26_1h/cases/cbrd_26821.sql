@@ -1,23 +1,28 @@
 /**
- * This test case verifies CBRD-26821: authorization checks must be back on after a DML statement
- * (stale Au_disable left by do_select_internal overwriting parser->au_save)
+ * This test case verifies CBRD-26821 and CBRD-26823: authorization checks must be back on
+ * after a DML statement (stale Au_disable left by do_select_internal (CBRD-26821) or
+ * insert_local (CBRD-26823) overwriting parser->au_save)
  *
  * After each DML statement, the same session reads a table that u_26821 has no
  * privilege on. The read must fail with an authorization error.
  * If Au_disable leaks (stays true), the read succeeds and 777 is shown.
  * The baseline read before any DML shows the check is on to begin with.
  *
- * Without the fix, only Case 1, 2 and 13 leak; Case 3 - 12 do not leak even then.
+ * Without the CBRD-26821 fix, Case 1, 2, 13 and 14 leak. With the CBRD-26821 fix but
+ * without the CBRD-26823 fix, only Case 14 leaks. Case 3 - 12 do not leak in either.
  * A leak stays for the rest of the session, so every later case also shows 777
  * and the first case that shows 777 is the one that leaked. To see whether a later
  * case leaks by itself, run it in its own session.
  *
  * Coverage:
  * Case 1, 2, 13 - reproduce CBRD-26821
+ * Case 14       - reproduce CBRD-26823 (an INSERT expression inside UPDATE is
+ *                 accepted only in a trigger action)
  * Case 3 - 7    - prepared statements (do_execute_*)
- * Case 8 - 12   - regression guards for CBRD-26823 (do_statement path; an object
- *                 label keeps the statement from being prepared, and the no-op
- *                 triggers on t4 make UPDATE and DELETE run on the client)
+ * Case 8 - 12   - do_statement paths that CBRD-26823 changed; the result is the
+ *                 same with or without the fix (an object label keeps the
+ *                 statement from being prepared, and the no-op triggers on t4
+ *                 make UPDATE and DELETE run on the client)
  *
  * 1 - UPDATE OBJECT with a subquery in SET
  * 2 - UPDATE CLASS attribute with a subquery and an object host variable in SET
@@ -32,6 +37,7 @@
  * 11 - MERGE with an object label in ON and subqueries in both branches
  * 12 - DELETE with an object label and a subquery in WHERE
  * 13 - UPDATE OBJECT by dba, then login as u_26821
+ * 14 - INSERT expression in UPDATE CLASS, run by a trigger
  */
 
 drop table if exists t_secret;
@@ -49,6 +55,10 @@ create table t4 (r t1, n int);
 create trigger trg_t4_u before update on t4 if 1 = 0 execute reject;
 create trigger trg_t4_d before delete on t4 if 1 = 0 execute reject;
 create unique index idx_t1_a on t1 (a);
+create table t6 (a int) dont_reuse_oid;
+create class t7 class attribute (cr t6);
+create trigger trg_t6 before statement update on t6
+  execute update class t7 set cr = (insert into t6 values (70));
 
 insert into t1 values (1, 1, 'a'), (2, 2, 'b');
 insert into t2 values (10), (20);
@@ -120,7 +130,11 @@ update object :o2 set b = (select max(x) from u_26821.t2);
 call login ('u_26821', '') on class db_user;
 select * from dba.t_secret;
 
-drop table t1, t2, t3, t4;
+evaluate 'Case 14: INSERT expression in UPDATE CLASS, run by a trigger';
+update t6 set a = 1;
+select * from dba.t_secret;
+
+drop table t1, t2, t3, t4, t6, t7;
 
 call login ('dba', '') on class db_user;
 
