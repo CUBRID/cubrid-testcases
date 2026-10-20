@@ -18,9 +18,9 @@
  *    Case 4:  IN over UNION, INTERSECT and EXCEPT whose first branch is NULL or CAST (NULL AS INT)
  *    Case 5:  recursive CTE whose non-recursive part is NULL and whose recursive part types the column
  *    Case 6:  a column whose rows are all NULL compared with constants, also in a recursive CTE
- *    Case 7:  VALUES whose first row is a typed NULL
+ *    Case 7:  VALUES whose first row is a typed NULL, also a nested CAST, keeping its type
  *    Case 8:  VALUES with NULL in different columns of different rows
- *    Case 9:  the non-NULL side keeps its domain (CHAR (3), NUMERIC (3,2))
+ *    Case 9:  the non-NULL side keeps its domain (CHAR (3), NUMERIC (5,2))
  *    Case 10: date, timestamp and json columns behind a NULL first row
  *    Case 11: GROUP BY over VALUES with a NULL first row
  *    Case 12: a view over VALUES with a NULL first row
@@ -98,8 +98,10 @@ select * from (select null a, 1 b) t where a is null and b = 1;
 evaluate 'Case 7: VALUES whose first row is a typed NULL; result = the typed NULL row last';
 select * from (values (cast(null as int)), (2)) t(a) order by 1;
 select * from (values (2), (cast(null as int))) t(a) order by 1;
-select * from (values (cast(null as varchar(3))), ('abcdef')) t(a) order by 1;
-select * from (values ('abcdef'), (cast(null as varchar(3)))) t(a) order by 1;
+select a, typeof(a) from (values (cast(null as varchar(3))), ('abcdef')) t(a) order by 1;
+select a, typeof(a) from (values ('abcdef'), (cast(null as varchar(3)))) t(a) order by 1;
+select a, typeof(a) from (values (cast(cast(null as double) as double)), (3)) t(a) order by 1;
+select a, typeof(a) from (values (3), (cast(cast(null as double) as double))) t(a) order by 1;
 
 
 evaluate 'Case 8: NULL in different columns of different rows; result = rows without a NULL first';
@@ -110,8 +112,10 @@ select * from (values (3, 'cc'), (null, 'a'), (2, null)) t(x, y) order by 1, 2;
 evaluate 'Case 9: the non-NULL side keeps its domain; result = the NULL branch last';
 select a, typeof(a) from (select null a union all select cast('a' as char(3))) t order by 1;
 select a, typeof(a) from (select cast('a' as char(3)) a union all select null) t order by 1;
-select a, typeof(a) from (select null a union all select 3.25) t order by 1;
-select a, typeof(a) from (select 3.25 a union all select null) t order by 1;
+select a, typeof(a) from (select null a union all select cast(3.25 as numeric(5,2))) t order by 1;
+select a, typeof(a) from (select cast(3.25 as numeric(5,2)) a union all select null) t order by 1;
+select a, typeof(a) from (values (null), (cast(3.25 as numeric(5,2)))) t(a) order by 1;
+select a, typeof(a) from (values (cast(3.25 as numeric(5,2))), (null)) t(a) order by 1;
 
 
 evaluate 'Case 10: date, timestamp and json behind a NULL first row; result = the NULL row last';
