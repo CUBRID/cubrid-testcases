@@ -15,12 +15,13 @@
  * -14 and -11-1 to -14-1 already cover fix (2) when the supporting equality
  * comes from a LEFT OUTER JOIN's ON clause, and are not repeated here. This TC
  * adds fix (1) and the RIGHT-OUTER-JOIN-sourced shape of fix (2), using the
- * issue author's scenarios 1-12 (groups A-D) with their data and hints.
+ * issue author's scenarios 1-12 (groups A-D) with their data and hints, plus
+ * Cases 6-1, 6-2, 9-1, 10-1 and 13 from the PR review.
  *
- * The oracle is the result values only (no .queryPlan): a COUNT(*), or ordered
- * rows that the outer join must preserve. [D] = the issue author measured a
- * different result on a build without the fix, [G] = constraint guard, same
- * result on both builds, kept to catch a later regression.
+ * The oracle is the result values only (no .queryPlan): a COUNT(*), ordered
+ * rows that the outer join must preserve, or the rows a DML statement changes.
+ * [D] = a build without the fix returns a different result, [G] = constraint
+ * guard, same result on both builds, kept to catch a later regression.
  *
  * Coverage:
  * Group A - ta 100 rows, tb 10000, tc 1, and ta JOIN tb is 10000 rows. The one-row
@@ -32,6 +33,9 @@
  * 5. [D] Case 1 with LEADING(ta, tc, tb), the row-losing order: the ON-clause
  *        dependency must win over the hint
  * 6. [G] ta RIGHT JOIN tb, then LEFT JOIN tc whose ON also reads ta
+ * 6-1. [D] UPDATE through the Case 1 join, WHERE tc.ca IS NULL: the 9999
+ *        NULL-padded rows are the ones updated
+ * 6-2. [D] DELETE through the same join: the same 9999 tb rows are deleted
  * Group B - tc 100 rows, preserved by a trailing RIGHT JOIN. Before the fix
  *   qo_optimize_helper() already made the right-outer node depend on the whole
  *   preceding explicit join, so 8-9 guard that constraint (they would drop
@@ -40,17 +44,26 @@
  * 7. [G] RIGHT JOIN tc, ON also reads ta and tb
  * 8. [G] RIGHT JOIN tc, ON also reads tb only
  * 9. [G] td JOIN ta JOIN tb RIGHT JOIN tc, ON also reads the first table td
+ * 9-1. [D] td JOIN ta JOIN tb LEFT JOIN tc, one ON comparison reads three
+ *        tables (ta.cb + tb.cb = td.cb), a QO_TC_OTHER term from the start
  * Group C - two rows per table, ta.ca primary key.
  * 10. [D] LEFT JOIN tc ON ... AND tb.cb > 5, ORDER BY ta.ca: row (1, 3, NULL)
  *        must stay. The ORDER BY is the trigger, not only a sort: skipping the
  *        sort on the ta.ca PK made the pre-fix optimizer drive from ta and join
  *        tc before tb (issue author's pre-fix plan).
  * 11. [G] Case 10 with ORDER BY tb.cb (no index, no sort skip)
+ * 10-1. [D] Case 10 after adding 10000 tb rows that match no ta row, with
+ *        LEADING(ta, tc, tb): the hint (11.4+) or the larger tb (11.0, 11.3)
+ *        leads to the row-losing order on every branch, not only on develop
  * Group D - fix (2) with the supporting equality from a RIGHT OUTER JOIN.
  * 12. [D] tc RIGHT JOIN ta ON tc.ca = ta.ca AND tc.ca = ta.cb, then LEFT JOIN tb
  *        ON ta.ca = tb.ca AND ta.cb = tb.ca: both LEFT JOIN terms must be
  *        applied, so only ta row (1, 1) matches tb and the other three rows
  *        get d NULL.
+ * Group E - both fixes in one query: Group D data plus td, 10000 rows.
+ * 13. [D] tc RIGHT JOIN ta (eqclass from its ON, fix 2) JOIN td, then LEFT
+ *        JOIN tb whose ON also reads td (td.cb > 5, fix 1). COUNT(*) loses
+ *        rows without fix (1), COUNT(tb.ca) grows without fix (2).
  */
 
 -- ============================================================================
@@ -103,6 +116,21 @@ evaluate 'Case 6: guard, ta RIGHT JOIN tb then LEFT JOIN tc whose ON also reads 
 SELECT /*+ RECOMPILE USE_NL */ COUNT(*) FROM ta RIGHT JOIN tb ON tb.ca = ta.ca
   LEFT JOIN tc ON tc.ca = tb.ca AND ta.cb = -1;
 
+-- the join of Case 1 picks the rows a DML statement changes: only tb row
+-- (1, 1) matches tc, so 9999 rows of ta JOIN tb have tc.ca NULL
+evaluate 'Case 6-1: UPDATE through the Case 1 join, WHERE tc.ca IS NULL - the 9999 NULL-padded rows are updated';
+UPDATE /*+ RECOMPILE USE_NL */ ta JOIN tb ON tb.ca = ta.ca
+  LEFT JOIN tc ON tc.ca = ta.ca AND ta.cb = tb.cb
+  SET tb.cb = -tb.cb WHERE tc.ca IS NULL;
+SELECT COUNT(*), SUM(cb) FROM tb WHERE cb < 0;
+
+UPDATE tb SET cb = -cb WHERE cb < 0;
+
+evaluate 'Case 6-2: DELETE through the Case 1 join, WHERE tc.ca IS NULL - 9999 rows deleted, only tb row 1, 1 is left';
+DELETE /*+ RECOMPILE USE_NL */ tb FROM ta JOIN tb ON tb.ca = ta.ca
+  LEFT JOIN tc ON tc.ca = ta.ca AND ta.cb = tb.cb WHERE tc.ca IS NULL;
+SELECT COUNT(*), SUM(ca), SUM(cb) FROM tb;
+
 -- ============================================================================
 -- Group B: RIGHT OUTER JOIN must keep all 100 rows of tc
 -- ============================================================================
@@ -146,6 +174,11 @@ evaluate 'Case 9: guard, USE_NL, td JOIN ta JOIN tb then RIGHT JOIN tc whose ON 
 SELECT /*+ RECOMPILE USE_NL */ COUNT(*) FROM td JOIN ta ON ta.ca = td.ca JOIN tb ON tb.ca = ta.ca
   RIGHT JOIN tc ON tc.ca = ta.ca AND td.cb = -1;
 
+-- ta.cb = td.cb on every joined row and tb.cb >= 1, so the comparison is never true
+evaluate 'Case 9-1: USE_NL, LEFT JOIN tc whose ON reads three tables (ta.cb + tb.cb = td.cb, never true) - all 10000 rows kept';
+SELECT /*+ RECOMPILE USE_NL */ COUNT(*) FROM td JOIN ta ON ta.ca = td.ca JOIN tb ON tb.ca = ta.ca
+  LEFT JOIN tc ON tc.ca = ta.ca AND ta.cb + tb.cb = td.cb;
+
 -- ============================================================================
 -- Group C: a sort skip on the ta.ca primary key must not change the result
 -- ============================================================================
@@ -172,6 +205,18 @@ evaluate 'Case 11: guard, same query as Case 10 with ORDER BY tb.cb (no index, n
 SELECT /*+ RECOMPILE */ ta.ca, tb.cb, tc.ca FROM ta JOIN tb ON tb.ca = ta.ca
   LEFT JOIN tc ON tc.ca = ta.ca AND tb.cb > 5 ORDER BY tb.cb;
 
+-- 10000 more tb rows that match no ta row. LEADING exists from 11.4 only, on
+-- 11.0 and 11.3 the larger tb leads to the same order by cost.
+INSERT INTO tb
+WITH RECURSIVE cte (n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM cte WHERE n < 100)
+SELECT 1000000 + ROWNUM, 7 FROM cte x, cte y;
+
+UPDATE STATISTICS ON ta, tb, tc;
+
+evaluate 'Case 10-1: Case 10 with 10000 more unmatched tb rows and LEADING(ta, tc, tb) - row 1, 3, NULL is kept';
+SELECT /*+ RECOMPILE LEADING(ta, tc, tb) */ ta.ca, tb.cb, tc.ca FROM ta JOIN tb ON tb.ca = ta.ca
+  LEFT JOIN tc ON tc.ca = ta.ca AND tb.cb > 5 ORDER BY ta.ca;
+
 -- ============================================================================
 -- Group D: an equality in a RIGHT OUTER JOIN's ON clause must not let a later
 -- outer join's term be skipped
@@ -196,6 +241,28 @@ SELECT /*+ RECOMPILE */ tc.ca AS c, ta.ca AS a, ta.cb AS b, tb.ca AS d
   FROM tc RIGHT JOIN ta ON tc.ca = ta.ca AND tc.ca = ta.cb
   LEFT JOIN tb ON ta.ca = tb.ca AND ta.cb = tb.ca
   ORDER BY 2, 3;
+
+-- ============================================================================
+-- Group E: both fixes in one query
+-- ============================================================================
+
+-- Group D data plus td, 5000 rows for each ta.ca value, td.cb 1 to 10000
+DROP TABLE IF EXISTS td;
+CREATE TABLE td (ca INT, cb INT);
+
+INSERT INTO td
+WITH RECURSIVE cte (n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM cte WHERE n < 100)
+SELECT MOD(ROWNUM, 2) + 1, ROWNUM FROM cte x, cte y;
+
+UPDATE STATISTICS ON ta, tb, tc, td;
+
+-- all 20000 rows of ta JOIN td are kept. Only ta row (1, 1) matches tc, and
+-- matches tb when td.cb > 5, which holds for 4998 of its 5000 td rows
+evaluate 'Case 13: RIGHT JOIN ON eqclass, then LEFT JOIN tb whose ON also reads td (td.cb > 5) - 20000 rows, 4998 with tb, 5000 with tc';
+SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tb.ca), COUNT(tc.ca)
+  FROM tc RIGHT JOIN ta ON tc.ca = ta.ca AND tc.ca = ta.cb
+  JOIN td ON td.ca = ta.ca
+  LEFT JOIN tb ON ta.ca = tb.ca AND ta.cb = tb.ca AND td.cb > 5;
 
 DROP TABLE ta;
 DROP TABLE tb;
