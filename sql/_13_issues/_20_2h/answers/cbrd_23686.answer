@@ -265,9 +265,9 @@ sscan
 Query stmt:
 (select /*+ NO_PARALLEL_SCAN */ tmp?.col?, tmp?.col? from tmp? tmp? where (inst_num()<= ?:? ))
 Query plan:
-nl-join (inner join)
+parallel nl-join (inner join)
     edge:  term[?] AND term[?]
-    outer: sscan
+    outer: parallel sscan
                class: b node[?]
                cost:  ? card ?
     inner: sscan
