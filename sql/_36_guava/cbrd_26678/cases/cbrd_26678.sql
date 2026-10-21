@@ -71,7 +71,7 @@ from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
 -- ============================================================
-evaluate 'Case 1: int single column index - A/C 2a - index and heap must both give count 50000, sum 1250025000, min 1, max 50000; point lookup 1, range [10000,20000] 10001, tail rows 49998/49999/50000';
+evaluate 'Case 1: int single column index - A/C 2a - index and heap must both give count 50000, sum 1250025000, min 1, max 50000; point lookup 1, range [10000,20000] 10001, tail rows 49998/49999/50000; the row reached through the index carries ida 12345, cola 00000000000000012345 and colg 00000000000000000345';
 -- ============================================================
 create index ixa on tb (ida);
 
@@ -79,6 +79,14 @@ set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
+
+-- The aggregate above runs covered, so it never visits the heap: it proves the keys are
+-- right but not that each key still points at its own row. This lookup reads cola and
+-- colg, which are not in the index, so the scan has to follow the entry into the heap.
+-- Both columns are derived from ida, so a wrong row shows up as wrong values.
+set trace on;
+select ida, cola, colg from tb where ida = 12345;
+show trace;
 
 select count(*) from tb where ida = 25000;
 select count(*) from tb where ida between 10000 and 20000;
@@ -188,18 +196,32 @@ select count(*), min(cola), max(cola) from tb where cola > lpad(to_char(40000), 
 drop index ixh on tb;
 
 -- ============================================================
-evaluate 'Case 9: function index on lower(cola) - A/C 2b - both give count 50000, min 00000000000000000001, max 00000000000000050000; point lookup 1';
+evaluate 'Case 9: function index on lower(cola) - A/C 2b - the keys are lower case while the column is upper case, so both give count 50000, min abc00000000000000001, max abc00000000000050000; point lookup 1';
 -- ============================================================
-create index ixi on tb (lower(cola));
+-- This case needs data the function actually changes. The main table holds digits only,
+-- where lower() is the identity, so a build that stored the column untouched instead of
+-- the function result would be indistinguishable. An upper case prefix makes the two
+-- differ: the index must hold abc..., not ABC...
+drop table if exists lc;
+create table lc (ida int, cola varchar(20), colb char(60));
+
+insert into lc
+select rownum, concat('ABC', lpad(to_char(rownum), 17, '0')), lpad(to_char(rownum), 60, '0')
+from db_class a, db_class b, db_class c, db_class d, db_class e
+limit 50000;
+
+select min(cola), max(cola) from lc;
+
+create index ixi on lc (lower(cola));
 
 set trace on;
-select count(*), min(lower(cola)), max(lower(cola)) from tb where lower(cola) > ' ';
+select count(*), min(lower(cola)), max(lower(cola)) from lc where lower(cola) > ' ';
 show trace;
-select count(*), min(lower(cola)), max(lower(cola)) from tb where lower(cola) > ' ' using index none;
+select count(*), min(lower(cola)), max(lower(cola)) from lc where lower(cola) > ' ' using index none;
 
-select count(*) from tb where lower(cola) = lpad(to_char(1), 20, '0');
+select count(*) from lc where lower(cola) = 'abc00000000000000001';
 
-drop index ixi on tb;
+drop table if exists lc;
 
 -- ============================================================
 evaluate 'Case 10: function index on substr(cola, 11, 10) - A/C 2b - 50000 distinct keys, so both give count 50000, min 0000000001, max 0000050000; point lookup 1';

@@ -6,7 +6,7 @@
 50000
 ===================================================
     
-Case 1: int single column index - A/C 2a - index and heap must both give count 50000, sum 1250025000, min 1, max 50000; point lookup 1, range [10000,20000] 10001, tail rows 49998/49999/50000     
+Case 1: int single column index - A/C 2a - index and heap must both give count 50000, sum 1250025000, min 1, max 50000; point lookup 1, range [10000,20000] 10001, tail rows 49998/49999/50000; the row reached through the index carries ida 12345, cola 00000000000000012345 and colg 00000000000000000345     
 
 ===================================================
 0
@@ -32,6 +32,25 @@ Trace Statistics:
 ===================================================
 count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)    
 50000     1250025000     1     50000     
+
+===================================================
+0
+===================================================
+ida    cola    colg    
+12345     00000000000000012345     00000000000000000345     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.ixa) (key range: [dba.tb].ida= ?:? )
+
+  rewritten query: select [dba.tb].ida, [dba.tb].cola, [dba.tb].colg from [dba.tb] [dba.tb] where [dba.tb].ida= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.ixa), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
 
 ===================================================
 count(*)    
@@ -321,7 +340,17 @@ count(*)    min(cola)    max(cola)
 0
 ===================================================
     
-Case 9: function index on lower(cola) - A/C 2b - both give count 50000, min 00000000000000000001, max 00000000000000050000; point lookup 1     
+Case 9: function index on lower(cola) - A/C 2b - the keys are lower case while the column is upper case, so both give count 50000, min abc00000000000000001, max abc00000000000050000; point lookup 1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+min(cola)    max(cola)    
+ABC00000000000000001     ABC00000000000050000     
 
 ===================================================
 0
@@ -329,24 +358,24 @@ Case 9: function index on lower(cola) - A/C 2b - both give count 50000, min 0000
 0
 ===================================================
 count(*)    min( lower(cola))    max( lower(cola))    
-50000     00000000000000000001     00000000000000050000     
+50000     abc00000000000000001     abc00000000000050000     
 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.tb.ixi) (key range: ( lower([dba.tb].cola)> ?:? ))
+  INDEX SCAN (dba.lc.ixi) (key range: ( lower([dba.lc].cola)> ?:? ))
 
-  rewritten query: select count(*), min( lower([dba.tb].cola)), max( lower([dba.tb].cola)) from [dba.tb] [dba.tb] where ( lower([dba.tb].cola)> ?:? )
+  rewritten query: select count(*), min( lower([dba.lc].cola)), max( lower([dba.lc].cola)) from [dba.lc] [dba.lc] where ( lower([dba.lc].cola)> ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tb.ixi), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.lc.ixi), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
 count(*)    min( lower(cola))    max( lower(cola))    
-50000     00000000000000000001     00000000000000050000     
+50000     abc00000000000000001     abc00000000000050000     
 
 ===================================================
 count(*)    
