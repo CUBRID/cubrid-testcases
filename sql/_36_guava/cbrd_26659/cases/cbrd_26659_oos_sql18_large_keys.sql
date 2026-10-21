@@ -43,6 +43,9 @@ delete from oos09_pk where id=2;
 
 insert into oos09_pk values(4,404,cast(concat(repeat('a1',1701),repeat('b2',1703),repeat('c3',1703)) as bit varying));
 
+-- A failed statement must preserve earlier work in this open transaction.
+insert into oos09_pk values(5,505,cast(concat(repeat('d4',1801),repeat('e5',1803),repeat('f6',1803)) as bit varying));
+
 select count(*) as n,sum(case when id=1 and note=303 and k=cast(concat(repeat('d4',1801),repeat('e5',1803),repeat('f6',1803)) as bit varying) then 1 when id=4 and note=404 and k=cast(concat(repeat('a1',1701),repeat('b2',1703),repeat('c3',1703)) as bit varying) then 1 else 0 end) as exact_rows from oos09_pk;
 
 rollback;
