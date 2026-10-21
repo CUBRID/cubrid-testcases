@@ -1,0 +1,213 @@
+===================================================
+0
+===================================================
+0
+===================================================
+600
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: probe side has 10% NULL keys - parallel probe, NULL must never match     
+
+===================================================
+cnt    sval    
+270000     81000000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_null] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_null), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: same NULL-key probe single-threaded - must match Case 1     
+
+===================================================
+cnt    sval    
+270000     81000000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_null] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_null), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: N:M - each probe row matches 3 build rows, workers emit more than they read     
+
+===================================================
+cnt    sval    
+300000     90150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_dup] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_dup), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: same N:M join single-threaded - must match Case 3     
+
+===================================================
+cnt    sval    
+300000     90150000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_dup] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_dup), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: skewed probe - 80% of rows carry one key, match volume is uneven across workers     
+
+===================================================
+cnt    sval    
+300000     114210000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_skew] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_skew), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: same skewed probe single-threaded - must match Case 5     
+
+===================================================
+cnt    sval    
+300000     114210000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(b.cval as bigint)) from [dba.t_pd_skew] a, [dba.t_pd_build] b where a.cval=b.ckey
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_pd_skew), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
