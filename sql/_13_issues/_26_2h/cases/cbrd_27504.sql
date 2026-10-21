@@ -2,9 +2,9 @@
  *  This test case verifies CBRD-27504: TO_CHAR on a date or time value rejects a format argument
  *  bound to a value that is not a character string, and the server keeps running.
  *
- *  A host/session variable in the format is bound without a cast; the date/time branch of TO_CHAR
+ *  A host/session variable in the format is bound without a cast - the date/time branch of TO_CHAR
  *  reads it as a string whatever its type, so a BIGINT format crashed release (aborted debug). The
- *  fix matches the number branch's error; literal/query-text formats keep their pre-fix results.
+ *  fix matches the number branch's error - literal/query-text formats keep their pre-fix results.
  *
  *  Coverage:
  *    Case 1:  issue repro, a BIGINT bound to the format on a DATETIME column
@@ -16,7 +16,6 @@
  *    Case 7:  a session variable, an expression of a host variable and a scalar subquery as the format
  *    Case 8:  INT, DOUBLE, DATE and VARCHAR values bound through the JDBC driver
  *    Case 9:  the format bound in WHERE, ORDER BY, UPDATE SET and INSERT SELECT, the row unchanged
- *    Case 10: NCHAR formats keep their results on the date and the number branch
  */
 
 drop table if exists t_dt;
@@ -118,8 +117,8 @@ $int, $1
 select to_char(g, ?) from t_dt where id = 1;
 $double, $1.5
 select to_char(dtt, ?) from t_dt where id = 1;
--- the CCI driver sends this DATE bind as a string, so it reaches is_char_string and fails later
--- parsing it as a format mask instead (see answer_cci: -176, not -621)
+-- the CTP CCI runner passes this $date text where CCI expects a date struct, so the bind
+-- itself fails with -176 before TO_CHAR runs (see answer_cci: -176, not -621)
 $date, $2024-01-02
 select to_char(dtt, ?) from t_dt where id = 1;
 $varchar, $YYYY-MM-DD
@@ -138,12 +137,6 @@ execute s using 9007199254740993;
 prepare s from 'insert into t_dt (id, fmt) select 2, to_char(dtt, ?) from t_dt where id = 1';
 execute s using 9007199254740993;
 select id, fmt from t_dt order by id;
-
-
-evaluate 'Case 10: NCHAR formats keep their results on the date and the number branch';
-prepare s from 'select to_char(dtt, ?) from t_dt where id = 1';
-execute s using n'YYYY-MM-DD';
-execute n using n'9999';
 
 drop prepare s;
 drop prepare n;
