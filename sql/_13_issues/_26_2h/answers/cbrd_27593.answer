@@ -1,0 +1,240 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a descending index with two overlapping host-variable ranges reads each row once; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ed) (key range: (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].e), min([dba.t_desc].e), max([dba.t_desc].e) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )) using index [dba.t_desc].i_ed
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ed), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+    
+Case 2: a descending index with one host-variable range inside another; result = no_parallel_scan     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ed) (key range: (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].e), min([dba.t_desc].e), max([dba.t_desc].e) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )) using index [dba.t_desc].i_ed
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ed), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 3: a descending index with a constant range and an overlapping host-variable range; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ed) (key range: (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].e), min([dba.t_desc].e), max([dba.t_desc].e) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )) using index [dba.t_desc].i_ed
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ed), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2991     2991     10     3000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 4: an ascending index under USE_DESC_IDX with two overlapping host-variable ranges; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct id)    min(id)    max(id)    
+2991     2991     10     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ea) (key range: (([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? ) or ([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? )), covered: true, desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX PARALLEL(?) */ count(*), count(distinct [dba.t_desc].id), min([dba.t_desc].id), max([dba.t_desc].id) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? ) or ([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? )) using index [dba.t_desc].i_ea
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ea), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct id)    min(id)    max(id)    
+2991     2991     10     3000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: a descending index with three ranges of which two overlap, and with three disjoint ranges; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+3992     3992     10     6000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ed) (key range: (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].e), min([dba.t_desc].e), max([dba.t_desc].e) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )) using index [dba.t_desc].i_ed
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ed), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+3992     3992     10     6000     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2903     2903     10     150010     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ed) (key range: (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].e), min([dba.t_desc].e), max([dba.t_desc].e) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? ) or ([dba.t_desc].e>= ?:?  and [dba.t_desc].e<= ?:? )) using index [dba.t_desc].i_ed
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ed), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct e)    min(e)    max(e)    
+2903     2903     10     150010     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 6: an ascending index in ascending order with two overlapping host-variable ranges; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct id)    min(id)    max(id)    
+2991     2991     10     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_desc.i_ea) (key range: (([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? ) or ([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? )), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(distinct [dba.t_desc].id), min([dba.t_desc].id), max([dba.t_desc].id) from [dba.t_desc] [dba.t_desc] where (([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? ) or ([dba.t_desc].id>= ?:?  and [dba.t_desc].id<= ?:? )) using index [dba.t_desc].i_ea
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_desc.i_ea), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+count(*)    count(distinct id)    min(id)    max(id)    
+2991     2991     10     3000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
