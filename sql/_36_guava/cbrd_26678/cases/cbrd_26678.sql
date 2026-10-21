@@ -70,6 +70,8 @@ select rownum,
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
+-- Trace stays on until set trace off, so it is enabled once here and turned off after the
+-- last show trace rather than before every query.
 -- ============================================================
 evaluate 'Case 1: int single column index - A/C 2a - index and heap must both give count 50000, sum 1250025000, min 1, max 50000; point lookup 1, range [10000,20000] 10001, tail rows 49998/49999/50000; the row reached through the index carries ida 12345, cola 00000000000000012345 and colg 00000000000000000345';
 -- ============================================================
@@ -84,7 +86,6 @@ select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida 
 -- right but not that each key still points at its own row. This lookup reads cola and
 -- colg, which are not in the index, so the scan has to follow the entry into the heap.
 -- Both columns are derived from ida, so a wrong row shows up as wrong values.
-set trace on;
 select ida, cola, colg from tb where ida = 12345;
 show trace;
 
@@ -99,7 +100,6 @@ evaluate 'Case 2: varchar single column index - A/C 2a - both give count 50000, 
 -- ============================================================
 create index ixb on tb (cola);
 
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
@@ -114,7 +114,6 @@ evaluate 'Case 3: composite index (int, varchar, int) - A/C 2a - both give count
 -- ============================================================
 create index ixc on tb (colc, colb, ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(colc), max(colc) from tb where colc >= 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(colc), max(colc) from tb where colc >= 0 using index none;
@@ -129,7 +128,6 @@ evaluate 'Case 4: unique index - A/C 2a - both give count 50000, sum 1250025000,
 -- ============================================================
 create unique index ixd on tb (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -143,7 +141,6 @@ evaluate 'Case 5: reverse index - both give count 50000, sum 1250025000, min 1, 
 -- ============================================================
 create reverse index ixe on tb (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -157,7 +154,6 @@ evaluate 'Case 6: descending index - both give count 50000, sum 1250025000, min 
 -- ============================================================
 create index ixf on tb (ida desc);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -174,7 +170,6 @@ evaluate 'Case 7: filter index on int - A/C 2b - the index holds only ida > 2500
 -- never read the index, so only the whole-index aggregate pins the path with using index.
 create index ixg on tb (ida) where ida > 25000;
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 25000 using index ixg;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 25000 using index none;
@@ -188,7 +183,6 @@ evaluate 'Case 8: filter index on varchar - A/C 2b - both give count 10000, min 
 -- ============================================================
 create index ixh on tb (cola) where cola > lpad(to_char(40000), 20, '0');
 
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > lpad(to_char(40000), 20, '0') using index ixh;
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > lpad(to_char(40000), 20, '0') using index none;
@@ -214,7 +208,6 @@ select min(cola), max(cola) from lc;
 
 create index ixi on lc (lower(cola));
 
-set trace on;
 select count(*), min(lower(cola)), max(lower(cola)) from lc where lower(cola) > ' ';
 show trace;
 select count(*), min(lower(cola)), max(lower(cola)) from lc where lower(cola) > ' ' using index none;
@@ -228,7 +221,6 @@ evaluate 'Case 10: function index on substr(cola, 11, 10) - A/C 2b - 50000 disti
 -- ============================================================
 create index ixj on tb (substr(cola, 11, 10));
 
-set trace on;
 select count(*), min(substr(cola, 11, 10)), max(substr(cola, 11, 10)) from tb where substr(cola, 11, 10) > ' ';
 show trace;
 select count(*), min(substr(cola, 11, 10)), max(substr(cola, 11, 10)) from tb where substr(cola, 11, 10) > ' ' using index none;
@@ -242,7 +234,6 @@ evaluate 'Case 11: function index on year(cole) - A/C 2b - both give count 50000
 -- ============================================================
 create index ixk on tb (year(cole));
 
-set trace on;
 select count(*), min(year(cole)), max(year(cole)) from tb where year(cole) > 0;
 show trace;
 select count(*), min(year(cole)), max(year(cole)) from tb where year(cole) > 0 using index none;
@@ -264,7 +255,6 @@ limit 20000;
 
 create index ixl on bk (cola);
 
-set trace on;
 select count(*), min(cola), max(cola) from bk where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from bk where cola > ' ' using index none;
@@ -290,12 +280,10 @@ create index ixn on nb (colb);
 
 -- Only the non NULL keys are aggregated through the index. An is null or is not null
 -- predicate takes a table scan, so it would not read the index at all.
-set trace on;
 select count(*), min(cola), max(cola) from nb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from nb where cola > ' ' using index none;
 
-set trace on;
 select count(*), sum(cast(colb as bigint)), min(colb), max(colb) from nb where colb > 0;
 show trace;
 select count(*), sum(cast(colb as bigint)), min(colb), max(colb) from nb where colb > 0 using index none;
@@ -319,12 +307,10 @@ limit 50000;
 create index ixo on dp (cola);
 create index ixp on dp (colb);
 
-set trace on;
 select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dp where cola > 0;
 show trace;
 select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dp where cola > 0 using index none;
 
-set trace on;
 select count(*), min(colb), max(colb) from dp where colb > ' ';
 show trace;
 select count(*), min(colb), max(colb) from dp where colb > ' ' using index none;
@@ -339,22 +325,18 @@ create index ixr on tb (cole);
 create index ixs on tb (colf);
 create index ixt on tb (colg);
 
-set trace on;
 select count(*), sum(cold), min(cold), max(cold) from tb where cold > 0;
 show trace;
 select count(*), sum(cold), min(cold), max(cold) from tb where cold > 0 using index none;
 
-set trace on;
 select count(*), min(cole), max(cole) from tb where cole > date '1900-01-01';
 show trace;
 select count(*), min(cole), max(cole) from tb where cole > date '1900-01-01' using index none;
 
-set trace on;
 select count(*), min(colf), max(colf) from tb where colf > datetime '1900-01-01 00:00:00';
 show trace;
 select count(*), min(colf), max(colf) from tb where colf > datetime '1900-01-01 00:00:00' using index none;
 
-set trace on;
 select count(*), min(colg), max(colg) from tb where colg > ' ';
 show trace;
 select count(*), min(colg), max(colg) from tb where colg > ' ' using index none;
@@ -371,17 +353,14 @@ create index ixu on tb (ida);
 create index ixv on tb (cola);
 create index ixw on tb (colc);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
 
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
 
-set trace on;
 select count(*), sum(cast(colc as bigint)), min(colc), max(colc) from tb where colc >= 0;
 show trace;
 select count(*), sum(cast(colc as bigint)), min(colc), max(colc) from tb where colc >= 0 using index none;
@@ -397,7 +376,6 @@ delete from tb where ida % 2 = 0;
 
 create index ixx on tb (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -441,12 +419,10 @@ limit 100000;
 create index ixy on pt (cola);
 create index ixz on pt (ida);
 
-set trace on;
 select count(*), min(cola), max(cola) from pt where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from pt where cola > ' ' using index none;
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from pt where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from pt where ida > 0 using index none;
@@ -474,7 +450,6 @@ limit 100000;
 
 alter table pk add constraint cpk primary key (ida, colb);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from pk where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from pk where ida > 0 using index none;
@@ -502,7 +477,6 @@ limit 100000;
 
 alter table uq add constraint cuq unique (ida, colb);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from uq where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from uq where ida > 0 using index none;
@@ -528,12 +502,10 @@ limit 50000;
 create index iya on ac (ida);
 create index iyb on ac (cola);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from ac where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from ac where ida > 0 using index none;
 
-set trace on;
 select count(*), min(cola), max(cola) from ac where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from ac where cola > ' ' using index none;
@@ -568,7 +540,6 @@ commit;
 
 create index iyn on ao (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from ao where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from ao where ida > 0 using index none;
@@ -593,7 +564,6 @@ limit 50000;
 
 create index iyo on au (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from au where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from au where ida > 0 using index none;
@@ -609,7 +579,6 @@ evaluate 'Case 24: composite index mixing ASC and DESC - both give count 50000, 
 -- ============================================================
 create index iyc on tb (colc asc, ida desc);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(colc), max(colc) from tb where colc >= 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(colc), max(colc) from tb where colc >= 0 using index none;
@@ -632,12 +601,10 @@ limit 20000;
 create index iyd on lb (ida);
 create index iye on lb (cola);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from lb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from lb where ida > 0 using index none;
 
-set trace on;
 select count(*), min(cola), max(cola) from lb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from lb where cola > ' ' using index none;
@@ -649,7 +616,6 @@ evaluate 'Case 26: unique composite index - both give count 50000, sum 125002500
 -- ============================================================
 create unique index iyf on tb (ida, colc);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -662,21 +628,18 @@ drop index iyf on tb;
 evaluate 'Case 27: the same index dropped and rebuilt three times - all three builds give count 50000, min 00000000000000000001, max 00000000000000050000, and the heap agrees';
 -- ============================================================
 create index iyg on tb (cola);
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
 drop index iyg on tb;
 
 create index iyg on tb (cola);
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
 drop index iyg on tb;
 
 create index iyg on tb (cola);
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
@@ -687,7 +650,6 @@ evaluate 'Case 28: five column composite key - both give count 50000, sum 125002
 -- ============================================================
 create index iyh on tb (ida, cola, colb, colc, cold);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
@@ -703,7 +665,6 @@ update tb set cola = lpad(to_char(ida + 1), 20, '0') where ida <= 25000;
 
 create index iyi on tb (cola);
 
-set trace on;
 select count(*), min(cola), max(cola) from tb where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
@@ -736,7 +697,6 @@ insert into tsb select caa + 100000, cab, caa + 100000 from only tsa;
 
 alter table tsa add index iyj (caa);
 
-set trace on;
 select count(*), sum(cast(caa as bigint)), min(caa), max(caa) from only tsa where caa > 0;
 show trace;
 select count(*), sum(cast(caa as bigint)), min(caa), max(caa) from only tsa where caa > 0 using index none;
@@ -760,7 +720,6 @@ insert into sm select rownum, lpad(to_char(rownum), 20, '0') from db_class a lim
 
 create index iyk on sm (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from sm where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from sm where ida > 0 using index none;
@@ -784,7 +743,6 @@ limit 10000;
 
 create index iyl on md (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from md where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from md where ida > 0 using index none;
@@ -808,14 +766,12 @@ limit 50000;
 
 alter table np add constraint cnp primary key (ida);
 
-set trace on;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from np where ida > 0;
 show trace;
 select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from np where ida > 0 using index none;
 
 alter table np add constraint cnu unique (cola);
 
-set trace on;
 select count(*), min(cola), max(cola) from np where cola > ' ';
 show trace;
 select count(*), min(cola), max(cola) from np where cola > ' ' using index none;
@@ -845,10 +801,11 @@ create unique index iym on dk (cola);
 delete from dk where ida = 50001;
 create unique index iym on dk (cola);
 
-set trace on;
 select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dk where cola > 0;
 show trace;
 select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dk where cola > 0 using index none;
+
+set trace off;
 
 drop table if exists dk;
 
