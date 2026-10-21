@@ -28,13 +28,17 @@ null     2
 
 ===================================================
     
-Case 2: CASE whose condition does not contain the argument expression, IF and DECODE     
+Case 2: CASE whose condition does not contain the argument expression     
 
 ===================================================
 r    x    
 null     1     
 2     2     
 4     3     
+
+===================================================
+    
+Case 3: a conditional function -- IF and DECODE     
 
 ===================================================
 r    x    
@@ -50,7 +54,7 @@ r    x
 
 ===================================================
     
-Case 3: the analytic function inside the CASE condition, after AND, and alone in the condition     
+Case 4: the analytic function inside the CASE condition, after AND, and alone in the condition     
 
 ===================================================
 r    x    
@@ -66,7 +70,7 @@ null     3
 
 ===================================================
     
-Case 4: a bare argument with an expression in the OVER clause     
+Case 5: a bare argument with an expression in the OVER clause     
 
 ===================================================
 r    x    
@@ -76,7 +80,7 @@ null     1
 
 ===================================================
     
-Case 5: SUM and ROW_NUMBER instead of LAG     
+Case 6: analytic functions other than LAG -- SUM and ROW_NUMBER     
 
 ===================================================
 r    x    
@@ -92,7 +96,7 @@ null     1
 
 ===================================================
     
-Case 6: the derived column is a CASE, the derived table is a LEFT OUTER JOIN, and two levels of derived tables     
+Case 7: the derived column is a CASE     
 
 ===================================================
 r    x    
@@ -101,10 +105,8 @@ null     1
 4     3     
 
 ===================================================
-r    x    
-null     1     
-2     2     
-4     3     
+    
+Case 8: the derived table is a LEFT OUTER JOIN     
 
 ===================================================
 r    x    
@@ -114,7 +116,7 @@ null     1
 
 ===================================================
     
-Case 7: shapes that already ran -- NO_MERGE, the analytic function outside CASE, NVL, bare arguments     
+Case 9: two levels of derived tables     
 
 ===================================================
 r    x    
@@ -123,16 +125,38 @@ null     1
 4     3     
 
 ===================================================
+    
+Case 10: reference -- the NO_MERGE hint keeps the derived table, which already ran     
+
+===================================================
+r    x    
+null     1     
+2     2     
+4     3     
+
+===================================================
+    
+Case 11: reference -- the analytic function outside CASE, which already ran     
+
+===================================================
 r1    r2    x    
 null     null     1     
 2     6     2     
 4     10     3     
 
 ===================================================
+    
+Case 12: reference -- the analytic function inside NVL, which already ran     
+
+===================================================
 r    x    
 -1     1     
 2     2     
 4     3     
+
+===================================================
+    
+Case 13: reference -- bare columns in the argument and the OVER clause, which already ran     
 
 ===================================================
 r    x    
@@ -142,7 +166,7 @@ null     1
 
 ===================================================
     
-Case 8: INSERT ... SELECT     
+Case 14: INSERT ... SELECT     
 
 ===================================================
 0
@@ -156,7 +180,7 @@ null     1
 
 ===================================================
     
-Case 9: the OVER order covered by a forced index scan, so the values are also read during the scan     
+Case 15: the OVER order covered by a forced index scan, so the values are also read during the scan     
 
 ===================================================
 0
