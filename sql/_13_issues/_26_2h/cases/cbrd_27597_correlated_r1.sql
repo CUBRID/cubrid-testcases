@@ -6,9 +6,7 @@
  *  Identical cached queries intentionally omit recompile and trace.
  *  Hint variants test result equivalence, not worker counts.
  *  No optimizer path or physical outer-row visit order is asserted.
- *  Run under parallelism=4 and parallelism=0 server configurations.
  *  The base tables have exactly the cardinalities required by the spec.
- *  Integer sums are widened to avoid overflow in the reference.
  *  Coverage:
  *    Case 1: first correlated UNION ALL EXISTS count
  *    Case 2: all outer rows including both endpoints
@@ -29,17 +27,14 @@
 
 -- Exact spec cardinalities, independent of any optimizer threshold
 -- No trace is captured: these are relational correctness assertions
-drop table if exists t_digit,t_src,t_outer,t_large,t_sink;
+drop table if exists t_digit,t_src,t_outer;
 create table t_digit(v integer);
 insert into t_digit values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
 create table t_src(id integer);
 insert into t_src select a.v+10*b.v+100*c.v+1000*d.v+10000*e.v+1 from t_digit a,t_digit b,t_digit c,t_digit d,t_digit e where e.v<4;
 create table t_outer(seq integer,v integer);
 insert into t_outer values (0,-1),(1,39999),(2,40000),(3,0),(4,9),(5,39999);
-create table t_large(id integer);
-insert into t_large select a.v+10*b.v+100*c.v+1000*d.v+10000*e.v+1 from t_digit a,t_digit b,t_digit c,t_digit d,t_digit e;
-create table t_sink(id integer,lvl integer);
-update statistics on t_digit,t_src,t_outer,t_large with fullscan;
+update statistics on t_digit,t_src,t_outer with fullscan;
 
 
 evaluate 'Case 1: first correlated UNION ALL EXISTS count; result = relational reference';
@@ -167,4 +162,4 @@ select d.v from t_digit d where not exists (with recursive r(id,lvl) as (select 
 select d.v from t_digit d where 1=0 order by d.v;
 select d.v,(with recursive r(id,lvl) as (select id,1 from t_src union all select id,lvl+1 from r where lvl<3) select id from r where r.id=d.v+1 and r.lvl=3 union all select v from t_digit where v=d.v+100) as got from t_digit d order by d.v;
 select d.v,d.v+1 as got from t_digit d order by d.v;
-drop table t_digit,t_src,t_outer,t_large,t_sink;
+drop table t_digit,t_src,t_outer;
