@@ -62,7 +62,7 @@ r    g    x
 
 ===================================================
     
-Case 3: other expressions wrapping the analytic function     
+Case 3: a conditional expression wrapping the analytic function -- IF and DECODE     
 
 ===================================================
 r    g    x    
@@ -77,6 +77,10 @@ r    x
 0     30     
 
 ===================================================
+    
+Case 4: arithmetic with a column wrapping the analytic function     
+
+===================================================
 r    g    
 101     1     
 202     1     
@@ -84,7 +88,7 @@ r    g
 
 ===================================================
     
-Case 4: the OVER order is covered by the forced index scan, so the sort is skipped as well     
+Case 5: the OVER order is covered by the forced index scan, so the sort is skipped as well     
 
 ===================================================
 r    g    x    
@@ -102,7 +106,7 @@ null     1     20
 
 ===================================================
     
-Case 5: RANK, DENSE_RANK and FIRST_VALUE, the other functions the optimization takes     
+Case 6: RANK, DENSE_RANK and FIRST_VALUE, the other functions the optimization takes     
 
 ===================================================
 rk    dr    fv    x    
@@ -113,7 +117,7 @@ rk    dr    fv    x
 
 ===================================================
     
-Case 6: LIMIT with an offset -- the skipped row still counts for the analytic function, and no returned row is lost     
+Case 7: LIMIT with an offset -- the skipped row still counts for the analytic function, and no returned row is lost     
 
 ===================================================
 r    x    
@@ -123,7 +127,7 @@ r    x
 
 ===================================================
     
-Case 7: ROWNUM in the select list, alone and inside an expression -- the optimization is not used     
+Case 8: ROWNUM in the select list, alone and inside an expression -- the optimization is not used     
 
 ===================================================
 rn    r    x    
@@ -139,7 +143,7 @@ v    x
 
 ===================================================
     
-Case 8: the same query inside a derived table and a named view     
+Case 9: the same query inside a derived table and a named view     
 
 ===================================================
 r    g    
@@ -157,7 +161,7 @@ r    x
 
 ===================================================
     
-Case 9: an OVER order the index does not cover -- the optimization is not used     
+Case 10: an OVER order the index does not cover -- the optimization is not used     
 
 ===================================================
 r    x    
