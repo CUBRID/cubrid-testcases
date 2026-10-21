@@ -796,11 +796,15 @@ Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN through an IN
 ===================================================
 0
 ===================================================
+0
+===================================================
 3000
 ===================================================
 20
 ===================================================
 20
+===================================================
+3
 ===================================================
 3
 ===================================================
@@ -1289,6 +1293,92 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: t_p node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_u node[?]
+                          index: pk_t_u_k term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o, t_p t_p, t_u t_u where t_o.id=t_p.id and t_p.k=t_u.k
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_p)
+      INDEX SCAN (dba.t_u.pk_t_u_k) (key range: [dba.t_p].k=[dba.t_u].k, covered: true)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o], [dba.t_p] [dba.t_p], [dba.t_u] [dba.t_u] where [dba.t_o].id=[dba.t_p].id and [dba.t_p].k=[dba.t_u].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_u.pk_t_u_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: t_p node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: t_u node[?]
+                          index: pk_t_u_k term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_p t_p, t_o t_o, t_u t_u where t_o.id=t_p.id and t_p.k=t_u.k
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (dba.t_p)
+      INDEX SCAN (dba.t_u.pk_t_u_k) (key range: [dba.t_p].k=[dba.t_u].k, covered: true)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p], [dba.t_o] [dba.t_o], [dba.t_u] [dba.t_u] where [dba.t_o].id=[dba.t_p].id and [dba.t_p].k=[dba.t_u].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_u.pk_t_u_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

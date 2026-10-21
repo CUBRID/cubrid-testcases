@@ -32,8 +32,9 @@
  *             node: the SEMI inner stays behind the outer join
  *    Case 8:  the same with a RIGHT OUTER JOIN
  *    Case 9:  an uncorrelated IN reads the null-supplying side: the SEMI ON rejects NULL, so the
- *             outer join becomes an inner join; where it does not, the SEMI stays behind the
- *             RIGHT OUTER JOIN
+ *             outer join becomes an inner join, also when the subquery table has a PRIMARY KEY
+ *             and the SEMI itself becomes an INNER JOIN; where it does not, the SEMI stays
+ *             behind the RIGHT OUTER JOIN
  *    Case 10: SEMI ON reads only the preserved side: an outer join in the query does not take the
  *             DISTINCT form away, it is still the merge input after its dependency
  *    Case 11: NOT IN -> ANTI JOIN on a column the WHERE keeps non-NULL, also beside a NOT IN
@@ -138,19 +139,22 @@ drop table t_o, t_i, t_pk;
 evaluate 'Case 7: SEMI ON reads the null-supplying side of a LEFT OUTER JOIN through an INNER JOIN node; the SEMI inner stays behind the outer join';
 -- t_o 3000 rows (m = id mod 7); t_p 20 rows matched by id (k 0..4), the null-supplying side; t_q 20 rows matched to t_p by id;
 -- t_s (k, m) = (1, 1), (2, 2), (0, 3). The SEMI reads t_p only through t_q, whose INNER JOIN ON is no ground to drop the LEFT
-drop table if exists t_o, t_p, t_q, t_s;
+-- t_u: the k of t_s as a PRIMARY KEY (Case 9)
+drop table if exists t_o, t_p, t_q, t_s, t_u;
 create table t_o (id int, m int);
 create table t_p (id int, k int);
 create table t_q (id int, k int);
 create table t_s (k int, m int);
+create table t_u (k int primary key);
 insert into t_o select rownum, mod(rownum, 7) from db_class a, db_class b, db_class c limit 3000;
 insert into t_p select rownum * 2, mod(rownum, 5) from db_class a, db_class b, db_class c limit 20;
 insert into t_q select rownum * 2, mod(rownum, 5) from db_class a, db_class b, db_class c limit 20;
 insert into t_s select mod(rownum, 3), mod(rownum, 7) from db_class a, db_class b limit 3;
+insert into t_u select k from t_s;
 create index i_t_p_id on t_p (id);
 create index i_t_q_id on t_q (id);
 create index i_t_o_m on t_o (m);
-update statistics on t_o, t_p, t_q, t_s with fullscan;
+update statistics on t_o, t_p, t_q, t_s, t_u with fullscan;
 select /*+ recompile parallel(0) */ count(*)
   from t_o left outer join t_p on t_o.id = t_p.id
        inner join t_q on t_q.id = t_p.id
@@ -193,6 +197,15 @@ select /*+ recompile parallel(0) */ count(*)
   from t_p right outer join t_o on t_o.id = t_p.id
  where t_p.k in (select /*+ NO_UNNEST */ k from t_s);
 show trace;
+-- t_u.k is a PRIMARY KEY: the SEMI becomes an INNER JOIN, after its ON has turned the outer join into an inner join
+select /*+ recompile parallel(0) */ count(*)
+  from t_o left outer join t_p on t_o.id = t_p.id
+ where t_p.k in (select k from t_u);
+show trace;
+select /*+ recompile parallel(0) */ count(*)
+  from t_p right outer join t_o on t_o.id = t_p.id
+ where t_p.k in (select k from t_u);
+show trace;
 -- coalesce lets a NULL-filled t_p.k through, so the RIGHT OUTER JOIN stays and the SEMI must come after it
 select /*+ recompile parallel(0) */ count(*)
   from t_p right outer join t_o on t_o.id = t_p.id
@@ -213,7 +226,7 @@ select /*+ recompile parallel(0) */ count(*)
   from t_o left outer join t_p on t_o.id = t_p.id
  where exists (select /*+ NO_UNNEST */ 1 from t_s where t_s.m = t_o.m);
 show trace;
-drop table t_o, t_p, t_q, t_s;
+drop table t_o, t_p, t_q, t_s, t_u;
 
 
 evaluate 'Case 11: NOT IN -> ANTI JOIN on a column the WHERE keeps non-NULL; no rewrite when the NULL exclusion would not hold';
