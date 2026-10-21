@@ -11,20 +11,25 @@
 --    Positive (skip fires, matches control) -- PR review Test table:
 --      [7]   trailing key (c3) is schema NOT NULL, unreferenced in the query -> ORDER BY skip
 --      [7g]  WHERE c2 > 0 ORDER BY c1: term proves c2 NOT NULL, c1 may still be NULL
---      [7h]  WHERE c1 = 3 ORDER BY c2: equality on the leading key permits scanning by c2
 --      [7b]  same as [7], under GROUP BY skip
 --      [8]   WHERE c2 NOT IN (nonempty ENUM literal list) ORDER BY c1: term proves
 --            c2 NOT NULL the same way as [7g], but the list is rewritten to a
 --            PT_FUNCTION by pt_fix_enumeration_comparison() first -- also exercises
 --            the literal-set recognition described under B/e0d5fc622 below
 --
+--    (A WHERE c1 = 3 ORDER BY c2 case ("[7h]") was tried here too, but gdb showed
+--    qo_validate_index_for_sort() is never even called for it -- an equality term
+--    on the leading key already guarantees that key is not null, through a
+--    completely different, pre-existing code path, so it cannot regress from
+--    anything this PR touches. Dropped as out of scope for this file.)
+--
 --    Negative (skip must NOT fire) -- PR review Test table:
---      [7i]  same as [7h] but with OR: the NOT NULL proof breaks
+--      [7i]  WHERE c1 = 3 OR c2 = 1 ORDER BY c1: OR breaks the NOT NULL proof
 --      [7j]  GROUP BY ... WITH ROLLUP -> must NOT skip
 --      [7c]  single-column index on a nullable column -> must NOT skip
 --
---    Regression (index-type exclusions; unlike [7]/[7g]/[7h], the index in each
---    of these has the same (c1, c2)-shaped key as a plain composite index that
+--    Regression (index-type exclusions; unlike [7]/[7g], the index in each of
+--    these has the same (c1, c2)-shaped key as a plain composite index that
 --    WOULD skip, but qo_validate_index_for_sort() deliberately restricts these
 --    index types to key 0 only, so the trailing key's NOT NULL proof must be
 --    ignored and skip must NOT fire):
@@ -105,7 +110,7 @@
 -- For outer join cases, unmatched NULL-padding rows must remain in the result;
 -- the LEFT OUTER JOIN must not be incorrectly reduced to an INNER JOIN.
 --
--- [7]/[7b]/[7d]/[7e]/[7f]/[7g]/[7h]/[7k]/[7l]/[8]: traced with show trace.
+-- [7]/[7b]/[7d]/[7e]/[7f]/[7g]/[7k]/[7l]/[8]: traced with show trace.
 -- For these A-side cases, a regression that silently stops skipping (or starts
 -- skipping when it must not, for [7k]/[7l]) still returns the right rows (it
 -- only loses or wrongly gains the optimization, not correctness), so only the
@@ -179,15 +184,6 @@ set trace off;
 
 evaluate '[7g-control] same query, index forced off: ground truth for [7g]';
 select c1, c2 from t where c2 > 0 using index none order by c1, c2;
-
-evaluate '[7h] t: where c1 = 3 order by c2: equality on the leading key permits scanning ordered by c2';
-set trace on;
-select c1, c2 from t where c1 = 3 order by c2;
-show trace;
-set trace off;
-
-evaluate '[7h-control] same query, index forced off: ground truth for [7h]';
-select c1, c2 from t where c1 = 3 using index none order by c2;
 
 evaluate '[7b] w: same as [7], under GROUP BY skip, NULL group must survive';
 set trace on;
@@ -367,7 +363,7 @@ create table fi (c1 int, c2 int not null);
 create index i_fi_filter on fi (c1, c2) where c2 > 0;
 insert into fi values (NULL,1), (NULL,2), (3,3), (4,4), (5,5);
 
-evaluate '[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g]/[7h], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire';
+evaluate '[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire';
 set trace on;
 select c1, c2 from fi where c2 > 0 order by c1, c2;
 show trace;
@@ -380,7 +376,7 @@ create table fn (c1 int, c2 int not null);
 create index i_fn_func on fn (c1, abs(c2));
 insert into fn values (NULL,1), (NULL,2), (3,3), (4,4), (5,5);
 
-evaluate '[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g]/[7h] do); func_index_info != NULL forces ncols=1 regardless of the function''s position, so key 1 (and c2''s own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)';
+evaluate '[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g] does); func_index_info != NULL forces ncols=1 regardless of the function''s position, so key 1 (and c2''s own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)';
 set trace on;
 select c1, c2 from fn order by c1, c2;
 show trace;

@@ -124,44 +124,6 @@ null     5
 
 ===================================================
     
-[7h] t: where c1 = 3 order by c2: equality on the leading key permits scanning ordered by c2     
-
-===================================================
-0
-===================================================
-c1    c2    
-3     null     
-3     1     
-3     7     
-
-===================================================
-trace    
-
-Query Plan:
-  INDEX SCAN (dba.t.i_t_c?_c?) (key range: [dba.t].c?= ?:? , covered: true)
-  skip order by: true
-
-  rewritten query: select [dba.t].c?, [dba.t].c? from [dba.t] [dba.t] where [dba.t].c?= ?:?  order by ?
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t.i_t_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-     
-
-===================================================
-0
-===================================================
-    
-[7h-control] same query, index forced off: ground truth for [7h]     
-
-===================================================
-c1    c2    
-3     null     
-3     1     
-3     7     
-
-===================================================
-    
 [7b] w: same as [7], under GROUP BY skip, NULL group must survive     
 
 ===================================================
@@ -812,7 +774,7 @@ null     Tue
 5
 ===================================================
     
-[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g]/[7h], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire     
+[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire     
 
 ===================================================
 0
@@ -861,7 +823,7 @@ null     2
 5
 ===================================================
     
-[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g]/[7h] do); func_index_info != NULL forces ncols=1 regardless of the function's position, so key 1 (and c2's own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)     
+[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g] does); func_index_info != NULL forces ncols=1 regardless of the function's position, so key 1 (and c2's own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)     
 
 ===================================================
 0
