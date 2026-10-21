@@ -32,7 +32,7 @@ g    x    d
 
 ===================================================
     
-Case 2: the main query selects some of the columns, or all of them in another order     
+Case 2: the main query selects some of the columns     
 
 ===================================================
 x    d    
@@ -53,6 +53,10 @@ g    d
 2     100     
 
 ===================================================
+    
+Case 3: the main query selects all the columns in another order     
+
+===================================================
 d    g    x    
 null     1     10     
 10     1     20     
@@ -63,7 +67,7 @@ null     2     100
 
 ===================================================
     
-Case 3: g and x are referenced only in the WHERE or ORDER BY of the main query     
+Case 4: g and x are referenced only in the ORDER BY of the main query     
 
 ===================================================
 d    
@@ -73,6 +77,10 @@ null
 null     
 100     
 100     
+
+===================================================
+    
+Case 5: g and x are referenced only in the WHERE of the main query     
 
 ===================================================
 d    
@@ -82,7 +90,7 @@ null
 
 ===================================================
     
-Case 4: the OVER clause written with ordinals     
+Case 6: the OVER clause written with ordinals     
 
 ===================================================
 d    
@@ -95,7 +103,7 @@ null
 
 ===================================================
     
-Case 5: the analytic function nested two levels down, in CASE and in a generic function     
+Case 7: the analytic function inside an expression in CASE     
 
 ===================================================
 d    
@@ -105,6 +113,10 @@ null
 10     
 100     
 100     
+
+===================================================
+    
+Case 8: the analytic function as the argument of a generic function (ELT)     
 
 ===================================================
 d    
@@ -117,7 +129,7 @@ d
 
 ===================================================
     
-Case 6: + 0 around ROW_NUMBER, which hit an assertion on debug builds     
+Case 9: + 0 around ROW_NUMBER, which hit an assertion on debug builds     
 
 ===================================================
 d    
@@ -130,7 +142,7 @@ d
 
 ===================================================
     
-Case 7: two analytic functions in one expression -- the second one must find the columns re-added for the first one     
+Case 10: two analytic functions in one expression     
 
 ===================================================
 d    
@@ -143,7 +155,7 @@ null
 
 ===================================================
     
-Case 8: the analytic function as the whole select list item, which was already renumbered     
+Case 11: the analytic function as the whole select list item, which was already renumbered     
 
 ===================================================
 lg    
@@ -156,7 +168,7 @@ null
 
 ===================================================
     
-Case 9: the same derived table through a named view and a WITH clause     
+Case 12: the same derived table as a named view     
 
 ===================================================
 0
@@ -172,6 +184,10 @@ null
 ===================================================
 sd    
 220     
+
+===================================================
+    
+Case 13: the same derived table in a WITH clause     
 
 ===================================================
 sd    
