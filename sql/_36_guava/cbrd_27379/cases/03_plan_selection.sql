@@ -226,8 +226,9 @@ INSERT INTO ta
   FROM cte x, cte y
   WHERE ROWNUM <= 2000;
 
--- tb: 2000 rows of MOD (ROWNUM, 500)
---   Stored: 2000 rows, keys 0 .. 499 with 4 rows per key
+-- tb: 2000 rows of ROWNUM + 1000, distinct keys: reading tb with its duplicates removed (CBRD-27397) has nothing to
+--     remove, so the hash join stays the cheapest plan without a hint
+--   Stored: 2000 rows, keys 1001 .. 3000 with 1 row per key, half of the keys of ta
 CREATE TABLE tb (ca INT);
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (
@@ -235,7 +236,7 @@ INSERT INTO tb
     UNION ALL
     SELECT n + 1 FROM cte WHERE n < 50
   )
-  SELECT MOD (ROWNUM, 500)
+  SELECT ROWNUM + 1000
   FROM cte x, cte y
   WHERE ROWNUM <= 2000;
 
