@@ -28,6 +28,7 @@
  *      23. pk column, like ''%'' || bind parameter || ''%'', hostvar_peeking=yes
  *      24. join query, like ''%'' || bind parameter || ''%'', hostvar_peeking=yes
  */
+
 set trace on;
 
 evaluate concat('1. IS NOT NULL on NOT NULL column');
@@ -39,6 +40,7 @@ create table tbl_w (
 
 insert into tbl_w (cola, colb) values(1, 100);
 
+--@queryplan
 select * from tbl_w where cola is not null;
 show trace;
 
@@ -52,6 +54,7 @@ create table tbl_x (
 insert into tbl_x (a, b) values(1, 'abcdef');
 insert into tbl_x (a, b) values(2, 'hello');
 
+--@queryplan
 select * from tbl_x where a is not null and b = 'hello';
 show trace;
 
@@ -67,10 +70,12 @@ insert into tbl_y (c, d, e) values(1, null, 'abcdef');
 insert into tbl_y (c, d, e) values(2, null, 'hello');
 insert into tbl_y (c, d, e) values(3, null, 'test');
 
+--@queryplan
 select * from tbl_y where e like '%';
 show trace;
 
 evaluate concat('4. IS NOT NULL in LIKE predicate with literal "?"');
+--@queryplan
 select * from tbl_y where e like '?';
 show trace;
 
@@ -86,10 +91,12 @@ insert into tbl_z (x, y, z) values(1, null, 'hi');
 insert into tbl_z (x, y, z) values(2, null, 'cubrid');
 insert into tbl_z (x, y, z) values(3, null, 'test');
 
+--@queryplan
 select * from tbl_z where z like '%' || '' || '%';
 show trace;
 
 evaluate concat('6. IS NOT NULL in complex LIKE expression with literal "?"');
+--@queryplan
 select * from tbl_z where z like '?' || '' || '?';
 show trace;
 
@@ -103,6 +110,7 @@ create table tbl_r (
 insert into tbl_r values ('a', 1);
 insert into tbl_r values ('b', 2);
 
+--@queryplan
 select /*+ recompile */ * from tbl_r where (cola is not null and cola like '%' || '' || '%');
 show trace;
 
@@ -116,6 +124,7 @@ create table tbl_or (
 insert into tbl_or values (1, null);
 insert into tbl_or values (2, 10);
 
+--@queryplan
 select /*+ recompile */ * from tbl_or where (cola is not null or colb = 10);
 show trace;
 
@@ -127,14 +136,17 @@ create table tbl_b(
 insert into tbl_b values (1);
 
 evaluate concat('9. type mismatch, not null column, is not null');
+--@queryplan
 select /*+ recompile */ * from tbl_b where cast(cola as bigint) is not null;
 show trace;
 
 evaluate concat('10. type mismatch, not null column, like ''%''');
+--@queryplan
 select /*+ recompile */ * from tbl_b where cola like '%';
 show trace;
 
 evaluate concat('11. type mismatch, not null column, like ''%'' || '''' || ''%''');
+--@queryplan
 select /*+ recompile */ * from tbl_b where cola like '%' || '' || '%';
 show trace;
 
@@ -148,14 +160,17 @@ insert into tbl_a (cola) values ('abc');
 insert into tbl_a (cola) values ('def');
 
 evaluate concat('12. pk column, is not null');
+--@queryplan
 select /*+ recompile */ * from tbl_a where cola is not null;
 show trace;
 
 evaluate concat('13. pk column, like ''%''');
+--@queryplan
 select /*+ recompile */ * from tbl_a where cola like '%';
 show trace;
 
 evaluate concat('14. pk column, like ''%'' || '''' || ''%''');
+--@queryplan
 select /*+ recompile */ * from tbl_a where cola like '%' || '' || '%';
 show trace;
 
@@ -176,6 +191,7 @@ create table tbl_b(
 insert into tbl_b (cola) values (111);
 insert into tbl_b (cola) values (222);
 
+--@queryplan
 select /*+ recompile */ * from tbl_a left outer join tbl_b on tbl_a.colb = tbl_b.cola and tbl_a.cola like '%' || '' || '%';
 show trace;
 
