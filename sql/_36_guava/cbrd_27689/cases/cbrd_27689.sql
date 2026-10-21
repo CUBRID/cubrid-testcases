@@ -1,6 +1,7 @@
 -- Verification for CBRD-27689 : Allow parallel index scan when the first ORDER BY column is DESC but the order is not skipped
 -- A DESC first ORDER BY / GROUP BY column used to turn the parallel index scan off even when the sort is not done by the index.
 -- Parallel scan must now be used in that case, and must still be off when ORDER BY / GROUP BY is skipped by the index.
+-- The name prefix groups (Char000 .. Char009) have different sizes, so ORDER BY count DESC and ASC give different orders.
 
 drop table if exists t_27689;
 create table t_27689 (id int primary key, name varchar(40) not null, v int not null);
@@ -10,7 +11,7 @@ with recursive cte (n) as (
     union all
     select n + 1 from cte where n < 400
   )
-select rownum, 'Char' || lpad (mod (rownum, 50000), 6, '0') || '_' || lpad (rownum, 10, '0'), mod (rownum, 1000)
+select rownum, 'Char' || lpad (cast (floor (sqrt (rownum - 1) / 40) as int), 3, '0') || '_' || lpad (rownum, 10, '0'), mod (rownum, 1000)
 from cte a, cte b
 limit 150000;
 create index i_27689_name on t_27689 (name);
@@ -37,12 +38,12 @@ select /*+ recompile */ mod (v, 3) m, count (*) c from t_27689 use index (i_2768
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ mod (v, 3) m, count (*) c from t_27689 use index (i_27689_name) where name >= 'Char' group by mod (v, 3) desc;
 
-evaluate 'Q5. ORDER BY skipped by a descending index scan -> serial, rows in descending order';
-select /*+ recompile */ name from t_27689 where name > 'Char049995' order by name desc;
+evaluate 'Q5. ORDER BY skipped by a descending index scan -> serial even with a PARALLEL hint, rows in descending order';
+select /*+ recompile PARALLEL(4) */ name from t_27689 where name > 'Char009_0000149990' order by name desc;
 show trace;
 
-evaluate 'Q6. GROUP BY skipped by a descending index scan -> serial, groups in descending order';
-select /*+ recompile */ name, count (*) from t_27689 where name > 'Char049998' group by name desc;
+evaluate 'Q6. GROUP BY skipped by a descending index scan -> serial even with a PARALLEL hint, groups in descending order';
+select /*+ recompile PARALLEL(4) */ name, count (*) from t_27689 where name > 'Char009_0000149995' group by name desc;
 show trace;
 
 set trace off;
