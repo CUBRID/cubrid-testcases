@@ -32,7 +32,8 @@
  *     partitioned table, and USE_DESC_IDX (the backward scan serves DESC keys only)
  *  7. Key-range sort-skip path of CBRD-26473 - NULL partition keys form one partition and a
  *     selected ROWNUM is numbered (wrong results before CBRD-27469: every NULL row started
- *     a new partition, and ROWNUM was 0). Trace is turned off before the last query so no
+ *     a new partition, and ROWNUM was 0). 7-2 adds COUNT(*) OVER so that the rows are not
+ *     emitted while scanning (no "(stopkey)" in the trace); only then ROWNUM was 0. Trace is turned off before the last query so no
  *     query plan is left in the session for the next test case.
  */
 
@@ -302,9 +303,10 @@ select /*+ recompile */ id, a, grp,
 from t27469_range where a = 1 using index idx_a_grp_id(+);
 show trace;
 
-evaluate '7-2. ROWNUM selected on the sort-skip path - numbered in output order';
+evaluate '7-2. ROWNUM selected on the sort-skip path without stopkey - numbered in output order';
 select /*+ recompile */ rownum, id, a, grp,
-  row_number() over (partition by a, grp order by id) r
+  row_number() over (partition by a, grp order by id) r,
+  count(*) over (partition by a, grp) c
 from t27469_range where a = 1 using index idx_a_grp_id(+);
 show trace;
 

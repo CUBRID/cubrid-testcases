@@ -859,16 +859,16 @@ Trace Statistics:
 
 ===================================================
     
-7-2. ROWNUM selected on the sort-skip path - numbered in output order     
+7-2. ROWNUM selected on the sort-skip path without stopkey - numbered in output order     
 
 ===================================================
-rownum    id    a    grp    r    
-1     1     1     null     1     
-2     2     1     null     2     
-3     3     1     null     3     
-4     4     1     1     1     
-5     5     1     1     2     
-6     6     1     2     1     
+rownum    id    a    grp    r    c    
+1     1     1     null     1     3     
+2     2     1     null     2     3     
+3     3     1     null     3     3     
+4     4     1     1     1     2     
+5     5     1     1     2     2     
+6     6     1     2     1     1     
 
 ===================================================
 trace    
@@ -876,12 +876,12 @@ trace
 Query Plan:
   INDEX SCAN (dba.t?_range.idx_a_grp_id) (key range: [dba.t?_range].a= ?:? , covered: true)
 
-  rewritten query: select rownum, [dba.t?_range].id, [dba.t?_range].a, [dba.t?_range].grp, row_number() over (partition by ?, ? order by ?) from [dba.t?_range] [dba.t?_range] where [dba.t?_range].a= ?:?  using index [dba.t?_range].idx_a_grp_id(+)
+  rewritten query: select rownum, [dba.t?_range].id, [dba.t?_range].a, [dba.t?_range].grp, row_number() over (partition by ?, ? order by ?), count(*) over (partition by ?, ?) from [dba.t?_range] [dba.t?_range] where [dba.t?_range].a= ?:?  using index [dba.t?_range].idx_a_grp_id(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t?_range.idx_a_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================
