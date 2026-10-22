@@ -115,6 +115,11 @@ $int, $1
 select to_char(dtt, ?) from t_dt where id = 1;
 $int, $1
 select to_char(g, ?) from t_dt where id = 1;
+-- JDBC/SQL-category has no BIGINT/long bind type (only int/double/date/string), so $bigint falls
+-- back to a string here and hits the pre-existing invalid-format-string path (-783) rather than
+-- the intended rejection; the CCI run (answer_cci) binds this correctly and gets -621 instead
+$bigint, $9007199254740993
+select to_char(dtt, ?) from t_dt where id = 1;
 $double, $1.5
 select to_char(dtt, ?) from t_dt where id = 1;
 -- the CTP CCI runner passes this $date text where CCI expects a date struct, so the bind
