@@ -9,6 +9,10 @@ insert into t values (3,1.1, 'AAAAA', 'AABBB', -1);
 insert into t values (4,null, null, null, null);
 insert into t values (5,2.1, 'BBBBB', 'BBBBB', 2);
 
+-- CBRD-27375 removes a GROUP BY that covers a primary key at the rewrite stage, so the next
+-- two queries no longer group and the index group-by skip does not apply to them. The ones
+-- below keep the clause -- an aggregate or a LIMIT without ORDER BY holds it -- and still
+-- exercise the skip on the primary-key-led index.
 prepare stmt from 'select /*+ recompile */ a,b,c,d from t group by a,b,c,d';
 execute stmt;
 deallocate prepare stmt;
