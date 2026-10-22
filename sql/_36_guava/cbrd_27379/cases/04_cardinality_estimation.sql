@@ -10,8 +10,9 @@
  *    TC-3-02: a WHERE term filters the result and does not take part in matching
  *    TC-3-03: duplicate inner keys (the number of distinct keys is used)
  *    TC-3-04: an ON term that does not read the inner input
- *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, PK table outer (FK table outer is no SEMI JOIN since CBRD-27397:
- *             an EXISTS whose equalities cover the inner's whole unique key runs as an INNER JOIN)
+ *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter (FK table outer uses
+ *             NOT EXISTS: since CBRD-27397 an EXISTS whose equalities cover the inner's whole unique key runs as
+ *             an INNER JOIN, a NOT EXISTS stays an ANTI JOIN)
  *    TC-3-06: equi-join and non-equi terms together
  *    TC-3-07: NULL outer keys, with unique inner keys and with another equi-join term
  *    TC-3-08: an equality on an expression, whose NDV ratio is unknown, so there is no key
@@ -24,11 +25,13 @@
  *    4   TC-3-03-01  ta ANTI JOIN tb                     duplicate inner keys
  *    5   TC-3-03-02  ta ANTI JOIN tc                     distinct inner keys
  *    6   TC-3-04-01  ta ANTI JOIN tb                     ON term ta.cb > 500
- *    7   TC-3-05-02  EXISTS subquery                     NOT NULL FK, PK table outer
- *    8   TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
- *    9   TC-3-06-01  EXISTS subquery                     equi and non-equi terms
- *    10  TC-3-07-01  EXISTS subquery                     NULL outer keys
- *    11  TC-3-08-01  NOT EXISTS subquery                 equality on an expression, no key
+ *    7   TC-3-05-01  NOT EXISTS subquery                 NOT NULL FK, FK table outer
+ *    8   TC-3-05-02  EXISTS subquery                     NOT NULL FK, PK table outer
+ *    9   TC-3-05-03  NOT EXISTS subquery                 nullable FK, FK table outer
+ *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
+ *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
+ *    12  TC-3-07-01  EXISTS subquery                     NULL outer keys
+ *    13  TC-3-08-01  NOT EXISTS subquery                 equality on an expression, no key
  *
  *  CTP masks the numbers in a --@queryplan output, so the estimated rows (card) are not compared.
  *  This file asserts the result rows and the plan shape. The estimate itself is not asserted here.
@@ -358,8 +361,67 @@ FROM ta
 DROP TABLE IF EXISTS tb, ta, tc;
 
 -- =====================================================================================================================
--- TC-3-05: composite PK-FK SEMI JOIN, PK table outer (NOT NULL or nullable FK)
+-- TC-3-05: composite PK-FK SEMI JOIN / ANTI JOIN (NOT NULL or nullable FK, with or without inner filter)
 -- =====================================================================================================================
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS';
+
+DROP TABLE IF EXISTS tb, ta;
+
+-- ta: 1000 rows of (n / 10, MOD (n, 10), n), n = 0 .. 999. The PK (a, b) covers a = 0 .. 99 and b = 0 .. 9
+--   n 0    -> (0, 0, 0)
+--   n 1    -> (0, 1, 1)
+--   ...
+--   n 10   -> (1, 0, 10)
+--   ...
+--   n 999  -> (99, 9, 999)
+--   Stored: 1000 rows, a 0 .. 99 and b 0 .. 9, x = a * 10 + b
+CREATE TABLE ta (a INT, b INT, x INT, PRIMARY KEY (a, b));
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 999
+  )
+  SELECT n / 10, MOD (n, 10), n
+  FROM cte;
+
+-- tb: 10000 rows of (MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
+--     Each ta key (a, b) is referenced by 10 rows
+--   m 0     -> (0, 0)
+--   m 1     -> (0, 1)
+--   ...
+--   m 10    -> (1, 0)
+--   ...
+--   m 999   -> (99, 9)
+--   m 1000  -> (0, 0)    the same keys repeat
+--   ...
+--   m 9999  -> (99, 9)
+--   Stored: 10000 rows, 1000 keys (a, b) with 10 rows per key
+CREATE TABLE tb (a INT NOT NULL, b INT NOT NULL, FOREIGN KEY (a, b) REFERENCES ta (a, b));
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 99
+  )
+  SELECT MOD (x.n * 100 + y.n, 1000) / 10, MOD (x.n * 100 + y.n, 10)
+  FROM cte x, cte y;
+
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-3-05-01-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-01-01: unnested, hash join, result and plan';
+--@queryplan
+SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
+FROM tb
+WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b AND ta.x < 100);
+
+-- cleanup
+DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-05-02: NOT NULL FK, PK table outer, EXISTS
@@ -416,6 +478,64 @@ evaluate 'TC-3-05-02-01: unnested, hash join, result and plan';
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.a = ta.a AND tb.b = ta.b AND tb.id < 100);
+
+-- cleanup
+DROP TABLE IF EXISTS tb, ta;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-3-05-03: nullable FK, FK table outer, NOT EXISTS
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-3-05-03: nullable FK, FK table outer, NOT EXISTS';
+
+DROP TABLE IF EXISTS tb, ta;
+
+-- ta: 1000 rows of (n / 10, MOD (n, 10)), n = 0 .. 999. The PK (a, b) covers a = 0 .. 99 and b = 0 .. 9
+--   n 0    -> (0, 0)
+--   n 1    -> (0, 1)
+--   ...
+--   n 10   -> (1, 0)
+--   ...
+--   n 999  -> (99, 9)
+--   Stored: 1000 rows, a 0 .. 99 and b 0 .. 9
+CREATE TABLE ta (a INT, b INT, PRIMARY KEY (a, b));
+INSERT INTO ta
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 999
+  )
+  SELECT n / 10, MOD (n, 10)
+  FROM cte;
+
+-- tb: 10000 rows of (MOD (m, 1000) / 10, MOD (m, 10)), m = x.n * 100 + y.n = 0 .. 9999.
+--     a is NULL where MOD (m, 4) = 0 (2500 rows)
+--   m 0     -> (NULL, 0)
+--   m 1     -> (0, 1)
+--   m 2     -> (0, 2)
+--   m 3     -> (0, 3)
+--   m 4     -> (NULL, 4)
+--   ...
+--   m 9999  -> (99, 9)
+--   Stored: 10000 rows, a is NULL in the 2500 rows of m 0, 4, 8, ...
+CREATE TABLE tb (a INT, b INT, FOREIGN KEY (a, b) REFERENCES ta (a, b));
+INSERT INTO tb
+  WITH RECURSIVE cte (n) AS (
+    SELECT 0
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 99
+  )
+  SELECT CASE WHEN MOD (x.n * 100 + y.n, 4) = 0 THEN NULL ELSE MOD (x.n * 100 + y.n, 1000) / 10 END,
+         MOD (x.n * 100 + y.n, 10)
+  FROM cte x, cte y;
+
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-3-05-03-01: unnested, hash join, result and plan
+evaluate 'TC-3-05-03-01: unnested, hash join, result and plan';
+--@queryplan
+SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
+FROM tb
+WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b);
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
