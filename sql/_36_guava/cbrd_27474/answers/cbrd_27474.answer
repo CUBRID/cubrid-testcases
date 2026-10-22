@@ -1,0 +1,126 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+25
+===================================================
+10000
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Q1. 12 driving rows: hash join over a parallel scan of t_27474_b     
+
+===================================================
+count(*)    sum(b.v)    max(b.pad)    
+14400     709200     fffcc1a3964b4ad665fa2f07d7bfd0861bc3368ddb162d1f2846b60b810ce6c00555bb36e8cfb7af4aaad5472cab1c4903f68714dba796f8d6b268029d0e62c462f6e7ceadd1f1eb64fe5d6936e7122beda9c67d6a20358927319cf3510402df461254593ec0cc1839a590251176c99c8c2a6cec60863b5ffd776ad9ff57495ac6b2aa071387a2e68359d61f88ea16f618c746a0e715b82e90f0b63ba322576fabd5e8f8c5783bc54bc2a3c91ae68118cf1f4d5318c6b0a76eb889ba14443cbe3d8338aae982b9c8be5f66ff9b91823ed95c6aef0aede9da6da41723b5ab4279c80e2e3dfd073a58a7868ba33aed57a9     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    TABLE SCAN (b)
+
+  rewritten query: select count(*), sum(b.v), max(b.pad) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+Q2. same query, parallel execution off: serial nested loop, same result     
+
+===================================================
+count(*)    sum(b.v)    max(b.pad)    
+14400     709200     fffcc1a3964b4ad665fa2f07d7bfd0861bc3368ddb162d1f2846b60b810ce6c00555bb36e8cfb7af4aaad5472cab1c4903f68714dba796f8d6b268029d0e62c462f6e7ceadd1f1eb64fe5d6936e7122beda9c67d6a20358927319cf3510402df461254593ec0cc1839a590251176c99c8c2a6cec60863b5ffd776ad9ff57495ac6b2aa071387a2e68359d61f88ea16f618c746a0e715b82e90f0b63ba322576fabd5e8f8c5783bc54bc2a3c91ae68118cf1f4d5318c6b0a76eb889ba14443cbe3d8338aae982b9c8be5f66ff9b91823ed95c6aef0aede9da6da41723b5ab4279c80e2e3dfd073a58a7868ba33aed57a9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    INDEX SCAN (b.i_?_b_m) (key range: b.m_id=m.id)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN NO_PARALLEL_HASH_JOIN */ count(*), sum(b.v), max(b.pad) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_b.i_?_b_m), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Q3. one driving row: nested loop is cheaper even against the parallel discount     
+
+===================================================
+count(*)    sum(b.v)    max(b.pad)    
+1200     70200     ffb04b3fde58882155c0f560b7e20bea51c9d0385c088de752dfb41cfa835a37c1160f0432464eb6110ada4a0ac569172d0d322f5fec1cda1b8b4c0020d61c370d730fb2cb696e47fbbe4b2054b10de768ff9c82826dcda9030b6b0990efc0337d78ce41a918d71886c6124f0013c92e3529a865a419051ed56a6e7421c6f794291ebc13dd6538bae3ec7959b8d770dc8f3f311cc38b1c4ec1c8efe173a94845d034a7eda6e49ec2b22c5eee94b053c77db8742948ee2a4a67999d26941bfa01439b968b83f96a704ad09bf8ffe2e91bda5dc4875e3401ea2bd35ee8f56277a6b0b9da81cf357c8884a06de8ef72bea0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (d)
+      INDEX SCAN (m.i_?_m_d) (key range: m.d_id=d.id)
+    INDEX SCAN (b.i_?_b_m) (key range: b.m_id=m.id)
+
+  rewritten query: select count(*), sum(b.v), max(b.pad) from [dba.t_?_d] d, [dba.t_?_m] m, [dba.t_?_b] b where m.d_id=d.id and b.m_id=m.id and d.[name]= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_?_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_?_m.i_?_m_d), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_b.i_?_b_m), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
