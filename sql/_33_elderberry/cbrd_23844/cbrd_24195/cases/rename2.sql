@@ -11,9 +11,6 @@ rename table t1 to t3;
 rename table t2 to t4;
 select class_of, unique_name, class_name, owner.name from _db_class where (is_system_class | flags) % 8 = 0 order by unique_name;
 select unique_name, name, owner.name, target_class, action_definition from _db_trigger;
--- Known issue (CBRD-27618): the trigger action compiled in this session still points to
--- the renamed t2 (now t4), so it inserts 2 into t4. A new session resolves
--- dba.t2 by name and fails with "Unknown class".
 insert into t3 values (2);
 select * from t4;
 
