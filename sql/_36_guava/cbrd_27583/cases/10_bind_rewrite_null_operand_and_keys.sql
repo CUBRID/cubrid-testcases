@@ -4,8 +4,8 @@
  *
  *  Case 1: c4 = vc and c4 = ? on a CHAR(4) and a VARCHAR column.  The optimizer copies the
  *  bind into vc = ?, and the client no longer casts the bind to CHAR(4), so the row
- *  ('a   ', 'a') matched although c4 = vc is false.  The copy now takes c4's type as a
- *  literal does, and no row matches in every join method.
+ *  ('a   ', 'a') matched although c4 = vc is false.  An equality of a CHAR column with a
+ *  bind is no longer copied, and no row matches in every join method.
  *  Case 2: rank () over (partition by mod (v, null)) failed with -181 on v = 'a' because the
  *  string operand was planned a DOUBLE conversion though the NULL operand makes the result
  *  NULL.  The partition key is NULL for every row.
@@ -13,12 +13,17 @@
  *  A NULL bound matches no row, as a NULL literal does.
  *  Case 4: a.i = nvl (?, b.i) under a nested loop join with a DOUBLE bind keyed the memo by
  *  the converted domain while the slot held the INTEGER value (a debug build asserted).
+ *  Case 5: a statement prepared without its values, as a JDBC client prepares.  A cast
+ *  that a first fix of Case 1 put on the copy of n = ? typed the bind's position as
+ *  NUMERIC (38,0), so the DOUBLE bind of n = ? itself lost its value, and the INTEGER bind
+ *  of c1 = ? failed with 'Cannot coerce host var' on a CHAR (1) column.
  *
  *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
- *  for the NULL bind, and Case 4 the counts of the literal statements beside them.
+ *  for the NULL bind, Case 4 the counts of the literal statements beside them, and Case 5 the
+ *  row 119673559571800002 for the DOUBLE bind, no row for 35203 and the row 'Y' for 'Y'.
  */
 
-drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i;
+drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
 
 
 evaluate 'Case 1: c4 = vc and c4 = ? on CHAR(4) and VARCHAR columns';
@@ -67,4 +72,14 @@ select /*+ use_nl */ count (*) from t_o a, t_i b where a.i = nvl (1.0, b.i);
 $double,$0.0;
 select /*+ use_nl */ count (*) from t_o a, t_i b where a.i = b.i - ?;
 
-drop table t_ca, t_cb, t_md, t_key, t_o, t_i;
+
+evaluate 'Case 5: binds prepared without their values beside a copy of the equality';
+create table t_pn (n numeric(38,0), c1 char(1));
+insert into t_pn values (119673559571800002, 'N'), (1, 'Y');
+prepare s_num from 'select n from t_pn where n = ? and n >= 0';
+execute s_num using 1.19673559571800002e17;
+prepare s_char from 'select c1 from t_pn where c1 = ?';
+execute s_char using 35203;
+execute s_char using 'Y';
+
+drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
