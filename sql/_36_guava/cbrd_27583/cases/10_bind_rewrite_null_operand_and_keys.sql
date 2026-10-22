@@ -1,0 +1,70 @@
+/**
+ *  This test case verifies CBRD-27583: four places where a bind or a NULL operand met a
+ *  decision the compiler makes once, found by a review fuzzer on PR 8213.
+ *
+ *  Case 1: c4 = vc and c4 = ? on a CHAR(4) and a VARCHAR column.  The optimizer copies the
+ *  bind into vc = ?, and the client no longer casts the bind to CHAR(4), so the row
+ *  ('a   ', 'a') matched although c4 = vc is false.  The copy now takes c4's type as a
+ *  literal does, and no row matches in every join method.
+ *  Case 2: rank () over (partition by mod (v, null)) failed with -181 on v = 'a' because the
+ *  string operand was planned a DOUBLE conversion though the NULL operand makes the result
+ *  NULL.  The partition key is NULL for every row.
+ *  Case 3: for orderby_num () <= ? with a NULL bind failed with -454 on the index key limit.
+ *  A NULL bound matches no row, as a NULL literal does.
+ *  Case 4: a.i = nvl (?, b.i) under a nested loop join with a DOUBLE bind keyed the memo by
+ *  the converted domain while the slot held the INTEGER value (a debug build asserted).
+ *
+ *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
+ *  for the NULL bind, and Case 4 the counts of the literal statements beside them.
+ */
+
+drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i;
+
+
+evaluate 'Case 1: c4 = vc and c4 = ? on CHAR(4) and VARCHAR columns';
+create table t_ca (id int, c4 char(4), vc varchar(6));
+insert into t_ca values (1, 'a   ', 'a'), (2, 'abc ', 'abc');
+create table t_cb (id int, vc varchar(6));
+insert into t_cb values (2, 'abc');
+$varchar,$a;
+select id from t_ca where c4 = vc and c4 = ? order by 1;
+select id from t_ca where c4 = vc and c4 = 'a' order by 1;
+$varchar,$abc;
+select /*+ use_nl */ a.id from t_ca a, t_cb b where a.c4 = b.vc and a.c4 = ? order by 1;
+$varchar,$abc;
+select /*+ use_hash */ a.id from t_ca a, t_cb b where a.c4 = b.vc and a.c4 = ? order by 1;
+$varchar,$abc;
+select /*+ use_merge */ a.id from t_ca a, t_cb b where a.c4 = b.vc and a.c4 = ? order by 1;
+
+
+evaluate 'Case 2: an analytic partition key over MOD and ROUND with a NULL operand';
+create table t_md (id int, v varchar(10));
+insert into t_md values (1, '1'), (2, 'a'), (3, null);
+select id, rank () over (partition by mod (v, null) order by id) from t_md order by id;
+select id, rank () over (partition by round (v, null) order by id) from t_md order by id;
+
+
+evaluate 'Case 3: an index key limit bound to NULL';
+create table t_key (id int primary key);
+insert into t_key values (1), (2), (3);
+$int,$NULL;
+select id from t_key order by id for orderby_num () <= ?;
+select id from t_key order by id for orderby_num () <= null;
+$int,$2;
+select id from t_key order by id for orderby_num () <= ?;
+
+
+evaluate 'Case 4: a memoized nested loop key over NVL with a wider bind';
+create table t_o (i int);
+create table t_i (i int);
+insert into t_o select mod (rownum, 10) from db_class a, db_class b limit 2000;
+insert into t_i select mod (rownum, 10) from db_class a, db_class b limit 2000;
+create index i_t_o on t_o (i);
+update statistics on t_o, t_i;
+$double,$1.0;
+select /*+ use_nl */ count (*) from t_o a, t_i b where a.i = nvl (?, b.i);
+select /*+ use_nl */ count (*) from t_o a, t_i b where a.i = nvl (1.0, b.i);
+$double,$0.0;
+select /*+ use_nl */ count (*) from t_o a, t_i b where a.i = b.i - ?;
+
+drop table t_ca, t_cb, t_md, t_key, t_o, t_i;
