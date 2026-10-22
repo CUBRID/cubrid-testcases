@@ -57,6 +57,18 @@ select count(*) from u_27716 where w = v;
 delete from u_27716 u where (select u.v from one_27716 union all select 2 from one_27716 where 1 = 0) = u.v;
 select count(*) from u_27716;
 
+-- a correlated set operation nested inside the remaining arm (s = v, 10, 5)
+select /*+ recompile */ v, (select (select t.v from db_root union select t.v from db_root) from db_root union all select 0 from db_root where 1 = 0) s from t_27716 t order by v;
+select /*+ recompile */ count(*) from t_27716 t
+ where (select (select t.v from db_root union select t.v from db_root) from db_root union all select 0 from db_root where 1 = 0) = t.v;
+select /*+ recompile */ count(*) from t_27716 t
+ where exists (select 1 from db_root where exists (select 1 from db_root where t.v < 5 union select 1 from db_root where t.v < 5) union all select 1 from db_root where 1 = 0);
+
+-- a view with a constant-false query spec inside the remaining arm (s = v)
+create view v_27716 as select v from c_27716 union all select v from c_27716 where 1 = 0;
+select /*+ recompile */ v, (select (select w.v from v_27716 w where w.v = t.v) from db_root union all select 0 from db_root where 1 = 0) s from t_27716 t order by v;
+drop view v_27716;
+
 -- controls: uncorrelated (10), both arms false (0)
 select /*+ recompile */ count(*) from t_27716 t where (select 1 from db_root union all select 2 from db_root where 1 = 0) = 1;
 select /*+ recompile */ count(*) from t_27716 t where (select t.v from one_27716 where 1 = 0 union all select 2 from one_27716 where 1 = 0) is not null;
