@@ -1,0 +1,334 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+12000
+===================================================
+5000
+===================================================
+500
+===================================================
+rows_hi    min_pad    max_pad    distinct_pad    
+12000     512     512     12000     
+
+===================================================
+0
+===================================================
+    
+[1] aggregate heap scan: serial reference (NO_PARALLEL_SCAN) / automatic degree     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+12000     594000     1     12000     6144000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum([dba.px_thr_hi].v), min([dba.px_thr_hi].k), max([dba.px_thr_hi].k), sum( char_length([dba.px_thr_hi].pad)) from [dba.px_thr_hi] [dba.px_thr_hi]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+12000     594000     1     12000     6144000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: select count(*), sum([dba.px_thr_hi].v), min([dba.px_thr_hi].k), max([dba.px_thr_hi].k), sum( char_length([dba.px_thr_hi].pad)) from [dba.px_thr_hi] [dba.px_thr_hi]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+5000     247500     2     10000     2560000     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+5000     247500     2     10000     2560000     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+500     24750     1     500     256000     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+500     24750     1     500     256000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_lo)
+
+  rewritten query: select count(*), sum([dba.px_thr_lo].v), min([dba.px_thr_lo].k), max([dba.px_thr_lo].k), sum( char_length([dba.px_thr_lo].pad)) from [dba.px_thr_lo] [dba.px_thr_lo]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.px_thr_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[2] filtered row-producing heap scan: serial reference (NO_PARALLEL_SCAN) / automatic degree     
+
+===================================================
+cnt    sum_k    sum_pad    
+1200     7157400     614400     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_thr_hi].k, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] where ([dba.px_thr_hi].v< ?:? ))
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.k), sum( char_length(d.pad)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_thr_hi].k, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] where ([dba.px_thr_hi].v< ?:? )) d (k, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    sum_k    sum_pad    
+1200     7157400     614400     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.px_thr_hi].k, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] where ([dba.px_thr_hi].v< ?:? ))
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.k), sum( char_length(d.pad)) from (select /*+ NO_MERGE */ [dba.px_thr_hi].k, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] where ([dba.px_thr_hi].v< ?:? )) d (k, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+cnt    sum_k    sum_pad    
+500     2464500     256000     
+
+===================================================
+cnt    sum_k    sum_pad    
+500     2464500     256000     
+
+===================================================
+cnt    sum_k    sum_pad    
+50     10725     25600     
+
+===================================================
+cnt    sum_k    sum_pad    
+50     10725     25600     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_thr_lo)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.px_thr_lo].k, [dba.px_thr_lo].pad from [dba.px_thr_lo] [dba.px_thr_lo] where ([dba.px_thr_lo].v< ?:? ))
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.k), sum( char_length(d.pad)) from (select /*+ NO_MERGE */ [dba.px_thr_lo].k, [dba.px_thr_lo].pad from [dba.px_thr_lo] [dba.px_thr_lo] where ([dba.px_thr_lo].v< ?:? )) d (k, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_thr_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+[3] hash join with a ~465-page input: serial reference (NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY) / hash join only / automatic degree     
+
+===================================================
+cnt    sum_v    sum_pad    sum_k    
+5000     492500     5120000     25005000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (h)
+    TABLE SCAN (m)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum(h.v+m.v), sum( char_length(h.pad)+ char_length(m.pad)), sum(h.k) from [dba.px_thr_hi] h, [dba.px_thr_mid] m where h.k=m.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    sum_v    sum_pad    sum_k    
+5000     492500     5120000     25005000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (h)
+    TABLE SCAN (m)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ count(*), sum(h.v+m.v), sum( char_length(h.pad)+ char_length(m.pad)), sum(h.k) from [dba.px_thr_hi] h, [dba.px_thr_mid] m where h.k=m.k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    sum_v    sum_pad    sum_k    
+5000     492500     5120000     25005000     
+
+===================================================
+    
+[4] ORDER BY with a ~465-page sort input: serial reference (PARALLEL(1)) / sort only / automatic degree     
+
+===================================================
+cnt    sum_k    sum_pad    min_k    max_k    
+12000     72006000     6144000     1     12000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_thr_hi].k, [dba.px_thr_hi].v, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] order by ? desc , ?)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.k), sum( char_length(d.pad)), min(d.k), max(d.k) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.px_thr_hi].k, [dba.px_thr_hi].v, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] order by ? desc , ?) d (k, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+cnt    sum_k    sum_pad    min_k    max_k    
+12000     72006000     6144000     1     12000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_thr_hi)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_thr_hi].k, [dba.px_thr_hi].v, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] order by ? desc , ?)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.k), sum( char_length(d.pad)), min(d.k), max(d.k) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_thr_hi].k, [dba.px_thr_hi].v, [dba.px_thr_hi].pad from [dba.px_thr_hi] [dba.px_thr_hi] order by ? desc , ?) d (k, v, pad)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+cnt    sum_k    sum_pad    min_k    max_k    
+12000     72006000     6144000     1     12000     
+
+===================================================
+cnt    out_of_order    
+12000     0     
+
+===================================================
+cnt    out_of_order    
+12000     0     
+
+===================================================
+0
+===================================================
+    
+[5] UPDATE STATISTICS WITH FULLSCAN on all three tables, then the aggregate and the join again     
+
+===================================================
+0
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+12000     594000     1     12000     6144000     
+
+===================================================
+cnt    sum_v    min_k    max_k    sum_pad    
+5000     247500     2     10000     2560000     
+
+===================================================
+cnt    sum_v    sum_pad    sum_k    
+5000     492500     5120000     25005000     
+
+===================================================
+0
