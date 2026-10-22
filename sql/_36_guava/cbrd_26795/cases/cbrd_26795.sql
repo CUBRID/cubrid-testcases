@@ -46,7 +46,12 @@
  *   Case 1: GROUP BY + HAVING on the sort path (NO_HASH_AGGREGATE):
  *           36 groups (grp 1..36) have 413 rows
  *   Case 2: GROUP BY on the all-unique key k: hash aggregation is abandoned
- *           after 2,000 tuples and the partial list is sorted (SORT_GROUP_BY)
+ *           after 2,000 tuples and the partial list is sorted (SORT_GROUP_BY).
+ *           Run three times: serial reference, NO_PARALLEL_SCAN (the leader
+ *           abandons the hash itself, so the GROUP BY sort runs on parallel
+ *           sort workers) and auto degree (a parallel heap scan aggregates in
+ *           the workers' own hash contexts; the leader's context is left in
+ *           HS_ACCEPT_ALL, so the GROUP BY sort itself currently stays serial)
  *   Case 3: ORDER BY k, id LIMIT 32000 on the unique key -> k = 0..31999
  *   Case 4: ORDER BY grp, id LIMIT 32000 on a key with ties, id as tiebreak
  *   Case 5: ROW_NUMBER() OVER (ORDER BY k) -> rn = k + 1 for every row
@@ -87,7 +92,11 @@ evaluate '[2] GROUP BY on an all-unique key (hash abandoned -> SORT_GROUP_BY): s
 select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
   from (select /*+ PARALLEL(1) */ k kk, count(*) cnt, sum(v) sv from px_sort_t group by k having count(*) = 1) d;
 
-evaluate '[2] GROUP BY on an all-unique key (hash abandoned -> SORT_GROUP_BY): parallel';
+evaluate '[2] GROUP BY on an all-unique key (hash abandoned -> SORT_GROUP_BY): parallel sort (NO_PARALLEL_SCAN)';
+select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
+  from (select /*+ NO_PARALLEL_SCAN */ k kk, count(*) cnt, sum(v) sv from px_sort_t group by k having count(*) = 1) d;
+
+evaluate '[2] GROUP BY on an all-unique key (hash abandoned in the scan workers): parallel scan';
 select count(*) grp_cnt, sum(cnt) row_cnt, sum(kk) sum_k, sum(sv) sum_v
   from (select k kk, count(*) cnt, sum(v) sv from px_sort_t group by k having count(*) = 1) d;
 
