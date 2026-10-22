@@ -10,10 +10,13 @@
  *   2. Filter index, function index
  *   3. Key domains (numeric, date, datetime, char, large key, NULL, all-duplicate)
  *   4. Heap states (sparse heap after DELETE, after UPDATE, LOB present, repeated rebuild)
- *   5. Auto-commit on and off (off covers both committed and uncommitted data)
+ *   5. Auto-commit on and off (off covers committed data, uncommitted data, and rows the
+ *      same transaction deleted or changed)
  *   6. Partitioned tables (CREATE INDEX is parallel, ALTER PK/UNIQUE is not)
- *   7. Fallback paths that stay single threaded (inheritance, degree < 2, too few sectors)
- *   8. Whole-index comparison that would expose lost or misplaced index entries
+ *   7. Fallback paths that stay single threaded (inheritance, heap below the threshold)
+ *   8. Sort stage edges (every worker producing an empty run, a sort buffer small enough
+ *      that each worker spills into several runs)
+ *   9. Whole-index comparison that would expose lost or misplaced index entries
  *
  *  How each case is judged:
  *   A parallel index build shows up in neither trace nor statdump, so the only way to
@@ -28,19 +31,33 @@
  *   Each evaluate label states the values the case must produce, so the answer file can
  *   be judged on its own without re-deriving them from the data.
  *
- *  Table sizing (assumes test_mode=yes):
- *   test_mode lowers parallel_sort_page_threshold to 0, and compute_parallel_degree
- *   raises that to a floor of 2. With the default parallelism of 4 the degree is
- *     parallel_num = MIN(floor(log2(data_pages / 2)) + 2, 4)
- *   One sector is 64 pages, so to satisfy the "sectors >= parallel_num" condition in
- *   sort_check_parallelism a table needs at least 193 data pages (about 3MB). Tables
- *   meant to take the parallel path therefore hold 50000 rows or more, and tables meant
- *   to fall back are deliberately smaller. Heap pages below were measured with
- *   cubrid spacedb -p.
- *     tb, main table (50000 rows)        470 pages,  8 sectors -> parallel
- *     pt, partitioned (100000 rows)      327 pages per partition, 6 sectors -> parallel
- *     md, medium (10000 rows)             42 pages,  1 sector   -> too few sectors
- *     sm, small (10 rows)                  1 page              -> below the threshold
+ *  Table sizing:
+ *   btsort_compute_parallel_degree, in src/storage/btree_sort.c, derives the degree from
+ *   the number of heap data pages:
+ *     threshold = MAX(parallel_index_build_page_threshold, 2)
+ *     data_pages < threshold -> serial
+ *     degree = MIN(2 + floor(log2(data_pages / threshold)), cap)
+ *   where cap is index_build_parallelism, or parallelism when that is negative, capped by
+ *   the core count. btsort_check_parallelism then also requires one 64 page sector per
+ *   worker.
+ *
+ *   parallel_index_build_page_threshold is PRM_HIDDEN with a default of 2048 and cannot be
+ *   set from a session, and test_mode does not lower it the way it lowers the scan, hash
+ *   join and query sort thresholds. A SQL test can therefore only reach the parallel path
+ *   by making the heap large enough. Every table meant to take it carries a bit(16000)
+ *   filler column named pad. It costs 2000 bytes a row, no query reads it, and no row
+ *   count changes, so the expected values are the ones the data alone gives. Heap pages
+ *   below were measured with cubrid spacedb -p.
+ *     tb, main table (50000 rows)      8338 pages -> degree 4
+ *     pt, partitioned (100000 rows)    3574 pages per partition -> degree 2
+ *     bk and lb (20000 rows)           2862 pages -> degree 2
+ *     sm, small (10 rows)                 1 page  -> below the threshold, serial
+ *   sm is the one table with no filler, so it is the one that stays on the serial path.
+ *
+ *   The other fallback, a heap holding fewer sectors than the degree asks for, cannot be
+ *   reached at a threshold of 2048: a heap small enough to hold fewer than 4 sectors is
+ *   rejected on the page count first. The shell test covers it, lowering the threshold
+ *   to 0 through cubrid.conf, which a SQL test cannot do.
  */
 
 -- ============================================================
@@ -55,7 +72,8 @@ create table tb (
   cold numeric(15,2),
   cole date,
   colf datetime,
-  colg char(20)
+  colg char(20),
+  pad bit(16000)
 );
 
 insert into tb
@@ -66,7 +84,8 @@ select rownum,
        rownum * 1.5,
        date '2020-01-01' + (rownum % 3650),
        datetime '2020-01-01 00:00:00' + (rownum % 3650),
-       lpad(to_char(rownum % 500), 20, '0')
+       lpad(to_char(rownum % 500), 20, '0'),
+       x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -197,10 +216,10 @@ evaluate 'Case 9: function index on lower(cola) - A/C 2b - the keys are lower ca
 -- the function result would be indistinguishable. An upper case prefix makes the two
 -- differ: the index must hold abc..., not ABC...
 drop table if exists lc;
-create table lc (ida int, cola varchar(20), colb char(60));
+create table lc (ida int, cola varchar(20), colb char(60), pad bit(16000));
 
 insert into lc
-select rownum, concat('ABC', lpad(to_char(rownum), 17, '0')), lpad(to_char(rownum), 60, '0')
+select rownum, concat('ABC', lpad(to_char(rownum), 17, '0')), lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -246,10 +265,10 @@ drop index ixk on tb;
 evaluate 'Case 12: char(2048) large key index - both give count 20000, and min / max are the 2048 character keys for 1 and 20000';
 -- ============================================================
 drop table if exists bk;
-create table bk (ida int, cola char(2048), colb int);
+create table bk (ida int, cola char(2048), colb int, pad bit(16000));
 
 insert into bk
-select rownum, lpad(to_char(rownum), 2048, '0'), rownum % 100
+select rownum, lpad(to_char(rownum), 2048, '0'), rownum % 100, x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 20000;
 
@@ -265,13 +284,14 @@ drop table if exists bk;
 evaluate 'Case 13: index over a column holding NULLs - cola has 33334 non null keys (min 00000000000000000001, max 00000000000000050000) and colb has 40000 (sum 1000000000, min 1, max 49999); index and heap agree on both. NULL counts are 16666 and 10000, taken separately because is null does not use the index';
 -- ============================================================
 drop table if exists nb;
-create table nb (ida int, cola varchar(20), colb int, colc char(60));
+create table nb (ida int, cola varchar(20), colb int, colc char(60), pad bit(16000));
 
 insert into nb
 select rownum,
        case when rownum % 3 = 0 then null else lpad(to_char(rownum), 20, '0') end,
        case when rownum % 5 = 0 then null else rownum end,
-       lpad(to_char(rownum), 60, '0')
+       lpad(to_char(rownum), 60, '0'),
+       x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -297,10 +317,10 @@ drop table if exists nb;
 evaluate 'Case 14: index where every key is identical - both give count 50000 with min = max (1 for the int key, same for the varchar key); sum 50000 confirms every row carries key 1';
 -- ============================================================
 drop table if exists dp;
-create table dp (ida int, cola int, colb varchar(20), colc char(60));
+create table dp (ida int, cola int, colb varchar(20), colc char(60), pad bit(16000));
 
 insert into dp
-select rownum, 1, 'same', lpad(to_char(rownum), 60, '0')
+select rownum, 1, 'same', lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -392,7 +412,8 @@ select rownum,
        rownum * 1.5,
        date '2020-01-01' + (rownum % 3650),
        datetime '2020-01-01 00:00:00' + (rownum % 3650),
-       lpad(to_char(rownum % 500), 20, '0')
+       lpad(to_char(rownum % 500), 20, '0'),
+       x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -403,7 +424,7 @@ evaluate 'Case 18: CREATE INDEX on a partitioned table, parallel is supported - 
 -- clear the 193 page bar on its own. 100000 rows plus char(120) give about 327 pages
 -- (6 sectors) per partition.
 drop table if exists pt;
-create table pt (ida int, cola varchar(20), colb int, colc char(120))
+create table pt (ida int, cola varchar(20), colb int, colc char(120), pad bit(16000))
 partition by range (colb) (
   partition pa values less than (250),
   partition pb values less than (500),
@@ -412,7 +433,7 @@ partition by range (colb) (
 );
 
 insert into pt
-select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 100000;
 
@@ -435,7 +456,7 @@ drop table if exists pt;
 evaluate 'Case 19: ALTER ADD PRIMARY KEY on a partitioned table, parallel is not supported - A/C 2e - both give count 100000, sum 5000050000, min 1, max 100000; point lookup 1';
 -- ============================================================
 drop table if exists pk;
-create table pk (ida int, cola varchar(20), colb int, colc char(120))
+create table pk (ida int, cola varchar(20), colb int, colc char(120), pad bit(16000))
 partition by range (colb) (
   partition pa values less than (250),
   partition pb values less than (500),
@@ -444,7 +465,7 @@ partition by range (colb) (
 );
 
 insert into pk
-select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 100000;
 
@@ -462,7 +483,7 @@ drop table if exists pk;
 evaluate 'Case 20: ALTER ADD UNIQUE on a partitioned table, parallel is not supported - A/C 2e - both give count 100000, sum 5000050000, min 1, max 100000; point lookup 1';
 -- ============================================================
 drop table if exists uq;
-create table uq (ida int, cola varchar(20), colb int, colc char(120))
+create table uq (ida int, cola varchar(20), colb int, colc char(120), pad bit(16000))
 partition by range (colb) (
   partition pa values less than (250),
   partition pb values less than (500),
@@ -471,7 +492,7 @@ partition by range (colb) (
 );
 
 insert into uq
-select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 120, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 100000;
 
@@ -490,12 +511,12 @@ evaluate 'Case 21: auto-commit left on, data committed per statement - A/C 2c - 
 -- ============================================================
 -- CTP runs SQL tests with auto-commit left on, so the insert below is committed before
 -- the index is built. This checks that the parallel build sees every committed row.
--- The variants with auto-commit turned off are cases 22 and 23.
+-- The variants with auto-commit turned off are cases 22, 23 and 24.
 drop table if exists ac;
-create table ac (ida int, cola varchar(20), colb char(60));
+create table ac (ida int, cola varchar(20), colb char(60), pad bit(16000));
 
 insert into ac
-select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -530,10 +551,10 @@ evaluate 'Case 22: auto-commit turned off, data committed before the build - A/C
 autocommit off;
 
 drop table if exists ao;
-create table ao (ida int, cola varchar(20), colb char(60));
+create table ao (ida int, cola varchar(20), colb char(60), pad bit(16000));
 
 insert into ao
-select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 commit;
@@ -555,10 +576,10 @@ evaluate 'Case 23: auto-commit turned off, data never committed before the build
 -- transaction, so the commit comes after the checks. This proves the parallel build
 -- sees rows its own transaction has not committed yet.
 drop table if exists au;
-create table au (ida int, cola varchar(20), colb char(60));
+create table au (ida int, cola varchar(20), colb char(60), pad bit(16000));
 
 insert into au
-select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -572,10 +593,44 @@ commit;
 drop table if exists au;
 commit;
 
+-- ============================================================
+evaluate 'Case 24: auto-commit turned off, rows this transaction deleted and changed - A/C 2c - the build must leave out the deleted rows and carry the new key of the changed ones, so both give count 25000, min 00000000000000025001, max 00000000000000124999; the shifted key returns 1 and the deleted key 0';
+-- ============================================================
+-- Case 23 shows that an uncommitted INSERT reaches the index. This is the other
+-- direction. The rows are committed first, then this transaction deletes half of them and
+-- rewrites the key of part of the rest, and only then is the index built. A worker reading
+-- its slice of the heap has to honour the snapshot of the transaction it belongs to: a
+-- deleted row must produce no entry, and a changed row must produce one under its new key.
+-- The index is on cola, the column the update rewrites, so the new keys are what the build
+-- has to pick up.
+drop table if exists ud;
+create table ud (ida int, cola varchar(20), colb char(60), pad bit(16000));
+
+insert into ud
+select rownum, lpad(to_char(rownum), 20, '0'), lpad(to_char(rownum), 60, '0'), x'61'
+from db_class a, db_class b, db_class c, db_class d, db_class e
+limit 50000;
+commit;
+
+delete from ud where ida % 2 = 0;
+update ud set cola = lpad(to_char(ida + 100000), 20, '0') where ida <= 25000;
+
+create index iyn on ud (cola);
+
+select count(*), min(cola), max(cola) from ud where cola > ' ';
+show trace;
+select count(*), min(cola), max(cola) from ud where cola > ' ' using index none;
+
+select count(*) from ud where cola = lpad(to_char(100001), 20, '0');
+select count(*) from ud where cola = lpad(to_char(2), 20, '0');
+
+drop table if exists ud;
+commit;
+
 autocommit on;
 
 -- ============================================================
-evaluate 'Case 24: composite index mixing ASC and DESC - both give count 50000, sum 1250025000, min colc 0, max colc 999; within colc 0 the rows come back 50000, 49000, 48000, 47000, 46000';
+evaluate 'Case 25: composite index mixing ASC and DESC - both give count 50000, sum 1250025000, min colc 0, max colc 999; within colc 0 the rows come back 50000, 49000, 48000, 47000, 46000';
 -- ============================================================
 create index iyc on tb (colc asc, ida desc);
 
@@ -588,13 +643,13 @@ select colc, ida from tb where colc = 0 order by colc asc, ida desc limit 5;
 drop index iyc on tb;
 
 -- ============================================================
-evaluate 'Case 25: index on a non LOB column of a table that holds a CLOB - both give count 20000, sum 200010000, min 1, max 20000 for ida, and count 20000 with min ...0001 max ...020000 for cola';
+evaluate 'Case 26: index on a non LOB column of a table that holds a CLOB - both give count 20000, sum 200010000, min 1, max 20000 for ida, and count 20000 with min ...0001 max ...020000 for cola';
 -- ============================================================
 drop table if exists lb;
-create table lb (ida int, cola varchar(20), colb clob, colc char(200));
+create table lb (ida int, cola varchar(20), colb clob, colc char(200), pad bit(16000));
 
 insert into lb
-select rownum, lpad(to_char(rownum), 20, '0'), repeat('X', 1024), lpad(to_char(rownum), 200, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), repeat('X', 1024), lpad(to_char(rownum), 200, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 20000;
 
@@ -612,7 +667,7 @@ select count(*), min(cola), max(cola) from lb where cola > ' ' using index none;
 drop table if exists lb;
 
 -- ============================================================
-evaluate 'Case 26: unique composite index - both give count 50000, sum 1250025000, min 1, max 50000; the composite point lookup returns 1';
+evaluate 'Case 27: unique composite index - both give count 50000, sum 1250025000, min 1, max 50000; the composite point lookup returns 1';
 -- ============================================================
 create unique index iyf on tb (ida, colc);
 
@@ -625,7 +680,7 @@ select count(*) from tb where ida = 1 and colc = 1;
 drop index iyf on tb;
 
 -- ============================================================
-evaluate 'Case 27: the same index dropped and rebuilt three times - all three builds give count 50000, min 00000000000000000001, max 00000000000000050000, and the heap agrees';
+evaluate 'Case 28: the same index dropped and rebuilt three times - all three builds give count 50000, min 00000000000000000001, max 00000000000000050000, and the heap agrees';
 -- ============================================================
 create index iyg on tb (cola);
 select count(*), min(cola), max(cola) from tb where cola > ' ';
@@ -646,7 +701,7 @@ select count(*), min(cola), max(cola) from tb where cola > ' ' using index none;
 drop index iyg on tb;
 
 -- ============================================================
-evaluate 'Case 28: five column composite key - both give count 50000, sum 1250025000, min 1, max 50000; the two column point lookup returns 1';
+evaluate 'Case 29: five column composite key - both give count 50000, sum 1250025000, min 1, max 50000; the two column point lookup returns 1';
 -- ============================================================
 create index iyh on tb (ida, cola, colb, colc, cold);
 
@@ -659,7 +714,7 @@ select count(*) from tb where ida = 1 and cola = lpad(to_char(1), 20, '0');
 drop index iyh on tb;
 
 -- ============================================================
-evaluate 'Case 29: build over a heap changed by UPDATE - the first 25000 keys shifted up by one, so both give count 50000, min 00000000000000000002, max 00000000000000050000; the shifted key returns 1';
+evaluate 'Case 30: build over a heap changed by UPDATE - the first 25000 keys shifted up by one, so both give count 50000, min 00000000000000000002, max 00000000000000050000; the shifted key returns 1';
 -- ============================================================
 update tb set cola = lpad(to_char(ida + 1), 20, '0') where ida <= 25000;
 
@@ -676,24 +731,26 @@ drop index iyi on tb;
 update tb set cola = lpad(to_char(ida), 20, '0') where ida <= 25000;
 
 -- ============================================================
-evaluate 'Case 30: extension - ALTER ADD INDEX on a table that has a subclass, n_classes > 1 so the build stays single threaded - the index covers the superclass rows only: both give count 50000, sum 1250025000, min 1, max 50000, while the whole hierarchy holds 100000 and the subclass 50000';
+evaluate 'Case 31: extension - ALTER ADD INDEX on a table that has a subclass, n_classes > 1 so the build stays single threaded - the index covers the superclass rows only: both give count 50000, sum 1250025000, min 1, max 50000, while the whole hierarchy holds 100000 and the subclass 50000';
 -- ============================================================
--- sort_check_parallelism drops straight to parallel_num = 1 when n_classes > 1. The
+-- btsort_check_parallelism drops straight to a degree of 1 when n_classes > 1, whatever
+-- the heap size, and tsa carries the same filler as the parallel tables so that size is
+-- plainly not the reason. The
 -- issue comment dated 2026-04-13 names this path, but the attached scenario file has no
 -- case for it. ALTER ADD INDEX on the superclass creates the index on that class only,
 -- so the index-versus-heap pair runs with from only. The counts for the whole hierarchy
 -- (from all) and for the subclass are listed separately.
 drop table if exists tsb;
 drop table if exists tsa;
-create table tsa (caa int, cab char(60));
+create table tsa (caa int, cab char(60), pad bit(16000));
 
 insert into tsa
-select rownum, lpad(to_char(rownum), 60, '0')
+select rownum, lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
 create table tsb under tsa (cba int);
-insert into tsb select caa + 100000, cab, caa + 100000 from only tsa;
+insert into tsb select caa + 100000, cab, pad, caa + 100000 from only tsa;
 
 alter table tsa add index iyj (caa);
 
@@ -708,12 +765,13 @@ drop table if exists tsb;
 drop table if exists tsa;
 
 -- ============================================================
-evaluate 'Case 31: extension - fallback because the degree would be below 2 - A/C 2d - 10 rows fit in a single data page; both give count 10, sum 55, min 1, max 10, and the tail rows are 9 and 10';
+evaluate 'Case 32: extension - fallback because the heap is below the page threshold - A/C 2d - 10 rows fit in a single data page; both give count 10, sum 55, min 1, max 10, and the tail rows are 9 and 10';
 -- ============================================================
--- When the heap has fewer data pages than page_threshold (floor 2), compute_parallel_degree
--- returns 0 and the build stays single threaded. 10 rows occupy a single data page, which
--- is this band. Which of the two conditions forced the single thread cannot be observed,
--- so what is checked is that the index is still built correctly (case 32 is the same).
+-- When the heap holds fewer data pages than the threshold, btsort_compute_parallel_degree
+-- returns 0 and the build stays single threaded. 10 rows occupy a single data page, far
+-- below the default of 2048, so sm is the one table in this file that carries no filler
+-- column. The fallback itself leaves no observable mark, so what is checked is that the
+-- index is still built correctly.
 drop table if exists sm;
 create table sm (ida int, cola varchar(20));
 insert into sm select rownum, lpad(to_char(rownum), 20, '0') from db_class a limit 10;
@@ -729,27 +787,6 @@ select ida from sm where ida > 8 order by ida;
 drop table if exists sm;
 
 -- ============================================================
-evaluate 'Case 32: extension - fallback because the heap has fewer sectors than the degree - A/C 2d - both give count 10000, sum 50005000, min 1, max 10000';
--- ============================================================
--- One sector is 64 pages. From 8 data pages on the degree works out to 4, but with fewer
--- than 4 sectors the "at least one sector per worker" condition fails and the build falls
--- back to a single thread. This narrow 10000 row table is 42 pages, that is 1 sector.
-drop table if exists md;
-create table md (ida int, cola varchar(20));
-insert into md
-select rownum, lpad(to_char(rownum), 20, '0')
-from db_class a, db_class b, db_class c, db_class d
-limit 10000;
-
-create index iyl on md (ida);
-
-select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from md where ida > 0;
-show trace;
-select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from md where ida > 0 using index none;
-
-drop table if exists md;
-
--- ============================================================
 evaluate 'Case 33: extension - ALTER ADD PK and UNIQUE on a table without partitions, which does take the parallel path - both give count 50000, sum 1250025000, min 1, max 50000 for the primary key, and count 50000 with min ...0001 max ...050000 for the unique key';
 -- ============================================================
 -- Cases 19 and 20 are partitioned, which excludes ALTER based PK and unique from the
@@ -757,10 +794,10 @@ evaluate 'Case 33: extension - ALTER ADD PK and UNIQUE on a table without partit
 -- n_classes == 1 and do take it. This is the control showing both paths build the same
 -- index.
 drop table if exists np;
-create table np (ida int, cola varchar(20), colb int, colc char(60));
+create table np (ida int, cola varchar(20), colb int, colc char(60), pad bit(16000));
 
 insert into np
-select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 60, '0')
+select rownum, lpad(to_char(rownum), 20, '0'), rownum % 1000, lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
@@ -785,15 +822,15 @@ evaluate 'Case 34: extension - duplicate keys placed at opposite ends of the hea
 -- duplicate surfaces during the merge rather than inside one worker, so the two duplicate
 -- rows are put at opposite ends of the heap to land in different worker ranges.
 drop table if exists dk;
-create table dk (ida int, cola int, colb char(60));
+create table dk (ida int, cola int, colb char(60), pad bit(16000));
 
 insert into dk
-select rownum, rownum, lpad(to_char(rownum), 60, '0')
+select rownum, rownum, lpad(to_char(rownum), 60, '0'), x'61'
 from db_class a, db_class b, db_class c, db_class d, db_class e
 limit 50000;
 
 -- add a second row carrying the key of the first record, at the end of the heap
-insert into dk values (50001, 1, lpad(to_char(50001), 60, '0'));
+insert into dk values (50001, 1, lpad(to_char(50001), 60, '0'), x'61');
 
 create unique index iym on dk (cola);
 
@@ -805,9 +842,65 @@ select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dk where c
 show trace;
 select count(*), sum(cast(cola as bigint)), min(cola), max(cola) from dk where cola > 0 using index none;
 
-set trace off;
-
 drop table if exists dk;
+
+-- ============================================================
+evaluate 'Case 35: extension - builds in which every worker produces an empty run - the filter index accepts no row and the indexed column is NULL in every row, so index and heap give count 0 in all four queries';
+-- ============================================================
+-- btsort_check_parallelism decides on the number of heap data pages, not on how many rows
+-- the key expression accepts, so the workers start as usual and each one reaches the end
+-- of its slice with nothing to sort. That is a merge of runs that are all empty, which no
+-- other case here reaches. The all NULL column gets a table of its own: adding and
+-- dropping a column on tb would rewrite its whole heap for nothing.
+create index iyr on tb (ida) where ida > 100000;
+
+-- pinned with using index, as in cases 7 and 8: a filter index that accepts no row is
+-- never what the optimizer picks on its own, and a table scan would read nothing of the
+-- index that was just built.
+select count(*) from tb where ida > 100000 using index iyr;
+show trace;
+select count(*) from tb where ida > 100000 using index none;
+
+drop index iyr on tb;
+
+drop table if exists ne;
+create table ne (ida int, cola varchar(20), coln int, pad bit(16000));
+
+insert into ne
+select rownum, lpad(to_char(rownum), 20, '0'), null, x'61'
+from db_class a, db_class b, db_class c, db_class d, db_class e
+limit 50000;
+
+create index iys on ne (coln);
+
+select count(*) from ne where coln > 0;
+show trace;
+select count(*) from ne where coln > 0 using index none;
+
+drop table if exists ne;
+
+-- ============================================================
+evaluate 'Case 36: extension - a sort buffer small enough that each worker spills into several runs - the index comes out of a merge instead of one in memory sort, and both give count 50000, sum 1250025000, min 1, max 50000';
+-- ============================================================
+-- Each worker takes a sort buffer of its own, index_build_buffer_size, 2MB by default. A
+-- sort record for the int key of tb is a few tens of bytes, so 50000 of them never fill
+-- that buffer and every worker finishes as a single in memory sort. Lowering the buffer to
+-- 128K forces several runs per worker and puts the build through the external merge. This
+-- is the only parameter of the three that govern an index build that a session can set;
+-- the other two are PRM_FOR_SERVER and are exercised by the shell test.
+set system parameters 'index_build_buffer_size=128K';
+
+create index iyt on tb (ida);
+
+select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0;
+show trace;
+select count(*), sum(cast(ida as bigint)), min(ida), max(ida) from tb where ida > 0 using index none;
+
+drop index iyt on tb;
+
+set system parameters 'index_build_buffer_size=default';
+
+set trace off;
 
 -- ============================================================
 -- Cleanup

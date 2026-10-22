@@ -1104,7 +1104,58 @@ count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)
 0
 ===================================================
     
-Case 24: composite index mixing ASC and DESC - both give count 50000, sum 1250025000, min colc 0, max colc 999; within colc 0 the rows come back 50000, 49000, 48000, 47000, 46000     
+Case 24: auto-commit turned off, rows this transaction deleted and changed - A/C 2c - the build must leave out the deleted rows and carry the new key of the changed ones, so both give count 25000, min 00000000000000025001, max 00000000000000124999; the shifted key returns 1 and the deleted key 0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+25000
+===================================================
+12500
+===================================================
+0
+===================================================
+count(*)    min(cola)    max(cola)    
+25000     00000000000000025001     00000000000000124999     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ud.iyn) (key range: ([dba.ud].cola> ?:? ), covered: true)
+
+  rewritten query: select count(*), min([dba.ud].cola), max([dba.ud].cola) from [dba.ud] [dba.ud] where ([dba.ud].cola> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ud.iyn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    min(cola)    max(cola)    
+25000     00000000000000025001     00000000000000124999     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 25: composite index mixing ASC and DESC - both give count 50000, sum 1250025000, min colc 0, max colc 999; within colc 0 the rows come back 50000, 49000, 48000, 47000, 46000     
 
 ===================================================
 0
@@ -1141,7 +1192,7 @@ colc    ida
 0
 ===================================================
     
-Case 25: index on a non LOB column of a table that holds a CLOB - both give count 20000, sum 200010000, min 1, max 20000 for ida, and count 20000 with min ...0001 max ...020000 for cola     
+Case 26: index on a non LOB column of a table that holds a CLOB - both give count 20000, sum 200010000, min 1, max 20000 for ida, and count 20000 with min ...0001 max ...020000 for cola     
 
 ===================================================
 0
@@ -1199,7 +1250,7 @@ count(*)    min(cola)    max(cola)
 0
 ===================================================
     
-Case 26: unique composite index - both give count 50000, sum 1250025000, min 1, max 50000; the composite point lookup returns 1     
+Case 27: unique composite index - both give count 50000, sum 1250025000, min 1, max 50000; the composite point lookup returns 1     
 
 ===================================================
 0
@@ -1232,7 +1283,7 @@ count(*)
 0
 ===================================================
     
-Case 27: the same index dropped and rebuilt three times - all three builds give count 50000, min 00000000000000000001, max 00000000000000050000, and the heap agrees     
+Case 28: the same index dropped and rebuilt three times - all three builds give count 50000, min 00000000000000000001, max 00000000000000050000, and the heap agrees     
 
 ===================================================
 0
@@ -1311,7 +1362,7 @@ count(*)    min(cola)    max(cola)
 0
 ===================================================
     
-Case 28: five column composite key - both give count 50000, sum 1250025000, min 1, max 50000; the two column point lookup returns 1     
+Case 29: five column composite key - both give count 50000, sum 1250025000, min 1, max 50000; the two column point lookup returns 1     
 
 ===================================================
 0
@@ -1344,7 +1395,7 @@ count(*)
 0
 ===================================================
     
-Case 29: build over a heap changed by UPDATE - the first 25000 keys shifted up by one, so both give count 50000, min 00000000000000000002, max 00000000000000050000; the shifted key returns 1     
+Case 30: build over a heap changed by UPDATE - the first 25000 keys shifted up by one, so both give count 50000, min 00000000000000000002, max 00000000000000050000; the shifted key returns 1     
 
 ===================================================
 25000
@@ -1381,7 +1432,7 @@ count(*)
 25000
 ===================================================
     
-Case 30: extension - ALTER ADD INDEX on a table that has a subclass, n_classes > 1 so the build stays single threaded - the index covers the superclass rows only: both give count 50000, sum 1250025000, min 1, max 50000, while the whole hierarchy holds 100000 and the subclass 50000     
+Case 31: extension - ALTER ADD INDEX on a table that has a subclass, n_classes > 1 so the build stays single threaded - the index covers the superclass rows only: both give count 50000, sum 1250025000, min 1, max 50000, while the whole hierarchy holds 100000 and the subclass 50000     
 
 ===================================================
 0
@@ -1432,7 +1483,7 @@ count(*)
 0
 ===================================================
     
-Case 31: extension - fallback because the degree would be below 2 - A/C 2d - 10 rows fit in a single data page; both give count 10, sum 55, min 1, max 10, and the tail rows are 9 and 10     
+Case 32: extension - fallback because the heap is below the page threshold - A/C 2d - 10 rows fit in a single data page; both give count 10, sum 55, min 1, max 10, and the tail rows are 9 and 10     
 
 ===================================================
 0
@@ -1467,41 +1518,6 @@ count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)
 ida    
 9     
 10     
-
-===================================================
-0
-===================================================
-    
-Case 32: extension - fallback because the heap has fewer sectors than the degree - A/C 2d - both give count 10000, sum 50005000, min 1, max 10000     
-
-===================================================
-0
-===================================================
-0
-===================================================
-10000
-===================================================
-0
-===================================================
-count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)    
-10000     50005000     1     10000     
-
-===================================================
-trace    
-
-Query Plan:
-  INDEX SCAN (dba.md.iyl) (key range: ([dba.md].ida> ?:? ), covered: true)
-
-  rewritten query: select count(*), sum( cast([dba.md].ida as bigint)), min([dba.md].ida), max([dba.md].ida) from [dba.md] [dba.md] where ([dba.md].ida> ?:? )
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.md.iyl), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-     
-
-===================================================
-count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)    
-10000     50005000     1     10000     
 
 ===================================================
 0
@@ -1602,6 +1618,99 @@ Trace Statistics:
 count(*)    sum( cast(cola as bigint))    min(cola)    max(cola)    
 50000     1250025000     1     50000     
 
+===================================================
+0
+===================================================
+    
+Case 35: extension - builds in which every worker produces an empty run - the filter index accepts no row and the indexed column is NULL in every row, so index and heap give count 0 in all four queries     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.iyr) (key range: ([dba.tb].ida> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.tb] [dba.tb] where ([dba.tb].ida> ?:? ) using index [dba.tb].iyr
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.iyr), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ne.iys) (key range: ([dba.ne].coln> ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.ne] [dba.ne] where ([dba.ne].coln> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ne.iys), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+    
+Case 36: extension - a sort buffer small enough that each worker spills into several runs - the index comes out of a merge instead of one in memory sort, and both give count 50000, sum 1250025000, min 1, max 50000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)    
+50000     1250025000     1     50000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.iyt) (key range: ([dba.tb].ida> ?:? ), covered: true)
+
+  rewritten query: select count(*), sum( cast([dba.tb].ida as bigint)), min([dba.tb].ida), max([dba.tb].ida) from [dba.tb] [dba.tb] where ([dba.tb].ida> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.iyt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(ida as bigint))    min(ida)    max(ida)    
+50000     1250025000     1     50000     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
