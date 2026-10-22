@@ -1,0 +1,282 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+40000
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the five-row code table keeps its rows, the large tables do not     
+
+===================================================
+class_name    attr_name    
+t_27478_c     .row_snapshot     
+t_27478_c     id     
+t_27478_c     name     
+t_27478_f     c_id     
+t_27478_f     k     
+t_27478_g     k     
+t_27478_g     pad     
+t_27478_g     v     
+
+===================================================
+    
+Case 2: the common code selects 39000 rows: hash join with t_27478_g     
+
+===================================================
+count(*)    
+39000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+    
+Case 3: a rare code selects 250 rows: index nested loop into t_27478_g     
+
+===================================================
+count(*)    
+250     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+    
+Case 4: an IN list of rare codes is evaluated on the rows too     
+
+===================================================
+count(*)    
+500     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where ((c.[name]= ?:? ) or (c.[name]= ?:? )) and f.c_id=c.id and g.k=f.k
+===================================================
+    
+Case 5: a code the rows do not hold keeps the histogram estimate (nested loop, no rows)     
+
+===================================================
+count(*)    
+0     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+    
+Case 6: a LIKE filter cannot be evaluated on the rows: the histogram estimate stays (nested loop)     
+
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where (c.[name]>= ?:?  and c.[name]< ?:? ) and f.c_id=c.id and g.k=f.k
+===================================================
+    
+Case 7: the parameter at 0 turns the use off: the common code is priced at 1/NDV again (nested loop)     
+
+===================================================
+0
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
+===================================================
+    
+Case 8: dropping the histograms drops the rows as well     
+
+===================================================
+0
+===================================================
+class_name    attr_name    
+
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+    
+Case 9: a table over the limit keeps no rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+class_name    attr_name    
+t_27478_c     id     
+t_27478_c     name     
+
+===================================================
+    
+Case 10: collected again under the limit, then the table is dropped: no row is left behind     
+
+===================================================
+0
+===================================================
+0
+===================================================
+class_name    attr_name    
+t_27478_c     .row_snapshot     
+t_27478_c     id     
+t_27478_c     name     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
