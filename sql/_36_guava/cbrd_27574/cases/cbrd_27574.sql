@@ -37,6 +37,9 @@ select a from t_27574_a where b is not null and b not in (select b from t_27574_
 select a from t_27574_a where b is null and b not in (select b from t_27574_e) and b < 100 order by 1;
 select a from t_27574_a where not (b is null and b not in (select b from t_27574_e)) order by 1;
 update t_27574_a set a = a where b is null and b not in (select b from t_27574_e);
+-- the same on a column an outer join filled with NULL
+select t_27574_a.a from t_27574_a left join t_27574_x x on x.a = t_27574_a.a where x.b is null and x.b not in (select b from t_27574_e) order by 1;
+select t_27574_a.a from t_27574_a left join t_27574_x x on x.a = t_27574_a.a where x.b is not null and x.b not in (select b from t_27574_e) order by 1;
 
 -- 2. NULL constant on the left of NOT IN, <> ALL, NOT (IN), IN, = SOME, = ALL
 select count (*) from db_root where null not in (select b from t_27574_e);
