@@ -142,7 +142,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (s.pk_small_col?) (key range: s.col?=a.k?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.ndv_outer] a semi join [dba.small] s on s.col?=a.k?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.ndv_outer] a semi join [dba.small] s on s.col?=a.k?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
