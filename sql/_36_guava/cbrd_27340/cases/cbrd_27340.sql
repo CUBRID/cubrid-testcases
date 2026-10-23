@@ -1,8 +1,8 @@
 /*
- * This test case verifies CBRD-27340 : an INNER JOIN condition that
- * references the null-supplying side of a preceding RIGHT OUTER JOIN must
- * stay a real join edge to the other table(s), instead of being evaluated
- * as a post-join filter.
+ * This test case verifies CBRD-27340 : a condition that reads the
+ * null-supplying side of a preceding LEFT/RIGHT OUTER JOIN -- directly, by
+ * inference, or through a SEMI/ANTI JOIN -- must not be evaluated before
+ * that OUTER JOIN's null-padding is resolved.
  *
  * jtbl_a is the null-supplying (left) side of "jtbl_a RIGHT JOIN jtbl_b".
  * jtbl_b is the RIGHT OUTER JOIN's on_node (preserved/right side).
@@ -14,15 +14,21 @@
  * jtbl_a's columns for that row; the following INNER JOIN to jtbl_c must
  * then drop that row (NULL never matches jtbl_c.k), leaving count = 2.
  *
- * Bug (pre-fix): the INNER JOIN term (jtbl_c.k = jtbl_a.k) was reclassified
- * away from a normal join edge once it was recognized as depending on the
- * preceding RIGHT OUTER JOIN, which disconnected jtbl_c from {jtbl_a,
- * jtbl_b} in the join graph. With no other edge connecting jtbl_c, the
- * planner was forced into a Cartesian product between jtbl_c and the
- * {jtbl_a, jtbl_b} result, filtering the condition only afterwards. The
- * final count stayed correct, but the plan degraded to a Cartesian product
- * instead of a real index/hash/merge join on jtbl_c.k -- catastrophic on
- * larger tables.
+ * Bug (develop): join order/method is chosen by cost, independently of
+ * this dependency. Nothing stopped the planner from placing jtbl_c's join
+ * to jtbl_a before the RIGHT OUTER JOIN against jtbl_b is resolved, which
+ * reads jtbl_a's original (pre-null-pad) rows instead of the null-padded
+ * ones.
+ *
+ * Fix: qo_add_null_supplier_dep_set() (query_graph.c) walks every on_node
+ * and records, in QO_NODE_OUTER_DEP_SET, every preceding LEFT/RIGHT OUTER
+ * JOIN on_node whose null-supplying side the current on_node's ON clause
+ * reads (directly, or indirectly through another on_node that already
+ * carries the same dependency). qo_build_implied_seg_roots() then excludes
+ * such a term from seeding a new *inferred* join condition (an inferred
+ * condition would otherwise carry none of this dependency), and
+ * planner_visit_node() uses the same dependency to keep the on_node out of
+ * the join order until its outer-join dependencies are resolved.
  *
  * count(*) must be 2 under every join method. Verified by hand (see above)
  * and empirically against the pre-fix engine: hintless/USE_NL/USE_MERGE
