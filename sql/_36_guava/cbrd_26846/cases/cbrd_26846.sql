@@ -33,15 +33,22 @@
  * the value itself.
  *
  * Table sizing: 10000 rows with three md5 strings each (incompressible) give
- * about 100 heap pages, well above the parallel scan threshold that the CTP
+ * about 110 heap pages, well above the parallel scan threshold that the CTP
  * test_mode=yes sets (32 pages), and large enough to spread over several
  * workers. Table and column names have no digits so CTP does not mask them.
  * cola = id % 100 (100 values x 100), colb = lpad(id % 20, 10, 0)
- * (20 values, used as duplicate JSON keys), nval/nstr are always NULL.
+ * (20 values, used as duplicate JSON keys), nval/nstr are always NULL,
+ * pnull = id % 50 but NULL when id % 7 = 0.
+ *
+ * BIT_AND/BIT_OR over cola give the same partial value (0/127) in every
+ * worker, so Case 1 and 2 add expressions where only the row id = 5000
+ * differs; a wrong merge of that one partial changes the result.
  *
  * Coverage:
- *   Case 1:  all new functions in one query, values printed (deterministic)
- *   Case 2:  BIT_AND/OR/XOR + MEDIAN next to COUNT/MIN/MAX/SUM/AVG
+ *   Case 1:  all new functions in one query, values printed (deterministic),
+ *            BIT_AND/BIT_OR with a single differing row
+ *   Case 2:  BIT_AND/OR/XOR + MEDIAN next to COUNT/MIN/MAX/SUM/AVG,
+ *            BIT_AND/BIT_OR with a single differing row
  *   Case 3:  MEDIAN with a predicate
  *   Case 4:  GROUP_CONCAT DISTINCT ORDER BY asc / desc
  *   Case 5:  GROUP_CONCAT ORDER BY without DISTINCT (raw value list)
@@ -52,13 +59,20 @@
  *   Case 10: all-NULL column (BIT_AND, MEDIAN, GROUP_CONCAT, JSON_ARRAYAGG)
  *   Case 11: list-based and partial aggregates on the same column
  *   Case 12: JSON_OBJECTAGG duplicate keys stay single-valued, never an array
+ *   Case 13: PERCENTILE_CONT constant out of range -> same error on both sides
+ *   Case 14: PERCENTILE_DISC sub-query out of range -> same error on both sides
+ *   Case 15: JSON_OBJECTAGG NULL key in one row -> the worker error reaches the
+ *            main thread, same error as serial
+ *   Case 16: CUME_DIST with two sort keys, PERCENT_RANK DESC NULLS FIRST
+ *   Case 17: MEDIAN / PERCENTILE_CONT / PERCENTILE_DISC skip NULLs
  */
 
 drop table if exists bvx;
-create table bvx (id int, cola int, colb varchar(10), nval int, nstr varchar(10), pad varchar(100));
+create table bvx (id int, cola int, colb varchar(10), nval int, nstr varchar(10), pad varchar(100), pnull int);
 insert into bvx
 select rownum, rownum % 100, lpad(to_char(rownum % 20), 10, '0'), null, null,
-       concat(md5(rownum), md5(rownum + 7919), md5(rownum * 31 + 7))
+       concat(md5(rownum), md5(rownum + 7919), md5(rownum * 31 + 7)),
+       case when rownum % 7 = 0 then null else rownum % 50 end
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
 
 set trace on;
@@ -71,17 +85,23 @@ select /*+ recompile PARALLEL(8) */ bit_and(cola), bit_or(cola), bit_xor(cola), 
        cast(cume_dist(50) within group (order by cola) as numeric(12,4)),
        cast(percent_rank(50) within group (order by cola) as numeric(12,4)),
        group_concat(distinct cola order by cola desc separator ','),
-       json_length(json_arrayagg(colb)), json_length(json_objectagg(colb, cola))
+       json_length(json_arrayagg(colb)), json_length(json_objectagg(colb, cola)),
+       bit_and(case when id = 5000 then 254 else 255 end), bit_or(case when id = 5000 then 1 else 0 end)
 from bvx;
 show trace;
 
 evaluate 'Case 2: BIT_AND/OR/XOR and MEDIAN next to COUNT/MIN/MAX/SUM/AVG';
 select /*+ recompile */ case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx and p.sm<=>s.sm and p.av<=>s.av
-            and p.ba<=>s.ba and p.bo<=>s.bo and p.bx<=>s.bx and p.md<=>s.md then 'PASS' else 'FAIL' end as result
+            and p.ba<=>s.ba and p.bo<=>s.bo and p.bx<=>s.bx and p.md<=>s.md
+            and p.ba2<=>s.ba2 and p.bo2<=>s.bo2 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, min(cola) mn, max(cola) mx, sum(cola) sm, avg(cola) av,
-             bit_and(cola) ba, bit_or(cola) bo, bit_xor(id) bx, median(cola) md from bvx) p,
+             bit_and(cola) ba, bit_or(cola) bo, bit_xor(id) bx, median(cola) md,
+             bit_and(case when id = 5000 then 254 else 255 end) ba2,
+             bit_or(case when id = 5000 then 1 else 0 end) bo2 from bvx) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, min(cola) mn, max(cola) mx, sum(cola) sm, avg(cola) av,
-             bit_and(cola) ba, bit_or(cola) bo, bit_xor(id) bx, median(cola) md from bvx) s;
+             bit_and(cola) ba, bit_or(cola) bo, bit_xor(id) bx, median(cola) md,
+             bit_and(case when id = 5000 then 254 else 255 end) ba2,
+             bit_or(case when id = 5000 then 1 else 0 end) bo2 from bvx) s;
 show trace;
 
 evaluate 'Case 3: MEDIAN with a predicate';
@@ -160,6 +180,40 @@ from (select json_length(o) kc, json_type(json_extract(o, '$."0000000000"')) vt
       from (select /*+ PARALLEL(8) */ json_objectagg(colb, cola) o from bvx) x) p,
      (select json_length(o) kc, json_type(json_extract(o, '$."0000000000"')) vt
       from (select /*+ NO_PARALLEL_SCAN */ json_objectagg(colb, cola) o from bvx) x) s;
+show trace;
+
+evaluate 'Case 13: PERCENTILE_CONT constant out of range';
+select /*+ recompile PARALLEL(8) */ percentile_cont(1.5) within group (order by cola) from bvx;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ percentile_cont(1.5) within group (order by cola) from bvx;
+show trace;
+
+evaluate 'Case 14: PERCENTILE_DISC sub-query out of range';
+select /*+ recompile PARALLEL(8) */ percentile_disc((select 1.5 from db_root)) within group (order by cola) from bvx;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ percentile_disc((select 1.5 from db_root)) within group (order by cola) from bvx;
+show trace;
+
+evaluate 'Case 15: JSON_OBJECTAGG NULL key in one row';
+select /*+ recompile PARALLEL(8) */ json_objectagg(case when id = 5000 then null else to_char(id) end, cola) from bvx;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ json_objectagg(case when id = 5000 then null else to_char(id) end, cola) from bvx;
+show trace;
+
+evaluate 'Case 16: CUME_DIST with two sort keys, PERCENT_RANK DESC NULLS FIRST';
+select /*+ recompile */ case when p.c<=>s.c and p.r<=>s.r then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ cume_dist(50, '0000000005') within group (order by cola, colb desc) c,
+             percent_rank(20) within group (order by pnull desc nulls first) r from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ cume_dist(50, '0000000005') within group (order by cola, colb desc) c,
+             percent_rank(20) within group (order by pnull desc nulls first) r from bvx) s;
+show trace;
+
+evaluate 'Case 17: MEDIAN / PERCENTILE_CONT / PERCENTILE_DISC skip NULLs';
+select /*+ recompile */ case when p.md<=>s.md and p.c<=>s.c and p.d<=>s.d then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ median(pnull) md, percentile_cont(0.3) within group (order by pnull) c,
+             percentile_disc(0.7) within group (order by pnull desc) d from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ median(pnull) md, percentile_cont(0.3) within group (order by pnull) c,
+             percentile_disc(0.7) within group (order by pnull desc) d from bvx) s;
 show trace;
 
 set trace off;
