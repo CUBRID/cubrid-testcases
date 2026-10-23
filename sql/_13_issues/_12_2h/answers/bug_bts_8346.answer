@@ -49,58 +49,42 @@ a
 b              
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct  upper(t.a) from t t where (t.a< ?:? ))
-Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
+    subplan: idx-join (semi join)
                  outer: sscan
-                            class: av? node[?]
+                            class: t node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
+                            class: t_? node[?]
                             index: i? term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct  upper(t.a) from t t where (t.a< ?:? )) av? (av_?) where  upper(t.a)=av?.av_? order by ?
+select t.a from t t semi join t t_? on (t_?.a< ?:? ) and  upper(t.a)= upper(t_?.a) order by ?
 ===================================================
 a    
 b              
 c              
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct  upper(t.a) from t t where (t.a> ?:? ))
-Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
+    subplan: idx-join (semi join)
                  outer: sscan
-                            class: av? node[?]
+                            class: t node[?]
                             cost:  ? card ?
                  inner: iscan
-                            class: t node[?]
+                            class: t_? node[?]
                             index: i? term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t, (select distinct  upper(t.a) from t t where (t.a> ?:? )) av? (av_?) where  upper(t.a)=av?.av_? order by ?
+select t.a from t t semi join t t_? on (t_?.a> ?:? ) and  upper(t.a)= upper(t_?.a) order by ?
 ===================================================
 a    
 a              
