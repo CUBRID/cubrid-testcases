@@ -17,10 +17,13 @@
  *  that a first fix of Case 1 put on the copy of n = ? typed the bind's position as
  *  NUMERIC (38,0), so the DOUBLE bind of n = ? itself lost its value, and the INTEGER bind
  *  of c1 = ? failed with 'Cannot coerce host var' on a CHAR (1) column.
+ *  Case 6: a fixed BIT bind as a result column, a 1-byte value before a 3-byte one in one
+ *  statement: the plan of the first value's BIT (8) cut the second to its first byte.
  *
  *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
  *  for the NULL bind, Case 4 the counts of the literal statements beside them, and Case 5 the
- *  row 119673559571800002 for the DOUBLE bind, no row for 35203 and the row 'Y' for 'Y'.
+ *  row 119673559571800002 for the DOUBLE bind, no row for 35203 and the row 'Y' for 'Y', and
+ *  Case 6 each bound value whole.
  */
 
 drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
@@ -81,5 +84,14 @@ execute s_num using 1.19673559571800002e17;
 prepare s_char from 'select c1 from t_pn where c1 = ?';
 execute s_char using 35203;
 execute s_char using 'Y';
+
+
+evaluate 'Case 6: a fixed BIT bind as a result column, short then long';
+$bit,$AB;
+select ? from db_root;
+$bit,$ABCDEF;
+select ? from db_root;
+$bit,$01234567;
+select bit_length (?) from db_root;
 
 drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
