@@ -27,12 +27,14 @@ FROM (SELECT /*+ NO_MERGE */ ca, cb, (SELECT MIN(x.cb) FROM tb x WHERE x.ca = ta
   LEFT JOIN tb ON tb.ca = d.cb AND tb.cb > d.cb + d.cc
 ORDER BY 1, 2;
 
--- 3. same with the join hints
+-- 3. same with the join hints: the view stays unmerged and the hinted join method is chosen
+--@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ d.ca, tb.cb
 FROM (SELECT ca, cb, (SELECT MIN(x.cb) FROM tb x WHERE x.ca = ta.ca) AS cc FROM ta) d
   LEFT JOIN tb ON tb.ca = d.cb AND tb.cb > d.cb + d.cc
 ORDER BY 1, 2;
 
+--@queryplan
 SELECT /*+ RECOMPILE USE_MERGE */ d.ca, tb.cb
 FROM (SELECT ca, cb, (SELECT MIN(x.cb) FROM tb x WHERE x.ca = ta.ca) AS cc FROM ta) d
   LEFT JOIN tb ON tb.ca = d.cb AND tb.cb > d.cb + d.cc
@@ -44,7 +46,8 @@ FROM va
   LEFT JOIN tb ON tb.ca = va.cb AND tb.cb > va.cb + va.cc
 ORDER BY 1, 2;
 
--- 5. uncorrelated scalar subquery column referenced by the ON clause
+-- 5. uncorrelated scalar subquery column referenced by the ON clause: evaluated once, so the view is still merged
+--@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ d.ca, tb.cb
 FROM (SELECT ca, cb, (SELECT MIN(cb) FROM tb) AS cc FROM ta) d
   LEFT JOIN tb ON tb.ca = d.cb AND tb.cb > d.cb + d.cc
@@ -95,7 +98,28 @@ FROM ta
   LEFT JOIN (SELECT ca, (SELECT COUNT(*) FROM tb x WHERE x.ca = tc.ca) AS k FROM tc) d ON d.ca = ta.ca + 100
 ORDER BY 1, 2;
 
--- 9. view on the null-padded side with plain columns: still merged
+-- 10. view on the null-padded side whose WHERE holds a correlated subquery: the merge would move it into the
+--     ON clause, so the view stays unmerged and (9, NULL) is kept
+--@queryplan
+SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca, d.cb
+FROM ta
+  LEFT JOIN (SELECT ca, cb FROM tb WHERE cb < (SELECT COUNT(*) FROM tc x WHERE x.ca = tb.ca)) d ON d.ca = ta.ca
+ORDER BY 1, 2;
+
+SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca, d.cb
+FROM ta
+  LEFT JOIN (SELECT /*+ NO_MERGE */ ca, cb FROM tb WHERE cb < (SELECT COUNT(*) FROM tc x WHERE x.ca = tb.ca)) d
+    ON d.ca = ta.ca
+ORDER BY 1, 2;
+
+-- 11. view on the null-padded side whose WHERE holds an uncorrelated subquery: still merged, and correct
+--@queryplan
+SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca, d.cb
+FROM ta
+  LEFT JOIN (SELECT ca, cb FROM tb WHERE cb < (SELECT MAX(cb) FROM tc)) d ON d.ca = ta.ca
+ORDER BY 1, 2;
+
+-- 12. view on the null-padded side with plain columns: still merged
 --@queryplan
 SELECT /*+ RECOMPILE NO_USE_HASH */ ta.ca, d.cb
 FROM ta
