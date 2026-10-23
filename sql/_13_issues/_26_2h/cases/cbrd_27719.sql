@@ -66,4 +66,13 @@ select id from t_27719_tgt where id in (select id from t_27719_loc order by id) 
 select id from t_27719_tgt where id in (select distinct id from t_27719_loc order by id limit 2) order by 1;
 select id from t_27719_tgt where id in (select id from t_27719_loc union select id from t_27719_loc limit 2) order by 1;
 
+-- 6. forms the change does not reach: same results as before
+-- ROWNUM without ORDER BY cuts rows before DISTINCT
+select id from t_27719_tgt where id in (select id from t_27719_loc where rownum <= 2) order by 1;
+-- the row cut wrapped in a derived table by hand
+select id from t_27719_tgt where id in (select id from (select id from t_27719_loc order by id limit 2) x) order by 1;
+-- a scalar comparison and EXISTS are not range predicates
+select id from t_27719_tgt where id = (select id from t_27719_loc order by id limit 1) order by 1;
+select id from t_27719_tgt where exists (select 1 from (select id from t_27719_loc order by id limit 2) x where x.id = t_27719_tgt.id) order by 1;
+
 drop table if exists t_27719_loc, t_27719_tgt, t_27719_ln, t_27719_tn;
