@@ -348,7 +348,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 8: ROWNUM + 1 -> stays row by row, result vs serial     
+Case 8: ROWNUM and ROWNUM + 1 together -> stays row by row, result vs serial     
 
 ===================================================
 result    
@@ -360,25 +360,25 @@ trace
 Query Plan:
   TABLE SCAN (dba.px_rn)
 
-  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ rownum, rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
 
   TABLE SCAN (t)
 
-  rewritten query: (select count(*), min(t.r), max(t.r) from (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id))
+  rewritten query: (select count(*), min(t.r), max(t.r), sum(case when t.r<>t.rn+ cast(? as bigint) then ? else ? end) from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, r, id))
 
   TABLE SCAN (dba.px_rn)
 
-  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum, rownum+ cast(? as bigint), [dba.px_rn].id from [dba.px_rn] [dba.px_rn])
 
   TABLE SCAN (t)
 
-  rewritten query: (select count(*), min(t.r), max(t.r) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id))
+  rewritten query: (select count(*), min(t.r), max(t.r), sum(case when t.r<>t.rn+ cast(? as bigint) then ? else ? end) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, r, id))
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end from (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx] from (select /*+ NO_MERGE PARALLEL(?) */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id)) p (c, mn, mx), (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (r, id)) s (c, mn, mx)
+  rewritten query: select case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx and p.bad=? and s.bad=? then 'PASS' else 'FAIL' end from (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx], sum(case when t.r<>t.rn+ cast(? as bigint) then ? else ? end) as [bad] from (select /*+ NO_MERGE PARALLEL(?) */ rownum as [rn], rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, r, id)) p (c, mn, mx, bad), (select count(*) as [c], min(t.r) as [mn], max(t.r) as [mx], sum(case when t.r<>t.rn+ cast(? as bigint) then ? else ? end) as [bad] from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ rownum as [rn], rownum+ cast(? as bigint) as [r], [dba.px_rn].id from [dba.px_rn] [dba.px_rn]) t (rn, r, id)) s (c, mn, mx, bad)
 
 
 Trace Statistics:

@@ -43,7 +43,8 @@
  *   Case 5:  WHERE ROWNUM < 5 -> numbers 1..4, mergeable list
  *   Case 6:  WHERE ROWNUM folded into an aggregate -> stays off, count exact
  *   Case 7:  fractional bounds (<= 0.6, < 1.4, <= 2.5) vs serial
- *   Case 8:  ROWNUM + 1 (expression) -> stays row by row, result vs serial
+ *   Case 8:  ROWNUM and ROWNUM + 1 together -> the expression alone keeps it
+ *            row by row, r = rn + 1 on every row, result vs serial
  *   Case 9:  ROWNUM in a CASE condition -> stays row by row, result vs serial
  *   Case 10: ORDER BY ... LIMIT with ROWNUM -> stays blocked, count exact
  *   Case 11: GROUP BY with max(ROWNUM) -> stays blocked, totals vs serial
@@ -104,12 +105,14 @@ from (select count(*) c from (select /*+ PARALLEL(8) NO_MERGE */ id from px_rn w
      (select count(*) c from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ id from px_rn where rownum <= 2.5) t) s3;
 show trace;
 
-evaluate 'Case 8: ROWNUM + 1 -> stays row by row, result vs serial';
-select /*+ recompile */ case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx then 'PASS' else 'FAIL' end as result
-from (select count(*) c, min(r) mn, max(r) mx
-      from (select /*+ PARALLEL(8) NO_MERGE */ rownum + 1 r, id from px_rn) t) p,
-     (select count(*) c, min(r) mn, max(r) mx
-      from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ rownum + 1 r, id from px_rn) t) s;
+evaluate 'Case 8: ROWNUM and ROWNUM + 1 together -> stays row by row, result vs serial';
+-- the plain rn would pass on its own, so only the expression r keeps it row by row
+select /*+ recompile */ case when p.c<=>s.c and p.mn<=>s.mn and p.mx<=>s.mx and p.bad = 0 and s.bad = 0
+            then 'PASS' else 'FAIL' end as result
+from (select count(*) c, min(r) mn, max(r) mx, sum(case when r <> rn + 1 then 1 else 0 end) bad
+      from (select /*+ PARALLEL(8) NO_MERGE */ rownum rn, rownum + 1 r, id from px_rn) t) p,
+     (select count(*) c, min(r) mn, max(r) mx, sum(case when r <> rn + 1 then 1 else 0 end) bad
+      from (select /*+ NO_PARALLEL_SCAN NO_MERGE */ rownum rn, rownum + 1 r, id from px_rn) t) s;
 show trace;
 
 evaluate 'Case 9: ROWNUM in a CASE condition -> stays row by row, result vs serial';
