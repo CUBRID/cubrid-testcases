@@ -18,7 +18,7 @@
  *  4    the OVER order covered by a forced index scan (sort skipped)
  *  5    RANK, DENSE_RANK, FIRST_VALUE, the other functions the optimization takes
  *  6    LIMIT with an offset: the skipped rows still count, and no returned row is lost
- *  7    ROWNUM in the select list, at any depth of an expression: the optimization is not used
+ *  7    ROWNUM in the select list, at any depth of an expression: the optimization is kept and each row keeps its ROWNUM
  */
 
 drop table if exists p, q;
@@ -62,7 +62,7 @@ evaluate 'Case 6: LIMIT with an offset -- the skipped row still counts for the a
 select /*+ recompile */ row_number() over () + 100 as r, x from q limit 1, 3;
 
 
-evaluate 'Case 7: ROWNUM in the select list, alone and inside an expression -- the optimization is not used';
+evaluate 'Case 7: ROWNUM in the select list, alone and inside an expression -- the optimization is kept and each row keeps its ROWNUM';
 select /*+ recompile */ rownum as rn, row_number() over () + 100 as r, x from q where rownum <= 3;
 select /*+ recompile */ rownum * 1000 + row_number() over () as v, x from q where rownum <= 3;
 
