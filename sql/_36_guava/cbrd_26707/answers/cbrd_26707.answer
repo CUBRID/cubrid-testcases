@@ -1213,13 +1213,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
+  rewritten query: (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (av?)
 
-  rewritten query: select count(*) from [dba.ta] a, (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
+  rewritten query: select count(*) from [dba.ta] a, (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
 
 
 Trace Statistics:
@@ -1246,13 +1246,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (b)
 
-  rewritten query: (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
+  rewritten query: (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?)
 
   NESTED LOOPS (inner join)
     TABLE SCAN (a)
     TABLE SCAN (av?)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a, (select distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.ta] a, (select /*+ NO_UNNEST */ distinct b.id from [dba.tb] b where [dba.sp_f](b.id)>?) av? (av_?) where a.id=av?.av_?
 
 
 Trace Statistics:
@@ -1352,7 +1352,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (tset)
 
-  rewritten query: select a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) anti join [dba.tb] b on b.id=a.id where  cast(a.cola as integer)<? order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.id, tset.v from [dba.ta] a anti join [dba.tb] b on b.id=a.id, table({?, ?, ?}) tset (v) where  cast(a.cola as integer)<? order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1383,7 +1383,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (tset)
 
-  rewritten query: select a.id, tset.v from [dba.ta] a, table({?, ?, ?}) tset (v) anti join [dba.tb] b on b.id=a.id where  cast(a.cola as integer)<? order by ?, ?
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ a.id, tset.v from [dba.ta] a anti join [dba.tb] b on b.id=a.id, table({?, ?, ?}) tset (v) where  cast(a.cola as integer)<? order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
