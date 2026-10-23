@@ -29,7 +29,8 @@
  *    Case 6:  ORDERED and LEADING: the outer first, no DISTINCT form; KEYLIMIT: subquery
  *             kept, no INNER rewrite
  *    Case 7:  SEMI ON reads the null-supplying side of a LEFT OUTER JOIN through an INNER JOIN
- *             node: the SEMI inner stays behind the outer join
+ *             node: the SEMI inner stays behind the outer join; and reads it directly together
+ *             with the preserved side (the shape that returned wrong rows in review)
  *    Case 8:  the same with a RIGHT OUTER JOIN
  *    Case 9:  an uncorrelated IN reads the null-supplying side: the SEMI ON rejects NULL, so the
  *             outer join becomes an inner join, also when the subquery table has a PRIMARY KEY
@@ -164,6 +165,15 @@ select /*+ recompile parallel(0) */ count(*)
   from t_o left outer join t_p on t_o.id = t_p.id
        inner join t_q on t_q.id = t_p.id
  where exists (select /*+ NO_UNNEST */ 1 from t_s where t_s.k = t_q.k and t_s.m = t_o.m);
+show trace;
+-- the SEMI ON reads the null-supplying side t_p directly, together with the preserved side t_o
+select /*+ recompile parallel(0) */ count(*)
+  from t_o left outer join t_p on t_o.id = t_p.id
+       semi join t_s on t_s.k = t_p.k and t_s.m = t_o.m;
+show trace;
+select /*+ recompile parallel(0) */ count(*)
+  from t_o left outer join t_p on t_o.id = t_p.id
+ where exists (select /*+ NO_UNNEST */ 1 from t_s where t_s.k = t_p.k and t_s.m = t_o.m);
 show trace;
 
 

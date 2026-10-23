@@ -939,6 +939,106 @@ Trace Statistics:
      
 
 ===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
+               outer: temp(distinct)
+                          subplan: sscan
+                                       class: t_s node[?]
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: t_p node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_o node[?]
+               index: i_t_o_m term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o inner join t_p t_p semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_p.k where t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      SORT (distinct)
+        TABLE SCAN (dba.t_s)
+      TABLE SCAN (dba.t_p)
+    INDEX SCAN (dba.t_o.i_t_o_m) (key range: [dba.t_s].m=[dba.t_o].m)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] inner join [dba.t_p] [dba.t_p] semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_p].k where [dba.t_o].id=[dba.t_p].id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (index: dba.t_o.i_t_o_m), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: t_s node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: t_p node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o, t_p t_p where  exists (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_p.k and (t_s.m=t_o.m) and inst_num()<= ?:? ) and t_o.id=t_p.id
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_s)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_p)
+    TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o], [dba.t_p] [dba.t_p] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_p].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? ) and [dba.t_o].id=[dba.t_p].id
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
     
 Case 8: the same with a RIGHT OUTER JOIN     
 
