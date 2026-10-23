@@ -19,14 +19,16 @@
  *  of c1 = ? failed with 'Cannot coerce host var' on a CHAR (1) column.
  *  Case 6: a fixed BIT bind as a result column, a 1-byte value before a 3-byte one in one
  *  statement: the plan of the first value's BIT (8) cut the second to its first byte.
+ *  Case 7: a hash or merge join key under arithmetic with a NULL bind (a.x = b.x + ?): the key
+ *  side typed NULL left the join undecided and the plan was refused with -1383.
  *
  *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
  *  for the NULL bind, Case 4 the counts of the literal statements beside them, and Case 5 the
  *  row 119673559571800002 for the DOUBLE bind, no row for 35203 and the row 'Y' for 'Y', and
- *  Case 6 each bound value whole.
+ *  Case 6 each bound value whole, and Case 7 0 for the NULL bind and 2 for 0.
  */
 
-drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
+drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx;
 
 
 evaluate 'Case 1: c4 = vc and c4 = ? on CHAR(4) and VARCHAR columns';
@@ -94,4 +96,18 @@ select ? from db_root;
 $bit,$01234567;
 select bit_length (?) from db_root;
 
-drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn;
+
+evaluate 'Case 7: a hash and a merge join key under arithmetic with a NULL bind';
+create table t_jx (x int, y numeric(10,2));
+insert into t_jx values (1, 1.5), (2, 2.5);
+prepare s_hash from 'select /*+ use_hash */ count (*) from t_jx a, t_jx b where a.x = b.x + ?';
+execute s_hash using null;
+execute s_hash using 0;
+prepare s_merge from 'select /*+ use_merge */ count (*) from t_jx a, t_jx b where a.x = b.x + ?';
+execute s_merge using null;
+prepare s_num from 'select /*+ use_hash */ count (*) from t_jx a, t_jx b where a.y = b.y * ?';
+execute s_num using null;
+prepare s_derived from 'select /*+ use_hash */ count (*) from t_jx a, (select x + ? as v from t_jx) b where a.x = b.v';
+execute s_derived using null;
+
+drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx;
