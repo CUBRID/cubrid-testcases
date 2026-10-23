@@ -75,4 +75,51 @@ select id from t_27719_tgt where id in (select id from (select id from t_27719_l
 select id from t_27719_tgt where id = (select id from t_27719_loc order by id limit 1) order by 1;
 select id from t_27719_tgt where exists (select 1 from (select id from t_27719_loc order by id limit 2) x where x.id = t_27719_tgt.id) order by 1;
 
+
+-- 7. inequality ANY: the derived table + MIN/MAX branch of the rewrite
+select id from t_27719_tgt where id > any (select id from t_27719_loc order by id limit 1, 2) order by 1;
+select id from t_27719_tgt where id >= any (select id from t_27719_loc order by id limit 1, 2) order by 1;
+select id from t_27719_tgt where id < any (select id from t_27719_loc order by id limit 1, 2) order by 1;
+select id from t_27719_tgt where id <= any (select id from t_27719_loc order by id limit 2) order by 1;
+
+-- 8. ORDER SIBLINGS BY with LIMIT: the LIMIT becomes INST_NUM () and the ORDER BY stays
+create table t_27719_h (id int, pid int, v int);
+insert into t_27719_h values (10, null, 1), (11, 10, 1), (12, 10, 2), (13, null, 3);
+select id from t_27719_tgt
+ where id in (select v from t_27719_h start with pid is null connect by prior id = pid order siblings by id limit 2) order by 1;
+
+-- 9. the join keeps duplicate outer rows, and EXCEPT ALL keeps duplicate values
+create table t_27719_td (id int);
+insert into t_27719_td values (1), (1), (2);
+select id from t_27719_td where id in (select id from t_27719_loc order by id limit 2) order by 1;
+select id from t_27719_td where id in (select id from t_27719_loc except all select id from t_27719_tgt where id = 3) order by 1;
+select id from t_27719_tgt where id in (select id from t_27719_loc except all select id from t_27719_tgt where id = 1) order by 1;
+
+-- 10. the plan keeps the join
+--@queryplan
+select id from t_27719_tgt where id in (select id from t_27719_loc union all select id from t_27719_loc limit 3) order by 1;
+--@queryplan
+select id from t_27719_tgt where id in (select id from t_27719_loc) order by 1;
+
+-- 11. other positions and statements
+select id from t_27719_tgt where id in (select id from t_27719_loc order by id limit 2) or id = 4 order by 1;
+select id from t_27719_tgt where id + 0 in (select id from t_27719_loc order by id limit 2) order by 1;
+select id from t_27719_tgt group by id having id in (select id from t_27719_loc order by id limit 2) order by 1;
+select id, case when id in (select id from t_27719_loc order by id limit 2) then 1 else 0 end as hit from t_27719_tgt order by 1;
+select id from t_27719_tgt where id in (select id from t_27719_loc where id in (select id from t_27719_loc order by id limit 2)) order by 1;
+with c as (select id from t_27719_loc) select id from t_27719_tgt where id in (select id from c order by id limit 2) order by 1;
+create table t_27719_ins (id int);
+insert into t_27719_ins select id from t_27719_tgt where id in (select id from t_27719_loc order by id limit 2);
+select id from t_27719_ins order by 1;
+merge into t_27719_tgt t using (select id from t_27719_tgt where id in (select id from t_27719_loc order by id limit 2)) s
+ on (t.id = s.id) when matched then update set t.flag = 2;
+select id from t_27719_tgt where flag = 2 order by 1;
+--+ holdcas on;
+prepare st from 'select id from t_27719_tgt where id in (select id from t_27719_loc order by id limit ?) order by 1';
+execute st using 2;
+execute st using 3;
+deallocate prepare st;
+--+ holdcas off;
+
+drop table if exists t_27719_h, t_27719_td, t_27719_ins;
 drop table if exists t_27719_loc, t_27719_tgt, t_27719_ln, t_27719_tn;
