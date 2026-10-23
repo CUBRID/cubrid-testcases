@@ -29,13 +29,19 @@
  *   Q14 PARTITION BY expression which matches no select list item, such as a
  *       function (elt, json_object) : the query runs without an error
  *   Q15 any deterministic expression on keys of an exact type (integer,
- *       numeric, date) : pushed
+ *       date) : pushed, NUMERIC expression : not pushed (see Q19)
  *   Q16 expression on a non-key column, on a value with a time zone, or on a
  *       floating point value : not pushed
  *   Q17 LIKE on a case insensitive collation key is rewritten to a range in
  *       the same collation : pushed
+ *   Q18 term with a variable assignment (@a := ...) : not pushed, neither into
+ *       an inline view with analytic functions nor into the outer joined inline
+ *       view kept by an OR term (it was evaluated twice there)
+ *   Q19 NUMERIC key whose values have different scales (1.0 and 1.00 are in
+ *       the same partition) : a direct comparison is pushed, an expression such
+ *       as a string conversion is not
  */
-drop table if exists tbl1, h1, e1;
+drop table if exists tbl1, h1, e1, e2, o1, n1;
 create table tbl1 (a int, b varchar, c varchar);
 insert into tbl1 select rownum, 'test' || mod (rownum, 100), 'test' || mod (rownum, 1000)
   from db_class a, db_class b, db_class c limit 10000;
@@ -297,4 +303,53 @@ where T.ci like 'a%' order by id;
 select /*+ recompile no_push_pred */ * from (select id, ci, count (*) over (partition by ci) cnt from h1) T
 where T.ci like 'a%' order by id;
 
-drop table tbl1, h1, e1;
+evaluate 'Q18. term with a variable assignment';
+create table e2 (id int, g int);
+insert into e2 select rownum, mod (rownum, 3) from db_class limit 12;
+create table o1 (id int);
+insert into o1 select rownum from db_class limit 12;
+set @a = 0;
+--@queryplan
+select /*+ recompile */ T.g, count (*), min (T.cnt), max (T.cnt)
+from (select g, count (*) over (partition by g) cnt from e2) T
+where T.g * 0 + mod ((@a := @a + 1), 2) = 0
+group by T.g order by 1;
+set @a = 0;
+select /*+ recompile no_push_pred */ T.g, count (*), min (T.cnt), max (T.cnt)
+from (select g, count (*) over (partition by g) cnt from e2) T
+where T.g * 0 + mod ((@a := @a + 1), 2) = 0
+group by T.g order by 1;
+set @a = 0;
+--@queryplan
+select /*+ recompile */ a.id, X.id, X.g
+from o1 a left outer join (select id, g from e2) X on a.id = X.id
+where X.g * 0 + mod ((@a := @a + 1), 2) = 0 or X.g < -1
+order by 2;
+select @a;
+set @a = 0;
+select /*+ recompile no_push_pred */ a.id, X.id, X.g
+from o1 a left outer join (select id, g from e2) X on a.id = X.id
+where X.g * 0 + mod ((@a := @a + 1), 2) = 0 or X.g < -1
+order by 2;
+select @a;
+
+evaluate 'Q19. NUMERIC key whose values have different scales';
+create table n1 (id int, k int, p numeric (5, 1), q numeric (5, 2));
+insert into n1 values (1, 0, 1.0, null), (2, 1, null, 1.00), (3, 0, 1.0, null), (4, 1, null, 1.00);
+--@queryplan
+select /*+ recompile */ T.* from (select id, n, count (*) over (partition by n) cnt
+                                  from (select id, case when k = 0 then p else q end n from n1) X) T
+where T.n || '' = '1.0' order by id;
+select /*+ recompile no_push_pred */ T.* from (select id, n, count (*) over (partition by n) cnt
+                                               from (select id, case when k = 0 then p else q end n from n1) X) T
+where T.n || '' = '1.0' order by id;
+--@queryplan
+select /*+ recompile */ T.* from (select id, n, count (*) over (partition by n) cnt
+                                  from (select id, case when k = 0 then p else q end n from n1) X) T
+where T.n = 1 order by id;
+select /*+ recompile no_push_pred */ T.* from (select id, n, count (*) over (partition by n) cnt
+                                               from (select id, case when k = 0 then p else q end n from n1) X) T
+where T.n = 1 order by id;
+
+drop variable @a;
+drop table tbl1, h1, e1, e2, o1, n1;
