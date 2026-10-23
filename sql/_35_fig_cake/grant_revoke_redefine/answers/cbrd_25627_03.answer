@@ -33,14 +33,14 @@ U1     U3     U1     FUNCTION     hello     EXECUTE
 
 ===================================================
     
-connect to u3 & changed to owner u1.hello -> u3.hello, ERROR: can only be performed by the DBA or a DBA group member     
+connect to u3 & changed to owner u1.hello -> u3.hello, ERROR: the owner or a member of DBA group can alter stored procedure     
 
 ===================================================
     
 null     
 
 ===================================================
-Error:-140
+Error:-907
 ===================================================
     
 connect to dba & changed to owner u1.hello -> u3.hello     
@@ -53,6 +53,7 @@ null
 0
 ===================================================
 grantor_name    grantee_name    owner_name    object_type    object_name    auth_type    
+DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_package     SELECT     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_server     SELECT     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_synonym     SELECT     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     dual     SELECT     
