@@ -69,6 +69,8 @@ show trace;
 evaluate 'Case 2: DISTINCT input of a merge join on two join columns';
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ use_merge(t_i) */ 1 from t_i where t_i.k = t_o.k and t_i.g = t_o.g);
 show trace;
+select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ NO_UNNEST */ 1 from t_i where t_i.k = t_o.k and t_i.g = t_o.g);
+show trace;
 
 
 evaluate 'Case 3: a plain join before the SEMI inner, the DISTINCT inner attached after it as the merge input';
@@ -110,7 +112,11 @@ select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ N
 show trace;
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_ck where t_ck.k = t_o.k);
 show trace;
+select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ NO_UNNEST */ 1 from t_ck where t_ck.k = t_o.k);
+show trace;
 select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_vc where t_vc.c = t_o.k);
+show trace;
+select /*+ recompile parallel(0) */ count(*) from t_o where exists (select /*+ NO_UNNEST */ 1 from t_vc where t_vc.c = t_o.k);
 show trace;
 drop table t_ck, t_vc;
 

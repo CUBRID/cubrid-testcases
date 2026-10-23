@@ -154,6 +154,47 @@ Trace Statistics:
      
 
 ===================================================
+count(*)    
+30     
+
+Query plan:
+sscan
+    class: t_i node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_i t_i where t_i.k=t_o.k and (t_i.g=t_o.g) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: t_o node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o where  exists (select /*+ NO_UNNEST */ ? from t_i t_i where t_i.k=t_o.k and (t_i.g=t_o.g) and inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_i)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_i] [dba.t_i] where [dba.t_i].k=[dba.t_o].k and ([dba.t_i].g=[dba.t_o].g) and inst_num()<= ?:? )
+
+  TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_i] [dba.t_i] where [dba.t_i].k=[dba.t_o].k and ([dba.t_i].g=[dba.t_o].g) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
     
 Case 3: a plain join before the SEMI inner, the DISTINCT inner attached after it as the merge input     
 
@@ -489,6 +530,48 @@ count(*)
 600     
 
 Query plan:
+iscan
+    class: t_ck node[?]
+    index: pk_t_ck_k_g term[?] (covers)
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_ck t_ck where (t_ck.k=t_o.k) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: t_o node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o where  exists (select /*+ NO_UNNEST */ ? from t_ck t_ck where (t_ck.k=t_o.k) and inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_ck.pk_t_ck_k_g) (key range: ([dba.t_ck].k=[dba.t_o].k), covered: true)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_ck] [dba.t_ck] where ([dba.t_ck].k=[dba.t_o].k) and inst_num()<= ?:? )
+
+  TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_ck] [dba.t_ck] where ([dba.t_ck].k=[dba.t_o].k) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_ck.pk_t_ck_k_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+count(*)    
+600     
+
+Query plan:
 nl-join (semi join)
     edge:  term[?]
     outer: sscan
@@ -516,6 +599,47 @@ Trace Statistics:
     SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (table: dba.t_vc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+600     
+
+Query plan:
+sscan
+    class: t_vc node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_UNNEST */ ? from t_vc t_vc where (t_o.k= cast(t_vc.c as double)) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: t_o node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o where  exists (select /*+ NO_UNNEST */ ? from t_vc t_vc where (t_o.k= cast(t_vc.c as double)) and inst_num()<= ?:? )
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_vc)
+
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_vc] [dba.t_vc] where ([dba.t_o].k= cast([dba.t_vc].c as double)) and inst_num()<= ?:? )
+
+  TABLE SCAN (dba.t_o)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] where  exists (select /*+ NO_UNNEST */ ? from [dba.t_vc] [dba.t_vc] where ([dba.t_o].k= cast([dba.t_vc].c as double)) and inst_num()<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_vc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
