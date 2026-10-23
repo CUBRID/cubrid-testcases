@@ -14,6 +14,12 @@
  *    Case 7: correlation only in HAVING
  *    Case 8: IN predicate with two correlated operands
  *    Case 9: nested HAVING subquery correctness fallback
+ *    Case 10: HAVING IF condition with a shared WHERE key
+ *    Case 11: HAVING CASE condition with a shared WHERE key
+ *    Case 12: HAVING DECODE condition with a shared WHERE key
+ *    Case 13: WHERE IF condition
+ *    Case 14: select-list IF condition
+ *    Case 15: predicate used as a select-list value
  */
 
 drop table if exists t_outer, t_inner;
@@ -85,5 +91,48 @@ evaluate 'Case 9: nested HAVING subquery correctness fallback; result = NO_SUBQU
 select /*+ recompile */ oo.id, (select max(ii.v) from t_inner ii where ii.k = oo.k having max(ii.v) > (select min(cc.lo) from t_outer cc where cc.id = oo.id)) as x from t_outer oo order by oo.id;
 
 select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) from t_inner ii where ii.k = oo.k having max(ii.v) > (select min(cc.lo) from t_outer cc where cc.id = oo.id)) as x from t_outer oo order by oo.id;
+
+
+-- The same k and hi with different lo expose a missing condition-only key
+evaluate 'Case 10: HAVING IF condition; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) from t_inner ii where ii.k = oo.k having if(oo.lo = 0, oo.hi, 0) > 0) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) from t_inner ii where ii.k = oo.k having if(oo.lo = 0, oo.hi, 0) > 0) as x from t_outer oo order by oo.id;
+
+
+evaluate 'Case 11: HAVING CASE condition; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) from t_inner ii where ii.k = oo.k having case when oo.lo = 0 then 1 else 0 end = 1) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) from t_inner ii where ii.k = oo.k having case when oo.lo = 0 then 1 else 0 end = 1) as x from t_outer oo order by oo.id;
+
+
+evaluate 'Case 12: HAVING DECODE condition; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) from t_inner ii where ii.k = oo.k having decode(oo.lo, 0, oo.hi, 0) > 0) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) from t_inner ii where ii.k = oo.k having decode(oo.lo, 0, oo.hi, 0) > 0) as x from t_outer oo order by oo.id;
+
+
+evaluate 'Case 13: WHERE IF condition; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) from t_inner ii where ii.k = oo.k and if(oo.lo = 0, 1, 0) = 1) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) from t_inner ii where ii.k = oo.k and if(oo.lo = 0, 1, 0) = 1) as x from t_outer oo order by oo.id;
+
+
+evaluate 'Case 14: select-list IF condition; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) + if(oo.lo = 0, 100, 0) from t_inner ii where ii.k = oo.k) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) + if(oo.lo = 0, 100, 0) from t_inner ii where ii.k = oo.k) as x from t_outer oo order by oo.id;
+
+
+evaluate 'Case 15: predicate used as a value; result = NO_SUBQUERY_CACHE';
+
+select /*+ recompile */ oo.id, (select max(ii.v) + (oo.lo > 0) from t_inner ii where ii.k = oo.k) as x from t_outer oo order by oo.id;
+
+select /*+ recompile */ oo.id, (select /*+ NO_SUBQUERY_CACHE */ max(ii.v) + (oo.lo > 0) from t_inner ii where ii.k = oo.k) as x from t_outer oo order by oo.id;
 
 drop table t_outer, t_inner;
