@@ -21,10 +21,11 @@
  * using the null-safe <=> and emitting PASS/FAIL. Every filtered-index side is
  * pinned with "(+)". Without it the optimizer may pick a table scan and the
  * check would compare two table scans. The trace blocks pin the plan shape
- * (INDEX SCAN of the filtered index, parallel workers) in the answer.
+ * (INDEX SCAN of the filtered index, parallel workers, gather type) in the
+ * answer.
  *
  * Stale entries: the filter-exit UPDATE and the checks after it run in one
- * open transaction (autocommit off), so the old entries can never be
+ * open transaction (auto-commit disabled), so the old entries can never be
  * vacuumed during the checks and the stale-entry path is always taken.
  *
  * Table sizing: the PARALLEL(N) hint only bypasses the optimizer estimate.
@@ -39,17 +40,20 @@
  *
  * Covering: a WHERE del = 0 needs del, so idx_flt (grp) never covers it and
  * every scan on it does a heap lookup. idx_flt_cov (grp, del) carries del in
- * the key and covers Case 2 / 9. A stale entry there still holds del = 0 in
+ * the key and covers Case 2 / 10. A stale entry there still holds del = 0 in
  * its key, so only the entry-level MVCC check can drop it.
  *
  * Coverage (no stale entries / after the filter-exit UPDATE):
- *   Case 1 / 8:   key range, WHERE absorbed by the filter, non-covering
- *   Case 2 / 9:   key range, covering (idx_flt_cov), also vs heap
- *   Case 3 / 10:  partial key range on a descending filtered index
- *   Case 4 / 11:  full range (no key range at all), vs serial and heap
- *   Case 5 / 12:  full range on the descending filtered index
- *   Case 6 / 13:  full range on the multi-column filtered index
- *   Case 7 / 14:  multi-column index, range on a nullable first column
+ *   Case 1 / 9:   key range, WHERE absorbed by the filter, non-covering
+ *   Case 2 / 10:  key range, covering (idx_flt_cov), also vs heap
+ *   Case 3 / 11:  partial key range on a descending filtered index
+ *   Case 4 / 12:  full range (no key range at all), vs serial and heap
+ *   Case 5 / 13:  full range on the descending filtered index
+ *   Case 6 / 14:  full range on the multi-column filtered index
+ *   Case 7 / 15:  multi-column index, range on a nullable first column
+ *   Case 8 / 16:  rows returned through a no_merge derived table, so the
+ *                 parallel index scan is gathered as a mergeable list
+ *                 instead of a buildvalue (Case 1-7 / 9-15)
  */
 
 drop table if exists ft;
@@ -86,6 +90,11 @@ select /*+ recompile PARALLEL(8) */ count(*), sum(cast(id as bigint))
 from ft where grp2 <= 7 and del = 0 using index idx_flt_mc(+);
 show trace;
 
+evaluate 'Plan: rows returned through a derived table -> parallel index scan gathered as a mergeable list';
+select /*+ recompile */ count(*), sum(cast(x as bigint))
+from (select /*+ no_merge PARALLEL(8) */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t;
+show trace;
+
 set trace off;
 
 evaluate 'Case 1: key range, non-covering';
@@ -111,7 +120,7 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(id as bigint)) s1
       from ft where del = 0 and grp between 2 and 20000 using index idx_flt_desc(+)) s;
 
-evaluate 'Case 4: full range, covering, vs serial and heap';
+evaluate 'Case 4: full range, vs serial and heap';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt(+)) s,
@@ -138,6 +147,15 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(id as bigint)) s1
       from ft where grp2 <= 7 and del = 0 using index none) h;
 
+evaluate 'Case 8: rows through a derived table (mergeable list), vs serial and heap';
+select case when p.c<=>s.c and p.s1<=>s.s1 and p.c<=>h.c and p.s1<=>h.s1 then 'PASS' else 'FAIL' end as result
+from (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge PARALLEL(8) */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t) p,
+     (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge NO_PARALLEL_SCAN */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t) s,
+     (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge NO_PARALLEL_SCAN */ id x from ft where del = 0 and grp between 0 and 30000 using index none) t) h;
+
 autocommit off;
 
 -- 10% of the rows leave the filter. Their old entries stay in the index until this transaction ends
@@ -155,16 +173,21 @@ select /*+ recompile PARALLEL(8) */ count(*), sum(cast(grp as bigint))
 from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+);
 show trace;
 
+evaluate 'Plan after the UPDATE: rows through a derived table are still gathered as a mergeable list';
+select /*+ recompile */ count(*), sum(cast(x as bigint))
+from (select /*+ no_merge PARALLEL(8) */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t;
+show trace;
+
 set trace off;
 
-evaluate 'Case 8: key range, non-covering, after the UPDATE';
+evaluate 'Case 9: key range, non-covering, after the UPDATE';
 select case when p.c<=>s.c and p.s1<=>s.s1 and p.s3<=>s.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(id as bigint)) s1, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) s;
 
-evaluate 'Case 9: key range, covering, vs heap, after the UPDATE';
+evaluate 'Case 10: key range, covering, vs heap, after the UPDATE';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index idx_flt_cov(+)) p,
@@ -173,32 +196,32 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3
       from ft where del = 0 and grp between 0 and 30000 using index none) h;
 
-evaluate 'Case 10: partial key range, descending filtered index, after the UPDATE';
+evaluate 'Case 11: partial key range, descending filtered index, after the UPDATE';
 select case when p.c<=>s.c and p.s1<=>s.s1 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1
       from ft where del = 0 and grp between 2 and 20000 using index idx_flt_desc(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(id as bigint)) s1
       from ft where del = 0 and grp between 2 and 20000 using index idx_flt_desc(+)) s;
 
-evaluate 'Case 11: full range, covering, vs serial and heap, after the UPDATE';
+evaluate 'Case 12: full range, vs serial and heap, after the UPDATE';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index none) h;
 
-evaluate 'Case 12: full range, descending filtered index, after the UPDATE';
+evaluate 'Case 13: full range, descending filtered index, after the UPDATE';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt_desc(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt_desc(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c from ft where del = 0 using index none) h;
 
-evaluate 'Case 13: full range, multi-column filtered index, after the UPDATE';
+evaluate 'Case 14: full range, multi-column filtered index, after the UPDATE';
 select case when p.c<=>s.c and p.s3<=>s.s3 and p.c<=>h.c and p.s3<=>h.s3 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt_mc(+)) p,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index idx_flt_mc(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(grp as bigint)) s3 from ft where del = 0 using index none) h;
 
-evaluate 'Case 14: multi-column filtered index, NULLs in the first key column, after the UPDATE';
+evaluate 'Case 15: multi-column filtered index, NULLs in the first key column, after the UPDATE';
 select case when p.c<=>s.c and p.s1<=>s.s1 and p.c<=>h.c and p.s1<=>h.s1 then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1
       from ft where grp2 <= 7 and del = 0 using index idx_flt_mc(+)) p,
@@ -206,6 +229,15 @@ from (select /*+ PARALLEL(8) */ count(*) c, sum(cast(id as bigint)) s1
       from ft where grp2 <= 7 and del = 0 using index idx_flt_mc(+)) s,
      (select /*+ NO_PARALLEL_SCAN */ count(*) c, sum(cast(id as bigint)) s1
       from ft where grp2 <= 7 and del = 0 using index none) h;
+
+evaluate 'Case 16: rows through a derived table (mergeable list), vs serial and heap, after the UPDATE';
+select case when p.c<=>s.c and p.s1<=>s.s1 and p.c<=>h.c and p.s1<=>h.s1 then 'PASS' else 'FAIL' end as result
+from (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge PARALLEL(8) */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t) p,
+     (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge NO_PARALLEL_SCAN */ id x from ft where del = 0 and grp between 0 and 30000 using index idx_flt(+)) t) s,
+     (select count(*) c, sum(cast(x as bigint)) s1
+      from (select /*+ no_merge NO_PARALLEL_SCAN */ id x from ft where del = 0 and grp between 0 and 30000 using index none) t) h;
 
 rollback;
 autocommit on;

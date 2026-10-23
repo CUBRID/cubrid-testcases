@@ -1,6 +1,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 40000
 ===================================================
 0
@@ -103,6 +105,36 @@ Trace Statistics:
      
 
 ===================================================
+    
+Plan: rows returned through a derived table -> parallel index scan gathered as a mergeable list     
+
+===================================================
+count(*)    sum( cast(x as bigint))    
+30000     450015000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ))
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.ft].id from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*), sum( cast(t.x as bigint)) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.ft].id as [x] from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+)) t (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
 0
 ===================================================
     
@@ -130,7 +162,7 @@ PASS
 
 ===================================================
     
-Case 4: full range, covering, vs serial and heap     
+Case 4: full range, vs serial and heap     
 
 ===================================================
 result    
@@ -155,6 +187,14 @@ PASS
 ===================================================
     
 Case 7: multi-column filtered index, NULLs in the first key column     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 8: rows through a derived table (mergeable list), vs serial and heap     
 
 ===================================================
 result    
@@ -209,10 +249,40 @@ Trace Statistics:
      
 
 ===================================================
+    
+Plan after the UPDATE: rows through a derived table are still gathered as a mergeable list     
+
+===================================================
+count(*)    sum( cast(x as bigint))    
+27000     405021000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ))
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ [dba.ft].id from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*), sum( cast(t.x as bigint)) from (select /*+ NO_MERGE PARALLEL(?) */ [dba.ft].id as [x] from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt(+)) t (x)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.ft.idx_flt), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
 0
 ===================================================
     
-Case 8: key range, non-covering, after the UPDATE     
+Case 9: key range, non-covering, after the UPDATE     
 
 ===================================================
 result    
@@ -220,7 +290,7 @@ PASS
 
 ===================================================
     
-Case 9: key range, covering, vs heap, after the UPDATE     
+Case 10: key range, covering, vs heap, after the UPDATE     
 
 ===================================================
 result    
@@ -228,7 +298,7 @@ PASS
 
 ===================================================
     
-Case 10: partial key range, descending filtered index, after the UPDATE     
+Case 11: partial key range, descending filtered index, after the UPDATE     
 
 ===================================================
 result    
@@ -236,7 +306,7 @@ PASS
 
 ===================================================
     
-Case 11: full range, covering, vs serial and heap, after the UPDATE     
+Case 12: full range, vs serial and heap, after the UPDATE     
 
 ===================================================
 result    
@@ -244,7 +314,7 @@ PASS
 
 ===================================================
     
-Case 12: full range, descending filtered index, after the UPDATE     
+Case 13: full range, descending filtered index, after the UPDATE     
 
 ===================================================
 result    
@@ -252,7 +322,7 @@ PASS
 
 ===================================================
     
-Case 13: full range, multi-column filtered index, after the UPDATE     
+Case 14: full range, multi-column filtered index, after the UPDATE     
 
 ===================================================
 result    
@@ -260,7 +330,15 @@ PASS
 
 ===================================================
     
-Case 14: multi-column filtered index, NULLs in the first key column, after the UPDATE     
+Case 15: multi-column filtered index, NULLs in the first key column, after the UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 16: rows through a derived table (mergeable list), vs serial and heap, after the UPDATE     
 
 ===================================================
 result    
