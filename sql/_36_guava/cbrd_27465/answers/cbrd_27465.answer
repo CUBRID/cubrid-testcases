@@ -34,7 +34,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -63,7 +63,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -210,7 +210,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?= ?:?  and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -247,7 +247,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -268,7 +268,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?key range: ([dba.subquery_small].col?< ?:? ), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a anti join [dba.subquery_small] [dba.subquery_small] on ([dba.subquery_small].col?< ?:? ) and [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -402,7 +402,7 @@ Query Plan:
       TABLE SCAN (b)
     INDEX SCAN (c.idx_col?_col?_col?) (key range: c.col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a, [dba.subquery_small] b semi join [dba.subquery_small] c on c.col?=a.col? where a.col?=b.col? and b.col?= ?:? 
+  rewritten query: select /*+ USE_NL USE_HASH(b) PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] c on c.col?=a.col?, [dba.subquery_small] b where a.col?=b.col? and b.col?= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -442,17 +442,22 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (semi join)
-    TABLE SCAN (a)
-    INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+  INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: ([dba.subquery_small].col?=a.col?), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col? using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? 
+  rewritten query: (select ? from [dba.subquery_small] [dba.subquery_small] where ([dba.subquery_small].col?=a.col?) and inst_num()<= ?:?  using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a where  exists (select ? from [dba.subquery_small] [dba.subquery_small] where ([dba.subquery_small].col?=a.col?) and inst_num()<= ?:?  using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
@@ -484,19 +489,24 @@ k    count(*)
 trace    
 
 Query Plan:
-  SORT (group by)
-    NESTED LOOPS (semi join)
-      TABLE SCAN (o)
-      INDEX SCAN (i.i_klim_inner_k_a) (key range: i.k=o.k, covered: true)
+  INDEX SCAN (i.i_klim_inner_k_a) (key range: (i.k=o.k), covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.klim_outer] o semi join [dba.klim_inner] i on i.k=o.k group by o.k using index i.i_klim_inner_k_a keylimit  ?:? , ?:? 
+  rewritten query: (select ? from [dba.klim_inner] i where (i.k=o.k) and inst_num()<= ?:?  using index i.i_klim_inner_k_a keylimit  ?:? , ?:? )
+
+  SORT (group by)
+    TABLE SCAN (o)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.klim_outer] o where  exists (select ? from [dba.klim_inner] i where (i.k=o.k) and inst_num()<= ?:?  using index i.i_klim_inner_k_a keylimit  ?:? , ?:? ) group by o.k
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.klim_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.klim_inner.i_klim_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.klim_inner.i_klim_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
@@ -538,7 +548,7 @@ k    count(*)
 0
 ===================================================
     
-Case 12: unique inner: memoize gives up (hit ratio 0), result unchanged     
+Case 12: unique inner, each of the 5000 probe keys comes four times: memoize kept (the hit ratio is judged only from 60% of the budget, CBRD-27487), result unchanged     
 
 ===================================================
 count(*)    
@@ -548,16 +558,17 @@ count(*)
 trace    
 
 Query Plan:
-  NESTED LOOPS (semi join)
+  NESTED LOOPS (inner join)
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.pk_subquery_small_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a, [dba.subquery_small] [dba.subquery_small] where [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.subquery_small.pk_subquery_small_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 ===================================================
@@ -582,7 +593,7 @@ Query Plan:
     TABLE SCAN (a)
     INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
+  rewritten query: select /*+ USE_NL PARALLEL(?) */ count(*) from [dba.subquery_big] a semi join [dba.subquery_small] [dba.subquery_small] on [dba.subquery_small].col?=a.col?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -623,11 +634,11 @@ trace
 
 Query Plan:
   SORT (order by)
-    NESTED LOOPS (semi join)
+    NESTED LOOPS (inner join)
       TABLE SCAN (o)
       INDEX SCAN (i.pk_part_inner_a) (key range: i.a=o.a, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ o.a, o.b from [dba.part_outer] o semi join [dba.part_inner] i on i.a=o.a order by ?, ?
+  rewritten query: select /*+ PARALLEL(?) */ o.a, o.b from [dba.part_outer] o, [dba.part_inner] i where i.a=o.a order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
