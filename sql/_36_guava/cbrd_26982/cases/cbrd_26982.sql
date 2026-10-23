@@ -28,17 +28,18 @@
  * test_mode=yes sets (32 pages). Names have no digits so CTP does not mask
  * them.
  *
- * Coverage (aggregates / output columns):
- *   Case 1: SUM(a) / COUNT(*)                         (2 / 1)
- *   Case 2: SUM(a) + COUNT(*), MAX(b)                  (3 / 2)
- *   Case 3: x, SUM(a), COUNT(*), 42                  (2 / 4)
- *   Case 4: (SUM(a) + SUM(b)) / COUNT(*)               (3 / 1)
- *   Case 5: SUM(a), has HAVING SUM(a) > 0            (1 / 2), one row
- *   Case 6: SUM(a), none HAVING SUM(a) < 0           (1 / 2), no row
- *   Case 7: COUNT(*), MAX(a), tag over no matching row (2 / 3)
+ * Coverage (aggregates / output columns; an aggregate in HAVING is a separate
+ * entry of the aggregate list):
+ *   Case 1: SUM(a) / COUNT(*)                                   (2 / 1)
+ *   Case 2: SUM(a) + COUNT(*), MAX(b)                           (3 / 2)
+ *   Case 3: x, SUM(a), COUNT(*), 42                             (2 / 4)
+ *   Case 4: (SUM(a) + SUM(b)) / COUNT(*)                        (3 / 1)
+ *   Case 5: SUM(a) HAVING SUM(a) > 0                            (2 / 1), one row
+ *   Case 6: SUM(a) HAVING SUM(a) < 0                            (2 / 1), no row
+ *   Case 7: COUNT(*), MAX(a), tag over no matching row          (2 / 3)
  *   Case 8: MEDIAN(a) * 2, MAX(b) - MIN(a), group_concat length (5 / 3)
- *   Case 9: SUM(a), big HAVING SUM(a) > 50000        (1 / 2), one row: true only for
- *           the final sum 55000, never for a worker's partial sum
+ *   Case 9: SUM(a) HAVING SUM(a) > 50000                        (2 / 1), one row: true
+ *           only for the final sum 55000, never for a worker's partial sum
  */
 
 drop table if exists tg;
@@ -69,15 +70,15 @@ select /*+ recompile PARALLEL(8) */ (sum(a) + sum(b)) / count(*) from tg;
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ (sum(a) + sum(b)) / count(*) from tg;
 
-evaluate 'Case 5: HAVING that keeps the row';
-select /*+ recompile PARALLEL(8) */ sum(a), 'has' from tg having sum(a) > 0;
+evaluate 'Case 5: HAVING that keeps the row  (2 aggregates, 1 column)';
+select /*+ recompile PARALLEL(8) */ sum(a) from tg having sum(a) > 0;
 show trace;
-select /*+ recompile NO_PARALLEL_SCAN */ sum(a), 'has' from tg having sum(a) > 0;
+select /*+ recompile NO_PARALLEL_SCAN */ sum(a) from tg having sum(a) > 0;
 
-evaluate 'Case 6: HAVING that removes the row';
-select /*+ recompile PARALLEL(8) */ sum(a), 'none' from tg having sum(a) < 0;
+evaluate 'Case 6: HAVING that removes the row  (2 aggregates, 1 column)';
+select /*+ recompile PARALLEL(8) */ sum(a) from tg having sum(a) < 0;
 show trace;
-select /*+ recompile NO_PARALLEL_SCAN */ sum(a), 'none' from tg having sum(a) < 0;
+select /*+ recompile NO_PARALLEL_SCAN */ sum(a) from tg having sum(a) < 0;
 
 evaluate 'Case 7: no matching row, aggregates plus a constant';
 select /*+ recompile PARALLEL(8) */ count(*), max(a), 'tag' from tg where b > 100;
@@ -91,10 +92,10 @@ show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ cast(median(a) * 2 as int), max(b) - min(a),
        length(group_concat(distinct b order by b separator ',')) + count(*) from tg;
 
-evaluate 'Case 9: HAVING true only for the final sum (55000 > 50000)';
-select /*+ recompile PARALLEL(8) */ sum(a), 'big' from tg having sum(a) > 50000;
+evaluate 'Case 9: HAVING true only for the final sum 55000 > 50000  (2 aggregates, 1 column)';
+select /*+ recompile PARALLEL(8) */ sum(a) from tg having sum(a) > 50000;
 show trace;
-select /*+ recompile NO_PARALLEL_SCAN */ sum(a), 'big' from tg having sum(a) > 50000;
+select /*+ recompile NO_PARALLEL_SCAN */ sum(a) from tg having sum(a) > 50000;
 select case when (select count(*) from (select /*+ recompile PARALLEL(8) */ sum(a) sa from tg having sum(a) > 50000) p
                    where p.sa = 55000) = 1
              and (select count(*) from (select /*+ recompile NO_PARALLEL_SCAN */ sum(a) sa from tg having sum(a) > 50000) s
