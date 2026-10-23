@@ -60,7 +60,7 @@ Query Plan:
       INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
     INDEX SCAN (w.pk_t_w_k_id) (key range: w.k=o.k, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] o, [dba.t_w] w anti join [dba.t_i] s on s.k=o.k where w.k=o.k
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] o anti join [dba.t_i] s on s.k=o.k, [dba.t_w] w where w.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -232,7 +232,7 @@ Query Plan:
       INDEX SCAN (s.pk_t_i_k) (key range: s.k=o.k, covered: true)
     INDEX SCAN (w.pk_t_wnp_k_id) (key range: w.k=o.k, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_op] o, [dba.t_wnp] w anti join [dba.t_i] s on s.k=o.k where w.k=o.k
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_op] o anti join [dba.t_i] s on s.k=o.k, [dba.t_wnp] w where w.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -282,7 +282,7 @@ Query Plan:
         INDEX SCAN (x.pk_t_x_k_v) (key range: o.k=x.k, covered: true)
       INDEX SCAN (w.pk_t_w_k_id) (key range: w.k=o.k, covered: true)
 
-  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.t_o] o, [dba.t_w] w, [dba.t_x] x anti join [dba.t_i] s on s.k=o.k where w.k=o.k and x.k=w.k group by o.k
+  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.t_o] o anti join [dba.t_i] s on s.k=o.k, [dba.t_w] w, [dba.t_x] x where w.k=o.k and x.k=w.k group by o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -399,7 +399,7 @@ Query Plan:
       INDEX SCAN (s.pk_t_i?_k) (key range: s.k=o.k, covered: true)
     INDEX SCAN (w.pk_t_w?_k_id) (key range: w.k=o.k, covered: true)
 
-  rewritten query: select /*+ NO_USE_HASH */ count(*) from [dba.outer_big] o, [dba.t_w?] w anti join [dba.t_i?] s on s.k=o.k where w.k=o.k
+  rewritten query: select /*+ NO_USE_HASH */ count(*) from [dba.outer_big] o anti join [dba.t_i?] s on s.k=o.k, [dba.t_w?] w where w.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
