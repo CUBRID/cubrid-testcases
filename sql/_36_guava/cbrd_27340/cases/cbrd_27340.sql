@@ -59,6 +59,30 @@
  *   Case 6: /*+ USE_NL *\/
  *   Case 7: /*+ USE_IDX *\/
  *   Case 8: /*+ USE_MERGE *\/
+ *
+ * Cases 9-15 were added when the per-term dependency tracking above was
+ * replaced by the current on_node-level tracking (QO_NODE_OUTER_DEP_SET),
+ * covering paths the term-level implementation did not guard.
+ *
+ *   Case 9:  RIGHT OUTER JOIN followed by LEFT OUTER JOIN, the LEFT JOIN's
+ *            own ON condition reads the RIGHT JOIN's null-supplying side
+ *            through nvl(), /*+ USE_NL *\/. count(*) must be 129315.
+ *   Case 10: LEFT OUTER JOIN -> INNER JOIN -> INNER JOIN, the last INNER
+ *            JOIN reads both the LEFT OUTER JOIN's preserved side and
+ *            (through the middle INNER JOIN) its null-supplying side.
+ *            count(*) must be 16.
+ *   Case 11: LEFT OUTER JOIN followed by an INNER JOIN whose ON clause is
+ *            an AND of two conditions -- one reading the LEFT JOIN's
+ *            preserved side (c11_x0), the other its null-supplying side
+ *            (c11_x2). count(*) must be 2.
+ *   Case 12: RIGHT OUTER JOIN followed by EXISTS (unnested to SEMI JOIN).
+ *            count(*) must be 800.
+ *   Case 13: RIGHT OUTER JOIN followed by an explicit SEMI JOIN.
+ *            count(*) must be 800.
+ *   Case 14: RIGHT OUTER JOIN followed by NOT EXISTS (unnested to ANTI
+ *            JOIN). count(*) must be 2.
+ *   Case 15: original JIRA repro (RIGHT OUTER JOIN -> INNER JOIN -> LEFT
+ *            OUTER JOIN, /*+ USE_NL *\/). count(*) must be 19020.
  */
 drop table if exists jtbl_a, jtbl_b, jtbl_c;
 
@@ -125,3 +149,100 @@ select /*+ USE_MERGE */ count(*) from jtbl2_a right outer join jtbl2_b on jtbl2_
   inner join jtbl2_d on jtbl2_c.x = jtbl2_d.x;
 
 drop table jtbl2_a, jtbl2_b, jtbl2_c, jtbl2_d;
+
+drop table if exists c9_jt3;
+drop table if exists c9_jt4;
+create table c9_jt3 (k int, v int, w int);
+create table c9_jt4 (g int primary key, h int, pk int);
+insert into c9_jt3 select mod(rownum,11), mod(rownum,13), mod(rownum,11) from db_class a, db_class b, db_class c limit 300;
+insert into c9_jt4 select rownum, mod(rownum,7), mod(rownum,11) from db_class a, db_class b, db_class c limit 200;
+update statistics on c9_jt3, c9_jt4 with fullscan;
+
+-- Case 9
+select /*+ USE_NL */ count(*) from c9_jt4 x1 right join c9_jt3 x2 on x2.w = x1.h
+  left join c9_jt3 x3 on x3.v = nvl(x1.pk,1);
+
+drop table c9_jt3, c9_jt4;
+
+drop table if exists la;
+drop table if exists lc;
+drop table if exists ld;
+drop table if exists lb;
+create table la (id int, m int);
+create table lc (id int, k int);
+create table ld (x int, k int);
+create table lb (k int, m int);
+insert into la select rownum, rownum mod 7 from db_class a, db_class b, db_class c limit 3000;
+insert into lc select rownum * 2, rownum mod 5 from db_class a, db_class b, db_class c limit 20;
+insert into ld select rownum mod 5, rownum mod 3 from db_class a, db_class b limit 10;
+insert into lb select 1, rownum mod 7 from db_class a, db_class b limit 7;
+create index i_lc_id on lc(id);
+create index i_la_m on la(m);
+update statistics on la, lc, ld, lb with fullscan;
+
+-- Case 10
+select count(*) from la left outer join lc on la.id = lc.id
+  inner join ld on ld.x = lc.k
+  inner join lb on lb.k = ld.k and lb.m = la.m;
+
+drop table la, lc, ld, lb;
+
+drop table if exists c11_x0;
+drop table if exists c11_x2;
+drop table if exists c11_x3;
+create table c11_x0 (pk int primary key);
+create table c11_x2 (k int, v int);
+create table c11_x3 (pk int, h int);
+
+insert into c11_x0 values (1), (2), (3);
+insert into c11_x2 values (1, 100), (2, 200);
+insert into c11_x3 values (1, 100), (1, 999), (2, 200), (3, 1);
+
+update statistics on c11_x0, c11_x2, c11_x3 with fullscan;
+
+-- Case 11
+select count(*) from c11_x0 left join c11_x2 on c11_x2.k = c11_x0.pk
+  join c11_x3 on c11_x3.pk = c11_x0.pk and c11_x3.h = c11_x2.v;
+
+drop table c11_x0, c11_x2, c11_x3;
+
+drop table if exists ra;
+drop table if exists rd;
+drop table if exists rb;
+create table ra (id int, m int, k int);
+create table rd (x int, k int, m int);
+create table rb (k int, m int);
+insert into ra select rownum, rownum mod 7, nullif(rownum mod 5, 4) from db_class a, db_class b, db_class c limit 400;
+insert into rd select rownum mod 5, rownum mod 3, rownum mod 7 from db_class a, db_class b limit 12;
+insert into rb select 1, rownum mod 7 from db_class a, db_class b limit 7;
+create index i_ra_m on ra(m);
+update statistics on ra, rd, rb with fullscan;
+
+-- Case 12
+select count(*) from ra right outer join rd on rd.x = ra.k where exists (select 1 from rb where rb.m = ra.m);
+
+-- Case 13
+select count(*) from ra right outer join rd on rd.x = ra.k semi join rb on rb.m = ra.m;
+
+-- Case 14
+select count(*) from ra right outer join rd on rd.x = ra.k where not exists (select 1 from rb where rb.m = ra.m);
+
+drop table ra, rd, rb;
+
+drop table if exists c15_jt3;
+drop table if exists c15_jt4;
+create table c15_jt3 (k int, v int, w int);
+create table c15_jt4 (pk int primary key, g int not null, h int, unique (g));
+insert into c15_jt3 select nullif(rownum mod 12, 11), rownum mod 5, nullif(rownum mod 9, 8)
+  from db_class x1, db_class x2 limit 150;
+insert into c15_jt4 select rownum, rownum, nullif(rownum mod 3, 2)
+  from db_class x1, db_class x2 limit 80;
+update statistics on c15_jt3, c15_jt4 with fullscan;
+
+-- Case 15
+select /*+ USE_NL */ count(*) from c15_jt4 x0
+  right join c15_jt3 x1 on x0.h = x1.k
+  join       c15_jt3 x2 on x0.pk = x2.v
+  left join  c15_jt3 x3 on x1.k = x3.w;
+
+drop table c15_jt3, c15_jt4;
