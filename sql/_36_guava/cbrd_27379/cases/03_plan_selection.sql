@@ -241,10 +241,10 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-2-01-05-01: EXISTS, no hint, result and plan
-evaluate 'TC-2-01-05-01: EXISTS, no hint, result and plan';
+-- TC-2-01-05-01: EXISTS, no join method hint (ORDERED keeps the DISTINCT form of tb out), result and plan
+evaluate 'TC-2-01-05-01: EXISTS, no join method hint, result and plan';
 --@queryplan
-SELECT /*+ RECOMPILE */ COUNT (*)
+SELECT /*+ RECOMPILE ORDERED */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca);
 

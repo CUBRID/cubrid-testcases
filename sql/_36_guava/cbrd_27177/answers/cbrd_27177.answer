@@ -145,7 +145,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -163,7 +163,7 @@ k    count(*)    sum(v)    min(v)    max(v)
 
 ===================================================
     
-Case 4: hashing kept, GROUP BY sort and one-page partial list serial, no_hash_aggregate sorts in parallel; result = no_hash_aggregate parallel(0)     
+Case 4: hashing kept, GROUP BY sort parallel since CBRD-27727, one-page partial list serial; result = no_hash_aggregate parallel(0)     
 
 ===================================================
 k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
@@ -190,6 +190,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
