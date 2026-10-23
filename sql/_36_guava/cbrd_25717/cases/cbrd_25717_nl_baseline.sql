@@ -32,6 +32,10 @@
 -- test data
 --
 
+-- CBRD-27361: the hash join's runtime filter stays off, so that the cases keep testing the plain and the
+-- parallel hash join paths they were written for
+set system parameters 'hash_join_runtime_filter=no';
+
 drop table if exists t_nla, t_nlb;
 
 create table t_nla (ckey int, cval int);
@@ -100,3 +104,6 @@ drop table t_nla, t_nlb;
 
 -- restore default so it does not leak into later cases
 set system parameters 'max_hash_list_scan_size=default';
+
+-- restore default so it does not leak into later cases
+set system parameters 'hash_join_runtime_filter=default';
