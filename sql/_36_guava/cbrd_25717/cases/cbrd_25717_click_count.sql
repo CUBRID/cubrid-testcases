@@ -10,6 +10,10 @@
 -- test data
 -- 
 
+-- CBRD-27361: the hash join's runtime filter stays off, so that the cases keep testing the plain and the
+-- parallel hash join paths they were written for
+set system parameters 'hash_join_runtime_filter=no';
+
 drop table if exists t_click_counter, t_filter;
 
 create table t_click_counter (ckey int, cval int);
@@ -83,3 +87,6 @@ with decrement for a.cval;
 --
 
 drop table t_click_counter, t_filter;
+
+-- restore default so it does not leak into later cases
+set system parameters 'hash_join_runtime_filter=default';
