@@ -11,6 +11,12 @@
 ===================================================
 0
 ===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
 0
 ===================================================
     
@@ -155,5 +161,42 @@ Trace Statistics:
 case4    
 PASS     
 
+===================================================
+    
+Case 5: constant output over an index scan, mergeable list; parallel = serial     
+
+===================================================
+0
+===================================================
+50000
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tk?.idx_k) (key range: ([dba.tk?].k> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ ? from [dba.tk?] [dba.tk?] where ([dba.tk?].k> ?:? ) using index [dba.tk?].idx_k(+)
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tk?.idx_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+50000
+===================================================
+case5    
+PASS     
+
+===================================================
+50000
+===================================================
+50000
 ===================================================
 0
