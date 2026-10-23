@@ -198,12 +198,73 @@ id
 1     
 2     
 
+Query plan:
+sscan
+    class: t_?_loc node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=?
+Query plan:
+sscan
+    class: t_?_loc node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=?
+Query plan:
+sscan
+    class: d? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select d?.a_? from (select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=? union all select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=?) d? (a_?) where (inst_num()<= ?:? ))
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: d? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct d?.a_? from (select d?.a_? from (select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=? union all select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=?) d? (a_?) where (inst_num()<= ?:? )) d? (a_?))
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t_?_tgt node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_?_tgt.id from t_?_tgt t_?_tgt, (select distinct d?.a_? from (select d?.a_? from (select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=? union all select t_?_loc.id from t_?_loc t_?_loc where inst_num()<=?) d? (a_?) where (inst_num()<= ?:? )) d? (a_?)) av? (av_?) where t_?_tgt.id=av?.av_? order by ?
 ===================================================
 id    
 1     
 2     
 3     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (semi join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t_?_tgt node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t_?_loc node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_?_tgt.id from t_?_tgt t_?_tgt semi join t_?_loc t_?_loc on t_?_tgt.id=t_?_loc.id order by ?
 ===================================================
 id    
 1     
