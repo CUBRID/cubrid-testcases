@@ -11,7 +11,8 @@
  *  Coverage:
  *    Case 1:  covered scan over one range, over an IN list, and without aggregates
  *    Case 2:  non-covered scan, every combinable aggregate, data filters, a division by zero
- *    Case 3:  many groups: 7000 of two columns, 200000 of one, covered and not
+ *    Case 3:  many groups: 7000 of two columns, 200000 of one, covered and not; the covered scan
+ *             of 200000 groups (one row per group) stays serial, the non-covered one does not
  *    Case 4:  NULL group key on a two-column index without a range, one and both columns
  *    Case 5:  JSON_ARRAYAGG and JSON_OBJECTAGG, judged by their length
  *    Case 6:  a non-aggregated column in the select list, read outside the derived table
