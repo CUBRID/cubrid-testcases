@@ -764,13 +764,6 @@ Query Plan:
 
   rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 
-  FOLLOW (edge: t.g=[_db_user])
-    NESTED LOOPS (inner join)
-      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
-      TABLE SCAN (t)
-
-  rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
-
   FOLLOW (edge: au.grantee=[_db_user])
     TABLE SCAN (au)
 
@@ -782,7 +775,7 @@ Query Plan:
       INDEX SCAN (coll.pk__db_collation_coll_id) (key range: (show_tables.collation_id=coll.coll_id), covered: true)
   skip order by: true
 
-  rewritten query: select show_tables.class_name from [_db_class] show_tables, [_db_collation] coll where (show_tables.class_name like  ?:? ) and (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ) and (( cast(case when show_tables.is_system_class=? then 'YES' else 'NO' end as varchar(?)))='NO') and (show_tables.collation_id=coll.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables.[owner].[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables.class_of} subseteq (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) order by ?
+  rewritten query: select show_tables.class_name from [_db_class] show_tables, [_db_collation] coll where (show_tables.class_name like  ?:? ) and (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ) and (( cast(case when show_tables.is_system_class=? then 'YES' else 'NO' end as varchar(?)))='NO') and (show_tables.collation_id=coll.coll_id) and ({'DBA', show_tables.[owner].[name]}*(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) setneq multiset{} or {show_tables.class_of} subseteq (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) order by ?
 
 
 Trace Statistics:
@@ -790,9 +783,6 @@ Trace Statistics:
     SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: _db_collation.pk__db_collation_coll_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-          SCAN (set time: ?, fetch: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           SCAN (set time: ?, fetch: ?, ioread: ?)
