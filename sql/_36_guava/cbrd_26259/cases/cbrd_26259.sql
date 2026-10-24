@@ -12,10 +12,12 @@
 --      [7]   trailing key (c3) is schema NOT NULL, unreferenced in the query -> ORDER BY skip
 --      [7g]  WHERE c2 > 0 ORDER BY c1: term proves c2 NOT NULL, c1 may still be NULL
 --      [7b]  same as [7], under GROUP BY skip
---      [8]   WHERE c2 NOT IN (nonempty ENUM literal list) ORDER BY c1: term proves
---            c2 NOT NULL the same way as [7g], but the list is rewritten to a
---            PT_FUNCTION by pt_fix_enumeration_comparison() first -- also exercises
---            the literal-set recognition described under B/e0d5fc622 below
+--
+--    (An ENUM-literal-list case ("[8]"), exercising the same PT_FUNCTION
+--    literal-set recognition as e0d5fc622, was tried here too, but the engine PR
+--    itself already judged a dedicated TC unnecessary -- that CI regression is
+--    already covered by the existing trac_344_03.sql. Dropped to avoid
+--    duplicating coverage this file doesn't need.)
 --
 --    (A WHERE c1 = 3 ORDER BY c2 case ("[7h]") was tried here too, but gdb showed
 --    qo_validate_index_for_sort() is never even called for it -- an equality term
@@ -28,23 +30,6 @@
 --      [7j]  GROUP BY ... WITH ROLLUP -> must NOT skip
 --      [7c]  single-column index on a nullable column -> must NOT skip
 --
---    Regression (index-type exclusions; unlike [7]/[7g], the index in each of
---    these has the same (c1, c2)-shaped key as a plain composite index that
---    WOULD skip, but qo_validate_index_for_sort() deliberately restricts these
---    index types to key 0 only, so the trailing key's NOT NULL proof must be
---    ignored and skip must NOT fire):
---      [7k]  composite index (c1, c2) WHERE c2 > 0 (filter index): filter_predicate
---            != NULL forces ncols=1
---      [7l]  composite index (c1, abs(c2)) (function index, function key at the
---            non-leading position): func_index_info != NULL forces ncols=1
---            regardless of the function's position (CBRD-26259 f73a4f45e)
---
---    (A third index type, prefix indexes, is also restricted to key 0 by the same
---    ncols computation, but CUBRID rejects any multi-column index that has a
---    prefix length on any of its columns ("Multi-column prefix index is not
---    allowed", csql_grammar.y), so a composite prefix index cannot exist and this
---    branch of the restriction is unreachable -- no case is added for it.)
---
 --    Regression (CBRD-27467):
 --      [7d]  same as [7b], descending index scan path
 --      [7e]  same as [7], descending index scan path (separate function from [7d]'s)
@@ -54,7 +39,7 @@
 --    a NULL operand, so it must not be treated as a NOT NULL proof for
 --    ORDER BY/GROUP BY skip or LEFT OUTER JOIN -> INNER JOIN reduction.
 --
---    For [1]/[1b]/[1c]/[1d]/[1e]/[2]/[4]/[5]/[5b] below, the predicate is on
+--    For [1]/[1b]/[1c]/[1d]/[1e]/[4]/[5]/[5b] below, the predicate is on
 --    the ORDER BY/GROUP BY column itself (c1), not on a different key column:
 --    qo_validate_index_attr_notnull() already walks the WHERE clause for terms
 --    on that exact column without needing the multi-key extension from A, so
@@ -70,10 +55,23 @@
 --    Regression (reviewer, first pass, 2026-09-04):
 --      [1]   c1 = ALL (empty subquery)
 --      [1b]  c1 NOT IN (empty subquery)
---      [2]   NOT EXISTS (correlated subquery on c1)
+--      [2]   NOT EXISTS (correlated subquery on c1), /*+ NO_UNNEST */
 --      [3]   j = ALL (empty subquery), outer join
 --      [3b]  j NOT IN (empty subquery), outer join
---      [3c]  NOT EXISTS (correlated on j), outer join
+--      [3c]  NOT EXISTS (correlated on ob.j), outer join, /*+ NO_UNNEST */
+--
+--    ([2]/[3c]'s subquery is otherwise unnestable (single base table, no
+--    aggregate/GROUP BY/LIMIT), so CBRD-26872's SEMI/ANTI JOIN unnesting
+--    (qo_rewrite_exists_semi_anti()) rewrites the NOT EXISTS into an explicit
+--    ANTI JOIN before either proof search runs, bypassing qo_check_nullable_op()
+--    entirely and masking this PR's fix -- confirmed with gdb: without the hint,
+--    the as-is and fixed builds produce identical plans/results, because the
+--    function is never called either way. The /*+ NO_UNNEST */ hint on the
+--    subquery's SELECT forces qo_is_unnestable_subquery() to reject it, so the
+--    NOT EXISTS stays a plain correlated predicate and does reach
+--    qo_check_nullable_op()'s PT_NOT(PT_EXISTS) case; with the hint, gdb confirms
+--    the branch is hit and that forcing it back to its pre-fix behavior
+--    reproduces the row/padding-row loss on the as-is build.)
 --
 --    Regression (reviewer, second pass, 2026-09-16):
 --      [1c]  c1 NOT IN ? (host variable bound to {})
@@ -98,7 +96,7 @@
 --    ever runs, so the CAST branch is not reached this way. A set containing a
 --    host variable also does not reach it: arg2 is the PT_HOST_VAR node itself,
 --    not a CAST wrapping it. A non-foldable set (e.g. containing sys_date) goes
---    through the PT_FUNCTION branch like [8], not the CAST one. No construct that
+--    through the PT_FUNCTION branch instead, not the CAST one. No construct that
 --    reaches this branch with a surviving CAST node was found -- as a prior
 --    session already noted for the PR's related PT_CAST handling, this looks
 --    defensive-only.)
@@ -110,16 +108,15 @@
 -- For outer join cases, unmatched NULL-padding rows must remain in the result;
 -- the LEFT OUTER JOIN must not be incorrectly reduced to an INNER JOIN.
 --
--- [7]/[7b]/[7d]/[7e]/[7f]/[7g]/[7k]/[7l]/[8]: traced with show trace.
--- For these A-side cases, a regression that silently stops skipping (or starts
--- skipping when it must not, for [7k]/[7l]) still returns the right rows (it
--- only loses or wrongly gains the optimization, not correctness), so only the
--- trace -- not the result -- would catch it.
+-- [7]/[7b]/[7d]/[7e]/[7f]/[7g]: traced with show trace.
+-- For these A-side cases, a regression that silently stops skipping still
+-- returns the right rows (it only loses the optimization, not correctness),
+-- so only the trace -- not the result -- would catch it.
 -- [1]/[2]/[4]/[5]/[5b]: also traced, to show directly whether the build uses an
 -- index-order skip plan for these predicates; see the B note above for why a
 -- regression here is result-visible too.
--- [1]/[1b]/[1c]/[1d]/[1e]/[7g]/[7f]/[7i]/[7k]/[7l]/[8] add c2 as an ORDER BY
--- tiebreaker, and [2]/[4]/[5] add it to their ORDER BY c1: ORDER BY c1 alone
+-- [1]/[1b]/[1c]/[1d]/[1e]/[7]/[7g]/[7e]/[7f]/[7i] add c2 as an
+-- ORDER BY tiebreaker, and [2]/[4]/[5] add it to their ORDER BY c1: ORDER BY c1 alone
 -- does not fully determine row order when c1 has duplicates, so an index-scan
 -- plan and a plain SORT/USING INDEX NONE plan could legally disagree on tie
 -- order without either being wrong.
@@ -132,9 +129,6 @@
 --   u(c1, c2)      : composite index (c1, c2), including a (NULL, NULL) row
 --   v(x)           : subquery source
 --   oa/ob          : LEFT OUTER JOIN test tables with unmatched oa rows
---   te(c1, c2)     : c2 is an ENUM column, composite index (c1, c2)
---   fi(c1, c2)     : composite index (c1, c2) WHERE c2 > 0 (filter index)
---   fn(c1, c2)     : composite index (c1, abs(c2)) (function index, non-leading)
 -- ============================================================================
 
 set system parameters 'dont_reuse_heap_file=yes';
@@ -266,14 +260,14 @@ select c1, c2 from u where c1 not in (select c1 from u where c1 > 1000) order by
 evaluate '[1b-control] same query, index forced off: ground truth for [1b]';
 select c1, c2 from u where c1 not in (select c1 from u where c1 > 1000) using index none order by c1, c2;
 
-evaluate '[2] not exists (correlated subquery with no match against the sort column): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker';
+evaluate '[2] not exists (correlated subquery with no match against the sort column): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker; NO_UNNEST keeps this a plain correlated predicate instead of being unnested into an ANTI JOIN, so it actually reaches qo_check_nullable_op()';
 set trace on;
-select c1, c2 from u where not exists (select 1 from v where v.x = u.c1) order by c1, c2;
+select c1, c2 from u where not exists (select /*+ NO_UNNEST */ 1 from v where v.x = u.c1) order by c1, c2;
 show trace;
 set trace off;
 
 evaluate '[2-control] same query, index forced off: ground truth for [2]';
-select c1, c2 from u where not exists (select 1 from v where v.x = u.c1) using index none order by c1, c2;
+select c1, c2 from u where not exists (select /*+ NO_UNNEST */ 1 from v where v.x = u.c1) using index none order by c1, c2;
 
 evaluate '[3] left outer join + j = all (empty subquery): padding rows must survive, join must stay outer';
 select oa.i, ob.i, ob.j from oa left outer join ob on oa.i = ob.i
@@ -283,9 +277,9 @@ evaluate '[3b] left outer join + j not in (empty subquery): padding rows must su
 select oa.i, ob.i, ob.j from oa left outer join ob on oa.i = ob.i
 where ob.j not in (select x from v where x > 1000) order by oa.i;
 
-evaluate '[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer';
+evaluate '[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer; NO_UNNEST keeps this a plain correlated predicate instead of being unnested into an ANTI JOIN, so it actually reaches qo_check_nullable_op()';
 select oa.i, ob.i, ob.j from oa left outer join ob on oa.i = ob.i
-where not exists (select 1 from v where v.x = ob.j) order by oa.i;
+where not exists (select /*+ NO_UNNEST */ 1 from v where v.x = ob.j) order by oa.i;
 
 evaluate '[1c] c1 not in ? (host variable bound to an empty set): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker';
 prepare stmt_1c from 'select c1, c2 from u where c1 not in ? order by c1, c2';
@@ -346,45 +340,6 @@ evaluate '[6b] same as [6], through an inline view on the inner side';
 select oa.i, d.i, d.j from oa left outer join (select i, j from ob) d on oa.i = d.i
 where (d.j > 0) is unknown order by oa.i;
 
-create table te (c1 int, c2 enum('Mon','Tue','Wed','Thu','Fri'));
-create index i_te_c1_c2 on te (c1, c2);
-insert into te values (NULL,'Mon'), (NULL,'Tue'), (1,'Wed'), (2,'Thu');
-
-evaluate '[8] te: c2 not in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622); c2 added as a tiebreaker so row order is fully determined';
-set trace on;
-select c1, c2 from te where c2 not in ('Fri') order by c1, c2;
-show trace;
-set trace off;
-
-evaluate '[8-control] same query, index forced off: ground truth for [8]';
-select c1, c2 from te where c2 not in ('Fri') using index none order by c1, c2;
-
-create table fi (c1 int, c2 int not null);
-create index i_fi_filter on fi (c1, c2) where c2 > 0;
-insert into fi values (NULL,1), (NULL,2), (3,3), (4,4), (5,5);
-
-evaluate '[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire';
-set trace on;
-select c1, c2 from fi where c2 > 0 order by c1, c2;
-show trace;
-set trace off;
-
-evaluate '[7k-control] same query, index forced off: ground truth for [7k]';
-select c1, c2 from fi where c2 > 0 using index none order by c1, c2;
-
-create table fn (c1 int, c2 int not null);
-create index i_fn_func on fn (c1, abs(c2));
-insert into fn values (NULL,1), (NULL,2), (3,3), (4,4), (5,5);
-
-evaluate '[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g] does); func_index_info != NULL forces ncols=1 regardless of the function''s position, so key 1 (and c2''s own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)';
-set trace on;
-select c1, c2 from fn order by c1, c2;
-show trace;
-set trace off;
-
-evaluate '[7l-control] same query, index forced off: ground truth for [7l]';
-select c1, c2 from fn using index none order by c1, c2;
-
 drop table if exists w;
 drop table if exists w0;
 drop table if exists w2;
@@ -393,6 +348,3 @@ drop table if exists u;
 drop table if exists v;
 drop table if exists oa;
 drop table if exists ob;
-drop table if exists te;
-drop table if exists fi;
-drop table if exists fn;

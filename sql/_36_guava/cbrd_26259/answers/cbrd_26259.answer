@@ -441,7 +441,7 @@ null     5
 
 ===================================================
     
-[2] not exists (correlated subquery with no match against the sort column): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker     
+[2] not exists (correlated subquery with no match against the sort column): (NULL,NULL) must survive ORDER BY skip; c2 added as a tiebreaker; NO_UNNEST keeps this a plain correlated predicate instead of being unnested into an ANTI JOIN, so it actually reaches qo_check_nullable_op()     
 
 ===================================================
 0
@@ -456,19 +456,24 @@ null     5
 trace    
 
 Query Plan:
-  SORT (order by)
-    NESTED LOOPS (anti join)
-      TABLE SCAN (dba.u)
-      TABLE SCAN (dba.v)
+  TABLE SCAN (dba.v)
 
-  rewritten query: select [dba.u].c?, [dba.u].c? from [dba.u] [dba.u] anti join [dba.v] [dba.v] on [dba.v].x=[dba.u].c? order by ?, ?
+  rewritten query: (select /*+ NO_UNNEST */ ? from [dba.v] [dba.v] where ([dba.v].x=[dba.u].c?) and inst_num()<= ?:? )
+
+  SORT (order by)
+    TABLE SCAN (dba.u)
+
+  rewritten query: select [dba.u].c?, [dba.u].c? from [dba.u] [dba.u] where  not  exists (select /*+ NO_UNNEST */ ? from [dba.v] [dba.v] where ([dba.v].x=[dba.u].c?) and inst_num()<= ?:? ) order by ?, ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.v), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.v), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
 ===================================================
@@ -506,7 +511,7 @@ i    i    j
 
 ===================================================
     
-[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer     
+[3c] left outer join + not exists (correlated on ob.j): padding rows must survive, join must stay outer; NO_UNNEST keeps this a plain correlated predicate instead of being unnested into an ANTI JOIN, so it actually reaches qo_check_nullable_op()     
 
 ===================================================
 i    i    j    
@@ -720,156 +725,6 @@ i    i    j
 2     null     null     
 3     null     null     
 
-===================================================
-0
-===================================================
-0
-===================================================
-4
-===================================================
-    
-[8] te: c2 not in (nonempty enum literal list, rewritten to PT_FUNCTION by pt_fix_enumeration_comparison) proves c2 NOT NULL, c1 may still be NULL, must survive skip (CBRD-26259 e0d5fc622); c2 added as a tiebreaker so row order is fully determined     
-
-===================================================
-0
-===================================================
-c1    c2    
-null     Mon     
-null     Tue     
-1     Wed     
-2     Thu     
-
-===================================================
-trace    
-
-Query Plan:
-  INDEX SCAN (dba.te.i_te_c?_c?) (key filter: [dba.te].c?<>'Fri', covered: true)
-  skip order by: true
-
-  rewritten query: select [dba.te].c?, [dba.te].c? from [dba.te] [dba.te] where [dba.te].c?<>'Fri' order by ?, ?
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.te.i_te_c?_c?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-     
-
-===================================================
-0
-===================================================
-    
-[8-control] same query, index forced off: ground truth for [8]     
-
-===================================================
-c1    c2    
-null     Mon     
-null     Tue     
-1     Wed     
-2     Thu     
-
-===================================================
-0
-===================================================
-0
-===================================================
-5
-===================================================
-    
-[7k] fi: composite index (c1, c2) has a filter predicate (where c2 > 0), so unlike the plain composite index in [7g], qo_validate_index_for_sort() restricts the NOT NULL proof to key 0 only (filter_predicate != NULL forces ncols=1); c2 schema NOT NULL at key 1 must NOT be used to prove c1, so skip must NOT fire     
-
-===================================================
-0
-===================================================
-c1    c2    
-null     1     
-null     2     
-3     3     
-4     4     
-5     5     
-
-===================================================
-trace    
-
-Query Plan:
-  SORT (order by)
-    TABLE SCAN (dba.fi)
-
-  rewritten query: select [dba.fi].c?, [dba.fi].c? from [dba.fi] [dba.fi] where ([dba.fi].c?> ?:? ) order by ?, ?
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.fi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-     
-
-===================================================
-0
-===================================================
-    
-[7k-control] same query, index forced off: ground truth for [7k]     
-
-===================================================
-c1    c2    
-null     1     
-null     2     
-3     3     
-4     4     
-5     5     
-
-===================================================
-0
-===================================================
-0
-===================================================
-5
-===================================================
-    
-[7l] fn: composite index (c1, abs(c2)) has its function key at the non-leading position (unlike a plain composite index of the same shape, which would skip the same way [7g] does); func_index_info != NULL forces ncols=1 regardless of the function's position, so key 1 (and c2's own NOT NULL flag behind abs(c2)) must never be consulted to prove c1 -- skip must NOT fire (CBRD-26259 f73a4f45e)     
-
-===================================================
-0
-===================================================
-c1    c2    
-null     1     
-null     2     
-3     3     
-4     4     
-5     5     
-
-===================================================
-trace    
-
-Query Plan:
-  SORT (order by)
-    TABLE SCAN (dba.fn)
-
-  rewritten query: select [dba.fn].c?, [dba.fn].c? from [dba.fn] [dba.fn] order by ?, ?
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.fn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-     
-
-===================================================
-0
-===================================================
-    
-[7l-control] same query, index forced off: ground truth for [7l]     
-
-===================================================
-c1    c2    
-null     1     
-null     2     
-3     3     
-4     4     
-5     5     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
 ===================================================
 0
 ===================================================
