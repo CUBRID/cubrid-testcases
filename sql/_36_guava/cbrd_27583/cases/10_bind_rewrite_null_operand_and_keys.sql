@@ -24,8 +24,9 @@
  *  Case 8: the equality of a CHAR column with a string bind is reduced again, as a literal is:
  *  its copies read the bind as the column's CHAR (n), the VARCHAR value padded (and cut when
  *  longer, the reduced term still rejecting it), through a chain of CHAR columns, a derived
- *  table, a join, an UPDATE and a collation.  An INTEGER bind is not reduced.  The plan of the
- *  first statement shows the copy vc = ? beside c4 = ?.
+ *  table, a join, an UPDATE and a collation.  A numeric, DATE or TIME bind is reduced too, as
+ *  develop reduces it, its copies reading the value cast into the column's CHAR (n).  The plan
+ *  of the first statement shows the copy vc = ? beside c4 = ?.
  *
  *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
  *  for the NULL bind, Case 4 the counts of the literal statements beside them, and Case 5 the
@@ -35,7 +36,7 @@
  *  changing no row, and the collation case all three rows.
  */
 
-drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4;
+drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4, t_s5, t_s6;
 
 
 evaluate 'Case 1: c4 = vc and c4 = ? on CHAR(4) and VARCHAR columns';
@@ -158,5 +159,25 @@ execute s_f8 using @v;
 drop variable @v;
 deallocate prepare s_c8;
 deallocate prepare s_f8;
+create table t_s5 (id int, c1 char(1), vc varchar(10));
+insert into t_s5 values (1, '1', '1'), (2, '1', '1.0'), (3, '1', '01'), (4, '3', '3');
+prepare s_n8 from 'select id from t_s5 where c1 = vc and c1 = ? order by 1';
+execute s_n8 using 1;
+execute s_n8 using 35203;
+execute s_n8 using 1.0;
+select id from t_s5 where c1 = vc and c1 = 1 order by 1;
+$int,$1;
+select id from t_s5 where c1 = vc and c1 = ? order by 1;
+$double,$1.0;
+select id from t_s5 where c1 = vc and c1 = ? order by 1;
+deallocate prepare s_n8;
+create table t_s6 (id int, c11 char(11), vc varchar(30));
+insert into t_s6 values (1, '01/02/2020', '01/02/2020'), (2, '12:30:00 PM', '12:30:00 PM');
+prepare s_d8 from 'select id from t_s6 where c11 = vc and c11 = ? order by 1';
+execute s_d8 using date'2020-01-02';
+execute s_d8 using time'12:30:00';
+select id from t_s6 where c11 = vc and c11 = date'2020-01-02' order by 1;
+select id from t_s6 where c11 = vc and c11 = time'12:30:00' order by 1;
+deallocate prepare s_d8;
 
-drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4;
+drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4, t_s5, t_s6;
