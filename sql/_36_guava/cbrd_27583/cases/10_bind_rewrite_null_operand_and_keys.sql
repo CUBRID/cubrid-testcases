@@ -4,8 +4,8 @@
  *
  *  Case 1: c4 = vc and c4 = ? on a CHAR(4) and a VARCHAR column.  The optimizer copies the
  *  bind into vc = ?, and the client no longer casts the bind to CHAR(4), so the row
- *  ('a   ', 'a') matched although c4 = vc is false.  An equality of a CHAR column with a
- *  bind is no longer copied, and no row matches in every join method.
+ *  ('a   ', 'a') matched although c4 = vc is false.  The copy now reads the bind as the
+ *  column's CHAR (4), padded (Case 8), and no row matches in every join method.
  *  Case 2: rank () over (partition by mod (v, null)) failed with -181 on v = 'a' because the
  *  string operand was planned a DOUBLE conversion though the NULL operand makes the result
  *  NULL.  The partition key is NULL for every row.
@@ -21,14 +21,21 @@
  *  statement: the plan of the first value's BIT (8) cut the second to its first byte.
  *  Case 7: a hash or merge join key under arithmetic with a NULL bind (a.x = b.x + ?): the key
  *  side typed NULL left the join undecided and the plan was refused with -1383.
+ *  Case 8: the equality of a CHAR column with a string bind is reduced again, as a literal is:
+ *  its copies read the bind as the column's CHAR (n), the VARCHAR value padded (and cut when
+ *  longer, the reduced term still rejecting it), through a chain of CHAR columns, a derived
+ *  table, a join, an UPDATE and a collation.  An INTEGER bind is not reduced.  The plan of the
+ *  first statement shows the copy vc = ? beside c4 = ?.
  *
  *  Judged by the rows: Case 1 answers no row, Case 2 three rows of rank 1, 2, 3, Case 3 no row
  *  for the NULL bind, Case 4 the counts of the literal statements beside them, and Case 5 the
  *  row 119673559571800002 for the DOUBLE bind, no row for 35203 and the row 'Y' for 'Y', and
- *  Case 6 each bound value whole, and Case 7 0 for the NULL bind and 2 for 0.
+ *  Case 6 each bound value whole, and Case 7 0 for the NULL bind and 2 for 0, and Case 8 the
+ *  rows the same statements give with a literal: no row where c4 = vc is false, the UPDATE
+ *  changing no row, and the collation case all three rows.
  */
 
-drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx;
+drop table if exists t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4;
 
 
 evaluate 'Case 1: c4 = vc and c4 = ? on CHAR(4) and VARCHAR columns';
@@ -110,4 +117,46 @@ execute s_num using null;
 prepare s_derived from 'select /*+ use_hash */ count (*) from t_jx a, (select x + ? as v from t_jx) b where a.x = b.v';
 execute s_derived using null;
 
-drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx;
+
+evaluate 'Case 8: copies of a CHAR column equality with a string bind read the CHAR (n), padded';
+create table t_s1 (id int, c4 char(4), c8 char(8), vc varchar(10), c1 char(1));
+insert into t_s1 values (1, 'a', 'a', 'a', 'N'), (2, 'abcd', 'abcd', 'abcd', 'Y'), (3, 'abc', 'abc', 'abcde', '1');
+create table t_s4 (id int, c1 char(1) collate utf8_en_ci, vb varchar(10) collate utf8_bin);
+insert into t_s4 values (1, 'A', 'a'), (2, 'a', 'A'), (3, 'a', 'a');
+$varchar,$a;
+--@queryplan
+select /*+ recompile */ id from t_ca where c4 = vc and c4 = ? order by 1;
+$varchar,$abcde;
+select id from t_s1 where c4 = vc and c4 = ? order by 1;
+$varchar,$abcd;
+select id from t_s1 where c4 = vc and c4 = ? order by 1;
+$int,$1;
+select id from t_s1 where c1 = vc and c1 = ? order by 1;
+$varchar,$a;
+select id from t_s4 where c1 = vb and c1 = ? order by 1;
+$varchar,$A;
+select id from t_s4 where c1 = vb and c1 = ? order by 1;
+$varchar,$a;
+select id from t_s1 where c4 = ? and c4 = c8 and c8 = vc order by 1;
+$varchar,$a;
+select u.id from (select c4 from t_s1 where c4 = ?) d, t_s1 u where d.c4 = u.vc order by 1;
+$varchar,$a;
+select a.id, b.id from t_s1 a, t_ca b where a.c4 = b.vc and a.c4 = ? order by 1, 2;
+$varchar,$a;
+select /*+ use_hash */ a.id, b.id from t_s1 a, t_ca b where a.c4 = b.vc and a.c4 = ? order by 1, 2;
+$char,$a;
+select id from t_ca where c4 = vc and c4 = ? order by 1;
+$varchar,$a;
+update t_s1 set id = id + 10 where c4 = vc and c4 = ?;
+select id from t_s1 order by 1;
+set @v = cast ('a' as varchar (10));
+prepare s_c8 from 'select id from t_s1 where c4 = ? and c4 = c8 and c8 = vc order by 1';
+execute s_c8 using @v;
+execute s_c8 using 'a';
+prepare s_f8 from 'select u.id from (select c4 from t_s1 where c4 = ?) d, t_s1 u where d.c4 = u.vc order by 1';
+execute s_f8 using @v;
+drop variable @v;
+deallocate prepare s_c8;
+deallocate prepare s_f8;
+
+drop table t_ca, t_cb, t_md, t_key, t_o, t_i, t_pn, t_jx, t_s1, t_s4;
