@@ -354,7 +354,7 @@ TC-2-01-05: no index on tb.ca, NO_USE_HASH
 0
 ===================================================
     
-TC-2-01-05-01: EXISTS, no hint, result and plan     
+TC-2-01-05-01: EXISTS, no join method hint, result and plan     
 
 ===================================================
 count(*)    
@@ -371,7 +371,7 @@ hash-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join tb tb on tb.ca=ta.ca
+select /*+ ORDERED */ count(*) from ta ta semi join tb tb on tb.ca=ta.ca
 ===================================================
     
 TC-2-01-05-02: EXISTS, outer query NO_USE_HASH, result and plan     
