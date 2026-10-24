@@ -42,6 +42,7 @@ C1: commit;
 C1: INSERT INTO t_foreign VALUES(1,'test');
 C1: ALTER TABLE t_foreign ADD COLUMN age INT;
 MC: wait until C1 ready;
+/* CBRD-27464: C1 commits a child of this parent while C2 waits, so under REPEATABLE READ the child is newer than the snapshot of C2 and the SET NULL update ends with a serialization conflict instead of leaving the child as an orphan */
 C2: UPDATE t_primary SET id=5 WHERE id=1;
 MC: wait until C2 blocked;
 C1: commit;
