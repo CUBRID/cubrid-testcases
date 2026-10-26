@@ -1,6 +1,7 @@
 /*
  * This test case verifies CBRD-27530 : sort-merge join without input sorts
- * and without the final ORDER BY sort when an index provides the join order.
+ * when an index provides the join order, and without the final ORDER BY sort
+ * when ORDER BY follows the merge output order.
  *
  * Feature: a merge-join input that is an index scan whose leading key columns
  * are the join columns (ASC) is already in join order. With
@@ -8,7 +9,8 @@
  * the index scan, generates a range-less index scan candidate for the join
  * column, feeds the scan to the merge join as a sorted input (the executor
  * opens the input list with the covered sort list and skips the sort), and
- * skips the final ORDER BY sort when the outer input covers it. A lower
+ * skips the final ORDER BY sort when ORDER BY is an ASC prefix of the merge
+ * columns (see "Merge output order" below). A lower
  * inner merge-join result (outer order) is accepted as a sorted input of an
  * upper merge join. With the parameter off (the default) the plan is the
  * same as before: inputs sorted, final ORDER BY sorted.
@@ -33,11 +35,11 @@
  * ~7300 joined rows so an order mistake cannot hide. No page threshold is
  * involved; the feature is plan-shape driven.
  *
- * Table names use letters (ta..te), not digits, because CTP masks digits in
+ * Table names use letters (ta..th), not digits, because CTP masks digits in
  * the trace output to ?.
  *
- * Plan proof (set trace on / show trace, 6 blocks): with the parameter on
- * the Query Plan has no "SORT (order by)" on top (final sort skipped) and
+ * Plan proof for C1..C22 (set trace on / show trace, 6 blocks): with the
+ * parameter on the Query Plan has no "SORT (order by)" on top (final sort skipped) and
  * the join column index is used as a range-less "INDEX SCAN" on both inputs
  * (the new full index scan candidate; without the feature tb falls back to
  * TABLE SCAN even with the (+) pin, see the last block). An input sort that
@@ -52,9 +54,9 @@
  * Coverage:
  *   C1  both inputs indexed, ORDER BY outer join column   -> inputs + final sort skipped
  *   C2  only the outer input indexed                      -> outer skip only
- *   C3  only the inner input indexed, ORDER BY outer col  -> inner skip, final sort kept
+ *   C3  only the inner input indexed, ORDER BY outer col  -> inner skip, final sort skipped
  *   C4  ORDER BY outer column DESC                        -> final sort kept (merge is ASC)
- *   C5  ORDER BY inner column / extra tie-breaker column  -> final sort kept
+ *   C5  ORDER BY inner column + extra tie-breaker columns -> final sort kept
  *   C6  ORDER BY ... LIMIT                                -> correct
  *   C7  composite join (a,b), (a,b) indexes on both sides -> inputs skipped
  *   C8  composite join (a,b) with an (a)-only index       -> partial cover, sort kept
@@ -72,11 +74,36 @@
  *   C20 expression join term (ta.a = tb.a + 0)            -> not skipped, correct
  *   C21 no join hint / no pin (parameter on)              -> cost model picks the sort-free merge
  *   C22 parameter off + USE_MERGE                         -> previous behaviour: inputs sorted
+ *
+ * Merge output order (tf/tg heap tables, th indexed on the non-join column b):
+ * the merge returns its rows in outer order and the outer is sorted by the
+ * merge columns, by an index or by the executor input sort. So the final
+ * ORDER BY sort is skipped whenever ORDER BY is an ASC prefix of the merge
+ * columns, also when both inputs are heap scans. The order is followed through
+ * the outer of an NL join; a hash join above the merge loses it. Inner join:
+ * the ORDER BY item may name the outer or the inner join column; LEFT join:
+ * the outer column only (NULL-key outer rows come first, as ORDER BY ASC puts
+ * them). Plan proof: 5 more trace blocks; a skipped final sort has no
+ * "SORT (order by)" in the plan and no top-level "ORDERBY (... topnsort ...)"
+ * line in the statistics, a kept one has both.
+ *   C23 both inputs heap, ORDER BY outer join column      -> final sort skipped
+ *   C24 outer heap, inner index-ordered                   -> final sort skipped
+ *   C25 ORDER BY the inner join column                    -> final sort skipped
+ *   C26 ORDER BY DESC                                     -> final sort kept
+ *   C27 ORDER BY a non-join column                        -> final sort kept
+ *   C28 outer index scan on b re-sorted by the merge on a,
+ *       ORDER BY b / ORDER BY a                           -> kept / skipped
+ *   C29 LEFT join with NULL keys, ORDER BY outer column /
+ *       NULL-padded inner column                          -> skipped (NULLs first) / kept
+ *   C30 merge as the outer of an NL join / under a hash join -> skipped / kept
+ *   C31 LIMIT offset / orderby_num range                  -> correct
+ *   C32 WHERE rownum over the skipped sort                -> rows ascending
+ *   C33 PARALLEL(4)                                       -> same result as serial
  */
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
-drop table if exists ta, tb, tc, td, te;
+drop table if exists ta, tb, tc, td, te, tf, tg, th;
 
 create table ta (a int, b int, p char(100));
 insert into ta
@@ -145,7 +172,7 @@ from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
             from (select /*+ USE_NL */ ta.a a, ta.b b, tb.c c from ta, tb where ta.a = tb.a
                   using index none order by ta.a) x) y) n;
 
--- C3. only the inner input indexed; outer is sorted so the final ORDER BY sort must stay
+-- C3. only the inner input indexed; the outer is sorted by the executor and the final sort is skipped
 select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord
        then 'PASS' else 'FAIL' end as c3
 from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
@@ -434,4 +461,212 @@ from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
-drop table if exists ta, tb, tc, td, te;
+-- ---------------------------------------------------------------------------------
+-- merge output order: tf/tg are small heap copies of ta/tb (no index), tf 600 rows / 6 NULL keys,
+-- tg 500 rows / 5 NULL keys; th is tf with an index on the non-join column b
+-- ---------------------------------------------------------------------------------
+create table tf (a int, b int);
+insert into tf select a, b from ta where b <= 600;
+
+create table tg (a int, c int);
+insert into tg select a, c from tb where c <= 1500;
+
+create table th (a int, b int);
+insert into th select a, b from tf;
+create index i_th_b on th(b);
+
+update statistics on tf, tg, th;
+
+-- trace sanity: both inputs heap, ORDER BY the outer join column -- both inputs are sorted by
+-- the executor, no "SORT (order by)" on top
+set trace on;
+select /*+ ORDERED USE_MERGE */ tf.a, tg.a from tf, tg where tf.a = tg.a order by tf.a limit 1;
+show trace;
+set trace off;
+
+-- C23. both inputs heap scan, ORDER BY the outer join column
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c23
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  order by tf.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  using index none order by tf.a) x) y) n;
+
+-- C24. outer heap, inner index-ordered (sorted inner input)
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c24
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tb.c c from tf, tb where tf.a = tb.a
+                  using index i_tb_a(+) order by tf.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tb.c c from tf, tb where tf.a = tb.a
+                  using index none order by tf.a) x) y) n;
+
+-- trace sanity: ORDER BY the inner join column -- an inner join returns equal values on both
+-- sides, so the sort is skipped as well (no "SORT (order by)" on top)
+set trace on;
+select /*+ ORDERED USE_MERGE */ tf.a, tg.a from tf, tg where tf.a = tg.a order by tg.a limit 1;
+show trace;
+set trace off;
+
+-- C25. ORDER BY the inner join column
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c25
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  order by tg.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  using index none order by tg.a) x) y) n;
+
+-- trace sanity: ORDER BY DESC -- the merge output is ASC, "SORT (order by)" stays on top
+set trace on;
+select /*+ ORDERED USE_MERGE */ tf.a, tg.a from tf, tg where tf.a = tg.a order by tf.a desc limit 1;
+show trace;
+set trace off;
+
+-- C26. ORDER BY DESC: final sort kept
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c26
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  order by tf.a desc) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  using index none order by tf.a desc) x) y) n;
+
+-- C27. ORDER BY a non-join column: final sort kept (b is unique per tf row)
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c27
+from (select count(*) cnt, sum(a) sa, sum(c) sc, sum(b*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  order by tf.b) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(c) sc, sum(b*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  using index none order by tf.b) x) y) n;
+
+-- trace sanity: the outer is an index scan on the non-join column b, but the merge re-sorts it
+-- by a, so ORDER BY b keeps "SORT (order by)" on top
+set trace on;
+select /*+ ORDERED USE_MERGE */ th.a, th.b from th, tg where th.a = tg.a and th.b > 0
+using index i_th_b(+) order by th.b limit 1;
+show trace;
+set trace off;
+
+-- C28. outer index scan on b re-sorted by the merge on a: ORDER BY b (sort kept) and ORDER BY a (skipped)
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c28a
+from (select count(*) cnt, sum(a) sa, sum(c) sc, sum(b*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ th.a a, th.b b, tg.c c from th, tg where th.a = tg.a and th.b > 0
+                  using index i_th_b(+) order by th.b) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(c) sc, sum(b*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ th.a a, th.b b, tg.c c from th, tg where th.a = tg.a and th.b > 0
+                  using index none order by th.b) x) y) n;
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c28b
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ th.a a, th.b b, tg.c c from th, tg where th.a = tg.a and th.b > 0
+                  using index i_th_b(+) order by th.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ th.a a, th.b b, tg.c c from th, tg where th.a = tg.a and th.b > 0
+                  using index none order by th.a) x) y) n;
+
+-- trace sanity: LEFT OUTER join ordered by the outer join column -- no "SORT (order by)" on top
+set trace on;
+select /*+ ORDERED USE_MERGE */ tf.a, tg.a from tf left outer join tg on tf.a = tg.a order by tf.a limit 1;
+show trace;
+set trace off;
+
+-- C29. LEFT OUTER join with NULL keys on the preserved side (6 in tf): the NULL-key rows must come
+--      first (ORDER BY ASC puts NULLs first); nvl() keeps them in the order fingerprint.
+--      ORDER BY the NULL-padded inner column keeps the final sort.
+select case when m.cnt<=>n.cnt and m.sb<=>n.sb and m.sc<=>n.sc and m.nn<=>n.nn and m.nn<=>6 and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c29a
+from (select count(*) cnt, sum(b) sb, sum(c) sc, sum(case when a is null then 1 else 0 end) nn, sum(nvl(a,-1000)*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf left outer join tg on tf.a = tg.a
+                  order by tf.a) x) y) m,
+     (select count(*) cnt, sum(b) sb, sum(c) sc, sum(case when a is null then 1 else 0 end) nn, sum(nvl(a,-1000)*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, tg.c c from tf left outer join tg on tf.a = tg.a
+                  using index none order by tf.a) x) y) n;
+select case when m.cnt<=>n.cnt and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c29b
+from (select count(*) cnt, sum(b) sb, sum(c) sc, sum(nvl(a2,-1000)*rn) ord
+      from (select a2, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tg.a a2, tf.b b, tg.c c from tf left outer join tg on tf.a = tg.a
+                  order by tg.a) x) y) m,
+     (select count(*) cnt, sum(b) sb, sum(c) sc, sum(nvl(a2,-1000)*rn) ord
+      from (select a2, b, c, rownum rn
+            from (select /*+ USE_NL */ tg.a a2, tf.b b, tg.c c from tf left outer join tg on tf.a = tg.a
+                  using index none order by tg.a) x) y) n;
+
+-- C30. merge join as the outer of an NL join (order kept) and under a hash join (sort kept)
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c30a
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE(tg) USE_NL(th) */ tf.a a, tf.b b, th.a c from tf, tg, th
+                  where tf.a = tg.a and tg.c = th.b order by tf.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, th.a c from tf, tg, th
+                  where tf.a = tg.a and tg.c = th.b using index none order by tf.a) x) y) n;
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c30b
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ ORDERED USE_MERGE(tg) USE_HASH(th) */ tf.a a, tf.b b, th.a c from tf, tg, th
+                  where tf.a = tg.a and tg.c = th.b order by tf.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ USE_NL */ tf.a a, tf.b b, th.a c from tf, tg, th
+                  where tf.a = tg.a and tg.c = th.b using index none order by tf.a) x) y) n;
+
+-- C31. LIMIT, LIMIT offset and orderby_num range over the skipped sort (ties: only a is fingerprinted)
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c31a
+from (select count(*) cnt, sum(a) sa, sum(a*rn) ord
+      from (select a, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a from tf, tg where tf.a = tg.a
+                  order by tf.a limit 20, 30) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(a*rn) ord
+      from (select a, rownum rn
+            from (select /*+ USE_NL */ tf.a a from tf, tg where tf.a = tg.a
+                  using index none order by tf.a limit 20, 30) x) y) n;
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c31b
+from (select count(*) cnt, sum(a) sa, sum(a*rn) ord
+      from (select a, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tf.a a from tf, tg where tf.a = tg.a
+                  order by tf.a for orderby_num() between 5 and 40) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(a*rn) ord
+      from (select a, rownum rn
+            from (select /*+ USE_NL */ tf.a a from tf, tg where tf.a = tg.a
+                  using index none order by tf.a for orderby_num() between 5 and 40) x) y) n;
+
+-- C32. WHERE rownum picks merge-dependent rows (no NL reference): the 300 rows must come out ascending
+with z as (select a, rownum rn
+           from (select /*+ ORDERED USE_MERGE */ tf.a a from tf, tg where tf.a = tg.a and rownum <= 300
+                 order by tf.a) x)
+select case when (select count(*) from z) = 300
+             and (select count(*) from z z1, z z2 where z2.rn = z1.rn + 1 and z2.a < z1.a) = 0
+       then 'PASS' else 'FAIL' end as c32;
+
+-- C33. PARALLEL(4) on the heap merge vs serial NL
+select case when m.cnt<=>n.cnt and m.sa<=>n.sa and m.sb<=>n.sb and m.sc<=>n.sc and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c33
+from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ PARALLEL(4) ORDERED USE_MERGE */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  order by tf.a) x) y) m,
+     (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
+      from (select a, b, c, rownum rn
+            from (select /*+ NO_PARALLEL_SCAN USE_NL */ tf.a a, tf.b b, tg.c c from tf, tg where tf.a = tg.a
+                  using index none order by tf.a) x) y) n;
+
+set system parameters 'optimizer_enable_merge_join=no';
+
+drop table if exists ta, tb, tc, td, te, tf, tg, th;

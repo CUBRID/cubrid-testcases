@@ -40,7 +40,7 @@
 0
 ===================================================
 a    b    c    
-0     450     1440     
+0     150     1440     
 
 ===================================================
 trace    
@@ -58,7 +58,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -115,7 +115,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.tc.i_tc_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -154,7 +154,7 @@ PASS
 0
 ===================================================
 a    b    c    
-0     450     1440     
+0     150     1440     
 
 ===================================================
 trace    
@@ -172,7 +172,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -203,7 +203,7 @@ PASS
 0
 ===================================================
 a    b    c    f    
-0     450     1440     200     
+0     150     1440     200     
 
 ===================================================
 trace    
@@ -225,7 +225,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -281,7 +281,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -302,7 +302,7 @@ PASS
 0
 ===================================================
 a    b    c    'off'    
-0     450     1440     off     
+0     150     1440     off     
 
 ===================================================
 trace    
@@ -322,7 +322,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
-      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -337,6 +337,258 @@ Trace Statistics:
 0
 ===================================================
 c22    
+PASS     
+
+===================================================
+0
+===================================================
+0
+===================================================
+600
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+600
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    a    
+0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        TABLE SCAN (dba.tf)
+      SORT (temp)
+        TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.tf].a, [dba.tg].a from [dba.tf] [dba.tf], [dba.tg] [dba.tg] where [dba.tf].a=[dba.tg].a order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c23    
+PASS     
+
+===================================================
+c24    
+PASS     
+
+===================================================
+0
+===================================================
+a    a    
+0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        TABLE SCAN (dba.tf)
+      SORT (temp)
+        TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.tf].a, [dba.tg].a from [dba.tf] [dba.tf], [dba.tg] [dba.tg] where [dba.tf].a=[dba.tg].a order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c25    
+PASS     
+
+===================================================
+0
+===================================================
+a    a    
+149     149     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          TABLE SCAN (dba.tf)
+        SORT (temp)
+          TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.tf].a, [dba.tg].a from [dba.tf] [dba.tf], [dba.tg] [dba.tg] where [dba.tf].a=[dba.tg].a order by ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c26    
+PASS     
+
+===================================================
+c27    
+PASS     
+
+===================================================
+0
+===================================================
+a    b    
+1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          INDEX SCAN (dba.th.i_th_b) (key range: ([dba.th].b> ?:? ))
+        SORT (temp)
+          TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.th].a, [dba.th].b from [dba.th] [dba.th], [dba.tg] [dba.tg] where [dba.th].a=[dba.tg].a and ([dba.th].b> ?:? ) using index [dba.th].i_th_b(+) order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.th.i_th_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c28a    
+PASS     
+
+===================================================
+c28b    
+PASS     
+
+===================================================
+0
+===================================================
+a    a    
+null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (left outer join)
+      SORT (temp)
+        SORT (limit)
+          TABLE SCAN (dba.tf)
+      SORT (temp)
+        TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.tf].a, [dba.tg].a from [dba.tf] [dba.tf] left outer join [dba.tg] [dba.tg] on [dba.tf].a=[dba.tg].a order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ORDERBY (time: ?, topnsort: true)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c29a    
+PASS     
+
+===================================================
+c29b    
+PASS     
+
+===================================================
+c30a    
+PASS     
+
+===================================================
+c30b    
+PASS     
+
+===================================================
+c31a    
+PASS     
+
+===================================================
+c31b    
+PASS     
+
+===================================================
+c32    
+PASS     
+
+===================================================
+c33    
 PASS     
 
 ===================================================
