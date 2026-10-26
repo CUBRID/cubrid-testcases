@@ -1,0 +1,405 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: aggregate with ROWNUM, the reported query; result = no_parallel_scan     
+
+===================================================
+count(*)    min(c)    
+90000     10001     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].c) from [dba.t_big] [dba.t_big] where ([dba.t_big].c>(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and (rownum<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    min(c)    
+90000     10001     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 2: GROUP BY with ROWNUM; result = no_parallel_scan     
+
+===================================================
+g    count(*)    min(c)    
+0     45000     10001     
+1     27000     10005     
+2     18000     10008     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  SORT (group by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].g, count(*), min([dba.t_big].c) from [dba.t_big] [dba.t_big] where ([dba.t_big].c>(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and (rownum<= ?:? ) group by [dba.t_big].g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+g    count(*)    min(c)    
+0     45000     10001     
+1     27000     10005     
+2     18000     10008     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 3: ROWNUM lower bound without an aggregate; result = no_parallel_scan     
+
+===================================================
+c    
+20000     
+30000     
+40000     
+50000     
+60000     
+70000     
+80000     
+90000     
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].c from [dba.t_big] [dba.t_big] where ([dba.t_big].c>(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and  mod([dba.t_big].c, ?)=? and (rownum>= ?:? ) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+c    
+20000     
+30000     
+40000     
+50000     
+60000     
+70000     
+80000     
+90000     
+100000     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 4: PL/CSQL function without PARALLEL_ENABLE in the select list; result = no_parallel_scan     
+
+===================================================
+f_id(c)    
+20000     
+30000     
+40000     
+50000     
+60000     
+70000     
+80000     
+90000     
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.f_id]([dba.t_big].c) from [dba.t_big] [dba.t_big] where ([dba.t_big].c>(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and  mod([dba.t_big].c, ?)=? order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+f_id(c)    
+20000     
+30000     
+40000     
+50000     
+60000     
+70000     
+80000     
+90000     
+100000     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: INSERT SELECT stores the aggregate; result = no_parallel_scan     
+
+===================================================
+1
+===================================================
+cnt    mn    
+90000     10001     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+cnt    mn    
+90000     10001     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 6: a subquery that cannot change the result still runs once; result = no_parallel_scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>=(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and (rownum<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+50000     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 7: partitioned table, one row-by-row pass per partition; result = no_parallel_scan     
+
+===================================================
+count(*)    min(c)    
+90000     10001     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_seq], ?) from db_root db_root)
+
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select count(*), min([dba.t_part].c) from [dba.t_part] [dba.t_part] where ([dba.t_part].c>(select serial_next_value([dba.s_seq], ?) from db_root db_root)* cast(? as numeric)) and (rownum<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+           PARTITION (table: dba.t_part__p__p_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_part__p__p_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    min(c)    
+90000     10001     
+
+===================================================
+serial_current_value(s_seq)    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
