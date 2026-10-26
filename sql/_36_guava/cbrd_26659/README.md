@@ -1,5 +1,12 @@
 # CBRD-26659 OOS SQL regression scope
 
+> Current execution selection, 2026-10-26: the owner requested disabling
+> failing OOS cases and separating/disabling cases over 60 seconds. Three SQL
+> entries and their unchanged answers are now in the [disabled inventory](../../../disabled/README.md).
+> Twenty-five SQL cases remain enabled. No OOS SQL case exceeded 60 seconds.
+> The historical repair scope below is retained; its statement that all cases
+> remain enabled is superseded by this owner decision.
+
 Decision recorded on 2026-10-12 for Engine PR8128 and public TC PR3688.
 Failure snapshot: [run38245729674, attempt 1](https://github.com/CUBRID/cubrid/actions/runs/38245729674), Engine `a5da823b2a84e95b4b22d48abe4a3f9fd601c176`, public TC `1a556a0752073aaad573bf87d53f3eb75f398138`.
 
@@ -20,13 +27,13 @@ The 14 in-scope SQL files are:
 - [INSERT SELECT](cases/cbrd_26659_oos_sql01_insert_select.sql)
 - [DELETE](cases/cbrd_26659_oos_sql04_delete.sql)
 - [UPDATE](cases/cbrd_26659_oos_sql04_update.sql)
-- [Bigone rejection](cases/cbrd_26659_oos_sql05_bigone.sql)
+- [Bigone rejection](../../../disabled/failing/sql/_36_guava/cbrd_26659/cases/cbrd_26659_oos_sql05_bigone.sql.disabled)
 - [Constraints](cases/cbrd_26659_oos_sql05_constraints.sql)
 - [Transactions](cases/cbrd_26659_oos_sql05_transactions.sql)
 - [Triggers](cases/cbrd_26659_oos_sql06_triggers.sql)
 - [Read paths](cases/cbrd_26659_oos_sql07_read_paths.sql)
 - [LOB copy](cases/cbrd_26659_oos_sql09_lob_copy.sql)
-- [LOB maximum columns](cases/cbrd_26659_oos_sql09_lob_maxcols.sql)
+- [LOB maximum columns](../../../disabled/failing/sql/_36_guava/cbrd_26659/cases/cbrd_26659_oos_sql09_lob_maxcols.sql.disabled)
 - [Storage policy](cases/cbrd_26659_oos_storage_policy.sql)
 
 These files failed at initial DDL following the partition assertion in the recorded historical CI run. Work item 332 reproduced the HA/JDBC crash and proved that source DELETE consumed OOS insertion LSAs after the destination INSERT had drained the queue. Engine commit `1ef86a7efa34002e971b1b30bcf5d451e9db441b` restricts OOS post-image replication to INSERT while preserving primary-key DELETE replication and the queue assertion. The representation testcase above belongs to the intended passing selection and is distinct from the separately retained representation target reproducer.
