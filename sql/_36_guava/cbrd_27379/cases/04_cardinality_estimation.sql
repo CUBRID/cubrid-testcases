@@ -10,7 +10,9 @@
  *    TC-3-02: a WHERE term filters the result and does not take part in matching
  *    TC-3-03: duplicate inner keys (the number of distinct keys is used)
  *    TC-3-04: an ON term that does not read the inner input
- *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter
+ *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter (FK table outer uses
+ *             NOT EXISTS: since CBRD-27397 an EXISTS whose equalities cover the inner's whole unique key runs as
+ *             an INNER JOIN, a NOT EXISTS stays an ANTI JOIN)
  *    TC-3-06: equi-join and non-equi terms together
  *    TC-3-07: NULL outer keys, with unique inner keys and with another equi-join term
  *    TC-3-08: an equality on an expression, whose NDV ratio is unknown, so there is no key
@@ -23,9 +25,9 @@
  *    4   TC-3-03-01  ta ANTI JOIN tb                     duplicate inner keys
  *    5   TC-3-03-02  ta ANTI JOIN tc                     distinct inner keys
  *    6   TC-3-04-01  ta ANTI JOIN tb                     ON term ta.cb > 500
- *    7   TC-3-05-01  EXISTS subquery                     NOT NULL FK, FK table outer
+ *    7   TC-3-05-01  NOT EXISTS subquery                 NOT NULL FK, FK table outer
  *    8   TC-3-05-02  EXISTS subquery                     NOT NULL FK, PK table outer
- *    9   TC-3-05-03  EXISTS subquery                     nullable FK, FK table outer
+ *    9   TC-3-05-03  NOT EXISTS subquery                 nullable FK, FK table outer
  *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
  *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
  *    12  TC-3-07-01  EXISTS subquery                     NULL outer keys
@@ -363,9 +365,9 @@ DROP TABLE IF EXISTS tb, ta, tc;
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-01: NOT NULL FK, FK table outer, EXISTS
+-- TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-01: NOT NULL FK, FK table outer, EXISTS';
+evaluate 'TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -416,7 +418,7 @@ evaluate 'TC-3-05-01-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
-WHERE EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b AND ta.x < 100);
+WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b AND ta.x < 100);
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
@@ -481,9 +483,9 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.a = ta.a AND tb.b = ta.b AND tb.id < 100
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-03: nullable FK, FK table outer, EXISTS
+-- TC-3-05-03: nullable FK, FK table outer, NOT EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-03: nullable FK, FK table outer, EXISTS';
+evaluate 'TC-3-05-03: nullable FK, FK table outer, NOT EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -533,7 +535,7 @@ evaluate 'TC-3-05-03-01: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
-WHERE EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b);
+WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b);
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;
