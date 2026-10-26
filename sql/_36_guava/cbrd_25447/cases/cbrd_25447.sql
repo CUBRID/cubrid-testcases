@@ -112,7 +112,7 @@ show trace;
 
 
 evaluate '12. contains uncorrelated SUBQUERY (should work) -> row by row, mergeable list';
-select count(cola) from tbl where cola in (select cola from tbl);
+select count(cola) from tbl where cola in (select /*+ NO_UNNEST */ cola from tbl);
 show trace;
 
 
@@ -209,7 +209,7 @@ show trace;
 evaluate '23. connect by clause (should not work)';
 drop table if exists tree;
 create table tree(id int, mgrid int, name varchar(32), birthyear int, dumy char(2048));
-insert into tree select rownum,decode(rownum,3,1,4,1,5,2,6,2,7,6, null),'abc',2025,'' from db_class a, db_class b, db_class c, db_class d limit 200;
+insert into tree select rownum,decode(rownum,3,1,4,1,5,2,6,2,7,6, null),'abc',2025,'' from db_class a, db_class b, db_class c, db_class d limit 2000;
 
 select id, mgrid, name from tree where id < 10
 connect by prior id = mgrid order by id;
@@ -258,12 +258,12 @@ show trace;
 
 
 evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
-update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) */ id from tbl where cola like '000%');
+update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) NO_UNNEST */ id from tbl where cola like '000%');
 show trace;
 
 
 evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
-delete from new_tbl where id in (select /*+ PARALLEL(2) */ id from tbl where colb like '000%');
+delete from new_tbl where id in (select /*+ PARALLEL(2) NO_UNNEST */ id from tbl where colb like '000%');
 show trace;
 
 
