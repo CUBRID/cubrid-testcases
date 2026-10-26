@@ -13,7 +13,7 @@
  *    Case 6: Integer key fallback
  *    Case 7: Numeric key fallback
  *    Case 8: Date key fallback
- *    Case 9: Composite string and scalar keys
+ *    Case 9: Composite keys differ only in string case
  *    Case 10: Empty outer input
  */
 drop table if exists t_wb_outer, t_wb_inner, t_wb_seed;
@@ -133,7 +133,9 @@ select /*+ recompile parallel(0) */ dd.g as grp, count(dd.val) as matched, sum(c
 show trace;
 
 
-evaluate 'Case 9: Composite string and scalar keys; result = cache disabled';
+evaluate 'Case 9: Composite keys differ only in string case; result = cache disabled';
+-- Same scalar parts for AAA, aAA, AaA and AAa leave string case as the only key difference.
+update t_wb_outer set n=4, v=5, dt=date '2020-01-05' where g between 4 and 7;
 set system parameters 'memoize_memory_limit=2M';
 select /*+ recompile parallel(0) ordered use_nl(ii) */ o.g as grp, count(*) as matched, sum(cast(ii.code as numeric(38,0))) as total from t_wb_outer o, t_wb_inner ii where ii.code=ascii(o.k)+o.n+cast(o.v as integer)+datediff(o.dt,date '2020-01-01') group by o.g order by o.g;
 show trace;
