@@ -559,56 +559,41 @@ Friday
 Saturday     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: t? node[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct t?.s from t? t?)
-Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
+    subplan: nl-join (semi join)
+                 edge:  term[?]
                  outer: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
-                 inner: iscan
                             class: t? node[?]
-                            index: idx? term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t?, (select distinct t?.s from t? t?) av? (av_?) where t?.e?=av?.av_? order by ?
+select t?.e?, t?.i from t? t? semi join t? t? on t?.e?=t?.s order by ?
 ===================================================
 e1    
 Saturday     
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct t?.s from t? t? where t?.s= ?:? )
-Query plan:
 temp(order by)
-    subplan: idx-join (inner join)
-                 outer: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
-                 inner: iscan
+    subplan: nl-join (semi join)
+                 outer: iscan
                             class: t? node[?]
                             index: idx? term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t? node[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e?, t?.i from t? t?, (select distinct t?.s from t? t? where t?.s= ?:? ) av? (av_?) where t?.e?=av?.av_? order by ?
+select t?.e?, t?.i from t? t? semi join t? t? on t?.e?=t?.s and t?.s= ?:?  and t?.e?='Saturday' order by ?
 ===================================================
 e1    
 Sunday     
