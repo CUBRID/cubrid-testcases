@@ -5250,13 +5250,13 @@ c1    c2    c3    rn
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), desc_index forced: true)
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), covered: true, desc_index forced: true)
 
   rewritten query: select /*+ USE_DESC_IDX */ [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -5302,13 +5302,13 @@ c1    c2    c3    rn
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), desc_index forced: true)
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), covered: true, desc_index forced: true)
 
   rewritten query: select /*+ USE_DESC_IDX */ [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?, row_number() over (partition by ? desc , ? desc , ? desc  order by ? desc ) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
      
 
@@ -5367,13 +5367,13 @@ c1    c2    c3    m    rn
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ))
+  INDEX SCAN (dba.test_table_?.midx_?) (key range: ([dba.test_table_?].c?>= ?:? ), covered: true)
 
   rewritten query: select [dba.test_table_?].c?, [dba.test_table_?].c?, [dba.test_table_?].c?,  mod([dba.test_table_?].c?, ?), row_number() over (partition by ?, ?, ? order by ?) from [dba.test_table_?] [dba.test_table_?] where ([dba.test_table_?].c?>= ?:? ) and (inst_num()<= ?:? ) using index [dba.test_table_?].midx_?(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.test_table_?.midx_?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
      
 
