@@ -84,7 +84,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, (select ?, v?.i from foo v? order by ?) v? (?), (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
+select count(foo.i), group_concat(distinct jt.a), jt.b from foo foo, (select ?, v?.i from foo v? order by ?) v? (a_?), (json_table ('[ {"a": ?, "b": [?,?]}, {"a": ?, "b": [?,?]}, {"a":?}]', '$[*]' columns (a integer PATH '$."a"' NULL ON EMPTY NULL ON ERROR, nested path '$."b"[*]' columns (b integer PATH '$' NULL ON EMPTY NULL ON ERROR ) )) as jt) group by jt.b
 ===================================================
 Error:-494
 ===================================================
