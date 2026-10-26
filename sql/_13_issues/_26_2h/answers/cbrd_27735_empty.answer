@@ -1,0 +1,366 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2048
+===================================================
+2048
+===================================================
+4096
+===================================================
+8192
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Basic aggregates; result = NO_PARALLEL_SCAN     
+
+===================================================
+count(*)    count(v)    sum( cast(v as bigint))    min(v)    max(v)    
+16384     16384     8065920     0     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select count(*), count([dba.td].v), sum( cast([dba.td].v as bigint)), min([dba.td].v), max([dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(v)    sum( cast(v as bigint))    min(v)    max(v)    
+16384     16384     8065920     0     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count([dba.td].v), sum( cast([dba.td].v as bigint)), min([dba.td].v), max([dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: COUNT DISTINCT; result = NO_PARALLEL_SCAN     
+
+===================================================
+count(distinct v)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select count(distinct [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(distinct v)    
+1000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: SUM DISTINCT; result = NO_PARALLEL_SCAN     
+
+===================================================
+sum(distinct v)    
+499500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select sum(distinct [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+sum(distinct v)    
+499500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ sum(distinct [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: AVG DISTINCT; result = NO_PARALLEL_SCAN     
+
+===================================================
+cast(avg(distinct v) as numeric(20,6))    
+499.500000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  cast(avg(distinct [dba.td].v) as numeric(?,?)) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cast(avg(distinct v) as numeric(20,6))    
+499.500000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  cast(avg(distinct [dba.td].v) as numeric(?,?)) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: MEDIAN; result = NO_PARALLEL_SCAN     
+
+===================================================
+cast(median(v) as numeric(20,6))    
+487.500000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  cast(median([dba.td].v) as numeric(?,?)) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cast(median(v) as numeric(20,6))    
+487.500000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  cast(median([dba.td].v) as numeric(?,?)) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: Ordered DISTINCT GROUP_CONCAT length; result = NO_PARALLEL_SCAN     
+
+===================================================
+concat_length    
+3889     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+concat_length    
+3889     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: Empty input; result = NO_PARALLEL_SCAN     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    median(v)    concat_length    
+0     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v), median([dba.td].v),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td] where ([dba.td].id< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    median(v)    concat_length    
+0     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v), median([dba.td].v),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td] where ([dba.td].id< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Complete ordered non-DISTINCT string; result = NO_PARALLEL_SCAN     
+
+===================================================
+concat_length    
+63667     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  char_length(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+concat_length    
+63667     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

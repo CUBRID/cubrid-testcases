@@ -1,22 +1,22 @@
 /**
- *  This test case verifies CBRD-27735: partition aggregates (nulls).
+ *  This test case verifies CBRD-27735: partition aggregates (base).
  *  Partition scan transitions must preserve all qualifying values and finish
  *  without a query error or abnormal server termination.
  *  Every result has an independently calculated oracle and NO_PARALLEL_SCAN
- *  reference. Separate TRACE probes check partition order and worker tokens.
- *  GROUP_CONCAT uses the same explicit limit and ordering for both queries.
+ *  reference. Traces check partition order and BUILDVALUE worker tokens.
+ *  DISTINCT GROUP_CONCAT uses a nontruncating limit on both paths.
  *  Coverage:
  *    Case 1: Basic aggregates
  *    Case 2: COUNT DISTINCT
  *    Case 3: SUM DISTINCT
  *    Case 4: AVG DISTINCT
  *    Case 5: MEDIAN
- *    Case 6: Ordered GROUP_CONCAT length
+ *    Case 6: Ordered DISTINCT GROUP_CONCAT length
  *    Case 7: Empty input
  */
 
 drop table if exists td;
-set trace off;
+set trace on;
 
 -- Large partition: 2048 rows doubled seven times, with 192-byte hash padding
 -- This is well above the test-mode 32-page floor (target at least 96 pages)
@@ -31,43 +31,57 @@ insert into td select id+32768, mod(id+32768-0,1000), pad from td;
 insert into td select id+65536, mod(id+65536-0,1000), pad from td;
 insert into td select id+131072, mod(id+131072-0,1000), pad from td;
 insert into td select 1000000+rownum, 5000+rownum, 's' from db_class aa, db_class bb limit 100;
-update td set v=null where mod(id,10)=0;
 update statistics on td with fullscan;
 set system parameters 'group_concat_max_len=4194304';
 
 
 evaluate 'Case 1: Basic aggregates; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ count(*), count(v), sum(cast(v as bigint)), min(v), max(v) from td;
+show trace;
 select /*+ recompile no_parallel_scan */ count(*), count(v), sum(cast(v as bigint)), min(v), max(v) from td;
+show trace;
 
 
 evaluate 'Case 2: COUNT DISTINCT; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ count(distinct v) from td;
+show trace;
 select /*+ recompile no_parallel_scan */ count(distinct v) from td;
+show trace;
 
 
 evaluate 'Case 3: SUM DISTINCT; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ sum(distinct v) from td;
+show trace;
 select /*+ recompile no_parallel_scan */ sum(distinct v) from td;
+show trace;
 
 
 evaluate 'Case 4: AVG DISTINCT; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ cast(avg(distinct v) as numeric(20,6)) from td;
+show trace;
 select /*+ recompile no_parallel_scan */ cast(avg(distinct v) as numeric(20,6)) from td;
+show trace;
 
 
 evaluate 'Case 5: MEDIAN; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ cast(median(v) as numeric(20,6)) from td;
+show trace;
 select /*+ recompile no_parallel_scan */ cast(median(v) as numeric(20,6)) from td;
+show trace;
 
 
-evaluate 'Case 6: Ordered GROUP_CONCAT length; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ length(group_concat(v order by v separator ',')) as concat_length from td;
-select /*+ recompile no_parallel_scan */ length(group_concat(v order by v separator ',')) as concat_length from td;
+evaluate 'Case 6: Ordered DISTINCT GROUP_CONCAT length; result = NO_PARALLEL_SCAN';
+select /*+ recompile */ length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+show trace;
+select /*+ recompile no_parallel_scan */ length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+show trace;
 
 
 evaluate 'Case 7: Empty input; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(v order by v separator ',')) as concat_length from td where id < 0;
-select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(v order by v separator ',')) as concat_length from td where id < 0;
+select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
+show trace;
+set trace off;
 set system parameters 'group_concat_max_len=default';
 drop table td;
