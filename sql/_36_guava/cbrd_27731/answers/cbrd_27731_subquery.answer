@@ -1,0 +1,4705 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+25600
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Baseline totals; result = cache disabled     
+
+===================================================
+matched    total    
+2000     162000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+matched    total    
+2000     162000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: Parity groups preserve both original values; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: Reversed values; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: Repeated identical original; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: Case sensitive collation control; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 6: Binary collation comparison; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: NULL and empty string boundaries; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     500     0     
+1     500     32500     
+2     500     48500     
+3     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     500     0     
+1     500     32500     
+2     500     48500     
+3     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Case insensitive SQL equality remains unchanged; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     1000     97000     
+1     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 9: Every outer row retains its own value; result = cache disabled     
+
+===================================================
+id    val    
+1     65     
+2     97     
+3     65     
+4     97     
+5     65     
+6     97     
+7     65     
+8     97     
+9     65     
+10     97     
+11     65     
+12     97     
+13     65     
+14     97     
+15     65     
+16     97     
+17     65     
+18     97     
+19     65     
+20     97     
+21     65     
+22     97     
+23     65     
+24     97     
+25     65     
+26     97     
+27     65     
+28     97     
+29     65     
+30     97     
+31     65     
+32     97     
+33     65     
+34     97     
+35     65     
+36     97     
+37     65     
+38     97     
+39     65     
+40     97     
+41     65     
+42     97     
+43     65     
+44     97     
+45     65     
+46     97     
+47     65     
+48     97     
+49     65     
+50     97     
+51     65     
+52     97     
+53     65     
+54     97     
+55     65     
+56     97     
+57     65     
+58     97     
+59     65     
+60     97     
+61     65     
+62     97     
+63     65     
+64     97     
+65     65     
+66     97     
+67     65     
+68     97     
+69     65     
+70     97     
+71     65     
+72     97     
+73     65     
+74     97     
+75     65     
+76     97     
+77     65     
+78     97     
+79     65     
+80     97     
+81     65     
+82     97     
+83     65     
+84     97     
+85     65     
+86     97     
+87     65     
+88     97     
+89     65     
+90     97     
+91     65     
+92     97     
+93     65     
+94     97     
+95     65     
+96     97     
+97     65     
+98     97     
+99     65     
+100     97     
+101     65     
+102     97     
+103     65     
+104     97     
+105     65     
+106     97     
+107     65     
+108     97     
+109     65     
+110     97     
+111     65     
+112     97     
+113     65     
+114     97     
+115     65     
+116     97     
+117     65     
+118     97     
+119     65     
+120     97     
+121     65     
+122     97     
+123     65     
+124     97     
+125     65     
+126     97     
+127     65     
+128     97     
+129     65     
+130     97     
+131     65     
+132     97     
+133     65     
+134     97     
+135     65     
+136     97     
+137     65     
+138     97     
+139     65     
+140     97     
+141     65     
+142     97     
+143     65     
+144     97     
+145     65     
+146     97     
+147     65     
+148     97     
+149     65     
+150     97     
+151     65     
+152     97     
+153     65     
+154     97     
+155     65     
+156     97     
+157     65     
+158     97     
+159     65     
+160     97     
+161     65     
+162     97     
+163     65     
+164     97     
+165     65     
+166     97     
+167     65     
+168     97     
+169     65     
+170     97     
+171     65     
+172     97     
+173     65     
+174     97     
+175     65     
+176     97     
+177     65     
+178     97     
+179     65     
+180     97     
+181     65     
+182     97     
+183     65     
+184     97     
+185     65     
+186     97     
+187     65     
+188     97     
+189     65     
+190     97     
+191     65     
+192     97     
+193     65     
+194     97     
+195     65     
+196     97     
+197     65     
+198     97     
+199     65     
+200     97     
+201     65     
+202     97     
+203     65     
+204     97     
+205     65     
+206     97     
+207     65     
+208     97     
+209     65     
+210     97     
+211     65     
+212     97     
+213     65     
+214     97     
+215     65     
+216     97     
+217     65     
+218     97     
+219     65     
+220     97     
+221     65     
+222     97     
+223     65     
+224     97     
+225     65     
+226     97     
+227     65     
+228     97     
+229     65     
+230     97     
+231     65     
+232     97     
+233     65     
+234     97     
+235     65     
+236     97     
+237     65     
+238     97     
+239     65     
+240     97     
+241     65     
+242     97     
+243     65     
+244     97     
+245     65     
+246     97     
+247     65     
+248     97     
+249     65     
+250     97     
+251     65     
+252     97     
+253     65     
+254     97     
+255     65     
+256     97     
+257     65     
+258     97     
+259     65     
+260     97     
+261     65     
+262     97     
+263     65     
+264     97     
+265     65     
+266     97     
+267     65     
+268     97     
+269     65     
+270     97     
+271     65     
+272     97     
+273     65     
+274     97     
+275     65     
+276     97     
+277     65     
+278     97     
+279     65     
+280     97     
+281     65     
+282     97     
+283     65     
+284     97     
+285     65     
+286     97     
+287     65     
+288     97     
+289     65     
+290     97     
+291     65     
+292     97     
+293     65     
+294     97     
+295     65     
+296     97     
+297     65     
+298     97     
+299     65     
+300     97     
+301     65     
+302     97     
+303     65     
+304     97     
+305     65     
+306     97     
+307     65     
+308     97     
+309     65     
+310     97     
+311     65     
+312     97     
+313     65     
+314     97     
+315     65     
+316     97     
+317     65     
+318     97     
+319     65     
+320     97     
+321     65     
+322     97     
+323     65     
+324     97     
+325     65     
+326     97     
+327     65     
+328     97     
+329     65     
+330     97     
+331     65     
+332     97     
+333     65     
+334     97     
+335     65     
+336     97     
+337     65     
+338     97     
+339     65     
+340     97     
+341     65     
+342     97     
+343     65     
+344     97     
+345     65     
+346     97     
+347     65     
+348     97     
+349     65     
+350     97     
+351     65     
+352     97     
+353     65     
+354     97     
+355     65     
+356     97     
+357     65     
+358     97     
+359     65     
+360     97     
+361     65     
+362     97     
+363     65     
+364     97     
+365     65     
+366     97     
+367     65     
+368     97     
+369     65     
+370     97     
+371     65     
+372     97     
+373     65     
+374     97     
+375     65     
+376     97     
+377     65     
+378     97     
+379     65     
+380     97     
+381     65     
+382     97     
+383     65     
+384     97     
+385     65     
+386     97     
+387     65     
+388     97     
+389     65     
+390     97     
+391     65     
+392     97     
+393     65     
+394     97     
+395     65     
+396     97     
+397     65     
+398     97     
+399     65     
+400     97     
+401     65     
+402     97     
+403     65     
+404     97     
+405     65     
+406     97     
+407     65     
+408     97     
+409     65     
+410     97     
+411     65     
+412     97     
+413     65     
+414     97     
+415     65     
+416     97     
+417     65     
+418     97     
+419     65     
+420     97     
+421     65     
+422     97     
+423     65     
+424     97     
+425     65     
+426     97     
+427     65     
+428     97     
+429     65     
+430     97     
+431     65     
+432     97     
+433     65     
+434     97     
+435     65     
+436     97     
+437     65     
+438     97     
+439     65     
+440     97     
+441     65     
+442     97     
+443     65     
+444     97     
+445     65     
+446     97     
+447     65     
+448     97     
+449     65     
+450     97     
+451     65     
+452     97     
+453     65     
+454     97     
+455     65     
+456     97     
+457     65     
+458     97     
+459     65     
+460     97     
+461     65     
+462     97     
+463     65     
+464     97     
+465     65     
+466     97     
+467     65     
+468     97     
+469     65     
+470     97     
+471     65     
+472     97     
+473     65     
+474     97     
+475     65     
+476     97     
+477     65     
+478     97     
+479     65     
+480     97     
+481     65     
+482     97     
+483     65     
+484     97     
+485     65     
+486     97     
+487     65     
+488     97     
+489     65     
+490     97     
+491     65     
+492     97     
+493     65     
+494     97     
+495     65     
+496     97     
+497     65     
+498     97     
+499     65     
+500     97     
+501     65     
+502     97     
+503     65     
+504     97     
+505     65     
+506     97     
+507     65     
+508     97     
+509     65     
+510     97     
+511     65     
+512     97     
+513     65     
+514     97     
+515     65     
+516     97     
+517     65     
+518     97     
+519     65     
+520     97     
+521     65     
+522     97     
+523     65     
+524     97     
+525     65     
+526     97     
+527     65     
+528     97     
+529     65     
+530     97     
+531     65     
+532     97     
+533     65     
+534     97     
+535     65     
+536     97     
+537     65     
+538     97     
+539     65     
+540     97     
+541     65     
+542     97     
+543     65     
+544     97     
+545     65     
+546     97     
+547     65     
+548     97     
+549     65     
+550     97     
+551     65     
+552     97     
+553     65     
+554     97     
+555     65     
+556     97     
+557     65     
+558     97     
+559     65     
+560     97     
+561     65     
+562     97     
+563     65     
+564     97     
+565     65     
+566     97     
+567     65     
+568     97     
+569     65     
+570     97     
+571     65     
+572     97     
+573     65     
+574     97     
+575     65     
+576     97     
+577     65     
+578     97     
+579     65     
+580     97     
+581     65     
+582     97     
+583     65     
+584     97     
+585     65     
+586     97     
+587     65     
+588     97     
+589     65     
+590     97     
+591     65     
+592     97     
+593     65     
+594     97     
+595     65     
+596     97     
+597     65     
+598     97     
+599     65     
+600     97     
+601     65     
+602     97     
+603     65     
+604     97     
+605     65     
+606     97     
+607     65     
+608     97     
+609     65     
+610     97     
+611     65     
+612     97     
+613     65     
+614     97     
+615     65     
+616     97     
+617     65     
+618     97     
+619     65     
+620     97     
+621     65     
+622     97     
+623     65     
+624     97     
+625     65     
+626     97     
+627     65     
+628     97     
+629     65     
+630     97     
+631     65     
+632     97     
+633     65     
+634     97     
+635     65     
+636     97     
+637     65     
+638     97     
+639     65     
+640     97     
+641     65     
+642     97     
+643     65     
+644     97     
+645     65     
+646     97     
+647     65     
+648     97     
+649     65     
+650     97     
+651     65     
+652     97     
+653     65     
+654     97     
+655     65     
+656     97     
+657     65     
+658     97     
+659     65     
+660     97     
+661     65     
+662     97     
+663     65     
+664     97     
+665     65     
+666     97     
+667     65     
+668     97     
+669     65     
+670     97     
+671     65     
+672     97     
+673     65     
+674     97     
+675     65     
+676     97     
+677     65     
+678     97     
+679     65     
+680     97     
+681     65     
+682     97     
+683     65     
+684     97     
+685     65     
+686     97     
+687     65     
+688     97     
+689     65     
+690     97     
+691     65     
+692     97     
+693     65     
+694     97     
+695     65     
+696     97     
+697     65     
+698     97     
+699     65     
+700     97     
+701     65     
+702     97     
+703     65     
+704     97     
+705     65     
+706     97     
+707     65     
+708     97     
+709     65     
+710     97     
+711     65     
+712     97     
+713     65     
+714     97     
+715     65     
+716     97     
+717     65     
+718     97     
+719     65     
+720     97     
+721     65     
+722     97     
+723     65     
+724     97     
+725     65     
+726     97     
+727     65     
+728     97     
+729     65     
+730     97     
+731     65     
+732     97     
+733     65     
+734     97     
+735     65     
+736     97     
+737     65     
+738     97     
+739     65     
+740     97     
+741     65     
+742     97     
+743     65     
+744     97     
+745     65     
+746     97     
+747     65     
+748     97     
+749     65     
+750     97     
+751     65     
+752     97     
+753     65     
+754     97     
+755     65     
+756     97     
+757     65     
+758     97     
+759     65     
+760     97     
+761     65     
+762     97     
+763     65     
+764     97     
+765     65     
+766     97     
+767     65     
+768     97     
+769     65     
+770     97     
+771     65     
+772     97     
+773     65     
+774     97     
+775     65     
+776     97     
+777     65     
+778     97     
+779     65     
+780     97     
+781     65     
+782     97     
+783     65     
+784     97     
+785     65     
+786     97     
+787     65     
+788     97     
+789     65     
+790     97     
+791     65     
+792     97     
+793     65     
+794     97     
+795     65     
+796     97     
+797     65     
+798     97     
+799     65     
+800     97     
+801     65     
+802     97     
+803     65     
+804     97     
+805     65     
+806     97     
+807     65     
+808     97     
+809     65     
+810     97     
+811     65     
+812     97     
+813     65     
+814     97     
+815     65     
+816     97     
+817     65     
+818     97     
+819     65     
+820     97     
+821     65     
+822     97     
+823     65     
+824     97     
+825     65     
+826     97     
+827     65     
+828     97     
+829     65     
+830     97     
+831     65     
+832     97     
+833     65     
+834     97     
+835     65     
+836     97     
+837     65     
+838     97     
+839     65     
+840     97     
+841     65     
+842     97     
+843     65     
+844     97     
+845     65     
+846     97     
+847     65     
+848     97     
+849     65     
+850     97     
+851     65     
+852     97     
+853     65     
+854     97     
+855     65     
+856     97     
+857     65     
+858     97     
+859     65     
+860     97     
+861     65     
+862     97     
+863     65     
+864     97     
+865     65     
+866     97     
+867     65     
+868     97     
+869     65     
+870     97     
+871     65     
+872     97     
+873     65     
+874     97     
+875     65     
+876     97     
+877     65     
+878     97     
+879     65     
+880     97     
+881     65     
+882     97     
+883     65     
+884     97     
+885     65     
+886     97     
+887     65     
+888     97     
+889     65     
+890     97     
+891     65     
+892     97     
+893     65     
+894     97     
+895     65     
+896     97     
+897     65     
+898     97     
+899     65     
+900     97     
+901     65     
+902     97     
+903     65     
+904     97     
+905     65     
+906     97     
+907     65     
+908     97     
+909     65     
+910     97     
+911     65     
+912     97     
+913     65     
+914     97     
+915     65     
+916     97     
+917     65     
+918     97     
+919     65     
+920     97     
+921     65     
+922     97     
+923     65     
+924     97     
+925     65     
+926     97     
+927     65     
+928     97     
+929     65     
+930     97     
+931     65     
+932     97     
+933     65     
+934     97     
+935     65     
+936     97     
+937     65     
+938     97     
+939     65     
+940     97     
+941     65     
+942     97     
+943     65     
+944     97     
+945     65     
+946     97     
+947     65     
+948     97     
+949     65     
+950     97     
+951     65     
+952     97     
+953     65     
+954     97     
+955     65     
+956     97     
+957     65     
+958     97     
+959     65     
+960     97     
+961     65     
+962     97     
+963     65     
+964     97     
+965     65     
+966     97     
+967     65     
+968     97     
+969     65     
+970     97     
+971     65     
+972     97     
+973     65     
+974     97     
+975     65     
+976     97     
+977     65     
+978     97     
+979     65     
+980     97     
+981     65     
+982     97     
+983     65     
+984     97     
+985     65     
+986     97     
+987     65     
+988     97     
+989     65     
+990     97     
+991     65     
+992     97     
+993     65     
+994     97     
+995     65     
+996     97     
+997     65     
+998     97     
+999     65     
+1000     97     
+1001     65     
+1002     97     
+1003     65     
+1004     97     
+1005     65     
+1006     97     
+1007     65     
+1008     97     
+1009     65     
+1010     97     
+1011     65     
+1012     97     
+1013     65     
+1014     97     
+1015     65     
+1016     97     
+1017     65     
+1018     97     
+1019     65     
+1020     97     
+1021     65     
+1022     97     
+1023     65     
+1024     97     
+1025     65     
+1026     97     
+1027     65     
+1028     97     
+1029     65     
+1030     97     
+1031     65     
+1032     97     
+1033     65     
+1034     97     
+1035     65     
+1036     97     
+1037     65     
+1038     97     
+1039     65     
+1040     97     
+1041     65     
+1042     97     
+1043     65     
+1044     97     
+1045     65     
+1046     97     
+1047     65     
+1048     97     
+1049     65     
+1050     97     
+1051     65     
+1052     97     
+1053     65     
+1054     97     
+1055     65     
+1056     97     
+1057     65     
+1058     97     
+1059     65     
+1060     97     
+1061     65     
+1062     97     
+1063     65     
+1064     97     
+1065     65     
+1066     97     
+1067     65     
+1068     97     
+1069     65     
+1070     97     
+1071     65     
+1072     97     
+1073     65     
+1074     97     
+1075     65     
+1076     97     
+1077     65     
+1078     97     
+1079     65     
+1080     97     
+1081     65     
+1082     97     
+1083     65     
+1084     97     
+1085     65     
+1086     97     
+1087     65     
+1088     97     
+1089     65     
+1090     97     
+1091     65     
+1092     97     
+1093     65     
+1094     97     
+1095     65     
+1096     97     
+1097     65     
+1098     97     
+1099     65     
+1100     97     
+1101     65     
+1102     97     
+1103     65     
+1104     97     
+1105     65     
+1106     97     
+1107     65     
+1108     97     
+1109     65     
+1110     97     
+1111     65     
+1112     97     
+1113     65     
+1114     97     
+1115     65     
+1116     97     
+1117     65     
+1118     97     
+1119     65     
+1120     97     
+1121     65     
+1122     97     
+1123     65     
+1124     97     
+1125     65     
+1126     97     
+1127     65     
+1128     97     
+1129     65     
+1130     97     
+1131     65     
+1132     97     
+1133     65     
+1134     97     
+1135     65     
+1136     97     
+1137     65     
+1138     97     
+1139     65     
+1140     97     
+1141     65     
+1142     97     
+1143     65     
+1144     97     
+1145     65     
+1146     97     
+1147     65     
+1148     97     
+1149     65     
+1150     97     
+1151     65     
+1152     97     
+1153     65     
+1154     97     
+1155     65     
+1156     97     
+1157     65     
+1158     97     
+1159     65     
+1160     97     
+1161     65     
+1162     97     
+1163     65     
+1164     97     
+1165     65     
+1166     97     
+1167     65     
+1168     97     
+1169     65     
+1170     97     
+1171     65     
+1172     97     
+1173     65     
+1174     97     
+1175     65     
+1176     97     
+1177     65     
+1178     97     
+1179     65     
+1180     97     
+1181     65     
+1182     97     
+1183     65     
+1184     97     
+1185     65     
+1186     97     
+1187     65     
+1188     97     
+1189     65     
+1190     97     
+1191     65     
+1192     97     
+1193     65     
+1194     97     
+1195     65     
+1196     97     
+1197     65     
+1198     97     
+1199     65     
+1200     97     
+1201     65     
+1202     97     
+1203     65     
+1204     97     
+1205     65     
+1206     97     
+1207     65     
+1208     97     
+1209     65     
+1210     97     
+1211     65     
+1212     97     
+1213     65     
+1214     97     
+1215     65     
+1216     97     
+1217     65     
+1218     97     
+1219     65     
+1220     97     
+1221     65     
+1222     97     
+1223     65     
+1224     97     
+1225     65     
+1226     97     
+1227     65     
+1228     97     
+1229     65     
+1230     97     
+1231     65     
+1232     97     
+1233     65     
+1234     97     
+1235     65     
+1236     97     
+1237     65     
+1238     97     
+1239     65     
+1240     97     
+1241     65     
+1242     97     
+1243     65     
+1244     97     
+1245     65     
+1246     97     
+1247     65     
+1248     97     
+1249     65     
+1250     97     
+1251     65     
+1252     97     
+1253     65     
+1254     97     
+1255     65     
+1256     97     
+1257     65     
+1258     97     
+1259     65     
+1260     97     
+1261     65     
+1262     97     
+1263     65     
+1264     97     
+1265     65     
+1266     97     
+1267     65     
+1268     97     
+1269     65     
+1270     97     
+1271     65     
+1272     97     
+1273     65     
+1274     97     
+1275     65     
+1276     97     
+1277     65     
+1278     97     
+1279     65     
+1280     97     
+1281     65     
+1282     97     
+1283     65     
+1284     97     
+1285     65     
+1286     97     
+1287     65     
+1288     97     
+1289     65     
+1290     97     
+1291     65     
+1292     97     
+1293     65     
+1294     97     
+1295     65     
+1296     97     
+1297     65     
+1298     97     
+1299     65     
+1300     97     
+1301     65     
+1302     97     
+1303     65     
+1304     97     
+1305     65     
+1306     97     
+1307     65     
+1308     97     
+1309     65     
+1310     97     
+1311     65     
+1312     97     
+1313     65     
+1314     97     
+1315     65     
+1316     97     
+1317     65     
+1318     97     
+1319     65     
+1320     97     
+1321     65     
+1322     97     
+1323     65     
+1324     97     
+1325     65     
+1326     97     
+1327     65     
+1328     97     
+1329     65     
+1330     97     
+1331     65     
+1332     97     
+1333     65     
+1334     97     
+1335     65     
+1336     97     
+1337     65     
+1338     97     
+1339     65     
+1340     97     
+1341     65     
+1342     97     
+1343     65     
+1344     97     
+1345     65     
+1346     97     
+1347     65     
+1348     97     
+1349     65     
+1350     97     
+1351     65     
+1352     97     
+1353     65     
+1354     97     
+1355     65     
+1356     97     
+1357     65     
+1358     97     
+1359     65     
+1360     97     
+1361     65     
+1362     97     
+1363     65     
+1364     97     
+1365     65     
+1366     97     
+1367     65     
+1368     97     
+1369     65     
+1370     97     
+1371     65     
+1372     97     
+1373     65     
+1374     97     
+1375     65     
+1376     97     
+1377     65     
+1378     97     
+1379     65     
+1380     97     
+1381     65     
+1382     97     
+1383     65     
+1384     97     
+1385     65     
+1386     97     
+1387     65     
+1388     97     
+1389     65     
+1390     97     
+1391     65     
+1392     97     
+1393     65     
+1394     97     
+1395     65     
+1396     97     
+1397     65     
+1398     97     
+1399     65     
+1400     97     
+1401     65     
+1402     97     
+1403     65     
+1404     97     
+1405     65     
+1406     97     
+1407     65     
+1408     97     
+1409     65     
+1410     97     
+1411     65     
+1412     97     
+1413     65     
+1414     97     
+1415     65     
+1416     97     
+1417     65     
+1418     97     
+1419     65     
+1420     97     
+1421     65     
+1422     97     
+1423     65     
+1424     97     
+1425     65     
+1426     97     
+1427     65     
+1428     97     
+1429     65     
+1430     97     
+1431     65     
+1432     97     
+1433     65     
+1434     97     
+1435     65     
+1436     97     
+1437     65     
+1438     97     
+1439     65     
+1440     97     
+1441     65     
+1442     97     
+1443     65     
+1444     97     
+1445     65     
+1446     97     
+1447     65     
+1448     97     
+1449     65     
+1450     97     
+1451     65     
+1452     97     
+1453     65     
+1454     97     
+1455     65     
+1456     97     
+1457     65     
+1458     97     
+1459     65     
+1460     97     
+1461     65     
+1462     97     
+1463     65     
+1464     97     
+1465     65     
+1466     97     
+1467     65     
+1468     97     
+1469     65     
+1470     97     
+1471     65     
+1472     97     
+1473     65     
+1474     97     
+1475     65     
+1476     97     
+1477     65     
+1478     97     
+1479     65     
+1480     97     
+1481     65     
+1482     97     
+1483     65     
+1484     97     
+1485     65     
+1486     97     
+1487     65     
+1488     97     
+1489     65     
+1490     97     
+1491     65     
+1492     97     
+1493     65     
+1494     97     
+1495     65     
+1496     97     
+1497     65     
+1498     97     
+1499     65     
+1500     97     
+1501     65     
+1502     97     
+1503     65     
+1504     97     
+1505     65     
+1506     97     
+1507     65     
+1508     97     
+1509     65     
+1510     97     
+1511     65     
+1512     97     
+1513     65     
+1514     97     
+1515     65     
+1516     97     
+1517     65     
+1518     97     
+1519     65     
+1520     97     
+1521     65     
+1522     97     
+1523     65     
+1524     97     
+1525     65     
+1526     97     
+1527     65     
+1528     97     
+1529     65     
+1530     97     
+1531     65     
+1532     97     
+1533     65     
+1534     97     
+1535     65     
+1536     97     
+1537     65     
+1538     97     
+1539     65     
+1540     97     
+1541     65     
+1542     97     
+1543     65     
+1544     97     
+1545     65     
+1546     97     
+1547     65     
+1548     97     
+1549     65     
+1550     97     
+1551     65     
+1552     97     
+1553     65     
+1554     97     
+1555     65     
+1556     97     
+1557     65     
+1558     97     
+1559     65     
+1560     97     
+1561     65     
+1562     97     
+1563     65     
+1564     97     
+1565     65     
+1566     97     
+1567     65     
+1568     97     
+1569     65     
+1570     97     
+1571     65     
+1572     97     
+1573     65     
+1574     97     
+1575     65     
+1576     97     
+1577     65     
+1578     97     
+1579     65     
+1580     97     
+1581     65     
+1582     97     
+1583     65     
+1584     97     
+1585     65     
+1586     97     
+1587     65     
+1588     97     
+1589     65     
+1590     97     
+1591     65     
+1592     97     
+1593     65     
+1594     97     
+1595     65     
+1596     97     
+1597     65     
+1598     97     
+1599     65     
+1600     97     
+1601     65     
+1602     97     
+1603     65     
+1604     97     
+1605     65     
+1606     97     
+1607     65     
+1608     97     
+1609     65     
+1610     97     
+1611     65     
+1612     97     
+1613     65     
+1614     97     
+1615     65     
+1616     97     
+1617     65     
+1618     97     
+1619     65     
+1620     97     
+1621     65     
+1622     97     
+1623     65     
+1624     97     
+1625     65     
+1626     97     
+1627     65     
+1628     97     
+1629     65     
+1630     97     
+1631     65     
+1632     97     
+1633     65     
+1634     97     
+1635     65     
+1636     97     
+1637     65     
+1638     97     
+1639     65     
+1640     97     
+1641     65     
+1642     97     
+1643     65     
+1644     97     
+1645     65     
+1646     97     
+1647     65     
+1648     97     
+1649     65     
+1650     97     
+1651     65     
+1652     97     
+1653     65     
+1654     97     
+1655     65     
+1656     97     
+1657     65     
+1658     97     
+1659     65     
+1660     97     
+1661     65     
+1662     97     
+1663     65     
+1664     97     
+1665     65     
+1666     97     
+1667     65     
+1668     97     
+1669     65     
+1670     97     
+1671     65     
+1672     97     
+1673     65     
+1674     97     
+1675     65     
+1676     97     
+1677     65     
+1678     97     
+1679     65     
+1680     97     
+1681     65     
+1682     97     
+1683     65     
+1684     97     
+1685     65     
+1686     97     
+1687     65     
+1688     97     
+1689     65     
+1690     97     
+1691     65     
+1692     97     
+1693     65     
+1694     97     
+1695     65     
+1696     97     
+1697     65     
+1698     97     
+1699     65     
+1700     97     
+1701     65     
+1702     97     
+1703     65     
+1704     97     
+1705     65     
+1706     97     
+1707     65     
+1708     97     
+1709     65     
+1710     97     
+1711     65     
+1712     97     
+1713     65     
+1714     97     
+1715     65     
+1716     97     
+1717     65     
+1718     97     
+1719     65     
+1720     97     
+1721     65     
+1722     97     
+1723     65     
+1724     97     
+1725     65     
+1726     97     
+1727     65     
+1728     97     
+1729     65     
+1730     97     
+1731     65     
+1732     97     
+1733     65     
+1734     97     
+1735     65     
+1736     97     
+1737     65     
+1738     97     
+1739     65     
+1740     97     
+1741     65     
+1742     97     
+1743     65     
+1744     97     
+1745     65     
+1746     97     
+1747     65     
+1748     97     
+1749     65     
+1750     97     
+1751     65     
+1752     97     
+1753     65     
+1754     97     
+1755     65     
+1756     97     
+1757     65     
+1758     97     
+1759     65     
+1760     97     
+1761     65     
+1762     97     
+1763     65     
+1764     97     
+1765     65     
+1766     97     
+1767     65     
+1768     97     
+1769     65     
+1770     97     
+1771     65     
+1772     97     
+1773     65     
+1774     97     
+1775     65     
+1776     97     
+1777     65     
+1778     97     
+1779     65     
+1780     97     
+1781     65     
+1782     97     
+1783     65     
+1784     97     
+1785     65     
+1786     97     
+1787     65     
+1788     97     
+1789     65     
+1790     97     
+1791     65     
+1792     97     
+1793     65     
+1794     97     
+1795     65     
+1796     97     
+1797     65     
+1798     97     
+1799     65     
+1800     97     
+1801     65     
+1802     97     
+1803     65     
+1804     97     
+1805     65     
+1806     97     
+1807     65     
+1808     97     
+1809     65     
+1810     97     
+1811     65     
+1812     97     
+1813     65     
+1814     97     
+1815     65     
+1816     97     
+1817     65     
+1818     97     
+1819     65     
+1820     97     
+1821     65     
+1822     97     
+1823     65     
+1824     97     
+1825     65     
+1826     97     
+1827     65     
+1828     97     
+1829     65     
+1830     97     
+1831     65     
+1832     97     
+1833     65     
+1834     97     
+1835     65     
+1836     97     
+1837     65     
+1838     97     
+1839     65     
+1840     97     
+1841     65     
+1842     97     
+1843     65     
+1844     97     
+1845     65     
+1846     97     
+1847     65     
+1848     97     
+1849     65     
+1850     97     
+1851     65     
+1852     97     
+1853     65     
+1854     97     
+1855     65     
+1856     97     
+1857     65     
+1858     97     
+1859     65     
+1860     97     
+1861     65     
+1862     97     
+1863     65     
+1864     97     
+1865     65     
+1866     97     
+1867     65     
+1868     97     
+1869     65     
+1870     97     
+1871     65     
+1872     97     
+1873     65     
+1874     97     
+1875     65     
+1876     97     
+1877     65     
+1878     97     
+1879     65     
+1880     97     
+1881     65     
+1882     97     
+1883     65     
+1884     97     
+1885     65     
+1886     97     
+1887     65     
+1888     97     
+1889     65     
+1890     97     
+1891     65     
+1892     97     
+1893     65     
+1894     97     
+1895     65     
+1896     97     
+1897     65     
+1898     97     
+1899     65     
+1900     97     
+1901     65     
+1902     97     
+1903     65     
+1904     97     
+1905     65     
+1906     97     
+1907     65     
+1908     97     
+1909     65     
+1910     97     
+1911     65     
+1912     97     
+1913     65     
+1914     97     
+1915     65     
+1916     97     
+1917     65     
+1918     97     
+1919     65     
+1920     97     
+1921     65     
+1922     97     
+1923     65     
+1924     97     
+1925     65     
+1926     97     
+1927     65     
+1928     97     
+1929     65     
+1930     97     
+1931     65     
+1932     97     
+1933     65     
+1934     97     
+1935     65     
+1936     97     
+1937     65     
+1938     97     
+1939     65     
+1940     97     
+1941     65     
+1942     97     
+1943     65     
+1944     97     
+1945     65     
+1946     97     
+1947     65     
+1948     97     
+1949     65     
+1950     97     
+1951     65     
+1952     97     
+1953     65     
+1954     97     
+1955     65     
+1956     97     
+1957     65     
+1958     97     
+1959     65     
+1960     97     
+1961     65     
+1962     97     
+1963     65     
+1964     97     
+1965     65     
+1966     97     
+1967     65     
+1968     97     
+1969     65     
+1970     97     
+1971     65     
+1972     97     
+1973     65     
+1974     97     
+1975     65     
+1976     97     
+1977     65     
+1978     97     
+1979     65     
+1980     97     
+1981     65     
+1982     97     
+1983     65     
+1984     97     
+1985     65     
+1986     97     
+1987     65     
+1988     97     
+1989     65     
+1990     97     
+1991     65     
+1992     97     
+1993     65     
+1994     97     
+1995     65     
+1996     97     
+1997     65     
+1998     97     
+1999     65     
+2000     97     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+id    val    
+1     65     
+2     97     
+3     65     
+4     97     
+5     65     
+6     97     
+7     65     
+8     97     
+9     65     
+10     97     
+11     65     
+12     97     
+13     65     
+14     97     
+15     65     
+16     97     
+17     65     
+18     97     
+19     65     
+20     97     
+21     65     
+22     97     
+23     65     
+24     97     
+25     65     
+26     97     
+27     65     
+28     97     
+29     65     
+30     97     
+31     65     
+32     97     
+33     65     
+34     97     
+35     65     
+36     97     
+37     65     
+38     97     
+39     65     
+40     97     
+41     65     
+42     97     
+43     65     
+44     97     
+45     65     
+46     97     
+47     65     
+48     97     
+49     65     
+50     97     
+51     65     
+52     97     
+53     65     
+54     97     
+55     65     
+56     97     
+57     65     
+58     97     
+59     65     
+60     97     
+61     65     
+62     97     
+63     65     
+64     97     
+65     65     
+66     97     
+67     65     
+68     97     
+69     65     
+70     97     
+71     65     
+72     97     
+73     65     
+74     97     
+75     65     
+76     97     
+77     65     
+78     97     
+79     65     
+80     97     
+81     65     
+82     97     
+83     65     
+84     97     
+85     65     
+86     97     
+87     65     
+88     97     
+89     65     
+90     97     
+91     65     
+92     97     
+93     65     
+94     97     
+95     65     
+96     97     
+97     65     
+98     97     
+99     65     
+100     97     
+101     65     
+102     97     
+103     65     
+104     97     
+105     65     
+106     97     
+107     65     
+108     97     
+109     65     
+110     97     
+111     65     
+112     97     
+113     65     
+114     97     
+115     65     
+116     97     
+117     65     
+118     97     
+119     65     
+120     97     
+121     65     
+122     97     
+123     65     
+124     97     
+125     65     
+126     97     
+127     65     
+128     97     
+129     65     
+130     97     
+131     65     
+132     97     
+133     65     
+134     97     
+135     65     
+136     97     
+137     65     
+138     97     
+139     65     
+140     97     
+141     65     
+142     97     
+143     65     
+144     97     
+145     65     
+146     97     
+147     65     
+148     97     
+149     65     
+150     97     
+151     65     
+152     97     
+153     65     
+154     97     
+155     65     
+156     97     
+157     65     
+158     97     
+159     65     
+160     97     
+161     65     
+162     97     
+163     65     
+164     97     
+165     65     
+166     97     
+167     65     
+168     97     
+169     65     
+170     97     
+171     65     
+172     97     
+173     65     
+174     97     
+175     65     
+176     97     
+177     65     
+178     97     
+179     65     
+180     97     
+181     65     
+182     97     
+183     65     
+184     97     
+185     65     
+186     97     
+187     65     
+188     97     
+189     65     
+190     97     
+191     65     
+192     97     
+193     65     
+194     97     
+195     65     
+196     97     
+197     65     
+198     97     
+199     65     
+200     97     
+201     65     
+202     97     
+203     65     
+204     97     
+205     65     
+206     97     
+207     65     
+208     97     
+209     65     
+210     97     
+211     65     
+212     97     
+213     65     
+214     97     
+215     65     
+216     97     
+217     65     
+218     97     
+219     65     
+220     97     
+221     65     
+222     97     
+223     65     
+224     97     
+225     65     
+226     97     
+227     65     
+228     97     
+229     65     
+230     97     
+231     65     
+232     97     
+233     65     
+234     97     
+235     65     
+236     97     
+237     65     
+238     97     
+239     65     
+240     97     
+241     65     
+242     97     
+243     65     
+244     97     
+245     65     
+246     97     
+247     65     
+248     97     
+249     65     
+250     97     
+251     65     
+252     97     
+253     65     
+254     97     
+255     65     
+256     97     
+257     65     
+258     97     
+259     65     
+260     97     
+261     65     
+262     97     
+263     65     
+264     97     
+265     65     
+266     97     
+267     65     
+268     97     
+269     65     
+270     97     
+271     65     
+272     97     
+273     65     
+274     97     
+275     65     
+276     97     
+277     65     
+278     97     
+279     65     
+280     97     
+281     65     
+282     97     
+283     65     
+284     97     
+285     65     
+286     97     
+287     65     
+288     97     
+289     65     
+290     97     
+291     65     
+292     97     
+293     65     
+294     97     
+295     65     
+296     97     
+297     65     
+298     97     
+299     65     
+300     97     
+301     65     
+302     97     
+303     65     
+304     97     
+305     65     
+306     97     
+307     65     
+308     97     
+309     65     
+310     97     
+311     65     
+312     97     
+313     65     
+314     97     
+315     65     
+316     97     
+317     65     
+318     97     
+319     65     
+320     97     
+321     65     
+322     97     
+323     65     
+324     97     
+325     65     
+326     97     
+327     65     
+328     97     
+329     65     
+330     97     
+331     65     
+332     97     
+333     65     
+334     97     
+335     65     
+336     97     
+337     65     
+338     97     
+339     65     
+340     97     
+341     65     
+342     97     
+343     65     
+344     97     
+345     65     
+346     97     
+347     65     
+348     97     
+349     65     
+350     97     
+351     65     
+352     97     
+353     65     
+354     97     
+355     65     
+356     97     
+357     65     
+358     97     
+359     65     
+360     97     
+361     65     
+362     97     
+363     65     
+364     97     
+365     65     
+366     97     
+367     65     
+368     97     
+369     65     
+370     97     
+371     65     
+372     97     
+373     65     
+374     97     
+375     65     
+376     97     
+377     65     
+378     97     
+379     65     
+380     97     
+381     65     
+382     97     
+383     65     
+384     97     
+385     65     
+386     97     
+387     65     
+388     97     
+389     65     
+390     97     
+391     65     
+392     97     
+393     65     
+394     97     
+395     65     
+396     97     
+397     65     
+398     97     
+399     65     
+400     97     
+401     65     
+402     97     
+403     65     
+404     97     
+405     65     
+406     97     
+407     65     
+408     97     
+409     65     
+410     97     
+411     65     
+412     97     
+413     65     
+414     97     
+415     65     
+416     97     
+417     65     
+418     97     
+419     65     
+420     97     
+421     65     
+422     97     
+423     65     
+424     97     
+425     65     
+426     97     
+427     65     
+428     97     
+429     65     
+430     97     
+431     65     
+432     97     
+433     65     
+434     97     
+435     65     
+436     97     
+437     65     
+438     97     
+439     65     
+440     97     
+441     65     
+442     97     
+443     65     
+444     97     
+445     65     
+446     97     
+447     65     
+448     97     
+449     65     
+450     97     
+451     65     
+452     97     
+453     65     
+454     97     
+455     65     
+456     97     
+457     65     
+458     97     
+459     65     
+460     97     
+461     65     
+462     97     
+463     65     
+464     97     
+465     65     
+466     97     
+467     65     
+468     97     
+469     65     
+470     97     
+471     65     
+472     97     
+473     65     
+474     97     
+475     65     
+476     97     
+477     65     
+478     97     
+479     65     
+480     97     
+481     65     
+482     97     
+483     65     
+484     97     
+485     65     
+486     97     
+487     65     
+488     97     
+489     65     
+490     97     
+491     65     
+492     97     
+493     65     
+494     97     
+495     65     
+496     97     
+497     65     
+498     97     
+499     65     
+500     97     
+501     65     
+502     97     
+503     65     
+504     97     
+505     65     
+506     97     
+507     65     
+508     97     
+509     65     
+510     97     
+511     65     
+512     97     
+513     65     
+514     97     
+515     65     
+516     97     
+517     65     
+518     97     
+519     65     
+520     97     
+521     65     
+522     97     
+523     65     
+524     97     
+525     65     
+526     97     
+527     65     
+528     97     
+529     65     
+530     97     
+531     65     
+532     97     
+533     65     
+534     97     
+535     65     
+536     97     
+537     65     
+538     97     
+539     65     
+540     97     
+541     65     
+542     97     
+543     65     
+544     97     
+545     65     
+546     97     
+547     65     
+548     97     
+549     65     
+550     97     
+551     65     
+552     97     
+553     65     
+554     97     
+555     65     
+556     97     
+557     65     
+558     97     
+559     65     
+560     97     
+561     65     
+562     97     
+563     65     
+564     97     
+565     65     
+566     97     
+567     65     
+568     97     
+569     65     
+570     97     
+571     65     
+572     97     
+573     65     
+574     97     
+575     65     
+576     97     
+577     65     
+578     97     
+579     65     
+580     97     
+581     65     
+582     97     
+583     65     
+584     97     
+585     65     
+586     97     
+587     65     
+588     97     
+589     65     
+590     97     
+591     65     
+592     97     
+593     65     
+594     97     
+595     65     
+596     97     
+597     65     
+598     97     
+599     65     
+600     97     
+601     65     
+602     97     
+603     65     
+604     97     
+605     65     
+606     97     
+607     65     
+608     97     
+609     65     
+610     97     
+611     65     
+612     97     
+613     65     
+614     97     
+615     65     
+616     97     
+617     65     
+618     97     
+619     65     
+620     97     
+621     65     
+622     97     
+623     65     
+624     97     
+625     65     
+626     97     
+627     65     
+628     97     
+629     65     
+630     97     
+631     65     
+632     97     
+633     65     
+634     97     
+635     65     
+636     97     
+637     65     
+638     97     
+639     65     
+640     97     
+641     65     
+642     97     
+643     65     
+644     97     
+645     65     
+646     97     
+647     65     
+648     97     
+649     65     
+650     97     
+651     65     
+652     97     
+653     65     
+654     97     
+655     65     
+656     97     
+657     65     
+658     97     
+659     65     
+660     97     
+661     65     
+662     97     
+663     65     
+664     97     
+665     65     
+666     97     
+667     65     
+668     97     
+669     65     
+670     97     
+671     65     
+672     97     
+673     65     
+674     97     
+675     65     
+676     97     
+677     65     
+678     97     
+679     65     
+680     97     
+681     65     
+682     97     
+683     65     
+684     97     
+685     65     
+686     97     
+687     65     
+688     97     
+689     65     
+690     97     
+691     65     
+692     97     
+693     65     
+694     97     
+695     65     
+696     97     
+697     65     
+698     97     
+699     65     
+700     97     
+701     65     
+702     97     
+703     65     
+704     97     
+705     65     
+706     97     
+707     65     
+708     97     
+709     65     
+710     97     
+711     65     
+712     97     
+713     65     
+714     97     
+715     65     
+716     97     
+717     65     
+718     97     
+719     65     
+720     97     
+721     65     
+722     97     
+723     65     
+724     97     
+725     65     
+726     97     
+727     65     
+728     97     
+729     65     
+730     97     
+731     65     
+732     97     
+733     65     
+734     97     
+735     65     
+736     97     
+737     65     
+738     97     
+739     65     
+740     97     
+741     65     
+742     97     
+743     65     
+744     97     
+745     65     
+746     97     
+747     65     
+748     97     
+749     65     
+750     97     
+751     65     
+752     97     
+753     65     
+754     97     
+755     65     
+756     97     
+757     65     
+758     97     
+759     65     
+760     97     
+761     65     
+762     97     
+763     65     
+764     97     
+765     65     
+766     97     
+767     65     
+768     97     
+769     65     
+770     97     
+771     65     
+772     97     
+773     65     
+774     97     
+775     65     
+776     97     
+777     65     
+778     97     
+779     65     
+780     97     
+781     65     
+782     97     
+783     65     
+784     97     
+785     65     
+786     97     
+787     65     
+788     97     
+789     65     
+790     97     
+791     65     
+792     97     
+793     65     
+794     97     
+795     65     
+796     97     
+797     65     
+798     97     
+799     65     
+800     97     
+801     65     
+802     97     
+803     65     
+804     97     
+805     65     
+806     97     
+807     65     
+808     97     
+809     65     
+810     97     
+811     65     
+812     97     
+813     65     
+814     97     
+815     65     
+816     97     
+817     65     
+818     97     
+819     65     
+820     97     
+821     65     
+822     97     
+823     65     
+824     97     
+825     65     
+826     97     
+827     65     
+828     97     
+829     65     
+830     97     
+831     65     
+832     97     
+833     65     
+834     97     
+835     65     
+836     97     
+837     65     
+838     97     
+839     65     
+840     97     
+841     65     
+842     97     
+843     65     
+844     97     
+845     65     
+846     97     
+847     65     
+848     97     
+849     65     
+850     97     
+851     65     
+852     97     
+853     65     
+854     97     
+855     65     
+856     97     
+857     65     
+858     97     
+859     65     
+860     97     
+861     65     
+862     97     
+863     65     
+864     97     
+865     65     
+866     97     
+867     65     
+868     97     
+869     65     
+870     97     
+871     65     
+872     97     
+873     65     
+874     97     
+875     65     
+876     97     
+877     65     
+878     97     
+879     65     
+880     97     
+881     65     
+882     97     
+883     65     
+884     97     
+885     65     
+886     97     
+887     65     
+888     97     
+889     65     
+890     97     
+891     65     
+892     97     
+893     65     
+894     97     
+895     65     
+896     97     
+897     65     
+898     97     
+899     65     
+900     97     
+901     65     
+902     97     
+903     65     
+904     97     
+905     65     
+906     97     
+907     65     
+908     97     
+909     65     
+910     97     
+911     65     
+912     97     
+913     65     
+914     97     
+915     65     
+916     97     
+917     65     
+918     97     
+919     65     
+920     97     
+921     65     
+922     97     
+923     65     
+924     97     
+925     65     
+926     97     
+927     65     
+928     97     
+929     65     
+930     97     
+931     65     
+932     97     
+933     65     
+934     97     
+935     65     
+936     97     
+937     65     
+938     97     
+939     65     
+940     97     
+941     65     
+942     97     
+943     65     
+944     97     
+945     65     
+946     97     
+947     65     
+948     97     
+949     65     
+950     97     
+951     65     
+952     97     
+953     65     
+954     97     
+955     65     
+956     97     
+957     65     
+958     97     
+959     65     
+960     97     
+961     65     
+962     97     
+963     65     
+964     97     
+965     65     
+966     97     
+967     65     
+968     97     
+969     65     
+970     97     
+971     65     
+972     97     
+973     65     
+974     97     
+975     65     
+976     97     
+977     65     
+978     97     
+979     65     
+980     97     
+981     65     
+982     97     
+983     65     
+984     97     
+985     65     
+986     97     
+987     65     
+988     97     
+989     65     
+990     97     
+991     65     
+992     97     
+993     65     
+994     97     
+995     65     
+996     97     
+997     65     
+998     97     
+999     65     
+1000     97     
+1001     65     
+1002     97     
+1003     65     
+1004     97     
+1005     65     
+1006     97     
+1007     65     
+1008     97     
+1009     65     
+1010     97     
+1011     65     
+1012     97     
+1013     65     
+1014     97     
+1015     65     
+1016     97     
+1017     65     
+1018     97     
+1019     65     
+1020     97     
+1021     65     
+1022     97     
+1023     65     
+1024     97     
+1025     65     
+1026     97     
+1027     65     
+1028     97     
+1029     65     
+1030     97     
+1031     65     
+1032     97     
+1033     65     
+1034     97     
+1035     65     
+1036     97     
+1037     65     
+1038     97     
+1039     65     
+1040     97     
+1041     65     
+1042     97     
+1043     65     
+1044     97     
+1045     65     
+1046     97     
+1047     65     
+1048     97     
+1049     65     
+1050     97     
+1051     65     
+1052     97     
+1053     65     
+1054     97     
+1055     65     
+1056     97     
+1057     65     
+1058     97     
+1059     65     
+1060     97     
+1061     65     
+1062     97     
+1063     65     
+1064     97     
+1065     65     
+1066     97     
+1067     65     
+1068     97     
+1069     65     
+1070     97     
+1071     65     
+1072     97     
+1073     65     
+1074     97     
+1075     65     
+1076     97     
+1077     65     
+1078     97     
+1079     65     
+1080     97     
+1081     65     
+1082     97     
+1083     65     
+1084     97     
+1085     65     
+1086     97     
+1087     65     
+1088     97     
+1089     65     
+1090     97     
+1091     65     
+1092     97     
+1093     65     
+1094     97     
+1095     65     
+1096     97     
+1097     65     
+1098     97     
+1099     65     
+1100     97     
+1101     65     
+1102     97     
+1103     65     
+1104     97     
+1105     65     
+1106     97     
+1107     65     
+1108     97     
+1109     65     
+1110     97     
+1111     65     
+1112     97     
+1113     65     
+1114     97     
+1115     65     
+1116     97     
+1117     65     
+1118     97     
+1119     65     
+1120     97     
+1121     65     
+1122     97     
+1123     65     
+1124     97     
+1125     65     
+1126     97     
+1127     65     
+1128     97     
+1129     65     
+1130     97     
+1131     65     
+1132     97     
+1133     65     
+1134     97     
+1135     65     
+1136     97     
+1137     65     
+1138     97     
+1139     65     
+1140     97     
+1141     65     
+1142     97     
+1143     65     
+1144     97     
+1145     65     
+1146     97     
+1147     65     
+1148     97     
+1149     65     
+1150     97     
+1151     65     
+1152     97     
+1153     65     
+1154     97     
+1155     65     
+1156     97     
+1157     65     
+1158     97     
+1159     65     
+1160     97     
+1161     65     
+1162     97     
+1163     65     
+1164     97     
+1165     65     
+1166     97     
+1167     65     
+1168     97     
+1169     65     
+1170     97     
+1171     65     
+1172     97     
+1173     65     
+1174     97     
+1175     65     
+1176     97     
+1177     65     
+1178     97     
+1179     65     
+1180     97     
+1181     65     
+1182     97     
+1183     65     
+1184     97     
+1185     65     
+1186     97     
+1187     65     
+1188     97     
+1189     65     
+1190     97     
+1191     65     
+1192     97     
+1193     65     
+1194     97     
+1195     65     
+1196     97     
+1197     65     
+1198     97     
+1199     65     
+1200     97     
+1201     65     
+1202     97     
+1203     65     
+1204     97     
+1205     65     
+1206     97     
+1207     65     
+1208     97     
+1209     65     
+1210     97     
+1211     65     
+1212     97     
+1213     65     
+1214     97     
+1215     65     
+1216     97     
+1217     65     
+1218     97     
+1219     65     
+1220     97     
+1221     65     
+1222     97     
+1223     65     
+1224     97     
+1225     65     
+1226     97     
+1227     65     
+1228     97     
+1229     65     
+1230     97     
+1231     65     
+1232     97     
+1233     65     
+1234     97     
+1235     65     
+1236     97     
+1237     65     
+1238     97     
+1239     65     
+1240     97     
+1241     65     
+1242     97     
+1243     65     
+1244     97     
+1245     65     
+1246     97     
+1247     65     
+1248     97     
+1249     65     
+1250     97     
+1251     65     
+1252     97     
+1253     65     
+1254     97     
+1255     65     
+1256     97     
+1257     65     
+1258     97     
+1259     65     
+1260     97     
+1261     65     
+1262     97     
+1263     65     
+1264     97     
+1265     65     
+1266     97     
+1267     65     
+1268     97     
+1269     65     
+1270     97     
+1271     65     
+1272     97     
+1273     65     
+1274     97     
+1275     65     
+1276     97     
+1277     65     
+1278     97     
+1279     65     
+1280     97     
+1281     65     
+1282     97     
+1283     65     
+1284     97     
+1285     65     
+1286     97     
+1287     65     
+1288     97     
+1289     65     
+1290     97     
+1291     65     
+1292     97     
+1293     65     
+1294     97     
+1295     65     
+1296     97     
+1297     65     
+1298     97     
+1299     65     
+1300     97     
+1301     65     
+1302     97     
+1303     65     
+1304     97     
+1305     65     
+1306     97     
+1307     65     
+1308     97     
+1309     65     
+1310     97     
+1311     65     
+1312     97     
+1313     65     
+1314     97     
+1315     65     
+1316     97     
+1317     65     
+1318     97     
+1319     65     
+1320     97     
+1321     65     
+1322     97     
+1323     65     
+1324     97     
+1325     65     
+1326     97     
+1327     65     
+1328     97     
+1329     65     
+1330     97     
+1331     65     
+1332     97     
+1333     65     
+1334     97     
+1335     65     
+1336     97     
+1337     65     
+1338     97     
+1339     65     
+1340     97     
+1341     65     
+1342     97     
+1343     65     
+1344     97     
+1345     65     
+1346     97     
+1347     65     
+1348     97     
+1349     65     
+1350     97     
+1351     65     
+1352     97     
+1353     65     
+1354     97     
+1355     65     
+1356     97     
+1357     65     
+1358     97     
+1359     65     
+1360     97     
+1361     65     
+1362     97     
+1363     65     
+1364     97     
+1365     65     
+1366     97     
+1367     65     
+1368     97     
+1369     65     
+1370     97     
+1371     65     
+1372     97     
+1373     65     
+1374     97     
+1375     65     
+1376     97     
+1377     65     
+1378     97     
+1379     65     
+1380     97     
+1381     65     
+1382     97     
+1383     65     
+1384     97     
+1385     65     
+1386     97     
+1387     65     
+1388     97     
+1389     65     
+1390     97     
+1391     65     
+1392     97     
+1393     65     
+1394     97     
+1395     65     
+1396     97     
+1397     65     
+1398     97     
+1399     65     
+1400     97     
+1401     65     
+1402     97     
+1403     65     
+1404     97     
+1405     65     
+1406     97     
+1407     65     
+1408     97     
+1409     65     
+1410     97     
+1411     65     
+1412     97     
+1413     65     
+1414     97     
+1415     65     
+1416     97     
+1417     65     
+1418     97     
+1419     65     
+1420     97     
+1421     65     
+1422     97     
+1423     65     
+1424     97     
+1425     65     
+1426     97     
+1427     65     
+1428     97     
+1429     65     
+1430     97     
+1431     65     
+1432     97     
+1433     65     
+1434     97     
+1435     65     
+1436     97     
+1437     65     
+1438     97     
+1439     65     
+1440     97     
+1441     65     
+1442     97     
+1443     65     
+1444     97     
+1445     65     
+1446     97     
+1447     65     
+1448     97     
+1449     65     
+1450     97     
+1451     65     
+1452     97     
+1453     65     
+1454     97     
+1455     65     
+1456     97     
+1457     65     
+1458     97     
+1459     65     
+1460     97     
+1461     65     
+1462     97     
+1463     65     
+1464     97     
+1465     65     
+1466     97     
+1467     65     
+1468     97     
+1469     65     
+1470     97     
+1471     65     
+1472     97     
+1473     65     
+1474     97     
+1475     65     
+1476     97     
+1477     65     
+1478     97     
+1479     65     
+1480     97     
+1481     65     
+1482     97     
+1483     65     
+1484     97     
+1485     65     
+1486     97     
+1487     65     
+1488     97     
+1489     65     
+1490     97     
+1491     65     
+1492     97     
+1493     65     
+1494     97     
+1495     65     
+1496     97     
+1497     65     
+1498     97     
+1499     65     
+1500     97     
+1501     65     
+1502     97     
+1503     65     
+1504     97     
+1505     65     
+1506     97     
+1507     65     
+1508     97     
+1509     65     
+1510     97     
+1511     65     
+1512     97     
+1513     65     
+1514     97     
+1515     65     
+1516     97     
+1517     65     
+1518     97     
+1519     65     
+1520     97     
+1521     65     
+1522     97     
+1523     65     
+1524     97     
+1525     65     
+1526     97     
+1527     65     
+1528     97     
+1529     65     
+1530     97     
+1531     65     
+1532     97     
+1533     65     
+1534     97     
+1535     65     
+1536     97     
+1537     65     
+1538     97     
+1539     65     
+1540     97     
+1541     65     
+1542     97     
+1543     65     
+1544     97     
+1545     65     
+1546     97     
+1547     65     
+1548     97     
+1549     65     
+1550     97     
+1551     65     
+1552     97     
+1553     65     
+1554     97     
+1555     65     
+1556     97     
+1557     65     
+1558     97     
+1559     65     
+1560     97     
+1561     65     
+1562     97     
+1563     65     
+1564     97     
+1565     65     
+1566     97     
+1567     65     
+1568     97     
+1569     65     
+1570     97     
+1571     65     
+1572     97     
+1573     65     
+1574     97     
+1575     65     
+1576     97     
+1577     65     
+1578     97     
+1579     65     
+1580     97     
+1581     65     
+1582     97     
+1583     65     
+1584     97     
+1585     65     
+1586     97     
+1587     65     
+1588     97     
+1589     65     
+1590     97     
+1591     65     
+1592     97     
+1593     65     
+1594     97     
+1595     65     
+1596     97     
+1597     65     
+1598     97     
+1599     65     
+1600     97     
+1601     65     
+1602     97     
+1603     65     
+1604     97     
+1605     65     
+1606     97     
+1607     65     
+1608     97     
+1609     65     
+1610     97     
+1611     65     
+1612     97     
+1613     65     
+1614     97     
+1615     65     
+1616     97     
+1617     65     
+1618     97     
+1619     65     
+1620     97     
+1621     65     
+1622     97     
+1623     65     
+1624     97     
+1625     65     
+1626     97     
+1627     65     
+1628     97     
+1629     65     
+1630     97     
+1631     65     
+1632     97     
+1633     65     
+1634     97     
+1635     65     
+1636     97     
+1637     65     
+1638     97     
+1639     65     
+1640     97     
+1641     65     
+1642     97     
+1643     65     
+1644     97     
+1645     65     
+1646     97     
+1647     65     
+1648     97     
+1649     65     
+1650     97     
+1651     65     
+1652     97     
+1653     65     
+1654     97     
+1655     65     
+1656     97     
+1657     65     
+1658     97     
+1659     65     
+1660     97     
+1661     65     
+1662     97     
+1663     65     
+1664     97     
+1665     65     
+1666     97     
+1667     65     
+1668     97     
+1669     65     
+1670     97     
+1671     65     
+1672     97     
+1673     65     
+1674     97     
+1675     65     
+1676     97     
+1677     65     
+1678     97     
+1679     65     
+1680     97     
+1681     65     
+1682     97     
+1683     65     
+1684     97     
+1685     65     
+1686     97     
+1687     65     
+1688     97     
+1689     65     
+1690     97     
+1691     65     
+1692     97     
+1693     65     
+1694     97     
+1695     65     
+1696     97     
+1697     65     
+1698     97     
+1699     65     
+1700     97     
+1701     65     
+1702     97     
+1703     65     
+1704     97     
+1705     65     
+1706     97     
+1707     65     
+1708     97     
+1709     65     
+1710     97     
+1711     65     
+1712     97     
+1713     65     
+1714     97     
+1715     65     
+1716     97     
+1717     65     
+1718     97     
+1719     65     
+1720     97     
+1721     65     
+1722     97     
+1723     65     
+1724     97     
+1725     65     
+1726     97     
+1727     65     
+1728     97     
+1729     65     
+1730     97     
+1731     65     
+1732     97     
+1733     65     
+1734     97     
+1735     65     
+1736     97     
+1737     65     
+1738     97     
+1739     65     
+1740     97     
+1741     65     
+1742     97     
+1743     65     
+1744     97     
+1745     65     
+1746     97     
+1747     65     
+1748     97     
+1749     65     
+1750     97     
+1751     65     
+1752     97     
+1753     65     
+1754     97     
+1755     65     
+1756     97     
+1757     65     
+1758     97     
+1759     65     
+1760     97     
+1761     65     
+1762     97     
+1763     65     
+1764     97     
+1765     65     
+1766     97     
+1767     65     
+1768     97     
+1769     65     
+1770     97     
+1771     65     
+1772     97     
+1773     65     
+1774     97     
+1775     65     
+1776     97     
+1777     65     
+1778     97     
+1779     65     
+1780     97     
+1781     65     
+1782     97     
+1783     65     
+1784     97     
+1785     65     
+1786     97     
+1787     65     
+1788     97     
+1789     65     
+1790     97     
+1791     65     
+1792     97     
+1793     65     
+1794     97     
+1795     65     
+1796     97     
+1797     65     
+1798     97     
+1799     65     
+1800     97     
+1801     65     
+1802     97     
+1803     65     
+1804     97     
+1805     65     
+1806     97     
+1807     65     
+1808     97     
+1809     65     
+1810     97     
+1811     65     
+1812     97     
+1813     65     
+1814     97     
+1815     65     
+1816     97     
+1817     65     
+1818     97     
+1819     65     
+1820     97     
+1821     65     
+1822     97     
+1823     65     
+1824     97     
+1825     65     
+1826     97     
+1827     65     
+1828     97     
+1829     65     
+1830     97     
+1831     65     
+1832     97     
+1833     65     
+1834     97     
+1835     65     
+1836     97     
+1837     65     
+1838     97     
+1839     65     
+1840     97     
+1841     65     
+1842     97     
+1843     65     
+1844     97     
+1845     65     
+1846     97     
+1847     65     
+1848     97     
+1849     65     
+1850     97     
+1851     65     
+1852     97     
+1853     65     
+1854     97     
+1855     65     
+1856     97     
+1857     65     
+1858     97     
+1859     65     
+1860     97     
+1861     65     
+1862     97     
+1863     65     
+1864     97     
+1865     65     
+1866     97     
+1867     65     
+1868     97     
+1869     65     
+1870     97     
+1871     65     
+1872     97     
+1873     65     
+1874     97     
+1875     65     
+1876     97     
+1877     65     
+1878     97     
+1879     65     
+1880     97     
+1881     65     
+1882     97     
+1883     65     
+1884     97     
+1885     65     
+1886     97     
+1887     65     
+1888     97     
+1889     65     
+1890     97     
+1891     65     
+1892     97     
+1893     65     
+1894     97     
+1895     65     
+1896     97     
+1897     65     
+1898     97     
+1899     65     
+1900     97     
+1901     65     
+1902     97     
+1903     65     
+1904     97     
+1905     65     
+1906     97     
+1907     65     
+1908     97     
+1909     65     
+1910     97     
+1911     65     
+1912     97     
+1913     65     
+1914     97     
+1915     65     
+1916     97     
+1917     65     
+1918     97     
+1919     65     
+1920     97     
+1921     65     
+1922     97     
+1923     65     
+1924     97     
+1925     65     
+1926     97     
+1927     65     
+1928     97     
+1929     65     
+1930     97     
+1931     65     
+1932     97     
+1933     65     
+1934     97     
+1935     65     
+1936     97     
+1937     65     
+1938     97     
+1939     65     
+1940     97     
+1941     65     
+1942     97     
+1943     65     
+1944     97     
+1945     65     
+1946     97     
+1947     65     
+1948     97     
+1949     65     
+1950     97     
+1951     65     
+1952     97     
+1953     65     
+1954     97     
+1955     65     
+1956     97     
+1957     65     
+1958     97     
+1959     65     
+1960     97     
+1961     65     
+1962     97     
+1963     65     
+1964     97     
+1965     65     
+1966     97     
+1967     65     
+1968     97     
+1969     65     
+1970     97     
+1971     65     
+1972     97     
+1973     65     
+1974     97     
+1975     65     
+1976     97     
+1977     65     
+1978     97     
+1979     65     
+1980     97     
+1981     65     
+1982     97     
+1983     65     
+1984     97     
+1985     65     
+1986     97     
+1987     65     
+1988     97     
+1989     65     
+1990     97     
+1991     65     
+1992     97     
+1993     65     
+1994     97     
+1995     65     
+1996     97     
+1997     65     
+1998     97     
+1999     65     
+2000     97     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0

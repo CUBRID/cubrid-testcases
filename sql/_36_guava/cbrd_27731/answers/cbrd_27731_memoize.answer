@@ -1,0 +1,4539 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+25600
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Baseline totals; result = cache disabled     
+
+===================================================
+0
+===================================================
+matched    total    
+200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+matched    total    
+200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: Parity groups preserve both original values; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 3: Reversed values; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     6500000     
+1     100000     9700000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.rev) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     6500000     
+1     100000     9700000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.rev) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 4: Repeated identical original; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     6500000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.same) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     6500000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.same) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 5: Case sensitive collation control; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.cs) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.cs) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 6: Binary collation comparison; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     100000     9700000     
+1     100000     6500000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 7: NULL and empty string boundaries; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     50000     0     
+1     50000     3250000     
+2     50000     4850000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.edge) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     50000     0     
+1     50000     3250000     
+2     50000     4850000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.edge) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 8: Case insensitive SQL equality remains unchanged; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     200000     16200000     
+1     200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch=o.c group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     200000     16200000     
+1     200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch=o.c group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 9: Every outer row retains its own value; result = cache disabled     
+
+===================================================
+0
+===================================================
+id    matched    total    
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     9700     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     9700     
+9     100     6500     
+10     100     9700     
+11     100     6500     
+12     100     9700     
+13     100     6500     
+14     100     9700     
+15     100     6500     
+16     100     9700     
+17     100     6500     
+18     100     9700     
+19     100     6500     
+20     100     9700     
+21     100     6500     
+22     100     9700     
+23     100     6500     
+24     100     9700     
+25     100     6500     
+26     100     9700     
+27     100     6500     
+28     100     9700     
+29     100     6500     
+30     100     9700     
+31     100     6500     
+32     100     9700     
+33     100     6500     
+34     100     9700     
+35     100     6500     
+36     100     9700     
+37     100     6500     
+38     100     9700     
+39     100     6500     
+40     100     9700     
+41     100     6500     
+42     100     9700     
+43     100     6500     
+44     100     9700     
+45     100     6500     
+46     100     9700     
+47     100     6500     
+48     100     9700     
+49     100     6500     
+50     100     9700     
+51     100     6500     
+52     100     9700     
+53     100     6500     
+54     100     9700     
+55     100     6500     
+56     100     9700     
+57     100     6500     
+58     100     9700     
+59     100     6500     
+60     100     9700     
+61     100     6500     
+62     100     9700     
+63     100     6500     
+64     100     9700     
+65     100     6500     
+66     100     9700     
+67     100     6500     
+68     100     9700     
+69     100     6500     
+70     100     9700     
+71     100     6500     
+72     100     9700     
+73     100     6500     
+74     100     9700     
+75     100     6500     
+76     100     9700     
+77     100     6500     
+78     100     9700     
+79     100     6500     
+80     100     9700     
+81     100     6500     
+82     100     9700     
+83     100     6500     
+84     100     9700     
+85     100     6500     
+86     100     9700     
+87     100     6500     
+88     100     9700     
+89     100     6500     
+90     100     9700     
+91     100     6500     
+92     100     9700     
+93     100     6500     
+94     100     9700     
+95     100     6500     
+96     100     9700     
+97     100     6500     
+98     100     9700     
+99     100     6500     
+100     100     9700     
+101     100     6500     
+102     100     9700     
+103     100     6500     
+104     100     9700     
+105     100     6500     
+106     100     9700     
+107     100     6500     
+108     100     9700     
+109     100     6500     
+110     100     9700     
+111     100     6500     
+112     100     9700     
+113     100     6500     
+114     100     9700     
+115     100     6500     
+116     100     9700     
+117     100     6500     
+118     100     9700     
+119     100     6500     
+120     100     9700     
+121     100     6500     
+122     100     9700     
+123     100     6500     
+124     100     9700     
+125     100     6500     
+126     100     9700     
+127     100     6500     
+128     100     9700     
+129     100     6500     
+130     100     9700     
+131     100     6500     
+132     100     9700     
+133     100     6500     
+134     100     9700     
+135     100     6500     
+136     100     9700     
+137     100     6500     
+138     100     9700     
+139     100     6500     
+140     100     9700     
+141     100     6500     
+142     100     9700     
+143     100     6500     
+144     100     9700     
+145     100     6500     
+146     100     9700     
+147     100     6500     
+148     100     9700     
+149     100     6500     
+150     100     9700     
+151     100     6500     
+152     100     9700     
+153     100     6500     
+154     100     9700     
+155     100     6500     
+156     100     9700     
+157     100     6500     
+158     100     9700     
+159     100     6500     
+160     100     9700     
+161     100     6500     
+162     100     9700     
+163     100     6500     
+164     100     9700     
+165     100     6500     
+166     100     9700     
+167     100     6500     
+168     100     9700     
+169     100     6500     
+170     100     9700     
+171     100     6500     
+172     100     9700     
+173     100     6500     
+174     100     9700     
+175     100     6500     
+176     100     9700     
+177     100     6500     
+178     100     9700     
+179     100     6500     
+180     100     9700     
+181     100     6500     
+182     100     9700     
+183     100     6500     
+184     100     9700     
+185     100     6500     
+186     100     9700     
+187     100     6500     
+188     100     9700     
+189     100     6500     
+190     100     9700     
+191     100     6500     
+192     100     9700     
+193     100     6500     
+194     100     9700     
+195     100     6500     
+196     100     9700     
+197     100     6500     
+198     100     9700     
+199     100     6500     
+200     100     9700     
+201     100     6500     
+202     100     9700     
+203     100     6500     
+204     100     9700     
+205     100     6500     
+206     100     9700     
+207     100     6500     
+208     100     9700     
+209     100     6500     
+210     100     9700     
+211     100     6500     
+212     100     9700     
+213     100     6500     
+214     100     9700     
+215     100     6500     
+216     100     9700     
+217     100     6500     
+218     100     9700     
+219     100     6500     
+220     100     9700     
+221     100     6500     
+222     100     9700     
+223     100     6500     
+224     100     9700     
+225     100     6500     
+226     100     9700     
+227     100     6500     
+228     100     9700     
+229     100     6500     
+230     100     9700     
+231     100     6500     
+232     100     9700     
+233     100     6500     
+234     100     9700     
+235     100     6500     
+236     100     9700     
+237     100     6500     
+238     100     9700     
+239     100     6500     
+240     100     9700     
+241     100     6500     
+242     100     9700     
+243     100     6500     
+244     100     9700     
+245     100     6500     
+246     100     9700     
+247     100     6500     
+248     100     9700     
+249     100     6500     
+250     100     9700     
+251     100     6500     
+252     100     9700     
+253     100     6500     
+254     100     9700     
+255     100     6500     
+256     100     9700     
+257     100     6500     
+258     100     9700     
+259     100     6500     
+260     100     9700     
+261     100     6500     
+262     100     9700     
+263     100     6500     
+264     100     9700     
+265     100     6500     
+266     100     9700     
+267     100     6500     
+268     100     9700     
+269     100     6500     
+270     100     9700     
+271     100     6500     
+272     100     9700     
+273     100     6500     
+274     100     9700     
+275     100     6500     
+276     100     9700     
+277     100     6500     
+278     100     9700     
+279     100     6500     
+280     100     9700     
+281     100     6500     
+282     100     9700     
+283     100     6500     
+284     100     9700     
+285     100     6500     
+286     100     9700     
+287     100     6500     
+288     100     9700     
+289     100     6500     
+290     100     9700     
+291     100     6500     
+292     100     9700     
+293     100     6500     
+294     100     9700     
+295     100     6500     
+296     100     9700     
+297     100     6500     
+298     100     9700     
+299     100     6500     
+300     100     9700     
+301     100     6500     
+302     100     9700     
+303     100     6500     
+304     100     9700     
+305     100     6500     
+306     100     9700     
+307     100     6500     
+308     100     9700     
+309     100     6500     
+310     100     9700     
+311     100     6500     
+312     100     9700     
+313     100     6500     
+314     100     9700     
+315     100     6500     
+316     100     9700     
+317     100     6500     
+318     100     9700     
+319     100     6500     
+320     100     9700     
+321     100     6500     
+322     100     9700     
+323     100     6500     
+324     100     9700     
+325     100     6500     
+326     100     9700     
+327     100     6500     
+328     100     9700     
+329     100     6500     
+330     100     9700     
+331     100     6500     
+332     100     9700     
+333     100     6500     
+334     100     9700     
+335     100     6500     
+336     100     9700     
+337     100     6500     
+338     100     9700     
+339     100     6500     
+340     100     9700     
+341     100     6500     
+342     100     9700     
+343     100     6500     
+344     100     9700     
+345     100     6500     
+346     100     9700     
+347     100     6500     
+348     100     9700     
+349     100     6500     
+350     100     9700     
+351     100     6500     
+352     100     9700     
+353     100     6500     
+354     100     9700     
+355     100     6500     
+356     100     9700     
+357     100     6500     
+358     100     9700     
+359     100     6500     
+360     100     9700     
+361     100     6500     
+362     100     9700     
+363     100     6500     
+364     100     9700     
+365     100     6500     
+366     100     9700     
+367     100     6500     
+368     100     9700     
+369     100     6500     
+370     100     9700     
+371     100     6500     
+372     100     9700     
+373     100     6500     
+374     100     9700     
+375     100     6500     
+376     100     9700     
+377     100     6500     
+378     100     9700     
+379     100     6500     
+380     100     9700     
+381     100     6500     
+382     100     9700     
+383     100     6500     
+384     100     9700     
+385     100     6500     
+386     100     9700     
+387     100     6500     
+388     100     9700     
+389     100     6500     
+390     100     9700     
+391     100     6500     
+392     100     9700     
+393     100     6500     
+394     100     9700     
+395     100     6500     
+396     100     9700     
+397     100     6500     
+398     100     9700     
+399     100     6500     
+400     100     9700     
+401     100     6500     
+402     100     9700     
+403     100     6500     
+404     100     9700     
+405     100     6500     
+406     100     9700     
+407     100     6500     
+408     100     9700     
+409     100     6500     
+410     100     9700     
+411     100     6500     
+412     100     9700     
+413     100     6500     
+414     100     9700     
+415     100     6500     
+416     100     9700     
+417     100     6500     
+418     100     9700     
+419     100     6500     
+420     100     9700     
+421     100     6500     
+422     100     9700     
+423     100     6500     
+424     100     9700     
+425     100     6500     
+426     100     9700     
+427     100     6500     
+428     100     9700     
+429     100     6500     
+430     100     9700     
+431     100     6500     
+432     100     9700     
+433     100     6500     
+434     100     9700     
+435     100     6500     
+436     100     9700     
+437     100     6500     
+438     100     9700     
+439     100     6500     
+440     100     9700     
+441     100     6500     
+442     100     9700     
+443     100     6500     
+444     100     9700     
+445     100     6500     
+446     100     9700     
+447     100     6500     
+448     100     9700     
+449     100     6500     
+450     100     9700     
+451     100     6500     
+452     100     9700     
+453     100     6500     
+454     100     9700     
+455     100     6500     
+456     100     9700     
+457     100     6500     
+458     100     9700     
+459     100     6500     
+460     100     9700     
+461     100     6500     
+462     100     9700     
+463     100     6500     
+464     100     9700     
+465     100     6500     
+466     100     9700     
+467     100     6500     
+468     100     9700     
+469     100     6500     
+470     100     9700     
+471     100     6500     
+472     100     9700     
+473     100     6500     
+474     100     9700     
+475     100     6500     
+476     100     9700     
+477     100     6500     
+478     100     9700     
+479     100     6500     
+480     100     9700     
+481     100     6500     
+482     100     9700     
+483     100     6500     
+484     100     9700     
+485     100     6500     
+486     100     9700     
+487     100     6500     
+488     100     9700     
+489     100     6500     
+490     100     9700     
+491     100     6500     
+492     100     9700     
+493     100     6500     
+494     100     9700     
+495     100     6500     
+496     100     9700     
+497     100     6500     
+498     100     9700     
+499     100     6500     
+500     100     9700     
+501     100     6500     
+502     100     9700     
+503     100     6500     
+504     100     9700     
+505     100     6500     
+506     100     9700     
+507     100     6500     
+508     100     9700     
+509     100     6500     
+510     100     9700     
+511     100     6500     
+512     100     9700     
+513     100     6500     
+514     100     9700     
+515     100     6500     
+516     100     9700     
+517     100     6500     
+518     100     9700     
+519     100     6500     
+520     100     9700     
+521     100     6500     
+522     100     9700     
+523     100     6500     
+524     100     9700     
+525     100     6500     
+526     100     9700     
+527     100     6500     
+528     100     9700     
+529     100     6500     
+530     100     9700     
+531     100     6500     
+532     100     9700     
+533     100     6500     
+534     100     9700     
+535     100     6500     
+536     100     9700     
+537     100     6500     
+538     100     9700     
+539     100     6500     
+540     100     9700     
+541     100     6500     
+542     100     9700     
+543     100     6500     
+544     100     9700     
+545     100     6500     
+546     100     9700     
+547     100     6500     
+548     100     9700     
+549     100     6500     
+550     100     9700     
+551     100     6500     
+552     100     9700     
+553     100     6500     
+554     100     9700     
+555     100     6500     
+556     100     9700     
+557     100     6500     
+558     100     9700     
+559     100     6500     
+560     100     9700     
+561     100     6500     
+562     100     9700     
+563     100     6500     
+564     100     9700     
+565     100     6500     
+566     100     9700     
+567     100     6500     
+568     100     9700     
+569     100     6500     
+570     100     9700     
+571     100     6500     
+572     100     9700     
+573     100     6500     
+574     100     9700     
+575     100     6500     
+576     100     9700     
+577     100     6500     
+578     100     9700     
+579     100     6500     
+580     100     9700     
+581     100     6500     
+582     100     9700     
+583     100     6500     
+584     100     9700     
+585     100     6500     
+586     100     9700     
+587     100     6500     
+588     100     9700     
+589     100     6500     
+590     100     9700     
+591     100     6500     
+592     100     9700     
+593     100     6500     
+594     100     9700     
+595     100     6500     
+596     100     9700     
+597     100     6500     
+598     100     9700     
+599     100     6500     
+600     100     9700     
+601     100     6500     
+602     100     9700     
+603     100     6500     
+604     100     9700     
+605     100     6500     
+606     100     9700     
+607     100     6500     
+608     100     9700     
+609     100     6500     
+610     100     9700     
+611     100     6500     
+612     100     9700     
+613     100     6500     
+614     100     9700     
+615     100     6500     
+616     100     9700     
+617     100     6500     
+618     100     9700     
+619     100     6500     
+620     100     9700     
+621     100     6500     
+622     100     9700     
+623     100     6500     
+624     100     9700     
+625     100     6500     
+626     100     9700     
+627     100     6500     
+628     100     9700     
+629     100     6500     
+630     100     9700     
+631     100     6500     
+632     100     9700     
+633     100     6500     
+634     100     9700     
+635     100     6500     
+636     100     9700     
+637     100     6500     
+638     100     9700     
+639     100     6500     
+640     100     9700     
+641     100     6500     
+642     100     9700     
+643     100     6500     
+644     100     9700     
+645     100     6500     
+646     100     9700     
+647     100     6500     
+648     100     9700     
+649     100     6500     
+650     100     9700     
+651     100     6500     
+652     100     9700     
+653     100     6500     
+654     100     9700     
+655     100     6500     
+656     100     9700     
+657     100     6500     
+658     100     9700     
+659     100     6500     
+660     100     9700     
+661     100     6500     
+662     100     9700     
+663     100     6500     
+664     100     9700     
+665     100     6500     
+666     100     9700     
+667     100     6500     
+668     100     9700     
+669     100     6500     
+670     100     9700     
+671     100     6500     
+672     100     9700     
+673     100     6500     
+674     100     9700     
+675     100     6500     
+676     100     9700     
+677     100     6500     
+678     100     9700     
+679     100     6500     
+680     100     9700     
+681     100     6500     
+682     100     9700     
+683     100     6500     
+684     100     9700     
+685     100     6500     
+686     100     9700     
+687     100     6500     
+688     100     9700     
+689     100     6500     
+690     100     9700     
+691     100     6500     
+692     100     9700     
+693     100     6500     
+694     100     9700     
+695     100     6500     
+696     100     9700     
+697     100     6500     
+698     100     9700     
+699     100     6500     
+700     100     9700     
+701     100     6500     
+702     100     9700     
+703     100     6500     
+704     100     9700     
+705     100     6500     
+706     100     9700     
+707     100     6500     
+708     100     9700     
+709     100     6500     
+710     100     9700     
+711     100     6500     
+712     100     9700     
+713     100     6500     
+714     100     9700     
+715     100     6500     
+716     100     9700     
+717     100     6500     
+718     100     9700     
+719     100     6500     
+720     100     9700     
+721     100     6500     
+722     100     9700     
+723     100     6500     
+724     100     9700     
+725     100     6500     
+726     100     9700     
+727     100     6500     
+728     100     9700     
+729     100     6500     
+730     100     9700     
+731     100     6500     
+732     100     9700     
+733     100     6500     
+734     100     9700     
+735     100     6500     
+736     100     9700     
+737     100     6500     
+738     100     9700     
+739     100     6500     
+740     100     9700     
+741     100     6500     
+742     100     9700     
+743     100     6500     
+744     100     9700     
+745     100     6500     
+746     100     9700     
+747     100     6500     
+748     100     9700     
+749     100     6500     
+750     100     9700     
+751     100     6500     
+752     100     9700     
+753     100     6500     
+754     100     9700     
+755     100     6500     
+756     100     9700     
+757     100     6500     
+758     100     9700     
+759     100     6500     
+760     100     9700     
+761     100     6500     
+762     100     9700     
+763     100     6500     
+764     100     9700     
+765     100     6500     
+766     100     9700     
+767     100     6500     
+768     100     9700     
+769     100     6500     
+770     100     9700     
+771     100     6500     
+772     100     9700     
+773     100     6500     
+774     100     9700     
+775     100     6500     
+776     100     9700     
+777     100     6500     
+778     100     9700     
+779     100     6500     
+780     100     9700     
+781     100     6500     
+782     100     9700     
+783     100     6500     
+784     100     9700     
+785     100     6500     
+786     100     9700     
+787     100     6500     
+788     100     9700     
+789     100     6500     
+790     100     9700     
+791     100     6500     
+792     100     9700     
+793     100     6500     
+794     100     9700     
+795     100     6500     
+796     100     9700     
+797     100     6500     
+798     100     9700     
+799     100     6500     
+800     100     9700     
+801     100     6500     
+802     100     9700     
+803     100     6500     
+804     100     9700     
+805     100     6500     
+806     100     9700     
+807     100     6500     
+808     100     9700     
+809     100     6500     
+810     100     9700     
+811     100     6500     
+812     100     9700     
+813     100     6500     
+814     100     9700     
+815     100     6500     
+816     100     9700     
+817     100     6500     
+818     100     9700     
+819     100     6500     
+820     100     9700     
+821     100     6500     
+822     100     9700     
+823     100     6500     
+824     100     9700     
+825     100     6500     
+826     100     9700     
+827     100     6500     
+828     100     9700     
+829     100     6500     
+830     100     9700     
+831     100     6500     
+832     100     9700     
+833     100     6500     
+834     100     9700     
+835     100     6500     
+836     100     9700     
+837     100     6500     
+838     100     9700     
+839     100     6500     
+840     100     9700     
+841     100     6500     
+842     100     9700     
+843     100     6500     
+844     100     9700     
+845     100     6500     
+846     100     9700     
+847     100     6500     
+848     100     9700     
+849     100     6500     
+850     100     9700     
+851     100     6500     
+852     100     9700     
+853     100     6500     
+854     100     9700     
+855     100     6500     
+856     100     9700     
+857     100     6500     
+858     100     9700     
+859     100     6500     
+860     100     9700     
+861     100     6500     
+862     100     9700     
+863     100     6500     
+864     100     9700     
+865     100     6500     
+866     100     9700     
+867     100     6500     
+868     100     9700     
+869     100     6500     
+870     100     9700     
+871     100     6500     
+872     100     9700     
+873     100     6500     
+874     100     9700     
+875     100     6500     
+876     100     9700     
+877     100     6500     
+878     100     9700     
+879     100     6500     
+880     100     9700     
+881     100     6500     
+882     100     9700     
+883     100     6500     
+884     100     9700     
+885     100     6500     
+886     100     9700     
+887     100     6500     
+888     100     9700     
+889     100     6500     
+890     100     9700     
+891     100     6500     
+892     100     9700     
+893     100     6500     
+894     100     9700     
+895     100     6500     
+896     100     9700     
+897     100     6500     
+898     100     9700     
+899     100     6500     
+900     100     9700     
+901     100     6500     
+902     100     9700     
+903     100     6500     
+904     100     9700     
+905     100     6500     
+906     100     9700     
+907     100     6500     
+908     100     9700     
+909     100     6500     
+910     100     9700     
+911     100     6500     
+912     100     9700     
+913     100     6500     
+914     100     9700     
+915     100     6500     
+916     100     9700     
+917     100     6500     
+918     100     9700     
+919     100     6500     
+920     100     9700     
+921     100     6500     
+922     100     9700     
+923     100     6500     
+924     100     9700     
+925     100     6500     
+926     100     9700     
+927     100     6500     
+928     100     9700     
+929     100     6500     
+930     100     9700     
+931     100     6500     
+932     100     9700     
+933     100     6500     
+934     100     9700     
+935     100     6500     
+936     100     9700     
+937     100     6500     
+938     100     9700     
+939     100     6500     
+940     100     9700     
+941     100     6500     
+942     100     9700     
+943     100     6500     
+944     100     9700     
+945     100     6500     
+946     100     9700     
+947     100     6500     
+948     100     9700     
+949     100     6500     
+950     100     9700     
+951     100     6500     
+952     100     9700     
+953     100     6500     
+954     100     9700     
+955     100     6500     
+956     100     9700     
+957     100     6500     
+958     100     9700     
+959     100     6500     
+960     100     9700     
+961     100     6500     
+962     100     9700     
+963     100     6500     
+964     100     9700     
+965     100     6500     
+966     100     9700     
+967     100     6500     
+968     100     9700     
+969     100     6500     
+970     100     9700     
+971     100     6500     
+972     100     9700     
+973     100     6500     
+974     100     9700     
+975     100     6500     
+976     100     9700     
+977     100     6500     
+978     100     9700     
+979     100     6500     
+980     100     9700     
+981     100     6500     
+982     100     9700     
+983     100     6500     
+984     100     9700     
+985     100     6500     
+986     100     9700     
+987     100     6500     
+988     100     9700     
+989     100     6500     
+990     100     9700     
+991     100     6500     
+992     100     9700     
+993     100     6500     
+994     100     9700     
+995     100     6500     
+996     100     9700     
+997     100     6500     
+998     100     9700     
+999     100     6500     
+1000     100     9700     
+1001     100     6500     
+1002     100     9700     
+1003     100     6500     
+1004     100     9700     
+1005     100     6500     
+1006     100     9700     
+1007     100     6500     
+1008     100     9700     
+1009     100     6500     
+1010     100     9700     
+1011     100     6500     
+1012     100     9700     
+1013     100     6500     
+1014     100     9700     
+1015     100     6500     
+1016     100     9700     
+1017     100     6500     
+1018     100     9700     
+1019     100     6500     
+1020     100     9700     
+1021     100     6500     
+1022     100     9700     
+1023     100     6500     
+1024     100     9700     
+1025     100     6500     
+1026     100     9700     
+1027     100     6500     
+1028     100     9700     
+1029     100     6500     
+1030     100     9700     
+1031     100     6500     
+1032     100     9700     
+1033     100     6500     
+1034     100     9700     
+1035     100     6500     
+1036     100     9700     
+1037     100     6500     
+1038     100     9700     
+1039     100     6500     
+1040     100     9700     
+1041     100     6500     
+1042     100     9700     
+1043     100     6500     
+1044     100     9700     
+1045     100     6500     
+1046     100     9700     
+1047     100     6500     
+1048     100     9700     
+1049     100     6500     
+1050     100     9700     
+1051     100     6500     
+1052     100     9700     
+1053     100     6500     
+1054     100     9700     
+1055     100     6500     
+1056     100     9700     
+1057     100     6500     
+1058     100     9700     
+1059     100     6500     
+1060     100     9700     
+1061     100     6500     
+1062     100     9700     
+1063     100     6500     
+1064     100     9700     
+1065     100     6500     
+1066     100     9700     
+1067     100     6500     
+1068     100     9700     
+1069     100     6500     
+1070     100     9700     
+1071     100     6500     
+1072     100     9700     
+1073     100     6500     
+1074     100     9700     
+1075     100     6500     
+1076     100     9700     
+1077     100     6500     
+1078     100     9700     
+1079     100     6500     
+1080     100     9700     
+1081     100     6500     
+1082     100     9700     
+1083     100     6500     
+1084     100     9700     
+1085     100     6500     
+1086     100     9700     
+1087     100     6500     
+1088     100     9700     
+1089     100     6500     
+1090     100     9700     
+1091     100     6500     
+1092     100     9700     
+1093     100     6500     
+1094     100     9700     
+1095     100     6500     
+1096     100     9700     
+1097     100     6500     
+1098     100     9700     
+1099     100     6500     
+1100     100     9700     
+1101     100     6500     
+1102     100     9700     
+1103     100     6500     
+1104     100     9700     
+1105     100     6500     
+1106     100     9700     
+1107     100     6500     
+1108     100     9700     
+1109     100     6500     
+1110     100     9700     
+1111     100     6500     
+1112     100     9700     
+1113     100     6500     
+1114     100     9700     
+1115     100     6500     
+1116     100     9700     
+1117     100     6500     
+1118     100     9700     
+1119     100     6500     
+1120     100     9700     
+1121     100     6500     
+1122     100     9700     
+1123     100     6500     
+1124     100     9700     
+1125     100     6500     
+1126     100     9700     
+1127     100     6500     
+1128     100     9700     
+1129     100     6500     
+1130     100     9700     
+1131     100     6500     
+1132     100     9700     
+1133     100     6500     
+1134     100     9700     
+1135     100     6500     
+1136     100     9700     
+1137     100     6500     
+1138     100     9700     
+1139     100     6500     
+1140     100     9700     
+1141     100     6500     
+1142     100     9700     
+1143     100     6500     
+1144     100     9700     
+1145     100     6500     
+1146     100     9700     
+1147     100     6500     
+1148     100     9700     
+1149     100     6500     
+1150     100     9700     
+1151     100     6500     
+1152     100     9700     
+1153     100     6500     
+1154     100     9700     
+1155     100     6500     
+1156     100     9700     
+1157     100     6500     
+1158     100     9700     
+1159     100     6500     
+1160     100     9700     
+1161     100     6500     
+1162     100     9700     
+1163     100     6500     
+1164     100     9700     
+1165     100     6500     
+1166     100     9700     
+1167     100     6500     
+1168     100     9700     
+1169     100     6500     
+1170     100     9700     
+1171     100     6500     
+1172     100     9700     
+1173     100     6500     
+1174     100     9700     
+1175     100     6500     
+1176     100     9700     
+1177     100     6500     
+1178     100     9700     
+1179     100     6500     
+1180     100     9700     
+1181     100     6500     
+1182     100     9700     
+1183     100     6500     
+1184     100     9700     
+1185     100     6500     
+1186     100     9700     
+1187     100     6500     
+1188     100     9700     
+1189     100     6500     
+1190     100     9700     
+1191     100     6500     
+1192     100     9700     
+1193     100     6500     
+1194     100     9700     
+1195     100     6500     
+1196     100     9700     
+1197     100     6500     
+1198     100     9700     
+1199     100     6500     
+1200     100     9700     
+1201     100     6500     
+1202     100     9700     
+1203     100     6500     
+1204     100     9700     
+1205     100     6500     
+1206     100     9700     
+1207     100     6500     
+1208     100     9700     
+1209     100     6500     
+1210     100     9700     
+1211     100     6500     
+1212     100     9700     
+1213     100     6500     
+1214     100     9700     
+1215     100     6500     
+1216     100     9700     
+1217     100     6500     
+1218     100     9700     
+1219     100     6500     
+1220     100     9700     
+1221     100     6500     
+1222     100     9700     
+1223     100     6500     
+1224     100     9700     
+1225     100     6500     
+1226     100     9700     
+1227     100     6500     
+1228     100     9700     
+1229     100     6500     
+1230     100     9700     
+1231     100     6500     
+1232     100     9700     
+1233     100     6500     
+1234     100     9700     
+1235     100     6500     
+1236     100     9700     
+1237     100     6500     
+1238     100     9700     
+1239     100     6500     
+1240     100     9700     
+1241     100     6500     
+1242     100     9700     
+1243     100     6500     
+1244     100     9700     
+1245     100     6500     
+1246     100     9700     
+1247     100     6500     
+1248     100     9700     
+1249     100     6500     
+1250     100     9700     
+1251     100     6500     
+1252     100     9700     
+1253     100     6500     
+1254     100     9700     
+1255     100     6500     
+1256     100     9700     
+1257     100     6500     
+1258     100     9700     
+1259     100     6500     
+1260     100     9700     
+1261     100     6500     
+1262     100     9700     
+1263     100     6500     
+1264     100     9700     
+1265     100     6500     
+1266     100     9700     
+1267     100     6500     
+1268     100     9700     
+1269     100     6500     
+1270     100     9700     
+1271     100     6500     
+1272     100     9700     
+1273     100     6500     
+1274     100     9700     
+1275     100     6500     
+1276     100     9700     
+1277     100     6500     
+1278     100     9700     
+1279     100     6500     
+1280     100     9700     
+1281     100     6500     
+1282     100     9700     
+1283     100     6500     
+1284     100     9700     
+1285     100     6500     
+1286     100     9700     
+1287     100     6500     
+1288     100     9700     
+1289     100     6500     
+1290     100     9700     
+1291     100     6500     
+1292     100     9700     
+1293     100     6500     
+1294     100     9700     
+1295     100     6500     
+1296     100     9700     
+1297     100     6500     
+1298     100     9700     
+1299     100     6500     
+1300     100     9700     
+1301     100     6500     
+1302     100     9700     
+1303     100     6500     
+1304     100     9700     
+1305     100     6500     
+1306     100     9700     
+1307     100     6500     
+1308     100     9700     
+1309     100     6500     
+1310     100     9700     
+1311     100     6500     
+1312     100     9700     
+1313     100     6500     
+1314     100     9700     
+1315     100     6500     
+1316     100     9700     
+1317     100     6500     
+1318     100     9700     
+1319     100     6500     
+1320     100     9700     
+1321     100     6500     
+1322     100     9700     
+1323     100     6500     
+1324     100     9700     
+1325     100     6500     
+1326     100     9700     
+1327     100     6500     
+1328     100     9700     
+1329     100     6500     
+1330     100     9700     
+1331     100     6500     
+1332     100     9700     
+1333     100     6500     
+1334     100     9700     
+1335     100     6500     
+1336     100     9700     
+1337     100     6500     
+1338     100     9700     
+1339     100     6500     
+1340     100     9700     
+1341     100     6500     
+1342     100     9700     
+1343     100     6500     
+1344     100     9700     
+1345     100     6500     
+1346     100     9700     
+1347     100     6500     
+1348     100     9700     
+1349     100     6500     
+1350     100     9700     
+1351     100     6500     
+1352     100     9700     
+1353     100     6500     
+1354     100     9700     
+1355     100     6500     
+1356     100     9700     
+1357     100     6500     
+1358     100     9700     
+1359     100     6500     
+1360     100     9700     
+1361     100     6500     
+1362     100     9700     
+1363     100     6500     
+1364     100     9700     
+1365     100     6500     
+1366     100     9700     
+1367     100     6500     
+1368     100     9700     
+1369     100     6500     
+1370     100     9700     
+1371     100     6500     
+1372     100     9700     
+1373     100     6500     
+1374     100     9700     
+1375     100     6500     
+1376     100     9700     
+1377     100     6500     
+1378     100     9700     
+1379     100     6500     
+1380     100     9700     
+1381     100     6500     
+1382     100     9700     
+1383     100     6500     
+1384     100     9700     
+1385     100     6500     
+1386     100     9700     
+1387     100     6500     
+1388     100     9700     
+1389     100     6500     
+1390     100     9700     
+1391     100     6500     
+1392     100     9700     
+1393     100     6500     
+1394     100     9700     
+1395     100     6500     
+1396     100     9700     
+1397     100     6500     
+1398     100     9700     
+1399     100     6500     
+1400     100     9700     
+1401     100     6500     
+1402     100     9700     
+1403     100     6500     
+1404     100     9700     
+1405     100     6500     
+1406     100     9700     
+1407     100     6500     
+1408     100     9700     
+1409     100     6500     
+1410     100     9700     
+1411     100     6500     
+1412     100     9700     
+1413     100     6500     
+1414     100     9700     
+1415     100     6500     
+1416     100     9700     
+1417     100     6500     
+1418     100     9700     
+1419     100     6500     
+1420     100     9700     
+1421     100     6500     
+1422     100     9700     
+1423     100     6500     
+1424     100     9700     
+1425     100     6500     
+1426     100     9700     
+1427     100     6500     
+1428     100     9700     
+1429     100     6500     
+1430     100     9700     
+1431     100     6500     
+1432     100     9700     
+1433     100     6500     
+1434     100     9700     
+1435     100     6500     
+1436     100     9700     
+1437     100     6500     
+1438     100     9700     
+1439     100     6500     
+1440     100     9700     
+1441     100     6500     
+1442     100     9700     
+1443     100     6500     
+1444     100     9700     
+1445     100     6500     
+1446     100     9700     
+1447     100     6500     
+1448     100     9700     
+1449     100     6500     
+1450     100     9700     
+1451     100     6500     
+1452     100     9700     
+1453     100     6500     
+1454     100     9700     
+1455     100     6500     
+1456     100     9700     
+1457     100     6500     
+1458     100     9700     
+1459     100     6500     
+1460     100     9700     
+1461     100     6500     
+1462     100     9700     
+1463     100     6500     
+1464     100     9700     
+1465     100     6500     
+1466     100     9700     
+1467     100     6500     
+1468     100     9700     
+1469     100     6500     
+1470     100     9700     
+1471     100     6500     
+1472     100     9700     
+1473     100     6500     
+1474     100     9700     
+1475     100     6500     
+1476     100     9700     
+1477     100     6500     
+1478     100     9700     
+1479     100     6500     
+1480     100     9700     
+1481     100     6500     
+1482     100     9700     
+1483     100     6500     
+1484     100     9700     
+1485     100     6500     
+1486     100     9700     
+1487     100     6500     
+1488     100     9700     
+1489     100     6500     
+1490     100     9700     
+1491     100     6500     
+1492     100     9700     
+1493     100     6500     
+1494     100     9700     
+1495     100     6500     
+1496     100     9700     
+1497     100     6500     
+1498     100     9700     
+1499     100     6500     
+1500     100     9700     
+1501     100     6500     
+1502     100     9700     
+1503     100     6500     
+1504     100     9700     
+1505     100     6500     
+1506     100     9700     
+1507     100     6500     
+1508     100     9700     
+1509     100     6500     
+1510     100     9700     
+1511     100     6500     
+1512     100     9700     
+1513     100     6500     
+1514     100     9700     
+1515     100     6500     
+1516     100     9700     
+1517     100     6500     
+1518     100     9700     
+1519     100     6500     
+1520     100     9700     
+1521     100     6500     
+1522     100     9700     
+1523     100     6500     
+1524     100     9700     
+1525     100     6500     
+1526     100     9700     
+1527     100     6500     
+1528     100     9700     
+1529     100     6500     
+1530     100     9700     
+1531     100     6500     
+1532     100     9700     
+1533     100     6500     
+1534     100     9700     
+1535     100     6500     
+1536     100     9700     
+1537     100     6500     
+1538     100     9700     
+1539     100     6500     
+1540     100     9700     
+1541     100     6500     
+1542     100     9700     
+1543     100     6500     
+1544     100     9700     
+1545     100     6500     
+1546     100     9700     
+1547     100     6500     
+1548     100     9700     
+1549     100     6500     
+1550     100     9700     
+1551     100     6500     
+1552     100     9700     
+1553     100     6500     
+1554     100     9700     
+1555     100     6500     
+1556     100     9700     
+1557     100     6500     
+1558     100     9700     
+1559     100     6500     
+1560     100     9700     
+1561     100     6500     
+1562     100     9700     
+1563     100     6500     
+1564     100     9700     
+1565     100     6500     
+1566     100     9700     
+1567     100     6500     
+1568     100     9700     
+1569     100     6500     
+1570     100     9700     
+1571     100     6500     
+1572     100     9700     
+1573     100     6500     
+1574     100     9700     
+1575     100     6500     
+1576     100     9700     
+1577     100     6500     
+1578     100     9700     
+1579     100     6500     
+1580     100     9700     
+1581     100     6500     
+1582     100     9700     
+1583     100     6500     
+1584     100     9700     
+1585     100     6500     
+1586     100     9700     
+1587     100     6500     
+1588     100     9700     
+1589     100     6500     
+1590     100     9700     
+1591     100     6500     
+1592     100     9700     
+1593     100     6500     
+1594     100     9700     
+1595     100     6500     
+1596     100     9700     
+1597     100     6500     
+1598     100     9700     
+1599     100     6500     
+1600     100     9700     
+1601     100     6500     
+1602     100     9700     
+1603     100     6500     
+1604     100     9700     
+1605     100     6500     
+1606     100     9700     
+1607     100     6500     
+1608     100     9700     
+1609     100     6500     
+1610     100     9700     
+1611     100     6500     
+1612     100     9700     
+1613     100     6500     
+1614     100     9700     
+1615     100     6500     
+1616     100     9700     
+1617     100     6500     
+1618     100     9700     
+1619     100     6500     
+1620     100     9700     
+1621     100     6500     
+1622     100     9700     
+1623     100     6500     
+1624     100     9700     
+1625     100     6500     
+1626     100     9700     
+1627     100     6500     
+1628     100     9700     
+1629     100     6500     
+1630     100     9700     
+1631     100     6500     
+1632     100     9700     
+1633     100     6500     
+1634     100     9700     
+1635     100     6500     
+1636     100     9700     
+1637     100     6500     
+1638     100     9700     
+1639     100     6500     
+1640     100     9700     
+1641     100     6500     
+1642     100     9700     
+1643     100     6500     
+1644     100     9700     
+1645     100     6500     
+1646     100     9700     
+1647     100     6500     
+1648     100     9700     
+1649     100     6500     
+1650     100     9700     
+1651     100     6500     
+1652     100     9700     
+1653     100     6500     
+1654     100     9700     
+1655     100     6500     
+1656     100     9700     
+1657     100     6500     
+1658     100     9700     
+1659     100     6500     
+1660     100     9700     
+1661     100     6500     
+1662     100     9700     
+1663     100     6500     
+1664     100     9700     
+1665     100     6500     
+1666     100     9700     
+1667     100     6500     
+1668     100     9700     
+1669     100     6500     
+1670     100     9700     
+1671     100     6500     
+1672     100     9700     
+1673     100     6500     
+1674     100     9700     
+1675     100     6500     
+1676     100     9700     
+1677     100     6500     
+1678     100     9700     
+1679     100     6500     
+1680     100     9700     
+1681     100     6500     
+1682     100     9700     
+1683     100     6500     
+1684     100     9700     
+1685     100     6500     
+1686     100     9700     
+1687     100     6500     
+1688     100     9700     
+1689     100     6500     
+1690     100     9700     
+1691     100     6500     
+1692     100     9700     
+1693     100     6500     
+1694     100     9700     
+1695     100     6500     
+1696     100     9700     
+1697     100     6500     
+1698     100     9700     
+1699     100     6500     
+1700     100     9700     
+1701     100     6500     
+1702     100     9700     
+1703     100     6500     
+1704     100     9700     
+1705     100     6500     
+1706     100     9700     
+1707     100     6500     
+1708     100     9700     
+1709     100     6500     
+1710     100     9700     
+1711     100     6500     
+1712     100     9700     
+1713     100     6500     
+1714     100     9700     
+1715     100     6500     
+1716     100     9700     
+1717     100     6500     
+1718     100     9700     
+1719     100     6500     
+1720     100     9700     
+1721     100     6500     
+1722     100     9700     
+1723     100     6500     
+1724     100     9700     
+1725     100     6500     
+1726     100     9700     
+1727     100     6500     
+1728     100     9700     
+1729     100     6500     
+1730     100     9700     
+1731     100     6500     
+1732     100     9700     
+1733     100     6500     
+1734     100     9700     
+1735     100     6500     
+1736     100     9700     
+1737     100     6500     
+1738     100     9700     
+1739     100     6500     
+1740     100     9700     
+1741     100     6500     
+1742     100     9700     
+1743     100     6500     
+1744     100     9700     
+1745     100     6500     
+1746     100     9700     
+1747     100     6500     
+1748     100     9700     
+1749     100     6500     
+1750     100     9700     
+1751     100     6500     
+1752     100     9700     
+1753     100     6500     
+1754     100     9700     
+1755     100     6500     
+1756     100     9700     
+1757     100     6500     
+1758     100     9700     
+1759     100     6500     
+1760     100     9700     
+1761     100     6500     
+1762     100     9700     
+1763     100     6500     
+1764     100     9700     
+1765     100     6500     
+1766     100     9700     
+1767     100     6500     
+1768     100     9700     
+1769     100     6500     
+1770     100     9700     
+1771     100     6500     
+1772     100     9700     
+1773     100     6500     
+1774     100     9700     
+1775     100     6500     
+1776     100     9700     
+1777     100     6500     
+1778     100     9700     
+1779     100     6500     
+1780     100     9700     
+1781     100     6500     
+1782     100     9700     
+1783     100     6500     
+1784     100     9700     
+1785     100     6500     
+1786     100     9700     
+1787     100     6500     
+1788     100     9700     
+1789     100     6500     
+1790     100     9700     
+1791     100     6500     
+1792     100     9700     
+1793     100     6500     
+1794     100     9700     
+1795     100     6500     
+1796     100     9700     
+1797     100     6500     
+1798     100     9700     
+1799     100     6500     
+1800     100     9700     
+1801     100     6500     
+1802     100     9700     
+1803     100     6500     
+1804     100     9700     
+1805     100     6500     
+1806     100     9700     
+1807     100     6500     
+1808     100     9700     
+1809     100     6500     
+1810     100     9700     
+1811     100     6500     
+1812     100     9700     
+1813     100     6500     
+1814     100     9700     
+1815     100     6500     
+1816     100     9700     
+1817     100     6500     
+1818     100     9700     
+1819     100     6500     
+1820     100     9700     
+1821     100     6500     
+1822     100     9700     
+1823     100     6500     
+1824     100     9700     
+1825     100     6500     
+1826     100     9700     
+1827     100     6500     
+1828     100     9700     
+1829     100     6500     
+1830     100     9700     
+1831     100     6500     
+1832     100     9700     
+1833     100     6500     
+1834     100     9700     
+1835     100     6500     
+1836     100     9700     
+1837     100     6500     
+1838     100     9700     
+1839     100     6500     
+1840     100     9700     
+1841     100     6500     
+1842     100     9700     
+1843     100     6500     
+1844     100     9700     
+1845     100     6500     
+1846     100     9700     
+1847     100     6500     
+1848     100     9700     
+1849     100     6500     
+1850     100     9700     
+1851     100     6500     
+1852     100     9700     
+1853     100     6500     
+1854     100     9700     
+1855     100     6500     
+1856     100     9700     
+1857     100     6500     
+1858     100     9700     
+1859     100     6500     
+1860     100     9700     
+1861     100     6500     
+1862     100     9700     
+1863     100     6500     
+1864     100     9700     
+1865     100     6500     
+1866     100     9700     
+1867     100     6500     
+1868     100     9700     
+1869     100     6500     
+1870     100     9700     
+1871     100     6500     
+1872     100     9700     
+1873     100     6500     
+1874     100     9700     
+1875     100     6500     
+1876     100     9700     
+1877     100     6500     
+1878     100     9700     
+1879     100     6500     
+1880     100     9700     
+1881     100     6500     
+1882     100     9700     
+1883     100     6500     
+1884     100     9700     
+1885     100     6500     
+1886     100     9700     
+1887     100     6500     
+1888     100     9700     
+1889     100     6500     
+1890     100     9700     
+1891     100     6500     
+1892     100     9700     
+1893     100     6500     
+1894     100     9700     
+1895     100     6500     
+1896     100     9700     
+1897     100     6500     
+1898     100     9700     
+1899     100     6500     
+1900     100     9700     
+1901     100     6500     
+1902     100     9700     
+1903     100     6500     
+1904     100     9700     
+1905     100     6500     
+1906     100     9700     
+1907     100     6500     
+1908     100     9700     
+1909     100     6500     
+1910     100     9700     
+1911     100     6500     
+1912     100     9700     
+1913     100     6500     
+1914     100     9700     
+1915     100     6500     
+1916     100     9700     
+1917     100     6500     
+1918     100     9700     
+1919     100     6500     
+1920     100     9700     
+1921     100     6500     
+1922     100     9700     
+1923     100     6500     
+1924     100     9700     
+1925     100     6500     
+1926     100     9700     
+1927     100     6500     
+1928     100     9700     
+1929     100     6500     
+1930     100     9700     
+1931     100     6500     
+1932     100     9700     
+1933     100     6500     
+1934     100     9700     
+1935     100     6500     
+1936     100     9700     
+1937     100     6500     
+1938     100     9700     
+1939     100     6500     
+1940     100     9700     
+1941     100     6500     
+1942     100     9700     
+1943     100     6500     
+1944     100     9700     
+1945     100     6500     
+1946     100     9700     
+1947     100     6500     
+1948     100     9700     
+1949     100     6500     
+1950     100     9700     
+1951     100     6500     
+1952     100     9700     
+1953     100     6500     
+1954     100     9700     
+1955     100     6500     
+1956     100     9700     
+1957     100     6500     
+1958     100     9700     
+1959     100     6500     
+1960     100     9700     
+1961     100     6500     
+1962     100     9700     
+1963     100     6500     
+1964     100     9700     
+1965     100     6500     
+1966     100     9700     
+1967     100     6500     
+1968     100     9700     
+1969     100     6500     
+1970     100     9700     
+1971     100     6500     
+1972     100     9700     
+1973     100     6500     
+1974     100     9700     
+1975     100     6500     
+1976     100     9700     
+1977     100     6500     
+1978     100     9700     
+1979     100     6500     
+1980     100     9700     
+1981     100     6500     
+1982     100     9700     
+1983     100     6500     
+1984     100     9700     
+1985     100     6500     
+1986     100     9700     
+1987     100     6500     
+1988     100     9700     
+1989     100     6500     
+1990     100     9700     
+1991     100     6500     
+1992     100     9700     
+1993     100     6500     
+1994     100     9700     
+1995     100     6500     
+1996     100     9700     
+1997     100     6500     
+1998     100     9700     
+1999     100     6500     
+2000     100     9700     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ o.id, count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+id    matched    total    
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     9700     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     9700     
+9     100     6500     
+10     100     9700     
+11     100     6500     
+12     100     9700     
+13     100     6500     
+14     100     9700     
+15     100     6500     
+16     100     9700     
+17     100     6500     
+18     100     9700     
+19     100     6500     
+20     100     9700     
+21     100     6500     
+22     100     9700     
+23     100     6500     
+24     100     9700     
+25     100     6500     
+26     100     9700     
+27     100     6500     
+28     100     9700     
+29     100     6500     
+30     100     9700     
+31     100     6500     
+32     100     9700     
+33     100     6500     
+34     100     9700     
+35     100     6500     
+36     100     9700     
+37     100     6500     
+38     100     9700     
+39     100     6500     
+40     100     9700     
+41     100     6500     
+42     100     9700     
+43     100     6500     
+44     100     9700     
+45     100     6500     
+46     100     9700     
+47     100     6500     
+48     100     9700     
+49     100     6500     
+50     100     9700     
+51     100     6500     
+52     100     9700     
+53     100     6500     
+54     100     9700     
+55     100     6500     
+56     100     9700     
+57     100     6500     
+58     100     9700     
+59     100     6500     
+60     100     9700     
+61     100     6500     
+62     100     9700     
+63     100     6500     
+64     100     9700     
+65     100     6500     
+66     100     9700     
+67     100     6500     
+68     100     9700     
+69     100     6500     
+70     100     9700     
+71     100     6500     
+72     100     9700     
+73     100     6500     
+74     100     9700     
+75     100     6500     
+76     100     9700     
+77     100     6500     
+78     100     9700     
+79     100     6500     
+80     100     9700     
+81     100     6500     
+82     100     9700     
+83     100     6500     
+84     100     9700     
+85     100     6500     
+86     100     9700     
+87     100     6500     
+88     100     9700     
+89     100     6500     
+90     100     9700     
+91     100     6500     
+92     100     9700     
+93     100     6500     
+94     100     9700     
+95     100     6500     
+96     100     9700     
+97     100     6500     
+98     100     9700     
+99     100     6500     
+100     100     9700     
+101     100     6500     
+102     100     9700     
+103     100     6500     
+104     100     9700     
+105     100     6500     
+106     100     9700     
+107     100     6500     
+108     100     9700     
+109     100     6500     
+110     100     9700     
+111     100     6500     
+112     100     9700     
+113     100     6500     
+114     100     9700     
+115     100     6500     
+116     100     9700     
+117     100     6500     
+118     100     9700     
+119     100     6500     
+120     100     9700     
+121     100     6500     
+122     100     9700     
+123     100     6500     
+124     100     9700     
+125     100     6500     
+126     100     9700     
+127     100     6500     
+128     100     9700     
+129     100     6500     
+130     100     9700     
+131     100     6500     
+132     100     9700     
+133     100     6500     
+134     100     9700     
+135     100     6500     
+136     100     9700     
+137     100     6500     
+138     100     9700     
+139     100     6500     
+140     100     9700     
+141     100     6500     
+142     100     9700     
+143     100     6500     
+144     100     9700     
+145     100     6500     
+146     100     9700     
+147     100     6500     
+148     100     9700     
+149     100     6500     
+150     100     9700     
+151     100     6500     
+152     100     9700     
+153     100     6500     
+154     100     9700     
+155     100     6500     
+156     100     9700     
+157     100     6500     
+158     100     9700     
+159     100     6500     
+160     100     9700     
+161     100     6500     
+162     100     9700     
+163     100     6500     
+164     100     9700     
+165     100     6500     
+166     100     9700     
+167     100     6500     
+168     100     9700     
+169     100     6500     
+170     100     9700     
+171     100     6500     
+172     100     9700     
+173     100     6500     
+174     100     9700     
+175     100     6500     
+176     100     9700     
+177     100     6500     
+178     100     9700     
+179     100     6500     
+180     100     9700     
+181     100     6500     
+182     100     9700     
+183     100     6500     
+184     100     9700     
+185     100     6500     
+186     100     9700     
+187     100     6500     
+188     100     9700     
+189     100     6500     
+190     100     9700     
+191     100     6500     
+192     100     9700     
+193     100     6500     
+194     100     9700     
+195     100     6500     
+196     100     9700     
+197     100     6500     
+198     100     9700     
+199     100     6500     
+200     100     9700     
+201     100     6500     
+202     100     9700     
+203     100     6500     
+204     100     9700     
+205     100     6500     
+206     100     9700     
+207     100     6500     
+208     100     9700     
+209     100     6500     
+210     100     9700     
+211     100     6500     
+212     100     9700     
+213     100     6500     
+214     100     9700     
+215     100     6500     
+216     100     9700     
+217     100     6500     
+218     100     9700     
+219     100     6500     
+220     100     9700     
+221     100     6500     
+222     100     9700     
+223     100     6500     
+224     100     9700     
+225     100     6500     
+226     100     9700     
+227     100     6500     
+228     100     9700     
+229     100     6500     
+230     100     9700     
+231     100     6500     
+232     100     9700     
+233     100     6500     
+234     100     9700     
+235     100     6500     
+236     100     9700     
+237     100     6500     
+238     100     9700     
+239     100     6500     
+240     100     9700     
+241     100     6500     
+242     100     9700     
+243     100     6500     
+244     100     9700     
+245     100     6500     
+246     100     9700     
+247     100     6500     
+248     100     9700     
+249     100     6500     
+250     100     9700     
+251     100     6500     
+252     100     9700     
+253     100     6500     
+254     100     9700     
+255     100     6500     
+256     100     9700     
+257     100     6500     
+258     100     9700     
+259     100     6500     
+260     100     9700     
+261     100     6500     
+262     100     9700     
+263     100     6500     
+264     100     9700     
+265     100     6500     
+266     100     9700     
+267     100     6500     
+268     100     9700     
+269     100     6500     
+270     100     9700     
+271     100     6500     
+272     100     9700     
+273     100     6500     
+274     100     9700     
+275     100     6500     
+276     100     9700     
+277     100     6500     
+278     100     9700     
+279     100     6500     
+280     100     9700     
+281     100     6500     
+282     100     9700     
+283     100     6500     
+284     100     9700     
+285     100     6500     
+286     100     9700     
+287     100     6500     
+288     100     9700     
+289     100     6500     
+290     100     9700     
+291     100     6500     
+292     100     9700     
+293     100     6500     
+294     100     9700     
+295     100     6500     
+296     100     9700     
+297     100     6500     
+298     100     9700     
+299     100     6500     
+300     100     9700     
+301     100     6500     
+302     100     9700     
+303     100     6500     
+304     100     9700     
+305     100     6500     
+306     100     9700     
+307     100     6500     
+308     100     9700     
+309     100     6500     
+310     100     9700     
+311     100     6500     
+312     100     9700     
+313     100     6500     
+314     100     9700     
+315     100     6500     
+316     100     9700     
+317     100     6500     
+318     100     9700     
+319     100     6500     
+320     100     9700     
+321     100     6500     
+322     100     9700     
+323     100     6500     
+324     100     9700     
+325     100     6500     
+326     100     9700     
+327     100     6500     
+328     100     9700     
+329     100     6500     
+330     100     9700     
+331     100     6500     
+332     100     9700     
+333     100     6500     
+334     100     9700     
+335     100     6500     
+336     100     9700     
+337     100     6500     
+338     100     9700     
+339     100     6500     
+340     100     9700     
+341     100     6500     
+342     100     9700     
+343     100     6500     
+344     100     9700     
+345     100     6500     
+346     100     9700     
+347     100     6500     
+348     100     9700     
+349     100     6500     
+350     100     9700     
+351     100     6500     
+352     100     9700     
+353     100     6500     
+354     100     9700     
+355     100     6500     
+356     100     9700     
+357     100     6500     
+358     100     9700     
+359     100     6500     
+360     100     9700     
+361     100     6500     
+362     100     9700     
+363     100     6500     
+364     100     9700     
+365     100     6500     
+366     100     9700     
+367     100     6500     
+368     100     9700     
+369     100     6500     
+370     100     9700     
+371     100     6500     
+372     100     9700     
+373     100     6500     
+374     100     9700     
+375     100     6500     
+376     100     9700     
+377     100     6500     
+378     100     9700     
+379     100     6500     
+380     100     9700     
+381     100     6500     
+382     100     9700     
+383     100     6500     
+384     100     9700     
+385     100     6500     
+386     100     9700     
+387     100     6500     
+388     100     9700     
+389     100     6500     
+390     100     9700     
+391     100     6500     
+392     100     9700     
+393     100     6500     
+394     100     9700     
+395     100     6500     
+396     100     9700     
+397     100     6500     
+398     100     9700     
+399     100     6500     
+400     100     9700     
+401     100     6500     
+402     100     9700     
+403     100     6500     
+404     100     9700     
+405     100     6500     
+406     100     9700     
+407     100     6500     
+408     100     9700     
+409     100     6500     
+410     100     9700     
+411     100     6500     
+412     100     9700     
+413     100     6500     
+414     100     9700     
+415     100     6500     
+416     100     9700     
+417     100     6500     
+418     100     9700     
+419     100     6500     
+420     100     9700     
+421     100     6500     
+422     100     9700     
+423     100     6500     
+424     100     9700     
+425     100     6500     
+426     100     9700     
+427     100     6500     
+428     100     9700     
+429     100     6500     
+430     100     9700     
+431     100     6500     
+432     100     9700     
+433     100     6500     
+434     100     9700     
+435     100     6500     
+436     100     9700     
+437     100     6500     
+438     100     9700     
+439     100     6500     
+440     100     9700     
+441     100     6500     
+442     100     9700     
+443     100     6500     
+444     100     9700     
+445     100     6500     
+446     100     9700     
+447     100     6500     
+448     100     9700     
+449     100     6500     
+450     100     9700     
+451     100     6500     
+452     100     9700     
+453     100     6500     
+454     100     9700     
+455     100     6500     
+456     100     9700     
+457     100     6500     
+458     100     9700     
+459     100     6500     
+460     100     9700     
+461     100     6500     
+462     100     9700     
+463     100     6500     
+464     100     9700     
+465     100     6500     
+466     100     9700     
+467     100     6500     
+468     100     9700     
+469     100     6500     
+470     100     9700     
+471     100     6500     
+472     100     9700     
+473     100     6500     
+474     100     9700     
+475     100     6500     
+476     100     9700     
+477     100     6500     
+478     100     9700     
+479     100     6500     
+480     100     9700     
+481     100     6500     
+482     100     9700     
+483     100     6500     
+484     100     9700     
+485     100     6500     
+486     100     9700     
+487     100     6500     
+488     100     9700     
+489     100     6500     
+490     100     9700     
+491     100     6500     
+492     100     9700     
+493     100     6500     
+494     100     9700     
+495     100     6500     
+496     100     9700     
+497     100     6500     
+498     100     9700     
+499     100     6500     
+500     100     9700     
+501     100     6500     
+502     100     9700     
+503     100     6500     
+504     100     9700     
+505     100     6500     
+506     100     9700     
+507     100     6500     
+508     100     9700     
+509     100     6500     
+510     100     9700     
+511     100     6500     
+512     100     9700     
+513     100     6500     
+514     100     9700     
+515     100     6500     
+516     100     9700     
+517     100     6500     
+518     100     9700     
+519     100     6500     
+520     100     9700     
+521     100     6500     
+522     100     9700     
+523     100     6500     
+524     100     9700     
+525     100     6500     
+526     100     9700     
+527     100     6500     
+528     100     9700     
+529     100     6500     
+530     100     9700     
+531     100     6500     
+532     100     9700     
+533     100     6500     
+534     100     9700     
+535     100     6500     
+536     100     9700     
+537     100     6500     
+538     100     9700     
+539     100     6500     
+540     100     9700     
+541     100     6500     
+542     100     9700     
+543     100     6500     
+544     100     9700     
+545     100     6500     
+546     100     9700     
+547     100     6500     
+548     100     9700     
+549     100     6500     
+550     100     9700     
+551     100     6500     
+552     100     9700     
+553     100     6500     
+554     100     9700     
+555     100     6500     
+556     100     9700     
+557     100     6500     
+558     100     9700     
+559     100     6500     
+560     100     9700     
+561     100     6500     
+562     100     9700     
+563     100     6500     
+564     100     9700     
+565     100     6500     
+566     100     9700     
+567     100     6500     
+568     100     9700     
+569     100     6500     
+570     100     9700     
+571     100     6500     
+572     100     9700     
+573     100     6500     
+574     100     9700     
+575     100     6500     
+576     100     9700     
+577     100     6500     
+578     100     9700     
+579     100     6500     
+580     100     9700     
+581     100     6500     
+582     100     9700     
+583     100     6500     
+584     100     9700     
+585     100     6500     
+586     100     9700     
+587     100     6500     
+588     100     9700     
+589     100     6500     
+590     100     9700     
+591     100     6500     
+592     100     9700     
+593     100     6500     
+594     100     9700     
+595     100     6500     
+596     100     9700     
+597     100     6500     
+598     100     9700     
+599     100     6500     
+600     100     9700     
+601     100     6500     
+602     100     9700     
+603     100     6500     
+604     100     9700     
+605     100     6500     
+606     100     9700     
+607     100     6500     
+608     100     9700     
+609     100     6500     
+610     100     9700     
+611     100     6500     
+612     100     9700     
+613     100     6500     
+614     100     9700     
+615     100     6500     
+616     100     9700     
+617     100     6500     
+618     100     9700     
+619     100     6500     
+620     100     9700     
+621     100     6500     
+622     100     9700     
+623     100     6500     
+624     100     9700     
+625     100     6500     
+626     100     9700     
+627     100     6500     
+628     100     9700     
+629     100     6500     
+630     100     9700     
+631     100     6500     
+632     100     9700     
+633     100     6500     
+634     100     9700     
+635     100     6500     
+636     100     9700     
+637     100     6500     
+638     100     9700     
+639     100     6500     
+640     100     9700     
+641     100     6500     
+642     100     9700     
+643     100     6500     
+644     100     9700     
+645     100     6500     
+646     100     9700     
+647     100     6500     
+648     100     9700     
+649     100     6500     
+650     100     9700     
+651     100     6500     
+652     100     9700     
+653     100     6500     
+654     100     9700     
+655     100     6500     
+656     100     9700     
+657     100     6500     
+658     100     9700     
+659     100     6500     
+660     100     9700     
+661     100     6500     
+662     100     9700     
+663     100     6500     
+664     100     9700     
+665     100     6500     
+666     100     9700     
+667     100     6500     
+668     100     9700     
+669     100     6500     
+670     100     9700     
+671     100     6500     
+672     100     9700     
+673     100     6500     
+674     100     9700     
+675     100     6500     
+676     100     9700     
+677     100     6500     
+678     100     9700     
+679     100     6500     
+680     100     9700     
+681     100     6500     
+682     100     9700     
+683     100     6500     
+684     100     9700     
+685     100     6500     
+686     100     9700     
+687     100     6500     
+688     100     9700     
+689     100     6500     
+690     100     9700     
+691     100     6500     
+692     100     9700     
+693     100     6500     
+694     100     9700     
+695     100     6500     
+696     100     9700     
+697     100     6500     
+698     100     9700     
+699     100     6500     
+700     100     9700     
+701     100     6500     
+702     100     9700     
+703     100     6500     
+704     100     9700     
+705     100     6500     
+706     100     9700     
+707     100     6500     
+708     100     9700     
+709     100     6500     
+710     100     9700     
+711     100     6500     
+712     100     9700     
+713     100     6500     
+714     100     9700     
+715     100     6500     
+716     100     9700     
+717     100     6500     
+718     100     9700     
+719     100     6500     
+720     100     9700     
+721     100     6500     
+722     100     9700     
+723     100     6500     
+724     100     9700     
+725     100     6500     
+726     100     9700     
+727     100     6500     
+728     100     9700     
+729     100     6500     
+730     100     9700     
+731     100     6500     
+732     100     9700     
+733     100     6500     
+734     100     9700     
+735     100     6500     
+736     100     9700     
+737     100     6500     
+738     100     9700     
+739     100     6500     
+740     100     9700     
+741     100     6500     
+742     100     9700     
+743     100     6500     
+744     100     9700     
+745     100     6500     
+746     100     9700     
+747     100     6500     
+748     100     9700     
+749     100     6500     
+750     100     9700     
+751     100     6500     
+752     100     9700     
+753     100     6500     
+754     100     9700     
+755     100     6500     
+756     100     9700     
+757     100     6500     
+758     100     9700     
+759     100     6500     
+760     100     9700     
+761     100     6500     
+762     100     9700     
+763     100     6500     
+764     100     9700     
+765     100     6500     
+766     100     9700     
+767     100     6500     
+768     100     9700     
+769     100     6500     
+770     100     9700     
+771     100     6500     
+772     100     9700     
+773     100     6500     
+774     100     9700     
+775     100     6500     
+776     100     9700     
+777     100     6500     
+778     100     9700     
+779     100     6500     
+780     100     9700     
+781     100     6500     
+782     100     9700     
+783     100     6500     
+784     100     9700     
+785     100     6500     
+786     100     9700     
+787     100     6500     
+788     100     9700     
+789     100     6500     
+790     100     9700     
+791     100     6500     
+792     100     9700     
+793     100     6500     
+794     100     9700     
+795     100     6500     
+796     100     9700     
+797     100     6500     
+798     100     9700     
+799     100     6500     
+800     100     9700     
+801     100     6500     
+802     100     9700     
+803     100     6500     
+804     100     9700     
+805     100     6500     
+806     100     9700     
+807     100     6500     
+808     100     9700     
+809     100     6500     
+810     100     9700     
+811     100     6500     
+812     100     9700     
+813     100     6500     
+814     100     9700     
+815     100     6500     
+816     100     9700     
+817     100     6500     
+818     100     9700     
+819     100     6500     
+820     100     9700     
+821     100     6500     
+822     100     9700     
+823     100     6500     
+824     100     9700     
+825     100     6500     
+826     100     9700     
+827     100     6500     
+828     100     9700     
+829     100     6500     
+830     100     9700     
+831     100     6500     
+832     100     9700     
+833     100     6500     
+834     100     9700     
+835     100     6500     
+836     100     9700     
+837     100     6500     
+838     100     9700     
+839     100     6500     
+840     100     9700     
+841     100     6500     
+842     100     9700     
+843     100     6500     
+844     100     9700     
+845     100     6500     
+846     100     9700     
+847     100     6500     
+848     100     9700     
+849     100     6500     
+850     100     9700     
+851     100     6500     
+852     100     9700     
+853     100     6500     
+854     100     9700     
+855     100     6500     
+856     100     9700     
+857     100     6500     
+858     100     9700     
+859     100     6500     
+860     100     9700     
+861     100     6500     
+862     100     9700     
+863     100     6500     
+864     100     9700     
+865     100     6500     
+866     100     9700     
+867     100     6500     
+868     100     9700     
+869     100     6500     
+870     100     9700     
+871     100     6500     
+872     100     9700     
+873     100     6500     
+874     100     9700     
+875     100     6500     
+876     100     9700     
+877     100     6500     
+878     100     9700     
+879     100     6500     
+880     100     9700     
+881     100     6500     
+882     100     9700     
+883     100     6500     
+884     100     9700     
+885     100     6500     
+886     100     9700     
+887     100     6500     
+888     100     9700     
+889     100     6500     
+890     100     9700     
+891     100     6500     
+892     100     9700     
+893     100     6500     
+894     100     9700     
+895     100     6500     
+896     100     9700     
+897     100     6500     
+898     100     9700     
+899     100     6500     
+900     100     9700     
+901     100     6500     
+902     100     9700     
+903     100     6500     
+904     100     9700     
+905     100     6500     
+906     100     9700     
+907     100     6500     
+908     100     9700     
+909     100     6500     
+910     100     9700     
+911     100     6500     
+912     100     9700     
+913     100     6500     
+914     100     9700     
+915     100     6500     
+916     100     9700     
+917     100     6500     
+918     100     9700     
+919     100     6500     
+920     100     9700     
+921     100     6500     
+922     100     9700     
+923     100     6500     
+924     100     9700     
+925     100     6500     
+926     100     9700     
+927     100     6500     
+928     100     9700     
+929     100     6500     
+930     100     9700     
+931     100     6500     
+932     100     9700     
+933     100     6500     
+934     100     9700     
+935     100     6500     
+936     100     9700     
+937     100     6500     
+938     100     9700     
+939     100     6500     
+940     100     9700     
+941     100     6500     
+942     100     9700     
+943     100     6500     
+944     100     9700     
+945     100     6500     
+946     100     9700     
+947     100     6500     
+948     100     9700     
+949     100     6500     
+950     100     9700     
+951     100     6500     
+952     100     9700     
+953     100     6500     
+954     100     9700     
+955     100     6500     
+956     100     9700     
+957     100     6500     
+958     100     9700     
+959     100     6500     
+960     100     9700     
+961     100     6500     
+962     100     9700     
+963     100     6500     
+964     100     9700     
+965     100     6500     
+966     100     9700     
+967     100     6500     
+968     100     9700     
+969     100     6500     
+970     100     9700     
+971     100     6500     
+972     100     9700     
+973     100     6500     
+974     100     9700     
+975     100     6500     
+976     100     9700     
+977     100     6500     
+978     100     9700     
+979     100     6500     
+980     100     9700     
+981     100     6500     
+982     100     9700     
+983     100     6500     
+984     100     9700     
+985     100     6500     
+986     100     9700     
+987     100     6500     
+988     100     9700     
+989     100     6500     
+990     100     9700     
+991     100     6500     
+992     100     9700     
+993     100     6500     
+994     100     9700     
+995     100     6500     
+996     100     9700     
+997     100     6500     
+998     100     9700     
+999     100     6500     
+1000     100     9700     
+1001     100     6500     
+1002     100     9700     
+1003     100     6500     
+1004     100     9700     
+1005     100     6500     
+1006     100     9700     
+1007     100     6500     
+1008     100     9700     
+1009     100     6500     
+1010     100     9700     
+1011     100     6500     
+1012     100     9700     
+1013     100     6500     
+1014     100     9700     
+1015     100     6500     
+1016     100     9700     
+1017     100     6500     
+1018     100     9700     
+1019     100     6500     
+1020     100     9700     
+1021     100     6500     
+1022     100     9700     
+1023     100     6500     
+1024     100     9700     
+1025     100     6500     
+1026     100     9700     
+1027     100     6500     
+1028     100     9700     
+1029     100     6500     
+1030     100     9700     
+1031     100     6500     
+1032     100     9700     
+1033     100     6500     
+1034     100     9700     
+1035     100     6500     
+1036     100     9700     
+1037     100     6500     
+1038     100     9700     
+1039     100     6500     
+1040     100     9700     
+1041     100     6500     
+1042     100     9700     
+1043     100     6500     
+1044     100     9700     
+1045     100     6500     
+1046     100     9700     
+1047     100     6500     
+1048     100     9700     
+1049     100     6500     
+1050     100     9700     
+1051     100     6500     
+1052     100     9700     
+1053     100     6500     
+1054     100     9700     
+1055     100     6500     
+1056     100     9700     
+1057     100     6500     
+1058     100     9700     
+1059     100     6500     
+1060     100     9700     
+1061     100     6500     
+1062     100     9700     
+1063     100     6500     
+1064     100     9700     
+1065     100     6500     
+1066     100     9700     
+1067     100     6500     
+1068     100     9700     
+1069     100     6500     
+1070     100     9700     
+1071     100     6500     
+1072     100     9700     
+1073     100     6500     
+1074     100     9700     
+1075     100     6500     
+1076     100     9700     
+1077     100     6500     
+1078     100     9700     
+1079     100     6500     
+1080     100     9700     
+1081     100     6500     
+1082     100     9700     
+1083     100     6500     
+1084     100     9700     
+1085     100     6500     
+1086     100     9700     
+1087     100     6500     
+1088     100     9700     
+1089     100     6500     
+1090     100     9700     
+1091     100     6500     
+1092     100     9700     
+1093     100     6500     
+1094     100     9700     
+1095     100     6500     
+1096     100     9700     
+1097     100     6500     
+1098     100     9700     
+1099     100     6500     
+1100     100     9700     
+1101     100     6500     
+1102     100     9700     
+1103     100     6500     
+1104     100     9700     
+1105     100     6500     
+1106     100     9700     
+1107     100     6500     
+1108     100     9700     
+1109     100     6500     
+1110     100     9700     
+1111     100     6500     
+1112     100     9700     
+1113     100     6500     
+1114     100     9700     
+1115     100     6500     
+1116     100     9700     
+1117     100     6500     
+1118     100     9700     
+1119     100     6500     
+1120     100     9700     
+1121     100     6500     
+1122     100     9700     
+1123     100     6500     
+1124     100     9700     
+1125     100     6500     
+1126     100     9700     
+1127     100     6500     
+1128     100     9700     
+1129     100     6500     
+1130     100     9700     
+1131     100     6500     
+1132     100     9700     
+1133     100     6500     
+1134     100     9700     
+1135     100     6500     
+1136     100     9700     
+1137     100     6500     
+1138     100     9700     
+1139     100     6500     
+1140     100     9700     
+1141     100     6500     
+1142     100     9700     
+1143     100     6500     
+1144     100     9700     
+1145     100     6500     
+1146     100     9700     
+1147     100     6500     
+1148     100     9700     
+1149     100     6500     
+1150     100     9700     
+1151     100     6500     
+1152     100     9700     
+1153     100     6500     
+1154     100     9700     
+1155     100     6500     
+1156     100     9700     
+1157     100     6500     
+1158     100     9700     
+1159     100     6500     
+1160     100     9700     
+1161     100     6500     
+1162     100     9700     
+1163     100     6500     
+1164     100     9700     
+1165     100     6500     
+1166     100     9700     
+1167     100     6500     
+1168     100     9700     
+1169     100     6500     
+1170     100     9700     
+1171     100     6500     
+1172     100     9700     
+1173     100     6500     
+1174     100     9700     
+1175     100     6500     
+1176     100     9700     
+1177     100     6500     
+1178     100     9700     
+1179     100     6500     
+1180     100     9700     
+1181     100     6500     
+1182     100     9700     
+1183     100     6500     
+1184     100     9700     
+1185     100     6500     
+1186     100     9700     
+1187     100     6500     
+1188     100     9700     
+1189     100     6500     
+1190     100     9700     
+1191     100     6500     
+1192     100     9700     
+1193     100     6500     
+1194     100     9700     
+1195     100     6500     
+1196     100     9700     
+1197     100     6500     
+1198     100     9700     
+1199     100     6500     
+1200     100     9700     
+1201     100     6500     
+1202     100     9700     
+1203     100     6500     
+1204     100     9700     
+1205     100     6500     
+1206     100     9700     
+1207     100     6500     
+1208     100     9700     
+1209     100     6500     
+1210     100     9700     
+1211     100     6500     
+1212     100     9700     
+1213     100     6500     
+1214     100     9700     
+1215     100     6500     
+1216     100     9700     
+1217     100     6500     
+1218     100     9700     
+1219     100     6500     
+1220     100     9700     
+1221     100     6500     
+1222     100     9700     
+1223     100     6500     
+1224     100     9700     
+1225     100     6500     
+1226     100     9700     
+1227     100     6500     
+1228     100     9700     
+1229     100     6500     
+1230     100     9700     
+1231     100     6500     
+1232     100     9700     
+1233     100     6500     
+1234     100     9700     
+1235     100     6500     
+1236     100     9700     
+1237     100     6500     
+1238     100     9700     
+1239     100     6500     
+1240     100     9700     
+1241     100     6500     
+1242     100     9700     
+1243     100     6500     
+1244     100     9700     
+1245     100     6500     
+1246     100     9700     
+1247     100     6500     
+1248     100     9700     
+1249     100     6500     
+1250     100     9700     
+1251     100     6500     
+1252     100     9700     
+1253     100     6500     
+1254     100     9700     
+1255     100     6500     
+1256     100     9700     
+1257     100     6500     
+1258     100     9700     
+1259     100     6500     
+1260     100     9700     
+1261     100     6500     
+1262     100     9700     
+1263     100     6500     
+1264     100     9700     
+1265     100     6500     
+1266     100     9700     
+1267     100     6500     
+1268     100     9700     
+1269     100     6500     
+1270     100     9700     
+1271     100     6500     
+1272     100     9700     
+1273     100     6500     
+1274     100     9700     
+1275     100     6500     
+1276     100     9700     
+1277     100     6500     
+1278     100     9700     
+1279     100     6500     
+1280     100     9700     
+1281     100     6500     
+1282     100     9700     
+1283     100     6500     
+1284     100     9700     
+1285     100     6500     
+1286     100     9700     
+1287     100     6500     
+1288     100     9700     
+1289     100     6500     
+1290     100     9700     
+1291     100     6500     
+1292     100     9700     
+1293     100     6500     
+1294     100     9700     
+1295     100     6500     
+1296     100     9700     
+1297     100     6500     
+1298     100     9700     
+1299     100     6500     
+1300     100     9700     
+1301     100     6500     
+1302     100     9700     
+1303     100     6500     
+1304     100     9700     
+1305     100     6500     
+1306     100     9700     
+1307     100     6500     
+1308     100     9700     
+1309     100     6500     
+1310     100     9700     
+1311     100     6500     
+1312     100     9700     
+1313     100     6500     
+1314     100     9700     
+1315     100     6500     
+1316     100     9700     
+1317     100     6500     
+1318     100     9700     
+1319     100     6500     
+1320     100     9700     
+1321     100     6500     
+1322     100     9700     
+1323     100     6500     
+1324     100     9700     
+1325     100     6500     
+1326     100     9700     
+1327     100     6500     
+1328     100     9700     
+1329     100     6500     
+1330     100     9700     
+1331     100     6500     
+1332     100     9700     
+1333     100     6500     
+1334     100     9700     
+1335     100     6500     
+1336     100     9700     
+1337     100     6500     
+1338     100     9700     
+1339     100     6500     
+1340     100     9700     
+1341     100     6500     
+1342     100     9700     
+1343     100     6500     
+1344     100     9700     
+1345     100     6500     
+1346     100     9700     
+1347     100     6500     
+1348     100     9700     
+1349     100     6500     
+1350     100     9700     
+1351     100     6500     
+1352     100     9700     
+1353     100     6500     
+1354     100     9700     
+1355     100     6500     
+1356     100     9700     
+1357     100     6500     
+1358     100     9700     
+1359     100     6500     
+1360     100     9700     
+1361     100     6500     
+1362     100     9700     
+1363     100     6500     
+1364     100     9700     
+1365     100     6500     
+1366     100     9700     
+1367     100     6500     
+1368     100     9700     
+1369     100     6500     
+1370     100     9700     
+1371     100     6500     
+1372     100     9700     
+1373     100     6500     
+1374     100     9700     
+1375     100     6500     
+1376     100     9700     
+1377     100     6500     
+1378     100     9700     
+1379     100     6500     
+1380     100     9700     
+1381     100     6500     
+1382     100     9700     
+1383     100     6500     
+1384     100     9700     
+1385     100     6500     
+1386     100     9700     
+1387     100     6500     
+1388     100     9700     
+1389     100     6500     
+1390     100     9700     
+1391     100     6500     
+1392     100     9700     
+1393     100     6500     
+1394     100     9700     
+1395     100     6500     
+1396     100     9700     
+1397     100     6500     
+1398     100     9700     
+1399     100     6500     
+1400     100     9700     
+1401     100     6500     
+1402     100     9700     
+1403     100     6500     
+1404     100     9700     
+1405     100     6500     
+1406     100     9700     
+1407     100     6500     
+1408     100     9700     
+1409     100     6500     
+1410     100     9700     
+1411     100     6500     
+1412     100     9700     
+1413     100     6500     
+1414     100     9700     
+1415     100     6500     
+1416     100     9700     
+1417     100     6500     
+1418     100     9700     
+1419     100     6500     
+1420     100     9700     
+1421     100     6500     
+1422     100     9700     
+1423     100     6500     
+1424     100     9700     
+1425     100     6500     
+1426     100     9700     
+1427     100     6500     
+1428     100     9700     
+1429     100     6500     
+1430     100     9700     
+1431     100     6500     
+1432     100     9700     
+1433     100     6500     
+1434     100     9700     
+1435     100     6500     
+1436     100     9700     
+1437     100     6500     
+1438     100     9700     
+1439     100     6500     
+1440     100     9700     
+1441     100     6500     
+1442     100     9700     
+1443     100     6500     
+1444     100     9700     
+1445     100     6500     
+1446     100     9700     
+1447     100     6500     
+1448     100     9700     
+1449     100     6500     
+1450     100     9700     
+1451     100     6500     
+1452     100     9700     
+1453     100     6500     
+1454     100     9700     
+1455     100     6500     
+1456     100     9700     
+1457     100     6500     
+1458     100     9700     
+1459     100     6500     
+1460     100     9700     
+1461     100     6500     
+1462     100     9700     
+1463     100     6500     
+1464     100     9700     
+1465     100     6500     
+1466     100     9700     
+1467     100     6500     
+1468     100     9700     
+1469     100     6500     
+1470     100     9700     
+1471     100     6500     
+1472     100     9700     
+1473     100     6500     
+1474     100     9700     
+1475     100     6500     
+1476     100     9700     
+1477     100     6500     
+1478     100     9700     
+1479     100     6500     
+1480     100     9700     
+1481     100     6500     
+1482     100     9700     
+1483     100     6500     
+1484     100     9700     
+1485     100     6500     
+1486     100     9700     
+1487     100     6500     
+1488     100     9700     
+1489     100     6500     
+1490     100     9700     
+1491     100     6500     
+1492     100     9700     
+1493     100     6500     
+1494     100     9700     
+1495     100     6500     
+1496     100     9700     
+1497     100     6500     
+1498     100     9700     
+1499     100     6500     
+1500     100     9700     
+1501     100     6500     
+1502     100     9700     
+1503     100     6500     
+1504     100     9700     
+1505     100     6500     
+1506     100     9700     
+1507     100     6500     
+1508     100     9700     
+1509     100     6500     
+1510     100     9700     
+1511     100     6500     
+1512     100     9700     
+1513     100     6500     
+1514     100     9700     
+1515     100     6500     
+1516     100     9700     
+1517     100     6500     
+1518     100     9700     
+1519     100     6500     
+1520     100     9700     
+1521     100     6500     
+1522     100     9700     
+1523     100     6500     
+1524     100     9700     
+1525     100     6500     
+1526     100     9700     
+1527     100     6500     
+1528     100     9700     
+1529     100     6500     
+1530     100     9700     
+1531     100     6500     
+1532     100     9700     
+1533     100     6500     
+1534     100     9700     
+1535     100     6500     
+1536     100     9700     
+1537     100     6500     
+1538     100     9700     
+1539     100     6500     
+1540     100     9700     
+1541     100     6500     
+1542     100     9700     
+1543     100     6500     
+1544     100     9700     
+1545     100     6500     
+1546     100     9700     
+1547     100     6500     
+1548     100     9700     
+1549     100     6500     
+1550     100     9700     
+1551     100     6500     
+1552     100     9700     
+1553     100     6500     
+1554     100     9700     
+1555     100     6500     
+1556     100     9700     
+1557     100     6500     
+1558     100     9700     
+1559     100     6500     
+1560     100     9700     
+1561     100     6500     
+1562     100     9700     
+1563     100     6500     
+1564     100     9700     
+1565     100     6500     
+1566     100     9700     
+1567     100     6500     
+1568     100     9700     
+1569     100     6500     
+1570     100     9700     
+1571     100     6500     
+1572     100     9700     
+1573     100     6500     
+1574     100     9700     
+1575     100     6500     
+1576     100     9700     
+1577     100     6500     
+1578     100     9700     
+1579     100     6500     
+1580     100     9700     
+1581     100     6500     
+1582     100     9700     
+1583     100     6500     
+1584     100     9700     
+1585     100     6500     
+1586     100     9700     
+1587     100     6500     
+1588     100     9700     
+1589     100     6500     
+1590     100     9700     
+1591     100     6500     
+1592     100     9700     
+1593     100     6500     
+1594     100     9700     
+1595     100     6500     
+1596     100     9700     
+1597     100     6500     
+1598     100     9700     
+1599     100     6500     
+1600     100     9700     
+1601     100     6500     
+1602     100     9700     
+1603     100     6500     
+1604     100     9700     
+1605     100     6500     
+1606     100     9700     
+1607     100     6500     
+1608     100     9700     
+1609     100     6500     
+1610     100     9700     
+1611     100     6500     
+1612     100     9700     
+1613     100     6500     
+1614     100     9700     
+1615     100     6500     
+1616     100     9700     
+1617     100     6500     
+1618     100     9700     
+1619     100     6500     
+1620     100     9700     
+1621     100     6500     
+1622     100     9700     
+1623     100     6500     
+1624     100     9700     
+1625     100     6500     
+1626     100     9700     
+1627     100     6500     
+1628     100     9700     
+1629     100     6500     
+1630     100     9700     
+1631     100     6500     
+1632     100     9700     
+1633     100     6500     
+1634     100     9700     
+1635     100     6500     
+1636     100     9700     
+1637     100     6500     
+1638     100     9700     
+1639     100     6500     
+1640     100     9700     
+1641     100     6500     
+1642     100     9700     
+1643     100     6500     
+1644     100     9700     
+1645     100     6500     
+1646     100     9700     
+1647     100     6500     
+1648     100     9700     
+1649     100     6500     
+1650     100     9700     
+1651     100     6500     
+1652     100     9700     
+1653     100     6500     
+1654     100     9700     
+1655     100     6500     
+1656     100     9700     
+1657     100     6500     
+1658     100     9700     
+1659     100     6500     
+1660     100     9700     
+1661     100     6500     
+1662     100     9700     
+1663     100     6500     
+1664     100     9700     
+1665     100     6500     
+1666     100     9700     
+1667     100     6500     
+1668     100     9700     
+1669     100     6500     
+1670     100     9700     
+1671     100     6500     
+1672     100     9700     
+1673     100     6500     
+1674     100     9700     
+1675     100     6500     
+1676     100     9700     
+1677     100     6500     
+1678     100     9700     
+1679     100     6500     
+1680     100     9700     
+1681     100     6500     
+1682     100     9700     
+1683     100     6500     
+1684     100     9700     
+1685     100     6500     
+1686     100     9700     
+1687     100     6500     
+1688     100     9700     
+1689     100     6500     
+1690     100     9700     
+1691     100     6500     
+1692     100     9700     
+1693     100     6500     
+1694     100     9700     
+1695     100     6500     
+1696     100     9700     
+1697     100     6500     
+1698     100     9700     
+1699     100     6500     
+1700     100     9700     
+1701     100     6500     
+1702     100     9700     
+1703     100     6500     
+1704     100     9700     
+1705     100     6500     
+1706     100     9700     
+1707     100     6500     
+1708     100     9700     
+1709     100     6500     
+1710     100     9700     
+1711     100     6500     
+1712     100     9700     
+1713     100     6500     
+1714     100     9700     
+1715     100     6500     
+1716     100     9700     
+1717     100     6500     
+1718     100     9700     
+1719     100     6500     
+1720     100     9700     
+1721     100     6500     
+1722     100     9700     
+1723     100     6500     
+1724     100     9700     
+1725     100     6500     
+1726     100     9700     
+1727     100     6500     
+1728     100     9700     
+1729     100     6500     
+1730     100     9700     
+1731     100     6500     
+1732     100     9700     
+1733     100     6500     
+1734     100     9700     
+1735     100     6500     
+1736     100     9700     
+1737     100     6500     
+1738     100     9700     
+1739     100     6500     
+1740     100     9700     
+1741     100     6500     
+1742     100     9700     
+1743     100     6500     
+1744     100     9700     
+1745     100     6500     
+1746     100     9700     
+1747     100     6500     
+1748     100     9700     
+1749     100     6500     
+1750     100     9700     
+1751     100     6500     
+1752     100     9700     
+1753     100     6500     
+1754     100     9700     
+1755     100     6500     
+1756     100     9700     
+1757     100     6500     
+1758     100     9700     
+1759     100     6500     
+1760     100     9700     
+1761     100     6500     
+1762     100     9700     
+1763     100     6500     
+1764     100     9700     
+1765     100     6500     
+1766     100     9700     
+1767     100     6500     
+1768     100     9700     
+1769     100     6500     
+1770     100     9700     
+1771     100     6500     
+1772     100     9700     
+1773     100     6500     
+1774     100     9700     
+1775     100     6500     
+1776     100     9700     
+1777     100     6500     
+1778     100     9700     
+1779     100     6500     
+1780     100     9700     
+1781     100     6500     
+1782     100     9700     
+1783     100     6500     
+1784     100     9700     
+1785     100     6500     
+1786     100     9700     
+1787     100     6500     
+1788     100     9700     
+1789     100     6500     
+1790     100     9700     
+1791     100     6500     
+1792     100     9700     
+1793     100     6500     
+1794     100     9700     
+1795     100     6500     
+1796     100     9700     
+1797     100     6500     
+1798     100     9700     
+1799     100     6500     
+1800     100     9700     
+1801     100     6500     
+1802     100     9700     
+1803     100     6500     
+1804     100     9700     
+1805     100     6500     
+1806     100     9700     
+1807     100     6500     
+1808     100     9700     
+1809     100     6500     
+1810     100     9700     
+1811     100     6500     
+1812     100     9700     
+1813     100     6500     
+1814     100     9700     
+1815     100     6500     
+1816     100     9700     
+1817     100     6500     
+1818     100     9700     
+1819     100     6500     
+1820     100     9700     
+1821     100     6500     
+1822     100     9700     
+1823     100     6500     
+1824     100     9700     
+1825     100     6500     
+1826     100     9700     
+1827     100     6500     
+1828     100     9700     
+1829     100     6500     
+1830     100     9700     
+1831     100     6500     
+1832     100     9700     
+1833     100     6500     
+1834     100     9700     
+1835     100     6500     
+1836     100     9700     
+1837     100     6500     
+1838     100     9700     
+1839     100     6500     
+1840     100     9700     
+1841     100     6500     
+1842     100     9700     
+1843     100     6500     
+1844     100     9700     
+1845     100     6500     
+1846     100     9700     
+1847     100     6500     
+1848     100     9700     
+1849     100     6500     
+1850     100     9700     
+1851     100     6500     
+1852     100     9700     
+1853     100     6500     
+1854     100     9700     
+1855     100     6500     
+1856     100     9700     
+1857     100     6500     
+1858     100     9700     
+1859     100     6500     
+1860     100     9700     
+1861     100     6500     
+1862     100     9700     
+1863     100     6500     
+1864     100     9700     
+1865     100     6500     
+1866     100     9700     
+1867     100     6500     
+1868     100     9700     
+1869     100     6500     
+1870     100     9700     
+1871     100     6500     
+1872     100     9700     
+1873     100     6500     
+1874     100     9700     
+1875     100     6500     
+1876     100     9700     
+1877     100     6500     
+1878     100     9700     
+1879     100     6500     
+1880     100     9700     
+1881     100     6500     
+1882     100     9700     
+1883     100     6500     
+1884     100     9700     
+1885     100     6500     
+1886     100     9700     
+1887     100     6500     
+1888     100     9700     
+1889     100     6500     
+1890     100     9700     
+1891     100     6500     
+1892     100     9700     
+1893     100     6500     
+1894     100     9700     
+1895     100     6500     
+1896     100     9700     
+1897     100     6500     
+1898     100     9700     
+1899     100     6500     
+1900     100     9700     
+1901     100     6500     
+1902     100     9700     
+1903     100     6500     
+1904     100     9700     
+1905     100     6500     
+1906     100     9700     
+1907     100     6500     
+1908     100     9700     
+1909     100     6500     
+1910     100     9700     
+1911     100     6500     
+1912     100     9700     
+1913     100     6500     
+1914     100     9700     
+1915     100     6500     
+1916     100     9700     
+1917     100     6500     
+1918     100     9700     
+1919     100     6500     
+1920     100     9700     
+1921     100     6500     
+1922     100     9700     
+1923     100     6500     
+1924     100     9700     
+1925     100     6500     
+1926     100     9700     
+1927     100     6500     
+1928     100     9700     
+1929     100     6500     
+1930     100     9700     
+1931     100     6500     
+1932     100     9700     
+1933     100     6500     
+1934     100     9700     
+1935     100     6500     
+1936     100     9700     
+1937     100     6500     
+1938     100     9700     
+1939     100     6500     
+1940     100     9700     
+1941     100     6500     
+1942     100     9700     
+1943     100     6500     
+1944     100     9700     
+1945     100     6500     
+1946     100     9700     
+1947     100     6500     
+1948     100     9700     
+1949     100     6500     
+1950     100     9700     
+1951     100     6500     
+1952     100     9700     
+1953     100     6500     
+1954     100     9700     
+1955     100     6500     
+1956     100     9700     
+1957     100     6500     
+1958     100     9700     
+1959     100     6500     
+1960     100     9700     
+1961     100     6500     
+1962     100     9700     
+1963     100     6500     
+1964     100     9700     
+1965     100     6500     
+1966     100     9700     
+1967     100     6500     
+1968     100     9700     
+1969     100     6500     
+1970     100     9700     
+1971     100     6500     
+1972     100     9700     
+1973     100     6500     
+1974     100     9700     
+1975     100     6500     
+1976     100     9700     
+1977     100     6500     
+1978     100     9700     
+1979     100     6500     
+1980     100     9700     
+1981     100     6500     
+1982     100     9700     
+1983     100     6500     
+1984     100     9700     
+1985     100     6500     
+1986     100     9700     
+1987     100     6500     
+1988     100     9700     
+1989     100     6500     
+1990     100     9700     
+1991     100     6500     
+1992     100     9700     
+1993     100     6500     
+1994     100     9700     
+1995     100     6500     
+1996     100     9700     
+1997     100     6500     
+1998     100     9700     
+1999     100     6500     
+2000     100     9700     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ o.id, count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
