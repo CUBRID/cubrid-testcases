@@ -86,3 +86,4 @@ select /*+ recompile */ c1, c2, c3 from t1 group by c2 with rollup;
 set system parameters 'only_full_group_by=no';
 DROP TABLE t1;
 DROP TABLE t2;
+DROP TABLE t3;
