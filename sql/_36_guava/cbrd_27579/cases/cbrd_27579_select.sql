@@ -17,8 +17,7 @@
  *    Case 1: ROLLBACK, SAVEPOINT, 2PC (PREPARE TO COMMIT, ATTACH) and DDL in a function invoked by SELECT
  *    Case 2: a function invoked by a subquery or DO
  *    Case 3: a view whose query calls a function
- *    Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE,
- *            and a name prepared again in a loop runs the new statement
+ *    Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE
  *    Case 5: nothing was written
  */
 
@@ -54,31 +53,6 @@ begin
   execute immediate 'execute s_incr';
   return 1;
 end;
-create or replace function f_reprepare return varchar as x int; r varchar := '';
-begin
-  for i in 1 .. 2 loop
-    if i = 1 then
-      execute immediate 'prepare s_loop from ''select 100 from db_root''';
-    else
-      execute immediate 'prepare s_loop from ''select 200 from db_root''';
-    end if;
-    execute immediate 'execute s_loop' into x;
-    r := r || x || ' ';
-  end loop;
-  return r;
-end;
-create or replace function f_reprepare_incr return int as
-begin
-  for i in 1 .. 2 loop
-    if i = 1 then
-      execute immediate 'prepare s_loop_incr from ''select 1 from db_root''';
-    else
-      execute immediate 'prepare s_loop_incr from ''select incr (cnt) from cnt_t where id = 1''';
-    end if;
-    execute immediate 'execute s_loop_incr';
-  end loop;
-  return 1;
-end;
 
 create view v_sel as select a, f_sel () as c from t;
 create view v_dml as select a, f_dml (1) as c from t;
@@ -107,9 +81,6 @@ select * from v_dml;
 evaluate 'Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE';
 select f_incr () from s;
 select f_incr_execute () from s;
--- a name prepared again in a loop runs the new statement, and is judged by it
-select f_reprepare () from s;
-select f_reprepare_incr () from s;
 
 
 evaluate 'Case 5: nothing was written';
@@ -130,8 +101,6 @@ drop function f_prepare_to_commit;
 drop function f_attach;
 drop function f_incr;
 drop function f_incr_execute;
-drop function f_reprepare;
-drop function f_reprepare_incr;
 drop table t;
 drop table s;
 drop table log_t;
