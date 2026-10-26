@@ -39,8 +39,8 @@
 ===================================================
 0
 ===================================================
-a    b    c    
-0     150     1440     
+a    ta.b*0    tb.c*0    
+0     0     0     
 
 ===================================================
 trace    
@@ -53,7 +53,7 @@ Query Plan:
       SORT (temp)
         INDEX SCAN (dba.tb.i_tb_a) ()
 
-  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b, [dba.tb].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b*?, [dba.tb].c*? from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -96,8 +96,8 @@ PASS
 ===================================================
 0
 ===================================================
-a    b    e    
-0     0     2100     
+a    b    td.e*0    
+0     0     0     
 
 ===================================================
 trace    
@@ -110,7 +110,7 @@ Query Plan:
       SORT (temp)
         INDEX SCAN (dba.td.i_td_ab) ()
 
-  rewritten query: select /*+ USE_MERGE */ [dba.tc].a, [dba.tc].b, [dba.td].e from [dba.tc] [dba.tc], [dba.td] [dba.td] where [dba.tc].a=[dba.td].a and [dba.tc].b=[dba.td].b using index [dba.tc].i_tc_ab(+), [dba.td].i_td_ab(+) order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ USE_MERGE */ [dba.tc].a, [dba.tc].b, [dba.td].e*? from [dba.tc] [dba.tc], [dba.td] [dba.td] where [dba.tc].a=[dba.td].a and [dba.tc].b=[dba.td].b using index [dba.tc].i_tc_ab(+), [dba.td].i_td_ab(+) order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -153,8 +153,8 @@ PASS
 ===================================================
 0
 ===================================================
-a    b    c    
-0     150     1440     
+a    ta.b*0    tb.c*0    
+0     0     0     
 
 ===================================================
 trace    
@@ -167,7 +167,7 @@ Query Plan:
       SORT (temp)
         INDEX SCAN (dba.tb.i_tb_a) ()
 
-  rewritten query: select /*+ USE_MERGE PARALLEL(?) */ [dba.ta].a, [dba.ta].b, [dba.tb].c from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ USE_MERGE PARALLEL(?) */ [dba.ta].a, [dba.ta].b*?, [dba.tb].c*? from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -202,8 +202,8 @@ PASS
 ===================================================
 0
 ===================================================
-a    b    c    f    
-0     150     1440     200     
+a    ta.b*0    tb.c*0    te.f*0    
+0     0     0     0     
 
 ===================================================
 trace    
@@ -220,7 +220,7 @@ Query Plan:
       SORT (temp)
         TABLE SCAN (dba.te)
 
-  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b, [dba.tb].c, [dba.te].f from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.te] [dba.te] where [dba.ta].a=[dba.tb].a and [dba.tb].a=[dba.te].a and ([dba.ta].a< ?:? ) using index [dba.te].none, [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b*?, [dba.tb].c*?, [dba.te].f*? from [dba.ta] [dba.ta], [dba.tb] [dba.tb], [dba.te] [dba.te] where [dba.ta].a=[dba.tb].a and [dba.tb].a=[dba.te].a and ([dba.ta].a< ?:? ) using index [dba.te].none, [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -301,8 +301,8 @@ PASS
 ===================================================
 0
 ===================================================
-a    b    c    'off'    
-0     150     1440     off     
+a    ta.b*0    tb.c*0    'off'    
+0     0     0     off     
 
 ===================================================
 trace    
@@ -316,7 +316,7 @@ Query Plan:
         SORT (temp)
           TABLE SCAN (dba.tb)
 
-  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b, [dba.tb].c, 'off' from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select /*+ USE_MERGE */ [dba.ta].a, [dba.ta].b*?, [dba.tb].c*?, 'off' from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].a=[dba.tb].a using index [dba.ta].i_ta_a(+), [dba.tb].i_tb_a(+) order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

@@ -49,7 +49,8 @@
  * turns the parameter off and shows the previous plan: "SORT (order by)" on
  * top, "TABLE SCAN (dba.tb)" and both input sorts executed. Counts in the
  * trace are masked by CTP; correctness is asserted only by the PASS/FAIL
- * rows.
+ * rows. Non-key columns printed by a trace query are multiplied by 0: ORDER BY
+ * has ties and the tie order depends on the (parallel) merge/sort.
  *
  * Coverage:
  *   C1  both inputs indexed, ORDER BY outer join column   -> inputs + final sort skipped
@@ -143,7 +144,7 @@ update statistics on ta, tb, tc, td, te;
 -- no sort step for the inputs nor for the final ORDER BY (skip ORDER BY)
 -- ---------------------------------------------------------------------------------
 set trace on;
-select /*+ USE_MERGE */ ta.a, ta.b, tb.c from ta, tb where ta.a = tb.a
+select /*+ USE_MERGE */ ta.a, ta.b * 0, tb.c * 0 from ta, tb where ta.a = tb.a
 using index i_ta_a(+), i_tb_a(+) order by ta.a limit 1;
 show trace;
 set trace off;
@@ -220,7 +221,7 @@ from (select count(*) cnt, sum(a) sa, sum(b*rn) ord
 
 -- trace sanity: C7 shape -- composite (a,b) indexes on both sides, expect both inputs "(sorted)"
 set trace on;
-select /*+ USE_MERGE */ tc.a, tc.b, td.e from tc, td where tc.a = td.a and tc.b = td.b
+select /*+ USE_MERGE */ tc.a, tc.b, td.e * 0 from tc, td where tc.a = td.a and tc.b = td.b
 using index i_tc_ab(+), i_td_ab(+) order by tc.a, tc.b limit 1;
 show trace;
 set trace off;
@@ -301,7 +302,7 @@ from (select count(*) cnt, sum(b) sb, sum(c) sc, sum(a*rn) ord
 
 -- trace sanity: C13 shape -- PARALLEL hint; the sorted merge inputs must not run as parallel scans
 set trace on;
-select /*+ PARALLEL(4) USE_MERGE */ ta.a, ta.b, tb.c from ta, tb where ta.a = tb.a
+select /*+ PARALLEL(4) USE_MERGE */ ta.a, ta.b * 0, tb.c * 0 from ta, tb where ta.a = tb.a
 using index i_ta_a(+), i_tb_a(+) order by ta.a limit 1;
 show trace;
 set trace off;
@@ -363,7 +364,7 @@ from (select count(*) cnt, sum(v) sv, sum(a*rn) ord
 -- trace sanity: C17 shape -- the upper merge reads the lower merge result without sorting it
 -- (ORDERBY page 0 on the list-scan input), both lower inputs sorted, no top ORDERBY
 set trace on;
-select /*+ USE_MERGE */ ta.a, ta.b, tb.c, te.f from ta, tb, te
+select /*+ USE_MERGE */ ta.a, ta.b * 0, tb.c * 0, te.f * 0 from ta, tb, te
 where ta.a = tb.a and tb.a = te.a and ta.a < 60
 using index i_ta_a(+), i_tb_a(+), te.none order by ta.a limit 1;
 show trace;
@@ -442,7 +443,7 @@ from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
 -- the plan compiled while the parameter was on.
 set system parameters 'optimizer_enable_merge_join=no';
 set trace on;
-select /*+ USE_MERGE */ ta.a, ta.b, tb.c, 'off' from ta, tb where ta.a = tb.a
+select /*+ USE_MERGE */ ta.a, ta.b * 0, tb.c * 0, 'off' from ta, tb where ta.a = tb.a
 using index i_ta_a(+), i_tb_a(+) order by ta.a limit 1;
 show trace;
 set trace off;
