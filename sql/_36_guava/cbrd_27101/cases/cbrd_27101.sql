@@ -100,23 +100,51 @@ $out:integer,$NULL,$integer,$10;
 ?:1 /* c */ =
 call f_add(?);
 
--- Case 12: hint style comment before CALL
+-- Case 12: "--" line comment containing "=" between "?" and "="
+--   the comment runs to the newline, and the "=" inside it must not be taken
+--   as the separator
+--   before fix : Error:-10023, after fix : 110
+$out:integer,$NULL,$integer,$10;
+? -- a=b
+=
+call f_add(?);
+
+-- Case 13: "//" line comment containing "=" between "?" and "="
+--   before fix : Error:-10023, after fix : 110
+$out:integer,$NULL,$integer,$10;
+? // a=b
+=
+call f_add(?);
+
+-- Case 14: hint style comment before CALL
 --   the skip treats a hint comment like any other comment
 $out:integer,$NULL;
 /*+ RECOMPILE */
 call p_count(?);
 
 
--- Negative cases: must still be rejected with -10023 after the fix
+-- Negative cases: must be rejected with -10023 after the fix
 
--- Case 13: not a CALL statement although prepared as a call
+-- Case 15: not a CALL statement although prepared as a call
 --   the "call (?)" part is inside the block comment
 select a from t_call /*
 call (?) */;
 
--- Case 14: "?" with no "="
+-- Case 16: "?" with no "="
 $out:integer,$NULL,$integer,$10;
 ?
+call f_add(?);
+
+-- Case 17: unterminated block comment containing "=" after "?"
+--   the "=" is inside the comment, so no separator exists and the statement
+--   must be rejected
+--   before fix : 110 (the "=" in the comment was taken as the separator and
+--   the rest was accepted), after fix : Error:-10023
+--   placed before the drops so that f_add still exists for the old behavior;
+--   CTP keeps its comment state after this, which matters only for PL/CSQL
+--   text, and none follows
+$out:integer,$NULL,$integer,$10;
+? /* =
 call f_add(?);
 
 
@@ -124,7 +152,7 @@ drop function f_add;
 drop procedure p_count;
 drop table t_call;
 
--- Case 15: unterminated block comment swallows the whole statement
+-- Case 18: unterminated block comment swallows the whole statement
 --   the skip must stop at the end of the text
 --   kept as the last statement: CTP keeps its comment state after this
 /* c
