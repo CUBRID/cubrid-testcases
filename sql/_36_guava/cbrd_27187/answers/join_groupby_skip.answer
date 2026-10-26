@@ -1,0 +1,153 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+8
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1: the reported queries -- GROUP BY on t_a alone, and the same with a one-row cross join     
+
+===================================================
+g    cnt    
+1     2     
+2     2     
+3     2     
+
+Query plan:
+iscan
+    class: a node[?]
+    index: i_a_g (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.g, count(*) from t_a a group by a.g using index a.i_a_g
+/* ---> skip GROUP BY */
+===================================================
+g    cnt    
+1     2     
+2     2     
+3     2     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: a node[?]
+               index: i_a_g (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: o node[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.g, count(*) from t_a a, t_one o group by a.g using index a.i_a_g
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 2: an inner join under a cross join, the index of t_a is two joins down     
+
+===================================================
+g    cnt    
+1     3     
+2     2     
+3     2     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: i_a_g 
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: i_b_aid term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: o node[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_IDX */ a.g, count(*) from t_a a, t_b b, t_one o where b.a_id=a.id group by a.g using index a.i_a_g, b.i_b_aid
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 3: left outer join, a t_a row without a match in t_b is counted in its group     
+
+===================================================
+g    cnt    cnt_b    
+1     3     3     
+2     3     2     
+3     2     2     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: a node[?]
+               index: i_a_g 
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_b_aid term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX */ a.g, count(*), count(b.id) from t_a a left outer join t_b b on b.a_id=a.id group by a.g using index a.i_a_g, b.i_b_aid
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 4: hash join, the GROUP BY is still sorted     
+
+===================================================
+g    cnt    
+1     3     
+2     2     
+3     2     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: i_a_g 
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.g, count(*) from t_a a, t_b b where b.a_id=a.id group by a.g using index a.i_a_g, b.i_b_aid
+===================================================
+    
+Case 5: right outer join, the t_b row without a match makes the NULL group     
+
+===================================================
+g    cnt    
+null     1     
+1     3     
+2     2     
+3     2     
+
+===================================================
+0
