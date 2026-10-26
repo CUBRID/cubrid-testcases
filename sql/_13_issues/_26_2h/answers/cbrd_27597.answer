@@ -1,0 +1,420 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the outer query aggregates a recursive CTE; result = no_parallel_scan in the CTE body     
+
+===================================================
+count(*)    sum(lvl)    
+70000     110000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: with recursive r(id, pad, lvl) as (select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src] union all select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?)select count(*), sum([dba.r].lvl) from [dba.r] [dba.r]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(lvl)    
+70000     110000     
+
+===================================================
+    
+Case 2: the outer query groups a recursive CTE by level; result = no_parallel_scan in the CTE body     
+
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20000     59999     
+3     10000     30000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?
+
+  SORT (group by)
+    TABLE SCAN (dba.r)
+
+  rewritten query: with recursive r(id, pad, lvl) as (select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src] union all select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?)select [dba.r].lvl, count(*), sum( mod([dba.r].id, ?)) from [dba.r] [dba.r] group by [dba.r].lvl
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20000     59999     
+3     10000     30000     
+
+===================================================
+    
+Case 3: a materialized CTE aggregates another materialized CTE; result = no_parallel_scan in the CTE body     
+
+===================================================
+cnt    s    
+40000     119997     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.c_all)
+
+  rewritten query: select /*+ MATERIALIZE */ count(*), sum( mod([dba.c_all].id, ?)) from [dba.c_all] [dba.c_all]
+
+  TABLE SCAN (dba.c_cnt)
+
+  rewritten query: with c_all(id, pad) as (select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]), c_cnt(cnt, s) as (select /*+ MATERIALIZE */ count(*), sum( mod([dba.c_all].id, ?)) from [dba.c_all] [dba.c_all])select [dba.c_cnt].cnt, [dba.c_cnt].s from [dba.c_cnt] [dba.c_cnt]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+cnt    s    
+40000     119997     
+
+===================================================
+    
+Case 4: a materialized CTE groups another materialized CTE; result = no_parallel_scan in the CTE body     
+
+===================================================
+g    cnt    
+a     5000     
+b     10000     
+c     25000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]
+
+  SORT (group by)
+    TABLE SCAN (dba.c_all)
+
+  rewritten query: select /*+ MATERIALIZE */ case when [dba.c_all].id<=? then 'a' when [dba.c_all].id<=? then 'b' else 'c' end, count(*) from [dba.c_all] [dba.c_all] group by case when [dba.c_all].id<=? then 'a' when [dba.c_all].id<=? then 'b' else 'c' end
+
+  SORT (order by)
+    TABLE SCAN (dba.c_grp)
+
+  rewritten query: with c_all(id, pad) as (select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]), c_grp(g, cnt) as (select /*+ MATERIALIZE */ case when [dba.c_all].id<=? then 'a' when [dba.c_all].id<=? then 'b' else 'c' end, count(*) from [dba.c_all] [dba.c_all] group by case when [dba.c_all].id<=? then 'a' when [dba.c_all].id<=? then 'b' else 'c' end)select [dba.c_grp].g, [dba.c_grp].cnt from [dba.c_grp] [dba.c_grp] order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+g    cnt    
+a     5000     
+b     10000     
+c     25000     
+
+===================================================
+    
+Case 5: the outer query and another CTE read the same materialized CTE; result = no_parallel_scan in the CTE body     
+
+===================================================
+src    cnt    
+by another CTE     40000     
+by outer query     40000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.c_all)
+
+  rewritten query: select /*+ MATERIALIZE */ count(*) from [dba.c_all] [dba.c_all]
+
+  TABLE SCAN (dba.c_all)
+
+  rewritten query: select 'by outer query', count(*) from [dba.c_all] [dba.c_all]
+
+  TABLE SCAN (dba.c_cnt)
+
+  rewritten query: select 'by another CTE', [dba.c_cnt].cnt from [dba.c_cnt] [dba.c_cnt]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+src    cnt    
+by another CTE     40000     
+by outer query     40000     
+
+===================================================
+    
+Case 6: a materialized CTE groups a recursive CTE; result = no_parallel_scan in the CTE body     
+
+===================================================
+lvl    cnt    
+1     40000     
+2     20000     
+3     10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.r)
+
+  rewritten query: select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?
+
+  SORT (group by)
+    TABLE SCAN (dba.r)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.r].lvl, count(*) from [dba.r] [dba.r] group by [dba.r].lvl
+
+  SORT (order by)
+    TABLE SCAN (dba.c_lvl)
+
+  rewritten query: with recursive r(id, pad, lvl) as (select [dba.t_src].id, [dba.t_src].pad, ? from [dba.t_src] [dba.t_src] union all select [dba.r].id, [dba.r].pad, [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ) and  mod([dba.r].id, [dba.r].lvl*?)=?), c_lvl(lvl, cnt) as (select /*+ MATERIALIZE */ [dba.r].lvl, count(*) from [dba.r] [dba.r] group by [dba.r].lvl)select [dba.c_lvl].lvl, [dba.c_lvl].cnt from [dba.c_lvl] [dba.c_lvl] order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+lvl    cnt    
+1     40000     
+2     20000     
+3     10000     
+
+===================================================
+    
+Case 7: the CTE runs as a parallel subquery job before the outer query reads it; result = no_parallel_scan in the CTE body     
+
+===================================================
+count(*)    sum( mod(c_all.id, 7))    max(x.cnt)    
+40000     119997     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src]
+
+  TABLE SCAN (dba.t_digit)
+
+  rewritten query: (select /*+ NO_MERGE */ count(*) from [dba.t_digit] [dba.t_digit])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (dba.c_all)
+    TABLE SCAN (x)
+
+  rewritten query: with c_all(id, pad) as (select /*+ MATERIALIZE */ [dba.t_src].id, [dba.t_src].pad from [dba.t_src] [dba.t_src])select count(*), sum( mod([dba.c_all].id, ?)), max(x.cnt) from [dba.c_all] [dba.c_all], (select /*+ NO_MERGE */ count(*) from [dba.t_digit] [dba.t_digit]) x (cnt)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_digit), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( mod(c_all.id, 7))    max(x.cnt)    
+40000     119997     10     
+
+===================================================
+0
+===================================================
+    
+Case 8: a recursive member with SELECT DISTINCT, whose sort stays serial; result = no_parallel_scan in the CTE body and parallel(1) in the recursive member     
+
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20001     59999     
+3     10001     30000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_src)
+
+  rewritten query: select [dba.t_src].id, ? from [dba.t_src] [dba.t_src]
+
+  SORT (distinct)
+    TABLE SCAN (dba.r)
+
+  rewritten query: select distinct [dba.r].id- mod([dba.r].id, [dba.r].lvl*?), [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? )
+
+  SORT (group by)
+    TABLE SCAN (dba.r)
+
+  rewritten query: with recursive r(id, lvl) as (select [dba.t_src].id, ? from [dba.t_src] [dba.t_src] union all select distinct [dba.r].id- mod([dba.r].id, [dba.r].lvl*?), [dba.r].lvl+? from [dba.r] [dba.r] where ([dba.r].lvl< ?:? ))select [dba.r].lvl, count(*), sum( mod([dba.r].id, ?)) from [dba.r] [dba.r] group by [dba.r].lvl
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      CTE (recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+lvl    count(*)    sum( mod(id, 7))    
+1     40000     119997     
+2     20001     59999     
+3     10001     30000     
+
+===================================================
+0
