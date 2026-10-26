@@ -15,11 +15,6 @@
 
 --+ server-message on
 
-drop trigger if exists tr_call_dml;
-drop trigger if exists tr_call_commit;
-drop trigger if exists tr_call_ddl;
-drop trigger if exists tr_cond_dml;
-drop trigger if exists tr_expr_dml;
 drop table if exists tr1;
 drop table if exists tr2;
 drop table if exists tr3;

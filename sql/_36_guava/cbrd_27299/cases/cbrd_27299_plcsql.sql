@@ -139,7 +139,8 @@ create function u_commit(n int) return int as begin commit; return n; end;
 create function u_abs(n int) return int as begin return abs(n); end;
 --+ server-message on
 create function u_dbo(n int) return int as begin dbms_output.put_line('x'); return n; end;
-select u_sql(1), u_commit(2), u_abs(-3), u_dbo(4);
+select u_sql(1), u_abs(-3), u_dbo(4);
+select u_commit(2);
 --+ server-message off
 select sp_name, is_parallel_enabled from db_stored_procedure where sp_name like 'k\_%' escape '\' or sp_name like 'u\_%' escape '\' order by 1;
 
