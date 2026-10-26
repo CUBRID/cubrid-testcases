@@ -2,7 +2,7 @@
  *  This test case verifies CBRD-27732: partitioned ORDER BY LIMIT preserves all input rows.
  *  Small partitions must not lose rows when large partitions can use parallel scans.
  *  Each query is compared with NO_PARALLEL_SCAN and independently computed rows.
- *  TRACE records per-partition scan shapes, without asserting an exact worker count.
+ *  TRACE records isolated partition controls and combined scans, not exact worker counts.
  *  Empty-partition controls are not claimed to have mixed serial and parallel scans.
  *  Coverage:
  *    Case 1: t_front small partition scan control
