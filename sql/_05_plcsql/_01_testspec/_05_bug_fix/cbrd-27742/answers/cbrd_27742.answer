@@ -62,6 +62,19 @@ f3()
 
 ===================================================
     
+static SQL: the generated name must not be the name of a column kept by ORDER BY (a_1)     
+
+
+===================================================
+0
+
+===================================================
+f4(1)    
+10     
+
+
+===================================================
+    
 the printed tree of an inline view and a view with no referenced column     
 
 
@@ -125,6 +138,40 @@ Trace Statistics:
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
+
+===================================================
+count(*)    
+10     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t?)
+
+  rewritten query: (select ?, [dba.t?].c from [dba.t?] [dba.t?] group by [dba.t?].c order by ?)
+
+  TABLE SCAN (z)
+
+  rewritten query: select count(*) from (select ?, [dba.t?].c as [a_?] from [dba.t?] [dba.t?] group by [dba.t?].c order by ?) z (a_?, a_?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+0
 
 ===================================================
 0
