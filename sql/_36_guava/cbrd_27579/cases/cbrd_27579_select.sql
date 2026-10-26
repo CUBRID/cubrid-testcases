@@ -14,10 +14,11 @@
  *                                             sql/_13_issues/_25_2h/cases/cbrd_26165.sql
  *
  *  Coverage:
- *    Case 1: ROLLBACK, SAVEPOINT and DDL in a function invoked by SELECT
+ *    Case 1: ROLLBACK, SAVEPOINT, 2PC (PREPARE TO COMMIT, ATTACH) and DDL in a function invoked by SELECT
  *    Case 2: a function invoked by a subquery or DO
  *    Case 3: a view whose query calls a function
- *    Case 4: INCR () in a function invoked by SELECT
+ *    Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE,
+ *            and a name prepared again in a loop runs the new statement
  *    Case 5: nothing was written
  */
 
@@ -44,16 +45,51 @@ create or replace function f_sel return int as c int; begin select count (*) int
 create or replace function f_rollback return int as begin rollback; return 1; end;
 create or replace function f_savepoint return int as begin execute immediate 'savepoint sp1'; return 1; end;
 create or replace function f_ddl return int as begin execute immediate 'create table t_new (a int)'; return 1; end;
+create or replace function f_prepare_to_commit return int as begin execute immediate 'prepare to commit 77'; return 1; end;
+create or replace function f_attach return int as begin execute immediate 'attach 77'; return 1; end;
 create or replace function f_incr return int as c int; begin select incr (cnt) into c from cnt_t where id = 1; return c; end;
+create or replace function f_incr_execute return int as
+begin
+  execute immediate 'prepare s_incr from ''select incr (cnt) from cnt_t where id = 1''';
+  execute immediate 'execute s_incr';
+  return 1;
+end;
+create or replace function f_reprepare return varchar as x int; r varchar := '';
+begin
+  for i in 1 .. 2 loop
+    if i = 1 then
+      execute immediate 'prepare s_loop from ''select 100 from db_root''';
+    else
+      execute immediate 'prepare s_loop from ''select 200 from db_root''';
+    end if;
+    execute immediate 'execute s_loop' into x;
+    r := r || x || ' ';
+  end loop;
+  return r;
+end;
+create or replace function f_reprepare_incr return int as
+begin
+  for i in 1 .. 2 loop
+    if i = 1 then
+      execute immediate 'prepare s_loop_incr from ''select 1 from db_root''';
+    else
+      execute immediate 'prepare s_loop_incr from ''select incr (cnt) from cnt_t where id = 1''';
+    end if;
+    execute immediate 'execute s_loop_incr';
+  end loop;
+  return 1;
+end;
 
 create view v_sel as select a, f_sel () as c from t;
 create view v_dml as select a, f_dml (1) as c from t;
 commit;
 
 
-evaluate 'Case 1: ROLLBACK, SAVEPOINT and DDL in a function invoked by SELECT';
+evaluate 'Case 1: ROLLBACK, SAVEPOINT, 2PC (PREPARE TO COMMIT, ATTACH) and DDL in a function invoked by SELECT';
 select f_rollback () from s;
 select f_savepoint () from s;
+select f_prepare_to_commit () from s;
+select f_attach () from s;
 select f_ddl () from s;
 
 
@@ -68,8 +104,12 @@ select * from v_sel order by a;
 select * from v_dml;
 
 
-evaluate 'Case 4: INCR () in a function invoked by SELECT';
+evaluate 'Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE';
 select f_incr () from s;
+select f_incr_execute () from s;
+-- a name prepared again in a loop runs the new statement, and is judged by it
+select f_reprepare () from s;
+select f_reprepare_incr () from s;
 
 
 evaluate 'Case 5: nothing was written';
@@ -86,7 +126,12 @@ drop function f_sel;
 drop function f_rollback;
 drop function f_savepoint;
 drop function f_ddl;
+drop function f_prepare_to_commit;
+drop function f_attach;
 drop function f_incr;
+drop function f_incr_execute;
+drop function f_reprepare;
+drop function f_reprepare_incr;
 drop table t;
 drop table s;
 drop table log_t;

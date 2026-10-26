@@ -68,8 +68,23 @@
 0
 
 ===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
     
-Case 1: ROLLBACK, SAVEPOINT and DDL in a function invoked by SELECT     
+Case 1: ROLLBACK, SAVEPOINT, 2PC (PREPARE TO COMMIT, ATTACH) and DDL in a function invoked by SELECT     
 
 
 ===================================================
@@ -81,6 +96,16 @@ Stored procedure execute error:
 Error:-889
 Stored procedure execute error: 
   (line 1, column 60) Cannot perform SAVEPOINT inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 68) Cannot perform PREPARE TO COMMIT inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 57) Cannot perform ATTACH inside a query or DML statement.
 
 ===================================================
 Error:-889
@@ -121,13 +146,28 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 4: INCR () in a function invoked by SELECT     
+Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE     
 
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
   (line 1, column 62) Cannot perform a DML operation inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 4, column 1) Cannot perform a DML operation inside a query or DML statement.
+
+===================================================
+f_reprepare()    
+100 200      
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 9, column 1) Cannot perform a DML operation inside a query or DML statement.
 
 ===================================================
     
@@ -149,6 +189,16 @@ count(*)
 0     
 
 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
