@@ -25,8 +25,8 @@
 Case 1: Parallel serial parallel mixed lists; result = NO_PARALLEL_SCAN     
 
 ===================================================
-count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_length    
-32868     2100     11504050     5050.500000     10389     
+count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_md5    
+32868     2100     11504050     5050.500000     17d221ca0094917db504e225e24edd72     
 
 ===================================================
 trace    
@@ -34,7 +34,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v),  cast(median([dba.td].v) as numeric(?,?)),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v),  cast(median([dba.td].v) as numeric(?,?)),  md?(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -46,8 +46,8 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_length    
-32868     2100     11504050     5050.500000     10389     
+count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_md5    
+32868     2100     11504050     5050.500000     17d221ca0094917db504e225e24edd72     
 
 ===================================================
 trace    
@@ -55,7 +55,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v),  cast(median([dba.td].v) as numeric(?,?)),  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.td].v), sum(distinct [dba.td].v),  cast(median([dba.td].v) as numeric(?,?)),  md?(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

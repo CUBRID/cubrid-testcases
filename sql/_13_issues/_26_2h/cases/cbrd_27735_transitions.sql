@@ -30,9 +30,9 @@ set system parameters 'group_concat_max_len=4194304';
 
 
 evaluate 'Case 1: Parallel serial parallel mixed lists; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+select /*+ recompile */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td;
 show trace;
-select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), cast(median(v) as numeric(20,6)), md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td;
 show trace;
 
 

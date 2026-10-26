@@ -11,7 +11,7 @@
  *    Case 3: SUM DISTINCT
  *    Case 4: AVG DISTINCT
  *    Case 5: MEDIAN
- *    Case 6: Ordered DISTINCT GROUP_CONCAT length
+ *    Case 6: Ordered DISTINCT GROUP_CONCAT MD5
  *    Case 7: Empty input
  */
 
@@ -70,10 +70,10 @@ select /*+ recompile no_parallel_scan */ cast(median(v) as numeric(20,6)) from t
 show trace;
 
 
-evaluate 'Case 6: Ordered DISTINCT GROUP_CONCAT length; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+evaluate 'Case 6: Ordered DISTINCT GROUP_CONCAT MD5; result = NO_PARALLEL_SCAN';
+select /*+ recompile */ md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td;
 show trace;
-select /*+ recompile no_parallel_scan */ length(group_concat(distinct v order by v separator ',')) as concat_length from td;
+select /*+ recompile no_parallel_scan */ md5(group_concat(distinct v order by v separator ',')) as concat_md5 from td;
 show trace;
 
 

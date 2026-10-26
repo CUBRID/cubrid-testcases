@@ -237,11 +237,11 @@ Trace Statistics:
 
 ===================================================
     
-Case 6: Ordered DISTINCT GROUP_CONCAT length; result = NO_PARALLEL_SCAN     
+Case 6: Ordered DISTINCT GROUP_CONCAT MD5; result = NO_PARALLEL_SCAN     
 
 ===================================================
-concat_length    
-3950     
+concat_md5    
+51bdba6022a90ef2ea73656b727e4bcb     
 
 ===================================================
 trace    
@@ -249,7 +249,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select  md?(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -260,8 +260,8 @@ Trace Statistics:
      
 
 ===================================================
-concat_length    
-3950     
+concat_md5    
+51bdba6022a90ef2ea73656b727e4bcb     
 
 ===================================================
 trace    
@@ -269,7 +269,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  md?(group_concat(distinct [dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -324,8 +324,8 @@ Trace Statistics:
 Case 8: Complete ordered non-DISTINCT string; result = NO_PARALLEL_SCAN     
 
 ===================================================
-concat_length    
-57750     
+concat_md5    
+8e82dd4b54cb53d2fc7c5d127f7a0b84     
 
 ===================================================
 trace    
@@ -333,7 +333,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select  char_length(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select  md?(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -344,8 +344,8 @@ Trace Statistics:
      
 
 ===================================================
-concat_length    
-57750     
+concat_md5    
+8e82dd4b54cb53d2fc7c5d127f7a0b84     
 
 ===================================================
 trace    
@@ -353,7 +353,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  md?(group_concat([dba.td].v order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
