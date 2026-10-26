@@ -83,6 +83,23 @@
  *            JOIN). count(*) must be 2.
  *   Case 15: original JIRA repro (RIGHT OUTER JOIN -> INNER JOIN -> LEFT
  *            OUTER JOIN, /*+ USE_NL *\/). count(*) must be 19020.
+ *
+ * Cases 16-19 cover a path opened by CBRD-27397 (#7943): an uncorrelated IN
+ * against a unique-key column gets unnested to an INNER JOIN. When that
+ * INNER JOIN's ON condition reads a preceding RIGHT OUTER JOIN's
+ * null-supplying side through coalesce() (so the column is never NULL and
+ * qo_rewrite_outerjoin() cannot convert the RIGHT OUTER JOIN to INNER), it
+ * hits the same hazard as Cases 1-15. This PR's fix resolves it without any
+ * change beyond what Cases 1-15 already exercise; Cases 16-17 pin that as a
+ * regression guard against CBRD-27397's rewrite, and Cases 18-19 confirm
+ * the same hazard through EXISTS and an explicit SEMI JOIN.
+ *
+ *   Case 16: uncorrelated IN, coalesce(k, -1) so a null-padded row never
+ *            matches. count(*) must be 12.
+ *   Case 17: uncorrelated IN, coalesce(k, 0) so a null-padded row matches
+ *            jtbl3_u's row 0. count(*) must be 2992.
+ *   Case 18: EXISTS form of Case 17. count(*) must be 2992.
+ *   Case 19: explicit SEMI JOIN form of Case 17. count(*) must be 2992.
  */
 drop table if exists jtbl_a, jtbl_b, jtbl_c;
 
@@ -246,3 +263,37 @@ select /*+ USE_NL */ count(*) from c15_jt4 x0
   left join  c15_jt3 x3 on x1.k = x3.w;
 
 drop table c15_jt3, c15_jt4;
+
+drop table if exists jtbl3_o;
+drop table if exists jtbl3_p;
+drop table if exists jtbl3_u;
+create table jtbl3_o (id int, m int);
+create table jtbl3_p (id int, k int);
+create table jtbl3_u (k int primary key);
+
+insert into jtbl3_o select rownum, mod(rownum, 7) from db_class a, db_class b, db_class c limit 3000;
+insert into jtbl3_p select rownum * 2, mod(rownum, 5) from db_class a, db_class b, db_class c limit 20;
+insert into jtbl3_u values (0), (1), (2);
+
+create index i_jtbl3_p_id on jtbl3_p (id);
+create index i_jtbl3_o_m on jtbl3_o (m);
+
+update statistics on jtbl3_o, jtbl3_p, jtbl3_u with fullscan;
+
+-- Case 16
+select count(*) from jtbl3_p right outer join jtbl3_o on jtbl3_o.id = jtbl3_p.id
+  where coalesce(jtbl3_p.k, -1) in (select k from jtbl3_u);
+
+-- Case 17
+select count(*) from jtbl3_p right outer join jtbl3_o on jtbl3_o.id = jtbl3_p.id
+  where coalesce(jtbl3_p.k, 0) in (select k from jtbl3_u);
+
+-- Case 18
+select count(*) from jtbl3_p right outer join jtbl3_o on jtbl3_o.id = jtbl3_p.id
+  where exists (select 1 from jtbl3_u where jtbl3_u.k = coalesce(jtbl3_p.k, 0));
+
+-- Case 19
+select count(*) from jtbl3_p right outer join jtbl3_o on jtbl3_o.id = jtbl3_p.id
+  semi join jtbl3_u on jtbl3_u.k = coalesce(jtbl3_p.k, 0);
+
+drop table jtbl3_o, jtbl3_p, jtbl3_u;
