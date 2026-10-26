@@ -1,0 +1,1498 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+0
+===================================================
+2560
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Byte lengths zero, one, two and three; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     1000     
+3     1000     2000     
+4     1000     3000     
+5     1000     3000     
+6     1000     3000     
+7     1000     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= octet_length(o.k) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     1000     
+3     1000     2000     
+4     1000     3000     
+5     1000     3000     
+6     1000     3000     
+7     1000     3000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= octet_length(o.k) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     100     
+3     100     200     
+4     100     300     
+5     100     300     
+6     100     300     
+7     100     300     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k)) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k)) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     100     
+3     100     200     
+4     100     300     
+5     100     300     
+6     100     300     
+7     100     300     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k)) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= octet_length(o.k)) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: First byte differs under the same collation; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+1     1000     32000     
+2     1000     65000     
+3     1000     65000     
+4     1000     65000     
+5     1000     97000     
+6     1000     65000     
+7     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+1     1000     32000     
+2     1000     65000     
+3     1000     65000     
+4     1000     65000     
+5     1000     97000     
+6     1000     65000     
+7     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     100     3200     
+2     100     6500     
+3     100     6500     
+4     100     6500     
+5     100     9700     
+6     100     6500     
+7     100     6500     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     100     3200     
+2     100     6500     
+3     100     6500     
+4     100     6500     
+5     100     9700     
+6     100     6500     
+7     100     6500     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: Middle byte differs under the same collation; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+3     1000     32000     
+4     1000     65000     
+5     1000     65000     
+6     1000     97000     
+7     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+3     1000     32000     
+4     1000     65000     
+5     1000     65000     
+6     1000     97000     
+7     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     0     null     
+2     0     null     
+3     100     3200     
+4     100     6500     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     0     null     
+2     0     null     
+3     100     3200     
+4     100     6500     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: Last byte differs under the same collation; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+4     1000     65000     
+5     1000     65000     
+6     1000     65000     
+7     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+4     1000     65000     
+5     1000     65000     
+6     1000     65000     
+7     1000     97000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     0     null     
+2     0     null     
+3     0     null     
+4     100     6500     
+5     100     6500     
+6     100     6500     
+7     100     9700     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     0     null     
+1     0     null     
+2     0     null     
+3     0     null     
+4     100     6500     
+5     100     6500     
+6     100     6500     
+7     100     9700     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.k, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: CHAR keys preserve case sensitive expressions; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     65000     
+2     1000     97000     
+3     1000     65000     
+4     1000     65000     
+5     1000     65000     
+6     1000     97000     
+7     1000     65000     
+8     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     65000     
+1     1000     65000     
+2     1000     97000     
+3     1000     65000     
+4     1000     65000     
+5     1000     65000     
+6     1000     97000     
+7     1000     65000     
+8     1000     65000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?)) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     6500     
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     6500     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     6500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     6500     
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     6500     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     6500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?)))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?))) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii( substr(o.ck, ?, ?))) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: Integer key fallback; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     2000     
+3     1000     3000     
+4     1000     4000     
+5     1000     5000     
+6     1000     6000     
+7     1000     7000     
+8     1000     8000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code=o.n group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     2000     
+3     1000     3000     
+4     1000     4000     
+5     1000     5000     
+6     1000     6000     
+7     1000     7000     
+8     1000     8000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code=o.n group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     200     
+3     100     300     
+4     100     400     
+5     100     500     
+6     100     600     
+7     100     700     
+8     100     800     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     200     
+3     100     300     
+4     100     400     
+5     100     500     
+6     100     600     
+7     100     700     
+8     100     800     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code=o.n) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: Numeric key fallback; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     1000     
+1     1000     2000     
+2     1000     3000     
+3     1000     4000     
+4     1000     5000     
+5     1000     6000     
+6     1000     7000     
+7     1000     8000     
+8     1000     9000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= cast(o.v as integer) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     1000     
+1     1000     2000     
+2     1000     3000     
+3     1000     4000     
+4     1000     5000     
+5     1000     6000     
+6     1000     7000     
+7     1000     8000     
+8     1000     9000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= cast(o.v as integer) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     100     
+1     100     200     
+2     100     300     
+3     100     400     
+4     100     500     
+5     100     600     
+6     100     700     
+7     100     800     
+8     100     900     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer)) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer)) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     100     
+1     100     200     
+2     100     300     
+3     100     400     
+4     100     500     
+5     100     600     
+6     100     700     
+7     100     800     
+8     100     900     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer)) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast(o.v as integer)) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Date key fallback; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     2000     
+3     1000     3000     
+4     1000     4000     
+5     1000     5000     
+6     1000     6000     
+7     1000     7000     
+8     1000     8000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?') group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     0     
+1     1000     1000     
+2     1000     2000     
+3     1000     3000     
+4     1000     4000     
+5     1000     5000     
+6     1000     6000     
+7     1000     7000     
+8     1000     8000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?') group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     200     
+3     100     300     
+4     100     400     
+5     100     500     
+6     100     600     
+7     100     700     
+8     100     800     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?'))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?')) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?')) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     0     
+1     100     100     
+2     100     200     
+3     100     300     
+4     100     400     
+5     100     500     
+6     100     600     
+7     100     700     
+8     100     800     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?'))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?')) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= datediff(o.dt, date '?-?-?')) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 9: Composite string and scalar keys; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     1000     
+1     1000     36000     
+2     1000     72000     
+3     1000     75000     
+4     1000     78000     
+5     1000     113000     
+6     1000     84000     
+7     1000     87000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?') group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     1000     1000     
+1     1000     36000     
+2     1000     72000     
+3     1000     75000     
+4     1000     78000     
+5     1000     113000     
+6     1000     84000     
+7     1000     87000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?') group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+0     100     100     
+1     100     3600     
+2     100     7200     
+3     100     7500     
+4     100     7800     
+5     100     11300     
+6     100     8400     
+7     100     8700     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?'))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?')) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?')) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     100     100     
+1     100     3600     
+2     100     7200     
+3     100     7500     
+4     100     7800     
+5     100     11300     
+6     100     8400     
+7     100     8700     
+8     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?'))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?')) from [dba.t_wb_outer] o)
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= cast( ascii(o.k) as integer)+o.n+ cast(o.v as integer)+ datediff(o.dt, date '?-?-?')) as [val] from [dba.t_wb_outer] o) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: Empty outer input; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii(o.k) and (o.g< ?:? ) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (ii)
+
+  rewritten query: select /*+ ORDERED USE_NL(ii) PARALLEL(?) */ o.g, count(*), sum( cast(ii.code as numeric(?,?))) from [dba.t_wb_outer] o, [dba.t_wb_inner] ii where ii.code= ascii(o.k) and (o.g< ?:? ) group by o.g
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_wb_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+grp    matched    total    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k)) from [dba.t_wb_outer] o where (o.g< ?:? ))
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k)) as [val] from [dba.t_wb_outer] o where (o.g< ?:? )) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+grp    matched    total    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (ii)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k)) from [dba.t_wb_outer] o where (o.g< ?:? ))
+
+  SORT (group by)
+    TABLE SCAN (dd)
+
+  rewritten query: select /*+ PARALLEL(?) */ dd.g, count(dd.val), sum( cast(dd.val as numeric(?,?))) from (select /*+ NO_MERGE PARALLEL(?) */ o.g, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(ii.code) from [dba.t_wb_inner] ii where ii.code= ascii(o.k)) as [val] from [dba.t_wb_outer] o where (o.g< ?:? )) dd (g, val) group by dd.g
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wb_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_wb_inner), (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

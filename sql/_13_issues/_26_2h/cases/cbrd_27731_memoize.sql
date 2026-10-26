@@ -34,6 +34,9 @@ show trace;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile parallel(0) ordered use_nl(i) */ count(*) as matched, sum(i.code) as total from t_outer o, t_inner i where i.code=ascii(o.c);
 show trace;
+-- Preserve the full baseline above; bound later variants to 100 outer rows.
+delete from t_outer where id>100;
+update statistics on t_outer with fullscan;
 
 
 evaluate 'Case 2: Parity groups preserve both original values; result = cache disabled';

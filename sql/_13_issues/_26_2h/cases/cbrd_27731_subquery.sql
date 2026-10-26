@@ -32,6 +32,9 @@ select /*+ recompile parallel(0) */ count(d.val) as matched, sum(d.val) as total
 show trace;
 select /*+ recompile parallel(0) */ count(d.val) as matched, sum(d.val) as total from (select /*+ no_merge parallel(0) */ o.id, (select /*+ no_unnest no_subquery_cache */ max(i.code) from t_inner i where i.code=ascii(o.c)) as val from t_outer o) d;
 show trace;
+-- Preserve the full baseline above; bound later variants to 100 outer rows.
+delete from t_outer where id>100;
+update statistics on t_outer with fullscan;
 
 
 evaluate 'Case 2: Parity groups preserve both original values; result = cache disabled';
