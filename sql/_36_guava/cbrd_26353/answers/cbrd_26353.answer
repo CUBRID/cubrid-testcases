@@ -9,6 +9,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 7
 ===================================================
 0
@@ -18,6 +20,10 @@
 0
 ===================================================
 4
+===================================================
+0
+===================================================
+2
 ===================================================
 0
 ===================================================
@@ -166,6 +172,25 @@ Trace Statistics:
      
 
 ===================================================
+upper(a)    drand()<1    
+A     1     
+A     1     
+A     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_upper_a) (key range:  upper([dba.ta].a)= ?:? )
+
+  rewritten query: select  upper([dba.ta].a),  drand()<? from [dba.ta] [dba.ta] where  upper([dba.ta].a)= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_upper_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
 a    b    
 a     1     
 A     2     
@@ -276,6 +301,26 @@ Trace Statistics:
      
 
 ===================================================
+b    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: select [dba.ta].b,  substring( cast( uuid()  as varchar) from ? for ?) from [dba.ta] [dba.ta] where  substring( cast( uuid()  as varchar) from ? for ?)='' and ([dba.ta].b< ?:? ) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
 a    b    
 a     1     
 A     2     
@@ -297,6 +342,47 @@ Trace Statistics:
      
 
 ===================================================
+upper(a)    count(*)    
+null     3     
+A     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.ta.i_ta_upper_a) (key range:  upper([dba.ta].a)= ?:? )
+
+  rewritten query: select  upper([dba.ta].a), count(*) from [dba.ta] [dba.ta] where  upper([dba.ta].a)= ?:?  group by  upper([dba.ta].a) with rollup order by ? nulls first 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_upper_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+abs(b)    a    
+9007199254740992     y     
+9007199254740993     x     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select  abs([dba.td].b), [dba.td].a from [dba.td] [dba.td] where  abs([dba.td].b)= cast(? as double) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
 0
 ===================================================
 0
@@ -311,6 +397,8 @@ upper(a)
 B     
 B     
 
+===================================================
+0
 ===================================================
 0
 ===================================================

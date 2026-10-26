@@ -18,12 +18,16 @@
 --   - ORDER BY ... FOR orderby_num () inside a derived table: moved to inst_num ()
 --   - LIMIT, GROUP BY on the same expression, inner join on a joined table expression
 --   - host variable on the constant side (prepare / execute)
+--   - a non-deterministic item later in the select list: ORDER BY still dropped
 --   - kept: OR term, outer join ON term, collation cast, different literal case,
---     non-deterministic expression, a different expression is fixed
+--     non-deterministic expression (drand (), uuid ()), a different expression is fixed
+--   - kept: GROUP BY ... WITH ROLLUP, the super-aggregate row has NULL for the key
+--   - kept: BIGINT expression compared with a DOUBLE constant, two different values match
 
 drop table if exists ta;
 drop table if exists tb;
 drop table if exists tc;
+drop table if exists td;
 
 create table ta (a varchar(10), b int);
 create index i_ta_upper_a on ta (upper (a));
@@ -34,6 +38,9 @@ insert into tb values (1, 'a'), (2, 'z'), (4, 'A');
 
 create table tc (a varchar(10) collate utf8_bin, b int);
 insert into tc values ('a', 1), ('A', 2), ('a', 3), ('A', 4);
+
+create table td (a varchar(10), b bigint);
+insert into td values ('x', 9007199254740993), ('y', 9007199254740992);
 
 set trace on;
 
@@ -65,6 +72,10 @@ show trace;
 select upper (tb.a) from ta inner join tb on ta.b = tb.x where upper (tb.a) = 'A' order by upper (tb.a);
 show trace;
 
+-- drand () later in the select list does not block the drop
+select upper (a), drand () < 1 from ta where upper (a) = 'A' order by upper (a);
+show trace;
+
 -- kept: OR term
 select a, b from ta where upper (a) = 'A' or a = 'b' order by upper (a), b;
 show trace;
@@ -85,8 +96,20 @@ show trace;
 select floor (drand () * 1) from ta where floor (drand () * 1) = 0 and b = 1 order by floor (drand () * 1);
 show trace;
 
+-- kept: uuid () is non-deterministic
+select b from ta where substring (uuid (), 1, 0) = '' and b < 3 order by substring (uuid (), 1, 0), b;
+show trace;
+
 -- kept: a different expression is fixed
 select a, b from ta where upper (a) = 'A' order by lower (a) desc, b;
+show trace;
+
+-- kept: WITH ROLLUP, the NULL row sorts first
+select upper (a), count (*) from ta where upper (a) = 'A' group by upper (a) with rollup order by upper (a) nulls first;
+show trace;
+
+-- kept: BIGINT and DOUBLE are compared in DOUBLE, both rows match
+select abs (b), a from td where abs (b) = cast (9007199254740992 as double) order by abs (b), a;
 show trace;
 
 set trace off;
@@ -100,3 +123,4 @@ deallocate prepare st;
 drop table ta;
 drop table tb;
 drop table tc;
+drop table td;
