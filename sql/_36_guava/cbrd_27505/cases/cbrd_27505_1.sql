@@ -2,7 +2,7 @@
  *  This test case verifies CBRD-27505 : a CONNECT BY over a join, here with db_root, runs its connect condition
  *  as a hash list scan, and must find the child rows whose NUMERIC key equals the PRIOR key when the two keys
  *  differ in precision or scale, or one is a fixed NUMERIC column and the other a floating NUMERIC result such
- *  as x.n1 + 0. The single table form does not use the hash list scan.
+ *  as x.n1 + 0. The single table form is covered by cbrd_27505_4.
  *
  *  Every case counts the rows of the query and of the same query with NO_HASH_LIST_SCAN,
  *  and prints PASS when both equal the expected count.
