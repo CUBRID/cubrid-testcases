@@ -1,23 +1,23 @@
 /*
-Test Case: escalation_demotion/seventeenth_partition_stays_raised
+Test Case: escalation_demotion/nineteen_partitions_all_demoted
 Priority: 1
 Reference case: CBRD-27238 (CUBRID/cubrid#8277)
 Author: hgryoo
 
 Test Point:
-A statement records at most 16 escalated classes for lowering. A full-table UPDATE (lock_escalation 60) on a table of
-20 range partitions escalates p1 to p19: p1 to p16 are lowered at statement end and p17 to p19 stay X to commit.
-Another transaction inserts into p0 and p16 at once and waits on p17.
+A statement may lower any number of escalated classes. A full-table UPDATE (lock_escalation 60) on a table of 20 range
+partitions escalates p1 to p19, and every one of them is lowered at statement end: another transaction inserts into
+p0, p16, p17 and p19 without waiting, before the first transaction commits.
 
 NUM_CLIENTS = 2
 C1: SET SYSTEM PARAMETERS 'lock_escalation=60';
 C1: UPDATE t27238_pt SET v = v + 1;
 C2: INSERT INTO t27238_pt VALUES (2, 5);
 C2: INSERT INTO t27238_pt VALUES (802, 5);
-C2: INSERT INTO t27238_pt VALUES (852, 5); -- blocks
-C1: COMMIT;
-C2: (released)
+C2: INSERT INTO t27238_pt VALUES (852, 5);
+C2: INSERT INTO t27238_pt VALUES (952, 5);
 C2: COMMIT;
+C1: COMMIT;
 */
 
 MC: setup NUM_CLIENTS = 2;
@@ -48,12 +48,13 @@ MC: wait until C2 ready;
 C2: INSERT INTO t27238_pt VALUES (802, 5);
 MC: wait until C2 ready;
 C2: INSERT INTO t27238_pt VALUES (852, 5);
-MC: wait until C2 blocked;
-C1: COMMIT;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
+C2: INSERT INTO t27238_pt VALUES (952, 5);
 MC: wait until C2 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
+C1: COMMIT;
+MC: wait until C1 ready;
 
 /* expected end state */
 /* expect 1 */
@@ -62,10 +63,10 @@ MC: wait until C2 ready;
 /* expect 5 */
 C2: SELECT v FROM t27238_pt WHERE id = 852;
 MC: wait until C2 ready;
-/* expect 502 */
+/* expect 503 */
 C2: SELECT COUNT(*) FROM t27238_pt;
 MC: wait until C2 ready;
-/* expect 514 */
+/* expect 519 */
 C2: SELECT SUM(v) FROM t27238_pt;
 MC: wait until C2 ready;
 
