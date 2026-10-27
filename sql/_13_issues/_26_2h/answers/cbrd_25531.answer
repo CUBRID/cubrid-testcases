@@ -29,7 +29,7 @@ sscan
     class: __t? node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from tbla tbla) [__t?] (a_?)
+select count(*) from (select ? from tbla tbla) [__t?] (?)
 ===================================================
 0
 ===================================================
@@ -47,7 +47,7 @@ sscan
     class: va node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from tbla va) va (a_?)
+select count(*) from (select ? from tbla va) va (?)
 ===================================================
     
 Case 2: the analytic column is referenced by the main query     
@@ -1314,7 +1314,7 @@ sscan
     class: __t? node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from tble tble) [__t?] (a_?)
+select count(*) from (select ? from tble tble) [__t?] (?)
 ===================================================
 0
 ===================================================
@@ -1332,7 +1332,7 @@ sscan
     class: vv node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from tble vv) vv (a_?)
+select count(*) from (select ? from tble vv) vv (?)
 ===================================================
     
 Case 23: nested, the inner analytic is unreferenced at the top -- both levels must reduce (the top and the inner select list collapse to (1))     
@@ -1358,7 +1358,7 @@ sscan
     class: __t? node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from (select tble.cola from tble tble) [__t?] (cola)) [__t?] (a_?)
+select count(*) from (select ? from (select tble.cola from tble tble) [__t?] (cola)) [__t?] (?)
 ===================================================
 0
 ===================================================
@@ -1384,7 +1384,7 @@ sscan
     class: vw_out node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from (select vw_in.cola from tble vw_in) vw_out (cola)) vw_out (a_?)
+select count(*) from (select ? from (select vw_in.cola from tble vw_in) vw_out (cola)) vw_out (?)
 ===================================================
     
 Case 24: regression -- the inner running SUM read through the outer view must match between the nested view and its equivalent nested inline view (a desync at depth would change the value)     
@@ -1748,7 +1748,7 @@ sscan
     class: w node[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from (select ? from tblf tblf) w (a_?)
+select count(*) from (select ? from tblf tblf) w (?)
 ===================================================
 rn    
 1     
