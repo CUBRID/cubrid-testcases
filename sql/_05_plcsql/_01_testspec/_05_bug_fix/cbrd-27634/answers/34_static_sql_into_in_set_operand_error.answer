@@ -1,0 +1,129 @@
+===================================================
+    
+SELECT INTO in an operand of UNION / INTERSECT / EXCEPT of a static SQL is a compile error (semantic error 344).     
+
+===================================================
+    
+INTO variables of PL/CSQL can receive only the final result of a query.     
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+2
+
+===================================================
+2
+
+===================================================
+    
+error: INTO in the left operand of UNION     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t2 where a = 3'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] where a=1 union select a ...
+
+===================================================
+    
+error: INTO in the right operand of UNION     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a from [dba.so_t1] where a=1 union select a into :x ...
+
+===================================================
+    
+error: INTO in both operands of UNION     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a into x from so_t2 where a = 3'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] where a=1 union select a ...
+
+===================================================
+    
+error: INTO in a nested left operand (UNION ALL and UNION chained)     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union all select a from so_t2 where a = 3 union select a fro...'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. ((select a into :x from [dba.so_t1] where a=1 union all sele...
+
+===================================================
+    
+error: INTO in a nested right operand (INTERSECT inside UNION ALL)     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before ' )'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a from [dba.so_t1] where a=1 union all (select a fro...
+
+===================================================
+    
+error: INTO in an operand of INTERSECT     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  intersect select a from so_t2'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] where a=1 intersect selec...
+
+===================================================
+    
+error: INTO in an operand of EXCEPT     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  except select a from so_t2'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] where a=1 except select a...
+
+===================================================
+    
+error: INTO in an operand of UNION in a derived table     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t2)'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. select max(a) into :x from ((select a into :x from [dba.so_t...
+
+===================================================
+    
+error: INTO in an operand of UNION in a function     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t2 where a = 3'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] where a=1 union select a ...
+
+===================================================
+    
+the routines above must not be created     
+
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.so_e1' does not exist.
+
+===================================================
+Error:-494
+Semantic: before '  from dual; '
+Function so_e9 is undefined. select  from dual dual
+
+===================================================
+0
+
