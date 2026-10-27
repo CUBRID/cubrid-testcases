@@ -15,7 +15,7 @@
  *             of 200000 groups (one row per group) stays serial, the non-covered one does not
  *    Case 4:  NULL group key on a two-column index without a range, one and both columns
  *    Case 5:  JSON_ARRAYAGG and JSON_OBJECTAGG, judged by their length
- *    Case 6:  a non-aggregated column in the select list, read outside the derived table
+ *    Case 6:  a non-aggregated column in the select list, kept by the outer query (not covered)
  *    Case 7:  an analytic function, HAVING, HAVING with a correlated subquery, HAVING that fails
  *    Case 8:  ORDER BY an aggregate or the key descending, with LIMIT, inside a derived table
  *    Case 9:  a prefix of a two-column index, with a filter on the second column
@@ -28,9 +28,10 @@
  *    Case 16: a prefix index does not order the groups, so GROUP BY sorts (develop split groups)
  *    Case 17: an index with a DESC column: GROUP BY a, b DESC and GROUP BY a over (a DESC)
  *    Case 18: keys whose rows are all deleted, and a key whose first row is deleted
+ *    Case 19: a case-insensitive string key, the leader merges a group's runs by the collation
  */
 
-drop table if exists t_digit, t_main, t_few, t_small, t_pfx, t_dsc;
+drop table if exists t_digit, t_main, t_few, t_small, t_pfx, t_dsc, t_ci;
 
 -- ten digits for the cross joins below
 create table t_digit (i int);
@@ -111,10 +112,12 @@ show trace;
 select /*+ recompile no_parallel_scan */ k, json_length(json_arrayagg(id)), sum(id), json_length(json_objectagg(id, v)) from t_few force index (i_k) where k >= 0 group by k order by k;
 
 
-evaluate 'Case 6: a non-aggregated column in the select list, read outside the derived table; result = no_parallel_scan';
-select /*+ recompile */ g, c from (select g, s, count(*) c from t_main force index (i_g) where g between 0 and 34 group by g) z order by g;
+evaluate 'Case 6: a non-aggregated column in the select list, kept by the outer query (not covered); result = no_parallel_scan';
+-- s is read but not printed: which row of the group gives it depends on the read order. Selecting
+-- s is not null keeps s in the derived table, so the scan reads the heap (not covered)
+select /*+ recompile */ g, c, s is not null from (select g, s, count(*) c from t_main force index (i_g) where g between 0 and 34 group by g) z order by g;
 show trace;
-select /*+ recompile no_parallel_scan */ g, c from (select /*+ no_parallel_scan */ g, s, count(*) c from t_main force index (i_g) where g between 0 and 34 group by g) z order by g;
+select /*+ recompile no_parallel_scan */ g, c, s is not null from (select /*+ no_parallel_scan */ g, s, count(*) c from t_main force index (i_g) where g between 0 and 34 group by g) z order by g;
 
 
 evaluate 'Case 7: an analytic function, HAVING, HAVING with a correlated subquery, HAVING that fails; result = no_parallel_scan';
@@ -273,9 +276,22 @@ show trace;
 select /*+ recompile no_parallel_scan */ g, count(*), sum(v) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
 select /*+ recompile */ g, count(*) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
 show trace;
+select /*+ recompile no_parallel_scan */ g, count(*) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
+
+
+evaluate 'Case 19: a case-insensitive string key whose groups several workers read; result = no_parallel_scan';
+-- 200000 rows: k has 40 groups of 5000 rows in three spellings (Grp1, gRP1, GRP1), one key each under
+-- utf8_en_ci with a long overflow chain. The leader must merge the runs of a group by the collation.
+-- The printed key is lower(k): its spelling comes from whichever run is merged first
+create table t_ci (id int primary key, k varchar(20) collate utf8_en_ci not null, v int);
+insert into t_ci select rownum, decode(mod(rownum, 3), 0, 'Grp', 1, 'gRP', 'GRP') || mod(rownum, 40), mod(rownum * 7, 1000) from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e, t_digit f limit 200000;
+create index i_ci on t_ci (k);
+update statistics on t_ci with fullscan;
+select /*+ recompile */ lower(x.k), x.c, x.s from (select k, count(*) c, sum(v) s from t_ci force index (i_ci) where k > '' group by k) x order by 1;
+show trace;
 -- trace goes off before the last query that no show trace reads: its plan would stay in the
 -- session and the next case's first show trace over a cached plan would print it
 set trace off;
-select /*+ recompile no_parallel_scan */ g, count(*) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
+select /*+ recompile no_parallel_scan */ lower(x.k), x.c, x.s from (select /*+ no_parallel_scan */ k, count(*) c, sum(v) s from t_ci force index (i_ci) where k > '' group by k) x order by 1;
 
-drop table t_digit, t_main, t_few, t_small, t_pfx, t_dsc;
+drop table t_digit, t_main, t_few, t_small, t_pfx, t_dsc, t_ci;
