@@ -362,7 +362,7 @@ Query Plan:
       TABLE SCAN (dba.ta)
       INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
 
-  rewritten query: select [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] natural  left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
+  rewritten query: select [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -394,7 +394,7 @@ Query Plan:
       TABLE SCAN (dba.ta)
       INDEX SCAN (dba.tb.pk_tb_id) (key range: [dba.ta].id=[dba.tb].id, covered: true)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] natural  left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.ta].id, [dba.ta].cola, [dba.tb].id from [dba.ta] [dba.ta] left outer join [dba.tb] [dba.tb] on [dba.ta].id=[dba.tb].id where  cast([dba.ta].cola as integer)<=? order by ?, ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -490,7 +490,7 @@ Trace Statistics:
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
       SCAN (index: dba.tb.pk_tb_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
