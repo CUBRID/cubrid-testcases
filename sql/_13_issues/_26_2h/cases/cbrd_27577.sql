@@ -2,10 +2,10 @@
  *  This test case verifies CBRD-27577: when the transaction rolls back to a savepoint, the user trigger
  *  cache is rebuilt on the next COMMIT, so it matches the catalog restored by the rollback.
  *
- *  ALTER TRIGGER ... OWNER TO marks the cache invalid, and ALTER TRIGGER ... PRIORITY of a user trigger
- *  rebuilds it at once, without t1 whose owner is u1 at that point. ROLLBACK TO SAVEPOINT restores the
- *  owner of t1 to DBA. Before the fix the cache kept the state before the rollback, so t1 did not run
- *  on the COMMIT of DBA.
+ *  ALTER TRIGGER ... OWNER TO and ALTER TRIGGER ... PRIORITY of a user trigger in a transaction, then
+ *  ROLLBACK TO SAVEPOINT. The user trigger cache is built from the owner of each trigger, so it must be
+ *  rebuilt after the rollback restores the owner of t1. Both user triggers of DBA run on the COMMIT, as
+ *  before the change of the user trigger cache.
  *
  *  Coverage:
  *    Case 1:  both user triggers of DBA run on the COMMIT after the rollback to the savepoint
