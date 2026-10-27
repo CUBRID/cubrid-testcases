@@ -24,9 +24,13 @@
  *    Case 5:  DELETE, 'attr = const' in HAVING of the subquery with GROUP BY ... WITH ROLLUP
  *    Case 6:  PREPARE with user host variables after a statement of the same text with literals
  *    Case 7:  MERGE ... USING a subquery with 'attr = const'
+ *    Case 8:  UPDATE, 'const = attr' in WHERE of the subquery (the operands are swapped before the lookup)
+ *             on its own table, because it would otherwise get the XASL cache key of Case 1
+ *    Case 9:  UPDATE, '= ANY' subquery instead of IN
+ *    Case 10: UPDATE, 'attr = const' in a derived table nested in the IN subquery
  */
 
-drop table if exists xt, xids, xids_idx;
+drop table if exists xt, xids, xids_idx, xids_rev;
 
 create table xt (id int primary key, s varchar (20));
 create table xids (id int);
@@ -34,6 +38,8 @@ insert into xids values (1), (2), (3), (4);
 create table xids_idx (id int);
 insert into xids_idx values (1), (2), (3), (4);
 create index i_xids_idx_id on xids_idx (id);
+create table xids_rev (id int);
+insert into xids_rev values (1), (2), (3), (4);
 
 
 evaluate 'Case 1: UPDATE, WHERE of the subquery; expected 1 one / 2 two / 3 three / 4 base';
@@ -100,4 +106,31 @@ merge into xt using (select id from xids where id = 3) u on (xt.id = u.id) when 
 select * from xt order by 1;
 
 
-drop table xt, xids, xids_idx;
+evaluate 'Case 8: UPDATE, const = attr in WHERE of the subquery; expected 1 one / 2 two / 3 three / 4 base';
+delete from xt;
+insert into xt values (1, 'base'), (2, 'base'), (3, 'base'), (4, 'base');
+update xt set s = 'one' where id in (select id from xids_rev where 1 = id);
+update xt set s = 'two' where id in (select id from xids_rev where 2 = id);
+update xt set s = 'three' where id in (select id from xids_rev where 3 = id);
+select * from xt order by 1;
+
+
+evaluate 'Case 9: UPDATE, = ANY subquery; expected 1 one / 2 two / 3 three / 4 base';
+delete from xt;
+insert into xt values (1, 'base'), (2, 'base'), (3, 'base'), (4, 'base');
+update xt set s = 'one' where id = any (select id from xids where id = 1);
+update xt set s = 'two' where id = any (select id from xids where id = 2);
+update xt set s = 'three' where id = any (select id from xids where id = 3);
+select * from xt order by 1;
+
+
+evaluate 'Case 10: UPDATE, derived table nested in the subquery; expected 1 one / 2 two / 3 three / 4 base';
+delete from xt;
+insert into xt values (1, 'base'), (2, 'base'), (3, 'base'), (4, 'base');
+update xt set s = 'one' where id in (select id from (select id from xids where id = 1) d);
+update xt set s = 'two' where id in (select id from (select id from xids where id = 2) d);
+update xt set s = 'three' where id in (select id from (select id from xids where id = 3) d);
+select * from xt order by 1;
+
+
+drop table xt, xids, xids_idx, xids_rev;
