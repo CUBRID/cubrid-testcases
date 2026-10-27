@@ -11,6 +11,7 @@
  *    Case 6-9:   14 digit keys in a CONNECT BY over a join with db_root
  *    Case 10-12: negative scale keys in a join with a NO_MERGE derived table
  *    Case 13-15: negative scale keys in a CONNECT BY over a join with db_root
+ *    Case 16:    trace of Cases 1, 6 and 13: each runs as a hash list scan (SCAN (hash temp(m), ...))
  */
 
 drop table if exists nl_a, nl_b, nl_c4, nl_c6, nq_a, nq_b;
@@ -132,6 +133,17 @@ evaluate 'Case 15: CONNECT BY prior numeric(36,-10) = numeric(38,2); 10 rows';
 select case when a.c = b.c and a.s = b.s and a.c = 10 and a.s = 12 then 'PASS' else 'FAIL' end res, a.c cnt
 from (select count(*) c, sum(t.lv) s from (select level lv, sys_connect_by_path(x.id,'/') pth from nq_a x, db_root r start with x.id > 0 connect by nocycle prior x.b = x.d) t) a,
      (select count(*) c, sum(t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth from nq_a x, db_root r start with x.id > 0 connect by nocycle prior x.b = x.d) t) b;
+
+
+evaluate 'Case 16: trace of Cases 1, 6 and 13, each scans hash temp';
+set trace on;
+select count(*) from nl_a x, (select /*+ NO_MERGE */ id, k4 from nl_b) d where x.k = d.k4;
+show trace;
+select count(*) from (select level lv, sys_connect_by_path(x.id,'/') pth from nl_c4 x, db_root r start with x.a is not null connect by nocycle prior x.a = x.b) t;
+show trace;
+select count(*) from (select level lv, sys_connect_by_path(x.id,'/') pth from nq_a x, db_root r start with x.id > 0 connect by nocycle prior x.b = x.c) t;
+show trace;
+set trace off;
 
 
 drop table nl_a, nl_b, nl_c4, nl_c6, nq_a, nq_b;

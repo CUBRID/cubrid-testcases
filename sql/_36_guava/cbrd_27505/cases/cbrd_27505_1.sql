@@ -10,8 +10,8 @@
  *  Coverage:
  *    Case 1:  two keys of different scales, also shown in full
  *    Case 2:  one key, no other select columns
- *    Case 3:  one key, other NUMERIC columns in the select list (a2, b2)
- *    Case 4:  one key, the same columns in the other order (b2, a2)
+ *    Case 3:  one key, other NUMERIC columns in the select list (a2, b2), their sums checked too
+ *    Case 4:  one key, the same columns in the other order (b2, a2), their sums checked too
  *    Case 5:  two keys, the table with NULL, negative and non-matching keys
  *    Case 6:  the expression on the child side, prior x.n1 = x.n1 + 0
  *    Case 7:  prior x.n1 * 1000 = x.n1, a wider probe domain, must not raise an error
@@ -20,6 +20,7 @@
  *             1000.00, same scale, must not raise an overflow error
  *    Case 10: two keys, both with the expression on the child side
  *    Case 11: the expression on the child side of a numeric(12,4) key
+ *    Case 12: trace of Cases 1 and 2: the connect condition runs as a hash list scan (SCAN (hash temp(m), ...))
  */
 
 drop table if exists h, h4, t9;
@@ -52,16 +53,16 @@ from (select count(*) c from (select level lv, sys_connect_by_path(x.id,'/') pth
      (select count(*) c from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) b;
 
 
-evaluate 'Case 3: one key, a2 and b2 in the select list; 33 rows';
-select case when a.c = b.c and a.c = 33 then 'PASS' else 'FAIL' end res, a.c cnt
-from (select count(*) c from (select level lv, sys_connect_by_path(x.id,'/') pth, x.a2, x.b2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) a,
-     (select count(*) c from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth, x.a2, x.b2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) b;
+evaluate 'Case 3: one key, a2 and b2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500';
+select case when a.c = b.c and a.sa = b.sa and a.sb = b.sb and a.c = 33 and a.sa = 489.90 and a.sb = 462.1500 then 'PASS' else 'FAIL' end res, a.c cnt, a.sa, a.sb
+from (select count(*) c, sum(t.a2) sa, sum(t.b2) sb from (select level lv, sys_connect_by_path(x.id,'/') pth, x.a2, x.b2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) a,
+     (select count(*) c, sum(t.a2) sa, sum(t.b2) sb from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth, x.a2, x.b2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) b;
 
 
-evaluate 'Case 4: one key, b2 and a2 in the select list; 33 rows';
-select case when a.c = b.c and a.c = 33 then 'PASS' else 'FAIL' end res, a.c cnt
-from (select count(*) c from (select level lv, sys_connect_by_path(x.id,'/') pth, x.b2, x.a2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) a,
-     (select count(*) c from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth, x.b2, x.a2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) b;
+evaluate 'Case 4: one key, b2 and a2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500';
+select case when a.c = b.c and a.sa = b.sa and a.sb = b.sb and a.c = 33 and a.sa = 489.90 and a.sb = 462.1500 then 'PASS' else 'FAIL' end res, a.c cnt, a.sa, a.sb
+from (select count(*) c, sum(t.a2) sa, sum(t.b2) sb from (select level lv, sys_connect_by_path(x.id,'/') pth, x.b2, x.a2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) a,
+     (select count(*) c, sum(t.a2) sa, sum(t.b2) sb from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth, x.b2, x.a2 from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t) b;
 
 
 evaluate 'Case 5: two keys on h4; 21 rows';
@@ -105,6 +106,15 @@ evaluate 'Case 11: prior x.n2 = x.n2 + 0; 9 rows';
 select case when a.c = b.c and a.c = 9 then 'PASS' else 'FAIL' end res, a.c cnt
 from (select count(*) c from (select level lv, sys_connect_by_path(x.id,'/') pth from h x, db_root r start with x.id > 0 connect by nocycle prior x.n2 = x.n2 + 0) t) a,
      (select count(*) c from (select /*+ NO_HASH_LIST_SCAN */ level lv, sys_connect_by_path(x.id,'/') pth from h x, db_root r start with x.id > 0 connect by nocycle prior x.n2 = x.n2 + 0) t) b;
+
+
+evaluate 'Case 12: trace of Cases 1 and 2, the CONNECT BY scans hash temp';
+set trace on;
+select count(*) from (select level lv, sys_connect_by_path(x.id,'/') pth from h x, db_root r start with x.id > 0 connect by nocycle prior x.n1 + 0 = x.n1 and prior x.n2 + 0 = x.n2) t;
+show trace;
+select count(*) from (select level lv, sys_connect_by_path(x.id,'/') pth from h4 x, db_root r start with x.id > 0 connect by nocycle prior x.a + 0 = x.a) t;
+show trace;
+set trace off;
 
 
 drop table h, h4, t9;

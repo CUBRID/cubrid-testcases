@@ -26,11 +26,16 @@
  *             The child key is cast to DOUBLE, which the hash list scan would evaluate on every row,
  *             so this query keeps the single table plan.
  *    Case 16: as Case 15 with a NULL root key: 1 row, no error
- *    Case 17: query plans: Cases 1, 6 and 4 scan the table without sargs (hash list scan), Case 15
- *             keeps the connect condition in sargs (single table plan)
+ *    Case 17: prior NUMERIC(3,0) = CAST(k AS NUMERIC(2,0)) with k holding 100, no START WITH row: no error, 0 rows.
+ *             A cast written on the build side keeps the single table plan, since the hash list scan would
+ *             evaluate it on every row.
+ *    Case 18: prior VARCHAR = CAST(DOUBLE 1000.5 AS VARCHAR(2)), no START WITH row: no error, 0 rows
+ *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
+ *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
+ *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
  */
 
-drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn;
+drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp;
 
 create table hs_si (id smallint, pid int, n int);
 insert into hs_si values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
@@ -60,6 +65,10 @@ create table hs_iv (id int, pid varchar(10), n int);
 insert into hs_iv values (1, null, 1), (2, '1', 2), (3, 'abc', 3);
 create table hs_ivn (id int, pid varchar(10), n int);
 insert into hs_ivn values (null, null, 1), (2, '1', 2), (3, 'abc', 3);
+create table hs_cg (k numeric(3,0), d double, s varchar(10), n int);
+insert into hs_cg values (100, 1000.5, 'x', 1), (5, 5, '5', 2);
+create table hs_cp (id int, pid double, n int);
+insert into hs_cp values (1, null, 1), (2, 1, 2), (3, 2, 3), (4, 1, 4);
 
 
 evaluate 'Case 1: prior smallint = int; 3 rows';
@@ -158,15 +167,37 @@ from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_ivn start with n = 1 connect by prior id = pid) t) b;
 
 
-evaluate 'Case 17: query plans of Cases 1, 6, 4 (hash list scan) and 15 (single table plan)';
---@queryplan
+evaluate 'Case 17: prior numeric(3,0) = cast(k as numeric(2,0)) with k holding 100, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0))) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0))) t) b;
+
+
+evaluate 'Case 18: prior varchar = cast(double 1000.5 as varchar(2)), no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cg start with n = 99 connect by prior s = cast(d as varchar(2))) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cg start with n = 99 connect by prior s = cast(d as varchar(2))) t) b;
+
+
+evaluate 'Case 19: prior int = cast(double as int); 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 108 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cp start with n = 1 connect by prior id = cast(pid as int)) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cp start with n = 1 connect by prior id = cast(pid as int)) t) b;
+
+
+evaluate 'Case 20: trace of Cases 1, 6, 4 (hash temp) and 15, 17 (single table plan)';
+set trace on;
 select n, level lv from hs_si start with n = 1 connect by prior id = pid order siblings by n;
---@queryplan
+show trace;
 select n, level lv from hs_na start with n = 1 connect by prior id = pid order siblings by n;
---@queryplan
+show trace;
 select n, level lv from hs_bd start with n = 1 connect by prior id = pid order siblings by n;
---@queryplan
+show trace;
 select n, level lv from hs_iv start with n = 99 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0)) order siblings by n;
+show trace;
+set trace off;
 
 
-drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn;
+drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp;

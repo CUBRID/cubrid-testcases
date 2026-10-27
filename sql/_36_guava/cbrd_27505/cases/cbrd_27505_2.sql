@@ -24,6 +24,7 @@
  *    Case 14: LEFT OUTER JOIN, x.n1 + 0 = d.n1
  *    Case 15: LEFT OUTER JOIN, numeric(10,2) probe, numeric(12,4) build
  *    Case 16: a correlated scalar subquery reopened for every outer row
+ *    Case 17: trace of Cases 1 and 4: the derived table is scanned as a hash list scan (SCAN (hash temp(m), ...))
  */
 
 drop table if exists hn_a, hn_b;
@@ -134,6 +135,15 @@ evaluate 'Case 16: a correlated scalar subquery reopened for every outer row; 10
 select case when a.c = b.c and a.s = b.s and a.c = 10 and a.s = 5510 then 'PASS' else 'FAIL' end res, a.c cnt
 from (select count(*) c, sum(t.id*100+t.k) s from (select x.id, (select count(*) from hn_a y, (select /*+ NO_MERGE */ id, n2 from hn_b) d where y.n1 = d.n2 and y.id = x.id) k from hn_a x) t) a,
      (select count(*) c, sum(t.id*100+t.k) s from (select x.id, (select /*+ NO_HASH_LIST_SCAN */ count(*) from hn_a y, (select /*+ NO_MERGE */ id, n2 from hn_b) d where y.n1 = d.n2 and y.id = x.id) k from hn_a x) t) b;
+
+
+evaluate 'Case 17: trace of Cases 1 and 4, the derived table scans hash temp';
+set trace on;
+select count(*) from hn_a x, (select /*+ NO_MERGE */ id, n1 from hn_b) d where x.n1 = d.n1 + 0;
+show trace;
+select count(*) from hn_a x, (select /*+ NO_MERGE */ id, n2 from hn_b) d where x.n1 = d.n2;
+show trace;
+set trace off;
 
 
 drop table hn_a, hn_b;

@@ -57,6 +57,14 @@
 ===================================================
 3
 ===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+4
+===================================================
     
 Case 1: prior smallint = int; 3 rows     
 
@@ -186,65 +194,144 @@ PASS     1
 
 ===================================================
     
-Case 17: query plans of Cases 1, 6, 4 (hash list scan) and 15 (single table plan)     
+Case 17: prior numeric(3,0) = cast(k as numeric(2,0)) with k holding 100, no START WITH row; 0 rows     
 
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 18: prior varchar = cast(double 1000.5 as varchar(2)), no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 19: prior int = cast(double as int); 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 20: trace of Cases 1, 6, 4 (hash temp) and 15, 17 (single table plan)     
+
+===================================================
+0
 ===================================================
 n    lv    
 1     1     
 2     2     
 4     3     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: hs_si node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select hs_si.n, level from hs_si hs_si start with hs_si.n= ?:?  connect by  prior hs_si.id=hs_si.pid order siblings by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_si)
+
+  rewritten query: select [dba.hs_si].n, level from [dba.hs_si] [dba.hs_si] start with [dba.hs_si].n= ?:?  connect by  prior [dba.hs_si].id=[dba.hs_si].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_si), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 n    lv    
 1     1     
 2     2     
 3     3     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: hs_na node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select hs_na.n, level from hs_na hs_na start with hs_na.n= ?:?  connect by  prior hs_na.id=hs_na.pid order siblings by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_na)
+
+  rewritten query: select [dba.hs_na].n, level from [dba.hs_na] [dba.hs_na] start with [dba.hs_na].n= ?:?  connect by  prior [dba.hs_na].id=[dba.hs_na].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_na), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 n    lv    
 1     1     
 2     2     
 3     3     
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: hs_bd node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select hs_bd.n, level from hs_bd hs_bd start with hs_bd.n= ?:?  connect by  prior hs_bd.id=hs_bd.pid order siblings by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_bd)
+
+  rewritten query: select [dba.hs_bd].n, level from [dba.hs_bd] [dba.hs_bd] start with [dba.hs_bd].n= ?:?  connect by  prior [dba.hs_bd].id=[dba.hs_bd].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_bd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
 ===================================================
 n    lv    
 
-Query plan:
-temp(order by)
-    subplan: sscan
-                 class: hs_iv node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-select hs_iv.n, level from hs_iv hs_iv start with hs_iv.n= ?:?  connect by  prior hs_iv.id= cast(hs_iv.pid as double) order siblings by ?
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_iv)
+
+  rewritten query: select [dba.hs_iv].n, level from [dba.hs_iv] [dba.hs_iv] start with [dba.hs_iv].n= ?:?  connect by  prior [dba.hs_iv].id= cast([dba.hs_iv].pid as double) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_iv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_iv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_cg)
+
+  rewritten query: select [dba.hs_cg].n, level from [dba.hs_cg] [dba.hs_cg] start with [dba.hs_cg].n= ?:?  connect by  prior [dba.hs_cg].k= cast([dba.hs_cg].k as numeric(?,?)) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
 ===================================================
 0

@@ -150,4 +150,70 @@ res    cnt
 PASS     10     
 
 ===================================================
+    
+Case 17: trace of Cases 1 and 4, the derived table scans hash temp     
+
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.hn_b)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hn_b].id, [dba.hn_b].n? from [dba.hn_b] [dba.hn_b])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (d)
+
+  rewritten query: select count(*) from [dba.hn_a] x, (select /*+ NO_MERGE */ [dba.hn_b].id, [dba.hn_b].n? from [dba.hn_b] [dba.hn_b]) d (id, n?) where x.n?=d.n?+ cast(? as numeric)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hn_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.hn_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.hn_b)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hn_b].id, [dba.hn_b].n? from [dba.hn_b] [dba.hn_b])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (d)
+
+  rewritten query: select count(*) from [dba.hn_a] x, (select /*+ NO_MERGE */ [dba.hn_b].id, [dba.hn_b].n? from [dba.hn_b] [dba.hn_b]) d (id, n?) where x.n?=d.n?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hn_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.hn_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
 0

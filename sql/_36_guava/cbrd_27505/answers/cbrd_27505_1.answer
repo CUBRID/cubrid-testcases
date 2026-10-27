@@ -42,19 +42,19 @@ PASS     33
 
 ===================================================
     
-Case 3: one key, a2 and b2 in the select list; 33 rows     
+Case 3: one key, a2 and b2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500     
 
 ===================================================
-res    cnt    
-PASS     33     
+res    cnt    sa    sb    
+PASS     33     489.90     462.1500     
 
 ===================================================
     
-Case 4: one key, b2 and a2 in the select list; 33 rows     
+Case 4: one key, b2 and a2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500     
 
 ===================================================
-res    cnt    
-PASS     33     
+res    cnt    sa    sb    
+PASS     33     489.90     462.1500     
 
 ===================================================
     
@@ -124,5 +124,73 @@ Case 11: prior x.n2 = x.n2 + 0; 9 rows
 res    cnt    
 PASS     9     
 
+===================================================
+    
+Case 12: trace of Cases 1 and 2, the CONNECT BY scans hash temp     
+
+===================================================
+0
+===================================================
+count(*)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.h] x, db_root r start with (x.id> ?:? ) connect by nocycle x.n?= prior x.n?+ cast(? as numeric) and x.n?= prior x.n?+ cast(? as numeric))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.h] x, db_root r start with (x.id> ?:? ) connect by nocycle x.n?= prior x.n?+ cast(? as numeric) and x.n?= prior x.n?+ cast(? as numeric)) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.h), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+33     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.h?] x, db_root r start with (x.id> ?:? ) connect by nocycle x.a= prior x.a+ cast(? as numeric))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.h?] x, db_root r start with (x.id> ?:? ) connect by nocycle x.a= prior x.a+ cast(? as numeric)) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
