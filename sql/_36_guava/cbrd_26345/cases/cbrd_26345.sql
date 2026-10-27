@@ -229,7 +229,7 @@ select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.l
 show trace;
 
 evaluate 'MULTISET(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
-select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 -- ===== SET(INT), 64M =====
@@ -246,7 +246,7 @@ select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_nd
 show trace;
 
 evaluate 'SET(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
-select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 -- ===== SEQUENCE(INT), 64M =====
@@ -263,7 +263,7 @@ select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.l
 show trace;
 
 evaluate 'SEQUENCE(INT) real projection, no limit (full scan) - expect: memoize enabled, value-fidelity baseline (memoize_memory_limit=64M)';
-select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 set system parameters 'memoize_memory_limit=0';
@@ -282,7 +282,7 @@ select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.l
 show trace;
 
 evaluate 'MULTISET(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
-select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(multiset_col_tbl) */ outer_tbl.low_ndv_int, multiset_col_tbl.ms from outer_tbl inner join multiset_col_tbl on outer_tbl.low_ndv_int = multiset_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 -- ===== SET(INT), 0 =====
@@ -299,7 +299,7 @@ select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_nd
 show trace;
 
 evaluate 'SET(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
-select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(set_col_tbl) */ outer_tbl.low_ndv_int, set_col_tbl.s from outer_tbl inner join set_col_tbl on outer_tbl.low_ndv_int = set_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 -- ===== SEQUENCE(INT), 0 =====
@@ -318,7 +318,7 @@ select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.l
 show trace;
 
 evaluate 'SEQUENCE(INT) real projection, no limit (full scan) - expect: no memoize (disabled), value-fidelity comparison against the 64M run above';
-select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id;
+select /*+ recompile parallel(0) ordered use_nl(sequence_col_tbl) */ outer_tbl.low_ndv_int, sequence_col_tbl.sq from outer_tbl inner join sequence_col_tbl on outer_tbl.low_ndv_int = sequence_col_tbl.id order by outer_tbl.uniq_int;
 show trace;
 
 set system parameters 'memoize_memory_limit=64M';
