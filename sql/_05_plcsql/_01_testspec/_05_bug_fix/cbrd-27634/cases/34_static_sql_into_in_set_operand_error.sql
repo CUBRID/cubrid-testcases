@@ -76,9 +76,16 @@ begin
     return x;
 end;
 
-evaluate 'the routines above must not be created';
-call so_e1();
-select so_e9() from dual;
+evaluate 'the routines above must not be created: error for each DROP';
+drop procedure so_e1;
+drop procedure so_e2;
+drop procedure so_e3;
+drop procedure so_e4;
+drop procedure so_e5;
+drop procedure so_e6;
+drop procedure so_e7;
+drop procedure so_e8;
+drop function so_e9;
 
 drop table so_t1, so_t2;
 
