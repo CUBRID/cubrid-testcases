@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-27684 : Carry whole tuples in sort records to avoid re-fetching originals after sort
- *  A sort record carries a short tuple (256 bytes or less) when the sorted tuples are scattered over the input
+ *  A sort record carries the columns of a tuple that are no sort key (256 bytes or less) when the sorted tuples are scattered over the input
  *  (decided on a sample of the first 8K input tuples), and points back to a longer one.
  *  Sorted results must be the same for short, long and overflow tuples mixed in one sort,
  *  with NULL keys and ties, for analytic functions, ORDER BY and GROUP BY.
