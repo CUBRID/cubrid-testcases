@@ -9,6 +9,7 @@
  *
  *  Coverage:
  *    Case 1:  both user triggers of DBA run on the COMMIT after the rollback to the savepoint
+ *    Case 2:  after DBA drops its user trigger, the COMMIT runs only the remaining one
  */
 
 -- users
@@ -36,8 +37,19 @@ select unique_name, owner.name from _db_trigger order by 1;
 select trg from dba.trg_log order by 1;
 autocommit on;
 
--- cleanup
+evaluate 'Case 2. after DBA drops its user trigger, the COMMIT runs only the remaining one';
+autocommit off;
+delete from dba.trg_log;
 drop trigger t1;
+commit;
+
+-- Expected: dba.x DBA
+select unique_name, owner.name from _db_trigger order by 1;
+-- Expected: x
+select trg from dba.trg_log order by 1;
+autocommit on;
+
+-- cleanup
 drop trigger x;
 drop table dba.trg_log;
 drop user u1;
