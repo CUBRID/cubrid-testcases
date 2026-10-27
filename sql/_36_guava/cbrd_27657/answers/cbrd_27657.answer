@@ -282,6 +282,13 @@ sscan
 Query stmt:
 (select max(tc.cb) from tc tc)
 Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tb.cb, tb.ca from tb tb where (tb.cb<(select max(tc.cb) from tc tc)))
+Query plan:
 temp(order by)
     subplan: nl-join (left outer join)
                  edge:  term[?]
@@ -290,13 +297,93 @@ temp(order by)
                             cost:  ? card ?
                  inner: sscan
                             class: d node[?]
-                            sargs: term[?] AND term[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ NO_USE_HASH */ ta.ca, d.cb from ta ta left outer join tb d on (d.cb<(select max(tc.cb) from tc tc)) and d.ca=ta.ca order by ?, ?
+select /*+ NO_USE_HASH */ ta.ca, d.cb from ta ta left outer join (select tb.cb, tb.ca from tb tb where (tb.cb<(select max(tc.cb) from tc tc))) d (cb, ca) on d.ca=ta.ca order by ?, ?
+===================================================
+2
+===================================================
+ca    cb    
+1     1     
+5     -1     
+7     7     
+9     -1     
+
+===================================================
+4
+===================================================
+2
+===================================================
+ca    cb    
+1     1     
+7     7     
+
+===================================================
+2
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     0     
+5     0     
+7     0     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    x    
+1     7     
+5     7     
+7     null     
+9     null     
+
+===================================================
+ca    x    
+1     7     
+5     7     
+
+===================================================
+0
+===================================================
+ca    bb    
+1     1     
+5     5     
+7     7     
+9     9     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca, ( cast(v.cb as bigint)) from ta ta left outer join tc v on v.ca=ta.ca order by ?, ?
+===================================================
+0
 ===================================================
 ca    cb    
 1     1     
