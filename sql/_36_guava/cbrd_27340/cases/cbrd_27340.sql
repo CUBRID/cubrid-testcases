@@ -27,17 +27,16 @@
  * carries the same dependency). qo_build_implied_seg_roots() then excludes
  * such a term from seeding a new *inferred* join condition (an inferred
  * condition would otherwise carry none of this dependency), and
- * planner_visit_node() uses the same dependency to keep the on_node out of
- * the join order until its outer-join dependencies are resolved.
+ * qo_node_can_be_placed() (called from planner_visit_node()) uses the same
+ * dependency to keep the on_node out of the join order until its outer-join
+ * dependencies are resolved.
  *
  * count(*) must be 2 under every join method. Verified by hand (see above)
  * and empirically against the pre-fix engine: hintless/USE_NL/USE_MERGE
  * happened to still return 2 on this data, but /*+ USE_IDX *\/ returned 3 --
  * the planner reordered to (jtbl_a INNER JOIN jtbl_c) RIGHT JOIN jtbl_b,
  * which null-pads a jtbl_b.j=9 row that the correct join order (RIGHT JOIN
- * first, then INNER JOIN) drops. So this is a real per-join-method
- * correctness regression, not only the plan-shape regression described
- * above.
+ * first, then INNER JOIN) drops.
  *
  *   Case 1: hintless
  *   Case 2: /*+ USE_NL *\/ (nested loop join)
