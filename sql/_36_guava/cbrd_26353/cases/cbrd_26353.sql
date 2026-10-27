@@ -7,6 +7,10 @@
 -- The expressions are compared case sensitively and without stripping casts, so a term compared under
 -- another collation (the expression is wrapped in a collation cast) does not remove the sort.
 --
+-- A plain column follows the same rules: WITH ROLLUP keeps the sort, and a BIGINT column compared with a
+-- DOUBLE constant is neither treated as a constant for ORDER BY nor replaced by the constant in the
+-- other WHERE terms.
+--
 -- The rewritten query in each trace shows whether the ORDER BY is still there. A query whose ORDER BY is
 -- dropped selects only values that are equal on every result row, so the answer does not depend on the
 -- output order.
@@ -23,6 +27,8 @@
 --     non-deterministic expression (drand (), uuid ()), a different expression is fixed
 --   - kept: GROUP BY ... WITH ROLLUP, the super-aggregate row has NULL for the key
 --   - kept: BIGINT expression compared with a DOUBLE constant, two different values match
+--   - plain column: kept with WITH ROLLUP; kept with a BIGINT column compared with a DOUBLE constant,
+--     and the column is not replaced by the constant in another term
 
 drop table if exists ta;
 drop table if exists tb;
@@ -110,6 +116,18 @@ show trace;
 
 -- kept: BIGINT and DOUBLE are compared in DOUBLE, both rows match
 select abs (b), a from td where abs (b) = cast (9007199254740992 as double) order by abs (b), a;
+show trace;
+
+-- plain column, kept: WITH ROLLUP, the NULL row sorts first
+select a, count (*) from ta where a = 'a' group by a with rollup order by a nulls first;
+show trace;
+
+-- plain column, kept: BIGINT column compared with a DOUBLE constant, both rows match
+select b, a from td where b = cast (9007199254740992 as double) order by b, a;
+show trace;
+
+-- plain column: b is not replaced by the DOUBLE constant in the other term, one row matches
+select count (*) from td where b = cast (9007199254740992 as double) and b = 9007199254740993;
 show trace;
 
 set trace off;
