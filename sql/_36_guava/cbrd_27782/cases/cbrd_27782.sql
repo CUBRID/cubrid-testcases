@@ -48,8 +48,12 @@ grant execute on procedure f_def to dba;
 
 call login('dba','') on class db_user;
 create or replace function outer_f return varchar as
+  v varchar;
+  u varchar;
 begin
-  return 'outer:' || u4.f_def ();
+  v := u4.f_def ();
+  select current_user into u from db_root;
+  return 'outer:' || v || ':' || u;
 end;
 create or replace function f_same return varchar as
   u varchar;
@@ -71,7 +75,7 @@ select u4.f_err () from db_root;
 evaluate '2. the rights are restored after the error: LOWU';
 select current_user from db_root;
 
-evaluate '3. nested: dba.outer_f (as DBA) calls u4.f_def (as U4): outer:U4:4';
+evaluate '3. nested: dba.outer_f (as DBA) calls u4.f_def (as U4), then is DBA again: outer:U4:4:DBA';
 select dba.outer_f () from db_root;
 evaluate '3. the session user is LOWU';
 select current_user from db_root;
