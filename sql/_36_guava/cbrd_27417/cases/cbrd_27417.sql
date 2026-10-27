@@ -6,7 +6,7 @@
  */
 drop table if exists t_group, t_duplicate, t_partial, t_both, t_self;
 
--- 1. DBA's GRANT SELECT gives u_select one SELECT row from DBA, with object_name and owner_name NULL and is_grantable NO
+-- 1. DBA's GRANT SELECT gives u_select one SELECT row from DBA, with object_name NULL, owner_name DBA and is_grantable NO
 create user u_select;
 grant select on sensitivity label to u_select;
 select grantor_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name = 'U_SELECT';
