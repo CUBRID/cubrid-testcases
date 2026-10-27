@@ -11,7 +11,7 @@ insert into t1 values (1, 'one'), (2, 'two');
 create table s1 (id int, name varchar(20));
 insert into s1 values (1, 'one'), (2, 'two'), (3, 'into');
 create table s2 (id int, name varchar(20));
-create table sp (id int, name varchar(20)) partition by range (id) (partition p0 values less than (10), partition p1 values less than maxvalue);
+create table sp (id int primary key, name varchar(20)) partition by range (id) (partition p0 values less than (10), partition p1 values less than maxvalue);
 create table sr (a int, b int);
 insert into sr values (1, 2);
 
@@ -70,6 +70,8 @@ create or replace procedure p6 (k int) as
 begin
     insert into sp partition (p0) values (k, 'odku') on duplicate key update name = 'dup';
 end;
+call p6 (6);
+select * from sp order by 1, 2;
 call p6 (6);
 select * from sp order by 1, 2;
 
