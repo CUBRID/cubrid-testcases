@@ -276,14 +276,16 @@ show trace;
 
 
 evaluate 'Case 25: SP in an uncorrelated IN-subquery predicate -> parallel heap scan (buildvalue)';
--- identical SP-in-predicate as Case 24 but uncorrelated: the optimizer unnests the uncorrelated
+-- identical SP-in-predicate as Case 24 but uncorrelated: the optimizer rewrites the uncorrelated
 -- IN into a join with a derived table (see the rewritten query in the answer), so no regu-linked
 -- aptr subquery remains and the driving heap scan parallelizes. Contrast Case 28 (uncorrelated
--- SCALAR + SP), which is NOT unnested and is blocked -> the block follows unnesting, not correlation.
-select /*+ recompile */ count(*) from ta a where a.id in (select b.id from tb b where sp_f(b.id) > 0);
+-- SCALAR + SP), which is NOT rewritten and is blocked -> the block follows the rewrite, not correlation.
+-- NO_UNNEST keeps that rewrite: without it (CBRD-27470) the IN becomes a SEMI JOIN instead, and the SP,
+-- now in the inner scan's ON, blocks the driving scan as in Case 24.
+select /*+ recompile */ count(*) from ta a where a.id in (select /*+ no_unnest */ b.id from tb b where sp_f(b.id) > 0);
 show trace;
 -- serial reference: result must match the parallel block above
-select /*+ recompile no_parallel_scan */ count(*) from ta a where a.id in (select b.id from tb b where sp_f(b.id) > 0);
+select /*+ recompile no_parallel_scan */ count(*) from ta a where a.id in (select /*+ no_unnest */ b.id from tb b where sp_f(b.id) > 0);
 show trace;
 
 

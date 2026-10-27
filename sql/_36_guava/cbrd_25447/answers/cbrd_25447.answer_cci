@@ -535,13 +535,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select distinct [dba.tbl].cola from [dba.tbl] [dba.tbl])
+  rewritten query: (select /*+ NO_UNNEST */ distinct [dba.tbl].cola from [dba.tbl] [dba.tbl])
 
   NESTED LOOPS (inner join)
     TABLE SCAN (dba.tbl)
     TABLE SCAN (av?)
 
-  rewritten query: select count([dba.tbl].cola) from [dba.tbl] [dba.tbl], (select distinct [dba.tbl].cola from [dba.tbl] [dba.tbl]) av? (av_?) where [dba.tbl].cola=av?.av_?
+  rewritten query: select count([dba.tbl].cola) from [dba.tbl] [dba.tbl], (select /*+ NO_UNNEST */ distinct [dba.tbl].cola from [dba.tbl] [dba.tbl]) av? (av_?) where [dba.tbl].cola=av?.av_?
 
 
 Trace Statistics:
@@ -975,9 +975,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-      SCAN (table: dba.tree), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-              (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -1146,13 +1144,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
+  rewritten query: (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
 
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
 
 Trace Statistics:
@@ -1183,13 +1181,13 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (dba.tbl)
 
-  rewritten query: (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
+  rewritten query: (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
 
-  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select /*+ PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
+  rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
 
 Trace Statistics:

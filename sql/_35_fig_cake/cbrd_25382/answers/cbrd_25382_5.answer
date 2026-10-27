@@ -376,7 +376,7 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct c.ca from tc c)
+(select /*+ NO_UNNEST */ distinct c.ca from tc c)
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -397,7 +397,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select /*+ NO_UNNEST */ distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 ===================================================
 trace    
 
@@ -417,7 +417,7 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (c)
 
-  rewritten query: (select distinct c.ca from [dba.tc] c)
+  rewritten query: (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c)
 
   SORT (order by)
     HASH JOIN (inner join)
@@ -426,7 +426,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (av?)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 
 
 Trace Statistics:
