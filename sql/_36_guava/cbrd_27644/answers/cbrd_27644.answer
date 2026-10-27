@@ -992,6 +992,51 @@ id    n    cnt
 4     1.00     4     
 
 ===================================================
+    
+Q20. inline view with an aggregate and analytic functions     
+
+===================================================
+g    count(*)    sum(T.s)    max(T.r)    max(T.cnt)    
+0     5     6321     5     5     
+3     5     6450     5     5     
+6     5     6579     5     5     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: e? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select e?.g, e?.x, sum(e?.id) from e? e? where  mod(e?.g, ?)=? group by e?.g, e?.x)
+Query plan:
+sscan
+    class: e? node[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: count partition by (? asc nulls first) order by ()
+           func[?]: rank partition by (? asc nulls first) order by (? asc nulls first)
+Query stmt:
+(select a_?, a_?, rank() over (partition by ? order by ?), count(*) over (partition by ?) from (select e?.g, e?.x, sum(e?.id) as [s] from e? e? where  mod(e?.g, ?)=? group by e?.g, e?.x) e? (a_?, a_?, a_?))
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: T node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select T.g, count(*), sum(T.s), max(T.r), max(T.cnt) from (select a_?, a_?, rank() over (partition by ? order by ?) as [r], count(*) over (partition by ?) as [cnt] from (select e?.g, e?.x, sum(e?.id) as [s] from e? e? where  mod(e?.g, ?)=? group by e?.g, e?.x) e? (a_?, a_?, a_?)) T (g, s, r, cnt) group by T.g
+===================================================
+g    count(*)    sum(T.s)    max(T.r)    max(T.cnt)    
+0     5     6321     5     5     
+3     5     6450     5     5     
+6     5     6579     5     5     
+
+===================================================
 0
 ===================================================
 0

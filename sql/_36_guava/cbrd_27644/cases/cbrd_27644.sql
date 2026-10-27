@@ -40,6 +40,9 @@
  *   Q19 NUMERIC key whose values have different scales (1.0 and 1.00 are in
  *       the same partition) : a direct comparison is pushed, an expression such
  *       as a string conversion is not
+ *   Q20 inline view with both an aggregate and analytic functions : the
+ *       aggregate is split into an inner query and the term on the PARTITION BY
+ *       key is pushed into its WHERE clause (before GROUP BY)
  */
 drop table if exists tbl1, h1, e1, e2, o1, n1;
 create table tbl1 (a int, b varchar, c varchar);
@@ -350,6 +353,19 @@ where T.n = 1 order by id;
 select /*+ recompile no_push_pred */ T.* from (select id, n, count (*) over (partition by n) cnt
                                                from (select id, case when k = 0 then p else q end n from n1) X) T
 where T.n = 1 order by id;
+
+evaluate 'Q20. inline view with an aggregate and analytic functions';
+--@queryplan
+select /*+ recompile */ T.g, count (*), sum (T.s), max (T.r), max (T.cnt)
+from (select g, x, sum (id) s, rank () over (partition by g order by sum (id)) r, count (*) over (partition by g) cnt
+      from e1 group by g, x) T
+where mod (T.g, 3) = 0
+group by T.g order by 1;
+select /*+ recompile no_push_pred */ T.g, count (*), sum (T.s), max (T.r), max (T.cnt)
+from (select g, x, sum (id) s, rank () over (partition by g order by sum (id)) r, count (*) over (partition by g) cnt
+      from e1 group by g, x) T
+where mod (T.g, 3) = 0
+group by T.g order by 1;
 
 drop variable @a;
 drop table tbl1, h1, e1, e2, o1, n1;
