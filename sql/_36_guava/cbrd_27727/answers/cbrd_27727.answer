@@ -1,0 +1,1061 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4000
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+66000
+===================================================
+0
+===================================================
+66000
+===================================================
+0
+===================================================
+40198
+===================================================
+0
+===================================================
+22500
+===================================================
+0
+===================================================
+1200
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+3000
+===================================================
+20000
+===================================================
+20000
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: every worker gives up hashing, GROUP BY sort parallel; result = no_parallel_scan = parallel(1) = no_hash_aggregate parallel(0)     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+40000     40000     799980000     19980000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select count(*), [dba.t_uniq].k, sum([dba.t_uniq].v) from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( cast(d.k as bigint)*d.cnt), sum(d.sv) from (select count(*) as [cnt], [dba.t_uniq].k, sum([dba.t_uniq].v) as [sv] from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k) d (cnt, k, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+40000     40000     799980000     19980000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*), [dba.t_uniq].k, sum([dba.t_uniq].v) from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( cast(d.k as bigint)*d.cnt), sum(d.sv) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [cnt], [dba.t_uniq].k, sum([dba.t_uniq].v) as [sv] from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k) d (cnt, k, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+40000     40000     799980000     19980000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), [dba.t_uniq].k, sum([dba.t_uniq].v) from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( cast(d.k as bigint)*d.cnt), sum(d.sv) from (select /*+ PARALLEL(?) */ count(*) as [cnt], [dba.t_uniq].k, sum([dba.t_uniq].v) as [sv] from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k) d (cnt, k, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+40000     40000     799980000     19980000     
+
+===================================================
+    
+Case 2: parallel(2), the first worker gives up and the second keeps hashing, GROUP BY sort parallel, hash partial; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    
+0     17000     8491500     
+1     13600     6786400     
+2     10200     5091500     
+3     6800     3400000     
+4     3400     1705100     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_mix)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_mix].k, count(*), sum([dba.t_mix].v) from [dba.t_mix] [dba.t_mix] group by [dba.t_mix].k having count(*)>? order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+k    count(*)    sum(v)    
+0     17000     8491500     
+1     13600     6786400     
+2     10200     5091500     
+3     6800     3400000     
+4     3400     1705100     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+15005     66000     1867575500     32967000     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+15005     66000     1867575500     32967000     
+
+===================================================
+    
+Case 3: every worker keeps hashing, hash true; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    sum(v)    
+0     22000     10989000     
+1     17600     8782400     
+2     13200     6589000     
+3     8800     4400000     
+4     4400     2206600     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_kept)
+
+  rewritten query: select [dba.t_kept].k, count(*), sum([dba.t_kept].v) from [dba.t_kept] [dba.t_kept] group by [dba.t_kept].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_kept), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+k    count(*)    sum(v)    
+0     22000     10989000     
+1     17600     8782400     
+2     13200     6589000     
+3     8800     4400000     
+4     4400     2206600     
+
+===================================================
+    
+Case 4: partitions, a parallel pass gives up and a later serial pass keeps hashing, then the leader gives up first, hash partial both times; result = no_hash_aggregate parallel(0)     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+20005     40198     2202016922     19999701     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_part)
+
+  rewritten query: (select count(*), [dba.t_part].k, sum([dba.t_part].v) from [dba.t_part] [dba.t_part] group by [dba.t_part].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( cast(d.k as bigint)*d.cnt), sum(d.sv) from (select count(*) as [cnt], [dba.t_part].k, sum([dba.t_part].v) as [sv] from [dba.t_part] [dba.t_part] group by [dba.t_part].k) d (cnt, k, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+               PARTITION (table: dba.t_part__p__p_head), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_part__p__p_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_part__p__p_few), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_part__p__p_tail), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+20005     40198     2202016922     19999701     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+2505     22500     253152922     11114250     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_lead)
+
+  rewritten query: (select count(*), [dba.t_lead].k, sum([dba.t_lead].v) from [dba.t_lead] [dba.t_lead] group by [dba.t_lead].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( cast(d.k as bigint)*d.cnt), sum(d.sv) from (select count(*) as [cnt], [dba.t_lead].k, sum([dba.t_lead].v) as [sv] from [dba.t_lead] [dba.t_lead] group by [dba.t_lead].k) d (cnt, k, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_lead), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+               PARTITION (table: dba.t_lead__p__p_lead), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_lead__p__p_rest), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(cnt)    sum( cast(k as bigint)*cnt)    sum(sv)    
+2505     22500     253152922     11114250     
+
+===================================================
+    
+Case 5: parallel scan whose filter keeps no row, hash false as in the serial scan; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(cnt)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select count(*) from [dba.t_uniq] [dba.t_uniq] where ([dba.t_uniq].v< ?:? ) group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt) from (select count(*) as [cnt] from [dba.t_uniq] [dba.t_uniq] where ([dba.t_uniq].v< ?:? ) group by [dba.t_uniq].k) d (cnt)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(cnt)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.t_uniq] [dba.t_uniq] where ([dba.t_uniq].v< ?:? ) group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [cnt] from [dba.t_uniq] [dba.t_uniq] where ([dba.t_uniq].v< ?:? ) group by [dba.t_uniq].k) d (cnt)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: serial scan keeps hashing, GROUP BY sort parallel, three groups stay serial; result = no_hash_aggregate parallel(0)     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    
+0     4     4     18     
+1     4     4     12     
+2     4     4     9     
+3     4     4     6     
+4     4     4     10     
+5     4     4     14     
+6     4     4     18     
+7     4     4     15     
+8     4     4     12     
+9     4     4     9     
+10     4     4     6     
+11     4     4     10     
+12     4     4     14     
+13     4     4     18     
+14     4     4     15     
+15     4     4     12     
+16     4     4     9     
+17     4     4     6     
+18     4     4     10     
+19     4     4     14     
+20     4     4     18     
+21     4     4     15     
+22     4     4     12     
+23     4     4     9     
+24     4     4     6     
+25     4     4     10     
+26     4     4     14     
+27     4     4     18     
+28     4     4     15     
+29     4     4     12     
+30     4     4     9     
+31     4     4     6     
+32     4     4     10     
+33     4     4     14     
+34     4     4     18     
+35     4     4     15     
+36     4     4     12     
+37     4     4     9     
+38     4     4     6     
+39     4     4     10     
+40     4     4     14     
+41     4     4     18     
+42     4     4     15     
+43     4     4     12     
+44     4     4     9     
+45     4     4     6     
+46     4     4     10     
+47     4     4     14     
+48     4     4     18     
+49     4     4     15     
+50     4     4     12     
+51     4     4     9     
+52     4     4     6     
+53     4     4     10     
+54     4     4     14     
+55     4     4     18     
+56     4     4     15     
+57     4     4     12     
+58     4     4     9     
+59     4     4     6     
+60     4     4     10     
+61     4     4     14     
+62     4     4     18     
+63     4     4     15     
+64     4     4     12     
+65     4     4     9     
+66     4     4     6     
+67     4     4     10     
+68     4     4     14     
+69     4     4     18     
+70     4     4     15     
+71     4     4     12     
+72     4     4     9     
+73     4     4     6     
+74     4     4     10     
+75     4     4     14     
+76     4     4     18     
+77     4     4     15     
+78     4     4     12     
+79     4     4     9     
+80     4     4     6     
+81     4     4     10     
+82     4     4     14     
+83     4     4     18     
+84     4     4     15     
+85     4     4     12     
+86     4     4     9     
+87     4     4     6     
+88     4     4     10     
+89     4     4     14     
+90     4     4     18     
+91     4     4     15     
+92     4     4     12     
+93     4     4     9     
+94     4     4     6     
+95     4     4     10     
+96     4     4     14     
+97     4     4     18     
+98     4     4     15     
+99     4     4     12     
+100     4     4     9     
+101     4     4     6     
+102     4     4     10     
+103     4     4     14     
+104     4     4     18     
+105     4     4     15     
+106     4     4     12     
+107     4     4     9     
+108     4     4     6     
+109     4     4     10     
+110     4     4     14     
+111     4     4     18     
+112     4     4     15     
+113     4     4     12     
+114     4     4     9     
+115     4     4     6     
+116     4     4     10     
+117     4     4     14     
+118     4     4     18     
+119     4     4     15     
+120     4     4     12     
+121     4     4     9     
+122     4     4     6     
+123     4     4     10     
+124     4     4     14     
+125     4     4     18     
+126     4     4     15     
+127     4     4     12     
+128     4     4     9     
+129     4     4     6     
+130     4     4     10     
+131     4     4     14     
+132     4     4     18     
+133     4     4     15     
+134     4     4     12     
+135     4     4     9     
+136     4     4     6     
+137     4     4     10     
+138     4     4     14     
+139     4     4     18     
+140     4     4     15     
+141     4     4     12     
+142     4     4     9     
+143     4     4     6     
+144     4     4     10     
+145     4     4     14     
+146     4     4     18     
+147     4     4     15     
+148     4     4     12     
+149     4     4     9     
+150     4     4     6     
+151     4     4     10     
+152     4     4     14     
+153     4     4     18     
+154     4     4     15     
+155     4     4     12     
+156     4     4     9     
+157     4     4     6     
+158     4     4     10     
+159     4     4     14     
+160     4     4     18     
+161     4     4     15     
+162     4     4     12     
+163     4     4     9     
+164     4     4     6     
+165     4     4     10     
+166     4     4     14     
+167     4     4     18     
+168     4     4     15     
+169     4     4     12     
+170     4     4     9     
+171     4     4     6     
+172     4     4     10     
+173     4     4     14     
+174     4     4     18     
+175     4     4     15     
+176     4     4     12     
+177     4     4     9     
+178     4     4     6     
+179     4     4     10     
+180     4     4     14     
+181     4     4     18     
+182     4     4     15     
+183     4     4     12     
+184     4     4     9     
+185     4     4     6     
+186     4     4     10     
+187     4     4     14     
+188     4     4     18     
+189     4     4     15     
+190     4     4     12     
+191     4     4     9     
+192     4     4     6     
+193     4     4     10     
+194     4     4     14     
+195     4     4     18     
+196     4     4     15     
+197     4     4     12     
+198     4     4     9     
+199     4     4     6     
+200     4     4     10     
+201     4     4     14     
+202     4     4     18     
+203     4     4     15     
+204     4     4     12     
+205     4     4     9     
+206     4     4     6     
+207     4     4     10     
+208     4     4     14     
+209     4     4     18     
+210     4     4     15     
+211     4     4     12     
+212     4     4     9     
+213     4     4     6     
+214     4     4     10     
+215     4     4     14     
+216     4     4     18     
+217     4     4     15     
+218     4     4     12     
+219     4     4     9     
+220     4     4     6     
+221     4     4     10     
+222     4     4     14     
+223     4     4     18     
+224     4     4     15     
+225     4     4     12     
+226     4     4     9     
+227     4     4     6     
+228     4     4     10     
+229     4     4     14     
+230     4     4     18     
+231     4     4     15     
+232     4     4     12     
+233     4     4     9     
+234     4     4     6     
+235     4     4     10     
+236     4     4     14     
+237     4     4     18     
+238     4     4     15     
+239     4     4     12     
+240     4     4     9     
+241     4     4     6     
+242     4     4     10     
+243     4     4     14     
+244     4     4     18     
+245     4     4     15     
+246     4     4     12     
+247     4     4     9     
+248     4     4     6     
+249     4     4     10     
+250     4     4     14     
+251     4     4     18     
+252     4     4     15     
+253     4     4     12     
+254     4     4     9     
+255     4     4     6     
+256     4     4     10     
+257     4     4     14     
+258     4     4     18     
+259     4     4     15     
+260     4     4     12     
+261     4     4     9     
+262     4     4     6     
+263     4     4     10     
+264     4     4     14     
+265     4     4     18     
+266     4     4     15     
+267     4     4     12     
+268     4     4     9     
+269     4     4     6     
+270     4     4     10     
+271     4     4     14     
+272     4     4     18     
+273     4     4     15     
+274     4     4     12     
+275     4     4     9     
+276     4     4     6     
+277     4     4     10     
+278     4     4     14     
+279     4     4     18     
+280     4     4     15     
+281     4     4     12     
+282     4     4     9     
+283     4     4     6     
+284     4     4     10     
+285     4     4     14     
+286     4     4     18     
+287     4     4     15     
+288     4     4     12     
+289     4     4     9     
+290     4     4     6     
+291     4     4     10     
+292     4     4     14     
+293     4     4     18     
+294     4     4     15     
+295     4     4     12     
+296     4     4     9     
+297     4     4     6     
+298     4     4     10     
+299     4     4     14     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_wide)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_wide].k, count(*), count([dba.t_wide].pad), sum([dba.t_wide].v) from [dba.t_wide] [dba.t_wide] group by [dba.t_wide].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    
+0     4     4     18     
+1     4     4     12     
+2     4     4     9     
+3     4     4     6     
+4     4     4     10     
+5     4     4     14     
+6     4     4     18     
+7     4     4     15     
+8     4     4     12     
+9     4     4     9     
+10     4     4     6     
+11     4     4     10     
+12     4     4     14     
+13     4     4     18     
+14     4     4     15     
+15     4     4     12     
+16     4     4     9     
+17     4     4     6     
+18     4     4     10     
+19     4     4     14     
+20     4     4     18     
+21     4     4     15     
+22     4     4     12     
+23     4     4     9     
+24     4     4     6     
+25     4     4     10     
+26     4     4     14     
+27     4     4     18     
+28     4     4     15     
+29     4     4     12     
+30     4     4     9     
+31     4     4     6     
+32     4     4     10     
+33     4     4     14     
+34     4     4     18     
+35     4     4     15     
+36     4     4     12     
+37     4     4     9     
+38     4     4     6     
+39     4     4     10     
+40     4     4     14     
+41     4     4     18     
+42     4     4     15     
+43     4     4     12     
+44     4     4     9     
+45     4     4     6     
+46     4     4     10     
+47     4     4     14     
+48     4     4     18     
+49     4     4     15     
+50     4     4     12     
+51     4     4     9     
+52     4     4     6     
+53     4     4     10     
+54     4     4     14     
+55     4     4     18     
+56     4     4     15     
+57     4     4     12     
+58     4     4     9     
+59     4     4     6     
+60     4     4     10     
+61     4     4     14     
+62     4     4     18     
+63     4     4     15     
+64     4     4     12     
+65     4     4     9     
+66     4     4     6     
+67     4     4     10     
+68     4     4     14     
+69     4     4     18     
+70     4     4     15     
+71     4     4     12     
+72     4     4     9     
+73     4     4     6     
+74     4     4     10     
+75     4     4     14     
+76     4     4     18     
+77     4     4     15     
+78     4     4     12     
+79     4     4     9     
+80     4     4     6     
+81     4     4     10     
+82     4     4     14     
+83     4     4     18     
+84     4     4     15     
+85     4     4     12     
+86     4     4     9     
+87     4     4     6     
+88     4     4     10     
+89     4     4     14     
+90     4     4     18     
+91     4     4     15     
+92     4     4     12     
+93     4     4     9     
+94     4     4     6     
+95     4     4     10     
+96     4     4     14     
+97     4     4     18     
+98     4     4     15     
+99     4     4     12     
+100     4     4     9     
+101     4     4     6     
+102     4     4     10     
+103     4     4     14     
+104     4     4     18     
+105     4     4     15     
+106     4     4     12     
+107     4     4     9     
+108     4     4     6     
+109     4     4     10     
+110     4     4     14     
+111     4     4     18     
+112     4     4     15     
+113     4     4     12     
+114     4     4     9     
+115     4     4     6     
+116     4     4     10     
+117     4     4     14     
+118     4     4     18     
+119     4     4     15     
+120     4     4     12     
+121     4     4     9     
+122     4     4     6     
+123     4     4     10     
+124     4     4     14     
+125     4     4     18     
+126     4     4     15     
+127     4     4     12     
+128     4     4     9     
+129     4     4     6     
+130     4     4     10     
+131     4     4     14     
+132     4     4     18     
+133     4     4     15     
+134     4     4     12     
+135     4     4     9     
+136     4     4     6     
+137     4     4     10     
+138     4     4     14     
+139     4     4     18     
+140     4     4     15     
+141     4     4     12     
+142     4     4     9     
+143     4     4     6     
+144     4     4     10     
+145     4     4     14     
+146     4     4     18     
+147     4     4     15     
+148     4     4     12     
+149     4     4     9     
+150     4     4     6     
+151     4     4     10     
+152     4     4     14     
+153     4     4     18     
+154     4     4     15     
+155     4     4     12     
+156     4     4     9     
+157     4     4     6     
+158     4     4     10     
+159     4     4     14     
+160     4     4     18     
+161     4     4     15     
+162     4     4     12     
+163     4     4     9     
+164     4     4     6     
+165     4     4     10     
+166     4     4     14     
+167     4     4     18     
+168     4     4     15     
+169     4     4     12     
+170     4     4     9     
+171     4     4     6     
+172     4     4     10     
+173     4     4     14     
+174     4     4     18     
+175     4     4     15     
+176     4     4     12     
+177     4     4     9     
+178     4     4     6     
+179     4     4     10     
+180     4     4     14     
+181     4     4     18     
+182     4     4     15     
+183     4     4     12     
+184     4     4     9     
+185     4     4     6     
+186     4     4     10     
+187     4     4     14     
+188     4     4     18     
+189     4     4     15     
+190     4     4     12     
+191     4     4     9     
+192     4     4     6     
+193     4     4     10     
+194     4     4     14     
+195     4     4     18     
+196     4     4     15     
+197     4     4     12     
+198     4     4     9     
+199     4     4     6     
+200     4     4     10     
+201     4     4     14     
+202     4     4     18     
+203     4     4     15     
+204     4     4     12     
+205     4     4     9     
+206     4     4     6     
+207     4     4     10     
+208     4     4     14     
+209     4     4     18     
+210     4     4     15     
+211     4     4     12     
+212     4     4     9     
+213     4     4     6     
+214     4     4     10     
+215     4     4     14     
+216     4     4     18     
+217     4     4     15     
+218     4     4     12     
+219     4     4     9     
+220     4     4     6     
+221     4     4     10     
+222     4     4     14     
+223     4     4     18     
+224     4     4     15     
+225     4     4     12     
+226     4     4     9     
+227     4     4     6     
+228     4     4     10     
+229     4     4     14     
+230     4     4     18     
+231     4     4     15     
+232     4     4     12     
+233     4     4     9     
+234     4     4     6     
+235     4     4     10     
+236     4     4     14     
+237     4     4     18     
+238     4     4     15     
+239     4     4     12     
+240     4     4     9     
+241     4     4     6     
+242     4     4     10     
+243     4     4     14     
+244     4     4     18     
+245     4     4     15     
+246     4     4     12     
+247     4     4     9     
+248     4     4     6     
+249     4     4     10     
+250     4     4     14     
+251     4     4     18     
+252     4     4     15     
+253     4     4     12     
+254     4     4     9     
+255     4     4     6     
+256     4     4     10     
+257     4     4     14     
+258     4     4     18     
+259     4     4     15     
+260     4     4     12     
+261     4     4     9     
+262     4     4     6     
+263     4     4     10     
+264     4     4     14     
+265     4     4     18     
+266     4     4     15     
+267     4     4     12     
+268     4     4     9     
+269     4     4     6     
+270     4     4     10     
+271     4     4     14     
+272     4     4     18     
+273     4     4     15     
+274     4     4     12     
+275     4     4     9     
+276     4     4     6     
+277     4     4     10     
+278     4     4     14     
+279     4     4     18     
+280     4     4     15     
+281     4     4     12     
+282     4     4     9     
+283     4     4     6     
+284     4     4     10     
+285     4     4     14     
+286     4     4     18     
+287     4     4     15     
+288     4     4     12     
+289     4     4     9     
+290     4     4     6     
+291     4     4     10     
+292     4     4     14     
+293     4     4     18     
+294     4     4     15     
+295     4     4     12     
+296     4     4     9     
+297     4     4     6     
+298     4     4     10     
+299     4     4     14     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    
+0     4     4     18     
+1     4     4     12     
+2     4     4     9     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_wide)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.t_wide].k, count(*), count([dba.t_wide].pad), sum([dba.t_wide].v) from [dba.t_wide] [dba.t_wide] where ([dba.t_wide].k< ?:? ) group by [dba.t_wide].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    count(*)    count(pad)    sum(v)    
+0     4     4     18     
+1     4     4     12     
+2     4     4     9     
+
+===================================================
+    
+Case 7: correlated GROUP BY subquery run by the scan workers, the run for g = 1 gives up hashing, hash partial; result = no_parallel_scan with no_hash_aggregate     
+
+===================================================
+count(*)    sum(s)    
+20000     23000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (i.i_in_g) (key range: i.g=z.a)
+
+  rewritten query: (select ? from [dba.t_in] i where i.g=z.a group by i.k)
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from (select ? from [dba.t_in] i where i.g=z.a group by i.k) x (?))
+
+  TABLE SCAN (z)
+
+  rewritten query: select count(*), sum((select count(*) from (select ? from [dba.t_in] i where i.g=z.a group by i.k) x (?))) from [dba.t_out] z
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_in.i_in_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(s)    
+20000     23000     
+
+===================================================
+0
