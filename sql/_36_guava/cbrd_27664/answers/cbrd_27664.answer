@@ -813,59 +813,59 @@ k    json_length(json_arrayagg(id))    sum(id)    json_length(json_objectagg(id,
 
 ===================================================
     
-Case 6: a non-aggregated column in the select list, read outside the derived table; result = no_parallel_scan     
+Case 6: a non-aggregated column in the select list, kept by the outer query (not covered); result = no_parallel_scan     
 
 ===================================================
-g    c    
-0     5714     
-1     5715     
-2     5715     
-3     5715     
-4     5715     
-5     5715     
-6     5715     
-7     5715     
-8     5715     
-9     5715     
-10     5715     
-11     5714     
-12     5714     
-13     5714     
-14     5714     
-15     5714     
-16     5714     
-17     5714     
-18     5714     
-19     5714     
-20     5714     
-21     5714     
-22     5714     
-23     5714     
-24     5714     
-25     5714     
-26     5714     
-27     5714     
-28     5714     
-29     5714     
-30     5714     
-31     5714     
-32     5714     
-33     5714     
-34     5714     
+g    c    s is not null    
+0     5714     1     
+1     5715     1     
+2     5715     1     
+3     5715     1     
+4     5715     1     
+5     5715     1     
+6     5715     1     
+7     5715     1     
+8     5715     1     
+9     5715     1     
+10     5715     1     
+11     5714     1     
+12     5714     1     
+13     5714     1     
+14     5714     1     
+15     5714     1     
+16     5714     1     
+17     5714     1     
+18     5714     1     
+19     5714     1     
+20     5714     1     
+21     5714     1     
+22     5714     1     
+23     5714     1     
+24     5714     1     
+25     5714     1     
+26     5714     1     
+27     5714     1     
+28     5714     1     
+29     5714     1     
+30     5714     1     
+31     5714     1     
+32     5714     1     
+33     5714     1     
+34     5714     1     
 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ), covered: true)
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
   group by nosort: true
 
-  rewritten query: (select [dba.t_main].g, count(*) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+))
+  rewritten query: (select [dba.t_main].g, count(*), [dba.t_main].s from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+))
 
   SORT (order by)
     TABLE SCAN (z)
 
-  rewritten query: select z.g, z.c from (select [dba.t_main].g, count(*) as [c] from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+)) z (g, c) order by ?
+  rewritten query: select z.g, z.c, z.s is not null  from (select [dba.t_main].g, count(*) as [c], [dba.t_main].s from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+)) z (g, c, s) order by ?
 
 
 Trace Statistics:
@@ -874,48 +874,48 @@ Trace Statistics:
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
         GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
 ===================================================
-g    c    
-0     5714     
-1     5715     
-2     5715     
-3     5715     
-4     5715     
-5     5715     
-6     5715     
-7     5715     
-8     5715     
-9     5715     
-10     5715     
-11     5714     
-12     5714     
-13     5714     
-14     5714     
-15     5714     
-16     5714     
-17     5714     
-18     5714     
-19     5714     
-20     5714     
-21     5714     
-22     5714     
-23     5714     
-24     5714     
-25     5714     
-26     5714     
-27     5714     
-28     5714     
-29     5714     
-30     5714     
-31     5714     
-32     5714     
-33     5714     
-34     5714     
+g    c    s is not null    
+0     5714     1     
+1     5715     1     
+2     5715     1     
+3     5715     1     
+4     5715     1     
+5     5715     1     
+6     5715     1     
+7     5715     1     
+8     5715     1     
+9     5715     1     
+10     5715     1     
+11     5714     1     
+12     5714     1     
+13     5714     1     
+14     5714     1     
+15     5714     1     
+16     5714     1     
+17     5714     1     
+18     5714     1     
+19     5714     1     
+20     5714     1     
+21     5714     1     
+22     5714     1     
+23     5714     1     
+24     5714     1     
+25     5714     1     
+26     5714     1     
+27     5714     1     
+28     5714     1     
+29     5714     1     
+30     5714     1     
+31     5714     1     
+32     5714     1     
+33     5714     1     
+34     5714     1     
 
 ===================================================
     
@@ -3409,8 +3409,6 @@ Trace Statistics:
      
 
 ===================================================
-0
-===================================================
 g    count(*)    
 0     5714     
 1     5715     
@@ -3444,6 +3442,132 @@ g    count(*)
 32     5714     
 33     5714     
 34     5714     
+
+===================================================
+    
+Case 19: a case-insensitive string key whose groups several workers read; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+lower(x.k)    c    s    
+grp0     5000     2400000     
+grp1     5000     2435000     
+grp10     5000     2550000     
+grp11     5000     2585000     
+grp12     5000     2420000     
+grp13     5000     2455000     
+grp14     5000     2490000     
+grp15     5000     2525000     
+grp16     5000     2560000     
+grp17     5000     2595000     
+grp18     5000     2430000     
+grp19     5000     2465000     
+grp2     5000     2470000     
+grp20     5000     2500000     
+grp21     5000     2535000     
+grp22     5000     2570000     
+grp23     5000     2405000     
+grp24     5000     2440000     
+grp25     5000     2475000     
+grp26     5000     2510000     
+grp27     5000     2545000     
+grp28     5000     2580000     
+grp29     5000     2415000     
+grp3     5000     2505000     
+grp30     5000     2450000     
+grp31     5000     2485000     
+grp32     5000     2520000     
+grp33     5000     2555000     
+grp34     5000     2590000     
+grp35     5000     2425000     
+grp36     5000     2460000     
+grp37     5000     2495000     
+grp38     5000     2530000     
+grp39     5000     2565000     
+grp4     5000     2540000     
+grp5     5000     2575000     
+grp6     5000     2410000     
+grp7     5000     2445000     
+grp8     5000     2480000     
+grp9     5000     2515000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_ci.i_ci) ()
+  group by nosort: true
+
+  rewritten query: (select [dba.t_ci].k, count(*), sum([dba.t_ci].v) from [dba.t_ci] [dba.t_ci] where ([dba.t_ci].k> ?:? ) group by [dba.t_ci].k using index [dba.t_ci].i_ci(+))
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select  lower(x.k), x.c, x.s from (select [dba.t_ci].k, count(*) as [c], sum([dba.t_ci].v) as [s] from [dba.t_ci] [dba.t_ci] where ([dba.t_ci].k> ?:? ) group by [dba.t_ci].k using index [dba.t_ci].i_ci(+)) x (k, c, s) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_ci.i_ci), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+lower(x.k)    c    s    
+grp0     5000     2400000     
+grp1     5000     2435000     
+grp10     5000     2550000     
+grp11     5000     2585000     
+grp12     5000     2420000     
+grp13     5000     2455000     
+grp14     5000     2490000     
+grp15     5000     2525000     
+grp16     5000     2560000     
+grp17     5000     2595000     
+grp18     5000     2430000     
+grp19     5000     2465000     
+grp2     5000     2470000     
+grp20     5000     2500000     
+grp21     5000     2535000     
+grp22     5000     2570000     
+grp23     5000     2405000     
+grp24     5000     2440000     
+grp25     5000     2475000     
+grp26     5000     2510000     
+grp27     5000     2545000     
+grp28     5000     2580000     
+grp29     5000     2415000     
+grp3     5000     2505000     
+grp30     5000     2450000     
+grp31     5000     2485000     
+grp32     5000     2520000     
+grp33     5000     2555000     
+grp34     5000     2590000     
+grp35     5000     2425000     
+grp36     5000     2460000     
+grp37     5000     2495000     
+grp38     5000     2530000     
+grp39     5000     2565000     
+grp4     5000     2540000     
+grp5     5000     2575000     
+grp6     5000     2410000     
+grp7     5000     2445000     
+grp8     5000     2480000     
+grp9     5000     2515000     
 
 ===================================================
 0
