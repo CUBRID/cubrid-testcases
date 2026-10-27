@@ -1,0 +1,911 @@
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1-1. PARTITION BY + ORDER BY, no condition - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: (select dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+1-1v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+1-2. PARTITION BY only - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    min(s)    max(s)    
+50000     48053847     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: (select sum([dba.t?].col?) over (partition by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), min(x.s), max(x.s) from (select sum([dba.t?].col?) over (partition by ?) as [s] from [dba.t?] [dba.t?]) x (s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+1-2v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+1-3. ORDER BY only - PK INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(r)    
+50000     1250025000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.pk_t?_col?) (covered: true)
+
+  rewritten query: (select row_number() over (order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r) from (select row_number() over (order by ?) as [r] from [dba.t?] [dba.t?]) x (r)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.pk_t?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+1-3v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+2-1. USING INDEX hint, no condition - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: (select dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?] using index [dba.t?].idx_col?_col?_col?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?] using index [dba.t?].idx_col?_col?_col?) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+3-1. another function whose key the index does not cover - no analytic index scan, both sort     
+
+===================================================
+count(*)    sum(r3)    sum(d2)    
+50000     1250025000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select rank() over (order by ?), dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r?), sum(x.d?) from (select rank() over (order by ?) as [r?], dense_rank() over (partition by ? order by ?) as [d?] from [dba.t?] [dba.t?]) x (r?, d?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+3-1v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+3-2. two functions whose keys are index prefixes share one sort group - #1 sort skipped     
+
+===================================================
+count(*)    min(s)    max(s)    sum(d)    
+50000     48053847     48101924     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: (select sum([dba.t?].col?) over (partition by ?), dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), min(x.s), max(x.s), sum(x.d) from (select sum([dba.t?].col?) over (partition by ?) as [s], dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?]) x (s, d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+3-2v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+3-3. partition and order keys also in the select list - INDEX SCAN, sort skipped     
+
+===================================================
+col2    col1    d    
+A     26     1     
+A     52     2     
+A     78     3     
+A     104     4     
+A     130     5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: select [dba.t?].col?, [dba.t?].col?, dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?] where (rownum<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
+     
+
+===================================================
+    
+3-4. a covered key shares the sort of a longer key the index does not cover - no analytic index scan     
+
+===================================================
+count(*)    sum(r1)    sum(r2)    
+50000     48101924     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select row_number() over (partition by ?), row_number() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r?), sum(x.r?) from (select row_number() over (partition by ?) as [r?], row_number() over (partition by ? order by ?) as [r?] from [dba.t?] [dba.t?]) x (r?, r?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+    
+3-5. PARTITION BY a, b merges into the (b, a, c) sort of another function - no analytic index scan     
+
+===================================================
+count(*)    max(s)    sum(r)    
+20000     2607410     18191819     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?_merge)
+
+  rewritten query: (select sum([dba.t?_merge].c) over (partition by ?, ?), row_number() over (partition by ? order by ?, ?) from [dba.t?_merge] [dba.t?_merge])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), max(x.s), sum(x.r) from (select sum([dba.t?_merge].c) over (partition by ?, ?) as [s], row_number() over (partition by ? order by ?, ?) as [r] from [dba.t?_merge] [dba.t?_merge]) x (s, r)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?_merge), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+3-6. (a) and (a, b) on index (a, b) merge into an index prefix - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(c1)    sum(d2)    
+20000     57142858     119993     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_merge.idx_merge_a_b) (covered: true)
+
+  rewritten query: (select count(*) over (partition by ?), dense_rank() over (partition by ? order by ?) from [dba.t?_merge] [dba.t?_merge])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.c?), sum(x.d?) from (select count(*) over (partition by ?) as [c?], dense_rank() over (partition by ? order by ?) as [d?] from [dba.t?_merge] [dba.t?_merge]) x (c?, d?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?_merge.idx_merge_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+3-6v. same value as the sequential scan     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+    
+4-1. analytic sort skipped, query ORDER BY still sorted     
+
+===================================================
+col1    col2    d    
+50000     C     1924     
+49999     B     1924     
+49998     A     1923     
+49997     Z     1923     
+49996     Y     1923     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+
+  rewritten query: (select [dba.t?].col?, [dba.t?].col?, dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?] order by ? desc )
+
+  TABLE SCAN (x)
+
+  rewritten query: select x.col?, x.col?, x.d from (select [dba.t?].col?, [dba.t?].col?, dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?] order by ? desc ) x (col?, col?, d) where (rownum<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+5-1. nullable grp, index (grp, id) with id NOT NULL - INDEX SCAN including the NULL partition     
+
+===================================================
+grp    count(*)    max(r)    
+null     2000     2000     
+0     2572     2572     
+1     2572     2572     
+2     2571     2571     
+3     2571     2571     
+4     2572     2572     
+5     2571     2571     
+6     2571     2571     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_null.idx_grp_id) (covered: true)
+
+  rewritten query: (select [dba.t?_null].grp, row_number() over (partition by ? order by ?) from [dba.t?_null] [dba.t?_null])
+
+  SORT (group by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.grp, count(*), max(x.r) from (select [dba.t?_null].grp, row_number() over (partition by ? order by ?) as [r] from [dba.t?_null] [dba.t?_null]) x (grp, r) group by x.grp
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?_null.idx_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+5-1v. same value as the sequential scan     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+    
+5-2. NULL keys in the ORDER BY key are ties - INDEX SCAN, sort skipped     
+
+===================================================
+count(*)    sum(r)    sum(dr)    
+20000     174877142     91996     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_null.idx_grp_id) (covered: true)
+
+  rewritten query: (select rank() over (order by ?), dense_rank() over (order by ?) from [dba.t?_null] [dba.t?_null])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.r), sum(x.dr) from (select rank() over (order by ?) as [r], dense_rank() over (order by ?) as [dr] from [dba.t?_null] [dba.t?_null]) x (r, dr)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?_null.idx_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+5-2v. same value as the sequential scan     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+5-3. nullable grp, single-column index (grp) does not hold NULL keys - TABLE SCAN     
+
+===================================================
+grp    count(*)    max(c)    
+null     2000     2000     
+0     2572     2572     
+1     2572     2572     
+2     2571     2571     
+3     2571     2571     
+4     2572     2572     
+5     2571     2571     
+6     2571     2571     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?_null)
+
+  rewritten query: (select [dba.t?_null].grp, count(*) over (partition by ?) from [dba.t?_null] [dba.t?_null])
+
+  SORT (group by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.grp, count(*), max(x.c) from (select [dba.t?_null].grp, count(*) over (partition by ?) as [c] from [dba.t?_null] [dba.t?_null]) x (grp, c) group by x.grp
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?_null), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+6-1. non-covering index on a large table - TABLE SCAN + sort     
+
+===================================================
+count(*)    sum(s)    
+50000     96204490     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select sum([dba.t?].col?) over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.s) from (select sum([dba.t?].col?) over (partition by ? order by ?) as [s] from [dba.t?] [dba.t?]) x (s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+6-2. DESC order on the ASC index - TABLE SCAN + sort     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select dense_rank() over (partition by ? order by ? desc ) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select dense_rank() over (partition by ? order by ? desc ) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+6-3. GROUP BY - analytic over the groups, no analytic index scan     
+
+===================================================
+col2    count(*)    r    
+A     1923     1     
+B     1924     2     
+C     1924     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t?].col?, count(*) from [dba.t?] [dba.t?] group by [dba.t?].col?)
+
+  SORT (order by)
+    TABLE SCAN (dba.t?)
+
+  rewritten query: select a_?, a_?, rank() over (order by ?) from (select [dba.t?].col?, count(*) from [dba.t?] [dba.t?] group by [dba.t?].col?) [dba.t?] (a_?, a_?) order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6-4. join - no analytic index scan     
+
+===================================================
+count(*)    sum(d)    
+20000     7702310     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select dense_rank() over (partition by ? order by ?) from [dba.t?] a, [dba.t?_null] b where a.col?=b.id)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] a, [dba.t?_null] b where a.col?=b.id) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+            SUBQUERY (uncorrelated)
+                     (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t?_null), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+    
+6-5. USE_DESC_IDX - DESC keys follow the backward index scan, sort skipped     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?.idx_col?_col?_col?) (covered: true, desc_index forced: true)
+
+  rewritten query: (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? desc  order by ? desc ) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? desc  order by ? desc ) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t?.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+6-5v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+    
+6-6. USE_DESC_IDX - ASC keys do not follow the backward index scan, TABLE SCAN + sort     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?)
+
+  rewritten query: (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? order by ?) from [dba.t?] [dba.t?])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select /*+ USE_DESC_IDX */ dense_rank() over (partition by ? order by ?) as [d] from [dba.t?] [dba.t?]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+6-7. partitioned table - partitions are scanned one by one, no analytic index scan     
+
+===================================================
+count(*)    sum(d)    
+50000     48101924     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t?_part)
+
+  rewritten query: (select dense_rank() over (partition by ? order by ?) from [dba.t?_part] [dba.t?_part])
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.d) from (select dense_rank() over (partition by ? order by ?) as [d] from [dba.t?_part] [dba.t?_part]) x (d)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t?_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+               PARTITION (table: dba.t?_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t?_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t?_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+6-7v. same value as the sequential scan     
+
+===================================================
+count(*)    
+50000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+    
+7-1. key range on a, NULL grp rows form one partition - INDEX SCAN, sort skipped     
+
+===================================================
+id    a    grp    r    c    
+1     1     null     1     3     
+2     1     null     2     3     
+3     1     null     3     3     
+4     1     1     1     2     
+5     1     1     2     2     
+6     1     2     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_range.idx_a_grp_id) (key range: [dba.t?_range].a= ?:? , covered: true)
+
+  rewritten query: select [dba.t?_range].id, [dba.t?_range].a, [dba.t?_range].grp, row_number() over (partition by ?, ? order by ?), count(*) over (partition by ?, ?) from [dba.t?_range] [dba.t?_range] where [dba.t?_range].a= ?:?  using index [dba.t?_range].idx_a_grp_id(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_range.idx_a_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+7-2. ROWNUM selected on the sort-skip path without stopkey - numbered in output order     
+
+===================================================
+rownum    id    a    grp    r    c    
+1     1     1     null     1     3     
+2     2     1     null     2     3     
+3     3     1     null     3     3     
+4     4     1     1     1     2     
+5     5     1     1     2     2     
+6     6     1     2     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t?_range.idx_a_grp_id) (key range: [dba.t?_range].a= ?:? , covered: true)
+
+  rewritten query: select rownum, [dba.t?_range].id, [dba.t?_range].a, [dba.t?_range].grp, row_number() over (partition by ?, ? order by ?), count(*) over (partition by ?, ?) from [dba.t?_range] [dba.t?_range] where [dba.t?_range].a= ?:?  using index [dba.t?_range].idx_a_grp_id(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?_range.idx_a_grp_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+7-3. 7-1 forced onto the sequential scan - same rows     
+
+===================================================
+id    a    grp    r    c    
+1     1     null     1     3     
+2     1     null     2     3     
+3     1     null     3     3     
+4     1     1     1     2     
+5     1     1     2     2     
+6     1     2     1     1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
