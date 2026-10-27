@@ -9,7 +9,8 @@
 --
 -- A plain column follows the same rules: WITH ROLLUP keeps the sort, and a BIGINT column compared with a
 -- DOUBLE constant is neither treated as a constant for ORDER BY nor replaced by the constant in the
--- other WHERE terms.
+-- other WHERE terms. A NUMERIC column of precision 15 or less is still treated as a constant: DOUBLE keeps
+-- its distinct values distinct.
 --
 -- The rewritten query in each trace shows whether the ORDER BY is still there. A query whose ORDER BY is
 -- dropped selects only values that are equal on every result row, so the answer does not depend on the
@@ -29,11 +30,14 @@
 --   - kept: BIGINT expression compared with a DOUBLE constant, two different values match
 --   - plain column: kept with WITH ROLLUP; kept with a BIGINT column compared with a DOUBLE constant,
 --     and the column is not replaced by the constant in another term
+--   - plain column: NUMERIC(15,0) compared with a DOUBLE constant is dropped, NUMERIC(16,0) is kept
 
 drop table if exists ta;
 drop table if exists tb;
 drop table if exists tc;
 drop table if exists td;
+drop table if exists te;
+drop table if exists tf;
 
 create table ta (a varchar(10), b int);
 create index i_ta_upper_a on ta (upper (a));
@@ -47,6 +51,12 @@ insert into tc values ('a', 1), ('A', 2), ('a', 3), ('A', 4);
 
 create table td (a varchar(10), b bigint);
 insert into td values ('x', 9007199254740993), ('y', 9007199254740992);
+
+create table te (a varchar(10), n numeric(15,0));
+insert into te values ('x', 999999999999999), ('y', 999999999999998);
+
+create table tf (a varchar(10), n numeric(16,0));
+insert into tf values ('x', 9007199254740993), ('y', 9007199254740992);
 
 set trace on;
 
@@ -130,6 +140,14 @@ show trace;
 select count (*) from td where b = cast (9007199254740992 as double) and b = 9007199254740993;
 show trace;
 
+-- plain column, dropped: NUMERIC(15,0) compared with a DOUBLE constant matches one value only
+select n from te where n = cast (999999999999998 as double) order by n;
+show trace;
+
+-- plain column, kept: NUMERIC(16,0) compared with a DOUBLE constant, both rows match
+select n, a from tf where n = cast (9007199254740992 as double) order by n, a;
+show trace;
+
 set trace off;
 
 -- host variable on the constant side
@@ -142,3 +160,5 @@ drop table ta;
 drop table tb;
 drop table tc;
 drop table td;
+drop table te;
+drop table tf;
