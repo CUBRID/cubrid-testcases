@@ -1,0 +1,436 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2048
+===================================================
+2048
+===================================================
+4096
+===================================================
+8192
+===================================================
+16384
+===================================================
+32768
+===================================================
+65536
+===================================================
+131072
+===================================================
+262144
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Repeated merges preserve both serial rows; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300001     -2     
+1     -1     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+300001     -2     
+1     -1     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+    
+Case 2: Descending large-partition rows; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+563144     563144     
+563143     563143     
+563142     563142     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ? desc , ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+563144     563144     
+563143     563143     
+563142     563142     
+
+===================================================
+    
+Case 3: No qualifying serial rows; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] where ([dba.t_chain].v> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+    
+Case 4: One qualifying serial row; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     -1     
+1001     1001     
+1002     1002     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] where ([dba.t_chain].v>= ?:? ) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1     -1     
+1001     1001     
+1002     1002     
+
+===================================================
+    
+Case 5: LIMIT zero control; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+
+===================================================
+    
+Case 6: OFFSET retains the serial candidate; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     -1     
+1001     1001     
+1002     1002     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1     -1     
+1001     1001     
+1002     1002     
+
+===================================================
+    
+Case 7: Final ORDERBY_NUM projection; result = NO_PARALLEL_SCAN     
+
+===================================================
+pos    id    v    
+2     1     -1     
+3     1001     1001     
+4     1002     1002     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select orderby_num(), [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+pos    id    v    
+2     1     -1     
+3     1001     1001     
+4     1002     1002     
+
+===================================================
+    
+Case 8: Numeric and nullable string projection; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    amount    payload    
+300001     -2     null     
+1     -1     null     
+1001     1001     1001     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id,  cast([dba.t_chain].v as numeric(?,?)), case when [dba.t_chain].v<? then null else  cast([dba.t_chain].v as varchar(?)) end, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    amount    payload    
+300001     -2     null     
+1     -1     null     
+1001     1001     1001     
+
+===================================================
+    
+Case 9: Hidden NULL sort keys with id tie breaker; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     -1     
+300001     -2     
+1001     1001     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v, case when [dba.t_chain].v<? then null else [dba.t_chain].v end from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1     -1     
+300001     -2     
+1001     1001     
+
+===================================================
+    
+Case 10: Full sort without top-N; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300001     -2     
+1     -1     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] where (([dba.t_chain].v< ?:? ) or ([dba.t_chain].v>= ?:?  and [dba.t_chain].v<= ?:? )) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+300001     -2     
+1     -1     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 11: Empty first partition; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300001     -2     
+1001     1001     
+1002     1002     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_chain)
+
+  rewritten query: select [dba.t_chain].id, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_chain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_chain__p__p_first), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_middle), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_chain__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+id    v    
+300001     -2     
+1001     1001     
+1002     1002     
+
+===================================================
+0
