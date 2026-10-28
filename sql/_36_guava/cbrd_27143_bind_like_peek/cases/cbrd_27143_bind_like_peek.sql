@@ -40,13 +40,15 @@ execute r using 'abc1';
 show trace;
 deallocate prepare r;
 
---test: [3-1] value boundaries: a NULL pattern cannot be priced (no fingerprint component, so the
---test: marker plan runs, no Query Plan block, 0 rows); a non-string pattern is cast to the
---test: column's string domain first ('123'), so it IS priced like any pattern -- the peek
---test: replans (Query Plan block), matches nothing, 0 rows, no error
+--test: [3-1] value boundaries: a NULL pattern matches no row and is priced as zero rows, as a
+--test: comparison with NULL is -- the first execution peeks (Query Plan block), 0 rows; a
+--test: non-string pattern is cast to the column's string domain first ('123'), so it IS priced
+--test: like any pattern -- the peek replans (Query Plan block), matches nothing, 0 rows, no error
 prepare z from 'select count(pad) from t_lpeek where s like ? and pad is not null';
 execute z using NULL;
 show trace;
+deallocate prepare z;
+prepare z from 'select count(pad) from t_lpeek where s like ? and pad <> ''''';
 execute z using 123;
 show trace;
 deallocate prepare z;
@@ -89,6 +91,35 @@ show trace;
 deallocate prepare o1;
 deallocate prepare o2;
 set trace off;
+
+--test: [8] a join with a LIKE pattern host variable on a column with most-common values is a
+--test: plan-variant target (plan_cache_bind_variants, default 5): the dominant prefix and a rare
+--test: one compile a plan each (Query Plan block), and coming back to either value runs its
+--test: variant without a compile (no Query Plan block)
+drop table if exists t_lvar;
+drop table if exists t_ldim;
+create table t_lvar (s varchar(50), g int, pad varchar(100));
+insert into t_lvar select 'abc' || (rownum % 10), rownum % 50, lpad('x',100,'x') from db_class x, db_class y, db_class z limit 7200;
+insert into t_lvar select 'xyz' || rownum, rownum % 50, lpad('x',100,'x') from db_class x, db_class y, db_class z limit 800;
+create index i_t_lvar_s on t_lvar (s);
+create table t_ldim (g int, name varchar(20));
+insert into t_ldim select rownum - 1, 'n' || rownum from db_class x, db_class y limit 50;
+create index i_t_ldim_g on t_ldim (g);
+update statistics on t_lvar, t_ldim with fullscan;
+set trace on;
+prepare v from 'select count(t.pad) from t_lvar t, t_ldim d where t.g = d.g and t.s like ?';
+execute v using 'abc%';
+show trace;
+execute v using 'xyz1%';
+show trace;
+execute v using 'abc%';
+show trace;
+execute v using 'xyz2%';
+show trace;
+deallocate prepare v;
+set trace off;
+drop table t_ldim;
+drop table t_lvar;
 
 drop table t_nostat;
 drop table t_lpeek;

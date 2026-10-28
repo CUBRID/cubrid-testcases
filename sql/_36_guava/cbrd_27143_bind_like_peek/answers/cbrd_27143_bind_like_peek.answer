@@ -91,11 +91,20 @@ count(pad)
 ===================================================
 trace    
 
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
+
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad is not null 
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
+===================================================
+0
+===================================================
+0
 ===================================================
 count(pad)    
 0     
@@ -106,7 +115,7 @@ trace
 Query Plan:
   INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
 
-  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad is not null 
+  rewritten query: select count([dba.t_lpeek].pad) from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and [dba.t_lpeek].pad<>''
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -219,6 +228,128 @@ Trace Statistics:
     SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
      
 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7200
+===================================================
+800
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(t.pad)    
+7200     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (d)
+
+  rewritten query: select count(t.pad) from [dba.t_lvar] t, [dba.t_ldim] d where t.g=d.g and t.s like  ?:?  and (t.s>= like_match_lower_bound( ?:? ) and t.s< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lvar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ldim), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(t.pad)    
+111     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (t.i_t_lvar_s) (key range: (t.s>= like_match_lower_bound( ?:? ) and t.s< like_match_upper_bound( ?:? )), key filter: t.s like  ?:? )
+    INDEX SCAN (d.i_t_ldim_g) (key range: t.g=d.g, covered: true)
+
+  rewritten query: select count(t.pad) from [dba.t_lvar] t, [dba.t_ldim] d where t.g=d.g and t.s like  ?:?  and (t.s>= like_match_lower_bound( ?:? ) and t.s< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lvar.i_t_lvar_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_ldim.i_t_ldim_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(t.pad)    
+7200     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lvar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ldim), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(t.pad)    
+111     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_lvar.i_t_lvar_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_ldim.i_t_ldim_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
