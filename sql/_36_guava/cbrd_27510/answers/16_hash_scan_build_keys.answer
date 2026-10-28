@@ -255,6 +255,9 @@ Trace Statistics:
 
 ===================================================
 k    k    
+1     1     
+3     3     
+3     6     
 
 ===================================================
 trace    
@@ -276,6 +279,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -781,7 +785,12 @@ Case 2: keys over binds
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -789,23 +798,40 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-Error:-181
+k    k    
+1     2     
+2     3     
+2     6     
+
 ===================================================
-Error:-181
+k    k    
+
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
-Error:-181
+k    k    
+
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -813,17 +839,23 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-Error:-181
+k    k    
+
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -831,13 +863,17 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-Error:-181
+k    k    
+1     2     
+2     5     
+
 ===================================================
 0
 ===================================================
@@ -953,7 +989,12 @@ k    k
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -961,23 +1002,35 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 0
 ===================================================
-Error:-181
+k    c    
+1     1     
+2     1     
+3     2     
+4     0     
+
 ===================================================
 trace    
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -988,7 +1041,12 @@ Trace Statistics:
      
 
 ===================================================
-Error:-181
+k    c    
+1     0     
+2     0     
+3     0     
+4     0     
+
 ===================================================
 0
 ===================================================
@@ -1030,23 +1088,31 @@ k    c
 
 ===================================================
 k    c    
-1     0     
+1     1     
 2     1     
 3     2     
 4     0     
 
 ===================================================
 k    c    
-1     0     
+1     1     
 2     1     
 3     2     
 4     0     
 
 ===================================================
 k    k    
+1     1     
+2     2     
+3     3     
+3     6     
 
 ===================================================
 k    k    
+1     1     
+2     2     
+3     3     
+3     6     
 
 ===================================================
 0
@@ -1075,7 +1141,12 @@ Case 3: keys over a session variable
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -1096,6 +1167,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1104,15 +1176,26 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -1133,6 +1216,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1248,7 +1332,12 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-Error:-181
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
 ===================================================
 trace    
 
@@ -1269,6 +1358,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1425,7 +1515,12 @@ Trace Statistics:
 ===================================================
 1
 ===================================================
-Error:-181
+id    pid    job    level    
+1     null     p     1     
+2     1     q     2     
+3     1     r     2     
+4     2     s     3     
+
 ===================================================
 id    pid    job    level    
 1     null     p     1     
@@ -1445,7 +1540,9 @@ Case 5: build values the conversion refuses
 ===================================================
 0
 ===================================================
-Error:-181
+k    bi    
+1     1     
+
 ===================================================
 trace    
 
@@ -1480,7 +1577,9 @@ k    bi
 ===================================================
 2
 ===================================================
-Error:-181
+k    d    
+1     1.0     
+
 ===================================================
 trace    
 
@@ -1511,7 +1610,9 @@ Trace Statistics:
 ===================================================
 2
 ===================================================
-Error:-181
+k    i    
+1     1     
+
 ===================================================
 trace    
 
@@ -1542,7 +1643,9 @@ Trace Statistics:
 ===================================================
 2
 ===================================================
-Error:-181
+k    s    
+1     abc     
+
 ===================================================
 trace    
 
@@ -1694,7 +1797,9 @@ k    k
 ===================================================
 2
 ===================================================
-Error:-181
+k    n    
+1     1     
+
 ===================================================
 trace    
 

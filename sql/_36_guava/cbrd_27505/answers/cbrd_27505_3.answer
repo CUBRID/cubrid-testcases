@@ -1,0 +1,244 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+15
+===================================================
+15
+===================================================
+0
+===================================================
+0
+===================================================
+16
+===================================================
+16
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+8
+===================================================
+    
+Case 1: numeric(14,0) probe, numeric(18,4) build; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 2: numeric(14,0) probe, numeric(20,6) build; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 3: numeric(18,4) probe, numeric(14,0) build; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 4: numeric(20,6) probe, numeric(14,0) build; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 5: x.k + 0 probe, numeric(18,4) build; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 6: CONNECT BY prior numeric(14,0) = numeric(18,4); 16 rows     
+
+===================================================
+res    cnt    
+PASS     16     
+
+===================================================
+    
+Case 7: CONNECT BY prior numeric(14,0) = numeric(20,6); 16 rows     
+
+===================================================
+res    cnt    
+PASS     16     
+
+===================================================
+    
+Case 8: CONNECT BY prior numeric(18,4) = numeric(14,0); 16 rows     
+
+===================================================
+res    cnt    
+PASS     16     
+
+===================================================
+    
+Case 9: CONNECT BY prior x.a + 0 = numeric(18,4); 16 rows     
+
+===================================================
+res    cnt    
+PASS     16     
+
+===================================================
+    
+Case 10: numeric(38,-5) probe, numeric(38,0) build; 7 rows     
+
+===================================================
+res    cnt    
+PASS     7     
+
+===================================================
+    
+Case 11: numeric(36,-10) probe, numeric(38,0) build; 5 rows     
+
+===================================================
+res    cnt    
+PASS     5     
+
+===================================================
+    
+Case 12: numeric(36,-10) probe, d.c + 0 build; 5 rows     
+
+===================================================
+res    cnt    
+PASS     5     
+
+===================================================
+    
+Case 13: CONNECT BY prior numeric(36,-10) = numeric(38,0); 10 rows     
+
+===================================================
+res    cnt    
+PASS     10     
+
+===================================================
+    
+Case 14: CONNECT BY prior numeric(36,-10) = x.b + 0; 12 rows     
+
+===================================================
+res    cnt    
+PASS     12     
+
+===================================================
+    
+Case 15: CONNECT BY prior numeric(36,-10) = numeric(38,2); 10 rows     
+
+===================================================
+res    cnt    
+PASS     10     
+
+===================================================
+    
+Case 16: trace of Cases 1, 6 and 13, each scans hash temp     
+
+===================================================
+0
+===================================================
+count(*)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.nl_b)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.nl_b].id, [dba.nl_b].k? from [dba.nl_b] [dba.nl_b])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (d)
+
+  rewritten query: select count(*) from [dba.nl_a] x, (select /*+ NO_MERGE */ [dba.nl_b].id, [dba.nl_b].k? from [dba.nl_b] [dba.nl_b]) d (id, k?) where x.k=d.k?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.nl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.nl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+16     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.nl_c?] x, db_root r start with x.a is not null  connect by nocycle  prior x.a=x.b)
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.nl_c?] x, db_root r start with x.a is not null  connect by nocycle  prior x.a=x.b) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.nl_c?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.nq_a] x, db_root r start with (x.id> ?:? ) connect by nocycle  prior x.b=x.c)
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.nq_a] x, db_root r start with (x.id> ?:? ) connect by nocycle  prior x.b=x.c) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.nq_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0

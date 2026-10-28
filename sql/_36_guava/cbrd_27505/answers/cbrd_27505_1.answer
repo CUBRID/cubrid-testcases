@@ -1,0 +1,196 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+15
+===================================================
+0
+===================================================
+4
+===================================================
+    
+Case 1: the reported query, two keys of different scales; 9 rows     
+
+===================================================
+lv    pth    
+1     /1     
+2     /1/2     
+1     /2     
+2     /2/1     
+1     /3     
+1     /4     
+2     /4/5     
+1     /5     
+2     /5/4     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 2: one key, no other select columns; 33 rows     
+
+===================================================
+res    cnt    
+PASS     33     
+
+===================================================
+    
+Case 3: one key, a2 and b2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500     
+
+===================================================
+res    cnt    sa    sb    
+PASS     33     489.90     462.1500     
+
+===================================================
+    
+Case 4: one key, b2 and a2 in the select list; 33 rows, sum(a2) 489.90, sum(b2) 462.1500     
+
+===================================================
+res    cnt    sa    sb    
+PASS     33     489.90     462.1500     
+
+===================================================
+    
+Case 5: two keys on h4; 21 rows     
+
+===================================================
+res    cnt    
+PASS     21     
+
+===================================================
+    
+Case 6: prior x.n1 = x.n1 + 0; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 7: prior x.n1 * 1000 = x.n1; 5 rows     
+
+===================================================
+res    cnt    
+PASS     5     
+
+===================================================
+    
+Case 8: join with a derived table outside CONNECT BY; 9 rows     
+
+===================================================
+id    id    
+1     1     
+1     2     
+2     1     
+2     2     
+3     3     
+4     4     
+4     5     
+5     4     
+5     5     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 9: numeric(3,2) literal probe, numeric(10,2) build with 1000.00; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 10: prior x.a = x.a + 0 and prior x.b = x.b + 0; 21 rows     
+
+===================================================
+res    cnt    
+PASS     21     
+
+===================================================
+    
+Case 11: prior x.n2 = x.n2 + 0; 9 rows     
+
+===================================================
+res    cnt    
+PASS     9     
+
+===================================================
+    
+Case 12: trace of Cases 1 and 2, the CONNECT BY scans hash temp     
+
+===================================================
+0
+===================================================
+count(*)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.h] x, db_root r start with (x.id> ?:? ) connect by nocycle x.n?= prior x.n?+ cast(? as numeric) and x.n?= prior x.n?+ cast(? as numeric))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.h] x, db_root r start with (x.id> ?:? ) connect by nocycle x.n?= prior x.n?+ cast(? as numeric) and x.n?= prior x.n?+ cast(? as numeric)) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.h), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+33     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (x)
+    TABLE SCAN (r)
+
+  rewritten query: (select level,  sys_connect_by_path( cast(x.id as varchar), '/') from [dba.h?] x, db_root r start with (x.id> ?:? ) connect by nocycle x.a= prior x.a+ cast(? as numeric))
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*) from (select level as [lv],  sys_connect_by_path( cast(x.id as varchar), '/') as [pth] from [dba.h?] x, db_root r start with (x.id> ?:? ) connect by nocycle x.a= prior x.a+ cast(? as numeric)) t (lv, pth)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0

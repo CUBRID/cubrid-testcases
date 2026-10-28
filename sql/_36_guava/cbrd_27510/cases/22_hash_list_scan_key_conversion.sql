@@ -2,10 +2,9 @@
  *  This test case verifies CBRD-27510: a hash list scan converts its build keys into the probe key's type as develop does.
  *
  *  A join with a derived table the optimizer keeps as a list (NO_MERGE with a WHERE, DISTINCT, UNION ALL) builds a
- *  hash table of the list's key values in the probe key's type. A build value longer than a CHAR(3) probe key does not
- *  convert, and the scan refuses it with the coercion error instead of truncating it - the same query without the hash
- *  list scan answers rows. A build key that fits, or a wider probe key, converts and joins. Every answer here is the
- *  develop answer, the refused conversions included.
+ *  hash table of the list's key values. A build value longer than a CHAR(3) probe key is hashed with the probe key in
+ *  one common domain, so the scan answers the rows of the same query without the hash list scan. A build key that
+ *  fits, or a wider probe key, converts and joins.
  *
  *  Coverage:
  *    Case 1: CHAR(3) probe key, VARCHAR build values one of which is longer than 3
@@ -29,7 +28,7 @@ insert into hls_bit8 values (1, X'AB');
 create table hls_bit16 (id int, b16 bit(16));
 insert into hls_bit16 values (1, X'AB00'), (2, X'ABCD'), (3, X'AB80');
 
--- Case 1 [DEVELOP]. The build value 'abcdef' does not convert into CHAR(3): the hash list scan refuses it
+-- Case 1. The build value 'abcdef' is longer than CHAR(3): the hash list scan answers as the scan without it does
 evaluate 'Case 1: CHAR(3) probe key, VARCHAR build values one of which is longer than 3';
 select /*+ ordered */ hls_p.id, s.id from hls_p, (select /*+ NO_MERGE */ id, v from hls_b where id > 0) s
   where hls_p.c = s.v order by 1, 2;
