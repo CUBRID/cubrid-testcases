@@ -464,7 +464,7 @@ Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: row_number partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t?.c, t?.a, row_number() over (partition by ? order by ?) from tbl? t? where (t?.a< ?:? )
+select t?.c, t?.a, row_number() over (partition by ? order by ?) from tbl? t? where (t?.a< ?:? ) using index t?.cix_cub?
 Query plan:
 iscan
     class: t? node[?]
@@ -481,7 +481,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select T.c, T.a, T.rnum from (select t?.c, t?.a, row_number() over (partition by ? order by ?) as [rnum] from tbl? t? where (t?.a< ?:? ) union all select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )) T (c, a, rnum) where T.c= ?:?  order by ?
+select T.c, T.a, T.rnum from (select t?.c, t?.a, row_number() over (partition by ? order by ?) as [rnum] from tbl? t? where (t?.a< ?:? ) using index t?.cix_cub? union all select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )) T (c, a, rnum) where T.c= ?:?  order by ?
 ===================================================
 c    a    rnum    
 test10     10     1     
@@ -901,7 +901,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select a.id, X.id, X.g from o? a left outer join (select e?.id, e?.g from e? e?) X (id, g) on a.id=X.id where (X.g*?+ mod((@a := @a+?), ?)=? or (X.g< ?:? )) order by ?
+select a.id, X.id, X.g from o? a left outer join (select e?.id, e?.g from e? e?) X (id, g) on a.id=X.id where (X.g*?+ mod((@a := @a+?), ?)=? or (X.g<-?)) order by ?
 ===================================================
 @a    
 12     
