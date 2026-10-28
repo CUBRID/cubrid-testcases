@@ -1358,16 +1358,20 @@ trace
 
 Query Plan:
   NESTED LOOPS (inner join)
-    INDEX SCAN (a.idx_cola_colb) ()
+    SORT (limit)
+      INDEX SCAN (a.idx_cola_colb) ()
     INDEX SCAN (b.pk_tbl_b_cold) (key range: a.cola=b.cold)
-  skip order by: true
 
   rewritten query: select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from [dba.tbl_a] a, [dba.tbl_b] b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tbl_a.idx_cola_colb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ORDERBY (time: ?, skipsort: true)
      
 
 ===================================================

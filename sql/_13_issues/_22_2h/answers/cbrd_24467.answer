@@ -30,7 +30,8 @@ Query Plan:
   SORT (order by)
     NESTED LOOPS (left outer join)
       NESTED LOOPS (left outer join)
-        TABLE SCAN (a)
+        SORT (limit)
+          TABLE SCAN (a)
         INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
       INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
 
@@ -38,10 +39,14 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (index: dba.tbl.idx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
      
 
 ===================================================
