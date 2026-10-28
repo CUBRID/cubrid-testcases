@@ -22,3 +22,4 @@ The rules for the TCs under `sql/` are in [sql/AGENTS.md](sql/AGENTS.md), and th
 | known wrong result | 알려진 오답 | A value in an answer file that is wrong because of an open issue. |
 | threshold | 임계값 | A size, counted in rows or pages, at which the engine changes how it runs a query. |
 | setup | 준비 단계 | The statements of a TC that create the schema and the data that its scenarios share. |
+| CI pod | CI 파드 | The pod in which the CI of the engine repo (`CUBRID/cubrid`) runs the TCs. |
