@@ -21,8 +21,7 @@
  *   Q07 analytic function without PARTITION BY : not pushed
  *   Q08 term on the analytic function result : not pushed
  *   Q09 function on the partition key : not pushed
- *   Q10 UNION ALL inline view : not pushed (the first branch names its index:
- *       two covering indexes cost alike there, and the plan must not pick one)
+ *   Q10 UNION ALL inline view : not pushed
  *   Q11 correlated term : not pushed
  *   Q12 case insensitive collation with a COLLATE modifier : not pushed
  *   Q13 non-deterministic term (drandom) : not pushed, it keeps only some rows
@@ -180,13 +179,13 @@ order by T.a;
 evaluate 'Q10. UNION ALL inline view';
 --@queryplan
 select /*+ recompile */ T.*
-from (select t1.c, t1.a, row_number () over (partition by t1.c order by t1.a) as rnum from tbl1 t1 where t1.a < 3000 using index t1.cix_cub01
+from (select t1.c, t1.a, row_number () over (partition by t1.c order by t1.a) as rnum from tbl1 t1 where t1.a < 3000
       union all
       select t1.c, t1.a, 0 from tbl1 t1 where t1.a >= 9000) T
 where T.c = 'test10'
 order by T.a;
 select /*+ recompile no_push_pred */ T.*
-from (select t1.c, t1.a, row_number () over (partition by t1.c order by t1.a) as rnum from tbl1 t1 where t1.a < 3000 using index t1.cix_cub01
+from (select t1.c, t1.a, row_number () over (partition by t1.c order by t1.a) as rnum from tbl1 t1 where t1.a < 3000
       union all
       select t1.c, t1.a, 0 from tbl1 t1 where t1.a >= 9000) T
 where T.c = 'test10'

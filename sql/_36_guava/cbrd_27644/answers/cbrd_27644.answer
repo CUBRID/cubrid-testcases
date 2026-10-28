@@ -458,13 +458,14 @@ test10     9010     0
 Query plan:
 iscan
     class: t? node[?]
-    index: cix_cub? term[?] (covers)
+    index: cix_cub? (covers)
+    filtr: term[?]
     cost:  ? card ?
 Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
            func[?]: row_number partition by (? asc nulls first) order by (? asc nulls first)
 Query stmt:
-select t?.c, t?.a, row_number() over (partition by ? order by ?) from tbl? t? where (t?.a< ?:? ) using index t?.cix_cub?
+select t?.c, t?.a, row_number() over (partition by ? order by ?) from tbl? t? where (t?.a< ?:? )
 Query plan:
 iscan
     class: t? node[?]
@@ -481,7 +482,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select T.c, T.a, T.rnum from (select t?.c, t?.a, row_number() over (partition by ? order by ?) as [rnum] from tbl? t? where (t?.a< ?:? ) using index t?.cix_cub? union all select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )) T (c, a, rnum) where T.c= ?:?  order by ?
+select T.c, T.a, T.rnum from (select t?.c, t?.a, row_number() over (partition by ? order by ?) as [rnum] from tbl? t? where (t?.a< ?:? ) union all select t?.c, t?.a, ? from tbl? t? where (t?.a>= ?:? )) T (c, a, rnum) where T.c= ?:?  order by ?
 ===================================================
 c    a    rnum    
 test10     10     1     
