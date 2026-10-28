@@ -13,6 +13,11 @@
  * leave out: a zero-width assertion that matches inside the string, a subject
  * with nothing to advance over, and a long multibyte string.
  *
+ * Case 16 runs under re2 only. The engines are documented to disagree on
+ * patterns that prefer an empty match where a non-empty one also starts, so
+ * the point there is that re2 terminates and enumerates every position, not
+ * that the two engines agree.
+ *
  * Coverage:
  *   Case 1: REGEXP_COUNT with constants, the queries from the report
  *   Case 2: REGEXP_COUNT over column values, one empty-match pattern per row
@@ -21,7 +26,7 @@
  *   Case 5: REGEXP_REPLACE, all matches, from a position, and one occurrence
  *   Case 6: a long subject with an empty match at every position
  *   Case 7: the column queries under cppstd, and under re2 again
- *   Case 8: every argument form of the four functions, under re2
+ *   Case 8: the constant queries of Case 1, 3, 4, 5, and a multibyte position, under re2
  *   Case 9: a zero-width assertion that matches inside the subject, under re2
  *   Case 10: nothing to advance over, an empty subject and a position past the end, under re2
  *   Case 11: a long multibyte subject, under re2
@@ -29,6 +34,7 @@
  *   Case 13: Case 9 repeated under cppstd
  *   Case 14: Case 10 repeated under cppstd
  *   Case 15: Case 11 repeated under cppstd
+ *   Case 16: patterns that prefer an empty match at a position a non-empty one also starts at, under re2
  */
 set system parameters 'regexp_engine=re2';
 
@@ -82,7 +88,8 @@ select id, regexp_count(s, p), regexp_instr(s, p, 1, 2), regexp_instr(s, p, 1, 3
 -- ---- re2 ----------------------------------------------------------------
 set system parameters 'regexp_engine=re2';
 
-evaluate 'Case 8: position, occurrence, return_option and match_type, under re2';
+evaluate 'Case 8: the constant queries of Case 1, 3, 4, 5, and a multibyte position, under re2, to pair with Case 12';
+select regexp_count('abc', 'a|'), regexp_count('abc', 'b*'), regexp_count('abc', '^'), regexp_count('abc', '$');
 select regexp_count('abc', 'b*', 2), regexp_count('abc', 'a|', 3), regexp_count('AbA', 'a*', 1, 'i');
 select regexp_instr('abc', 'b*', 1, 1), regexp_instr('abc', 'b*', 1, 2), regexp_instr('abc', 'b*', 1, 3),
   regexp_instr('abc', 'b*', 1, 4), regexp_instr('abc', 'b*', 1, 5), regexp_instr('abc', 'b*', 1, 2, 1);
@@ -91,8 +98,12 @@ select regexp_substr('abc', 'b*', 1, 2), regexp_substr('abc', 'b*', 1, 3), regex
 select regexp_replace('abc', 'b*', 'X'), regexp_replace('abc', 'a|', 'X'), regexp_replace('abc', '^', '>'),
   regexp_replace('abc', '$', '<');
 select regexp_replace('abc', 'b*', 'X', 2), regexp_replace('abc', 'b*', 'X', 1, 2), regexp_replace('AbA', 'a*', 'X', 1, 0, 'i');
+-- a position inside a multibyte subject: the prefix must be cut by character, so '가' survives
+select regexp_count('가나다', '나*', 2), regexp_instr('가나다', '나*', 2, 2), regexp_substr('가나다', '나*', 2, 2),
+  regexp_replace('가나다', '나*', 'X', 2);
 
 evaluate 'Case 9: a zero-width assertion matches inside the subject, unlike ^ and $, under re2';
+-- '\b' is a single backslash: no_backslash_escapes defaults to yes, so it reaches the engine as written
 select regexp_count('ab cd', '\b'), regexp_instr('ab cd', '\b', 1, 3), regexp_substr('ab cd', '\b', 1, 2),
   regexp_replace('ab cd', '\b', '|');
 
@@ -108,6 +119,7 @@ select regexp_count(repeat('가나', 5000), 'x*'), length(regexp_replace(repeat(
 set system parameters 'regexp_engine=cppstd';
 
 evaluate 'Case 12: Case 8 repeated under cppstd';
+select regexp_count('abc', 'a|'), regexp_count('abc', 'b*'), regexp_count('abc', '^'), regexp_count('abc', '$');
 select regexp_count('abc', 'b*', 2), regexp_count('abc', 'a|', 3), regexp_count('AbA', 'a*', 1, 'i');
 select regexp_instr('abc', 'b*', 1, 1), regexp_instr('abc', 'b*', 1, 2), regexp_instr('abc', 'b*', 1, 3),
   regexp_instr('abc', 'b*', 1, 4), regexp_instr('abc', 'b*', 1, 5), regexp_instr('abc', 'b*', 1, 2, 1);
@@ -116,6 +128,8 @@ select regexp_substr('abc', 'b*', 1, 2), regexp_substr('abc', 'b*', 1, 3), regex
 select regexp_replace('abc', 'b*', 'X'), regexp_replace('abc', 'a|', 'X'), regexp_replace('abc', '^', '>'),
   regexp_replace('abc', '$', '<');
 select regexp_replace('abc', 'b*', 'X', 2), regexp_replace('abc', 'b*', 'X', 1, 2), regexp_replace('AbA', 'a*', 'X', 1, 0, 'i');
+select regexp_count('가나다', '나*', 2), regexp_instr('가나다', '나*', 2, 2), regexp_substr('가나다', '나*', 2, 2),
+  regexp_replace('가나다', '나*', 'X', 2);
 
 evaluate 'Case 13: Case 9 repeated under cppstd';
 select regexp_count('ab cd', '\b'), regexp_instr('ab cd', '\b', 1, 3), regexp_substr('ab cd', '\b', 1, 2),
@@ -128,6 +142,15 @@ select regexp_count('abc', 'b*', 10), regexp_instr('abc', 'b*', 10, 1), regexp_s
 
 evaluate 'Case 15: Case 11 repeated under cppstd';
 select regexp_count(repeat('가나', 5000), 'x*'), length(regexp_replace(repeat('가나', 5000), '나*', 'X'));
+
+-- ---- re2 only -----------------------------------------------------------
+set system parameters 'regexp_engine=re2';
+
+evaluate 'Case 16: patterns that prefer an empty match at a position a non-empty one also starts at, under re2';
+select regexp_count('abc', '|b'), regexp_count('abc', 'b*?'), regexp_replace('abc', '|b', 'X'),
+  regexp_instr('abc', 'b*?', 1, 3);
+select regexp_instr('abc', '|b', 1, 1), regexp_instr('abc', '|b', 1, 2), regexp_instr('abc', '|b', 1, 3),
+  regexp_instr('abc', '|b', 1, 4), regexp_instr('abc', '|b', 1, 5);
 
 drop table t_27655;
 set system parameters 'regexp_engine=default';
