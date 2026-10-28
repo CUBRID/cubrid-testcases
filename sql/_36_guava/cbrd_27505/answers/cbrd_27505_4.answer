@@ -65,6 +65,14 @@
 ===================================================
 4
 ===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
     
 Case 1: prior smallint = int; 3 rows     
 
@@ -328,6 +336,78 @@ Trace Statistics:
     SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 21: prior numeric(14,0) = numeric(18,4) with 14 digit keys; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 22: prior numeric(38,0) = numeric(38,-5); 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 23: trace of Cases 21 and 22 (single table plan)     
+
+===================================================
+0
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_nl)
+
+  rewritten query: select [dba.hs_nl].n, level from [dba.hs_nl] [dba.hs_nl] start with [dba.hs_nl].n= ?:?  connect by  prior [dba.hs_nl].id=[dba.hs_nl].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_nq)
+
+  rewritten query: select [dba.hs_nq].n, level from [dba.hs_nq] [dba.hs_nq] start with [dba.hs_nq].n= ?:?  connect by  prior [dba.hs_nq].id=[dba.hs_nq].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 

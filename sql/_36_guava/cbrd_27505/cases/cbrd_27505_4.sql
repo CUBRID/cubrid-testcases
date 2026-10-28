@@ -33,9 +33,13 @@
  *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
  *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
  *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
+ *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed as DOUBLE, which
+ *             rounds a coefficient above 2^53, so this query keeps the single table plan.
+ *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
+ *    Case 23: trace: Cases 21 and 22 keep the single table plan
  */
 
-drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp;
+drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq;
 
 create table hs_si (id smallint, pid int, n int);
 insert into hs_si values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
@@ -69,6 +73,12 @@ create table hs_cg (k numeric(3,0), d double, s varchar(10), n int);
 insert into hs_cg values (100, 1000.5, 'x', 1), (5, 5, '5', 2);
 create table hs_cp (id int, pid double, n int);
 insert into hs_cp values (1, null, 1), (2, 1, 2), (3, 2, 3), (4, 1, 4);
+
+create table hs_nl (id numeric(14,0), pid numeric(18,4), n int);
+insert into hs_nl values (63427896765467,NULL,1),(57868758049228,63427896765467,2),(65998847102851,57868758049228,3),(1,65998847102851,4);
+
+create table hs_nq (id numeric(38,0), pid numeric(38,-5), n int);
+insert into hs_nq values (100000,NULL,1),(1200000,100000,2),(-500000,1200000,3),(7,-500000,4);
 
 
 evaluate 'Case 1: prior smallint = int; 3 rows';
@@ -200,4 +210,25 @@ show trace;
 set trace off;
 
 
-drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp;
+evaluate 'Case 21: prior numeric(14,0) = numeric(18,4) with 14 digit keys; 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nl start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nl start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 22: prior numeric(38,0) = numeric(38,-5); 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 23: trace of Cases 21 and 22 (single table plan)';
+set trace on;
+select n, level lv from hs_nl start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_nq start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+set trace off;
+
+
+drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq;
