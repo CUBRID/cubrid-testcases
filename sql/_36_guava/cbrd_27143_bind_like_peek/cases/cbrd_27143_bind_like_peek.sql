@@ -71,6 +71,13 @@ prepare d from 'delete from t_lpeek where s like ?';
 execute d using 'nomatch%';
 show trace;
 deallocate prepare d;
+--test: [5-1] the UPDATE prices the pattern like the SELECT does: its range derived from the pattern is
+--test: counted once (the statement is rewritten again as the SELECT it builds), so the dominant prefix
+--test: replans to a TABLE SCAN, as `s like 'abc%'` does
+prepare u2 from 'update t_lpeek set pad = pad where s like ? and pad is not null';
+execute u2 using 'abc%';
+show trace;
+deallocate prepare u2;
 set trace off;
 select count(*) from t_lpeek;
 
