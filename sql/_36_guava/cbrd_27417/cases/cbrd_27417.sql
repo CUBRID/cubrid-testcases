@@ -53,12 +53,13 @@ revoke select on sensitivity label from u_revoke_target;
 call login('dba', '') on class db_user;
 select grantee_name, auth_type from db_auth where grantee_name in ('U_GRANT_TARGET', 'U_REVOKE_TARGET') order by 1;
 
--- 10. m_revoke, a DBA group member, revokes DBA's grant and leaves u_revoke_by_member no row
+-- 10. m_revoke, a DBA group member, revokes DBA's grant and leaves u_revoke_by_member no row, but cannot REVOKE from dba
 create user m_revoke groups dba;
 create user u_revoke_by_member;
 grant select on sensitivity label to u_revoke_by_member;
 call login('m_revoke', '') on class db_user;
 revoke select on sensitivity label from u_revoke_by_member;
+revoke select on sensitivity label from dba;
 call login('dba', '') on class db_user;
 select auth_type from db_auth where grantee_name = 'U_REVOKE_BY_MEMBER';
 
@@ -84,7 +85,7 @@ grant select on sensitivity label to u_duplicate_label;
 grant select on sensitivity label to u_duplicate_label;
 select grantee_name, count (*) from db_auth where grantee_name in ('U_DUPLICATE_TABLE', 'U_DUPLICATE_LABEL') group by grantee_name order by 1;
 
--- 14. REVOKE SELECT after ALL PRIVILEGES has the outcome it has on t_partial, and leaves u_partial_label only ALTER
+-- 14. REVOKE SELECT after ALL PRIVILEGES has the outcome it has on t_partial, and leaves u_partial_label only ALTER, and a second REVOKE SELECT fails
 create user u_partial_table;
 create user u_partial_label;
 create table t_partial (a int);
@@ -92,16 +93,18 @@ grant all privileges on t_partial to u_partial_table;
 grant all privileges on sensitivity label to u_partial_label;
 revoke select on t_partial from u_partial_table;
 revoke select on sensitivity label from u_partial_label;
+revoke select on sensitivity label from u_partial_label;
 select grantee_name, auth_type from db_auth where grantee_name in ('U_PARTIAL_TABLE', 'U_PARTIAL_LABEL') order by 1, 2;
 
 -- 15. SHOW GRANTS FOR u_select prints its label grant
 show grants for u_select;
 
--- 16. a GRANT by m_grant, a DBA group member, records DBA as the grantor
+-- 16. a GRANT by m_grant, a DBA group member, records DBA as the grantor, and m_grant's GRANT to dba fails
 create user m_grant groups dba;
 create user u_grant_by_member;
 call login('m_grant', '') on class db_user;
 grant select on sensitivity label to u_grant_by_member;
+grant select on sensitivity label to dba;
 call login('dba', '') on class db_user;
 select grantor_name, auth_type from db_auth where grantee_name = 'U_GRANT_BY_MEMBER';
 
