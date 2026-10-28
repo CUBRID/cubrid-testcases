@@ -68,9 +68,9 @@ insert into t_lead select rownum, case when rownum <= 2500 then 100000 + rownum 
   when mod(rownum, 15) < 12 then 2 when mod(rownum, 15) < 14 then 3 else 4 end, mod(rownum, 1000),
   case when rownum <= 2500 then null else sha2(rownum, 512) || substr(sha2(rownum + 1, 512), 1, 64) end from t_num a, t_num b limit 22500;
 
--- 300 keys of 4 rows: 1200 rows never reach the first give-up check, so hashing is kept. count(pad) puts the 896-character
--- incompressible pad into the first row of each group: the main sort reads about 17 pages (8x the 2-page parallel sort floor
--- of CTP) while 300 hash entries stay far under the 2 MB hash memory. Three keys fit one page and sort serially
+-- 300 keys of 4 rows: 1200 rows never reach the first give-up check, so hashing is kept. max(pad) puts the 896-character
+-- incompressible pad into each group's hash entry: the sort of the 300 entries reads about 17 pages (8x the 2-page parallel
+-- sort floor of CTP) while they stay far under the 2 MB hash memory. Three keys fit one page and sort serially
 create table t_wide (k int, v int, pad varchar(1000));
 insert into t_wide select mod(n, 300), mod(n, 7), sha2(mod(n, 300) * 8 + 1, 512) || sha2(mod(n, 300) * 8 + 2, 512) || sha2(mod(n, 300) * 8 + 3, 512)
   || sha2(mod(n, 300) * 8 + 4, 512) || sha2(mod(n, 300) * 8 + 5, 512) || sha2(mod(n, 300) * 8 + 6, 512) || sha2(mod(n, 300) * 8 + 7, 512)
@@ -133,12 +133,12 @@ show trace;
 
 
 evaluate 'Case 6: serial scan keeps hashing, GROUP BY sort parallel, three groups stay serial; result = no_hash_aggregate parallel(0)';
-select /*+ recompile no_parallel_scan */ k, count(*), count(pad), sum(v) from t_wide group by k order by k;
+select /*+ recompile no_parallel_scan */ k, count(*), length(max(pad)), sum(v) from t_wide group by k order by k;
 show trace;
-select /*+ recompile no_hash_aggregate parallel(0) */ k, count(*), count(pad), sum(v) from t_wide group by k order by k;
-select /*+ recompile no_parallel_scan */ k, count(*), count(pad), sum(v) from t_wide where k < 3 group by k order by k;
+select /*+ recompile no_hash_aggregate parallel(0) */ k, count(*), length(max(pad)), sum(v) from t_wide group by k order by k;
+select /*+ recompile no_parallel_scan */ k, count(*), length(max(pad)), sum(v) from t_wide where k < 3 group by k order by k;
 show trace;
-select /*+ recompile no_hash_aggregate parallel(0) */ k, count(*), count(pad), sum(v) from t_wide where k < 3 group by k order by k;
+select /*+ recompile no_hash_aggregate parallel(0) */ k, count(*), length(max(pad)), sum(v) from t_wide where k < 3 group by k order by k;
 
 
 evaluate 'Case 7: correlated GROUP BY subquery run by the scan workers, the run for g = 1 gives up hashing, hash partial; result = no_parallel_scan with no_hash_aggregate';
