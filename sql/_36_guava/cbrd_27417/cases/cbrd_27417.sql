@@ -155,3 +155,6 @@ drop user u_insert;
 drop user u_seen;
 drop user u_other;
 drop user u_catalog;
+
+-- 20. dropping the grantees above leaves no label row
+select count (*) from db_auth where object_type = 'SENSITIVITY LABEL';
