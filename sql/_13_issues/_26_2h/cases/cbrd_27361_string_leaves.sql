@@ -11,6 +11,7 @@
  *    Case 3: LIKE under utf8_en_ci, utf8_ko_cs, iso88591_bin, binary
  *    Case 4: "=", "<>", IN: trailing spaces and the CHAR padding under each collation
  *    Case 5: SUBSTRING ... IN at and past the string end, multibyte
+ *    Case 6: SUBSTR ... IN: SUBSTR is NULL past the string end, SUBSTRING the empty string, with '' in the list
  */
 
 drop table if exists t_str;
@@ -107,5 +108,25 @@ select count(*) from t_str where substring(vc, 3, 3) in ('abc', 'c한');
 select count(*) from t_str where substring(c10, 1, 3) in ('abc', 'v1 ');
 select count(*) from t_str where substring(vi, 2, 2) in (cast('bc' as varchar(2) charset iso88591), cast('b_' as varchar(2) charset iso88591));
 select count(*) from t_str where substring(vb, 1, 4) in (_binary'abc ', _binary'ab\c');
+
+-- Case 6: SUBSTR returns NULL for a start past the string's last character, SUBSTRING the empty string; with ''
+-- in the IN list the two differ (PR #8196 review: the batch compared SUBSTR's NULL as the empty string)
+drop table if exists t_sub;
+create table t_sub (k int, s varchar(2000));
+insert into t_sub values (1, 'abc'), (2, ''), (3, NULL), (4, repeat ('q', 300)), (5, 'xyz');
+select k from t_sub where substr (s, 500, 2) in ('', 'zz') order by k;
+select k from t_sub where substr (s, 1, 3) in ('abc', '') order by k;
+select k from t_sub where substring (s, 500, 2) in ('', 'zz') order by k;
+select k from t_sub where substring (s, 1, 3) in ('abc', '') order by k;
+select k from t_sub where substr (s, 3, 5) in ('c', 'qqqqq', 'x') order by k;
+drop table if exists t_sub2;
+create table t_sub2 (k int, s varchar(2000));
+insert into t_sub2 select rownum, case mod (rownum, 5) when 0 then 'abc' when 1 then '' when 2 then 'xyz' when 3 then 'ab' else repeat ('q', 300) end
+  from db_class a, db_class b, db_class c limit 20000;
+select count (*) from t_sub2 where substr (s, 1, 3) in ('abc', 'xyz', '');
+select count (*) from t_sub2 where substring (s, 1, 3) in ('abc', 'xyz', '');
+select count (*) from t_sub2 where substr (s, 3, 2) in ('c', 'z', '');
+select count (*) from t_sub2 where substring (s, 3, 2) in ('c', 'z', '');
+drop table t_sub, t_sub2;
 
 drop table t_str;
