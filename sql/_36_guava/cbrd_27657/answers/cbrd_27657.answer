@@ -1,0 +1,413 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+5
+===================================================
+4
+===================================================
+0
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select min(x.cb) from tb x where x.ca=ta.ca)
+Query plan:
+sscan
+    class: ta node[?]
+    cost:  ? card ?
+Query stmt:
+(select ta.ca, ta.cb, (select min(x.cb) from tb x where x.ca=ta.ca) from ta ta)
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ d.ca, tb.cb from (select ta.ca, ta.cb, (select min(x.cb) from tb x where x.ca=ta.ca) as [cc] from ta ta) d (ca, cb, cc) left outer join tb tb on (tb.cb>d.cb+d.cc) and tb.ca=d.cb order by ?, ?
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select min(x.cb) from tb x where x.ca=ta.ca)
+Query plan:
+sscan
+    class: ta node[?]
+    cost:  ? card ?
+Query stmt:
+(select ta.ca, ta.cb, (select min(x.cb) from tb x where x.ca=ta.ca) from ta ta)
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: UNORDERED
+                 subplan: m-join (left outer join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: cb[?]
+                                         subplan: sscan
+                                                      class: d node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: ca[?]
+                                         subplan: sscan
+                                                      class: tb node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              during:term[?]
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ d.ca, tb.cb from (select ta.ca, ta.cb, (select min(x.cb) from tb x where x.ca=ta.ca) as [cc] from ta ta) d (ca, cb, cc) left outer join tb tb on (tb.cb>d.cb+d.cc) and tb.ca=d.cb order by ?, ?
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+Query plan:
+sscan
+    class: tb node[?]
+    cost:  ? card ?
+Query stmt:
+(select min(tb.cb) from tb tb)
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tb node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ d.ca, tb.cb from ta d left outer join tb tb on (tb.cb>d.cb+(select min(tb.cb) from tb tb)) and tb.ca=d.cb order by ?, ?
+===================================================
+ca    cb    cb    
+1     0     1     
+1     100     1     
+5     0     5     
+7     0     7     
+7     100     7     
+9     null     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cc    cb    
+1     0     0     
+1     0     100     
+5     0     0     
+7     0     0     
+7     0     100     
+9     null     null     
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select min(x.cb) from tb x where x.ca=d.ca)
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ d.ca, (select min(x.cb) from tb x where x.ca=d.ca), tb.cb from ta d left outer join tb tb on tb.ca=d.cb order by ?, ?, ?
+===================================================
+ca    k    
+1     null     
+5     null     
+7     null     
+9     null     
+
+===================================================
+ca    k    
+1     null     
+5     null     
+7     null     
+9     null     
+
+===================================================
+ca    cb    
+1     0     
+5     0     
+7     0     
+9     null     
+
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select count(*) from tc x where x.ca=tb.ca)
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+(select tb.cb, tb.ca from tb tb where (tb.cb<(select count(*) from tc x where x.ca=tb.ca)))
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca, d.cb from ta ta left outer join (select tb.cb, tb.ca from tb tb where (tb.cb<(select count(*) from tc x where x.ca=tb.ca))) d (cb, ca) on d.ca=ta.ca order by ?, ?
+===================================================
+ca    cb    
+1     0     
+5     0     
+7     0     
+9     null     
+
+===================================================
+ca    cb    
+1     0     
+5     0     
+7     0     
+9     null     
+
+Query plan:
+sscan
+    class: tc node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(tc.cb) from tc tc)
+Query plan:
+sscan
+    class: tb node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select tb.cb, tb.ca from tb tb where (tb.cb<(select max(tc.cb) from tc tc)))
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca, d.cb from ta ta left outer join (select tb.cb, tb.ca from tb tb where (tb.cb<(select max(tc.cb) from tc tc))) d (cb, ca) on d.ca=ta.ca order by ?, ?
+===================================================
+2
+===================================================
+ca    cb    
+1     1     
+5     -1     
+7     7     
+9     -1     
+
+===================================================
+4
+===================================================
+2
+===================================================
+ca    cb    
+1     1     
+7     7     
+
+===================================================
+2
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    cb    
+1     0     
+5     0     
+7     0     
+9     null     
+
+===================================================
+ca    cb    
+1     100     
+5     null     
+7     100     
+9     null     
+
+===================================================
+ca    x    
+1     7     
+5     7     
+7     null     
+9     null     
+
+===================================================
+ca    x    
+1     7     
+5     7     
+
+===================================================
+0
+===================================================
+ca    bb    
+1     1     
+5     5     
+7     7     
+9     9     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: v node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca, ( cast(v.cb as bigint)) from ta ta left outer join tc v on v.ca=ta.ca order by ?, ?
+===================================================
+0
+===================================================
+ca    cb    
+1     1     
+5     5     
+7     7     
+9     9     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ ta.ca, d.cb from ta ta left outer join tc d on d.ca=ta.ca order by ?, ?
+===================================================
+0
+===================================================
+0
