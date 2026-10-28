@@ -48,7 +48,7 @@ commit;
 
 ### Answer files
 
-**Make an answer file from a CTP run of the whole directory of the TC, or of all of `medium/` when you can, not from a run of the TC alone.** Each run loads `mdb` fresh and runs its TCs on it one after another, and a TC sees what the TCs before it left ([test perspectives](test-perspectives.md#what-a-medium-tc-cannot-check)), so its output when it runs alone can differ from its output in a run of the directory. Example: set `scenario` in the `[sql]` section of the CTP medium conf to `${HOME}/cubrid-testcases/medium/_02_xtests`, run `ctp.sh medium -c <conf>`, and make `answers/between.answer` from the `between.result` of that run.
+**Make an answer file from a CTP run of the whole directory of the TC, or of all of `medium/` when you can, not from a run of the TC alone.** Each run loads `mdb` fresh and runs its TCs on it one after another, and a TC sees what the TCs before it left ([test perspectives](test-perspectives.md#what-a-medium-tc-cannot-check)), so its output when it runs alone can differ from its output in a run of the directory. Example: set `scenario` in the `[sql]` section of `medium_dev.conf` ([Operational facts](../AGENTS.md#operational-facts)) to `${HOME}/cubrid-testcases/medium/_02_xtests`, run `ctp.sh medium -c <conf>`, and make `answers/between.answer` from the `between.result` of that run.
 
 ## Changing an existing TC
 
