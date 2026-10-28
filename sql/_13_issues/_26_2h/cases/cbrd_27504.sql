@@ -2,32 +2,29 @@
  *  This test case verifies CBRD-27504: TO_CHAR on a date or time value rejects a format argument
  *  bound to a value that is not a character string, and the server keeps running.
  *
- *  A host variable or a session variable in the format argument of TO_CHAR is bound without a
- *  cast. The date and time branch of TO_CHAR read the bound value as a string whatever its type,
- *  so a BIGINT format made the debug build abort on an assert and the release build crash. The
- *  fix returns the error that the number branch of TO_CHAR already returns for such a format.
- *
- *  Each rejected format is also bound to the number branch, prepared statement n, which must give
- *  the same error. No hint or parameter selects another path, so the other expected values are
- *  literal: string, empty string and NULL formats, and formats written in the query text, keep the
- *  results they had before the fix. The pre-fix debug build aborts on Case 1.
+ *  A host/session variable in the format is bound without a cast - the date/time branch of TO_CHAR
+ *  reads it as a string whatever its type, so a BIGINT format crashed release (aborted debug). The
+ *  fix matches the number branch's error - literal/query-text formats keep their pre-fix results.
  *
  *  Coverage:
  *    Case 1:  issue repro, a BIGINT bound to the format on a DATETIME column
- *    Case 2:  a BIGINT format on DATE, TIME, TIMESTAMP and DATETIMETZ columns and with a date language
+ *    Case 2:  a BIGINT format on every date/time column type and with a date language
  *    Case 3:  the date value and the format both bound, a zero date and a NULL date included
  *    Case 4:  INT, NUMERIC, DOUBLE, DATE and BIT values bound to the format
  *    Case 5:  string formats keep their results, an empty string and NULL included
  *    Case 6:  formats in the query text are cast at compile time and keep their results
  *    Case 7:  a session variable, an expression of a host variable and a scalar subquery as the format
  *    Case 8:  INT, DOUBLE, DATE and VARCHAR values bound through the JDBC driver
+ *    Case 9:  the format bound in WHERE, ORDER BY, UPDATE SET and INSERT SELECT, the row unchanged
  */
 
 drop table if exists t_dt;
 
 -- one row holding every date and time type, a number g for the number branch and a string format
-create table t_dt (id int primary key, g int, dtt datetime, d date, t time, ts timestamp, dtz datetimetz, fmt varchar(16));
-insert into t_dt values (1, 1, datetime'2024-01-02 10:00:01.500', date'2024-01-02', time'10:00:01', timestamp'2024-01-02 10:00:01', datetimetz'2024-01-02 10:00:01.500 +09:00', 'YYYY-MM-DD');
+create table t_dt (id int primary key, g int, dtt datetime, d date, t time, ts timestamp, dtz datetimetz,
+    tsz timestamptz, tsl timestampltz, dtl datetimeltz, fmt varchar(16));
+insert into t_dt values (1, 1, datetime'2024-01-02 10:00:01.500', date'2024-01-02', time'10:00:01', timestamp'2024-01-02 10:00:01', datetimetz'2024-01-02 10:00:01.500 +09:00',
+    timestamptz'2024-01-02 10:00:01 +09:00', timestampltz'2024-01-02 10:00:01', datetimeltz'2024-01-02 10:00:01.500', 'YYYY-MM-DD');
 
 prepare n from 'select to_char(g, ?) from t_dt where id = 1';
 
@@ -41,7 +38,7 @@ execute s using 2147483648;
 execute n using 9007199254740993;
 
 
-evaluate 'Case 2: a BIGINT format on DATE, TIME, TIMESTAMP and DATETIMETZ columns and with a date language';
+evaluate 'Case 2: a BIGINT format on every date and time type and with a date language';
 prepare s from 'select to_char(d, ?) from t_dt where id = 1';
 execute s using 9007199254740993;
 prepare s from 'select to_char(t, ?) from t_dt where id = 1';
@@ -49,6 +46,12 @@ execute s using 9007199254740993;
 prepare s from 'select to_char(ts, ?) from t_dt where id = 1';
 execute s using 9007199254740993;
 prepare s from 'select to_char(dtz, ?) from t_dt where id = 1';
+execute s using 9007199254740993;
+prepare s from 'select to_char(tsz, ?) from t_dt where id = 1';
+execute s using 9007199254740993;
+prepare s from 'select to_char(tsl, ?) from t_dt where id = 1';
+execute s using 9007199254740993;
+prepare s from 'select to_char(dtl, ?) from t_dt where id = 1';
 execute s using 9007199254740993;
 prepare s from 'select to_char(dtt, ?, ''en_US'') from t_dt where id = 1';
 execute s using 9007199254740993;
@@ -112,13 +115,33 @@ $int, $1
 select to_char(dtt, ?) from t_dt where id = 1;
 $int, $1
 select to_char(g, ?) from t_dt where id = 1;
+-- JDBC/SQL-category has no BIGINT/long bind type (only int/double/date/string), so $bigint falls
+-- back to a string here and hits the pre-existing invalid-format-string path (-783) rather than
+-- the intended rejection; the CCI run (answer_cci) binds this correctly and gets -621 instead
+$bigint, $9007199254740993
+select to_char(dtt, ?) from t_dt where id = 1;
 $double, $1.5
 select to_char(dtt, ?) from t_dt where id = 1;
+-- the CTP CCI runner passes this $date text where CCI expects a date struct, so the bind
+-- itself fails with -176 before TO_CHAR runs (see answer_cci: -176, not -621)
 $date, $2024-01-02
 select to_char(dtt, ?) from t_dt where id = 1;
 $varchar, $YYYY-MM-DD
 select to_char(dtt, ?) from t_dt where id = 1;
 
+
+evaluate 'Case 9: the format bound in WHERE, ORDER BY, UPDATE SET and INSERT SELECT, the row unchanged';
+prepare s from 'select id from t_dt where to_char(dtt, ?) = ''2024''';
+execute s using 9007199254740993;
+execute s using 'YYYY';
+prepare s from 'select id from t_dt order by to_char(dtt, ?)';
+execute s using 9007199254740993;
+-- the failed UPDATE and INSERT must leave the table as it was
+prepare s from 'update t_dt set fmt = to_char(dtt, ?) where id = 1';
+execute s using 9007199254740993;
+prepare s from 'insert into t_dt (id, fmt) select 2, to_char(dtt, ?) from t_dt where id = 1';
+execute s using 9007199254740993;
+select id, fmt from t_dt order by id;
 
 drop prepare s;
 drop prepare n;
