@@ -33,7 +33,7 @@ C1: commit;
 C1: ALTER TRIGGER tt1_insert STATUS INACTIVE;
 MC: wait until C1 ready;
 C2: ALTER TRIGGER tt1_delete STATUS INACTIVE;
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C3: select trigger_name, owner_name, target_class_name, target_owner_name, target_attr_name, target_attr_type, action_type, action_time, comment from db_trigger order by 1;
 MC: wait until C3 ready;
 C1: commit;
