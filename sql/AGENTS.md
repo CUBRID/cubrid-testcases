@@ -6,6 +6,8 @@
 
 Opening an engine PR to develop or to a `feature/` branch makes a branch `tc/pr-<N>` in this repo, where `<N>` is the number of the engine PR, and opens a Draft TC PR from it. When the engine PR merges, the engine repo deletes its `tc/pr-<N>` branches, so the TC changes of a Draft TC PR that was closed instead of merged are lost.
 
+The *CI pod* that runs the sql and medium TCs of an engine PR runs the image `cubridci/cubridci:test_rl8.10` from Docker Hub, built from [`docker/ci/Dockerfile`](https://github.com/CUBRID/cubridci/blob/test_rl8.10/docker/ci/Dockerfile) on the `test_rl8.10` branch of `CUBRID/cubridci`, so you can write and try a TC locally in the same environment. In that pod, CTP runs the sql TCs with [`CTP/conf/sql.conf`](https://github.com/CUBRID/cubrid-testtools/blob/develop/CTP/conf/sql.conf) from the develop branch of `cubrid-testtools`.
+
 Windows tests of sql and medium TCs have stopped: from the 11.4.6 and 11.3.6 patch releases, CUBRID ships CUBRID-For-WSL instead of a Windows build. No run compares output with a `.answer_win` file any more. What this means when you change a TC is in [writing rules](rules/writing-rules.md#changing-an-existing-tc).
 
 `sql/_13_issues/` holds one directory per half-year, `_<yy>_<1|2>h/`, such as `_26_2h/`. A code-name directory `_<no>_<codename>/`, such as `_36_guava/`, takes its name from a Jira version of CUBRID: `_35_fig_cake/` is the version `fig-cake`. Which TC goes into which directory is in [writing rules](rules/writing-rules.md#place-and-files).
