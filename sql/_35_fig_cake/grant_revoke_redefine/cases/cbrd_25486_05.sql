@@ -59,7 +59,7 @@ evaluate 'success: drop u1.t1_l';
 drop table u1.t1_l;
 
 evaluate 'success: drop u1.t1_l';
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
@@ -77,7 +77,7 @@ call login(class db_user,'u1','');
 
 drop table u1.t1_h;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
@@ -87,7 +87,7 @@ call login(class db_user,'dba','');
 
 drop table u1.t1_r;
 
-select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name;
+select grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable from db_auth where grantee_name != 'PUBLIC' order by grantor_name, object_name, auth_type;
 
 select owner, grants from db_authorization where owner != 'PUBLIC' order by owner;
 
