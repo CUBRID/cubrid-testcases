@@ -151,11 +151,47 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+0
+===================================================
 800
 ===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? )
+
+  rewritten query: select [dba.t_lpeek],class [dba.t_lpeek],[dba.t_lpeek].pad as [t_lpeek.pad] from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_lpeek.i_t_lpeek_s) (key range: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )), key filter: [dba.t_lpeek].s like  ?:? , covered: true)
+
+  rewritten query: select [dba.t_lpeek],class [dba.t_lpeek] from [dba.t_lpeek] [dba.t_lpeek] where [dba.t_lpeek].s like  ?:?  and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? )) and ([dba.t_lpeek].s>= like_match_lower_bound( ?:? ) and [dba.t_lpeek].s< like_match_upper_bound( ?:? ))
+
+Trace Statistics:
+  DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_lpeek.i_t_lpeek_s), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
 ===================================================
 0
 ===================================================

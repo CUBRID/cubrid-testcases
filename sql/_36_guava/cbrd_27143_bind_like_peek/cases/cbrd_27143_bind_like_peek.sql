@@ -60,13 +60,18 @@ show trace;
 deallocate prepare n;
 set trace off;
 
---test: [5] UPDATE / DELETE with a LIKE pattern host variable take the same path
+--test: [5] UPDATE / DELETE with a LIKE pattern host variable take the same path: the first
+--test: execution of each replans under the bound pattern (Query Plan block in the trace)
+set trace on;
 prepare u from 'update t_lpeek set pad = pad where s like ?';
 execute u using 'xyz%';
+show trace;
 deallocate prepare u;
 prepare d from 'delete from t_lpeek where s like ?';
 execute d using 'nomatch%';
+show trace;
 deallocate prepare d;
+set trace off;
 select count(*) from t_lpeek;
 
 --test: [6] a column without a histogram cannot be priced: no replan (no Query Plan block)
