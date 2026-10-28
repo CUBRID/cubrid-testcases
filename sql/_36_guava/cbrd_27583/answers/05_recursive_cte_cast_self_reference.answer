@@ -1,0 +1,52 @@
+===================================================
+    
+Case 1: COALESCE over the cast self-reference and over a NULL column     
+
+===================================================
+n    s    typeof(s)    v    typeof(v)    t    typeof(t)    
+1     null     *NULL*     null     *NULL*     q     character varying (1073741823)     
+2     q     character varying (1073741823)     10     integer     q1     character varying (1073741823)     
+3     q     character varying (1073741823)     100     integer     q12     character varying (1073741823)     
+
+===================================================
+n    s    typeof(s)    t    
+1     null     *NULL*     q     
+2     q     character varying (1073741823)     qr     
+3     qr     character varying (1073741823)     qrr     
+
+===================================================
+    
+Case 2: the cast self-reference in a concatenation, an aggregate and an analytic function     
+
+===================================================
+n    s    typeof(s)    t    
+1     null     *NULL*     q     
+2     q|     character varying (1073741823)     q1     
+3     q1|     character varying (1073741823)     q12     
+
+===================================================
+count(*)    max(s)    group_concat(s order by s)    typeof(max(s))    
+3     q     q,q     character varying (1073741823)     
+
+===================================================
+n    s    max(s) over ()    min(s) over ()    
+1     null     q     q     
+2     q     q     q     
+3     q     q     q     
+
+===================================================
+    
+Case 3: a self-reference without a cast, as before     
+
+===================================================
+n    s    typeof(s)    t    
+1     null     *NULL*     q     
+2     q     character varying (1073741823)     q1     
+3     q     character varying (1073741823)     q12     
+
+===================================================
+n    s    typeof(s)    
+1     null     *NULL*     
+2     q     character (-1)     
+3     q     character (-1)     
+
