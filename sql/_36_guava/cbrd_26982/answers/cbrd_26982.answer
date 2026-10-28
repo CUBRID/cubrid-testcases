@@ -1,0 +1,248 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+    
+Case 1: SUM(a) / COUNT(*)  (2 aggregates, 1 column)     
+
+===================================================
+sum(a)/count(*)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */  cast(sum([dba.tg].a) as bigint)/count(*) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)/count(*)    
+5     
+
+===================================================
+    
+Case 2: SUM(a) + COUNT(*), MAX(b)  (3 aggregates, 2 columns)     
+
+===================================================
+sum(a)+count(*)    max(b)    
+65000     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */  cast(sum([dba.tg].a) as bigint)+count(*), max([dba.tg].b) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)+count(*)    max(b)    
+65000     10     
+
+===================================================
+    
+Case 3: leading and trailing constants  (2 aggregates, 4 columns)     
+
+===================================================
+'x'    sum(a)    count(*)    42    
+x     55000     10000     42     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ 'x', sum([dba.tg].a), count(*), ? from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+'x'    sum(a)    count(*)    42    
+x     55000     10000     42     
+
+===================================================
+    
+Case 4: (SUM(a) + SUM(b)) / COUNT(*)  (3 aggregates, 1 column)     
+
+===================================================
+(sum(a)+sum(b))/count(*)    
+11     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */  cast((sum([dba.tg].a)+sum([dba.tg].b)) as bigint)/count(*) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+(sum(a)+sum(b))/count(*)    
+11     
+
+===================================================
+    
+Case 5: HAVING that keeps the row  (2 aggregates, 1 column)     
+
+===================================================
+sum(a)    
+55000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a) from [dba.tg] [dba.tg] having sum([dba.tg].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)    
+55000     
+
+===================================================
+    
+Case 6: HAVING that removes the row  (2 aggregates, 1 column)     
+
+===================================================
+sum(a)    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a) from [dba.tg] [dba.tg] having sum([dba.tg].a)<?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)    
+
+===================================================
+    
+Case 7: no matching row, aggregates plus a constant     
+
+===================================================
+count(*)    max(a)    'tag'    
+0     null     tag     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), max([dba.tg].a), 'tag' from [dba.tg] [dba.tg] where ([dba.tg].b> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    max(a)    'tag'    
+0     null     tag     
+
+===================================================
+    
+Case 8: list-based aggregates inside expressions  (5 aggregates, 3 columns)     
+
+===================================================
+cast(median(a)*2 as integer)    max(b)-min(a)    char_length(group_concat(distinct b order by b separator ','))+count(*)    
+11     9     10020     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */  cast(median([dba.tg].a)*? as integer), max([dba.tg].b)-min([dba.tg].a),  cast( char_length(group_concat(distinct [dba.tg].b order by ? separator ',')) as bigint)+count(*) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+cast(median(a)*2 as integer)    max(b)-min(a)    char_length(group_concat(distinct b order by b separator ','))+count(*)    
+11     9     10020     
+
+===================================================
+    
+Case 9: HAVING true only for the final sum 55000 > 50000  (2 aggregates, 1 column)     
+
+===================================================
+sum(a)    
+55000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a) from [dba.tg] [dba.tg] having sum([dba.tg].a)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)    
+55000     
+
+===================================================
+case9    
+PASS     
+
+===================================================
+0
+===================================================
+0
