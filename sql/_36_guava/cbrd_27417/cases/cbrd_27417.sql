@@ -113,9 +113,10 @@ grant select on sensitivity label to dba;
 revoke select on sensitivity label from dba;
 select count (*) from db_auth where grantee_name = 'DBA' and object_type = 'SENSITIVITY LABEL';
 
--- 18. GRANT INSERT on the label fails
+-- 18. GRANT INSERT on the label fails, and neither it nor 11's GRANT WITH GRANT OPTION adds a row
 create user u_insert;
 grant insert on sensitivity label to u_insert;
+select grantee_name from db_auth where grantee_name in ('U_OPTION', 'U_INSERT');
 
 -- 19. db_auth shows the label row to its grantee u_seen and to u_catalog, a member of cub_select_catalog, but not to u_other
 create user u_seen;
