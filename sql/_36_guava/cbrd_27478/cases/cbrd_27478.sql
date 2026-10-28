@@ -1,7 +1,7 @@
--- Verification for CBRD-27478 : Keep a row sample of the tables declared ROW_SNAPSHOT with their statistics and price their joins by the keys a filter selects
+-- Verification for CBRD-27478 : Keep the rows of the tables declared ROW_SNAPSHOT with their statistics and price their joins by the keys a filter selects
 -- A code table filtered by a constant joins a large table on its key. Histograms are per column, so without the rows
 -- the join is priced at 1/NDV whatever key the constant selects. A table declared ROW_SNAPSHOT keeps its rows
--- (a uniform sample of statistics_row_snapshot_rows of them beyond that count) with its statistics, and the
+-- (none when it has more than statistics_row_snapshot_rows of them) with its statistics, and the
 -- optimizer prices the join by the selected key.
 
 drop table if exists t_27478_c;
@@ -72,7 +72,7 @@ set system parameters 'statistics_row_snapshot_rows=0';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
-set system parameters 'statistics_row_snapshot_rows=1000';
+set system parameters 'statistics_row_snapshot_rows=10000';
 
 evaluate 'Case 10: NO_ROW_SNAPSHOT drops the rows at once (nested loop)';
 alter table t_27478_c no_row_snapshot;
@@ -91,13 +91,13 @@ select class_name, attr_name from db_histogram where class_name = 't_27478_c' or
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
 
-evaluate 'Case 12: a table over statistics_row_snapshot_rows keeps a sample instead of nothing';
-alter table t_27478_f row_snapshot;
-set system parameters 'statistics_row_snapshot_rows=100';
-update statistics on t_27478_f with fullscan;
-select class_name, attr_name from db_histogram where class_name = 't_27478_f' order by attr_name;
-set system parameters 'statistics_row_snapshot_rows=1000';
-alter table t_27478_f no_row_snapshot;
+evaluate 'Case 12: a table over statistics_row_snapshot_rows keeps no rows, and gets them back once under it';
+set system parameters 'statistics_row_snapshot_rows=3';
+update statistics on t_27478_c with fullscan;
+select class_name, attr_name from db_histogram where class_name = 't_27478_c' order by attr_name;
+set system parameters 'statistics_row_snapshot_rows=10000';
+update statistics on t_27478_c with fullscan;
+select class_name, attr_name from db_histogram where class_name = 't_27478_c' order by attr_name;
 
 evaluate 'Case 13: CREATE TABLE LIKE copies the option';
 drop table if exists t_27478_l;

@@ -332,24 +332,27 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
-Case 12: a table over statistics_row_snapshot_rows keeps a sample instead of nothing     
+Case 12: a table over statistics_row_snapshot_rows keeps no rows, and gets them back once under it     
 
-===================================================
-0
 ===================================================
 0
 ===================================================
 0
 ===================================================
 class_name    attr_name    
-t_27478_f     .row_snapshot     
-t_27478_f     c_id     
-t_27478_f     k     
+t_27478_c     id     
+t_27478_c     name     
 
 ===================================================
 0
 ===================================================
 0
+===================================================
+class_name    attr_name    
+t_27478_c     .row_snapshot     
+t_27478_c     id     
+t_27478_c     name     
+
 ===================================================
     
 Case 13: CREATE TABLE LIKE copies the option     
