@@ -48,9 +48,10 @@ grant select on sensitivity label to u_revoke_target;
 call login('u_non', '') on class db_user;
 grant select on sensitivity label to u_grant_target;
 
--- 9. u_non cannot REVOKE SELECT from u_revoke_target
+-- 9. u_non cannot REVOKE SELECT from u_revoke_target, and neither denial changes db_auth
 revoke select on sensitivity label from u_revoke_target;
 call login('dba', '') on class db_user;
+select grantee_name, auth_type from db_auth where grantee_name in ('U_GRANT_TARGET', 'U_REVOKE_TARGET') order by 1;
 
 -- 10. m_revoke, a DBA group member, revokes DBA's grant and leaves u_revoke_by_member no row
 create user m_revoke groups dba;
