@@ -17,7 +17,8 @@
  *  2    an inner join under a cross join, the index of t_a is two joins down
  *  3    left outer join, a t_a row without a match in t_b is counted in its group
  *  4    hash join, the GROUP BY is still sorted
- *  5    right outer join, the t_b row without a match makes the NULL group
+ *  5    right outer join, the GROUP BY is still sorted and the t_b row without a match makes
+ *       the NULL group
  *  6    partitioned table as the inner, the GROUP BY is still sorted
  *  7    class hierarchy as the inner, the GROUP BY is still sorted
  */
@@ -82,7 +83,8 @@ select /*+ recompile ordered use_hash */ a.g, count(*) as cnt
  using index a.i_a_g, b.i_b_aid;
 
 
-evaluate 'Case 5: right outer join, the t_b row without a match makes the NULL group';
+evaluate 'Case 5: right outer join, the GROUP BY is still sorted and the t_b row without a match makes the NULL group';
+--@queryplan
 select /*+ recompile */ a.g, count(*) as cnt
   from t_a a right outer join t_b b on b.a_id = a.id
  group by a.g

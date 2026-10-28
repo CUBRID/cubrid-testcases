@@ -162,7 +162,7 @@ Query stmt:
 select /*+ ORDERED USE_HASH */ a.g, count(*) from t_a a, t_b b where b.a_id=a.id group by a.g using index a.i_a_g, b.i_b_aid
 ===================================================
     
-Case 5: right outer join, the t_b row without a match makes the NULL group     
+Case 5: right outer join, the GROUP BY is still sorted and the t_b row without a match makes the NULL group     
 
 ===================================================
 g    cnt    
@@ -171,6 +171,22 @@ null     1
 2     2     
 3     2     
 
+Query plan:
+temp(group by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select a.g, count(*) from t_a a right outer join t_b b on b.a_id=a.id group by a.g using index a.i_a_g
 ===================================================
     
 Case 6: partitioned table as the inner, the GROUP BY is still sorted     
