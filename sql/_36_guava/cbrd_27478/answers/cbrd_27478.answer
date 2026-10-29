@@ -15,6 +15,12 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
 5
 ===================================================
 5
@@ -22,6 +28,10 @@
 40000
 ===================================================
 40000
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -34,19 +44,18 @@ Case 1: the option is part of the schema
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_27478_c     CREATE TABLE [t_27478_c] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_c_id] PRIMARY KEY  ([id])) REUSE_OID, ROW_SNAPSHOT, COLLATE utf8_bin     
+dba.t_27478_c     CREATE TABLE [t_27478_c] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_c_id] PRIMARY KEY  ([id]),  INDEX [i_27478_c_name] ([name])) REUSE_OID, ROW_SNAPSHOT, COLLATE utf8_bin     
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_27478_n     CREATE TABLE [t_27478_n] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_n_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
+dba.t_27478_n     CREATE TABLE [t_27478_n] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_n_id] PRIMARY KEY  ([id]),  INDEX [i_27478_n_name] ([name])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
     
-Case 2: only the declared table keeps its rows     
+Case 2: nothing but the declaration is stored     
 
 ===================================================
 class_name    attr_name    
-t_27478_c     .row_snapshot     
 t_27478_c     id     
 t_27478_c     name     
 t_27478_f     c_id     
@@ -56,6 +65,8 @@ t_27478_g     pad
 t_27478_g     v     
 t_27478_n     id     
 t_27478_n     name     
+t_27478_x     id     
+t_27478_x     name     
 
 ===================================================
     
@@ -69,9 +80,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -95,9 +106,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_n_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -122,9 +133,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -140,7 +151,7 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
-Case 6: an IN list of rare codes is evaluated on the rows too     
+Case 6: an IN list of rare codes is read too     
 
 ===================================================
 count(*)    
@@ -149,9 +160,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -167,7 +178,7 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where ((c.[name]= ?:? ) or (c.[name]= ?:? )) and f.c_id=c.id and g.k=f.k
 ===================================================
     
-Case 7: a code the rows do not hold keeps the histogram estimate (nested loop, no rows)     
+Case 7: a code the table does not hold keeps the histogram estimate (nested loop, no rows)     
 
 ===================================================
 count(*)    
@@ -176,9 +187,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -194,7 +205,7 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
-Case 8: a LIKE filter cannot be evaluated on the rows: the histogram estimate stays (nested loop)     
+Case 8: a LIKE filter is not read: the histogram estimate stays (nested loop)     
 
 ===================================================
 count(*)    
@@ -203,9 +214,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -221,10 +232,39 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where (c.[name]>= ?:?  and c.[name]< ?:? ) and f.c_id=c.id and g.k=f.k
 ===================================================
     
-Case 9: statistics_row_snapshot_rows=0 turns the use off (nested loop)     
+Case 9: row_snapshot_max_rows=0 turns the reading off (nested loop)     
 
 ===================================================
 0
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
+===================================================
+    
+Case 10: no index on the filter column: the table is not read (nested loop)     
+
 ===================================================
 count(*)    
 39000     
@@ -247,34 +287,23 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
-===================================================
-0
+select count(*) from t_?_x c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
-Case 10: NO_ROW_SNAPSHOT drops the rows at once (nested loop)     
+Case 11: a filter that selects more than row_snapshot_max_rows rows keeps the histogram estimate     
 
 ===================================================
 0
 ===================================================
-TABLE    CREATE TABLE    
-dba.t_27478_c     CREATE TABLE [t_27478_c] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_c_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
-
-===================================================
-class_name    attr_name    
-t_27478_c     id     
-t_27478_c     name     
-
-===================================================
 count(*)    
-39000     
+39250     
 
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -287,26 +316,38 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+select count(*) from t_?_c c, t_?_f f, t_?_g g where ((c.[name]= ?:? ) or (c.[name]= ?:? )) and f.c_id=c.id and g.k=f.k
+===================================================
+0
+===================================================
+count(*)    
+39250     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where ((c.[name]= ?:? ) or (c.[name]= ?:? )) and f.c_id=c.id and g.k=f.k
 ===================================================
     
-Case 11: ROW_SNAPSHOT again keeps the rows from the next UPDATE STATISTICS (hash join)     
+Case 12: the rows are read as they are now: a code renamed after UPDATE STATISTICS is found (hash join)     
 
 ===================================================
-0
-===================================================
-class_name    attr_name    
-t_27478_c     id     
-t_27478_c     name     
-
-===================================================
-0
-===================================================
-class_name    attr_name    
-t_27478_c     .row_snapshot     
-t_27478_c     id     
-t_27478_c     name     
-
+1
 ===================================================
 count(*)    
 39000     
@@ -315,9 +356,69 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: sscan
+               outer: iscan
                           class: c node[?]
-                          sargs: term[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+1
+===================================================
+    
+Case 13: NO_ROW_SNAPSHOT stops the reading at once (nested loop), ROW_SNAPSHOT starts it at once (hash join)     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_27478_c     CREATE TABLE [t_27478_c] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_c_id] PRIMARY KEY  ([id]),  INDEX [i_27478_c_name] ([name])) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
+===================================================
+count(*)    
+39000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -332,30 +433,7 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
-Case 12: a table over statistics_row_snapshot_rows keeps no rows, and gets them back once under it     
-
-===================================================
-0
-===================================================
-0
-===================================================
-class_name    attr_name    
-t_27478_c     id     
-t_27478_c     name     
-
-===================================================
-0
-===================================================
-0
-===================================================
-class_name    attr_name    
-t_27478_c     .row_snapshot     
-t_27478_c     id     
-t_27478_c     name     
-
-===================================================
-    
-Case 13: CREATE TABLE LIKE copies the option     
+Case 14: CREATE TABLE LIKE copies the option     
 
 ===================================================
 0
@@ -363,13 +441,13 @@ Case 13: CREATE TABLE LIKE copies the option
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_27478_l     CREATE TABLE [t_27478_l] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_l_id] PRIMARY KEY  ([id])) REUSE_OID, ROW_SNAPSHOT, COLLATE utf8_bin     
+dba.t_27478_l     CREATE TABLE [t_27478_l] ([id] INTEGER NOT NULL, [name] CHARACTER VARYING(20),  CONSTRAINT [pk_t_27478_l_id] PRIMARY KEY  ([id]),  INDEX [i_27478_c_name] ([name])) REUSE_OID, ROW_SNAPSHOT, COLLATE utf8_bin     
 
 ===================================================
 0
 ===================================================
     
-Case 14: not for views, partitioned tables or a class in an inheritance chain, and not twice     
+Case 15: not for views, partitioned tables or a class in an inheritance chain, and not twice     
 
 ===================================================
 0
@@ -400,19 +478,9 @@ Error:-494
 ===================================================
 0
 ===================================================
-    
-Case 15: dropping the table leaves no kept rows behind     
-
-===================================================
-count(*)    
-1     
-
-===================================================
 0
 ===================================================
-count(*)    
-0     
-
+0
 ===================================================
 0
 ===================================================
