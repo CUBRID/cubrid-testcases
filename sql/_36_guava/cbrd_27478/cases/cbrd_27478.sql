@@ -78,7 +78,7 @@ set system parameters 'row_snapshot_max_rows=0';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
-set system parameters 'row_snapshot_max_rows=1000';
+set system parameters 'row_snapshot_max_rows=100';
 
 evaluate 'Case 10: no index on the filter column: the table is not read (nested loop)';
 --@queryplan
@@ -90,7 +90,7 @@ set system parameters 'row_snapshot_max_rows=1';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name in ('common', 'rare2') and f.c_id = c.id and g.k = f.k;
-set system parameters 'row_snapshot_max_rows=1000';
+set system parameters 'row_snapshot_max_rows=100';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name in ('common', 'rare2') and f.c_id = c.id and g.k = f.k;
