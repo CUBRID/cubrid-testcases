@@ -96,7 +96,7 @@ end;
 
 call p_cte_recursive();
 
-evaluate 'the same queries out of PL/CSQL';
+evaluate 'some of the queries above out of PL/CSQL (the aliases in general SQLs are covered by 36)';
 select m from (select count(*) m from t1 having 1 > 0) d;
 select m from (select count(*) m from t1 having abs(1) > 0) d;
 select sum(m) from (select c, count(*) m from t1 group by c having count(*) > 1) d;

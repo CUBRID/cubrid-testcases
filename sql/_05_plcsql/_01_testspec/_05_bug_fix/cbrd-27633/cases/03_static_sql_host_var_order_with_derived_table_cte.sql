@@ -35,18 +35,19 @@ end;
 
 call p_cte();
 
-evaluate 'variables in WHERE and HAVING of a derived table, and WHERE of the outer query: 2:2';
+-- v_d = 3, v_lo = 2, v_cnt = 0, v_max = 4. any other order of them gives a different result
+evaluate 'variables in WHERE and HAVING of a derived table, and WHERE of the outer query: 2:2, 3:1';
 create or replace procedure p_dt_both as
     sr sys_refcursor;
-    v_c int := 1;
+    v_d int := 3;
     v_lo int := 2;
-    v_cnt int := 1;
-    v_max int := 3;
+    v_cnt int := 0;
+    v_max int := 4;
     a int;
     b int;
 begin
-    open sr for select k, sum(m) s from (select c as k, count(*) m from t1 where c >= v_c group by k having k >= v_lo) d
-        where d.m >= v_cnt and d.k < v_max group by k;
+    open sr for select k, sum(m) s from (select c as k, count(*) m from t1 where d > v_d group by k having k >= v_lo) d
+        where d.m >= v_cnt and d.k < v_max group by k order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;

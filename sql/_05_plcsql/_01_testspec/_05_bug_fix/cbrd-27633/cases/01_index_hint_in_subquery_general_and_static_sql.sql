@@ -77,42 +77,42 @@ create or replace procedure p_having as
     a int;
     b int;
 begin
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1(+));
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1(+)) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
         dbms_output.put_line(a || ':' || b);
     end loop;
     close sr;
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1(-));
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1(-)) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
         dbms_output.put_line(a || ':' || b);
     end loop;
     close sr;
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1);
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 where c > v using index i1) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
         dbms_output.put_line(a || ':' || b);
     end loop;
     close sr;
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 use index (i1) where c > v);
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 use index (i1) where c > v) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
         dbms_output.put_line(a || ':' || b);
     end loop;
     close sr;
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 force index (i1) where c > v);
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 force index (i1) where c > v) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
         dbms_output.put_line(a || ':' || b);
     end loop;
     close sr;
-    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 ignore index (i1) where c > v);
+    open sr for select c as k, count(*) cnt from t1 group by k having k > (select min(c) from t1 ignore index (i1) where c > v) order by 1;
     loop
         fetch sr into a, b;
         exit when sr%notfound;
