@@ -67,44 +67,44 @@ Case 1: a host-variable LIMIT/OFFSET must pick the PK-descending order-by-skip s
 Query plan:
 iscan
     class: tbl node[?]
-    index: pk_tbl_id (covers) (desc_index)
+    index: pk_tbl_id  (desc_index)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select tbl.id from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 /* ---> skip ORDER BY */
 ===================================================
-id    
-2627654     
-2627653     
-2627652     
-2627651     
-2627650     
-2627649     
-2627648     
-2627647     
-2627646     
-2627645     
-2627644     
-2627643     
-2627642     
-2627641     
-2627640     
-2627639     
-2627638     
-2627637     
-2627636     
-2627635     
-2627634     
-2627633     
-2627632     
-2627631     
-2627630     
-2627629     
-2627628     
-2627627     
-2627626     
-2627625     
+id    col_c    
+2627654     some message text here     
+2627653     some message text here     
+2627652     some message text here     
+2627651     some message text here     
+2627650     some message text here     
+2627649     some message text here     
+2627648     some message text here     
+2627647     some message text here     
+2627646     some message text here     
+2627645     some message text here     
+2627644     some message text here     
+2627643     some message text here     
+2627642     some message text here     
+2627641     some message text here     
+2627640     some message text here     
+2627639     some message text here     
+2627638     some message text here     
+2627637     some message text here     
+2627636     some message text here     
+2627635     some message text here     
+2627634     some message text here     
+2627633     some message text here     
+2627632     some message text here     
+2627631     some message text here     
+2627630     some message text here     
+2627629     some message text here     
+2627628     some message text here     
+2627627     some message text here     
+2627626     some message text here     
+2627625     some message text here     
 
 ===================================================
 0
@@ -113,46 +113,46 @@ id
 Case 2: a constant LIMIT already picks the same plan and must keep matching     
 
 ===================================================
-id    
-2627654     
-2627653     
-2627652     
-2627651     
-2627650     
-2627649     
-2627648     
-2627647     
-2627646     
-2627645     
-2627644     
-2627643     
-2627642     
-2627641     
-2627640     
-2627639     
-2627638     
-2627637     
-2627636     
-2627635     
-2627634     
-2627633     
-2627632     
-2627631     
-2627630     
-2627629     
-2627628     
-2627627     
-2627626     
-2627625     
+id    col_c    
+2627654     some message text here     
+2627653     some message text here     
+2627652     some message text here     
+2627651     some message text here     
+2627650     some message text here     
+2627649     some message text here     
+2627648     some message text here     
+2627647     some message text here     
+2627646     some message text here     
+2627645     some message text here     
+2627644     some message text here     
+2627643     some message text here     
+2627642     some message text here     
+2627641     some message text here     
+2627640     some message text here     
+2627639     some message text here     
+2627638     some message text here     
+2627637     some message text here     
+2627636     some message text here     
+2627635     some message text here     
+2627634     some message text here     
+2627633     some message text here     
+2627632     some message text here     
+2627631     some message text here     
+2627630     some message text here     
+2627629     some message text here     
+2627628     some message text here     
+2627627     some message text here     
+2627626     some message text here     
+2627625     some message text here     
 
 Query plan:
 iscan
     class: tbl node[?]
-    index: pk_tbl_id (covers) (desc_index)
+    index: pk_tbl_id  (desc_index)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select tbl.id from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 0

@@ -7,6 +7,11 @@
  * cost is far enough above the full-scan-plus-sort cost (per the issue,
  * about 2.6M rows) - this is the issue's own confirmed repro scale.
  *
+ * col_c rides along in the SELECT so the chosen index cannot cover it
+ * (forcing the heap-fetch cost the misplan depends on); unlike the other
+ * columns it stays a constant literal through every doubling INSERT, so
+ * it alone is scan-order independent.
+ *
  * Coverage:
  * 1. host-variable LIMIT+OFFSET - the issue's exact repro (regression)
  * 2. constant LIMIT - already picked this plan; must keep matching
@@ -58,11 +63,11 @@ UPDATE STATISTICS ON tbl WITH FULLSCAN;
 
 evaluate 'Case 1: a host-variable LIMIT/OFFSET must pick the PK-descending order-by-skip scan';
 --@queryplan
-PREPARE st FROM 'SELECT id FROM tbl ORDER BY id DESC LIMIT ? OFFSET ?';
+PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT ? OFFSET ?';
 EXECUTE st USING 30, 0;
 deallocate prepare st;
 
 evaluate 'Case 2: a constant LIMIT already picks the same plan and must keep matching';
-SELECT id FROM tbl ORDER BY id DESC LIMIT 30 OFFSET 0;
+SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT 30 OFFSET 0;
 
 drop table if exists tbl;
