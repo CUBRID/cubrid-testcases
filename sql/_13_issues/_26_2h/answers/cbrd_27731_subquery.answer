@@ -1,0 +1,909 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+25600
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Baseline totals; result = cache disabled     
+
+===================================================
+matched    total    
+2000     162000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+matched    total    
+2000     162000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+1900
+===================================================
+0
+===================================================
+    
+Case 2: Parity groups preserve both original values; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: Reversed values; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     3250     
+1     50     4850     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     3250     
+1     50     4850     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.rev)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: Repeated identical original; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     3250     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     3250     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.same)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: Case sensitive collation control; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.cs)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+    
+Case 6: Binary collation comparison; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     3250     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: NULL and empty string boundaries; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     25     0     
+1     25     1625     
+2     25     2425     
+3     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     25     0     
+1     25     1625     
+2     25     2425     
+3     0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge))
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.edge)) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Case insensitive SQL equality remains unchanged; result = cache disabled     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     4850     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.ch=o.c) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+grp    matched    total    
+0     50     4850     
+1     50     4850     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c)
+
+  TABLE SCAN (o)
+
+  rewritten query: (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c) from [dba.t_outer] o)
+
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod(d.id, ?), count(d.val), sum(d.val) from (select /*+ NO_MERGE PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.ch=o.c) as [val] from [dba.t_outer] o) d (id, val) group by  mod(d.id, ?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 9: Every outer row retains its own value; result = cache disabled     
+
+===================================================
+id    val    
+1     65     
+2     97     
+3     65     
+4     97     
+5     65     
+6     97     
+7     65     
+8     97     
+9     65     
+10     97     
+11     65     
+12     97     
+13     65     
+14     97     
+15     65     
+16     97     
+17     65     
+18     97     
+19     65     
+20     97     
+21     65     
+22     97     
+23     65     
+24     97     
+25     65     
+26     97     
+27     65     
+28     97     
+29     65     
+30     97     
+31     65     
+32     97     
+33     65     
+34     97     
+35     65     
+36     97     
+37     65     
+38     97     
+39     65     
+40     97     
+41     65     
+42     97     
+43     65     
+44     97     
+45     65     
+46     97     
+47     65     
+48     97     
+49     65     
+50     97     
+51     65     
+52     97     
+53     65     
+54     97     
+55     65     
+56     97     
+57     65     
+58     97     
+59     65     
+60     97     
+61     65     
+62     97     
+63     65     
+64     97     
+65     65     
+66     97     
+67     65     
+68     97     
+69     65     
+70     97     
+71     65     
+72     97     
+73     65     
+74     97     
+75     65     
+76     97     
+77     65     
+78     97     
+79     65     
+80     97     
+81     65     
+82     97     
+83     65     
+84     97     
+85     65     
+86     97     
+87     65     
+88     97     
+89     65     
+90     97     
+91     65     
+92     97     
+93     65     
+94     97     
+95     65     
+96     97     
+97     65     
+98     97     
+99     65     
+100     97     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.id, (select /*+ NO_UNNEST */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+id    val    
+1     65     
+2     97     
+3     65     
+4     97     
+5     65     
+6     97     
+7     65     
+8     97     
+9     65     
+10     97     
+11     65     
+12     97     
+13     65     
+14     97     
+15     65     
+16     97     
+17     65     
+18     97     
+19     65     
+20     97     
+21     65     
+22     97     
+23     65     
+24     97     
+25     65     
+26     97     
+27     65     
+28     97     
+29     65     
+30     97     
+31     65     
+32     97     
+33     65     
+34     97     
+35     65     
+36     97     
+37     65     
+38     97     
+39     65     
+40     97     
+41     65     
+42     97     
+43     65     
+44     97     
+45     65     
+46     97     
+47     65     
+48     97     
+49     65     
+50     97     
+51     65     
+52     97     
+53     65     
+54     97     
+55     65     
+56     97     
+57     65     
+58     97     
+59     65     
+60     97     
+61     65     
+62     97     
+63     65     
+64     97     
+65     65     
+66     97     
+67     65     
+68     97     
+69     65     
+70     97     
+71     65     
+72     97     
+73     65     
+74     97     
+75     65     
+76     97     
+77     65     
+78     97     
+79     65     
+80     97     
+81     65     
+82     97     
+83     65     
+84     97     
+85     65     
+86     97     
+87     65     
+88     97     
+89     65     
+90     97     
+91     65     
+92     97     
+93     65     
+94     97     
+95     65     
+96     97     
+97     65     
+98     97     
+99     65     
+100     97     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (i)
+
+  rewritten query: (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c))
+
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select /*+ PARALLEL(?) */ o.id, (select /*+ NO_UNNEST NO_SUBQUERY_CACHE */ max(i.code) from [dba.t_inner] i where i.code= ascii(o.c)) from [dba.t_outer] o order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
