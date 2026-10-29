@@ -1,0 +1,743 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+25600
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Baseline totals; result = cache disabled     
+
+===================================================
+0
+===================================================
+matched    total    
+200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+matched    total    
+200000     16200000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+1900
+===================================================
+0
+===================================================
+    
+Case 2: Parity groups preserve both original values; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 3: Reversed values; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     325000     
+1     5000     485000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.rev) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     325000     
+1     5000     485000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.rev) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 4: Repeated identical original; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     325000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.same) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     325000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.same) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 5: Case sensitive collation control; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.cs) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (i.idx_code) (key range: i.code= ascii(o.cs), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.cs) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.idx_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 6: Binary collation comparison; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     5000     485000     
+1     5000     325000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch collate utf?_bin=o.c collate utf?_bin group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 7: NULL and empty string boundaries; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     2500     0     
+1     2500     162500     
+2     2500     242500     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.edge) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     2500     0     
+1     2500     162500     
+2     2500     242500     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.edge) group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 8: Case insensitive SQL equality remains unchanged; result = cache disabled     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     10000     810000     
+1     10000     810000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch=o.c group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+grp    matched    total    
+0     10000     810000     
+1     10000     810000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */  mod(o.id, ?), count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.ch=o.c group by  mod(o.id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 9: Every outer row retains its own value; result = cache disabled     
+
+===================================================
+0
+===================================================
+id    matched    total    
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     9700     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     9700     
+9     100     6500     
+10     100     9700     
+11     100     6500     
+12     100     9700     
+13     100     6500     
+14     100     9700     
+15     100     6500     
+16     100     9700     
+17     100     6500     
+18     100     9700     
+19     100     6500     
+20     100     9700     
+21     100     6500     
+22     100     9700     
+23     100     6500     
+24     100     9700     
+25     100     6500     
+26     100     9700     
+27     100     6500     
+28     100     9700     
+29     100     6500     
+30     100     9700     
+31     100     6500     
+32     100     9700     
+33     100     6500     
+34     100     9700     
+35     100     6500     
+36     100     9700     
+37     100     6500     
+38     100     9700     
+39     100     6500     
+40     100     9700     
+41     100     6500     
+42     100     9700     
+43     100     6500     
+44     100     9700     
+45     100     6500     
+46     100     9700     
+47     100     6500     
+48     100     9700     
+49     100     6500     
+50     100     9700     
+51     100     6500     
+52     100     9700     
+53     100     6500     
+54     100     9700     
+55     100     6500     
+56     100     9700     
+57     100     6500     
+58     100     9700     
+59     100     6500     
+60     100     9700     
+61     100     6500     
+62     100     9700     
+63     100     6500     
+64     100     9700     
+65     100     6500     
+66     100     9700     
+67     100     6500     
+68     100     9700     
+69     100     6500     
+70     100     9700     
+71     100     6500     
+72     100     9700     
+73     100     6500     
+74     100     9700     
+75     100     6500     
+76     100     9700     
+77     100     6500     
+78     100     9700     
+79     100     6500     
+80     100     9700     
+81     100     6500     
+82     100     9700     
+83     100     6500     
+84     100     9700     
+85     100     6500     
+86     100     9700     
+87     100     6500     
+88     100     9700     
+89     100     6500     
+90     100     9700     
+91     100     6500     
+92     100     9700     
+93     100     6500     
+94     100     9700     
+95     100     6500     
+96     100     9700     
+97     100     6500     
+98     100     9700     
+99     100     6500     
+100     100     9700     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ o.id, count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+id    matched    total    
+1     100     6500     
+2     100     9700     
+3     100     6500     
+4     100     9700     
+5     100     6500     
+6     100     9700     
+7     100     6500     
+8     100     9700     
+9     100     6500     
+10     100     9700     
+11     100     6500     
+12     100     9700     
+13     100     6500     
+14     100     9700     
+15     100     6500     
+16     100     9700     
+17     100     6500     
+18     100     9700     
+19     100     6500     
+20     100     9700     
+21     100     6500     
+22     100     9700     
+23     100     6500     
+24     100     9700     
+25     100     6500     
+26     100     9700     
+27     100     6500     
+28     100     9700     
+29     100     6500     
+30     100     9700     
+31     100     6500     
+32     100     9700     
+33     100     6500     
+34     100     9700     
+35     100     6500     
+36     100     9700     
+37     100     6500     
+38     100     9700     
+39     100     6500     
+40     100     9700     
+41     100     6500     
+42     100     9700     
+43     100     6500     
+44     100     9700     
+45     100     6500     
+46     100     9700     
+47     100     6500     
+48     100     9700     
+49     100     6500     
+50     100     9700     
+51     100     6500     
+52     100     9700     
+53     100     6500     
+54     100     9700     
+55     100     6500     
+56     100     9700     
+57     100     6500     
+58     100     9700     
+59     100     6500     
+60     100     9700     
+61     100     6500     
+62     100     9700     
+63     100     6500     
+64     100     9700     
+65     100     6500     
+66     100     9700     
+67     100     6500     
+68     100     9700     
+69     100     6500     
+70     100     9700     
+71     100     6500     
+72     100     9700     
+73     100     6500     
+74     100     9700     
+75     100     6500     
+76     100     9700     
+77     100     6500     
+78     100     9700     
+79     100     6500     
+80     100     9700     
+81     100     6500     
+82     100     9700     
+83     100     6500     
+84     100     9700     
+85     100     6500     
+86     100     9700     
+87     100     6500     
+88     100     9700     
+89     100     6500     
+90     100     9700     
+91     100     6500     
+92     100     9700     
+93     100     6500     
+94     100     9700     
+95     100     6500     
+96     100     9700     
+97     100     6500     
+98     100     9700     
+99     100     6500     
+100     100     9700     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL(i) PARALLEL(?) */ o.id, count(*), sum(i.code) from [dba.t_outer] o, [dba.t_inner] i where i.code= ascii(o.c) group by o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
