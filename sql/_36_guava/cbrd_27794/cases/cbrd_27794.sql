@@ -4,9 +4,10 @@
 --   1) '7' and '07' are both 7 as a number
 --   2) BIGINT values above 2^53 are equal as DOUBLE, and 1e-20 + 1 = 0 + 1 as DOUBLE
 --   3) 'a' and 'A' are equal in a case insensitive collation
+--   4) a NUMERIC sum with more than 40 digits is rounded
 -- Each query is compared with the same query under the NO_ELIMINATE_JOIN hint.
 
-drop table if exists ro, ru, tbl;
+drop table if exists ro, ru, tbl, rn, rk;
 create table ro (k int, ks varchar(10), kd double, kd1 double, kn numeric(10,1), kci varchar(10) collate utf8_en_ci, kb bigint);
 create table ru (code varchar(10) unique, n int unique, b bigint unique, d double unique, nm numeric(10,2) unique, cs varchar(10) collate utf8_bin unique, cd varchar(10) unique);
 insert into ro values (7, '7', 9007199254740992, 1, 1.2, 'a', 1);
@@ -76,4 +77,12 @@ insert into tbl values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, null);
 evaluate 'Case 14 : mod';
 select /*+ recompile */ count(*) from tbl a left outer join tbl b on a.colb = mod(b.colb, 3) and a.cola = b.cola;
 
-drop table if exists ro, ru, tbl;
+evaluate 'Case 15 : numeric(38,38) unique + 38 digits = numeric(38,0) (rounded sum)';
+create table rn (n numeric(38,38) unique);
+insert into rn values (0.0001), (0.0002);
+create table rk (k numeric(38,0));
+insert into rk values (10000000000000000000000000000000000000);
+select /*+ recompile */ count(*) from rk o left join rn u on u.n + 10000000000000000000000000000000000000 = o.k;
+select /*+ recompile no_eliminate_join */ count(*) from rk o left join rn u on u.n + 10000000000000000000000000000000000000 = o.k;
+
+drop table if exists ro, ru, tbl, rn, rk;
