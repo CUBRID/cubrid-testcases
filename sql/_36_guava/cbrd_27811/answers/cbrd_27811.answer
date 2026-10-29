@@ -1,0 +1,254 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+80003
+===================================================
+0
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+80003     
+
+===================================================
+    
+[1] sum (l_qty) > 300: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[2] 300 < sum (l_qty): idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+0     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having ?<sum(t_line.l_qty))
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having ?<sum(t_line.l_qty)) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[3] max (l_qty) > 49: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+1602     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)>?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[4] min (l_qty) > 40: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+570     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty)>?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[5] max (l_date) > date 2020-12-20: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+1039     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_date)>date '?-?-?')
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_date)>date '?-?-?') av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[6] count (*) > 5: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+
+===================================================
+count(*)    
+5715     
+
+Query plan:
+iscan
+    class: t_line node[?]
+    index: pk_t_line_l_oid_l_no (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having count(*)>?)
+/* ---> skip GROUP BY */
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having count(*)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[7] control, sum (l_qty) > 10: hash join     
+
+===================================================
+count(*)    
+19428     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+[8] control, no HAVING: hash join     
+
+===================================================
+count(*)    
+20000     
+
+Query plan:
+iscan
+    class: t_line node[?]
+    index: pk_t_line_l_oid_l_no (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid)
+/* ---> skip GROUP BY */
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid) av (l_oid) where o.o_id=av.l_oid
+===================================================
+0
