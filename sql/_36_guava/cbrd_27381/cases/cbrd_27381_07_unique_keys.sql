@@ -82,6 +82,11 @@ create unique index u_r_ci on t_str (ci);
 create unique index u_r_bin on t_str (bin);
 create unique index u_r_ch on t_str (ch);
 create unique index u_r_vc on t_str (vc);
+-- a second unique index on the same column takes the first one over instead of building, so the radix
+-- ones that were built are listed and dropped before the compare builds
+select index_name from db_index where class_name = 't_str' order by 1;
+drop index u_r_bin on t_str;
+drop index u_r_vc on t_str;
 set system parameters 'index_sort_method=compare';
 create unique index u_c_ci on t_str (ci);
 create unique index u_c_bin on t_str (bin);
@@ -112,9 +117,9 @@ create table t_mk (id int, a int, b varchar(10));
 insert into t_mk select n, mod (n, 100), concat ('b', n / 100) from g order by n;
 set system parameters 'index_sort_method=radix';
 create unique index u_r on t_mk (a, b);
+drop index u_r on t_mk;
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_mk (a, b);
-drop index u_r on t_mk;
 drop index u_c on t_mk;
 insert into t_mk values (7001, null, 'b1'), (7002, null, 'b1');
 set system parameters 'index_sort_method=radix';
@@ -140,6 +145,10 @@ delete from t_pk where id = 7001;
 set system parameters 'index_sort_method=radix';
 alter table t_pk add constraint pk_r primary key (k);
 select count(*) from t_pk where k >= 0 using index pk_r;
+alter table t_pk drop constraint pk_r;
+set system parameters 'index_sort_method=compare';
+alter table t_pk add constraint pk_c primary key (k);
+select count(*) from t_pk where k >= 0 using index pk_c;
 
 -- FLOAT: negative and positive zero
 create table t_flt (id int, k float);
@@ -187,6 +196,8 @@ set system parameters 'index_sort_method=radix';
 create unique index u_r_iso on t_ci (iso);
 create unique index u_r_chc on t_ci (chc);
 create unique index u_r_vcc on t_ci (vcc);
+select index_name from db_index where class_name = 't_ci' order by 1;
+drop index u_r_vcc on t_ci;
 set system parameters 'index_sort_method=compare';
 create unique index u_c_iso on t_ci (iso);
 create unique index u_c_chc on t_ci (chc);
