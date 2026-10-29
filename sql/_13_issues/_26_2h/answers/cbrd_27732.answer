@@ -1,0 +1,641 @@
+===================================================
+0
+===================================================
+0
+===================================================
+999
+===================================================
+2048
+===================================================
+2048
+===================================================
+4096
+===================================================
+8192
+===================================================
+16384
+===================================================
+32768
+===================================================
+65536
+===================================================
+131072
+===================================================
+0
+===================================================
+263143
+===================================================
+0
+===================================================
+part    count(*)    min(id)    max(id)    
+0     999     1     999     
+1     262144     1001     263144     
+
+===================================================
+part    count(*)    min(id)    max(id)    
+0     262144     1001     263144     
+1     999     300001     300999     
+
+===================================================
+0
+===================================================
+    
+Case 1: t_front small partition scan control; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front__p__p_small)
+
+  rewritten query: select [dba.t_front__p__p_small].id, [dba.t_front__p__p_small].v from [dba.t_front__p__p_small] [dba.t_front__p__p_small] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+id    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+    
+Case 2: t_front large partition scan control; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front__p__p_large)
+
+  rewritten query: select [dba.t_front__p__p_large].id, [dba.t_front__p__p_large].v from [dba.t_front__p__p_large] [dba.t_front__p__p_large] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+    
+Case 3: t_back small partition scan control; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300001     300001     
+300002     300002     
+300003     300003     
+300004     300004     
+300005     300005     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back__p__p_small)
+
+  rewritten query: select [dba.t_back__p__p_small].id, [dba.t_back__p__p_small].v from [dba.t_back__p__p_small] [dba.t_back__p__p_small] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+id    v    
+300001     300001     
+300002     300002     
+300003     300003     
+300004     300004     
+300005     300005     
+
+===================================================
+    
+Case 4: t_back large partition scan control; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back__p__p_large)
+
+  rewritten query: select [dba.t_back__p__p_large].id, [dba.t_back__p__p_large].v from [dba.t_back__p__p_large] [dba.t_back__p__p_large] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+    
+Case 5: Small first partition, ascending top five; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+===================================================
+    
+Case 6: Small first partition, descending top five; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+263144     263144     
+263143     263143     
+263142     263142     
+263141     263141     
+263140     263140     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ? desc , ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+263144     263144     
+263143     263143     
+263142     263142     
+263141     263141     
+263140     263140     
+
+===================================================
+    
+Case 7: Small first partition, LIMIT one; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1     1     
+
+===================================================
+    
+Case 8: Ascending OFFSET crosses partition boundary; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+998     998     
+999     999     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+998     998     
+999     999     
+1001     1001     
+1002     1002     
+1003     1003     
+
+===================================================
+    
+Case 9: Descending OFFSET crosses partition boundary; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1002     1002     
+1001     1001     
+999     999     
+998     998     
+997     997     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1002     1002     
+1001     1001     
+999     999     
+998     998     
+997     997     
+
+===================================================
+    
+Case 10: Small last partition, descending top five; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300999     300999     
+300998     300998     
+300997     300997     
+300996     300996     
+300995     300995     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back)
+
+  rewritten query: select [dba.t_back].id, [dba.t_back].v from [dba.t_back] [dba.t_back] order by ? desc , ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_back__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_back__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+300999     300999     
+300998     300998     
+300997     300997     
+300996     300996     
+300995     300995     
+
+===================================================
+    
+Case 11: Small last partition, ascending top five; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back)
+
+  rewritten query: select [dba.t_back].id, [dba.t_back].v from [dba.t_back] [dba.t_back] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_back__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_back__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+    
+Case 12: Small last partition, OFFSET crosses boundary; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300002     300002     
+300001     300001     
+263144     263144     
+263143     263143     
+263142     263142     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back)
+
+  rewritten query: select [dba.t_back].id, [dba.t_back].v from [dba.t_back] [dba.t_back] order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_back__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_back__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+id    v    
+300002     300002     
+300001     300001     
+263144     263144     
+263143     263143     
+263142     263142     
+
+===================================================
+    
+Case 13: Tied sort values with deterministic id tie breaker; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+3     3     
+6     6     
+9     9     
+12     12     
+15     15     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v,  mod([dba.t_front].v, ?) from [dba.t_front] [dba.t_front] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+3     3     
+6     6     
+9     9     
+12     12     
+15     15     
+
+===================================================
+999
+===================================================
+0
+===================================================
+    
+Case 14: Empty first partition; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+1001     1001     
+1002     1002     
+1003     1003     
+1004     1004     
+1005     1005     
+
+===================================================
+262144
+===================================================
+0
+===================================================
+    
+Case 15: Empty large partition and nonempty small last partition; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+300999     300999     
+300998     300998     
+300997     300997     
+300996     300996     
+300995     300995     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_back)
+
+  rewritten query: select [dba.t_back].id, [dba.t_back].v from [dba.t_back] [dba.t_back] order by ? desc , ? desc  for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_back), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_back__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_back__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    v    
+300999     300999     
+300998     300998     
+300997     300997     
+300996     300996     
+300995     300995     
+
+===================================================
+262144
+===================================================
+0
+===================================================
+    
+Case 16: Both partitions empty; result = NO_PARALLEL_SCAN     
+
+===================================================
+id    v    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_front)
+
+  rewritten query: select [dba.t_front].id, [dba.t_front].v from [dba.t_front] [dba.t_front] order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_front), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+           PARTITION (table: dba.t_front__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_front__p__p_large), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+id    v    
+
+===================================================
+0
