@@ -40,7 +40,7 @@ MC: wait until C2 ready;
 /* expected: no row, C2's snapshot is older than C1's commit */
 C2: select * from t order by 1,2;
 C2: commit;
-MC: wait until C1 ready;
+MC: wait until C2 ready;
 /* expected (1,a) */
 C1: select * from t order by 1,2;
 C2: commit;          

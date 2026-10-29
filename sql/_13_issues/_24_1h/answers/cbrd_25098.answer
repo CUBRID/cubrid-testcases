@@ -216,13 +216,6 @@ rownum    test
 3     3     
 
 Query plan:
-sscan
-    class: tbl_two node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t_one node[?]
@@ -231,6 +224,13 @@ temp(group by)
     cost:  ? card ?
 Query stmt:
 (select t_one.col_one from tbl_one t_one group by t_one.col_one)
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
 Query plan:
 temp(order by)
     subplan: sscan
@@ -245,13 +245,6 @@ rownum    test
 1     1     
 
 Query plan:
-sscan
-    class: tbl_two node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t_one node[?]
@@ -260,6 +253,13 @@ temp(group by)
     cost:  ? card ?
 Query stmt:
 (select t_one.col_one from tbl_one t_one group by t_one.col_one)
+Query plan:
+sscan
+    class: tbl_two node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_two.col_three from tbl_two tbl_two where tbl_two.col_three=a_? and (rownum= ?:? ))
 Query plan:
 temp(order by)
     subplan: sscan
