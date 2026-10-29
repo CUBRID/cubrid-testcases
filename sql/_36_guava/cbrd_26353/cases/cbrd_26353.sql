@@ -32,6 +32,7 @@
 --     and the column is not replaced by the constant in another term
 --   - plain column on an index scan: same results whether the index scan returns one or both matching values
 --   - plain column: NUMERIC(15,0) compared with a DOUBLE constant is dropped, NUMERIC(16,0) is kept
+--   - kept: a MONETARY literal in the expression, it prints rounded to two decimals
 
 drop table if exists ta;
 drop table if exists tb;
@@ -41,6 +42,7 @@ drop table if exists te;
 drop table if exists tf;
 drop table if exists tg;
 drop table if exists th;
+drop table if exists tk;
 
 create table ta (a varchar(10), b int);
 create index i_ta_upper_a on ta (upper (a));
@@ -67,6 +69,9 @@ create index i_tg_b on tg (b);
 create table th (id int, b bigint);
 insert into th select * from tg;
 update statistics on tg, th;
+
+create table tk (id int, a double);
+insert into tk values (1, 0.997), (2, 0.995);
 
 set trace on;
 
@@ -166,11 +171,15 @@ show trace;
 select n, a from tf where n = cast (9007199254740992 as double) order by n, a;
 show trace;
 
-set trace off;
+-- kept: a MONETARY literal prints rounded, so a different amount must not match
+select id, floor (a + $1.004) from tk where floor (a + $1.001) = 1 order by 2 asc;
+show trace;
 
--- host variable on the constant side
-prepare st from 'select upper (a) from ta where upper (a) = ? order by upper (a)';
+-- host variable on the constant side, recompiled at execute so that the trace shows the plan
+prepare st from 'select /*+ recompile */ upper (a) from ta where upper (a) = ? order by upper (a)';
 execute st using 'A';
+show trace;
+set trace off;
 execute st using 'B';
 deallocate prepare st;
 
@@ -182,3 +191,4 @@ drop table te;
 drop table tf;
 drop table tg;
 drop table th;
+drop table tk;
