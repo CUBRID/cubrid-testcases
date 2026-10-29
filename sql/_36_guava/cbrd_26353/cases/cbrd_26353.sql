@@ -30,6 +30,7 @@
 --   - kept: BIGINT expression compared with a DOUBLE constant, two different values match
 --   - plain column: kept with WITH ROLLUP; kept with a BIGINT column compared with a DOUBLE constant,
 --     and the column is not replaced by the constant in another term
+--   - plain column on an index scan: same results whether the index scan returns one or both matching values
 --   - plain column: NUMERIC(15,0) compared with a DOUBLE constant is dropped, NUMERIC(16,0) is kept
 
 drop table if exists ta;
@@ -38,6 +39,8 @@ drop table if exists tc;
 drop table if exists td;
 drop table if exists te;
 drop table if exists tf;
+drop table if exists tg;
+drop table if exists th;
 
 create table ta (a varchar(10), b int);
 create index i_ta_upper_a on ta (upper (a));
@@ -57,6 +60,13 @@ insert into te values ('x', 999999999999999), ('y', 999999999999998);
 
 create table tf (a varchar(10), n numeric(16,0));
 insert into tf values ('x', 9007199254740993), ('y', 9007199254740992);
+
+create table tg (id int, b bigint);
+insert into tg select rownum, 9007199254740990 + (rownum mod 6) from db_class a, db_class b limit 120;
+create index i_tg_b on tg (b);
+create table th (id int, b bigint);
+insert into th select * from tg;
+update statistics on tg, th;
 
 set trace on;
 
@@ -140,6 +150,14 @@ show trace;
 select count (*) from td where b = cast (9007199254740992 as double) and b = 9007199254740993;
 show trace;
 
+-- plain column on an index scan, kept: the largest matching value is 9007199254740993
+select b from tg where b = 9007199254740992e0 order by b desc limit 2;
+show trace;
+
+-- plain column on an index scan: the joined index key stays a.b = c.b, 40 rows of th match 20 rows of tg each
+select count (*) from tg a, th c where a.b = c.b and c.b = 9007199254740992e0;
+show trace;
+
 -- plain column, dropped: NUMERIC(15,0) compared with a DOUBLE constant matches one value only
 select n from te where n = cast (999999999999998 as double) order by n;
 show trace;
@@ -162,3 +180,5 @@ drop table tc;
 drop table td;
 drop table te;
 drop table tf;
+drop table tg;
+drop table th;
