@@ -100,11 +100,15 @@
  *   C31 LIMIT offset / orderby_num range                  -> correct
  *   C32 WHERE rownum over the skipped sort                -> rows ascending
  *   C33 PARALLEL(4)                                       -> same result as serial
+ *
+ * Parameter off (tr 100000 rows, index i_tr_g about 300 pages): 2 more trace
+ * blocks; the index SCAN line keeps its "(parallel workers: ...)" sub-line.
+ *   C34 GROUP BY ... WITH ROLLUP / + ORDER BY g           -> parallel index scan kept
  */
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th;
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr;
 
 create table ta (a int, b int, p char(100));
 insert into ta
@@ -693,4 +697,25 @@ from (select count(*) cnt, sum(a) sa, sum(b) sb, sum(c) sc, sum(a*rn) ord
 
 set system parameters 'optimizer_enable_merge_join=no';
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th;
+-- C34. GROUP BY ... WITH ROLLUP over an index scan, parameter off: the scan stays parallel
+create table tr (id int, g int);
+insert into tr select rownum, mod(rownum, 100) from db_class x1, db_class x2, db_class x3 limit 100000;
+create index i_tr_g on tr(g);
+update statistics on tr with fullscan;
+
+set trace on;
+select /*+ PARALLEL(4) */ g, count(*) from tr where g > 90 group by g with rollup using index i_tr_g(+);
+show trace;
+select /*+ PARALLEL(4) */ g, count(*) from tr where g > 90 group by g with rollup using index i_tr_g(+) order by g;
+show trace;
+set trace off;
+
+select case when m.cnt<=>n.cnt and m.sg<=>n.sg and m.sc<=>n.sc and m.ord<=>n.ord and m.ordc<=>n.ordc then 'PASS' else 'FAIL' end as c34
+from (select count(*) cnt, sum(g) sg, sum(c) sc, sum(nvl(g, -1)*rn) ord, sum(c*rn) ordc
+      from (select g, c, rownum rn
+            from (select /*+ PARALLEL(4) */ g, count(*) c from tr where g > 5 group by g with rollup using index i_tr_g(+)) x) y) m,
+     (select count(*) cnt, sum(g) sg, sum(c) sc, sum(nvl(g, -1)*rn) ord, sum(c*rn) ordc
+      from (select g, c, rownum rn
+            from (select /*+ NO_PARALLEL_SCAN */ g, count(*) c from tr where g > 5 group by g with rollup using index i_tr_g(+)) x) y) n;
+
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr;

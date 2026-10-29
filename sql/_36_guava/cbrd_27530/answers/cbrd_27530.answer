@@ -717,3 +717,79 @@ PASS
 0
 ===================================================
 0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+g    count(*)    
+91     1000     
+92     1000     
+93     1000     
+94     1000     
+95     1000     
+96     1000     
+97     1000     
+98     1000     
+99     1000     
+null     9000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tr.i_tr_g) (key range: ([dba.tr].g> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.tr].g, count(*) from [dba.tr] [dba.tr] where ([dba.tr].g> ?:? ) group by [dba.tr].g with rollup using index [dba.tr].i_tr_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tr.i_tr_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+g    count(*)    
+null     9000     
+91     1000     
+92     1000     
+93     1000     
+94     1000     
+95     1000     
+96     1000     
+97     1000     
+98     1000     
+99     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.tr.i_tr_g) (key range: ([dba.tr].g> ?:? ), covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.tr].g, count(*) from [dba.tr] [dba.tr] where ([dba.tr].g> ?:? ) group by [dba.tr].g with rollup using index [dba.tr].i_tr_g(+) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tr.i_tr_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c34    
+PASS     
+
+===================================================
+0
