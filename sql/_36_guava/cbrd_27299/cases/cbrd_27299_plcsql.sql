@@ -18,7 +18,7 @@
  *    Case 5:  COMMIT, ROLLBACK, EXECUTE IMMEDIATE
  *    Case 6:  calls to global functions and procedures, with and without owner
  *    Case 7:  forbidden construct in an initializer, a dead branch, a handler, a local routine
- *    Case 8:  an undeclared identifier is refused as a possible server call
+ *    Case 8:  an undeclared identifier is reported as such, as without PARALLEL_ENABLE
  *    Case 9:  DBMS_OUTPUT calls give their own message
  *    Case 10: the first forbidden construct in the body decides the message
  *    Case 11: PARALLEL_ENABLE and duplicate options on a local routine
@@ -97,7 +97,7 @@ create function e_local(n int) return int parallel_enable as procedure lp is c i
 --+ server-message off
 
 
-evaluate 'Case 8: an undeclared identifier is refused as a possible server call';
+evaluate 'Case 8: an undeclared identifier is reported as such, as without PARALLEL_ENABLE';
 --+ server-message on
 create function e_typo(n int) return int parallel_enable as begin return n + no_such_var; end;
 create function u_typo(n int) return int as begin return n + no_such_var; end;

@@ -14,8 +14,9 @@ select test_func1() from dual;
 -- without default value
 create or replace function test_func2(a int comment 'param comment without default value') return varchar
 as
+    v varchar;
 begin
-    test_func1(3);
+    v := test_func1(3);
     return 'func2 param: ' || a;
 end;
 
