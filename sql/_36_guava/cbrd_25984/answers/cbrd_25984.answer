@@ -25,6 +25,20 @@
 ===================================================
 0
 ===================================================
+20
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
     
 [1-1] covering + key filter on (i1, sqrt(d1))     
 
@@ -322,5 +336,284 @@ select fi_t.i?,  sqrt(fi_t.d?) from fi_t fi_t where (fi_t.i?>= ?:?  and fi_t.i?<
 /* ---> skip ORDER BY */
 ===================================================
 0
+===================================================
+    
+[6-1] (d1, sqrt(d1)): expression projected over a key range on the argument     
+
+===================================================
+r    
+4.0     
+8.0     
+12.0     
+16.0     
+20.0     
+24.0     
+28.0     
+32.0     
+36.0     
+40.0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_d node[?]
+                 index: idx_fi_d term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  sqrt(fi_d.d?) from fi_d fi_d where (fi_d.d?>= ?:?  and fi_d.d?<= ?:? ) order by ?
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[6-2] (d1, sqrt(d1)): key filter on the expression     
+
+===================================================
+r    
+24.0     
+28.0     
+32.0     
+36.0     
+40.0     
+44.0     
+48.0     
+52.0     
+56.0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_d node[?]
+                 index: idx_fi_d term[?] (covers)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  sqrt(fi_d.d?) from fi_d fi_d where (fi_d.d?> ?:? ) and ( sqrt(fi_d.d?)> ?:?  and  sqrt(fi_d.d?)< ?:? ) order by ?
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[6-3] (d1, sqrt(d1)): raw argument projected and filtered with the expression     
+
+===================================================
+d1    r    
+64.0     8.0     
+256.0     16.0     
+576.0     24.0     
+1024.0     32.0     
+1600.0     40.0     
+
+Query plan:
+iscan
+    class: fi_d node[?]
+    index: idx_fi_d term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_d.d?,  sqrt(fi_d.d?) from fi_d fi_d where (fi_d.d?>= ?:?  and fi_d.d?<= ?:? ) and  mod(fi_d.d?,  cast(? as double))=? order by ?
+/* ---> skip ORDER BY */
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[6-4] (d1, sqrt(d1)): ORDER BY the argument / the expression, with LIMIT     
+
+===================================================
+r    
+40.0     
+36.0     
+32.0     
+28.0     
+24.0     
+20.0     
+16.0     
+12.0     
+8.0     
+4.0     
+
+===================================================
+r    
+40.0     
+36.0     
+32.0     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[7-1] CONNECT BY over (i1, sqrt(d1)) forced by USING INDEX     
+
+===================================================
+i1    r    lv    
+2     8.0     1     
+3     12.0     2     
+4     16.0     3     
+5     20.0     4     
+6     24.0     5     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[7-2] CONNECT BY over (d1, sqrt(d1)): raw argument and expression at every level     
+
+===================================================
+d1    r    lv    
+16.0     4.0     1     
+64.0     8.0     2     
+144.0     12.0     3     
+256.0     16.0     4     
+400.0     20.0     5     
+576.0     24.0     6     
+784.0     28.0     7     
+1024.0     32.0     8     
+1296.0     36.0     9     
+1600.0     40.0     10     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[7-3] CONNECT BY over (d1, sqrt(d1)): expression only, with a filter on it     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[8-1] merge join over the (i1, sqrt(d1)) scan, expression only projected     
+
+===================================================
+x    r    
+1     4.0     
+2     8.0     
+3     12.0     
+4     16.0     
+5     20.0     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: i?[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: i?[?]
+                                         subplan: iscan
+                                                      class: t node[?]
+                                                      index: idx_fi_t term[?]
+                                                      filtr: term[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: x[?]
+                                         subplan: sscan
+                                                      class: w node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ w.x,  sqrt(t.d?) from fi_t t, fi_w w where t.i?=w.x and (t.i?>= ?:?  and t.i?<= ?:? ) and ( sqrt(t.d?)> ?:? ) order by ?
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[8-2] hash join over the (i1, sqrt(d1)) scan, both build orders     
+
+===================================================
+x    r    
+1     4.0     
+2     8.0     
+3     12.0     
+4     16.0     
+5     20.0     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: t node[?]
+                            index: idx_fi_t term[?]
+                            filtr: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: w node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ w.x,  sqrt(t.d?) from fi_t t, fi_w w where t.i?=w.x and (t.i?>= ?:?  and t.i?<= ?:? ) and ( sqrt(t.d?)> ?:? ) order by ?
+===================================================
+result    
+PASS     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[8-3] merge / hash join over the (d1, sqrt(d1)) scan joined on the argument     
+
+===================================================
+result    
+PASS     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[9-1] click counter on the other table of a join, function index scan first     
+
+===================================================
+i1    r    c    chk    
+3     12.0     0     PASS     
+
+===================================================
+i1    r    c    chk    
+3     12.0     0     PASS     
+
+===================================================
+    
+[9-2] click counter on the other table of a join, function index scan second     
+
+===================================================
+c    i1    r    chk    
+0     3     12.0     PASS     
+
+===================================================
+c    i1    r    chk    
+0     3     12.0     PASS     
+
+===================================================
+result    
+PASS     
+
 ===================================================
 0
