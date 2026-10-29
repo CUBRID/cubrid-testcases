@@ -263,8 +263,33 @@ select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and
 0
 ===================================================
     
-Case 10: no index on the filter column: the table is not read (nested loop)     
+Case 10: no index on the filter column: a table no larger than row_snapshot_max_rows is scanned (hash join), a larger one is not read (nested loop)     
 
+===================================================
+count(*)    
+39000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: c node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_x c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
 ===================================================
 count(*)    
 39000     
@@ -288,6 +313,31 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*) from t_?_x c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+count(*)    
+39000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
 ===================================================
     
 Case 11: a filter that selects more than row_snapshot_max_rows rows keeps the histogram estimate     

@@ -1,8 +1,8 @@
 -- Verification for CBRD-27478 : Read the rows a constant filter selects from the tables declared ROW_SNAPSHOT while planning and price their joins by those keys
 -- A code table filtered by a constant joins a large table on its key. Histograms are per column, so without the rows
 -- the join is priced at 1/NDV whatever key the constant selects. For a table declared ROW_SNAPSHOT the optimizer
--- reads the rows the filter selects from the table while it plans (through an index on a filter column, at most
--- row_snapshot_max_rows of them) and prices the join by their keys.
+-- reads the rows the filter selects from the table while it plans (through an index on a filter column, or by a
+-- scan of a table no larger than row_snapshot_max_rows; at most that many rows) and prices the join by their keys.
 
 drop table if exists t_27478_c;
 drop table if exists t_27478_f;
@@ -80,10 +80,18 @@ select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
 set system parameters 'row_snapshot_max_rows=1000';
 
-evaluate 'Case 10: no index on the filter column: the table is not read (nested loop)';
+evaluate 'Case 10: no index on the filter column: a table no larger than row_snapshot_max_rows is scanned (hash join), a larger one is not read (nested loop)';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_x c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+set system parameters 'row_snapshot_max_rows=4';
+--@queryplan
+select /*+ recompile */ count (*) from t_27478_x c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+--@queryplan
+select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+set system parameters 'row_snapshot_max_rows=1000';
 
 evaluate 'Case 11: a filter that selects more than row_snapshot_max_rows rows keeps the histogram estimate';
 set system parameters 'row_snapshot_max_rows=1';
