@@ -1,0 +1,402 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: EXISTS / NOT EXISTS over two tables -> SEMI / ANTI JOIN with a derived table inner     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o anti join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+===================================================
+id    
+2     
+4     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+id    
+2     
+4     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+    
+Case 2: IN / NOT IN over two tables; a correlated IN whose ON reads two inner columns     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on t_o.k=av?.av_?
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+nl-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o anti join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on t_o.k=av?.av_?
+===================================================
+id    
+2     
+4     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+id    
+2     
+4     
+6     
+7     
+8     
+9     
+10     
+
+===================================================
+id    
+1     
+
+===================================================
+id    
+1     
+
+===================================================
+    
+Case 3: the subquery joins its tables with JOIN ... ON, and with LEFT JOIN plus IS NULL     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 4: three tables chained by two inner conditions     
+
+===================================================
+id    
+1     
+3     
+
+===================================================
+id    
+1     
+3     
+
+===================================================
+    
+Case 5: a hint of the subquery stays with it: ORDERED puts t_b first inside the derived table     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t_b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED */ t_a.k from t_b t_b, t_a t_a where t_a.v=t_b.v)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select /*+ ORDERED */ t_a.k from t_b t_b, t_a t_a where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+===================================================
+    
+Case 6: kept as written: a derived table with LIMIT inside the subquery FROM; NOT IN on a column that may be NULL     
+
+===================================================
+id    
+1     
+3     
+5     
+
+===================================================
+id    
+
+===================================================
+    
+Case 7: inner tables joined to each other only through the outer query     
+
+===================================================
+id    
+2     
+3     
+5     
+
+===================================================
+id    
+2     
+3     
+5     
+
+===================================================
+    
+Case 8: a large indexed outer: the derived table is read first with DISTINCT and probes the outer by index     
+
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+450     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_b node[?]
+               index: i_t_b_v term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+Query plan:
+idx-join (inner join)
+    outer: temp(distinct)
+               subplan: sscan
+                            class: av? node[?]
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: t_big node[?]
+               index: i_t_big_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_big t_big semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_big.k
+===================================================
+count(*)    
+450     
+
+===================================================
+0
