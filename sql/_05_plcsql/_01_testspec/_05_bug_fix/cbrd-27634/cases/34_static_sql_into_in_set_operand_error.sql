@@ -1,5 +1,5 @@
 -- verified the CBRD-27634
-evaluate 'SELECT INTO in an operand of UNION / INTERSECT / EXCEPT of a static SQL is a compile error (semantic error 344).';
+evaluate 'SELECT INTO in an operand of UNION / INTERSECT / EXCEPT of a static SQL is a compile error: SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL.';
 evaluate 'INTO variables of PL/CSQL can receive only the final result of a query.';
 
 --+ server-message on
@@ -76,6 +76,31 @@ begin
     return x;
 end;
 
+evaluate 'error: INTO in an operand of UNION in a cursor declaration';
+create or replace procedure so_e10 as
+    x int;
+    cursor c is select a into x from so_t1 union select a from so_t2;
+begin
+    open c;
+    close c;
+end;
+
+evaluate 'error: INTO in an operand of UNION in a FOR loop';
+create or replace procedure so_e11 as
+    x int;
+begin
+    for r in (select a into x from so_t1 union select a from so_t2) loop
+        dbms_output.put_line(r.a);
+    end loop;
+end;
+
+evaluate 'error: INTO in an operand of UNION in INSERT ... SELECT';
+create or replace procedure so_e12 as
+    x int;
+begin
+    insert into so_t1 select a into x from so_t2 union select a from so_t1;
+end;
+
 evaluate 'the routines above must not be created: error for each DROP';
 drop procedure so_e1;
 drop procedure so_e2;
@@ -86,6 +111,9 @@ drop procedure so_e6;
 drop procedure so_e7;
 drop procedure so_e8;
 drop function so_e9;
+drop procedure so_e10;
+drop procedure so_e11;
+drop procedure so_e12;
 
 drop table so_t1, so_t2;
 

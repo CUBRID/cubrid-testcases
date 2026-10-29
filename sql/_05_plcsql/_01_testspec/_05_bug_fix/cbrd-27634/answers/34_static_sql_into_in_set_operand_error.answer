@@ -1,6 +1,6 @@
 ===================================================
     
-SELECT INTO in an operand of UNION / INTERSECT / EXCEPT of a static SQL is a compile error (semantic error 344).     
+SELECT INTO in an operand of UNION / INTERSECT / EXCEPT of a static SQL is a compile error: SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL.     
 
 ===================================================
     
@@ -112,6 +112,36 @@ SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static
 
 ===================================================
     
+error: INTO in an operand of UNION in a cursor declaration     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t2'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] union select a from [dba....
+
+===================================================
+    
+error: INTO in an operand of UNION in a FOR loop     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t2'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. (select a into :x from [dba.so_t1] union select a from [dba....
+
+===================================================
+    
+error: INTO in an operand of UNION in INSERT ... SELECT     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Semantic: before '  union select a from so_t1'
+SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL. insert into [dba.so_t1] (select a into :x from [dba.so_t2] u...
+
+===================================================
+    
 the routines above must not be created: error for each DROP     
 
 
@@ -150,6 +180,18 @@ Stored procedure/function 'dba.so_e8' does not exist.
 ===================================================
 Error:-894
 Stored procedure/function 'dba.so_e9' does not exist.
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.so_e10' does not exist.
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.so_e11' does not exist.
+
+===================================================
+Error:-894
+Stored procedure/function 'dba.so_e12' does not exist.
 
 ===================================================
 0

@@ -1,5 +1,5 @@
 -- verified the CBRD-27634
-evaluate 'set operations without INTO in their operands are not affected by the semantic error 344 of a static SQL.';
+evaluate 'set operations without INTO in their operands are not affected by the compile error of a static SQL: SELECT INTO is not allowed in an operand of UNION, INTERSECT or EXCEPT in Static SQL.';
 
 --+ server-message on
 
@@ -66,7 +66,34 @@ begin
 end;
 call so_n6();
 
-drop procedure so_n1, so_n2, so_n3, so_n4, so_n5, so_n6;
+evaluate 'INTO for a query with UNION in a WHERE subquery';
+create or replace procedure so_n7 as
+    x int;
+begin
+    select a into x from so_t1 where a in (select a from so_t1 union select a from so_t2) and a = 1;
+    dbms_output.put_line('n7 ' || x);
+end;
+call so_n7();
+
+evaluate 'INTO for a query with UNION in a CTE';
+create or replace procedure so_n8 as
+    x int;
+begin
+    with c as (select a from so_t1 union select a from so_t2) select max(a) into x from c;
+    dbms_output.put_line('n8 ' || x);
+end;
+call so_n8();
+
+evaluate 'INTO for a query with UNION ALL in a recursive CTE';
+create or replace procedure so_n9 as
+    x int;
+begin
+    with recursive c (n) as (select 1 union all select n + 1 from c where n < 5) select sum(n) into x from c;
+    dbms_output.put_line('n9 ' || x);
+end;
+call so_n9();
+
+drop procedure so_n1, so_n2, so_n3, so_n4, so_n5, so_n6, so_n7, so_n8, so_n9;
 drop table so_t1, so_t2;
 
 --+ server-message off
