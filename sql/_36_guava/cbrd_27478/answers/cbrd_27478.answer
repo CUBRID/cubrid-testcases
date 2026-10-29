@@ -310,7 +310,65 @@ select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and
 1
 ===================================================
     
-Case 10: nothing is stored with the statistics     
+Case 10: the NO_ROW_SNAPSHOT hint turns the reading off for the statement (nested loop)     
+
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ROW_SNAPSHOT */ count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+    
+Case 11: the ROW_SNAPSHOT hint reads the rows even with row_snapshot_max_rows=0 (hash join)     
+
+===================================================
+0
+===================================================
+count(*)    
+39000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ROW_SNAPSHOT */ count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
+===================================================
+    
+Case 12: nothing is stored with the statistics     
 
 ===================================================
 class_name    attr_name    

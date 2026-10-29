@@ -86,7 +86,19 @@ select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'renamed' and f.c_id = c.id and g.k = f.k;
 update t_27478_c set name = 'common' where id = 1;
 
-evaluate 'Case 10: nothing is stored with the statistics';
+evaluate 'Case 10: the NO_ROW_SNAPSHOT hint turns the reading off for the statement (nested loop)';
+--@queryplan
+select /*+ recompile no_row_snapshot */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+
+evaluate 'Case 11: the ROW_SNAPSHOT hint reads the rows even with row_snapshot_max_rows=0 (hash join)';
+set system parameters 'row_snapshot_max_rows=0';
+--@queryplan
+select /*+ recompile row_snapshot */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+set system parameters 'row_snapshot_max_rows=100';
+
+evaluate 'Case 12: nothing is stored with the statistics';
 select class_name, attr_name from db_histogram where class_name like 't_27478_%' order by class_name, attr_name;
 
 drop table t_27478_c;
