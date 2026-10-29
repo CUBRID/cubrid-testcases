@@ -35,20 +35,20 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (semi join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -56,15 +56,15 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
-id    
+ca    
 1     
 3     
 5     
 
 ===================================================
-id    
+ca    
 1     
 3     
 5     
@@ -76,20 +76,20 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (anti join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -97,9 +97,9 @@ nl-join (anti join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o anti join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+select /*+ PARALLEL(?) */ count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
-id    
+ca    
 2     
 4     
 6     
@@ -109,7 +109,7 @@ id
 10     
 
 ===================================================
-id    
+ca    
 2     
 4     
 6     
@@ -129,20 +129,20 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (semi join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -150,15 +150,15 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on t_o.k=av?.av_?
+select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
 ===================================================
-id    
+ca    
 1     
 3     
 5     
 
 ===================================================
-id    
+ca    
 1     
 3     
 5     
@@ -170,20 +170,20 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (anti join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -191,9 +191,9 @@ nl-join (anti join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o anti join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on t_o.k=av?.av_?
+select /*+ PARALLEL(?) */ count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
 ===================================================
-id    
+ca    
 2     
 4     
 6     
@@ -203,7 +203,7 @@ id
 10     
 
 ===================================================
-id    
+ca    
 2     
 4     
 6     
@@ -213,11 +213,11 @@ id
 10     
 
 ===================================================
-id    
+ca    
 1     
 
 ===================================================
-id    
+ca    
 1     
 
 ===================================================
@@ -231,20 +231,20 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (semi join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -252,26 +252,26 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
-id    
+ca    
 1     
 3     
 5     
 
 ===================================================
-id    
+ca    
 1     
 3     
 5     
 
 ===================================================
-id    
+ca    
 1     
 2     
 
 ===================================================
-id    
+ca    
 1     
 2     
 
@@ -280,18 +280,18 @@ id
 Case 4: three tables chained by two inner conditions     
 
 ===================================================
-id    
+ca    
 1     
 3     
 
 ===================================================
-id    
+ca    
 1     
 3     
 
 ===================================================
     
-Case 5: a hint of the subquery stays with it: ORDERED puts t_b first inside the derived table     
+Case 5: a hint of the subquery stays with it: ORDERED puts tc first inside the derived table     
 
 ===================================================
 count(*)    
@@ -301,20 +301,20 @@ Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: t_b node[?]
+               class: tc node[?]
                cost:  ? card ?
     inner: sscan
-               class: t_a node[?]
+               class: tb node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select /*+ ORDERED */ t_a.k from t_b t_b, t_a t_a where t_a.v=t_b.v)
+(select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca)
 Query plan:
 nl-join (semi join)
     edge:  term[?]
     outer: sscan
-               class: t_o node[?]
+               class: ta node[?]
                cost:  ? card ?
     inner: sscan
                class: av? node[?]
@@ -322,32 +322,32 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o semi join (select /*+ ORDERED */ t_a.k from t_b t_b, t_a t_a where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_o.k
+select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
     
 Case 6: kept as written: a derived table with LIMIT inside the subquery FROM; NOT IN on a column that may be NULL     
 
 ===================================================
-id    
+ca    
 1     
 3     
 5     
 
 ===================================================
-id    
+ca    
 
 ===================================================
     
 Case 7: inner tables joined to each other only through the outer query     
 
 ===================================================
-id    
+ca    
 2     
 3     
 5     
 
 ===================================================
-id    
+ca    
 2     
 3     
 5     
@@ -371,15 +371,15 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: sscan
-               class: t_a node[?]
+               class: tb node[?]
                cost:  ? card ?
     inner: iscan
-               class: t_b node[?]
-               index: i_t_b_v term[?] (covers)
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v)
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 idx-join (inner join)
     outer: temp(distinct)
@@ -389,11 +389,11 @@ idx-join (inner join)
                cost:  ? card ?
     inner: iscan
                class: t_big node[?]
-               index: i_t_big_k term[?] (covers)
+               index: i_t_big_cb term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_big t_big semi join (select t_a.k from t_a t_a, t_b t_b where t_a.v=t_b.v) av? (av_?) on av?.av_?=t_big.k
+select /*+ PARALLEL(?) */ count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.cb
 ===================================================
 count(*)    
 450     
