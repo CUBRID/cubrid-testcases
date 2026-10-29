@@ -4,7 +4,7 @@
  * OFFSET on ORDER BY <pk> DESC must pick the same PK-descending order-by-
  * skip index scan a constant LIMIT already does, not a full scan + sort.
  * The misplan is cost-based, so it only surfaces once the index scan's
- * cost is far enough above the full-scan-plus-sort cost; both costs
+ * cost is far enough above the full-scan-plus-sort cost - both costs
  * scale with row count, so the data here is sized well below the
  * issue's original repro scale while still crossing that threshold.
  *
