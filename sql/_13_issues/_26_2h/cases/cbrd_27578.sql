@@ -5,6 +5,7 @@
  *  Coverage:
  *    Case 1:  DBA renames u2.trg to a name of u1, refused
  *    Case 2:  DBA renames u2.trg keeping u2, allowed
+ *    Case 3:  DBA renames u2.trg2 to a system catalog name, refused
  */
 
 -- users
@@ -25,6 +26,11 @@ select unique_name, owner.name from _db_trigger order by 1;
 
 evaluate 'Case 2. DBA renames u2.trg keeping u2, allowed';
 rename trigger u2.trg as u2.trg2;
+-- Expected: u2.trg2 U2
+select unique_name, owner.name from _db_trigger order by 1;
+
+evaluate 'Case 3. DBA renames u2.trg2 to a system catalog name, refused';
+rename trigger u2.trg2 as db_trigger;
 -- Expected: u2.trg2 U2
 select unique_name, owner.name from _db_trigger order by 1;
 
