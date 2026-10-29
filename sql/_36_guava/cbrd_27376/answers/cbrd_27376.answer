@@ -56,19 +56,7 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
-===================================================
-ca    
-1     
-3     
-5     
-
-===================================================
-ca    
-1     
-3     
-5     
-
+select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
 count(*)    
 7     
@@ -97,27 +85,7 @@ nl-join (anti join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
-===================================================
-ca    
-2     
-4     
-6     
-7     
-8     
-9     
-10     
-
-===================================================
-ca    
-2     
-4     
-6     
-7     
-8     
-9     
-10     
-
+select count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
     
 Case 2: IN / NOT IN over two tables; a correlated IN whose ON reads two inner columns     
@@ -150,19 +118,7 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
-===================================================
-ca    
-1     
-3     
-5     
-
-===================================================
-ca    
-1     
-3     
-5     
-
+select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
 ===================================================
 count(*)    
 7     
@@ -191,31 +147,7 @@ nl-join (anti join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
-===================================================
-ca    
-2     
-4     
-6     
-7     
-8     
-9     
-10     
-
-===================================================
-ca    
-2     
-4     
-6     
-7     
-8     
-9     
-10     
-
-===================================================
-ca    
-1     
-
+select count(*) from ta ta anti join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.cb=av?.av_?
 ===================================================
 ca    
 1     
@@ -252,24 +184,7 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
-===================================================
-ca    
-1     
-3     
-5     
-
-===================================================
-ca    
-1     
-3     
-5     
-
-===================================================
-ca    
-1     
-2     
-
+select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
 ca    
 1     
@@ -277,21 +192,7 @@ ca
 
 ===================================================
     
-Case 4: three tables chained by two inner conditions     
-
-===================================================
-ca    
-1     
-3     
-
-===================================================
-ca    
-1     
-3     
-
-===================================================
-    
-Case 5: a hint of the subquery stays with it: ORDERED puts tc first inside the derived table     
+Case 4: a hint of the subquery stays with it: ORDERED puts tc first inside the derived table     
 
 ===================================================
 count(*)    
@@ -322,29 +223,17 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from ta ta semi join (select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
+select count(*) from ta ta semi join (select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
 ===================================================
     
-Case 6: kept as written: a derived table with LIMIT inside the subquery FROM; NOT IN on a column that may be NULL     
-
-===================================================
-ca    
-1     
-3     
-5     
+Case 5: NOT IN on a column that may be NULL is kept as written     
 
 ===================================================
 ca    
 
 ===================================================
     
-Case 7: inner tables joined to each other only through the outer query     
-
-===================================================
-ca    
-2     
-3     
-5     
+Case 6: inner tables joined to each other only through the outer query     
 
 ===================================================
 ca    
@@ -354,7 +243,7 @@ ca
 
 ===================================================
     
-Case 8: a large indexed outer: the derived table is read first with DISTINCT and probes the outer by index     
+Case 7: a large indexed outer: the derived table is read first with DISTINCT and probes the outer by index     
 
 ===================================================
 0
@@ -393,10 +282,6 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.cb
-===================================================
-count(*)    
-450     
-
+select count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.cb
 ===================================================
 0

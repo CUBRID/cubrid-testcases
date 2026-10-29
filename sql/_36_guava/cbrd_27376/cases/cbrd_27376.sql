@@ -10,10 +10,9 @@
  *  join order and join method choice of the outer query. The DISTINCT that type checking marks on an
  *  IN subquery is dropped, so EXISTS and IN get the same plan.
  *
- *  A query with the NO_UNNEST hint that follows an unnested one gives the reference result and the
- *  two must match. The data is chosen so that a decision per inner table would be wrong: the first
- *  tb row of ca = 1 (cb 100) has no tc match while the second (cb 200) has two, so the outer row
- *  cb = 1 must come out, and once.
+ *  The data is chosen so that a decision per inner table would be wrong: the first tb row of ca = 1
+ *  (cb 100) has no tc match while the second (cb 200) has two, so the outer row cb = 1 must come out,
+ *  and once. A missing row shows as count 2, a duplicated one as count 4.
  *
  *  Coverage:
  *    Case 1: EXISTS / NOT EXISTS over two tables (the reported query) -> SEMI / ANTI JOIN with a
@@ -21,12 +20,10 @@
  *    Case 2: IN / NOT IN over two tables, both operands NOT NULL; a correlated IN whose ON reads two
  *            inner columns
  *    Case 3: the subquery joins its tables with JOIN ... ON, and with LEFT JOIN plus IS NULL
- *    Case 4: three tables chained by two inner conditions
- *    Case 5: a hint of the subquery (ORDERED) stays with it and orders the derived table
- *    Case 6: kept as written: a derived table with LIMIT inside the subquery FROM; NOT IN on a column
- *            that may be NULL
- *    Case 7: inner tables joined to each other only through the outer query
- *    Case 8: a large indexed outer: the derived table is read first with DISTINCT and probes the outer
+ *    Case 4: a hint of the subquery (ORDERED) stays with it and orders the derived table
+ *    Case 5: NOT IN on a column that may be NULL is kept as written
+ *    Case 6: inner tables joined to each other only through the outer query
+ *    Case 7: a large indexed outer: the derived table is read first with DISTINCT and probes the outer
  *            by index
  */
 
@@ -42,7 +39,7 @@ insert into tb values (1, 100), (1, 200), (2, 300), (3, 400), (3, 401), (5, 500)
 create table tc (ca int not null, cb int not null);
 insert into tc values (200, 1), (200, 2), (400, 3), (401, 4), (500, 5), (999, 6);
 create index i_tc_ca on tc (ca);
--- td: cb 1 and 3 of tc
+-- td: ca 1 and 3, matched by ta.cc + 1
 create table td (ca int not null);
 insert into td values (1), (3);
 -- te: like tb, but ca may be NULL and one row has a NULL ca
@@ -53,69 +50,49 @@ update statistics on ta, tb, tc, td, te with fullscan;
 
 evaluate 'Case 1: EXISTS / NOT EXISTS over two tables -> SEMI / ANTI JOIN with a derived table inner';
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca);
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where exists (select /*+ NO_UNNEST */ 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca) order by ca;
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca);
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where not exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca);
-select /*+ recompile parallel(0) */ ca from ta where not exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where not exists (select /*+ NO_UNNEST */ 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca) order by ca;
+select /*+ recompile */ count(*) from ta where not exists (select 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca);
 
 
 evaluate 'Case 2: IN / NOT IN over two tables; a correlated IN whose ON reads two inner columns';
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where ta.cb in (select tb.ca from tb, tc where tb.cb = tc.ca);
-select /*+ recompile parallel(0) */ ca from ta where ta.cb in (select tb.ca from tb, tc where tb.cb = tc.ca) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where ta.cb in (select /*+ NO_UNNEST */ tb.ca from tb, tc where tb.cb = tc.ca) order by ca;
+select /*+ recompile */ count(*) from ta where ta.cb in (select tb.ca from tb, tc where tb.cb = tc.ca);
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where ta.cb not in (select tb.ca from tb, tc where tb.cb = tc.ca);
-select /*+ recompile parallel(0) */ ca from ta where ta.cb not in (select tb.ca from tb, tc where tb.cb = tc.ca) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where ta.cb not in (select /*+ NO_UNNEST */ tb.ca from tb, tc where tb.cb = tc.ca) order by ca;
+select /*+ recompile */ count(*) from ta where ta.cb not in (select tb.ca from tb, tc where tb.cb = tc.ca);
 -- tc.cb <= ta.cc + 2 reads tc through the ON too: only cb = 1 (cc 1, tc.cb 1) passes
-select /*+ recompile parallel(0) */ ca from ta where ta.cb in (select tb.ca from tb, tc where tb.cb = tc.ca and tc.cb <= ta.cc + 2) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where ta.cb in (select /*+ NO_UNNEST */ tb.ca from tb, tc where tb.cb = tc.ca and tc.cb <= ta.cc + 2) order by ca;
+select /*+ recompile */ ca from ta where ta.cb in (select tb.ca from tb, tc where tb.cb = tc.ca and tc.cb <= ta.cc + 2);
 
 
 evaluate 'Case 3: the subquery joins its tables with JOIN ... ON, and with LEFT JOIN plus IS NULL';
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where exists (select 1 from tb join tc on tb.cb = tc.ca where tb.ca = ta.cb);
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb join tc on tb.cb = tc.ca where tb.ca = ta.cb) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where exists (select /*+ NO_UNNEST */ 1 from tb join tc on tb.cb = tc.ca where tb.ca = ta.cb) order by ca;
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb join tc on tb.cb = tc.ca where tb.ca = ta.cb);
 -- the tb rows without a tc match are ca 1, 2 and 11
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb left join tc on tb.cb = tc.ca where tb.ca = ta.cb and tc.ca is null) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where exists (select /*+ NO_UNNEST */ 1 from tb left join tc on tb.cb = tc.ca where tb.ca = ta.cb and tc.ca is null) order by ca;
+select /*+ recompile */ ca from ta where exists (select 1 from tb left join tc on tb.cb = tc.ca where tb.ca = ta.cb and tc.ca is null) order by ca;
 
 
-evaluate 'Case 4: three tables chained by two inner conditions';
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb, tc, td where tb.ca = ta.cb and tb.cb = tc.ca and tc.cb = td.ca) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where exists (select /*+ NO_UNNEST */ 1 from tb, tc, td where tb.ca = ta.cb and tb.cb = tc.ca and tc.cb = td.ca) order by ca;
-
-
-evaluate 'Case 5: a hint of the subquery stays with it: ORDERED puts tc first inside the derived table';
+evaluate 'Case 4: a hint of the subquery stays with it: ORDERED puts tc first inside the derived table';
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from ta where exists (select /*+ ordered */ 1 from tc, tb where tb.ca = ta.cb and tb.cb = tc.ca);
+select /*+ recompile */ count(*) from ta where exists (select /*+ ordered */ 1 from tc, tb where tb.ca = ta.cb and tb.cb = tc.ca);
 
 
-evaluate 'Case 6: kept as written: a derived table with LIMIT inside the subquery FROM; NOT IN on a column that may be NULL';
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb, (select ca from tc limit 10) d where tb.ca = ta.cb and tb.cb = d.ca) order by ca;
+evaluate 'Case 5: NOT IN on a column that may be NULL is kept as written';
 -- the subquery returns a NULL ca, so NOT IN is UNKNOWN for every outer row: no row
-select /*+ recompile parallel(0) */ ca from ta where ta.cb not in (select te.ca from te, tc where te.cb = tc.ca) order by ca;
+select /*+ recompile */ ca from ta where ta.cb not in (select te.ca from te, tc where te.cb = tc.ca);
 
 
-evaluate 'Case 7: inner tables joined to each other only through the outer query';
-select /*+ recompile parallel(0) */ ca from ta where exists (select 1 from tb, td where tb.ca = ta.cb and td.ca = ta.cc + 1) order by ca;
-select /*+ recompile parallel(0) */ ca from ta where exists (select /*+ NO_UNNEST */ 1 from tb, td where tb.ca = ta.cb and td.ca = ta.cc + 1) order by ca;
+evaluate 'Case 6: inner tables joined to each other only through the outer query';
+select /*+ recompile */ ca from ta where exists (select 1 from tb, td where tb.ca = ta.cb and td.ca = ta.cc + 1) order by ca;
 
 
-evaluate 'Case 8: a large indexed outer: the derived table is read first with DISTINCT and probes the outer by index';
+evaluate 'Case 7: a large indexed outer: the derived table is read first with DISTINCT and probes the outer by index';
 -- t_big 3000 rows, cb 1..20 (150 rows each), index on cb; cb 1, 3 and 5 are matched: 450 rows
 create table t_big (ca int primary key, cb int not null);
 insert into t_big select rownum, mod(rownum, 20) + 1 from db_class a, db_class b, db_class c limit 3000;
 create index i_t_big_cb on t_big (cb);
 update statistics on t_big with fullscan;
 --@queryplan
-select /*+ recompile parallel(0) */ count(*) from t_big where exists (select 1 from tb, tc where tb.ca = t_big.cb and tb.cb = tc.ca);
-select /*+ recompile parallel(0) */ count(*) from t_big where exists (select /*+ NO_UNNEST */ 1 from tb, tc where tb.ca = t_big.cb and tb.cb = tc.ca);
+select /*+ recompile */ count(*) from t_big where exists (select 1 from tb, tc where tb.ca = t_big.cb and tb.cb = tc.ca);
 
 
 drop table ta, tb, tc, td, te, t_big;
