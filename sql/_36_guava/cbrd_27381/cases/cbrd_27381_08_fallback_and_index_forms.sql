@@ -15,7 +15,8 @@
 --
 -- Covers: VARCHAR(300) and VARCHAR(64) under utf8_bin, VARCHAR(30) under euckr_bin, utf8_ko_cs and
 -- utf8_tr_cs, STRING, VARCHAR(255) under iso88591_bin; a function index on ABS () and on LOWER ();
--- a filtered index
+-- a filtered index; prefix-length indexes on a VARCHAR(300), which takes the radix sorter through its
+-- prefix, on a CHAR(100) and on a VARCHAR(30)
 
 drop table if exists g;
 drop table if exists t_r;
@@ -109,6 +110,39 @@ select count(*) from t_r where f7 >= '' using index i_r7;
 select count(*) from t_r where abs (f8) >= 0 using index i_r8;
 select count(*) from t_r where lower (f9) >= '' using index i_r9;
 select count(*) from t_r where f8 > 0 using index i_r10;
+
+-- prefix-length indexes: the key is the first characters of the column, so a VARCHAR(300) like f1, which
+-- has no radix key, gets one from its prefix, and a CHAR key, padded to its precision, is cut short. The
+-- keys are read as the prefix: rows that share a prefix lie in OID order, which may differ between the two
+-- tables
+create table t_pr (id int, l varchar(300) collate utf8_bin, w char(100) collate iso88591_bin, s varchar(30) collate utf8_bin);
+create table t_pc like t_pr;
+insert into t_pr
+  select n, concat (v, repeat ('x', mod (n, 200))), concat (mod (n * 104729, 20011), 'w'), concat (v, substr ('abcd', 1, mod (n, 4)))
+  from g order by n;
+insert into t_pc select * from t_pr order by id;
+set system parameters 'index_build_buffer_size=64K';
+set system parameters 'index_sort_method=radix';
+create index i_rpl on t_pr (l(6));
+create index i_rpw on t_pr (w(5));
+create index i_rps on t_pr (s(3));
+set system parameters 'index_sort_method=compare';
+create index i_cpl on t_pc (l(6));
+create index i_cpw on t_pc (w(5));
+create index i_cps on t_pc (s(3));
+set system parameters 'index_sort_method=DEFAULT';
+set system parameters 'index_build_buffer_size=DEFAULT';
+select 'l(6)', count(*) from ((select rownum, substr (l, 1, 6) from t_pr where l >= '' using index i_rpl)
+  difference (select rownum, substr (l, 1, 6) from t_pc where l >= '' using index i_cpl)) x;
+select 'w(5)', count(*) from ((select rownum, substr (w, 1, 5) from t_pr where w >= '' using index i_rpw)
+  difference (select rownum, substr (w, 1, 5) from t_pc where w >= '' using index i_cpw)) x;
+select 's(3)', count(*) from ((select rownum, substr (s, 1, 3) from t_pr where s >= '' using index i_rps)
+  difference (select rownum, substr (s, 1, 3) from t_pc where s >= '' using index i_cps)) x;
+select count(*) from t_pr where l >= '' using index i_rpl;
+select count(*) from t_pr where w >= '' using index i_rpw;
+select count(*) from t_pr where s >= '' using index i_rps;
+drop table t_pr;
+drop table t_pc;
 
 drop table g;
 drop table t_r;
