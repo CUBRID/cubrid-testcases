@@ -31,20 +31,6 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
-Query plan:
-sscan
-    class: tbl_a node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -54,6 +40,13 @@ temp(group by)
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
 Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
@@ -62,6 +55,13 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_MERGE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
 Query plan:
 sscan
     class: X node[?]
@@ -79,20 +79,6 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
-Query plan:
-sscan
-    class: tbl_a node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -102,6 +88,13 @@ temp(group by)
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
 Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
@@ -110,6 +103,13 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 (select /*+ QUERY_CACHE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
 Query plan:
 sscan
     class: X node[?]
@@ -127,12 +127,14 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
+(select t.col_a from tbl_a t group by t.col_a)
 Query plan:
 temp(group by)
     subplan: sscan
@@ -144,15 +146,6 @@ temp(group by)
 Query stmt:
 (select /*+ NO_MERGE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_? group by tbl_a.col_a)
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t node[?]
-                 cost:  ? card ?
-    sort:  ? asc
-    cost:  ? card ?
-Query stmt:
-(select t.col_a from tbl_a t group by t.col_a)
-Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
@@ -161,6 +154,13 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_MERGE */ a_?, (select /*+ NO_MERGE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_? group by tbl_a.col_a) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
 Query plan:
 sscan
     class: X node[?]
@@ -178,20 +178,6 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
-Query plan:
-sscan
-    class: tbl_a node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -201,6 +187,13 @@ temp(group by)
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
 Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
 temp(order by)
     subplan: sscan
                  class: t node[?]
@@ -209,6 +202,13 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_MERGE */ a_?, (select /*+ QUERY_CACHE */ tbl_a.col_a from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) t (a_?) order by ?)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=X.col_a and (rownum= ?:? ))
 Query plan:
 sscan
     class: X node[?]
@@ -226,13 +226,6 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=a_? and (rownum= ?:? ))
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -241,6 +234,13 @@ temp(group by)
     cost:  ? card ?
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=a_? and (rownum= ?:? ))
 Query plan:
 temp(order by)
     subplan: sscan
@@ -259,13 +259,6 @@ X
 1     
 
 Query plan:
-sscan
-    class: tbl_a node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -274,6 +267,13 @@ temp(group by)
     cost:  ? card ?
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
+Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
 Query plan:
 temp(order by)
     subplan: sscan
@@ -316,20 +316,6 @@ test
 3     
 
 Query plan:
-sscan
-    class: tbl_b node[?]
-    sargs: term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=view_a.col_a and (rownum= ?:? ))
-Query plan:
-sscan
-    class: tbl_a node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
-Query plan:
 temp(group by)
     subplan: sscan
                  class: t node[?]
@@ -339,6 +325,13 @@ temp(group by)
 Query stmt:
 (select t.col_a from tbl_a t group by t.col_a)
 Query plan:
+sscan
+    class: tbl_a node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tbl_a tbl_a where tbl_a.col_a=a_?)
+Query plan:
 temp(order by)
     subplan: sscan
                  class: view_a node[?]
@@ -347,6 +340,13 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_MERGE */ a_?, (select ? from tbl_a tbl_a where tbl_a.col_a=a_?) from (select t.col_a from tbl_a t group by t.col_a) view_a (a_?) order by ?)
+Query plan:
+sscan
+    class: tbl_b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select tbl_b.col_c from tbl_b tbl_b where tbl_b.col_c=view_a.col_a and (rownum= ?:? ))
 Query plan:
 sscan
     class: view_a node[?]

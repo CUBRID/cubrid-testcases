@@ -2,6 +2,10 @@
  *  This test case verifies CBRD-27510: an analytic MEDIAN or PERCENTILE decides the class of a string sort key
  *  before the sort.
  *
+ *  CBRD-27583: this case no longer checks that. A string argument of MEDIAN, PERCENTILE_CONT and PERCENTILE_DISC is
+ *  DOUBLE whatever it holds, so no class is chosen before the sort and a date or time string is error -1118. The
+ *  answers of Case 1 to 5 are CBRD-27583's; Case 6 and 7 keep their meaning.
+ *
  *  An analytic MEDIAN, PERCENTILE_CONT or PERCENTILE_DISC sorts a string operand in the function's class - DOUBLE,
  *  DATETIME or TIME. develop took the class from the first pair of values the sort compared. CBRD-27510 decides it
  *  in the analytic setup before the sort, from the compiled function domain or from the class the gate

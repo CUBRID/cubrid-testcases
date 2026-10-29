@@ -42,7 +42,13 @@
  * 14 - INSERT expression in UPDATE CLASS, run by a trigger
  * 15 - UPDATE OBJECT whose subquery returns more than one row
  * 16 - UPDATE OBJECT that violates a unique index
+ *
+ * server-message is a run-wide setting that a case file only restores by an
+ * explicit off, so it is turned off here to keep the answer independent of
+ * whatever ran before this case.
  */
+
+--+ server-message off
 
 drop table if exists t_secret;
 
