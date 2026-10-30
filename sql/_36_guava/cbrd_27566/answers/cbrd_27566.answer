@@ -1,0 +1,188 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+25000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: 64-partition inner, 12,000 outer rows -> hash join     
+
+===================================================
+count(*)    
+120000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: w node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o, t_p? w where w.k=o.k and ( mod(o.k, ?)=? or ((o.k= ?:? ) or (o.k> ?:? )))
+===================================================
+    
+Case 2: the partition key is the join key, it does not prune per row -> hash join     
+
+===================================================
+count(*)    
+120000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: w node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o, t_pk? w where w.k=o.k and ( mod(o.k, ?)=? or ((o.k= ?:? ) or (o.k> ?:? )))
+===================================================
+    
+Case 3: the same join on a table that is not partitioned keeps the index nested loop     
+
+===================================================
+count(*)    
+120000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: w node[?]
+               index: i_np term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o, t_np w where w.k=o.k and ( mod(o.k, ?)=? or ((o.k= ?:? ) or (o.k> ?:? )))
+===================================================
+    
+Case 4: a few outer rows keep the index nested loop on the 64-partition inner     
+
+===================================================
+count(*)    
+90     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t_o_id term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: w node[?]
+               index: i_p? term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o, t_p? w where w.k=o.k and (o.id< ?:? )
+===================================================
+    
+Case 5: NOT EXISTS followed by a join to the 64-partition table -> hash join     
+
+===================================================
+count(*)    
+100000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (anti join)
+               edge:  term[?]
+               outer: sscan
+                          class: o node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: x node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: w node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o anti join t_half x on x.k=o.k, t_p? w where w.k=o.k
+===================================================
+    
+Case 6: EXISTS followed by a join to the 64-partition table -> hash join     
+
+===================================================
+count(*)    
+100000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: temp(distinct)
+                          subplan: sscan
+                                       class: x node[?]
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: o node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: w node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*) from t_o o semi join t_half x on x.k=o.k, t_p? w where w.k=o.k
+===================================================
+    
+Case 7: the results do not depend on the join method     
+
+===================================================
+count(*)    
+120000     
+
+===================================================
+count(*)    
+120000     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+0
