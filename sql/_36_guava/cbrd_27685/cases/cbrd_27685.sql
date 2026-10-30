@@ -30,7 +30,7 @@ insert into t_digit values (0), (1), (2), (3), (4), (5), (6), (7), (8), (9);
 create table t_mv (id int primary key, g int not null, y int);
 insert into t_mv select rownum, (rownum - 1) div 10, 1990 + mod(rownum, 35) from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 20000;
 create index i_mv_g on t_mv (g);
--- 12000 titles of the movies 1, 4, 7, ... (two each, so two movies in three have none); v is never 0
+-- 12000 titles of the movies 1, 4, 7, ... (two each, so two movies in three have none), and v is never 0
 -- except on the last movie, whose row is added below. w is NULL on every eleventh row
 create table t_aka (id int primary key, mid int not null, title varchar(30), v int, w int);
 insert into t_aka select rownum, mod(rownum, 6000) * 3 + 1, 'aka ' || mod(rownum * 37, 1000), mod(rownum, 7) + 1, case when mod(rownum, 11) = 0 then null else mod(rownum, 50) end from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 12000;
