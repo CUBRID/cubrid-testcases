@@ -121,6 +121,140 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+    
+Q4. no LIMIT: discounted, parallel nested loop driven by t_27474_b     
+
+===================================================
+id    id    
+
+Query plan:
+parallel idx-join (inner join)
+    outer: sscan
+               class: b node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_?_m_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select b.id, m.id from t_?_b b, t_?_m m where b.m_id=m.id and b.v= ?:? 
+===================================================
+    
+Q5. LIMIT stops the joins: no discount, nested loop driven by t_27474_m     
+
+===================================================
+id    id    
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: m node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_?_b_m term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select b.id, m.id from t_?_b b, t_?_m m where b.m_id=m.id and (inst_num()<= ?:? ) and b.v= ?:? 
+===================================================
+0
+===================================================
+    
+Q6. LIMIT above an aggregate does not stop the joins: discount kept     
+
+===================================================
+count(*)    sum(b.v)    max(b.pad)    
+14400     709200     fffcc1a3964b4ad665fa2f07d7bfd0861bc3368ddb162d1f2846b60b810ce6c00555bb36e8cfb7af4aaad5472cab1c4903f68714dba796f8d6b268029d0e62c462f6e7ceadd1f1eb64fe5d6936e7122beda9c67d6a20358927319cf3510402df461254593ec0cc1839a590251176c99c8c2a6cec60863b5ffd776ad9ff57495ac6b2aa071387a2e68359d61f88ea16f618c746a0e715b82e90f0b63ba322576fabd5e8f8c5783bc54bc2a3c91ae68118cf1f4d5318c6b0a76eb889ba14443cbe3d8338aae982b9c8be5f66ff9b91823ed95c6aef0aede9da6da41723b5ab4279c80e2e3dfd073a58a7868ba33aed57a9     
+
+Query plan:
+parallel hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: d node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: m node[?]
+                          index: i_?_m_d term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: parallel sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select count(*), sum(b.v), max(b.pad) from t_?_d d, t_?_m m, t_?_b b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id)
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select d.a_?, d.a_?, d.a_? from (select count(*), sum(b.v), max(b.pad) from t_?_d d, t_?_m m, t_?_b b where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id) d (a_?, a_?, a_?) where (inst_num()<= ?:? )
+===================================================
+    
+Q7. hash join result of 256 pages or more: parallel hash join driving a parallel nested loop     
+
+===================================================
+count(*)    sum(b.v)    max(b.pad)    
+14400     709200     fffcc1a3964b4ad665fa2f07d7bfd0861bc3368ddb162d1f2846b60b810ce6c00555bb36e8cfb7af4aaad5472cab1c4903f68714dba796f8d6b268029d0e62c462f6e7ceadd1f1eb64fe5d6936e7122beda9c67d6a20358927319cf3510402df461254593ec0cc1839a590251176c99c8c2a6cec60863b5ffd776ad9ff57495ac6b2aa071387a2e68359d61f88ea16f618c746a0e715b82e90f0b63ba322576fabd5e8f8c5783bc54bc2a3c91ae68118cf1f4d5318c6b0a76eb889ba14443cbe3d8338aae982b9c8be5f66ff9b91823ed95c6aef0aede9da6da41723b5ab4279c80e2e3dfd073a58a7868ba33aed57a9     
+
+Query plan:
+parallel idx-join (inner join)
+    outer: parallel hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: m node[?]
+                          cost:  ? card ?
+               inner: parallel sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: d node[?]
+               index: pk_t_?_d_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL(d) USE_HASH(b) */ count(*), sum(b.v), max(b.pad) from t_?_m m, t_?_b b, t_?_d d where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+===================================================
+    
+Q8. same join without b.pad, lists under 256 pages: neither the hash join nor the nested loop is discounted     
+
+===================================================
+count(*)    sum(b.v)    
+14400     709200     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: m node[?]
+                          cost:  ? card ?
+               inner: parallel sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: d node[?]
+               index: pk_t_?_d_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL(d) USE_HASH(b) */ count(*), sum(b.v) from t_?_m m, t_?_b b, t_?_d d where ((d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? ) or (d.[name]= ?:? )) and m.d_id=d.id and b.m_id=m.id
+===================================================
+0
+===================================================
 0
 ===================================================
 0
