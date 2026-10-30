@@ -1,0 +1,679 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+50000
+===================================================
+50000
+===================================================
+0
+===================================================
+80000
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: 4 consecutive rows per key, serial scan; result = no_hash_aggregate     
+
+===================================================
+k    count(*)    sum(v)    sum(n)    min(id)    max(id)    cast(avg(v) as numeric(10,4))    
+0     4     10     1.26     1     4     2.5000     
+4999     4     442     374.26     19997     20000     110.5000     
+9998     4     422     497.26     39993     39996     105.5000     
+14997     4     402     495.26     59989     59992     100.5000     
+19996     4     382     493.26     79985     79988     95.5000     
+24995     4     362     491.26     99981     99984     90.5000     
+29994     4     342     489.26     119977     119980     85.5000     
+34993     4     322     487.26     139973     139976     80.5000     
+39992     4     302     485.26     159969     159972     75.5000     
+44991     4     282     483.26     179965     179968     70.5000     
+49990     4     262     481.26     199961     199964     65.5000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    sum(k*sn)    sum( cast(k as bigint)*mx)    
+50000     200000     4999900000     280024202250     312711468500.00     166666666600000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_grp)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*), [dba.t_grp].k, sum([dba.t_grp].v), sum([dba.t_grp].n), max([dba.t_grp].id) from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.c), sum( cast(d.k as bigint)*d.c), sum( cast(d.k as bigint)* cast(d.s as bigint)), sum( cast(d.k as numeric)*d.sn), sum( cast(d.k as bigint)* cast(d.mx as bigint)) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [c], [dba.t_grp].k, sum([dba.t_grp].v) as [s], sum([dba.t_grp].n) as [sn], max([dba.t_grp].id) as [mx] from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k) d (c, k, s, sn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_grp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+k    count(*)    sum(v)    sum(n)    min(id)    max(id)    cast(avg(v) as numeric(10,4))    
+0     4     10     1.26     1     4     2.5000     
+4999     4     442     374.26     19997     20000     110.5000     
+9998     4     422     497.26     39993     39996     105.5000     
+14997     4     402     495.26     59989     59992     100.5000     
+19996     4     382     493.26     79985     79988     95.5000     
+24995     4     362     491.26     99981     99984     90.5000     
+29994     4     342     489.26     119977     119980     85.5000     
+34993     4     322     487.26     139973     139976     80.5000     
+39992     4     302     485.26     159969     159972     75.5000     
+44991     4     282     483.26     179965     179968     70.5000     
+49990     4     262     481.26     199961     199964     65.5000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    sum(k*sn)    sum( cast(k as bigint)*mx)    
+50000     200000     4999900000     280024202250     312711468500.00     166666666600000     
+
+===================================================
+    
+Case 2: parallel heap scan, parallel workers line under the scan; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    sum(k*sn)    sum( cast(k as bigint)*mx)    
+50000     200000     4999900000     280024202250     312711468500.00     166666666600000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_grp)
+
+  rewritten query: (select count(*), [dba.t_grp].k, sum([dba.t_grp].v), sum([dba.t_grp].n), max([dba.t_grp].id) from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.c), sum( cast(d.k as bigint)*d.c), sum( cast(d.k as bigint)* cast(d.s as bigint)), sum( cast(d.k as numeric)*d.sn), sum( cast(d.k as bigint)* cast(d.mx as bigint)) from (select count(*) as [c], [dba.t_grp].k, sum([dba.t_grp].v) as [s], sum([dba.t_grp].n) as [sn], max([dba.t_grp].id) as [mx] from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k) d (c, k, s, sn, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_grp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    sum(k*sn)    sum( cast(k as bigint)*mx)    
+50000     200000     4999900000     280024202250     312711468500.00     166666666600000     
+
+===================================================
+    
+Case 3: Q18 IN subquery with HAVING over the aggregates; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum( cast(id as bigint))    sum( cast(k as bigint))    sum(v)    
+65480     6550050388     1637471672     6072358     
+
+===================================================
+count(*)    sum( cast(id as bigint))    sum( cast(k as bigint))    sum(v)    
+65480     6550050388     1637471672     6072358     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    SORT (group by)
+      TABLE SCAN (dba.t_grp)
+
+  rewritten query: (select distinct [dba.t_grp].k from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k having sum([dba.t_grp].v)>?)
+
+  HASH JOIN (inner join)
+    TABLE SCAN (dba.t_grp)
+    TABLE SCAN (av?)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.t_grp].id as bigint)), sum( cast([dba.t_grp].k as bigint)), sum([dba.t_grp].v) from [dba.t_grp] [dba.t_grp], (select distinct [dba.t_grp].k from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k having sum([dba.t_grp].v)>?) av? (av_?) where [dba.t_grp].k=av?.av_?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_grp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_grp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    sum( cast(k as bigint))    sum(v)    
+65480     6550050388     1637471672     6072358     
+
+===================================================
+    
+Case 4: every key in two blocks, one key leaves the hash table twice; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(kc as bigint)*c)    sum( cast(kc as bigint)*s)    sum( cast(kc as bigint)*mi)    sum( cast(kc as bigint)*mx)    
+25000     200000     2499900000     140030452250     20832395837500     52082083300000     
+
+===================================================
+count(*)    sum(c)    sum( cast(kc as bigint)*c)    sum( cast(kc as bigint)*s)    sum( cast(kc as bigint)*mi)    sum( cast(kc as bigint)*mx)    
+25000     200000     2499900000     140030452250     20832395837500     52082083300000     
+
+===================================================
+count(*)    sum(c)    sum( cast(kc as bigint)*c)    sum( cast(kc as bigint)*s)    sum( cast(kc as bigint)*mi)    sum( cast(kc as bigint)*mx)    
+25000     200000     2499900000     140030452250     20832395837500     52082083300000     
+
+===================================================
+    
+Case 5: two keys, one descending, listed in GROUP BY order; result = no_hash_aggregate     
+
+===================================================
+kc    kb    count(*)    sum(v)    min(id)    
+22507     0     3     237     90030     
+22507     1     2     160     90031     
+22507     2     3     243     90029     
+20007     0     2     48     80031     
+20007     1     3     75     80029     
+20007     2     3     69     80030     
+17507     0     3     246     70029     
+17507     1     3     240     70030     
+17507     2     2     162     70031     
+15007     0     3     72     60030     
+15007     1     2     50     60031     
+15007     2     3     78     60029     
+12507     0     2     164     50031     
+12507     1     3     249     50029     
+12507     2     3     243     50030     
+10007     0     3     81     40029     
+10007     1     3     75     40030     
+10007     2     2     52     40031     
+7507     0     3     246     30030     
+7507     1     2     166     30031     
+7507     2     3     252     30029     
+5007     0     2     54     20031     
+5007     1     3     84     20029     
+5007     2     3     78     20030     
+2507     0     3     255     10029     
+2507     1     3     249     10030     
+2507     2     2     168     10031     
+7     0     3     81     30     
+7     1     2     56     31     
+7     2     3     87     29     
+
+===================================================
+count(*)    sum(c)    sum( cast(kc*3+kb as bigint)*s)    
+75000     200000     420102556332     
+
+===================================================
+kc    kb    count(*)    sum(v)    min(id)    
+22507     0     3     237     90030     
+22507     1     2     160     90031     
+22507     2     3     243     90029     
+20007     0     2     48     80031     
+20007     1     3     75     80029     
+20007     2     3     69     80030     
+17507     0     3     246     70029     
+17507     1     3     240     70030     
+17507     2     2     162     70031     
+15007     0     3     72     60030     
+15007     1     2     50     60031     
+15007     2     3     78     60029     
+12507     0     2     164     50031     
+12507     1     3     249     50029     
+12507     2     3     243     50030     
+10007     0     3     81     40029     
+10007     1     3     75     40030     
+10007     2     2     52     40031     
+7507     0     3     246     30030     
+7507     1     2     166     30031     
+7507     2     3     252     30029     
+5007     0     2     54     20031     
+5007     1     3     84     20029     
+5007     2     3     78     20030     
+2507     0     3     255     10029     
+2507     1     3     249     10030     
+2507     2     2     168     10031     
+7     0     3     81     30     
+7     1     2     56     31     
+7     2     3     87     29     
+
+===================================================
+count(*)    sum(c)    sum( cast(kc*3+kb as bigint)*s)    
+75000     200000     420102556332     
+
+===================================================
+    
+Case 6: key expression in the select list, nested and in HAVING; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(e as bigint)*s)    
+6250     200000     35009324878     
+
+===================================================
+count(*)    sum(c)    sum( cast(e as bigint)*c)    
+3250     104000     962104000     
+
+===================================================
+count(*)    sum(c)    sum( cast(e as bigint)*s)    
+6250     200000     35009324878     
+
+===================================================
+count(*)    sum(c)    sum( cast(e as bigint)*c)    
+3250     104000     962104000     
+
+===================================================
+    
+Case 7: NULL keys; result = no_hash_aggregate     
+
+===================================================
+kn    count(*)    sum(v)    
+null     20000     1120056     
+0     4     10     
+1     4     26     
+2     3     32     
+
+===================================================
+count(*)    count(kn)    sum(c)    sum( cast(nvl(kn, -1) as bigint)*s)    
+50001     50000     200000     252017171939     
+
+===================================================
+count(*)    count(kn)    sum(c)    sum( cast(nvl(kn, -1) as bigint)*s)    
+50001     50000     200000     252017171939     
+
+===================================================
+kn    count(*)    sum(v)    
+null     20000     1120056     
+0     4     10     
+1     4     26     
+2     3     32     
+
+===================================================
+count(*)    count(kn)    sum(c)    sum( cast(nvl(kn, -1) as bigint)*s)    
+50001     50000     200000     252017171939     
+
+===================================================
+    
+Case 8: 300-byte MAX aggregates, serial and parallel; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)* to_number( substr(mx, 291)))    max( char_length(mx))    
+20000     40000     5333333320000     300     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)* to_number( substr(mx, 291)))    max( char_length(mx))    
+20000     40000     5333333320000     300     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_wide)
+
+  rewritten query: (select count(*), [dba.t_wide].k, max([dba.t_wide].pad) from [dba.t_wide] [dba.t_wide] group by [dba.t_wide].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.c), sum( cast( cast(d.k as bigint) as numeric)* to_number( substr(d.mx, ?))), max( char_length(d.mx)) from (select count(*) as [c], [dba.t_wide].k, max([dba.t_wide].pad) as [mx] from [dba.t_wide] [dba.t_wide] group by [dba.t_wide].k) d (c, k, mx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)* to_number( substr(mx, 291)))    max( char_length(mx))    
+20000     40000     5333333320000     300     
+
+===================================================
+    
+Case 9: hash aggregation given up after unique keys, hash partial; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50001     100000     1700010000     14049505016     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_uniq)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ count(*), [dba.t_uniq].k, sum([dba.t_uniq].v) from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.c), sum( cast(d.k as bigint)*d.c), sum( cast(d.k as bigint)* cast(d.s as bigint)) from (select /*+ NO_PARALLEL_SCAN */ count(*) as [c], [dba.t_uniq].k, sum([dba.t_uniq].v) as [s] from [dba.t_uniq] [dba.t_uniq] group by [dba.t_uniq].k) d (c, k, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50001     100000     1700010000     14049505016     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50001     100000     1700010000     14049505016     
+
+===================================================
+    
+Case 10: rows longer than a page and rows with a SET value bypass the hash table; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*l)    sum( cast(k as bigint)*mx)    
+20000     80000     174930133066     10666666640000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*l)    sum( cast(k as bigint)*mx)    
+20000     80000     174930133066     10666666640000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*cs)    
+25000     100000     1249950000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*l)    sum( cast(k as bigint)*mx)    
+20000     80000     174930133066     10666666640000     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*cs)    
+25000     100000     1249950000     
+
+===================================================
+    
+Case 11: copy kept, non-key column in the select list, HAVING or ORDER BY; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(kd as bigint)*c)    sum( cast(k as bigint)*s)    
+50000     200000     14999700000     280024202250     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    
+49899     199596     4999879800     
+
+===================================================
+k    count(*)    
+49990     4     
+44991     4     
+39992     4     
+34993     4     
+29994     4     
+24995     4     
+19996     4     
+14997     4     
+9998     4     
+4999     4     
+0     4     
+
+===================================================
+count(*)    sum(c)    sum( cast(kd as bigint)*c)    sum( cast(k as bigint)*s)    
+50000     200000     14999700000     280024202250     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    
+49899     199596     4999879800     
+
+===================================================
+k    count(*)    
+49990     4     
+44991     4     
+39992     4     
+34993     4     
+29994     4     
+24995     4     
+19996     4     
+14997     4     
+9998     4     
+4999     4     
+0     4     
+
+===================================================
+    
+Case 12: copy kept, correlated subquery, analytic function, WITH ROLLUP; result = no_hash_aggregate     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*r)    
+50000     200000     448500     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*rk)    
+50000     200000     31337587918508     
+
+===================================================
+kb    count(*)    sum(v)    sum(n)    
+0     66666     3733199     4162708.29     
+1     66667     3733196     4162666.67     
+2     66667     3733193     4162625.04     
+null     200000     11199588     12488000.00     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*r)    
+50000     200000     448500     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*rk)    
+50000     200000     31337587918508     
+
+===================================================
+kb    count(*)    sum(v)    sum(n)    
+0     66666     3733199     4162708.29     
+1     66667     3733196     4162666.67     
+2     66667     3733193     4162625.04     
+null     200000     11199588     12488000.00     
+
+===================================================
+    
+Case 13: agg_hash_respect_order=no; result = no_hash_aggregate     
+
+===================================================
+0
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50000     200000     4999900000     280024202250     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50000     200000     4999900000     280024202250     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*l)    
+20000     80000     174930133066     
+
+===================================================
+0
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*c)    sum( cast(k as bigint)*s)    
+50000     200000     4999900000     280024202250     
+
+===================================================
+count(*)    sum(c)    sum( cast(k as bigint)*l)    
+20000     80000     174930133066     
+
+===================================================
+    
+Case 14: empty input, serial and parallel; result = no_hash_aggregate     
+
+===================================================
+k    count(*)    sum(v)    
+
+===================================================
+k    count(*)    sum(v)    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_grp)
+
+  rewritten query: select [dba.t_grp].k, count(*), sum([dba.t_grp].v) from [dba.t_grp] [dba.t_grp] where ([dba.t_grp].id< ?:? ) group by [dba.t_grp].k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_grp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+k    count(*)    sum(v)    
+
+===================================================
+    
+Case 15: LIMIT and GROUPBY_NUM stop the output; result = no_hash_aggregate     
+
+===================================================
+k    count(*)    sum(v)    sum(n)    
+0     4     10     1.26     
+1     4     26     3.26     
+2     4     42     5.26     
+3     4     58     7.26     
+4     4     74     9.26     
+
+===================================================
+k    count(*)    sum(v)    
+30000     4     438     
+30001     4     115     
+30002     4     18     
+30003     4     34     
+
+===================================================
+groupby_num()    kc    count(*)    sum(v)    
+24998     24997     8     768     
+24999     24998     8     800     
+25000     24999     8     832     
+
+===================================================
+k    count(*)    sum(v)    
+0     4     10     
+1     4     26     
+2     4     42     
+
+===================================================
+k    count(*)    sum(v)    
+49990     1     10     
+49991     1     11     
+49992     1     12     
+49993     1     13     
+49994     1     14     
+49995     1     15     
+
+===================================================
+k    count(*)    sum( char_length(big))    
+0     4     8     
+1     4     8     
+2     4     11     
+
+===================================================
+k    count(*)    sum( char_length(big))    
+19     4     17011     
+20     4     12     
+21     4     12     
+
+===================================================
+k    count(*)    sum(v)    sum(n)    
+0     4     10     1.26     
+1     4     26     3.26     
+2     4     42     5.26     
+3     4     58     7.26     
+4     4     74     9.26     
+
+===================================================
+k    count(*)    sum(v)    
+30000     4     438     
+30001     4     115     
+30002     4     18     
+30003     4     34     
+
+===================================================
+groupby_num()    kc    count(*)    sum(v)    
+24998     24997     8     768     
+24999     24998     8     800     
+25000     24999     8     832     
+
+===================================================
+k    count(*)    sum(v)    
+0     4     10     
+1     4     26     
+2     4     42     
+
+===================================================
+k    count(*)    sum(v)    
+49990     1     10     
+49991     1     11     
+49992     1     12     
+49993     1     13     
+49994     1     14     
+49995     1     15     
+
+===================================================
+k    count(*)    sum( char_length(big))    
+0     4     8     
+1     4     8     
+2     4     11     
+
+===================================================
+k    count(*)    sum( char_length(big))    
+19     4     17011     
+20     4     12     
+21     4     12     
+
+===================================================
+0
