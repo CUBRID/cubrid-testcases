@@ -386,20 +386,20 @@ cola    cnt
 2     2     
 
 Query plan:
-temp(group by)
-    subplan: idx-join (left outer join)
-                 outer: sscan
-                            class: a node[?]
-                            cost:  ? card ?
-                 inner: iscan
-                            class: b node[?]
-                            index: pk term[?] AND term[?] (covers)
-                            cost:  ? card ?
-                 cost:  ? card ?
+idx-join (left outer join)
+    outer: iscan
+               class: a node[?]
+               index: pk (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk term[?] AND term[?] (covers)
+               cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select a.cola, count(*) from tbl a left outer join tbl b on b.cola= ?:?  and a.colb=b.colb group by a.cola having max(b.cola) is not null 
+/* ---> skip GROUP BY */
 ===================================================
     
 Case 20: RIGHT OUTER JOIN, check elimination on left-side uniqueness -> elimination not allowed     
