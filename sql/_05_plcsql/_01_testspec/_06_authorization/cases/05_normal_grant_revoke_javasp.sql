@@ -30,6 +30,11 @@ drop function test2;
 
 call login('dba','') on class db_user;
 
+-- CBRD-27720: CREATE OR REPLACE keeps the privileges
+CREATE OR REPLACE FUNCTION test1() RETURN int as
+language java name 'SpTest3.typetestint0() return int';
+SELECT * FROM db_auth WHERE grantee_name = 'T1';
+
 -- REVOKE test
 REVOKE EXECUTE ON PROCEDURE test1 FROM t1;
 SHOW GRANTS FOR T1;
