@@ -6,7 +6,7 @@ These *writing rules* say how to write the files of a TC under `sql/`. What a TC
 
 ### Place and files
 
-**Put the TC of an issue whose Jira type is Correct Error under `sql/_13_issues/_<yy>_<1|2>h/` for the half-year in which the issue was created.** The date of the issue picks the directory, not the day you write the TC. What the directories hold is in [Operational facts](../AGENTS.md#operational-facts). Example: a Correct Error issue created on 2026-08-03 gets `sql/_13_issues/_26_2h/cases/cbrd_xxxxx.sql`, also when you write its TC in 2027.
+**Put the TC of an issue whose Jira type is Correct Error under `sql/_13_issues/_<yy>_<1|2>h/` for the half-year in which you write the TC.** The day you write the TC picks the directory, not a date on the issue, for developers and QA alike. What the directories hold is in [Operational facts](../AGENTS.md#operational-facts). Example: a Correct Error issue created on 2026-08-03 gets `sql/_13_issues/_27_1h/cases/cbrd_xxxxx.sql` when you write its TC on 2027-02-10.
 
 **Put the TC of any other issue under the code-name directory `_<no>_<codename>/` of the Jira version that the issue is planned for or fixed in.** A TC of a Correct Error issue stays under `_13_issues/` even when the issue names a version. Example: an Improve issue with the fix version `guava` gets `sql/_36_guava/cbrd_xxxxx/cases/cbrd_xxxxx.sql`, and a TC that extends an existing feature directory goes into it, such as `sql/_35_fig_cake/grant_revoke_redefine/cases/`.
 
