@@ -10,8 +10,8 @@
  *
  * Fix: the group count is multiplied by the HAVING selectivity. SUM, AVG, MIN
  * and MAX compared with a constant are estimated with the histogram of the
- * aggregated column. Any other aggregate predicate takes the default
- * selectivity.
+ * aggregated column, and COUNT (*) with the distribution of the group size.
+ * Any other aggregate predicate takes the default selectivity.
  *
  * Data: t_ord 20,000 orders, t_line 1 to 7 lines per order (80,003 rows),
  * l_qty 1..50, l_date in 2020.
@@ -21,7 +21,7 @@
  *   Case 3: max (l_qty) > 49 -> idx-join
  *   Case 4: min (l_qty) > 40 -> idx-join
  *   Case 5: max (l_date) > date'2020-12-20' -> idx-join
- *   Case 6: count (*) > 5, the default selectivity -> idx-join
+ *   Case 6: count (*) > 6, from the group size -> idx-join
  *   Case 7: control, sum (l_qty) > 10 keeps almost every group -> hash join,
  *           the same before and after the fix
  *   Case 8: control, no HAVING -> hash join, the same before and after the fix
@@ -69,9 +69,9 @@ evaluate '[5] max (l_date) > date 2020-12-20: idx-join, inner iscan t_ord on pk_
 --@queryplan
 select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having max (l_date) > date'2020-12-20') av where o.o_id = av.l_oid;
 
-evaluate '[6] count (*) > 5: idx-join, inner iscan t_ord on pk_t_ord_o_id';
+evaluate '[6] count (*) > 6: idx-join, inner iscan t_ord on pk_t_ord_o_id';
 --@queryplan
-select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having count (*) > 5) av where o.o_id = av.l_oid;
+select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having count (*) > 6) av where o.o_id = av.l_oid;
 
 evaluate '[7] control, sum (l_qty) > 10: hash join';
 --@queryplan

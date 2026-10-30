@@ -165,11 +165,11 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_date)>date '?-?-?') av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[6] count (*) > 5: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+[6] count (*) > 6: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
-5715     
+2858     
 
 Query plan:
 iscan
