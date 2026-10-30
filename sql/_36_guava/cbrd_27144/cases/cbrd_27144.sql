@@ -73,10 +73,14 @@ show trace;
 set trace off;
 deallocate prepare s_cbrd_27144;
 
--- Case 4: a variable the statement assigns keeps the default estimate (index scan for 1)
+-- Case 4: a variable the statement assigns keeps the default estimate (index scan for 1),
+-- also when the assignment is in another query block of the statement
 set @v = 1;
 --@fullplan
 select count (pad), max (@v := a) from t_cbrd_27144 where a = @v;
+set @v = 1;
+--@fullplan
+select count (pad), (select max (@v := 1) from db_root) from t_cbrd_27144 where a = @v;
 
 -- Case 5: a session variable in the USING list was already estimated with its value
 -- (first-execution peek); the statement text differs from the other cases' so that no

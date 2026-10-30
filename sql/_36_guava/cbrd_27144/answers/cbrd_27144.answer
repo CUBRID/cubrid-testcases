@@ -258,6 +258,37 @@ select count(t_cbrd_?.pad), max(@v := t_cbrd_?.a) from t_cbrd_? t_cbrd_? where t
 ===================================================
 0
 ===================================================
+count(pad)    (select max(@v := 1) from db_root)    
+9900     1     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+Join graph nodes:
+node[0]: db_root db_root(0/1) (loc 0)
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(@v := ?) from db_root db_root)
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad), (select max(@v := ?) from db_root db_root) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
 0
 ===================================================
 0
