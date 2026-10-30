@@ -104,6 +104,8 @@ select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_outer o left outer join (s
 
 
 evaluate 'Case 12: CTE returns two copies of each left row';
+-- 11.4 does not inline a nonrecursive CTE into a derived table, so this case runs as a CTE scan.
+-- It checks the duplicate count only; the derived-input path of the fix is covered by Case 11.
 with rhs as (select v from t_unique union all select v from t_unique) select /*+ recompile */ o.id from t_outer o left outer join rhs s on s.v=1 order by 1;
 show trace;
 with rhs as (select v from t_unique union all select v from t_unique) select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_outer o left outer join rhs s on s.v=1 order by 1;

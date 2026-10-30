@@ -206,7 +206,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (noscan time: ?, fetch: ?, ioread: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
      
 
 ===================================================
@@ -376,7 +376,6 @@ Trace Statistics:
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -416,9 +415,9 @@ Query Plan:
   SORT (order by)
     NESTED LOOPS (left outer join)
       TABLE SCAN (o)
-      TABLE SCAN (rhs)
+      TABLE SCAN (s)
 
-  rewritten query: select o.id from [dba.t_outer] o left outer join (select [dba.t_unique].v from [dba.t_unique] [dba.t_unique] union all select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]) rhs (v) on rhs.v= ?:?  order by ?
+  rewritten query: with rhs(v) as ((select [dba.t_unique].v from [dba.t_unique] [dba.t_unique] union all select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]))select o.id from [dba.t_outer] o left outer join [dba.rhs] s on s.v= ?:?  order by ?
 
 
 Trace Statistics:
@@ -426,12 +425,13 @@ Trace Statistics:
     SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
