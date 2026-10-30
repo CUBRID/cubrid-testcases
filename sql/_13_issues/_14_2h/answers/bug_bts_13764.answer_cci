@@ -1595,8 +1595,11 @@ yyyy    mm    sales_sum    sum(sales_sum)
 null     null     1300.0     39620.0     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup
@@ -1608,8 +1611,11 @@ yyyy    mm    sales_sum    sum(sales_sum)
 null     null     1300.0     39620.0     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup having t.mm is null 
@@ -1620,8 +1626,11 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2002     1     980.0     980.0     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup having t.mm= ?:? 
@@ -1642,8 +1651,11 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2000     null     1610.0     14300.0     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup having t.yyyy= ?:? 
@@ -1652,8 +1664,11 @@ yyyy    mm    sales_sum    sum(sales_sum)
 2000     null     1610.0     14300.0     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.yyyy, t.mm, t.sales_sum, sum(t.sales_sum) from t t group by t.yyyy, t.mm with rollup having t.yyyy= ?:?  and sum(t.sales_sum)>?
