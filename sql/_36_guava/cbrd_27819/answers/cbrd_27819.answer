@@ -1,0 +1,1592 @@
+===================================================
+0
+===================================================
+    
+Case 1: DOUBLE and FLOAT to NUMERIC by CAST and by assignment     
+
+===================================================
+q    cast(12345678901234567e0 as numeric(38,0))    cast(144115188075855872e0 as numeric(38,0))    cast(9007199254740993e0 as numeric(20,0))    cast(1.2345678901234567e30 as numeric(38,0))    
+c1a     12345678901234560     144115188075855800     9007199254740992     1234567890123456000000000000000     
+
+===================================================
+q    cast(0.1e0 as numeric(20,18))    cast(1e0/3 as numeric(38,30))    cast(2e0/3 as numeric(10,9))    cast(0.30000000000000004e0 as numeric(20,18))    
+c1b     0.100000000000000000     0.333333333333333300000000000000     0.666666667     0.300000000000000000     
+
+===================================================
+q    cast(1.5e-10 as numeric(20,15))    cast(1e-20 as numeric(38,30))    cast(1e-300 as numeric(38,30))    cast(1.234567e-7 as numeric(30,20))    
+c1c     1.50000E-10     1.0000000000E-20     0E-30     1.2345670000000E-7     
+
+===================================================
+q    cast(1.5e0 as numeric(5,0))    cast(2.5e0 as numeric(5,0))    cast(-2.5e0 as numeric(5,0))    cast(0.125e0 as numeric(5,2))    cast(0.135e0 as numeric(5,2))    cast(-0.0e0 as numeric(5,2))    
+c1d     2     3     -3     0.13     0.14     0.00     
+
+===================================================
+q    cast(-1234.5678e0 as numeric(10,2))    cast(99999.994e0 as numeric(7,2))    cast(1.234567890123456e37 as numeric(38,0))    cast(123e0 as numeric)    cast(0.5e0 as numeric)    
+c1e     -1234.57     99999.99     12345678901234560000000000000000000000     123     0.5     
+
+===================================================
+q    cast( cast(0.1 as float) as numeric(20,18))    cast( cast(16777217 as float) as numeric(20,0))    cast( cast(1.5e-5 as float) as numeric(20,15))    cast( cast(-3.3 as float) as numeric(10,3))    cast( cast(1e20 as float) as numeric(38,0))    
+c1f     0.100000000000000000     16777210     0.000014999990000     -3.300     100000000000000000000     
+
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+0
+===================================================
+4
+===================================================
+1
+===================================================
+q    id    n    w    
+c1k     1     0.100001     12345678901234560     
+c1k     2     0.333333     9007199254740992     
+c1k     3     -12345.678901     10000000000000000000000000000000000000     
+c1k     4     0.100000     16777210     
+
+===================================================
+    
+Case 2: SMALLINT, INTEGER, BIGINT and NUMERIC of another scale compared with NUMERIC     
+
+===================================================
+q    cast(5 as smallint)=5.00    cast(5 as integer)<5.01    cast(-5 as bigint)>-5.01    cast(5 as integer)=5.000000001    cast(-32768 as smallint)=-32768.0    cast(2147483647 as integer)<2147483647.5    
+c2a     1     1     1     0     1     1     
+
+===================================================
+q    cast(9223372036854775807 as bigint)< cast(9223372036854775808 as numeric(20,0))    cast(-9223372036854775808 as bigint)> cast(-9223372036854775809 as numeric(20,0))    cast(9223372036854775807 as bigint)= cast(9223372036854775807 as numeric(19,0))    cast(9007199254740993 as bigint)= cast(9007199254740992 as numeric(20,0))    cast(9007199254740993 as bigint)= cast(9007199254740993 as numeric(20,0))    
+c2b     1     1     1     0     1     
+
+===================================================
+q    5.5 between  cast(5 as integer) and  cast(6 as bigint)    cast(7 as bigint) in multiset{6.99, 7.00, 7.01}    case when  cast(3 as smallint)=3.0 then 'eq' else 'ne' end    nullif( cast(4 as integer), 4.0)    cast(null as integer)=1.0    
+c2c     1     1     eq     null     null     
+
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+q    id    s=n    i<n    b>n    b=w    i<=w    
+c2d     1     1     0     0     1     1     
+c2d     2     0     0     1     1     1     
+c2d     3     0     1     1     1     1     
+c2d     4     0     1     0     1     0     
+c2d     5     1     0     0     0     1     
+c2d     6     null     null     null     null     null     
+
+===================================================
+q    id    
+c2ei     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_ic node[?]
+                 index: i_ic_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ei', t_ic.id from t_ic t_ic where t_ic.n= ?:?  using index t_ic.i_ic_n(+) order by ?
+===================================================
+q    id    
+c2en     5     
+
+===================================================
+q    id    
+c2fi     1     
+c2fi     2     
+c2fi     3     
+c2fi     4     
+c2fi     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_ic node[?]
+                 index: i_ic_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?fi', t_ic.id from t_ic t_ic where (t_ic.n> cast(-? as smallint) and t_ic.n< cast(? as bigint)) using index t_ic.i_ic_n(+) order by ?
+===================================================
+q    id    
+c2fn     1     
+c2fn     2     
+c2fn     3     
+c2fn     4     
+c2fn     5     
+
+===================================================
+q    id    
+c2gi     3     
+c2gi     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_ic node[?]
+                 index: i_ic_b term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?gi', t_ic.id from t_ic t_ic where (t_ic.b>= ?:?  and t_ic.b<= ?:? ) using index t_ic.i_ic_b(+) order by ?
+===================================================
+q    id    
+c2gn     3     
+c2gn     5     
+
+===================================================
+q    id    
+c2hi     3     
+c2hi     4     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_ic node[?]
+                 index: i_ic_w term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?hi', t_ic.id from t_ic t_ic where ((t_ic.w= ?:? ) or (t_ic.w< ?:? )) using index t_ic.i_ic_w(+) order by ?
+===================================================
+q    id    
+c2hn     3     
+c2hn     4     
+
+===================================================
+q    id    id    
+c2in     1     1     
+c2in     2     2     
+c2in     3     3     
+c2in     4     4     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_ic_w term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?in', x.id, y.id from t_ic x, t_ic y where x.b=y.w order by ?, ?
+===================================================
+q    id    id    
+c2ih     1     1     
+c2ih     2     2     
+c2ih     3     3     
+c2ih     4     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'c?ih', x.id, y.id from t_ic x, t_ic y where x.b=y.w order by ?, ?
+===================================================
+q    id    id    
+c2jn     1     1     
+c2jn     5     5     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_ic_n term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?jn', x.id, y.id from t_ic x, t_ic y where x.i=y.n order by ?, ?
+===================================================
+q    id    id    
+c2jh     1     1     
+c2jh     5     5     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'c?jh', x.id, y.id from t_ic x, t_ic y where x.i=y.n order by ?, ?
+===================================================
+0
+===================================================
+q    id    
+c2k     5     
+
+===================================================
+q    id    
+c2l     2     
+c2l     3     
+
+===================================================
+0
+===================================================
+q    cast(1.5 as numeric(5,1))= cast(1.50 as numeric(10,2))    cast(-1.25 as numeric(3,2))< cast(-1.2 as numeric(2,1))    cast(-7.25 as numeric(3,2))< cast(-7.24 as numeric(30,2))    cast(12345678901234567890.5 as numeric(21,1))= cast(12345678901234567890.50 as numeric(22,2))    cast(0 as numeric(5,0))= cast(-0.00 as numeric(5,2))    
+c2m     1     1     1     1     1     
+
+===================================================
+q    cast(1 as numeric(38,0))= cast(1.0000000000000000000000000000000000000 as numeric(38,37))    cast(99999999999999999999999999999999999999 as numeric(38,0))> cast(0.99999999999999999999999999999999999999 as numeric(38,38))    cast(-99999999999999999999999999999999999999 as numeric(38,0))< cast(-0.99999999999999999999999999999999999999 as numeric(38,38))    cast(999999999999999999999999999999999999.99 as numeric(38,2))< cast(1000000000000000000000000000000000000 as numeric(37,0))    cast(999999999999999999999999999999999999.99 as numeric(38,2))> cast(999999999999999999999999999999999999 as numeric(36,0))    
+c2n     1     1     1     1     1     
+
+===================================================
+q    id    n=w    n<w    n> cast(-2.505 as numeric(6,3))    w> cast(9223372036854775806.5 as numeric(20,1))    
+c2o     1     1     0     1     0     
+c2o     2     0     1     1     0     
+c2o     3     0     1     1     1     
+c2o     4     0     0     1     0     
+c2o     5     0     1     1     1     
+c2o     6     null     null     null     null     
+
+===================================================
+q    id    
+c2pi     1     
+c2pi     2     
+c2pi     3     
+c2pi     4     
+c2pi     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_ic node[?]
+                 index: i_ic_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?pi', t_ic.id from t_ic t_ic where (t_ic.n>= cast(-?.? as numeric(?,?)) and t_ic.n< cast(?.? as numeric(?,?))) using index t_ic.i_ic_n(+) order by ?
+===================================================
+q    id    
+c2pn     1     
+c2pn     2     
+c2pn     3     
+c2pn     4     
+c2pn     5     
+
+===================================================
+q    id    id    
+c2qn     1     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_ic_w term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?qn', x.id, y.id from t_ic x, t_ic y where x.n=y.w order by ?, ?
+===================================================
+q    id    id    
+c2qh     1     1     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'c?qh', x.id, y.id from t_ic x, t_ic y where x.n=y.w order by ?, ?
+===================================================
+    
+Case 3: NUMERIC add, subtract and multiply     
+
+===================================================
+q    cast(12345678901234567 as numeric(38,0))+1    cast(99999999999999999999999999999999999998 as numeric(38,0))+1    cast(0.999 as numeric(4,3))+ cast(0.001 as numeric(4,3))    cast(1.25 as numeric(5,2))+ cast(3 as bigint)    
+c3a     12345678901234568     99999999999999999999999999999999999999     1.999     4.25     
+
+===================================================
+q    cast(1 as numeric(38,10))- cast(0.0000000001 as numeric(38,10))    cast(-99999.99 as numeric(7,2))-0.01    cast(5 as numeric(10,0))- cast(5.000001 as numeric(10,6))    cast(-9223372036854775808 as numeric(20,0))-1    
+c3b     0.9999999999     -99999.9900000001     -0.000001     -9223372036854775808.0000000001     
+
+===================================================
+q    cast(1.25 as numeric(5,2))* cast(3 as bigint)    cast(12345678901234567890 as numeric(20,0))* cast(12345678901234567 as numeric(17,0))    cast(1.0000000001 as numeric(38,10))* cast(1.0000000001 as numeric(38,10))    cast(-0.5 as numeric(2,1))* cast(0 as numeric(1,0))    
+c3c     3.75     152415787532388356514250977776253630     1.00000000020000000001     0     
+
+===================================================
+q    cast(99999999999999999999 as numeric(20,0))* cast(9999999999999999999 as numeric(19,0))    cast(123456789.123456789 as numeric(38,9))* cast(987654321.987654321 as numeric(38,9))    
+c3d     999999999999999999890000000000000000001     121932631356500531.347203169112635269     
+
+===================================================
+q    cast(99999999999999999999999999999999999999 as numeric(38,0))+1    
+c3e     100000000000000000000000000000000000000     
+
+===================================================
+q    cast(10000000000000000000 as numeric(20,0))* cast(10000000000000000000 as numeric(20,0))    
+c3f     100000000000000000000000000000000000000     
+
+===================================================
+q    typeof( cast(1 as numeric(5,2))+1e0)    typeof( cast(1 as numeric(5,2))+ cast(1 as numeric(10,4)))    typeof( cast(1 as numeric(38,10))* cast(1 as numeric(38,10)))    typeof( cast(1 as numeric(15,2))* cast(1 as numeric(15,2)))    
+c3g     double     numeric     numeric     numeric     
+
+===================================================
+0
+===================================================
+4
+===================================================
+q    id    a+b    a-b    a*b    c+d    c-d    c*c    d*d    
+c3h     1     1234567890125.95     1234567890120.95     3086419725308.6250     123456789012346913469124.5801456789     -123456789012344444333344.5554543211     1524157875049535257.50053345778750190521     15241578753238836750495351540313976765280000000     
+c3h     2     0.00     -0.02     -0.0001     -1.0001000001     1.0000999999     1E-20     1.00020001     
+c3h     3     0.00     19999999999999.98     -99999999999999800000000000.0001     9999999999999999999999999999.9999999999     9999999999999999999999999999.9999999999     99999999999999999999999999999999999998000000000000000000     0     
+c3h     4     null     null     null     2.0000000000     0E-10     1.00000000000000000000     1.00000000     
+
+===================================================
+q    sum(a)    sum(c)    avg(a)    sum(a*b)    sum(d-c)    
+c3i     11234567890123.43     10000000000000000001234567891.0123456787     3.7448559633744766E12     -99999999999996713580274691.3752     -9999876543210987655555666656.4446456787     
+
+===================================================
+    
+Case 4: ROUND, TRUNC, FLOOR and CEIL of NUMERIC     
+
+===================================================
+q    round( cast(2.5 as numeric(3,1)), 0)    round( cast(-2.5 as numeric(3,1)), 0)    round( cast(1.005 as numeric(5,3)), 2)    round( cast(-0.4 as numeric(2,1)), 0)    round( cast(123.456 as numeric(6,3)), -1)    round( cast(155 as numeric(3,0)), -1)    round( cast(-150 as numeric(3,0)), -2)    
+c4a     3.0     -3.0     1.010     0.0     120.000     160     -200     
+
+===================================================
+q    trunc( cast(2.59 as numeric(3,2)), 1)    trunc( cast(-2.59 as numeric(3,2)), 1)    trunc( cast(-0.09 as numeric(3,2)), 1)    trunc( cast(1234.5 as numeric(5,1)), -2)    trunc( cast(99.99 as numeric(4,2)), 0)    
+c4b     2.50     -2.50     0.00     1200.0     99.00     
+
+===================================================
+q    floor( cast(2.5 as numeric(3,1)))    floor( cast(-2.5 as numeric(3,1)))    ceil( cast(2.1 as numeric(3,1)))    ceil( cast(-2.9 as numeric(3,1)))    ceil( cast(99.5 as numeric(3,1)))    floor( cast(-99.5 as numeric(3,1)))    ceil( cast(-0.5 as numeric(2,1)))    
+c4c     2.0     -3.0     3.0     -2.0     100.0     -100.0     0.0     
+
+===================================================
+q    round( cast(99999999999999999999999999999999999.995 as numeric(38,3)), 2)    round( cast(12345678901234567890.123456789 as numeric(38,9)), 5)    trunc( cast(-12345678901234567890.123456789 as numeric(38,9)), -10)    ceil( cast(12345678901234567890.000000001 as numeric(38,9)))    
+c4d     100000000000000000000000000000000000.000     12345678901234567890.123460000     -12345678900000000000.000000000     12345678901234567891.000000000     
+
+===================================================
+q    round( cast(1.23456 as numeric(6,5)), 2.7e0)    round( cast(1.23456 as numeric(6,5)),  cast(3 as smallint))    round( cast(1.23456 as numeric(6,5)),  cast(1 as bigint))    trunc( cast(1.23456 as numeric(6,5)), 300)    round( cast(123.4 as numeric(4,1)), -300)    
+c4e     1.23000     1.23500     1.20000     1.23456     0.0     
+
+===================================================
+q    typeof( round( cast(2.5 as numeric(3,1)), 0))    typeof( trunc( cast(2.59 as numeric(3,2)), 1))    typeof( ceil( cast(99.5 as numeric(3,1))))    typeof( floor( cast(-2.5 as numeric(3,1))))    typeof( round( cast(155 as numeric(3,0)), -1))    
+c4f     numeric     numeric     numeric     numeric     numeric     
+
+===================================================
+0
+===================================================
+6
+===================================================
+q    id    round(n, 2)    round(n, -3)    trunc(n, 1)    trunc(n, -1)    floor(n)    ceil(n)    round(n, 'default')    
+c4g     1     12345678.5600     12346000.0000     12345678.5000     12345670.0000     12345678.0000     12345679.0000     12345679.0000     
+c4g     2     -12345678.5600     -12346000.0000     -12345678.5000     -12345670.0000     -12345679.0000     -12345678.0000     -12345679.0000     
+c4g     3     0.0100     0.0000     0.0000     0.0000     0.0000     1.0000     0.0000     
+c4g     4     -0.0100     0.0000     0.0000     0.0000     -1.0000     0.0000     0.0000     
+c4g     5     100000000.0000     100000000.0000     99999999.9000     99999990.0000     99999999.0000     100000000.0000     100000000.0000     
+c4g     6     null     null     null     null     null     null     null     
+
+===================================================
+    
+Case 5: NUMERIC of every stored size, hash GROUP BY and query cache with NUMERIC binds     
+
+===================================================
+0
+===================================================
+4
+===================================================
+q    id    n1    n4    n9    n18    n19    n38    n38s    
+c5a     1     9     99.99     999999999     999999999999999.999     9999999999999999999     99999999999999999999999999999999999999     0.99999999999999999999999999999999999999     
+c5a     2     -9     -99.99     -999999999     -999999999999999.999     -9999999999999999999     -99999999999999999999999999999999999999     -1E-38     
+c5a     3     0     0.00     0     0.000     0     0     0E-38     
+c5a     4     1     0.01     1     0.001     1844674407370955161     18446744073709551616     0.50000000000000000000000000000000000000     
+
+===================================================
+q    n4+n4    n19+n19    n38-1    n38s*2    
+c5b     0.02     3689348814741910322     18446744073709551615     1.00000000000000000000000000000000000000     
+
+===================================================
+0
+===================================================
+6
+===================================================
+q    n    count(*)    
+c5c     12345678901234567     2     
+c5c     12345678901234568     2     
+c5c     12345678901234569     2     
+c5c     24691357802469134     1     
+c5c     24691357802469136     1     
+c5c     24691357802469138     1     
+c5c     144115188075855870     2     
+c5c     144115188075855872     2     
+c5c     144115188075855873     2     
+c5c     288230376151711740     1     
+c5c     288230376151711744     1     
+c5c     288230376151711746     1     
+
+===================================================
+q    n4    count(*)    sum(n38)    
+c5d     -99.99     2     -199999999999999999999999999999999999998     
+c5d     0.00     2     0     
+c5d     0.01     2     36893488147419103232     
+c5d     99.99     2     199999999999999999999999999999999999998     
+
+===================================================
+0
+===================================================
+q    id    
+c5e     4     
+c5e     5     
+c5e     6     
+
+===================================================
+q    id    
+c5f     5     
+c5f     6     
+
+===================================================
+q    id    
+c5g     2     
+c5g     3     
+c5g     4     
+c5g     5     
+c5g     6     
+
+===================================================
+q    id    
+c5h     4     
+c5h     5     
+c5h     6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+13
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+6
+===================================================
+6
+===================================================
+6
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 6: BIGINT index, equality and ranges near 2^53 and 2^57, binds     
+
+===================================================
+q    b    
+c6ai     9007199254740992     
+c6ai     9007199254740993     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?ai', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+===================================================
+q    b    
+c6an     9007199254740992     
+c6an     9007199254740993     
+
+===================================================
+q    b    
+c6bi     9007199254740994     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?bi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+===================================================
+q    b    
+c6bn     9007199254740994     
+
+===================================================
+q    b    
+c6ci     9007199254740994     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ci', t_big.b from t_big t_big where (t_big.b> ?:?  and t_big.b< ?:? ) using index t_big.i_big_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+q    b    
+c6cn     9007199254740994     
+
+===================================================
+q    b    
+c6di     9007199254740992     
+c6di     9007199254740993     
+c6di     9007199254740994     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?di', t_big.b from t_big t_big where (t_big.b>= ?:?  and t_big.b< ?:? ) using index t_big.i_big_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+q    b    
+c6dn     9007199254740992     
+c6dn     9007199254740993     
+c6dn     9007199254740994     
+
+===================================================
+q    b    
+c6ei     9007199254740991     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ei', t_big.b from t_big t_big where (t_big.b> ?:?  and t_big.b< ?:? ) using index t_big.i_big_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+q    b    
+c6en     9007199254740991     
+
+===================================================
+q    b    
+c6fi     144115188075855870     
+c6fi     144115188075855872     
+c6fi     144115188075855873     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?fi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+===================================================
+q    b    
+c6fn     144115188075855870     
+c6fn     144115188075855872     
+c6fn     144115188075855873     
+
+===================================================
+q    b    
+c6gi     9007199254740992     
+c6gi     9007199254740993     
+c6gi     144115188075855870     
+c6gi     144115188075855872     
+c6gi     144115188075855873     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?gi', t_big.b from t_big t_big where ((t_big.b= ?:? ) or (t_big.b= ?:? )) using index t_big.i_big_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+q    b    
+c6gn     9007199254740992     
+c6gn     9007199254740993     
+c6gn     144115188075855870     
+c6gn     144115188075855872     
+c6gn     144115188075855873     
+
+===================================================
+q    b    
+c6hi     9007199254740993     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_big node[?]
+                 index: i_big_b term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?hi', t_big.b from t_big t_big where (t_big.b= ?:? ) using index t_big.i_big_b(+) order by ?
+===================================================
+q    b    
+c6hn     9007199254740993     
+
+===================================================
+0
+===================================================
+0
+===================================================
+q    b    
+c6ii     9007199254740994     
+
+===================================================
+q    b    
+c6in     9007199254740994     
+
+===================================================
+q    b    
+c6ji     9007199254740992     
+c6ji     9007199254740993     
+
+===================================================
+q    b    
+c6jn     9007199254740992     
+c6jn     9007199254740993     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+q    b    
+c6k     9007199254740992     
+c6k     9007199254740993     
+
+===================================================
+q    b    
+c6l     9223372036854775807     
+
+===================================================
+0
+===================================================
+    
+Case 7: BIGINT index, non-integer and out-of-range DOUBLE bounds     
+
+===================================================
+q    b    
+c7ai     1     
+c7ai     2     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ai', t_big.b from t_big t_big where (t_big.b>= ?:?  and t_big.b<= ?:? ) using index t_big.i_big_b(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+q    b    
+c7an     1     
+c7an     2     
+
+===================================================
+q    count(*)    
+c7bi     0     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?bi', count(*) from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7bn     0     
+
+===================================================
+q    count(*)    
+c7ci     13     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?ci', count(*) from t_big t_big where (t_big.b<= ?:? ) using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7cn     13     
+
+===================================================
+q    count(*)    
+c7di     1     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?di', count(*) from t_big t_big where (t_big.b>= ?:? ) using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7dn     1     
+
+===================================================
+q    count(*)    
+c7ei     12     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?ei', count(*) from t_big t_big where (t_big.b< ?:? ) using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7en     12     
+
+===================================================
+q    count(*)    
+c7fi     1     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?fi', count(*) from t_big t_big where (t_big.b<= ?:? ) using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7fn     1     
+
+===================================================
+q    count(*)    
+c7gi     13     
+
+Query plan:
+iscan
+    class: t_big node[?]
+    index: i_big_b term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?gi', count(*) from t_big t_big where (t_big.b> ?:?  and t_big.b< ?:? ) using index t_big.i_big_b(+)
+===================================================
+q    count(*)    
+c7gn     13     
+
+===================================================
+    
+Case 8: NUMERIC index, 17-digit values and non-integer DOUBLE values     
+
+===================================================
+q    id    
+c8ai     1     
+c8ai     2     
+c8ai     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_wide node[?]
+                 index: i_wide_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ai', t_wide.id from t_wide t_wide where t_wide.n= ?:?  using index t_wide.i_wide_n(+) order by ?
+===================================================
+q    id    
+c8an     1     
+c8an     2     
+c8an     3     
+
+===================================================
+q    count(*)    
+c8bi     0     
+
+Query plan:
+iscan
+    class: t_wide node[?]
+    index: i_wide_n term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?bi', count(*) from t_wide t_wide where (t_wide.n> ?:?  and t_wide.n< ?:? ) using index t_wide.i_wide_n(+)
+===================================================
+q    count(*)    
+c8bn     0     
+
+===================================================
+q    id    
+c8ci     4     
+c8ci     5     
+c8ci     6     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_wide node[?]
+                 index: i_wide_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ci', t_wide.id from t_wide t_wide where t_wide.n= ?:?  using index t_wide.i_wide_n(+) order by ?
+===================================================
+q    id    
+c8cn     4     
+c8cn     5     
+c8cn     6     
+
+===================================================
+q    id    
+c8di     7     
+c8di     8     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_wide node[?]
+                 index: i_wide_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?di', t_wide.id from t_wide t_wide where ((t_wide.n>= ?:? ) or (t_wide.n<= ?:? )) using index t_wide.i_wide_n(+) order by ?
+===================================================
+q    id    
+c8dn     7     
+c8dn     8     
+
+===================================================
+q    count(*)    
+c8ei     0     
+
+Query plan:
+iscan
+    class: t_num node[?]
+    index: i_num_n term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?ei', count(*) from t_num t_num where t_num.n= ?:?  using index t_num.i_num_n(+)
+===================================================
+q    count(*)    
+c8en     0     
+
+===================================================
+q    id    
+c8fi     1     
+c8fi     2     
+c8fi     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_num node[?]
+                 index: i_num_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?fi', t_num.id from t_num t_num where (t_num.n< ?:? ) using index t_num.i_num_n(+) order by ?
+===================================================
+q    id    
+c8fn     1     
+c8fn     2     
+c8fn     3     
+
+===================================================
+q    id    
+c8gi     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_num node[?]
+                 index: i_num_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?gi', t_num.id from t_num t_num where t_num.n= ?:?  using index t_num.i_num_n(+) order by ?
+===================================================
+q    id    
+c8gn     3     
+
+===================================================
+q    id    
+c8hi     4     
+c8hi     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_num node[?]
+                 index: i_num_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?hi', t_num.id from t_num t_num where (t_num.n> ?:? ) using index t_num.i_num_n(+) order by ?
+===================================================
+q    id    
+c8hn     4     
+c8hn     5     
+
+===================================================
+q    count(*)    
+c8ii     5     
+
+Query plan:
+iscan
+    class: t_num node[?]
+    index: i_num_n term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select 'c?ii', count(*) from t_num t_num where (t_num.n<= ?:? ) using index t_num.i_num_n(+)
+===================================================
+q    count(*)    
+c8in     5     
+
+===================================================
+    
+Case 9: INTEGER, BIGINT and NUMERIC index against FLOAT near 2^24     
+
+===================================================
+q    id    
+c9ai     2     
+c9ai     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_flt node[?]
+                 index: i_flt_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ai', t_flt.id from t_flt t_flt where t_flt.i= cast(? as float) using index t_flt.i_flt_i(+) order by ?
+===================================================
+q    id    
+c9an     2     
+c9an     3     
+
+===================================================
+q    id    
+c9bi     2     
+c9bi     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_flt node[?]
+                 index: i_flt_b term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?bi', t_flt.id from t_flt t_flt where t_flt.b= cast(? as float) using index t_flt.i_flt_b(+) order by ?
+===================================================
+q    id    
+c9bn     2     
+c9bn     3     
+
+===================================================
+q    id    
+c9ci     4     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_flt node[?]
+                 index: i_flt_i term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ci', t_flt.id from t_flt t_flt where (t_flt.i> cast(? as float)) using index t_flt.i_flt_i(+) order by ?
+===================================================
+q    id    
+c9cn     4     
+
+===================================================
+q    id    
+c9di     2     
+c9di     3     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_flt node[?]
+                 index: i_flt_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?di', t_flt.id from t_flt t_flt where t_flt.n= cast(?.? as float) using index t_flt.i_flt_n(+) order by ?
+===================================================
+q    id    
+c9dn     2     
+c9dn     3     
+
+===================================================
+q    id    
+c9ei     4     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_flt node[?]
+                 index: i_flt_n term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ei', t_flt.id from t_flt t_flt where (t_flt.n> cast(?.? as float)) using index t_flt.i_flt_n(+) order by ?
+===================================================
+q    id    
+c9en     4     
+
+===================================================
+    
+Case 10: RANGE, LIST and HASH partitions, UPDATE and DELETE, binds     
+
+===================================================
+q    k    v    
+c10ap     9007199254740993     5     
+
+===================================================
+q    k    v    
+c10aq     9007199254740992     4     
+
+===================================================
+q    k    v    
+c10ar     9007199254740992     4     
+c10ar     9007199254740993     5     
+
+===================================================
+q    k    v    
+c10an     9007199254740992     4     
+c10an     9007199254740993     5     
+
+===================================================
+q    k    v    
+c10bp     9007199254740993     5     
+c10bp     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10bq     9007199254740992     4     
+c10bq     9007199254740993     5     
+c10bq     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10bn     9007199254740992     4     
+c10bn     9007199254740993     5     
+c10bn     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10cp     9     1     
+c10cp     10     2     
+c10cp     11     3     
+
+===================================================
+q    k    v    
+c10cq     9     1     
+c10cq     10     2     
+c10cq     11     3     
+
+===================================================
+q    k    v    
+c10cn     9     1     
+c10cn     10     2     
+c10cn     11     3     
+
+===================================================
+q    k    v    
+c10dp     9     1     
+
+===================================================
+q    k    v    
+c10dn     9     1     
+
+===================================================
+q    k    v    
+c10eq     10     2     
+
+===================================================
+q    k    v    
+c10en     10     2     
+
+===================================================
+q    k    v    
+c10fp     10     2     
+
+===================================================
+q    k    v    
+c10fn     10     2     
+
+===================================================
+q    k    v    
+c10gr     10     2     
+
+===================================================
+q    k    v    
+c10gn     10     2     
+
+===================================================
+q    k    v    
+c10hr     11     3     
+c10hr     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10hn     11     3     
+c10hn     9007199254740994     6     
+
+===================================================
+0
+===================================================
+q    k    v    
+c10ip     9007199254740993     5     
+
+===================================================
+q    k    v    
+c10jp     10     2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+q    k    v    
+c10iq     9007199254740992     4     
+
+===================================================
+q    k    v    
+c10jq     10     2     
+
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+2
+===================================================
+q    k    v    
+c10kp     9     1     
+c10kp     10     2     
+c10kp     11     3     
+c10kp     9007199254740992     4     
+c10kp     9007199254740993     105     
+c10kp     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10kq     9     1     
+c10kq     10     2     
+c10kq     11     3     
+c10kq     9007199254740992     104     
+c10kq     9007199254740993     5     
+c10kq     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10kr     9     1     
+c10kr     10     2     
+c10kr     11     3     
+c10kr     9007199254740992     104     
+c10kr     9007199254740993     105     
+c10kr     9007199254740994     6     
+
+===================================================
+q    k    v    
+c10kn     9     1     
+c10kn     10     2     
+c10kn     11     3     
+c10kn     9007199254740992     104     
+c10kn     9007199254740993     105     
+c10kn     9007199254740994     6     
+
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+2
+===================================================
+q    k    
+c10lp     9     
+c10lp     10     
+c10lp     11     
+c10lp     9007199254740992     
+c10lp     9007199254740994     
+
+===================================================
+q    k    
+c10lq     9     
+c10lq     10     
+c10lq     11     
+c10lq     9007199254740993     
+c10lq     9007199254740994     
+
+===================================================
+q    k    
+c10lr     9     
+c10lr     10     
+c10lr     11     
+c10lr     9007199254740994     
+
+===================================================
+q    k    
+c10ln     9     
+c10ln     10     
+c10ln     11     
+c10ln     9007199254740994     
+
+===================================================
+    
+Case 11: nested-loop, hash and sort-merge join on a mixed key     
+
+===================================================
+q    id    id    
+c11an     1     1     
+c11an     2     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?an', x.id, y.id from t_mix x, t_mix y where x.b=y.d order by ?, ?
+===================================================
+q    id    id    
+c11ah     1     1     
+c11ah     2     1     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'c?ah', x.id, y.id from t_mix x, t_mix y where x.b=y.d order by ?, ?
+===================================================
+q    id    id    
+c11am     1     1     
+c11am     2     1     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: UNORDERED
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: b[?]
+                                         subplan: sscan
+                                                      class: x node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: d[?]
+                                         subplan: sscan
+                                                      class: y node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ 'c?am', x.id, y.id from t_mix x, t_mix y where x.b=y.d order by ?, ?
+===================================================
+q    id    id    
+c11bn     1     2     
+c11bn     2     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?bn', x.id, y.id from t_mix x, t_mix y where x.n=y.d order by ?, ?
+===================================================
+q    id    id    
+c11bh     1     2     
+c11bh     2     2     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: y node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ 'c?bh', x.id, y.id from t_mix x, t_mix y where x.n=y.d order by ?, ?
+===================================================
+q    id    id    
+c11bm     1     2     
+c11bm     2     2     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: UNORDERED
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: n[?]
+                                         subplan: sscan
+                                                      class: x node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: d[?]
+                                         subplan: sscan
+                                                      class: y node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ 'c?bm', x.id, y.id from t_mix x, t_mix y where x.n=y.d order by ?, ?
+===================================================
+q    id    b    
+c11ci     1     9007199254740992     
+c11ci     1     9007199254740993     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_big_b term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?ci', x.id, y.b from t_mix x, t_big y where y.b=x.d order by ?, ?
+===================================================
+q    id    id    
+c11di     2     1     
+c11di     2     2     
+c11di     2     3     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: x node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_wide_n term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ 'c?di', x.id, y.id from t_mix x, t_wide y where y.n=x.d order by ?, ?
+===================================================
+    
+Case 12: an equality term copied into another term (col = const and col2 = col)     
+
+===================================================
+q    id    
+c12ai     1     
+c12ai     2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_eq node[?]
+                 index: i_eq_b term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select 'c?ai', t_eq.id from t_eq t_eq where t_eq.c= ?:?  and t_eq.b= ?:?  using index t_eq.i_eq_b(+) order by ?
+===================================================
+q    id    
+c12ae     1     
+c12ae     2     
+
+===================================================
+q    id    
+c12an     2     
+
+===================================================
+q    count(*)    
+c12bi     0     
+
+Query plan:
+iscan
+    class: t_eq node[?]
+    index: i_eq_n term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'c?bi', count(*) from t_eq t_eq where t_eq.m= ?:?  and t_eq.n= ?:?  using index t_eq.i_eq_n(+)
+===================================================
+q    count(*)    
+c12be     0     
+
+===================================================
+q    count(*)    
+c12bn     1     
+
+===================================================
+q    b    c    
+c12c     9007199254740992     9007199254740993     
+c12c     9007199254740993     9007199254740993     
+
+===================================================
+0
