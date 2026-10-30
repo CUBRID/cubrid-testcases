@@ -19,9 +19,11 @@
  *    Case 5:  COUNT DISTINCT, SUM, MIN, MAX, a NULL inner value
  *    Case 6:  several outer rows per group (a non-unique outer index), and a three-table join
  *    Case 7:  no LIMIT, a HAVING over an aggregate, GROUP BY DESC: the join sorts as before
+ *    Case 8:  an inner partitioned class or class hierarchy is read one partition or class after another, each
+ *             over the whole outer scan, so the rows of a group do not come together: the join sorts
  */
 
-drop table if exists t_digit, t_mv, t_aka, t_note;
+drop table if exists t_digit, t_mv, t_aka, t_note, t_akap, t_akac_sub, t_akac;
 
 -- ten digits for the cross joins below
 create table t_digit (i int);
@@ -40,7 +42,17 @@ create index i_aka_mid on t_aka (mid);
 create table t_note (id int primary key, aid int not null, n int);
 insert into t_note select rownum, mod(rownum, 12000) + 1, mod(rownum, 5) from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 18000;
 create index i_note_aid on t_note (aid);
-update statistics on t_digit, t_mv, t_aka, t_note with fullscan;
+-- the titles again in three hash partitions, and split between a class and its subclass
+create table t_akap (id int, mid int not null, v int) partition by hash (id) partitions 3;
+insert into t_akap select id, mid, v from t_aka;
+create index i_akap_mid on t_akap (mid);
+create table t_akac (id int, mid int not null, v int);
+create table t_akac_sub under t_akac;
+insert into t_akac select id, mid, v from t_aka where mod(id, 2) = 0;
+insert into t_akac_sub select id, mid, v from t_aka where mod(id, 2) = 1;
+create index i_akac_mid on t_akac (mid);
+create index i_akac_sub_mid on t_akac_sub (mid);
+update statistics on t_digit, t_mv, t_aka, t_note, t_akap, t_akac, t_akac_sub with fullscan;
 
 set trace on;
 
@@ -97,5 +109,14 @@ show trace;
 select /*+ recompile */ m.id, count(*) from t_mv m join t_aka a on a.mid = m.id and a.v > 0 group by m.id desc limit 5;
 show trace;
 
+
+evaluate 'Case 8: an inner partitioned class and an inner class hierarchy: the join sorts the GROUP BY; result = use_hash';
+select /*+ recompile */ m.id, count(*), sum(a.v) from t_mv m join t_akap a on a.mid = m.id group by m.id limit 12;
+show trace;
+select /*+ recompile use_hash */ m.id, count(*), sum(a.v) from t_mv m join t_akap a on a.mid = m.id group by m.id limit 12;
+select /*+ recompile */ m.id, count(*), sum(a.v) from t_mv m join all t_akac a on a.mid = m.id group by m.id limit 12;
+show trace;
+select /*+ recompile use_hash */ m.id, count(*), sum(a.v) from t_mv m join all t_akac a on a.mid = m.id group by m.id limit 12;
+
 set trace off;
-drop table t_digit, t_mv, t_aka, t_note;
+drop table t_digit, t_mv, t_aka, t_note, t_akap, t_akac_sub, t_akac;

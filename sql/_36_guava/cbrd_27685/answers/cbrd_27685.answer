@@ -27,6 +27,24 @@
 ===================================================
 0
 ===================================================
+12001
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6000
+===================================================
+6001
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 0
 ===================================================
     
@@ -716,6 +734,132 @@ Trace Statistics:
             SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
+
+===================================================
+    
+Case 8: an inner partitioned class and an inner class hierarchy: the join sorts the GROUP BY; result = use_hash     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    HASH JOIN (inner join)
+      TABLE SCAN (m)
+      TABLE SCAN (a)
+
+  rewritten query: select m.id, count(*), sum(a.v) from [dba.t_mv] m, [dba.t_akap] a where a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_akap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_akap__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_akap__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   PARTITION (table: dba.t_akap__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    HASH JOIN (inner join)
+      TABLE SCAN (m)
+      TABLE SCAN (a)
+
+  rewritten query: select m.id, count(*), sum(a.v) from [dba.t_mv] m,  all [dba.t_akac] a where a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_akac_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (table: dba.t_akac), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
 
 ===================================================
 0
