@@ -2,7 +2,8 @@
 -- A code table filtered by a constant joins a large table on its key. Histograms are per column, so without the rows
 -- the join is priced at 1/NDV whatever key the constant selects. For a node joined by an equality, the optimizer
 -- reads the rows its constant filters select from the table while it plans (through an index on a filter column,
--- at most row_snapshot_max_rows of them) and prices the join by their keys.
+-- at most row_snapshot_max_rows of them; hinted ROW_SNAPSHOT, also a table the statistics count at most 1000 rows
+-- without the index) and prices the join by their keys.
 
 drop table if exists t_27478_c;
 drop table if exists t_27478_f;
@@ -100,6 +101,22 @@ set system parameters 'row_snapshot_max_rows=100';
 
 evaluate 'Case 12: nothing is stored with the statistics';
 select class_name, attr_name from db_histogram where class_name like 't_27478_%' order by class_name, attr_name;
+
+evaluate 'Case 13: hinted ROW_SNAPSHOT, a table the statistics count as small is read without an index (hash join)';
+--@queryplan
+select /*+ recompile row_snapshot */ count (*) from t_27478_x c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+
+evaluate 'Case 14: hinted ROW_SNAPSHOT, a table the statistics count past 1000 rows is not read without an index (nested loop)';
+create table t_27478_y (id int primary key, name varchar(20));
+insert into t_27478_y
+with recursive cte (n) as (select 1 union all select n + 1 from cte where n < 100)
+select rownum, case when rownum = 1 then 'common' else 'code' || rownum end from cte a, cte b where rownum <= 2000;
+update statistics on t_27478_y with fullscan;
+--@queryplan
+select /*+ recompile row_snapshot */ count (*) from t_27478_y c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+drop table t_27478_y;
 
 drop table t_27478_c;
 drop table t_27478_f;
