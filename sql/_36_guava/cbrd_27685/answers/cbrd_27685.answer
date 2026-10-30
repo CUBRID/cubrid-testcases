@@ -1,0 +1,723 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+12000
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+18000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: GROUP_CONCAT with ORDER BY over the join (RND-2589 scenario 32); result = use_hash     
+
+===================================================
+id    group_concat(a.title order by a.title separator ', ')    
+1     aka 0, aka 0     
+4     aka 37, aka 37     
+7     aka 74, aka 74     
+10     aka 111, aka 111     
+13     aka 148, aka 148     
+16     aka 185, aka 185     
+19     aka 222, aka 222     
+22     aka 259, aka 259     
+25     aka 296, aka 296     
+28     aka 333, aka 333     
+31     aka 370, aka 370     
+34     aka 407, aka 407     
+37     aka 444, aka 444     
+40     aka 481, aka 481     
+43     aka 518, aka 518     
+46     aka 555, aka 555     
+49     aka 592, aka 592     
+52     aka 629, aka 629     
+55     aka 666, aka 666     
+58     aka 703, aka 703     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+  group by nosort: true
+
+  rewritten query: select m.id, group_concat(a.title order by ? separator ', ') from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    group_concat(a.title order by a.title separator ', ')    
+1     aka 0, aka 0     
+4     aka 37, aka 37     
+7     aka 74, aka 74     
+10     aka 111, aka 111     
+13     aka 148, aka 148     
+16     aka 185, aka 185     
+19     aka 222, aka 222     
+22     aka 259, aka 259     
+25     aka 296, aka 296     
+28     aka 333, aka 333     
+31     aka 370, aka 370     
+34     aka 407, aka 407     
+37     aka 444, aka 444     
+40     aka 481, aka 481     
+43     aka 518, aka 518     
+46     aka 555, aka 555     
+49     aka 592, aka 592     
+52     aka 629, aka 629     
+55     aka 666, aka 666     
+58     aka 703, aka 703     
+
+===================================================
+    
+Case 2: the join stops at the LIMIT groups: the row of the last movie divides by zero; result = use_hash with the row excluded     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
+37     2     13     
+40     2     8     
+43     2     3     
+46     2     5     
+49     2     7     
+52     2     9     
+55     2     11     
+58     2     13     
+61     2     8     
+64     2     3     
+67     2     5     
+70     2     7     
+73     2     9     
+76     2     11     
+79     2     13     
+82     2     8     
+85     2     3     
+88     2     5     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+  group by nosort: true
+
+  rewritten query: select m.id, count(*), sum(a.v) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id and ?/a.v>? group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum(a.v)    
+1     2     5     
+4     2     5     
+7     2     7     
+10     2     9     
+13     2     11     
+16     2     13     
+19     2     8     
+22     2     3     
+25     2     5     
+28     2     7     
+31     2     9     
+34     2     11     
+37     2     13     
+40     2     8     
+43     2     3     
+46     2     5     
+49     2     7     
+52     2     9     
+55     2     11     
+58     2     13     
+61     2     8     
+64     2     3     
+67     2     5     
+70     2     7     
+73     2     9     
+76     2     11     
+79     2     13     
+82     2     8     
+85     2     3     
+88     2     5     
+
+===================================================
+    
+Case 3: LEFT OUTER JOIN, two outer keys in three have no inner row; result = use_hash     
+
+===================================================
+id    count(a.id)    max(a.title)    
+1     2     aka 0     
+2     0     null     
+3     0     null     
+4     2     aka 37     
+5     0     null     
+6     0     null     
+7     2     aka 74     
+8     0     null     
+9     0     null     
+10     2     aka 111     
+11     0     null     
+12     0     null     
+13     2     aka 148     
+14     0     null     
+15     0     null     
+16     2     aka 185     
+17     0     null     
+18     0     null     
+19     2     aka 222     
+20     0     null     
+21     0     null     
+22     2     aka 259     
+23     0     null     
+24     0     null     
+25     2     aka 296     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+  group by nosort: true
+
+  rewritten query: select m.id, count(a.id), max(a.title) from [dba.t_mv] m left outer join [dba.t_aka] a on a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(a.id)    max(a.title)    
+1     2     aka 0     
+2     0     null     
+3     0     null     
+4     2     aka 37     
+5     0     null     
+6     0     null     
+7     2     aka 74     
+8     0     null     
+9     0     null     
+10     2     aka 111     
+11     0     null     
+12     0     null     
+13     2     aka 148     
+14     0     null     
+15     0     null     
+16     2     aka 185     
+17     0     null     
+18     0     null     
+19     2     aka 222     
+20     0     null     
+21     0     null     
+22     2     aka 259     
+23     0     null     
+24     0     null     
+25     2     aka 296     
+
+===================================================
+    
+Case 4: LIMIT offset, count; a LIMIT past the last group; ORDER BY the GROUP BY key; result = use_hash     
+
+===================================================
+id    count(*)    
+301     2     
+304     2     
+307     2     
+310     2     
+313     2     
+316     2     
+319     2     
+322     2     
+325     2     
+328     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id, covered: true)
+  group by nosort: true
+
+  rewritten query: select m.id, count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=? and groupby_num()>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    
+301     2     
+304     2     
+307     2     
+310     2     
+313     2     
+316     2     
+319     2     
+322     2     
+325     2     
+328     2     
+
+===================================================
+count(*)    sum(c)    sum(s)    
+6000     12000     47997     
+
+===================================================
+count(*)    sum(c)    sum(s)    
+6000     12000     47997     
+
+===================================================
+id    count(*)    
+1     2     
+4     2     
+7     2     
+10     2     
+13     2     
+16     2     
+19     2     
+22     2     
+25     2     
+28     2     
+31     2     
+34     2     
+37     2     
+40     2     
+43     2     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id, covered: true)
+  group by nosort: true
+
+  rewritten query: select m.id, count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    
+1     2     
+4     2     
+7     2     
+10     2     
+13     2     
+16     2     
+19     2     
+22     2     
+25     2     
+28     2     
+31     2     
+34     2     
+37     2     
+40     2     
+43     2     
+
+===================================================
+    
+Case 5: COUNT DISTINCT, SUM, MIN, MAX and a NULL inner value; result = use_hash     
+
+===================================================
+id    count(distinct a.v)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
+1     2     0     0     aka 0     2     
+4     2     2     1     aka 37     2     
+7     2     4     2     aka 74     2     
+10     2     6     3     aka 111     2     
+13     2     8     4     aka 148     2     
+16     2     10     5     aka 185     2     
+19     2     6     6     aka 222     1     
+22     2     14     7     aka 259     2     
+25     2     16     8     aka 296     2     
+28     2     18     9     aka 333     2     
+31     2     20     10     aka 370     2     
+34     2     11     11     aka 407     1     
+37     2     24     12     aka 444     2     
+40     2     26     13     aka 481     2     
+43     2     28     14     aka 518     2     
+46     2     30     15     aka 555     2     
+49     2     32     16     aka 592     2     
+52     2     17     17     aka 629     1     
+55     2     36     18     aka 666     2     
+58     2     38     19     aka 703     2     
+61     2     40     20     aka 740     2     
+64     2     42     21     aka 777     2     
+67     2     22     22     aka 814     1     
+70     2     46     23     aka 851     2     
+73     2     48     24     aka 888     2     
+76     2     50     25     aka 925     2     
+79     2     52     26     aka 962     2     
+82     2     54     27     aka 999     2     
+85     2     28     28     aka 36     1     
+88     2     58     29     aka 73     2     
+91     2     60     30     aka 110     2     
+94     2     62     31     aka 147     2     
+97     2     64     32     aka 184     2     
+100     2     33     33     aka 221     1     
+103     2     68     34     aka 258     2     
+106     2     70     35     aka 295     2     
+109     2     72     36     aka 332     2     
+112     2     74     37     aka 369     2     
+115     2     76     38     aka 406     2     
+118     2     39     39     aka 443     1     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.pk_t_mv_id) (covered: true)
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+  group by nosort: true
+
+  rewritten query: select m.id, count(distinct a.v), sum(a.w), min(a.w), max(a.title), count(a.w) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(distinct a.v)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
+1     2     0     0     aka 0     2     
+4     2     2     1     aka 37     2     
+7     2     4     2     aka 74     2     
+10     2     6     3     aka 111     2     
+13     2     8     4     aka 148     2     
+16     2     10     5     aka 185     2     
+19     2     6     6     aka 222     1     
+22     2     14     7     aka 259     2     
+25     2     16     8     aka 296     2     
+28     2     18     9     aka 333     2     
+31     2     20     10     aka 370     2     
+34     2     11     11     aka 407     1     
+37     2     24     12     aka 444     2     
+40     2     26     13     aka 481     2     
+43     2     28     14     aka 518     2     
+46     2     30     15     aka 555     2     
+49     2     32     16     aka 592     2     
+52     2     17     17     aka 629     1     
+55     2     36     18     aka 666     2     
+58     2     38     19     aka 703     2     
+61     2     40     20     aka 740     2     
+64     2     42     21     aka 777     2     
+67     2     22     22     aka 814     1     
+70     2     46     23     aka 851     2     
+73     2     48     24     aka 888     2     
+76     2     50     25     aka 925     2     
+79     2     52     26     aka 962     2     
+82     2     54     27     aka 999     2     
+85     2     28     28     aka 36     1     
+88     2     58     29     aka 73     2     
+91     2     60     30     aka 110     2     
+94     2     62     31     aka 147     2     
+97     2     64     32     aka 184     2     
+100     2     33     33     aka 221     1     
+103     2     68     34     aka 258     2     
+106     2     70     35     aka 295     2     
+109     2     72     36     aka 332     2     
+112     2     74     37     aka 369     2     
+115     2     76     38     aka 406     2     
+118     2     39     39     aka 443     1     
+
+===================================================
+    
+Case 6: ten outer rows per group (index i_mv_g), and a three-table join; result = use_hash     
+
+===================================================
+g    count(*)    sum(a.v)    min(m.id)    
+0     8     26     1     
+1     6     32     13     
+2     6     15     22     
+3     8     41     31     
+4     6     15     43     
+5     6     33     52     
+6     8     23     61     
+7     6     33     73     
+8     6     16     82     
+9     8     40     91     
+10     6     16     103     
+11     6     27     112     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (m.i_mv_g) (key range: (m.g>= ?:? ))
+    INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+  group by nosort: true
+
+  rewritten query: select m.g, count(*), sum(a.v), min(m.id) from [dba.t_mv] m, [dba.t_aka] a where (m.g>= ?:? ) and a.mid=m.id group by m.g having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.i_mv_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    count(*)    sum(a.v)    min(m.id)    
+0     8     26     1     
+1     6     32     13     
+2     6     15     22     
+3     8     41     31     
+4     6     15     43     
+5     6     33     52     
+6     8     23     61     
+7     6     33     73     
+8     6     16     82     
+9     8     40     91     
+10     6     16     103     
+11     6     27     112     
+
+===================================================
+id    count(*)    sum(n.n)    
+1     3     12     
+4     3     0     
+7     3     3     
+10     3     6     
+13     3     9     
+16     3     12     
+19     3     0     
+22     3     3     
+25     3     6     
+28     3     9     
+31     3     12     
+34     3     0     
+37     3     3     
+40     3     6     
+43     3     9     
+46     3     12     
+49     3     0     
+52     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (m.pk_t_mv_id) (covered: true)
+      INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
+    INDEX SCAN (n.i_note_aid) (key range: n.aid=a.id)
+  group by nosort: true
+
+  rewritten query: select m.id, count(*), sum(n.n) from [dba.t_mv] m, [dba.t_aka] a, [dba.t_note] n where a.mid=m.id and n.aid=a.id group by m.id having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mv.pk_t_mv_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (index: dba.t_aka.i_aka_mid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_note.i_note_aid), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum(n.n)    
+1     3     12     
+4     3     0     
+7     3     3     
+10     3     6     
+13     3     9     
+16     3     12     
+19     3     0     
+22     3     3     
+25     3     6     
+28     3     9     
+31     3     12     
+34     3     0     
+37     3     3     
+40     3     6     
+43     3     9     
+46     3     12     
+49     3     0     
+52     3     3     
+
+===================================================
+    
+Case 7: no LIMIT, a HAVING over an aggregate, GROUP BY DESC: the join sorts the GROUP BY as before     
+
+===================================================
+count(*)    sum(c)    
+6000     12000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    HASH JOIN (inner join)
+      TABLE SCAN (m)
+      TABLE SCAN (a)
+
+  rewritten query: (select count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id and (a.v> ?:? ) group by m.id)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.c) from (select count(*) as [c] from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id and (a.v> ?:? ) group by m.id) x (c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+          HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+            PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+            SUBQUERY (uncorrelated)
+                     (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+id    count(*)    
+1     2     
+4     2     
+7     2     
+10     2     
+13     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    HASH JOIN (inner join)
+      TABLE SCAN (m)
+      TABLE SCAN (a)
+
+  rewritten query: select m.id, count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=? and (count(*)>?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+id    count(*)    
+17998     2     
+17995     2     
+17992     2     
+17989     2     
+17986     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    HASH JOIN (inner join)
+      TABLE SCAN (m)
+      TABLE SCAN (a)
+
+  rewritten query: select m.id, count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id and (a.v> ?:? ) group by m.id desc  having groupby_num()<=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+0
