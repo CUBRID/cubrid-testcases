@@ -37,8 +37,11 @@ i    c    j
 null     null     null     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup
@@ -58,8 +61,11 @@ i    c    j
 2     b              null     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup having t.c is not null 
@@ -71,8 +77,11 @@ i    c    j
 2     a              2     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, t.j from t t group by t.i, t.c, t.j with rollup having (t.j> ?:? )
@@ -83,8 +92,11 @@ i    c    max(j)
 null     null     3     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, max(t.j) from t t group by t.i, t.c with rollup having max(t.j)>?
@@ -107,8 +119,11 @@ i    c    j    count(j)
 null     null     null     8     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, t.j, count(t.j) from t t group by t.i, t.c, t.j with rollup
@@ -123,8 +138,11 @@ i    c    count(j)
 null     null     8     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup
@@ -136,8 +154,11 @@ i    c    count(j)
 2     b              1     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having t.c is not null 
@@ -147,8 +168,11 @@ i    c    count(j)
 2     b              1     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having (t.c> ?:? )
@@ -159,8 +183,11 @@ i    c    count(j)
 null     null     8     
 
 Query plan:
-sscan
-    class: t node[?]
+temp(group by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.c, count(t.j) from t t group by t.i, t.c with rollup having max(t.j)>?
