@@ -118,6 +118,32 @@ select /*+ recompile row_snapshot */ count (*) from t_27478_y c, t_27478_f f, t_
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
 drop table t_27478_y;
 
+evaluate 'Case 15: the plan cached for a statement whose join is read while planning still references the table of its subquery: dropping that table recompiles the statement';
+create table t_27478_it (id int primary key, info varchar(50));
+create index i_27478_it_info on t_27478_it (info);
+create table t_27478_mi (id int auto_increment primary key, info_type_id int, c int);
+create index i_27478_mi_t on t_27478_mi (info_type_id);
+create table t_27478_s (c int);
+insert into t_27478_it
+with recursive cte (n) as (select 1 union all select n + 1 from cte where n < 100)
+select n, 'info' || n from cte;
+update t_27478_it set info = 'release dates' where id = 16;
+insert into t_27478_mi (info_type_id, c)
+with recursive cte (n) as (select 1 union all select n + 1 from cte where n < 200)
+select case when rownum % 3 = 0 then 16 else mod (rownum, 100) + 1 end, mod (rownum, 50) from cte a, cte b where rownum <= 30000;
+insert into t_27478_s values (999);
+update statistics on t_27478_it, t_27478_mi, t_27478_s with fullscan;
+select mi.id, (select max (c) from t_27478_s) from t_27478_it it, t_27478_mi mi
+where it.info in ('release dates', 'info5', 'info7') and it.id = mi.info_type_id and mi.id <= 6 order by 1;
+drop table t_27478_s;
+create table t_27478_s (c int);
+insert into t_27478_s values (777);
+select mi.id, (select max (c) from t_27478_s) from t_27478_it it, t_27478_mi mi
+where it.info in ('release dates', 'info5', 'info7') and it.id = mi.info_type_id and mi.id <= 6 order by 1;
+drop table t_27478_s;
+drop table t_27478_mi;
+drop table t_27478_it;
+
 drop table t_27478_c;
 drop table t_27478_f;
 drop table t_27478_g;
