@@ -59,4 +59,4 @@ drop procedure t2;
 drop table test;
 
 set system parameters 'pl_transaction_control=no';
---+ server-message on
+--+ server-message off

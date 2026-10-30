@@ -207,10 +207,10 @@ Query Plan:
   rewritten query: (select (@v? := i.v) from [dba.i?] i where i.k=o.k)
 
   NESTED LOOPS (inner join)
-    INDEX SCAN (o.ix_o?) (key range: (o.k<= ?:? ), covered: true)
+    INDEX SCAN (o.ix_o?) (key range: (o.k<=?), covered: true)
     TABLE SCAN (d)
 
-  rewritten query: select /*+ PARALLEL(?) */ sum(d.av) from [dba.o?] o, (select (@v? := i.v) from [dba.i?] i where i.k=o.k) d (av) where (o.k<= ?:? ) using index o.ix_o?(+)
+  rewritten query: select /*+ PARALLEL(?) */ sum(d.av) from [dba.o?] o, (select (@v? := i.v) from [dba.i?] i where i.k=o.k) d (av) where (o.k<=?) using index o.ix_o?(+)
 
 
 Trace Statistics:
