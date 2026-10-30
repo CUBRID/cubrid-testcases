@@ -6,7 +6,7 @@ Author: hgryoo
 
 Test Point:
 Two transactions update two rows in opposite order; the deadlock detector ends one and the other's changes are kept.
-C3 holds row 3, which the second UPDATE of C2 reaches after row 1. So C2 still waits after the detector ends C1, and the error of C1 and the result of C2 arrive one at a time.
+C3 holds row 3, which the third UPDATE of C2 reaches after row 1. So C2 still waits after the detector ends C1, and the error of C1 and the result of C2 arrive one at a time.
 
 NUM_CLIENTS = 3
 C1: UPDATE t27034_t SET v=v+1 WHERE id=1;
