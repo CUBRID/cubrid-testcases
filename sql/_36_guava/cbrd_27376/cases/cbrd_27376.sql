@@ -25,9 +25,13 @@
  *    Case 6: inner tables joined to each other only through the outer query
  *    Case 7: a large indexed outer: the derived table is read first with DISTINCT and probes the outer
  *            by index
+ *    Case 8: a hint of the subquery that applies to its whole SELECT (NO_COVERING_IDX) stays inside the
+ *            derived table, so it no longer keeps the subquery nested
+ *    Case 9: USING INDEX ... KEYLIMIT in the subquery keeps it nested: inside the derived table the index
+ *            could be read first and its keys cut once for every outer row
  */
 
-drop table if exists ta, tb, tc, td, te, t_big;
+drop table if exists ta, tb, tc, td, te, t_big, tf, tg, th;
 
 -- ta: the outer, 10 rows, cb 1..10 without an index, cc 0..2
 create table ta (ca int primary key, cb int not null, cc int not null);
@@ -95,4 +99,25 @@ update statistics on t_big with fullscan;
 select /*+ recompile */ count(*) from t_big where exists (select 1 from tb, tc where tb.ca = t_big.cb and tb.cb = tc.ca);
 
 
-drop table ta, tb, tc, td, te, t_big;
+evaluate 'Case 8: a hint of the subquery that applies to its whole SELECT (NO_COVERING_IDX) stays inside the derived table';
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (select /*+ no_covering_idx */ 1 from tb, tc where tb.ca = ta.cb and tb.cb = tc.ca);
+
+
+evaluate 'Case 9: USING INDEX ... KEYLIMIT in the subquery keeps it nested';
+-- th ca 200 is the first key and matches nothing, 400 is the match of the outer row: KEYLIMIT 1 must not cut it
+-- tg holds 1000 rows that match nothing, so a derived table over tg and th would read th first
+create table tf (ca int);
+insert into tf values (3);
+create table tg (ca int, cb int);
+insert into tg values (3, 400);
+insert into tg select -level, -level from db_root connect by level <= 1000;
+create index i_tg_ca on tg (ca);
+create table th (ca int);
+insert into th values (200), (400);
+create index i_th_ca on th (ca);
+update statistics on tg, th;
+select /*+ recompile */ ca from tf where exists (select 1 from tg, th where tg.ca = tf.ca and tg.cb = th.ca and th.ca > 0 using index i_th_ca keylimit 1);
+
+
+drop table ta, tb, tc, td, te, t_big, tf, tg, th;

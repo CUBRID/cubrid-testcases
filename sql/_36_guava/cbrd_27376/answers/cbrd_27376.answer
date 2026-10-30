@@ -284,4 +284,65 @@ idx-join (inner join)
 Query stmt:
 select count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.cb
 ===================================================
+    
+Case 8: a hint of the subquery that applies to its whole SELECT (NO_COVERING_IDX) stays inside the derived table     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_COVERING_IDX */ tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join (select /*+ NO_COVERING_IDX */ tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.cb
+===================================================
+    
+Case 9: USING INDEX ... KEYLIMIT in the subquery keeps it nested     
+
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+ca    
+3     
+
+===================================================
 0
