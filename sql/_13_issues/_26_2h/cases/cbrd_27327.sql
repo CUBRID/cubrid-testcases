@@ -41,19 +41,19 @@ update statistics on t_part, t_flat with fullscan;
 set trace on;
 
 
-evaluate 'Case 1: the reported query, MIN and MAX of a string column over four partitions; result = parallel(0)';
+evaluate 'Case 1: the reported query, MIN and MAX of a string column over four partitions result = parallel(0)';
 select /*+ recompile */ min(col), max(col) from t_part;
 show trace;
 select /*+ recompile parallel(0) */ min(col), max(col) from t_part;
 
 
-evaluate 'Case 2: COUNT, string MIN and MAX, SUM, AVG, STDDEV and VARIANCE family, BIT aggregates; result = parallel(0)';
+evaluate 'Case 2: COUNT, string MIN and MAX, SUM, AVG, STDDEV and VARIANCE family, BIT aggregates result = parallel(0)';
 select /*+ recompile */ count(*), count(col), min(grp), max(grp), sum(v), round(avg(v), 2), round(stddev(v), 2), round(stddev_pop(v), 2), round(stddev_samp(v), 2), round(variance(v), 2), round(var_pop(v), 2), round(var_samp(v), 2), bit_and(v), bit_or(v), bit_xor(v) from t_part;
 show trace;
 select /*+ recompile parallel(0) */ count(*), count(col), min(grp), max(grp), sum(v), round(avg(v), 2), round(stddev(v), 2), round(stddev_pop(v), 2), round(stddev_samp(v), 2), round(variance(v), 2), round(var_pop(v), 2), round(var_samp(v), 2), bit_and(v), bit_or(v), bit_xor(v) from t_part;
 
 
-evaluate 'Case 3: GROUP_CONCAT without ORDER BY and the JSON aggregates, compared by length; result = parallel(0)';
+evaluate 'Case 3: GROUP_CONCAT without ORDER BY and the JSON aggregates, compared by length result = parallel(0)';
 -- the partial values are merged in worker order, so only lengths are compared: 40 values of 16
 -- characters joined by 39 separators of 4 characters, and 40 JSON members
 select /*+ recompile */ length(group_concat(col separator '<<>>')), length(replace(group_concat(col separator '<<>>'), '<<>>', '')), json_length(json_arrayagg(col)), json_length(json_objectagg(col, v)) from t_part where mod(id, 5000) = 0;
@@ -61,13 +61,13 @@ show trace;
 select /*+ recompile parallel(0) */ length(group_concat(col separator '<<>>')), length(replace(group_concat(col separator '<<>>'), '<<>>', '')), json_length(json_arrayagg(col)), json_length(json_objectagg(col, v)) from t_part where mod(id, 5000) = 0;
 
 
-evaluate 'Case 4: MEDIAN, PERCENTILE, CUME_DIST, PERCENT_RANK, DISTINCT and sorted GROUP_CONCAT; result = parallel(0)';
+evaluate 'Case 4: MEDIAN, PERCENTILE, CUME_DIST, PERCENT_RANK, DISTINCT and sorted GROUP_CONCAT result = parallel(0)';
 select /*+ recompile */ round(median(v), 2), round(percentile_cont(0.25) within group (order by v), 2), percentile_disc(0.75) within group (order by v), round(cume_dist(500) within group (order by v), 4), round(percent_rank(500) within group (order by v), 4), count(distinct grp), sum(distinct v), min(distinct col), max(distinct col), group_concat(distinct grp order by grp separator '-|-') from t_part;
 show trace;
 select /*+ recompile parallel(0) */ round(median(v), 2), round(percentile_cont(0.25) within group (order by v), 2), percentile_disc(0.75) within group (order by v), round(cume_dist(500) within group (order by v), 4), round(percent_rank(500) within group (order by v), 4), count(distinct grp), sum(distinct v), min(distinct col), max(distinct col), group_concat(distinct grp order by grp separator '-|-') from t_part;
 
 
-evaluate 'Case 5: the qualifying row in one partition only, then no qualifying row; result = parallel(0)';
+evaluate 'Case 5: the qualifying row in one partition only, then no qualifying row result = parallel(0)';
 -- col is not the partition key, so all four partitions are scanned, and the passes over the
 -- partitions without the row merge nothing but NULL
 select /*+ recompile */ count(*), min(col), max(col), group_concat(grp separator '<<>>') from t_part where col = 'row-000000000007';
@@ -78,7 +78,7 @@ show trace;
 select /*+ recompile parallel(0) */ count(*), min(col), max(col), group_concat(grp separator '<<>>') from t_part where col = 'none';
 
 
-evaluate 'Case 6: the same aggregates on a table without partitions, scanned in one pass; result = parallel(0)';
+evaluate 'Case 6: the same aggregates on a table without partitions, scanned in one pass result = parallel(0)';
 select /*+ recompile */ min(col), max(col), min(grp), max(grp), count(*), sum(v), round(stddev(v), 2), round(variance(v), 2), group_concat(distinct grp order by grp separator '-|-') from t_flat;
 show trace;
 -- trace goes off before the next query: the plan of a traced query that no show trace reads stays in the
@@ -87,7 +87,7 @@ set trace off;
 select /*+ recompile parallel(0) */ min(col), max(col), min(grp), max(grp), count(*), sum(v), round(stddev(v), 2), round(variance(v), 2), group_concat(distinct grp order by grp separator '-|-') from t_flat;
 
 
-evaluate 'Case 7: one statement three times without recompile, reusing the cached plan; result = parallel(0)';
+evaluate 'Case 7: one statement three times without recompile, reusing the cached plan result = parallel(0)';
 -- no recompile: the second and third runs take the plan cached by the first, with its accumulators
 -- and its separator, over the same partitioned scan as Case 2 and Case 4
 select min(col), max(col), min(grp), max(grp), count(*), sum(v), group_concat(distinct grp order by grp separator '-|-') from t_part;
@@ -96,7 +96,7 @@ select min(col), max(col), min(grp), max(grp), count(*), sum(v), group_concat(di
 select /*+ recompile parallel(0) */ min(col), max(col), min(grp), max(grp), count(*), sum(v), group_concat(distinct grp order by grp separator '-|-') from t_part;
 
 
-evaluate 'Case 8: a division by zero inside the parallel scan of the table without partitions, then the same statement without it; result = parallel(0)';
+evaluate 'Case 8: a division by zero inside the parallel scan of the table without partitions, then the same statement without it result = parallel(0)';
 -- one pass only, so the error path is tested apart from the partition passes. d is 0 on one
 -- qualifying row while the error is wanted, and 1 again afterwards. The statement text never changes
 -- and has no recompile, so every run after the first takes the cached plan whose separator the error
@@ -113,7 +113,7 @@ select count(*), min(col), max(col), group_concat(distinct grp order by grp sepa
 select /*+ recompile parallel(0) */ count(*), min(col), max(col), group_concat(distinct grp order by grp separator '-|-') from t_flat where mod(id, 20000) < 10 and 100 / d > 0;
 
 
-evaluate 'Case 9: the same division by zero on the partitioned table, then the same statement without it; result = parallel(0)';
+evaluate 'Case 9: the same division by zero on the partitioned table, then the same statement without it result = parallel(0)';
 -- the error stops a scan that merges one partition after another, so the values merged so far are
 -- released on the error path as well
 update t_part set d = 0 where id = 100000;
