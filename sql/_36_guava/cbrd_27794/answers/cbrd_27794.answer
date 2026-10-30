@@ -542,3 +542,142 @@ Query stmt:
 select /*+ NO_ELIMINATE_JOIN */ count(*) from rk o left outer join rn u on o.k=u.n+?
 ===================================================
 0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 16 : date unique = datetime     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: u node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on o.kdt= cast(u.dte as datetime)
+===================================================
+    
+Case 17 : float unique = double     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_f term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.f=o.kd
+===================================================
+    
+Case 18 : smallint unique = float     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+sscan
+    class: o node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o
+===================================================
+count(*)    
+2     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_s term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.s=o.kf
+===================================================
+    
+Case 19 : int unique = float (2^24 and 2^24 + 1 are equal as FLOAT, the join is kept)     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_i term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from rq o left outer join rt u on u.i=o.kf
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (left outer join)
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_rt_i term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_ELIMINATE_JOIN */ count(*) from rq o left outer join rt u on u.i=o.kf
+===================================================
+0

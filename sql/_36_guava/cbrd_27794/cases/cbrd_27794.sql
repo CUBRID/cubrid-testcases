@@ -7,7 +7,7 @@
 --   4) a NUMERIC sum with more than 40 digits is rounded
 -- Each query is compared with the same query under the NO_ELIMINATE_JOIN hint.
 
-drop table if exists ro, ru, tbl, rn, rk;
+drop table if exists ro, ru, tbl, rn, rk, rt, rq;
 create table ro (k int, ks varchar(10), kd double, kd1 double, kn numeric(10,1), kci varchar(10) collate utf8_en_ci, kb bigint);
 create table ru (code varchar(10) unique, n int unique, b bigint unique, d double unique, nm numeric(10,2) unique, cs varchar(10) collate utf8_bin unique, cd varchar(10) unique);
 insert into ro values (7, '7', 9007199254740992, 1, 1.2, 'a', 1);
@@ -85,4 +85,28 @@ insert into rk values (10000000000000000000000000000000000000);
 select /*+ recompile */ count(*) from rk o left join rn u on u.n + 10000000000000000000000000000000000000 = o.k;
 select /*+ recompile no_eliminate_join */ count(*) from rk o left join rn u on u.n + 10000000000000000000000000000000000000 = o.k;
 
-drop table if exists ro, ru, tbl, rn, rk;
+-- Conversions that keep every value: the right-hand table can be removed, except INT to FLOAT
+create table rt (dte date unique, f float unique, s smallint unique, i int unique);
+create table rq (kdt datetime, kd double, kf float);
+insert into rt values (date'2020-01-01', 0.1, 1, 16777216);
+insert into rt values (date'2020-01-02', 0.2, 2, 16777217);
+insert into rq values (datetime'2020-01-01 00:00:00', cast(cast(0.1 as float) as double), 16777216);
+insert into rq values (datetime'2020-01-02 00:00:00', 2, 2);
+
+evaluate 'Case 16 : date unique = datetime';
+select /*+ recompile */ count(*) from rq o left join rt u on u.dte = o.kdt;
+select /*+ recompile no_eliminate_join */ count(*) from rq o left join rt u on u.dte = o.kdt;
+
+evaluate 'Case 17 : float unique = double';
+select /*+ recompile */ count(*) from rq o left join rt u on u.f = o.kd;
+select /*+ recompile no_eliminate_join */ count(*) from rq o left join rt u on u.f = o.kd;
+
+evaluate 'Case 18 : smallint unique = float';
+select /*+ recompile */ count(*) from rq o left join rt u on u.s = o.kf;
+select /*+ recompile no_eliminate_join */ count(*) from rq o left join rt u on u.s = o.kf;
+
+evaluate 'Case 19 : int unique = float (2^24 and 2^24 + 1 are equal as FLOAT, the join is kept)';
+select /*+ recompile */ count(*) from rq o left join rt u on u.i = o.kf;
+select /*+ recompile no_eliminate_join */ count(*) from rq o left join rt u on u.i = o.kf;
+
+drop table if exists ro, ru, tbl, rn, rk, rt, rq;
