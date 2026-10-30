@@ -21,6 +21,8 @@
  *       the NULL group
  *  6    partitioned table as the inner, the GROUP BY is still sorted
  *  7    class hierarchy as the inner, the GROUP BY is still sorted
+ *  8    ROWNUM in the WHERE clause rules the skip out: the index scan is not even a candidate,
+ *       with or without the USING INDEX hint, and the rows ROWNUM picks are the same as before
  */
 
 drop table if exists tbl_a, tbl_b, tbl_c, tbl_d;
@@ -105,6 +107,20 @@ evaluate 'Case 7: class hierarchy as the inner, the GROUP BY is still sorted';
 select /*+ recompile ordered */ a.colb, count(*) as cnt
   from tbl_a a, all tbl_e e
  where e.coli = a.cola
+ group by a.colb
+ using index a.idx_colb;
+
+
+evaluate 'Case 8: ROWNUM in the WHERE clause rules the skip out, the index scan is not a candidate and the GROUP BY is sorted as before';
+--@queryplan
+select /*+ recompile ordered */ a.colb, count(*) as cnt
+  from tbl_a a, tbl_c c
+ where rownum <= 3
+ group by a.colb;
+--@queryplan
+select /*+ recompile ordered */ a.colb, count(*) as cnt
+  from tbl_a a, tbl_c c
+ where rownum <= 3
  group by a.colb
  using index a.idx_colb;
 

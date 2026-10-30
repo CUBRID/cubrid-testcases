@@ -241,6 +241,54 @@ temp(group by)
 Query stmt:
 select /*+ ORDERED */ a.colb, count(*) from tbl_a a,  all tbl_e e where e.coli=a.cola group by a.colb using index a.idx_colb
 ===================================================
+    
+Case 8: ROWNUM in the WHERE clause rules the skip out, the index scan is not a candidate and the GROUP BY is sorted as before     
+
+===================================================
+colb    cnt    
+1     1     
+2     1     
+3     1     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.colb, count(*) from tbl_a a, tbl_c c where (rownum<= ?:? ) group by a.colb
+===================================================
+colb    cnt    
+1     1     
+2     1     
+3     1     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ a.colb, count(*) from tbl_a a, tbl_c c where (rownum<= ?:? ) group by a.colb using index a.idx_colb
+===================================================
 0
 ===================================================
 0
