@@ -1,0 +1,196 @@
+===================================================
+0
+===================================================
+0
+===================================================
+800000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+800000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+800000     
+
+===================================================
+count(*)    
+800000     
+
+===================================================
+    
+[1] NUMERIC key, ta.cd = 5: idx-join, outer iscan tb, inner iscan ta on i_ta_ka     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_ka term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.ka=tb.ka and tb.cd= ?:?  and ta.cd= ?:? 
+===================================================
+    
+[2] NUMERIC key, ta.ce = 5: idx-join, outer iscan tb, inner iscan ta on i_ta_ka     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_ka term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.ka=tb.ka and tb.cd= ?:?  and ta.ce= ?:? 
+===================================================
+    
+[3] DOUBLE key: idx-join, outer iscan tb, inner iscan ta on i_ta_kd     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_kd term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.kd=tb.kd and tb.cd= ?:?  and ta.ce= ?:? 
+===================================================
+    
+[4] MONETARY key: idx-join, outer iscan tb, inner iscan ta on i_ta_km     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_km term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.km=tb.km and tb.cd= ?:?  and ta.ce= ?:? 
+===================================================
+    
+[5] BIT VARYING key: idx-join, outer iscan tb, inner iscan ta on i_ta_kb     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_kb term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.kb=tb.kb and tb.cd= ?:?  and ta.ce= ?:? 
+===================================================
+    
+[6] BIGINT key: idx-join, outer iscan tb, inner iscan ta on i_ta_kg     
+
+===================================================
+count(*)    
+200     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_cd term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: ta node[?]
+               index: i_ta_kg term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta, tb tb where ta.kg=tb.kg and tb.cd= ?:?  and ta.ce= ?:? 
+===================================================
+    
+[7] control, constant terms: iscan ta on i_ta_ka     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: i_ta_ka term[?] AND term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where ta.cd= ?:?  and ta.cb= ?:?  and ta.ka= ?:? 
+===================================================
+0
