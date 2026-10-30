@@ -1,0 +1,408 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9900
+===================================================
+50
+===================================================
+50
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+9900     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+sscan
+    class: t_cbrd_? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+count(pad)    
+50     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+count(pad)    
+10000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: c1[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].c1 range (@v gt_inf max) (sel 1) (rank 2) (sarg term) (not-join eligible) (indexable c1[0]) (loc 0)
+Query plan:
+sscan
+    class: t_cbrd_? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where (t_cbrd_?.c?>@v)
+===================================================
+0
+===================================================
+count(pad)    
+10     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: c1[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].c1 range (@v gt_inf max) (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable c1[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_c? term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where (t_cbrd_?.c?>@v)
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+10000     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: c1[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].c1 range (@lo ge_le @hi) (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable c1[0]) (loc 0)
+Query plan:
+sscan
+    class: t_cbrd_? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where (t_cbrd_?.c?>=@lo and t_cbrd_?.c?<=@hi)
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+21     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: c1[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].c1 range (@lo ge_le @hi) (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable c1[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_c? term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where (t_cbrd_?.c?>=@lo and t_cbrd_?.c?<=@hi)
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+9950     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a range (@v =  or @w = ) (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+sscan
+    class: t_cbrd_? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where ((t_cbrd_?.a=@v) or (t_cbrd_?.a=@w))
+===================================================
+0
+===================================================
+count(pad)    
+100     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a range (@v =  or @w = ) (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where ((t_cbrd_?.a=@v) or (t_cbrd_?.a=@w))
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+9900     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_cbrd_?)
+
+  rewritten query: select count([dba.t_cbrd_?].pad) from [dba.t_cbrd_?] [dba.t_cbrd_?] where [dba.t_cbrd_?].a=@v
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_cbrd_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(pad)    
+50     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_cbrd_?.i_t_cbrd_?_a) (key range: [dba.t_cbrd_?].a=@v)
+
+  rewritten query: select count([dba.t_cbrd_?].pad) from [dba.t_cbrd_?] [dba.t_cbrd_?] where [dba.t_cbrd_?].a=@v
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_cbrd_?.i_t_cbrd_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    max(@v := a)    
+9900     1     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0] (f)
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad), max(@v := t_cbrd_?.a) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+count(pad)    (select max(@v := 1) from db_root)    
+9900     1     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+Join graph nodes:
+node[0]: db_root db_root(0/1) (loc 0)
+Query plan:
+sscan
+    class: db_root node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(@v := ?) from db_root db_root)
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad), (select max(@v := ?) from db_root db_root) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)+1    
+51     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_cbrd_?.i_t_cbrd_?_a) (key range: [dba.t_cbrd_?].a= ?:? )
+
+  rewritten query: select count([dba.t_cbrd_?].pad)+ cast(? as bigint) from [dba.t_cbrd_?] [dba.t_cbrd_?] where [dba.t_cbrd_?].a= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_cbrd_?.i_t_cbrd_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(pad)+1    
+9901     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_cbrd_?)
+
+  rewritten query: select count([dba.t_cbrd_?].pad)+ cast(? as bigint) from [dba.t_cbrd_?] [dba.t_cbrd_?] where [dba.t_cbrd_?].a= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_cbrd_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(pad)    
+0     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+Error:-1070
+===================================================
+0
+===================================================
+count(pad)    
+9900     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+iscan
+    class: t_cbrd_? node[?]
+    index: i_t_cbrd_?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+count(pad)    
+9900     
+
+Join graph segments (f indicates final):
+seg[0]: [0]
+seg[1]: pad[0] (f)
+seg[2]: a[0]
+Join graph nodes:
+node[0]: dba.t_cbrd_27144 dba.t_cbrd_27144(10000/97) (sargs 0) (loc 0)
+Join graph terms:
+term[0]: [dba.t_cbrd_27144].a=@v (sel ?) (rank 2) (sarg term) (not-join eligible) (indexable a[0]) (loc 0)
+Query plan:
+sscan
+    class: t_cbrd_? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_cbrd_?.pad) from t_cbrd_? t_cbrd_? where t_cbrd_?.a=@v
+===================================================
+0
+===================================================
+0
