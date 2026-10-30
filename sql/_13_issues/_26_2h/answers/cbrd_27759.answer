@@ -1,0 +1,528 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: collection column returns left rows 1 and 2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(o.st) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 2: JSON_TABLE preserves two matches and one unmatched row     
+
+===================================================
+id    
+1     
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join (json_table (o.j, '$[*]' columns (v integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as s) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+1     
+2     
+
+===================================================
+    
+Case 3: collection literal returns left rows 1 and 2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table({?, ?}) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 4: correlated equality preserves unmatched row 2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(o.st) s (v) on s.v=o.id order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 5: MULTISET equality returns two copies of each left row     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(multiset{?, ?, ?}) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+    
+Case 6: JSON grouped counts are (1,2,2) and (2,1,0)     
+
+===================================================
+id    count(*)    count(s.v)    
+1     2     2     
+2     1     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id, count(*), count(s.v) from [dba.t_outer] o left outer join (json_table (o.j, '$[*]' columns (v integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as s) on s.v= ?:?  group by o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    count(s.v)    
+1     2     2     
+2     1     0     
+
+===================================================
+    
+Case 7: empty input gives count star 2 and count right 0     
+
+===================================================
+count(*)    count(s.v)    
+2     0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (left outer join)
+    TABLE SCAN (o)
+    TABLE SCAN (s)
+
+  rewritten query: select count(*), count(s.v) from [dba.t_outer] o left outer join table( cast({} as set(integer))) s (v) on s.v= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    count(s.v)    
+2     0     
+
+===================================================
+    
+Case 8: SQL NULL input returns left rows 1 and 2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(set{}) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 9: real unique class can be eliminated without changing rows     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select o.id from [dba.t_outer] o order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 10: real nonunique class returns two copies of each left row     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join [dba.t_duplicate] s on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_duplicate), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+    
+Case 11: nonmergeable UNION ALL returns two copies of each left row     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_unique)
+
+  rewritten query: select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]
+
+  TABLE SCAN (dba.t_unique)
+
+  rewritten query: select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]
+
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join (select [dba.t_unique].v from [dba.t_unique] [dba.t_unique] union all select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]) s (v) on s.v= ?:?  order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+    
+Case 12: CTE returns two copies of each left row     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_unique)
+
+  rewritten query: select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]
+
+  TABLE SCAN (dba.t_unique)
+
+  rewritten query: select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]
+
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: with rhs(v) as ((select [dba.t_unique].v from [dba.t_unique] [dba.t_unique] union all select [dba.t_unique].v from [dba.t_unique] [dba.t_unique]))select o.id from [dba.t_outer] o left outer join [dba.rhs] s on s.v= ?:?  order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_unique), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+
+===================================================
+    
+Case 13: mixed entity and nonentity specs preserve both left rows     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(o.st) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (o)
+        INDEX SCAN (u.pk_t_unique_v) (key range: u.v= ?:? , covered: true)
+      TABLE SCAN (s)
+
+  rewritten query: select /*+ NO_ELIMINATE_JOIN */ o.id from [dba.t_outer] o left outer join [dba.t_unique] u on u.v= ?:?  left outer join table(o.st) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_unique.pk_t_unique_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (o)
+      TABLE SCAN (s)
+
+  rewritten query: select o.id from [dba.t_outer] o left outer join table(o.st) s (v) on s.v= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+id    
+1     
+2     
+
+===================================================
+0
