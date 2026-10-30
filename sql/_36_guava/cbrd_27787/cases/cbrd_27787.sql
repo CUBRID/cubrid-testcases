@@ -3,8 +3,8 @@
  *  on a small data buffer
  *  ORDER BY with LIMIT, analytic functions and GROUP BY sort in parallel but the main thread puts the sorted tuples
  *  alone. The main thread now merges the worker runs (down to 4 by the merge queue when there are more workers)
- *  and puts each tuple as it is merged instead of writing one merged run and reading it back, and the workers keep
- *  the input pages in the main thread's private LRU list.
+ *  and puts each tuple as it is merged instead of writing one merged run and reading it back, and a merge discards
+ *  each run page once it has read the page so that the run pages do not push the input pages out of the buffer.
  *  Under CTP every sort with 2 pages or more is parallel. Each query runs serially (PARALLEL(1)), with 4 workers
  *  (merged on the main thread directly) and with 8 and 16 workers (merge queue first) and must return the same rows.
  *  The pad is a chain of SHA-2 digests so that the sort input is not compressed and spans many pages, and the
