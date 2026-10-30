@@ -255,14 +255,22 @@ e1
 2014-11-01 00:00:00.0     
 
 Query plan:
-temp(distinct)
+temp(order by)
     subplan: sscan
                  class: a node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select distinct a.k from a a order by ? for orderby_num()<= ?:? )
+(select a.k from a a order by ? for orderby_num()<= ?:? )
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: d? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct d?.a_? from (select a.k from a a order by ? for orderby_num()<= ?:? ) d? (a_?))
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
@@ -277,7 +285,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t?, (select distinct a.k from a a order by ? for orderby_num()<= ?:? ) av? (av_?) where t?.e?=av?.av_? order by ?
+select t?.e? from t? t?, (select distinct d?.a_? from (select a.k from a a order by ? for orderby_num()<= ?:? ) d? (a_?)) av? (av_?) where t?.e?=av?.av_? order by ?
 ===================================================
 e1    
 2014-11-01 00:00:00.0     
