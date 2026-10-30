@@ -4,7 +4,7 @@ These *writing rules* say how to write the files of a TC under `medium/`. What a
 
 ## New TC
 
-**Write a TC for a new issue under `sql/`, not `medium/`, unless its scenario needs the inheritance, collection, or vclass data that `mdb` holds.** No TC of a new issue has gone under `medium/` since the medium TCs were imported into this repo, and the work there is changing them and their *answer files*. Example: the TC of a wrong result of `LEFT JOIN` goes to `sql/_13_issues/_26_2h/cases/cbrd_xxxxx.sql`, where the [sql writing rules](../../sql/rules/writing-rules.md#place-and-files) place it.
+**Write a TC for a new issue under `sql/`, not `medium/`, unless its scenario needs the inheritance, collection, or vclass data that `mdb` holds.** Since the medium TCs were imported into this repo in 2016, one commit has added TCs of a new issue under `medium/`, the five files of CBRD-26632 in 2026-07, and the other work there changes the imported TCs and their *answer files*. Example: the TC of a wrong result of `LEFT JOIN` goes to `sql/_13_issues/_26_2h/cases/cbrd_xxxxx.sql`, where the [sql writing rules](../../sql/rules/writing-rules.md#place-and-files) place it.
 
 The rest of this section holds for every TC under `medium/`, and [Changing an existing TC](#changing-an-existing-tc) adds the rules for a change. These rules of the [sql writing rules](../../sql/rules/writing-rules.md#new-tc) hold for medium TCs as well:
 
@@ -17,7 +17,7 @@ The rest of this section holds for every TC under `medium/`, and [Changing an ex
 - making the answer file from a run and never editing it by hand ([sql](../../sql/rules/writing-rules.md#answer-files)),
 - one answer file in `answers/` for each `.sql` file in `cases/`, and no empty answer file ([sql](../../sql/rules/writing-rules.md#place-and-files)),
 - only TC files in `cases/` and `answers/` ([sql](../../sql/rules/writing-rules.md#place-and-files)),
-- a `;` at the end of every statement, and no `;` or `'` in a block comment ([sql](../../sql/rules/writing-rules.md#statements-and-comments)),
+- a `;` at the end of every statement, and in a block comment no line that ends with `;` and no `'` or `?` ([sql](../../sql/rules/writing-rules.md#statements-and-comments)),
 - the exact form of the CTP control lines such as `autocommit off;` and `--+ holdcas on;` ([sql](../../sql/rules/writing-rules.md#statements-and-comments)),
 - UTF-8 without a BOM and LF line ends ([sql](../../sql/rules/writing-rules.md#place-and-files)).
 
@@ -27,7 +27,7 @@ The rest of this section holds for every TC under `medium/`, and [Changing an ex
 
 **Name a new TC file with lowercase letters, digits, and underscores only.** Example: `outer_inner.sql`, not `server-concurrent-sortmerge.sql` or `test_add_months_QA.sql`; a TC of an issue is `cbrd_xxxxx.sql`, or `cbrd_xxxxx_<keyword>.sql` for a split file, as the [sql writing rules](../../sql/rules/writing-rules.md#place-and-files) say.
 
-**Make no subdirectory under `cases/` or `answers/`.** Example: `_02_xtests/cases/setjn1.sql` and `_02_xtests/answers/setjn1.answer`, not `_02_xtests/cases/old/setjn1.sql`.
+**Make no subdirectory under `cases/` or `answers/`.** CTP also runs a `.sql` file in a subdirectory of `cases/`, but it looks for the answer file in `answers/` without the subdirectory, so `cases/old/setjn1.sql` and `cases/setjn1.sql` read the same answer file. Example: `_02_xtests/cases/setjn1.sql` and `_02_xtests/answers/setjn1.answer`, not `_02_xtests/cases/old/setjn1.sql`.
 
 ### Start and end of the file
 
