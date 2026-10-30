@@ -1,11 +1,30 @@
 # Disabled OOS testcases for PR #8128
 
+## Current selection, 2026-10-30
+
+All 28 OOS SQL cases are enabled. The current [manifest](oos-pr8128.tsv)
+has no disabled entries. The three previously disabled SQL inputs were restored
+unchanged after their paired answers were updated at four error-number records.
+The current Engine `e3589ae42d42b04eb020e1ae43e165b01d31b12a` defines
+`ER_HEAP_OOS_OVERPASS_MAXOBJ_SIZE` as `-1388`; the old answers expected `-1384`.
+All other expected output is unchanged. Native JDBC runs of the three cases
+passed with zero failures or skips, followed by owned-process cleanup checks.
+The other 25 pairs are unchanged and were not rerun in this focused validation.
+This does not certify the whole SQL corpus or complete Work456.
+
+The original failure inventory is retained in
+[TC revision 45e21ad](https://github.com/CUBRID/cubrid-testcases/blob/45e21ad799d82ebadc04a93c7d2f69517d53bf39/disabled/oos-pr8128.tsv).
+Its recorded FAIL results remain historical evidence. The sections below record
+the original disabling decision and do not describe the current selection.
+
+## Historical disabling decision, 2026-10-26
+
 Owner decision: 2026-10-26. Scope: OOS tests in Engine PR #8128 only.
 Disable failing cases and separate cases whose measured individual runtime is
 strictly greater than **60 seconds**. This is an execution-selection change;
 it does not repair defects or turn the recorded FAIL results into passing coverage.
 
-## Selection
+### Historical selection
 
 | Disposition | Cases |
 | --- | ---: |
@@ -14,7 +33,7 @@ it does not repair defects or turn the recorded FAIL results into passing covera
 | Both failed and over 60 seconds | 0 |
 | Distinct disabled cases | 3 |
 
-The [manifest](oos-pr8128.tsv) records every original path, disabled path,
+The [historical manifest](https://github.com/CUBRID/cubrid-testcases/blob/45e21ad799d82ebadc04a93c7d2f69517d53bf39/disabled/oos-pr8128.tsv) records every original path, disabled path,
 observed verdict, runtime in seconds, reason, and original entry-file SHA-256.
 Entries with both reasons are stored under `long_running/`; `failing/` holds
 the remaining failing entries. Cases at or below 60 seconds are not slow.
@@ -24,7 +43,7 @@ fixtures and shared helpers remain at their original paths for retained cases.
 Entry files retain their contents and have a `.disabled` suffix. SQL answers
 retain their contents. No expected answer, assertion, or engine source was changed.
 
-## CI evidence
+### Historical CI evidence
 
 - Run: [40311481032](https://github.com/CUBRID/cubrid/actions/runs/40311481032), attempt 1.
 - Engine: `c4c4f5c5ed55fb0130c72bb261061ec441662554`.
