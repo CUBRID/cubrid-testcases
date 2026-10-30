@@ -7,6 +7,12 @@
 ===================================================
 0
 ===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
 0
 ===================================================
 1
@@ -138,5 +144,107 @@ iscan
 Query stmt:
 select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
+===================================================
+    
+Case 3: a host-variable LIMIT alone must pick the PK-descending order-by-skip scan     
+
+===================================================
+0
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_id  (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    col_c    
+16384     some message text here     
+16383     some message text here     
+16382     some message text here     
+16381     some message text here     
+16380     some message text here     
+16379     some message text here     
+16378     some message text here     
+16377     some message text here     
+16376     some message text here     
+16375     some message text here     
+16374     some message text here     
+16373     some message text here     
+16372     some message text here     
+16371     some message text here     
+16370     some message text here     
+16369     some message text here     
+16368     some message text here     
+16367     some message text here     
+16366     some message text here     
+16365     some message text here     
+16364     some message text here     
+16363     some message text here     
+16362     some message text here     
+16361     some message text here     
+16360     some message text here     
+16359     some message text here     
+16358     some message text here     
+16357     some message text here     
+16356     some message text here     
+16355     some message text here     
+
+===================================================
+0
+===================================================
+    
+Case 4: a host-variable LIMIT on a join must pick the same plan as a constant LIMIT     
+
+===================================================
+0
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_tbl_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.col_c from tbl t, tbl_u u where t.id=u.id order by ? desc  for orderby_num()<= ?:? 
+===================================================
+id    col_c    
+5     some message text here     
+4     some message text here     
+3     some message text here     
+
+===================================================
+0
+===================================================
+id    col_c    
+5     some message text here     
+4     some message text here     
+3     some message text here     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_tbl_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.col_c from tbl t, tbl_u u where t.id=u.id order by ? desc  for orderby_num()<= ?:? 
+===================================================
+0
 ===================================================
 0
