@@ -63,8 +63,9 @@ C1: DELETE a,b FROM t1 a LEFT JOIN t2 b ON a.id = b.id WHERE a.id < 5;
 MC: wait until C1 blocked;
 C2: COMMIT;
 MC: wait until C2 ready;
+/* CBRD-27463: C1 still holds the locks of its DELETE that failed on the foreign key, but the foreign key check takes no lock on a committed parent row, so the child INSERT does not wait */
 C3: insert into t3(valueid, str) SELECT a.id, a.col+'xx' FROM t1 a LEFT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
-MC: wait until C3 blocked;
+MC: wait until C3 ready;
 C1: COMMIT;
 MC: wait until C3 ready;
 C3: DELETE FROM t3 WHERE valueid > 5;
