@@ -9,27 +9,33 @@
  *  the statement decides before any byte is streamed:
  *
  *  1. The COPY keywords are unreserved -- COPY / CSV / DELIMITER / QUOTE / HEADER /
- *     BULK / FORMAT / STDIN remain usable as identifiers, so existing schemas that
- *     use them as table or column names keep working.
+ *     BULK / FORMAT / STDIN / ON_ERROR / REJECT_LIMIT remain usable as identifiers,
+ *     so existing schemas that use them as table or column names keep working.
  *  2. Grammar: FORMAT is mandatory and must come first, the WITH clause is
  *     mandatory, FROM STDIN is mandatory, the format name must be BINARY or CSV,
  *     and there is no COPY ... TO.
  *  3. Options: the CSV-only options are refused under FORMAT BINARY, DELIMITER / QUOTE
  *     take exactly one character, and a DELIMITER / QUOTE pair that cannot describe a
- *     file is refused (ER_COPY_INVALID_OPTION).
+ *     file is refused (ER_COPY_INVALID_OPTION). So are a NULL string holding the
+ *     DELIMITER or the QUOTE, ON_ERROR other than STOP / IGNORE, ON_ERROR IGNORE
+ *     under FORMAT BINARY, and a REJECT_LIMIT without ON_ERROR IGNORE or below 1.
  *  4. Name resolution: an unknown table or column is reported before the stream opens.
  *  5. Target: a view, a partitioned table and a partition are refused
  *     (ER_COPY_NOT_SUPPORTED); COPY inserts into the target heap and does no pruning.
- *  6. Columns: every column type COPY cannot decode is refused at open, named in the
- *     column list or taken from the table; a column list that leaves out a NOT NULL
- *     column with no default, names a column twice, or names a SHARED column is refused.
+ *     So is a table with an active INSERT trigger, row or statement: no trigger runs
+ *     where COPY inserts.
+ *  6. Columns: every column type COPY cannot decode -- BLOB, CLOB and the collections
+ *     -- is refused at open, named in the column list or taken from the table; a
+ *     column list that leaves out a NOT NULL column with no default, names a column
+ *     twice, or names a SHARED column is refused.
+ *  7. COPY_REJECTED_ROWS () reads 0 in a session whose COPYs skipped nothing.
  *
  *  Every COPY statement below fails on purpose. That is deliberate: a COPY that
  *  succeeded would leave the connection inside the stream, and the next statement
  *  would be refused for that reason instead of its own. The same statements with a
  *  valid target, column list or option pair open and load in the shell TC
  *  cbrd_26961_copy, which is the positive control of each refusal here; the test
- *  design attached to CBRD-26961 maps them (test1 b-i).
+ *  design attached to CBRD-26961 maps them (test1 b-k).
  */
 
 DROP TABLE IF EXISTS tc;
@@ -40,9 +46,10 @@ CREATE TABLE tc (a INT, b VARCHAR(20));
 -- =====================================================
 evaluate('1. COPY option keywords are still usable as identifiers');
 DROP TABLE IF EXISTS kw;
-CREATE TABLE kw (copy INT, csv INT, delimiter INT, quote INT, header INT, bulk INT, format INT, stdin INT);
-INSERT INTO kw VALUES (1, 2, 3, 4, 5, 6, 7, 8);
-SELECT copy, csv, delimiter, quote, header, bulk, format, stdin FROM kw;
+CREATE TABLE kw (copy INT, csv INT, delimiter INT, quote INT, header INT, bulk INT, format INT, stdin INT,
+  on_error INT, reject_limit INT);
+INSERT INTO kw VALUES (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+SELECT copy, csv, delimiter, quote, header, bulk, format, stdin, on_error, reject_limit FROM kw;
 DROP TABLE kw;
 
 evaluate('2. and as a table name');
@@ -135,59 +142,88 @@ DROP TABLE c26961_pt;
 -- 21. column types COPY cannot decode are refused at open
 -- =====================================================
 DROP TABLE IF EXISTS c26961_ut;
-CREATE TABLE c26961_ut (
-  i INT, n NUMERIC(10,2), m MONETARY, bt BIT(8), vb BIT VARYING(8), bl BLOB, cl CLOB,
-  st SET(INT), ms MULTISET(INT), ls LIST(INT), en ENUM('x', 'y'), js JSON,
-  tstz TIMESTAMPTZ, tsltz TIMESTAMPLTZ, dttz DATETIMETZ, dtltz DATETIMELTZ);
+CREATE TABLE c26961_ut (i INT, bl BLOB, cl CLOB, st SET(INT), ms MULTISET(INT), ls LIST(INT));
 
-evaluate('21. NUMERIC');
-COPY c26961_ut (i, n) FROM STDIN WITH (FORMAT CSV);
-evaluate('22. MONETARY');
-COPY c26961_ut (i, m) FROM STDIN WITH (FORMAT CSV);
-evaluate('23. BIT');
-COPY c26961_ut (i, bt) FROM STDIN WITH (FORMAT CSV);
-evaluate('24. BIT VARYING');
-COPY c26961_ut (i, vb) FROM STDIN WITH (FORMAT CSV);
-evaluate('25. BLOB');
+evaluate('21. BLOB');
 COPY c26961_ut (i, bl) FROM STDIN WITH (FORMAT CSV);
-evaluate('26. CLOB');
+evaluate('22. CLOB');
 COPY c26961_ut (i, cl) FROM STDIN WITH (FORMAT CSV);
-evaluate('27. SET');
+evaluate('23. SET');
 COPY c26961_ut (i, st) FROM STDIN WITH (FORMAT CSV);
-evaluate('28. MULTISET');
+evaluate('24. MULTISET');
 COPY c26961_ut (i, ms) FROM STDIN WITH (FORMAT CSV);
-evaluate('29. LIST');
-COPY c26961_ut (i, ls) FROM STDIN WITH (FORMAT CSV);
-evaluate('30. ENUM');
-COPY c26961_ut (i, en) FROM STDIN WITH (FORMAT CSV);
-evaluate('31. JSON');
-COPY c26961_ut (i, js) FROM STDIN WITH (FORMAT CSV);
-evaluate('32. TIMESTAMPTZ');
-COPY c26961_ut (i, tstz) FROM STDIN WITH (FORMAT CSV);
-evaluate('33. TIMESTAMPLTZ');
-COPY c26961_ut (i, tsltz) FROM STDIN WITH (FORMAT CSV);
-evaluate('34. DATETIMETZ');
-COPY c26961_ut (i, dttz) FROM STDIN WITH (FORMAT CSV);
-evaluate('35. DATETIMELTZ');
-COPY c26961_ut (i, dtltz) FROM STDIN WITH (FORMAT CSV, BULK);
-evaluate('36. no column list: the table has such columns');
+evaluate('25. LIST');
+COPY c26961_ut (i, ls) FROM STDIN WITH (FORMAT CSV, BULK);
+evaluate('26. no column list: the table has such columns');
 COPY c26961_ut FROM STDIN WITH (FORMAT BINARY);
 DROP TABLE c26961_ut;
 
 -- =====================================================
--- 37. the column list
+-- 27. the column list
 -- =====================================================
 DROP TABLE IF EXISTS c26961_cl;
 CREATE TABLE c26961_cl (a INT, b INT NOT NULL, c INT SHARED 5);
 
-evaluate('37. a NOT NULL column with no default is left out');
+evaluate('27. a NOT NULL column with no default is left out');
 COPY c26961_cl (a) FROM STDIN WITH (FORMAT CSV);
 
-evaluate('38. a column named twice');
+evaluate('28. a column named twice');
 COPY c26961_cl (a, b, a) FROM STDIN WITH (FORMAT CSV);
 
-evaluate('39. a SHARED column');
+evaluate('29. a SHARED column');
 COPY c26961_cl (a, b, c) FROM STDIN WITH (FORMAT CSV);
 DROP TABLE c26961_cl;
+
+-- =====================================================
+-- 30. a table with an active INSERT trigger
+--     (the same table with the trigger made INACTIVE loads in the shell TC)
+-- =====================================================
+DROP TABLE IF EXISTS c26961_tr;
+DROP TABLE IF EXISTS c26961_tr_log;
+CREATE TABLE c26961_tr (a INT);
+CREATE TABLE c26961_tr_log (a INT);
+CREATE TRIGGER c26961_tr_ai AFTER INSERT ON c26961_tr EXECUTE INSERT INTO c26961_tr_log VALUES (obj.a);
+
+evaluate('30. a row INSERT trigger');
+COPY c26961_tr FROM STDIN WITH (FORMAT CSV);
+DROP TRIGGER c26961_tr_ai;
+
+CREATE TRIGGER c26961_tr_si BEFORE STATEMENT INSERT ON c26961_tr EXECUTE INSERT INTO c26961_tr_log VALUES (-1);
+evaluate('31. a statement INSERT trigger');
+COPY c26961_tr FROM STDIN WITH (FORMAT BINARY, BULK);
+DROP TRIGGER c26961_tr_si;
+DROP TABLE c26961_tr;
+DROP TABLE c26961_tr_log;
+
+-- =====================================================
+-- 32. NULL, ON_ERROR and REJECT_LIMIT
+--     (each one used correctly loads in the shell TC)
+-- =====================================================
+evaluate('32. NULL is refused under FORMAT BINARY');
+COPY tc FROM STDIN WITH (FORMAT BINARY, NULL '\N');
+
+evaluate('33. a NULL string that holds the DELIMITER');
+COPY tc FROM STDIN WITH (FORMAT CSV, NULL 'a,b');
+
+evaluate('34. a NULL string that holds the QUOTE');
+COPY tc FROM STDIN WITH (FORMAT CSV, DELIMITER '|', QUOTE '#', NULL 'N#');
+
+evaluate('35. ON_ERROR takes STOP or IGNORE');
+COPY tc FROM STDIN WITH (FORMAT CSV, ON_ERROR SKIP);
+
+evaluate('36. ON_ERROR IGNORE is refused under FORMAT BINARY');
+COPY tc FROM STDIN WITH (FORMAT BINARY, ON_ERROR IGNORE);
+
+evaluate('37. REJECT_LIMIT needs ON_ERROR IGNORE');
+COPY tc FROM STDIN WITH (FORMAT CSV, ON_ERROR STOP, REJECT_LIMIT 10);
+
+evaluate('38. REJECT_LIMIT below 1');
+COPY tc FROM STDIN WITH (FORMAT CSV, ON_ERROR IGNORE, REJECT_LIMIT 0);
+
+-- =====================================================
+-- 39. COPY_REJECTED_ROWS ()
+-- =====================================================
+evaluate('39. COPY_REJECTED_ROWS () is 0 when no COPY skipped a row');
+SELECT COPY_REJECTED_ROWS ();
 
 DROP TABLE tc;
