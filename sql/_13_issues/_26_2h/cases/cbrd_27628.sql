@@ -15,7 +15,7 @@
  * 3. host-variable LIMIT alone (no OFFSET) - rewrites differently from
  *    case 1; the fix's own PR measured this form as regressed too
  * 4. host-variable LIMIT on a join - the fix reuses the constant-LIMIT
- *    comparison here too, which can change join plans; asserts both agree
+ *    comparison here too, which can change join plans - asserts both agree
  */
 
 drop table if exists tbl;
