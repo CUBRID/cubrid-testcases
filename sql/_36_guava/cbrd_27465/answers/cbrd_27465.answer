@@ -410,6 +410,7 @@ Trace Statistics:
       SCAN (index: dba.subquery_small.idx_col?_col?_col?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -502,7 +503,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.klim_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.klim_inner.i_klim_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
