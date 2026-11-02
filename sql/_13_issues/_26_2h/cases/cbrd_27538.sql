@@ -1,5 +1,5 @@
 -- CBRD-27538: CREATE VIEW / ALTER VIEW with a WITH clause (CTE) failed with Unknown class
-drop view if exists v1, v2, v3, v4, v5, v6, v7, v8, v9, cte;
+drop view if exists v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, cte;
 drop table if exists t, tx;
 
 create table t (c int, d varchar(10));
@@ -37,6 +37,18 @@ create view v9 (x, y) as with c1 as (select c, d from t), c2 as (select c + 10 c
 select * from v9 order by 1;
 select * from v9 a, v2 b where a.x - 10 = b.n order by 1;
 
+-- a view whose WITH clause remains (materialized, recursive) referenced twice, and a view on CTE views
+select * from v8 a, v8 b where a.c = b.c order by 1;
+select * from v2 a, v2 b where a.n = b.n order by 1;
+create view v10 as select a.c, b.n from v1 a, v2 b where a.c = b.n;
+select * from v10 order by 1;
+
+-- a view with a WITH clause is not updatable
+update v1 set c = 0;
+delete from v1 where c = 1;
+insert into v1 values (4);
+select * from t order by 1;
+
 -- a view having the same name as its CTE
 create view cte as with cte as (select c from t) select c from cte;
 select * from cte order by 1;
@@ -59,5 +71,5 @@ select * from tx order by 1;
 create view verr as with cte as (select c from t), cte as (select c from t) select c from cte;
 create view verr as with cte as (select c from no_such_table) select c from cte;
 
-drop view v1, v2, v3, v4, v5, v6, v7, v8, v9, cte;
+drop view v10, v1, v2, v3, v4, v5, v6, v7, v8, v9, cte;
 drop table t, tx;
