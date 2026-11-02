@@ -1,0 +1,166 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+60000
+===================================================
+5000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+671
+===================================================
+724
+===================================================
+0
+===================================================
+    
+Case 1: equality     
+
+===================================================
+'eq_s'    mismatches    hits    
+eq_s     0     5722     
+
+===================================================
+'eq_i'    mismatches    hits    
+eq_i     0     4950     
+
+===================================================
+'eq_b'    mismatches    hits    
+eq_b     0     5318     
+
+===================================================
+'eq_iu'    mismatches    hits    
+eq_iu     0     10     
+
+===================================================
+'eq_idsc'    mismatches    hits    
+eq_idsc     0     5480     
+
+===================================================
+'eq_bdsc'    mismatches    hits    
+eq_bdsc     0     5426     
+
+===================================================
+    
+Case 2: ranges and index order     
+
+===================================================
+'rng_i'    count(*)    
+rng_i     0     
+
+===================================================
+'rng_s'    count(*)    
+rng_s     0     
+
+===================================================
+'rng_b'    count(*)    
+rng_b     0     
+
+===================================================
+'rng_idsc'    count(*)    
+rng_idsc     0     
+
+===================================================
+'rng_bdsc'    count(*)    
+rng_bdsc     0     
+
+===================================================
+'ord_idsc'    idsc    id    
+ord_idsc     3     1503     
+ord_idsc     3     4504     
+ord_idsc     3     7505     
+ord_idsc     3     10506     
+ord_idsc     3     13507     
+ord_idsc     3     16508     
+ord_idsc     3     19509     
+ord_idsc     3     22510     
+ord_idsc     3     25511     
+ord_idsc     3     28512     
+ord_idsc     3     31513     
+ord_idsc     3     34514     
+
+===================================================
+'ord_i'    i    id    
+ord_i     101     2443     
+ord_i     101     7446     
+ord_i     101     12449     
+ord_i     101     17452     
+ord_i     101     22455     
+ord_i     101     27458     
+ord_i     101     32461     
+ord_i     101     37464     
+
+===================================================
+    
+Case 3: bounds of other types     
+
+===================================================
+'mix1'    (select count(*) from t27862 where i=7.0 using index ix_i)-(select count(*) from t27862 where i=7.0 using index none)    
+mix1     0     
+
+===================================================
+'mix2'    (select count(*) from t27862 where i<7.5e0 and i>-10.5 using index ix_i)-(select count(*) from t27862 where i<7.5e0 and i>-10.5 using index none)    
+mix2     0     
+
+===================================================
+'mix3'    (select count(*) from t27862 where s=70000 using index ix_s)-(select count(*) from t27862 where s=70000 using index none)    
+mix3     0     
+
+===================================================
+'mix4'    (select count(*) from t27862 where b=7 using index ix_b)-(select count(*) from t27862 where b=7 using index none)    
+mix4     0     
+
+===================================================
+'mix5'    (select count(*) from t27862 where i='7' using index ix_i)-(select count(*) from t27862 where i='7' using index none)    
+mix5     0     
+
+===================================================
+'mix6'    (select count(*) from t27862 where b>2147483648 using index ix_b)-(select count(*) from t27862 where b>2147483648 using index none)    
+mix6     0     
+
+===================================================
+'mix7'    (select count(*) from t27862 where s in multiset{7, 8, -1000, 999} using index ix_s)-(select count(*) from t27862 where s in multiset{7, 8, -1000, 999} using index none)    
+mix7     0     
+
+===================================================
+    
+Case 4: the inner index scan of a nested-loop join     
+
+===================================================
+'nl_i'    (select /*+ ORDERED USE_NL */ count(*)||':'||sum(o.x+n.id) from d27862 o, t27862 n where n.i=o.x*351-17000 using index n.ix_i)=(select count(*)||':'||sum(o.x+n.id) from d27862 o, t27862 n where n.i=o.x*351-17000 using index none)    
+nl_i     1     
+
+===================================================
+'nl_s'    (select /*+ ORDERED USE_NL */ count(*) from d27862 o, t27862 n where n.s=o.x-50 using index n.ix_s)-(select count(*) from d27862 o, t27862 n where n.s=o.x-50 using index none)    
+nl_s     0     
+
+===================================================
+'nl_iu'    (select /*+ ORDERED USE_NL */ count(*) from t27862 o, t27862 n where n.iu=o.i*3 and o.id<3000 using index n.ux_iu)-(select count(*) from t27862 o, t27862 n where n.iu=o.i*3 and o.id<3000 using index none)    
+nl_iu     0     
+
+===================================================
+'nl_idsc'    (select /*+ ORDERED USE_NL */ count(*) from d27862 o, t27862 n where n.idsc=o.x-50 using index n.ix_idsc)-(select count(*) from d27862 o, t27862 n where n.idsc=o.x-50 using index none)    
+nl_idsc     0     
+
+===================================================
+0
+===================================================
+0
