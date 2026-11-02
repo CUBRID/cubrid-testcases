@@ -1,0 +1,151 @@
+/**
+ * This test case verifies CBRD-27516.
+ *
+ * CBRD-27516: a foreign key check fails when the primary key has a DESC column.
+ * A foreign key index is always ASC, whatever the declaration says, so its
+ * columns and the primary key index's columns differ in direction.
+ * pr_midxkey_compare () does not compare two columns of different directions:
+ * it returns DB_UNK, and a debug build asserts just before. A parent DELETE,
+ * a parent key UPDATE and ALTER TABLE ... ADD FOREIGN KEY on a child that has
+ * rows all searched one index with a key carrying the other index's domain.
+ * Fix: the search key takes the domain of the index it searches.
+ *
+ * Indexes of several levels: parent 3,000 rows, child about 6,000 rows.
+ */
+
+-- Case 01: (a DESC, b), CASCADE, delete (1,1) that has 3,000 children: they go
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200), FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE);
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, 1, 1, 'x' FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT 10000 + LEVEL, LEVEL + 1, LEVEL + 1, 'x' FROM db_root CONNECT BY LEVEL <= 2999;
+COMMIT;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL THEN 1 ELSE 0 END) FROM fk27516_c;
+
+-- Case 02: same data, SET NULL: both foreign key columns of the 3,000 children become NULL, the other 2,999 keep theirs
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200), FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE SET NULL);
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, 1, 1, 'x' FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT 10000 + LEVEL, LEVEL + 1, LEVEL + 1, 'x' FROM db_root CONNECT BY LEVEL <= 2999;
+COMMIT;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL AND fb IS NULL THEN 1 ELSE 0 END) || '/' || SUM(CASE WHEN fa IS NULL OR fb IS NULL THEN 1 ELSE 0 END) || '/' || SUM(CASE WHEN fa = id - 9999 AND fb = fa THEN 1 ELSE 0 END) FROM fk27516_c;
+
+-- Case 03: RESTRICT, delete (1,1) without children, then update the key of (3000,3000) with children: deleted, then restricted
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200), FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE RESTRICT);
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT 10000 + LEVEL, LEVEL + 1, LEVEL + 1, 'x' FROM db_root CONNECT BY LEVEL <= 2999;
+COMMIT;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+UPDATE fk27516_p SET b=0 WHERE a=3000 AND b=3000;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL THEN 1 ELSE 0 END) FROM fk27516_c;
+
+-- Case 04: RESTRICT, delete (1500,1500) that has children: restricted
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200), FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE RESTRICT);
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT 10000 + LEVEL, LEVEL + 1, LEVEL + 1, 'x' FROM db_root CONNECT BY LEVEL <= 2999;
+COMMIT;
+DELETE FROM fk27516_p WHERE a=1500 AND b=1500;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) || '/' || SUM(CASE WHEN fa IS NULL THEN 1 ELSE 0 END) FROM fk27516_c;
+
+-- Case 05: add the foreign key to a child of 6,000 rows: created, then cascade
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200));
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, MOD(LEVEL, 3000) + 1, MOD(LEVEL, 3000) + 1, 'x' FROM db_root CONNECT BY LEVEL <= 6000;
+COMMIT;
+ALTER TABLE fk27516_c ADD CONSTRAINT fk_c FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) FROM fk27516_c;
+SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
+
+-- Case 06: plus a child (5000,5000) without parent: ER_FK_INVALID
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a DESC, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200));
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, MOD(LEVEL, 3000) + 1, MOD(LEVEL, 3000) + 1, 'x' FROM db_root CONNECT BY LEVEL <= 6000;
+INSERT INTO fk27516_c VALUES (99999, 5000, 5000, 'x');
+COMMIT;
+ALTER TABLE fk27516_c ADD CONSTRAINT fk_c FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) FROM fk27516_c;
+SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
+
+-- Case 07: PRIMARY KEY (a, b), child of 6,000 rows: created, then cascade (control)
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200));
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, MOD(LEVEL, 3000) + 1, MOD(LEVEL, 3000) + 1, 'x' FROM db_root CONNECT BY LEVEL <= 6000;
+COMMIT;
+ALTER TABLE fk27516_c ADD CONSTRAINT fk_c FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) FROM fk27516_c;
+SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
+
+-- Case 08: 07 plus (5000,5000) without parent, last in foreign key order: ER_FK_INVALID (control)
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200));
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, MOD(LEVEL, 3000) + 1, MOD(LEVEL, 3000) + 1, 'x' FROM db_root CONNECT BY LEVEL <= 6000;
+INSERT INTO fk27516_c VALUES (99999, 5000, 5000, 'x');
+COMMIT;
+ALTER TABLE fk27516_c ADD CONSTRAINT fk_c FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) FROM fk27516_c;
+SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
+
+-- Case 09: 07 plus (1500,1501) without parent, in the middle of foreign key order: ER_FK_INVALID (control)
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_p;
+CREATE TABLE fk27516_p (a INT, b INT, PRIMARY KEY (a, b));
+CREATE TABLE fk27516_c (id INT PRIMARY KEY, fa INT, fb INT, pad CHAR(200));
+INSERT INTO fk27516_p SELECT LEVEL, LEVEL FROM db_root CONNECT BY LEVEL <= 3000;
+INSERT INTO fk27516_c SELECT LEVEL, MOD(LEVEL, 3000) + 1, MOD(LEVEL, 3000) + 1, 'x' FROM db_root CONNECT BY LEVEL <= 6000;
+INSERT INTO fk27516_c VALUES (99999, 1500, 1501, 'x');
+COMMIT;
+ALTER TABLE fk27516_c ADD CONSTRAINT fk_c FOREIGN KEY (fa, fb) REFERENCES fk27516_p (a, b) ON DELETE CASCADE;
+DELETE FROM fk27516_p WHERE a=1 AND b=1;
+SELECT 'R=p:' || COUNT(*) FROM fk27516_p;
+SELECT 'R=c:' || COUNT(*) FROM fk27516_c;
+SELECT 'R=fk:' || COUNT(*) FROM db_index WHERE class_name = 'fk27516_c' AND is_foreign_key = 'YES';
+
+DROP TABLE IF EXISTS fk27516_c;
+DROP TABLE IF EXISTS fk27516_c2;
+DROP TABLE IF EXISTS fk27516_p;

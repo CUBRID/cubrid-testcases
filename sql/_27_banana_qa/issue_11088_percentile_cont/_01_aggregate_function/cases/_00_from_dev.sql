@@ -1,3 +1,9 @@
+-- CBRD-27583: the statements that sort PERCENTILE_CONT or PERCENTILE_DISC by a date or time string constant
+-- (within group (order by '2013-5-7')) were written to check that such a string is computed as a date or time
+-- value. Since CBRD-27583 a string constant, host variable or session variable argument of MEDIAN and PERCENTILE is
+-- DOUBLE, and a string that does not convert to a number is error -1118, so those statements no longer check that.
+-- The other statements keep their meaning.
+
 --test cases from dev
 
 autocommit off;

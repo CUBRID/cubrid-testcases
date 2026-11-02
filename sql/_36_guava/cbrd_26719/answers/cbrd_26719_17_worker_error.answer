@@ -1,0 +1,73 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+0
+===================================================
+50000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: during_join_pred fails inside a worker - the error must reach the session     
+
+===================================================
+Error:-181
+===================================================
+    
+Case 2: same failing join single-threaded - defines the expected error text     
+
+===================================================
+Error:-181
+===================================================
+    
+Case 3: the session is still usable after the worker error     
+
+===================================================
+count(*)    
+200     
+
+===================================================
+0
+===================================================
+    
+Case 4: same shape with the failing row filtered out - parallel probe engages, no error     
+
+===================================================
+total_rows    matched    
+49999     49999     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), count(b.id) from [dba.t_err_probe] a left outer join [dba.t_err_build] b on  cast(a.tag as integer)>? and a.ckey=b.id where a.id<>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_err_build), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_err_probe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

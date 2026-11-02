@@ -42,4 +42,7 @@ show trace;
 select /*+ recompile */ 'n_4', min(col1), max(col1) from t3;
 show trace;
 
+-- trace goes off so that it does not stay on for the cases run after this one on the same connection
+set trace off;
+
 drop table t1, t2, t3, t4;
