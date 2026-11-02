@@ -109,11 +109,18 @@
  * blocks): the index order skips tn.b as fixed by "tn.b = 2", but an ON term
  * does not filter the preserved rows, so ORDER BY a, c is not the merge order.
  *   C35 LEFT merge / inner merge under an NL or merge left join -> final sort kept
+ *
+ * Index key order differs from the join term order (tu/tv indexed on (b, a),
+ * a has fewer distinct values, so its term sorts first): the merge compares
+ * in the sorted input's key order (b, a). 4 more trace blocks.
+ *   C36 both (b, a), ORDER BY b, a / ORDER BY a, b        -> skipped / kept
+ *       LEFT join, NULL keys, preserved side heap-sorted  -> skipped
+ *       outer (b, a), inner (a, b) index                  -> inner re-sorted
  */
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx;
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx, tu, tv;
 
 create table ta (a int, b int, p char(100));
 insert into ta
@@ -774,6 +781,81 @@ from (select count(*) cnt, sum(b*rn) ord
             from (select /*+ USE_NL */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
                   left join tp on tn.b = 2 and tp.a = tn.a using index none order by tn.a, tn.c) x) y) n;
 
+-- C36. index key order (b, a) differs from the join term order (a first: a has fewer distinct values, so
+--      its term sorts first). The merge compares in the sorted input's key order (b, a), an input whose
+--      index order is (a, b) is re-sorted by the executor.
+create table tu (a int, b int, d int);
+insert into tu
+select case when mod(rownum,53)=0 then null else mod(rownum,7) end,
+       case when mod(rownum,61)=0 then null else mod(rownum,40) end, rownum
+from db_class x1, db_class x2, db_class x3 limit 600;
+create index i_tu_ba on tu(b, a);
+create table tv (a int, b int, e int);
+insert into tv
+select case when mod(rownum,47)=0 then null else mod(rownum,7) end,
+       case when mod(rownum,59)=0 then null else mod(rownum,50) end, rownum*2
+from db_class x1, db_class x2, db_class x3 limit 500;
+create index i_tv_ba on tv(b, a);
+create index i_tv_ab on tv(a, b);
+update statistics on tu, tv;
+
+-- trace sanity: C36 shapes -- both (b, a) indexes, ORDER BY b, a: no "SORT (order by)" / ORDER BY a, b: kept.
+-- LEFT join: TABLE SCAN on the preserved side, no "SORT (order by)". Inner (a, b) index: no "SORT (order by)"
+set trace on;
+select /*+ USE_MERGE */ tu.a, tu.b, tu.d * 0, tv.e * 0 from tu, tv where tu.a = tv.a and tu.b = tv.b
+using index i_tu_ba(+), i_tv_ba(+) order by tu.b, tu.a limit 1;
+show trace;
+select /*+ USE_MERGE */ tu.a, tu.b, tu.d * 0, tv.e * 0 from tu, tv where tu.a = tv.a and tu.b = tv.b
+using index i_tu_ba(+), i_tv_ba(+) order by tu.a, tu.b limit 1;
+show trace;
+select /*+ USE_MERGE */ tu.a, tu.b, tu.d * 0, tv.e * 0 from tu left outer join tv on tu.a = tv.a and tu.b = tv.b
+where tu.d <= 12 using index i_tu_ba(+), i_tv_ba(+) order by tu.b, tu.a;
+show trace;
+select /*+ USE_MERGE */ tu.a, tu.b, tu.d * 0, tv.e * 0 from tu, tv where tu.a = tv.a and tu.b = tv.b
+using index i_tu_ba(+), i_tv_ab(+) order by tu.b, tu.a limit 1;
+show trace;
+set trace off;
+
+select case when m.cnt<=>n.cnt and m.sd<=>n.sd and m.se<=>n.se and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c36a
+from (select count(*) cnt, sum(d) sd, sum(e) se, sum((b*10+a)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_MERGE */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index i_tu_ba(+), i_tv_ba(+) order by tu.b, tu.a) x) y) m,
+     (select count(*) cnt, sum(d) sd, sum(e) se, sum((b*10+a)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_NL */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index none order by tu.b, tu.a) x) y) n;
+select case when m.cnt<=>n.cnt and m.sd<=>n.sd and m.se<=>n.se and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c36b
+from (select count(*) cnt, sum(d) sd, sum(e) se, sum((a*100+b)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_MERGE */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index i_tu_ba(+), i_tv_ba(+) order by tu.a, tu.b) x) y) m,
+     (select count(*) cnt, sum(d) sd, sum(e) se, sum((a*100+b)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_NL */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index none order by tu.a, tu.b) x) y) n;
+select case when m.cnt<=>n.cnt and m.sd<=>n.sd and m.se<=>n.se and m.nn<=>n.nn and m.nn<=>32 and m.ord<=>n.ord
+       then 'PASS' else 'FAIL' end as c36c
+from (select count(*) cnt, sum(d) sd, sum(e) se, sum(case when e is null then 1 else 0 end) nn,
+             sum(((nvl(b,-9)+10)*100+nvl(a,-9)+10)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_MERGE */ tu.a a, tu.b b, tu.d d, tv.e e from tu left outer join tv on tu.a = tv.a and tu.b = tv.b
+                  using index i_tu_ba(+), i_tv_ba(+) order by tu.b, tu.a) x) y) m,
+     (select count(*) cnt, sum(d) sd, sum(e) se, sum(case when e is null then 1 else 0 end) nn,
+             sum(((nvl(b,-9)+10)*100+nvl(a,-9)+10)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_NL */ tu.a a, tu.b b, tu.d d, tv.e e from tu left outer join tv on tu.a = tv.a and tu.b = tv.b
+                  using index none order by tu.b, tu.a) x) y) n;
+select case when m.cnt<=>n.cnt and m.sd<=>n.sd and m.se<=>n.se and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c36d
+from (select count(*) cnt, sum(d) sd, sum(e) se, sum((b*10+a)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_MERGE */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index i_tu_ba(+), i_tv_ab(+) order by tu.b, tu.a) x) y) m,
+     (select count(*) cnt, sum(d) sd, sum(e) se, sum((b*10+a)*rn) ord
+      from (select a, b, d, e, rownum rn
+            from (select /*+ USE_NL */ tu.a a, tu.b b, tu.d d, tv.e e from tu, tv where tu.a = tv.a and tu.b = tv.b
+                  using index none order by tu.b, tu.a) x) y) n;
+
 set system parameters 'optimizer_enable_merge_join=no';
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx;
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx, tu, tv;

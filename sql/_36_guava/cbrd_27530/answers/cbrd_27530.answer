@@ -958,4 +958,180 @@ PASS
 ===================================================
 0
 ===================================================
+600
+===================================================
+0
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+a    b    tu.d*0    tv.e*0    
+0     0     0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (dba.tu.i_tu_ba) ()
+      SORT (temp)
+        INDEX SCAN (dba.tv.i_tv_ba) ()
+
+  rewritten query: select /*+ USE_MERGE */ [dba.tu].a, [dba.tu].b, [dba.tu].d*?, [dba.tv].e*? from [dba.tu] [dba.tu], [dba.tv] [dba.tv] where [dba.tu].a=[dba.tv].a and [dba.tu].b=[dba.tv].b using index [dba.tu].i_tu_ba(+), [dba.tv].i_tv_ba(+) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tu.i_tu_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tv.i_tv_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    tu.d*0    tv.e*0    
+0     0     0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (inner join)
+        SORT (temp)
+          INDEX SCAN (dba.tu.i_tu_ba) ()
+        SORT (temp)
+          INDEX SCAN (dba.tv.i_tv_ba) ()
+
+  rewritten query: select /*+ USE_MERGE */ [dba.tu].a, [dba.tu].b, [dba.tu].d*?, [dba.tv].e*? from [dba.tu] [dba.tu], [dba.tv] [dba.tv] where [dba.tu].a=[dba.tv].a and [dba.tu].b=[dba.tv].b using index [dba.tu].i_tu_ba(+), [dba.tv].i_tv_ba(+) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tu.i_tu_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tv.i_tv_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    tu.d*0    tv.e*0    
+1     1     0     0     
+1     1     0     0     
+2     2     0     0     
+2     2     0     0     
+3     3     0     0     
+3     3     0     0     
+4     4     0     0     
+5     5     0     0     
+5     5     0     0     
+6     6     0     0     
+6     6     0     0     
+0     7     0     0     
+0     7     0     0     
+1     8     0     0     
+1     8     0     0     
+2     9     0     0     
+2     9     0     0     
+3     10     0     0     
+3     10     0     0     
+4     11     0     0     
+4     11     0     0     
+5     12     0     0     
+5     12     0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (left outer join)
+      SORT (temp)
+        TABLE SCAN (dba.tu)
+      SORT (temp)
+        INDEX SCAN (dba.tv.i_tv_ba) ()
+
+  rewritten query: select /*+ USE_MERGE */ [dba.tu].a, [dba.tu].b, [dba.tu].d*?, [dba.tv].e*? from [dba.tu] [dba.tu] left outer join [dba.tv] [dba.tv] on [dba.tu].b=[dba.tv].b and [dba.tu].a=[dba.tv].a where ([dba.tu].d<= ?:? ) using index [dba.tu].i_tu_ba(+), [dba.tv].i_tv_ba(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tu), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tv.i_tv_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    tu.d*0    tv.e*0    
+0     0     0     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (temp)
+    MERGE JOIN (inner join)
+      SORT (temp)
+        INDEX SCAN (dba.tu.i_tu_ba) ()
+      SORT (temp)
+        INDEX SCAN (dba.tv.i_tv_ab) ()
+
+  rewritten query: select /*+ USE_MERGE */ [dba.tu].a, [dba.tu].b, [dba.tu].d*?, [dba.tv].e*? from [dba.tu] [dba.tu], [dba.tv] [dba.tv] where [dba.tu].a=[dba.tv].a and [dba.tu].b=[dba.tv].b using index [dba.tu].i_tu_ba(+), [dba.tv].i_tv_ab(+) order by ?, ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tu.i_tu_ba), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tv.i_tv_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c36a    
+PASS     
+
+===================================================
+c36b    
+PASS     
+
+===================================================
+c36c    
+PASS     
+
+===================================================
+c36d    
+PASS     
+
+===================================================
+0
+===================================================
 0
