@@ -793,3 +793,169 @@ PASS
 
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+2     3     3     
+2     2     4     
+2     1     5     
+3     2     7     
+3     1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (left outer join)
+        SORT (temp)
+          INDEX SCAN (dba.tn.i_tn) (covered: true)
+        SORT (temp)
+          INDEX SCAN (dba.tp.i_tp) (covered: true)
+
+  rewritten query: select /*+ USE_MERGE */ [dba.tn].a, [dba.tn].b, [dba.tn].c from [dba.tn] [dba.tn] left outer join [dba.tp] [dba.tp] on [dba.tn].b= ?:?  and [dba.tp].a=[dba.tn].a order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tn.i_tn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tp.i_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+2     3     3     
+2     2     4     
+2     1     5     
+3     2     7     
+3     1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (left outer join)
+      SORT (temp)
+        MERGE JOIN (inner join)
+          SORT (temp)
+            INDEX SCAN (dba.tn.i_tn) (covered: true)
+          SORT (temp)
+            INDEX SCAN (dba.tx.i_tx) (covered: true)
+      INDEX SCAN (dba.tp.i_tp) (key range: [dba.tp].a=[dba.tn].a)
+
+  rewritten query: select /*+ ORDERED USE_NL(tp) USE_MERGE(tx) */ [dba.tn].a, [dba.tn].b, [dba.tn].c from [dba.tn] [dba.tn] inner join [dba.tx] [dba.tx] on [dba.tx].a=[dba.tn].a left outer join [dba.tp] [dba.tp] on [dba.tn].b= ?:?  and [dba.tp].a=[dba.tn].a order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tp.i_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          MERGELIST
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.tn.i_tn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (index: dba.tx.i_tx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+              ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+2     3     3     
+2     2     4     
+2     1     5     
+3     2     7     
+3     1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (temp)
+      MERGE JOIN (left outer join)
+        SORT (temp)
+          MERGE JOIN (inner join)
+            SORT (temp)
+              INDEX SCAN (dba.tn.i_tn) (covered: true)
+            SORT (temp)
+              INDEX SCAN (dba.tx.i_tx) (covered: true)
+        SORT (temp)
+          INDEX SCAN (dba.tp.i_tp) (covered: true)
+
+  rewritten query: select /*+ ORDERED USE_MERGE */ [dba.tn].a, [dba.tn].b, [dba.tn].c from [dba.tn] [dba.tn] inner join [dba.tx] [dba.tx] on [dba.tx].a=[dba.tn].a left outer join [dba.tp] [dba.tp] on [dba.tn].b= ?:?  and [dba.tp].a=[dba.tn].a order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tn.i_tn), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (index: dba.tx.i_tx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (index: dba.tp.i_tp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+c35a    
+PASS     
+
+===================================================
+c35b    
+PASS     
+
+===================================================
+c35c    
+PASS     
+
+===================================================
+0
+===================================================
+0

@@ -104,11 +104,16 @@
  * Parameter off (tr 100000 rows, index i_tr_g about 300 pages): 2 more trace
  * blocks; the index SCAN line keeps its "(parallel workers: ...)" sub-line.
  *   C34 GROUP BY ... WITH ROLLUP / + ORDER BY g           -> parallel index scan kept
+ *
+ * Outer join ON constant (tn indexed on (a, b, c), parameter on, 3 more trace
+ * blocks): the index order skips tn.b as fixed by "tn.b = 2", but an ON term
+ * does not filter the preserved rows, so ORDER BY a, c is not the merge order.
+ *   C35 LEFT merge / inner merge under an NL or merge left join -> final sort kept
  */
 
 set system parameters 'optimizer_enable_merge_join=yes';
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th, tr;
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx;
 
 create table ta (a int, b int, p char(100));
 insert into ta
@@ -718,4 +723,57 @@ from (select count(*) cnt, sum(g) sg, sum(c) sc, sum(nvl(g, -1)*rn) ord, sum(c*r
       from (select g, c, rownum rn
             from (select /*+ NO_PARALLEL_SCAN */ g, count(*) c from tr where g > 5 group by g with rollup using index i_tr_g(+)) x) y) n;
 
-drop table if exists ta, tb, tc, td, te, tf, tg, th, tr;
+-- C35. outer join ON condition compares an index key of the merge outer to a constant: the final sort is kept
+set system parameters 'optimizer_enable_merge_join=yes';
+create table tn (a int not null, b int, c int);
+create index i_tn on tn (a, b, c);
+insert into tn values (1, 1, 2), (1, 2, 1), (2, 1, 5), (2, 2, 4), (2, 3, 3), (3, 2, 7), (3, 1, 8);
+create table tp (a int);
+create index i_tp on tp (a);
+insert into tp values (1), (2);
+create table tx (a int not null);
+create index i_tx on tx (a);
+insert into tx values (1), (2), (3);
+
+set trace on;
+select /*+ USE_MERGE */ tn.a, tn.b, tn.c from tn left join tp on tn.b = 2 and tp.a = tn.a order by tn.a, tn.c;
+show trace;
+select /*+ ORDERED USE_MERGE(tx) USE_NL(tp) */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+left join tp on tn.b = 2 and tp.a = tn.a order by tn.a, tn.c;
+show trace;
+select /*+ ORDERED USE_MERGE */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+left join tp on tn.b = 2 and tp.a = tn.a order by tn.a, tn.c;
+show trace;
+set trace off;
+
+select case when m.cnt<=>n.cnt and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c35a
+from (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ USE_MERGE */ tn.a, tn.b, tn.c from tn left join tp on tn.b = 2 and tp.a = tn.a
+                  order by tn.a, tn.c) x) y) m,
+     (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ USE_NL */ tn.a, tn.b, tn.c from tn left join tp on tn.b = 2 and tp.a = tn.a
+                  using index none order by tn.a, tn.c) x) y) n;
+select case when m.cnt<=>n.cnt and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c35b
+from (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ ORDERED USE_MERGE(tx) USE_NL(tp) */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+                  left join tp on tn.b = 2 and tp.a = tn.a order by tn.a, tn.c) x) y) m,
+     (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ USE_NL */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+                  left join tp on tn.b = 2 and tp.a = tn.a using index none order by tn.a, tn.c) x) y) n;
+select case when m.cnt<=>n.cnt and m.ord<=>n.ord then 'PASS' else 'FAIL' end as c35c
+from (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ ORDERED USE_MERGE */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+                  left join tp on tn.b = 2 and tp.a = tn.a order by tn.a, tn.c) x) y) m,
+     (select count(*) cnt, sum(b*rn) ord
+      from (select b, rownum rn
+            from (select /*+ USE_NL */ tn.a, tn.b, tn.c from tn inner join tx on tx.a = tn.a
+                  left join tp on tn.b = 2 and tp.a = tn.a using index none order by tn.a, tn.c) x) y) n;
+
+set system parameters 'optimizer_enable_merge_join=no';
+
+drop table if exists ta, tb, tc, td, te, tf, tg, th, tr, tn, tp, tx;
