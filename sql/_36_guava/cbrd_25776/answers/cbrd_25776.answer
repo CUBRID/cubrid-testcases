@@ -3727,18 +3727,17 @@ Trace Statistics:
 trace    
 
 Query Plan:
-  SORT (distinct)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (cte)
-      TABLE SCAN (t?)
-
-  rewritten query: (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca)
-
   NESTED LOOPS (inner join)
+    TABLE SCAN (cte)
+    TABLE SCAN (t?)
+
+  rewritten query: (select /*+ INLINE */ cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca)
+
+  NESTED LOOPS (semi join)
     TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
 
-  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ distinct cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca) av? (av_?) where [dba.tb].ca=av?.av_?
+  rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb] semi join (select /*+ INLINE */ cte.ca from [dba.ta] cte, [dba.ta] t? where (cte.ca> ?:? ) and cte.ca=t?.ca) av? (av_?) on [dba.tb].ca=av?.av_?
 
 
 Trace Statistics:
@@ -3752,7 +3751,6 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

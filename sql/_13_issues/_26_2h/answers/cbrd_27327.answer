@@ -14,7 +14,7 @@
 0
 ===================================================
     
-Case 1: the reported query, MIN and MAX of a string column over four partitions; result = parallel(0)     
+Case 1: the reported query, MIN and MAX of a string column over four partitions result = parallel(0)     
 
 ===================================================
 min(col)    max(col)    
@@ -44,7 +44,7 @@ row-000000000001     row-000000200000
 
 ===================================================
     
-Case 2: COUNT, string MIN and MAX, SUM, AVG, STDDEV and VARIANCE family, BIT aggregates; result = parallel(0)     
+Case 2: COUNT, string MIN and MAX, SUM, AVG, STDDEV and VARIANCE family, BIT aggregates result = parallel(0)     
 
 ===================================================
 count(*)    count(col)    min(grp)    max(grp)    sum(v)    round(avg(v), 2)    round(stddev(v), 2)    round(stddev_pop(v), 2)    round(stddev_samp(v), 2)    round(variance(v), 2)    round(var_pop(v), 2)    round(var_samp(v), 2)    bit_and(v)    bit_or(v)    bit_xor(v)    
@@ -74,7 +74,7 @@ count(*)    count(col)    min(grp)    max(grp)    sum(v)    round(avg(v), 2)    
 
 ===================================================
     
-Case 3: GROUP_CONCAT without ORDER BY and the JSON aggregates, compared by length; result = parallel(0)     
+Case 3: GROUP_CONCAT without ORDER BY and the JSON aggregates, compared by length result = parallel(0)     
 
 ===================================================
 char_length(group_concat(col separator '<<>>'))    char_length( replace(group_concat(col separator '<<>>'), '<<>>', ''))    json_length(json_arrayagg(col))    json_length(json_objectagg(col, v))    
@@ -104,7 +104,7 @@ char_length(group_concat(col separator '<<>>'))    char_length( replace(group_co
 
 ===================================================
     
-Case 4: MEDIAN, PERCENTILE, CUME_DIST, PERCENT_RANK, DISTINCT and sorted GROUP_CONCAT; result = parallel(0)     
+Case 4: MEDIAN, PERCENTILE, CUME_DIST, PERCENT_RANK, DISTINCT and sorted GROUP_CONCAT result = parallel(0)     
 
 ===================================================
 round(median(v), 2)    round(percentile_cont( cast(0.25 as double)) within group (order by v), 2)    percentile_disc( cast(0.75 as double)) within group (order by v)    round(cume_dist(500) within group(order by v), 4)    round(percent_rank(500) within group(order by v), 4)    count(distinct grp)    sum(distinct v)    min(col)    max(col)    group_concat(distinct grp order by grp separator '-|-')    
@@ -134,7 +134,7 @@ round(median(v), 2)    round(percentile_cont( cast(0.25 as double)) within group
 
 ===================================================
     
-Case 5: the qualifying row in one partition only, then no qualifying row; result = parallel(0)     
+Case 5: the qualifying row in one partition only, then no qualifying row result = parallel(0)     
 
 ===================================================
 count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')    
@@ -190,7 +190,7 @@ count(*)    min(col)    max(col)    group_concat(grp separator '<<>>')
 
 ===================================================
     
-Case 6: the same aggregates on a table without partitions, scanned in one pass; result = parallel(0)     
+Case 6: the same aggregates on a table without partitions, scanned in one pass result = parallel(0)     
 
 ===================================================
 min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    round(stddev(v), 2)    round(variance(v), 2)    group_concat(distinct grp order by grp separator '-|-')    
@@ -218,7 +218,7 @@ row-000000000001     row-000000200000     aa     dd     200000     99900000     
 
 ===================================================
     
-Case 7: one statement three times without recompile, reusing the cached plan; result = parallel(0)     
+Case 7: one statement three times without recompile, reusing the cached plan result = parallel(0)     
 
 ===================================================
 min(col)    max(col)    min(grp)    max(grp)    count(*)    sum(v)    group_concat(distinct grp order by grp separator '-|-')    
@@ -238,7 +238,7 @@ row-000000000001     row-000000200000     aa     dd     200000     99900000     
 
 ===================================================
     
-Case 8: a division by zero inside the parallel scan of the table without partitions, then the same statement without it; result = parallel(0)     
+Case 8: a division by zero inside the parallel scan of the table without partitions, then the same statement without it result = parallel(0)     
 
 ===================================================
 1
@@ -268,7 +268,7 @@ count(*)    min(col)    max(col)    group_concat(distinct grp order by grp separ
 
 ===================================================
     
-Case 9: the same division by zero on the partitioned table, then the same statement without it; result = parallel(0)     
+Case 9: the same division by zero on the partitioned table, then the same statement without it result = parallel(0)     
 
 ===================================================
 1
