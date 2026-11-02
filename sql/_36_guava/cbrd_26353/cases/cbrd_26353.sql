@@ -23,6 +23,7 @@
 --   - ORDER BY ... FOR orderby_num () inside a derived table: moved to inst_num ()
 --   - LIMIT, GROUP BY on the same expression, inner join on a joined table expression
 --   - host variable on the constant side (prepare / execute)
+--   - plain column: BIGINT column compared with a host variable, dropped for an integer bind and kept for a DOUBLE bind
 --   - a non-deterministic item later in the select list: ORDER BY still dropped
 --   - kept: OR term, outer join ON term, collation cast, different literal case,
 --     non-deterministic expression (drand (), uuid ()), a different expression is fixed
@@ -174,6 +175,15 @@ show trace;
 -- kept: a MONETARY literal prints rounded, so a different amount must not match
 select id, floor (a + $1.004) from tk where floor (a + $1.001) = 1 order by 2 asc;
 show trace;
+
+-- plain column: BIGINT column compared with a host variable, recompiled at execute so that the trace shows the plan;
+-- an integer bind drops b from the ORDER BY, a DOUBLE bind matches both rows and keeps it
+prepare sb from 'select /*+ recompile */ b, a from td where b = ? order by b, a';
+execute sb using 9007199254740992;
+show trace;
+execute sb using 9007199254740992e0;
+show trace;
+deallocate prepare sb;
 
 -- host variable on the constant side, recompiled at execute so that the trace shows the plan
 prepare st from 'select /*+ recompile */ upper (a) from ta where upper (a) = ? order by upper (a)';

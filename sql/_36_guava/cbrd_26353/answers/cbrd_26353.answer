@@ -575,6 +575,48 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+b    a    
+9007199254740992     y     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select [dba.td].b, [dba.td].a from [dba.td] [dba.td] where [dba.td].b= ?:?  order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+b    a    
+9007199254740992     y     
+9007199254740993     x     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select [dba.td].b, [dba.td].a from [dba.td] [dba.td] where [dba.td].b= ?:?  order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
 upper(a)    
 A     
 A     
