@@ -1171,26 +1171,30 @@ count(*)
 2     
 
 Query plan:
-hash-join (semi join)
-    edge:  term[?] AND term[?]
-    outer: hash-join (right outer join)
+idx-join (inner join)
+    outer: hash-join (inner join)
                edge:  term[?]
-               outer: idx-join (inner join)
+               outer: idx-join (left outer join)
                           outer: sscan
-                                     class: t_q node[?]
+                                     class: t_o node[?]
                                      cost:  ? card ?
                           inner: iscan
                                      class: t_p node[?]
                                      index: i_t_p_id term[?] (covers)
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
-                          class: t_o node[?]
+               inner: temp(distinct)
+                          subplan: sscan
+                                       class: t_s node[?]
+                                       cost:  ? card ?
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: t_s node[?]
+    inner: iscan
+               class: t_q node[?]
+               index: i_t_q_id term[?]
+               sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.id=t_p.id inner join t_q t_q on t_q.id=t_p.id semi join t_s t_s on t_s.m=t_o.m and t_s.k=t_q.k
@@ -1198,34 +1202,31 @@ select /*+ PARALLEL(?) */ count(*) from t_p t_p right outer join t_o t_o on t_o.
 trace    
 
 Query Plan:
-  HASH JOIN (semi join)
-    HASH JOIN (right outer join)
-      NESTED LOOPS (inner join)
-        TABLE SCAN (dba.t_q)
-        INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_q].id=[dba.t_p].id, covered: true)
-      TABLE SCAN (dba.t_o)
-    TABLE SCAN (dba.t_s)
+  NESTED LOOPS (inner join)
+    HASH JOIN (inner join)
+      NESTED LOOPS (left outer join)
+        TABLE SCAN (dba.t_o)
+        INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id, covered: true)
+      SORT (distinct)
+        TABLE SCAN (dba.t_s)
+    INDEX SCAN (dba.t_q.i_t_q_id) (key range: [dba.t_q].id=[dba.t_p].id)
 
   rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id semi join [dba.t_s] [dba.t_s] on [dba.t_s].m=[dba.t_o].m and [dba.t_s].k=[dba.t_q].k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_q.i_t_q_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.t_q), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -1240,19 +1241,20 @@ sscan
 Query stmt:
 (select /*+ NO_UNNEST */ ? from t_s t_s where t_s.k=t_q.k and (t_s.m=t_o.m) and inst_num()<= ?:? )
 Query plan:
-hash-join (right outer join)
-    edge:  term[?]
-    outer: idx-join (inner join)
+idx-join (inner join)
+    outer: idx-join (left outer join)
                outer: sscan
-                          class: t_q node[?]
+                          class: t_o node[?]
                           cost:  ? card ?
                inner: iscan
                           class: t_p node[?]
                           index: i_t_p_id term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: t_o node[?]
+    inner: iscan
+               class: t_q node[?]
+               index: i_t_q_id term[?]
+               sargs: term[?]
                cost:  ? card ?
     sargs: term[?]
     subqs: ?
@@ -1267,30 +1269,24 @@ Query Plan:
 
   rewritten query: (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
 
-  HASH JOIN (right outer join)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (dba.t_q)
-      INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_q].id=[dba.t_p].id, covered: true)
-    TABLE SCAN (dba.t_o)
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (left outer join)
+      TABLE SCAN (dba.t_o)
+      INDEX SCAN (dba.t_p.i_t_p_id) (key range: [dba.t_o].id=[dba.t_p].id, covered: true)
+    INDEX SCAN (dba.t_q.i_t_q_id) (key range: [dba.t_q].id=[dba.t_p].id)
 
   rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_p] [dba.t_p] right outer join [dba.t_o] [dba.t_o] on [dba.t_o].id=[dba.t_p].id inner join [dba.t_q] [dba.t_q] on [dba.t_q].id=[dba.t_p].id where  exists (select /*+ NO_UNNEST */ ? from [dba.t_s] [dba.t_s] where [dba.t_s].k=[dba.t_q].k and ([dba.t_s].m=[dba.t_o].m) and inst_num()<= ?:? )
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+    SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_q.i_t_q_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_q), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SCAN (index: dba.t_p.i_t_p_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (correlated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+            SCAN (table: dba.t_s), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

@@ -458,7 +458,8 @@ test10     9010     0
 Query plan:
 iscan
     class: t? node[?]
-    index: cix_cub? term[?] (covers)
+    index: cix_cub? (covers)
+    filtr: term[?]
     cost:  ? card ?
 Analytic functions:
     run[?]: sort with key (? asc nulls first, ? asc nulls first)
@@ -901,7 +902,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select a.id, X.id, X.g from o? a left outer join (select e?.id, e?.g from e? e?) X (id, g) on a.id=X.id where (X.g*?+ mod((@a := @a+?), ?)=? or (X.g< ?:? )) order by ?
+select a.id, X.id, X.g from o? a left outer join (select e?.id, e?.g from e? e?) X (id, g) on a.id=X.id where (X.g*?+ mod((@a := @a+?), ?)=? or (X.g<-?)) order by ?
 ===================================================
 @a    
 12     

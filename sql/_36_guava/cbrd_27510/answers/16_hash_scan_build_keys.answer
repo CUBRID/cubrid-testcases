@@ -794,6 +794,19 @@ k    k
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.i=a.i+ ?:?  order by ?, ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -835,6 +848,19 @@ k    k
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.bi=a.i+ ?:?  order by ?, ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -858,6 +884,19 @@ k    k
 
 ===================================================
 trace    
+
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.d=a.i* ?:?  order by ?, ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -887,6 +926,19 @@ k    k
 
 ===================================================
 trace    
+
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k,  ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k,  ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where a.i= ?:?  and a.i=b.v order by ?, ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -931,6 +983,19 @@ k    k
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where a.bi=b.v order by ?, ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -956,6 +1021,19 @@ k    k
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=a.i+ ?:?  order by ?, ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -997,6 +1075,19 @@ k    k
 
 ===================================================
 trace    
+
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, v) where b.v=a.i+ ?:?  and a.bi=b.i order by ?, ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1026,6 +1117,23 @@ k    c
 
 ===================================================
 trace    
+
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (b)
+
+  rewritten query: (select count(*) from [dba.hk_o] x, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.i=x.i+ ?:?  and x.k=a.k)
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.k, (select count(*) from [dba.hk_o] x, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.i=x.i+ ?:?  and x.k=a.k) from [dba.hk_o] a order by ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1059,6 +1167,23 @@ k    c
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (b)
+
+  rewritten query: (select count(*) from [dba.hk_o] x, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=x.i+ ?:?  and x.k=a.k)
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.k, (select count(*) from [dba.hk_o] x, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=x.i+ ?:?  and x.k=a.k) from [dba.hk_o] a order by ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1122,6 +1247,19 @@ k    k
 ===================================================
 trace    
 
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+ ?:?  from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=a.i+ ?:?  order by ?, ?
+
+
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1153,14 +1291,14 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.i=a.i+@hk_v order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where b.i=a.i+@hk_v order by ?, ?
 
 
 Trace Statistics:
@@ -1202,14 +1340,14 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where a.i+@hk_v=b.i+? order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i, [dba.hk_i].bi, [dba.hk_i].si, [dba.hk_i].d, [dba.hk_i].f, [dba.hk_i].n, [dba.hk_i].n?, [dba.hk_i].s, [dba.hk_i].c, [dba.hk_i].dt, [dba.hk_i].dtm, [dba.hk_i].e, [dba.hk_i].m from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, i, bi, si, d, f, n, n?, s, c, dt, dtm, e, m) where a.i+@hk_v=b.i+? order by ?, ?
 
 
 Trace Statistics:
@@ -1235,14 +1373,14 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where a.bi=b.v order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, v) where a.bi=b.v order by ?, ?
 
 
 Trace Statistics:
@@ -1274,49 +1412,14 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, (@hk_v := @hk_v+?) from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, (@hk_v := @hk_v+?) from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, (@hk_v := @hk_v+?) from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where a.bi=b.v order by ?, ?
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-0
-===================================================
-k    k    
-1     1     
-2     2     
-3     3     
-3     6     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.hk_i)
-
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
-
-  SORT (order by)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (a)
-      TABLE SCAN (b)
-
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=a.i+@hk_v order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, (@hk_v := @hk_v+?) from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, v) where a.bi=b.v order by ?, ?
 
 
 Trace Statistics:
@@ -1344,14 +1447,14 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+? from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+? from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where b.v=a.i+@hk_v order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+@hk_v from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, v) where b.v=a.i+@hk_v order by ?, ?
 
 
 Trace Statistics:
@@ -1379,14 +1482,49 @@ trace
 Query Plan:
   TABLE SCAN (dba.hk_i)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+? from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
 
   SORT (order by)
     NESTED LOOPS (inner join)
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k> ?:? )) b (k, v) where a.bi=b.v+@hk_v order by ?, ?
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i+? from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, v) where b.v=a.i+@hk_v order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hk_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.hk_i), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+k    k    
+1     1     
+2     2     
+3     3     
+3     6     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.hk_i)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED */ a.k, b.k from [dba.hk_o] a, (select /*+ NO_MERGE */ [dba.hk_i].k, [dba.hk_i].i from [dba.hk_i] [dba.hk_i] where ([dba.hk_i].k>?)) b (k, v) where a.bi=b.v+@hk_v order by ?, ?
 
 
 Trace Statistics:
@@ -1733,7 +1871,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.hk_r), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.hk_r?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
