@@ -24,6 +24,7 @@
 --   - LIMIT, GROUP BY on the same expression, inner join on a joined table expression
 --   - host variable on the constant side (prepare / execute)
 --   - plain column: BIGINT column compared with a host variable, dropped for an integer bind and kept for a DOUBLE bind
+--   - the same without recompile, alternating integer and DOUBLE binds
 --   - a non-deterministic item later in the select list: ORDER BY still dropped
 --   - kept: OR term, outer join ON term, collation cast, different literal case,
 --     non-deterministic expression (drand (), uuid ()), a different expression is fixed
@@ -184,6 +185,13 @@ show trace;
 execute sb using 9007199254740992e0;
 show trace;
 deallocate prepare sb;
+
+-- the same statement without recompile: the plan of one bind type is not reused for another
+prepare sb2 from 'select b, a from td where b = ? order by b, a';
+execute sb2 using 9007199254740992;
+execute sb2 using 9007199254740992e0;
+execute sb2 using 9007199254740992;
+deallocate prepare sb2;
 
 -- host variable on the constant side, recompiled at execute so that the trace shows the plan
 prepare st from 'select /*+ recompile */ upper (a) from ta where upper (a) = ? order by upper (a)';
