@@ -52,26 +52,26 @@ Case 1: GROUP_CONCAT with ORDER BY over the join (RND-2589 scenario 32); result 
 
 ===================================================
 id    group_concat(a.title order by a.title separator ', ')    
-1     aka 0, aka 0     
-4     aka 37, aka 37     
-7     aka 74, aka 74     
-10     aka 111, aka 111     
-13     aka 148, aka 148     
-16     aka 185, aka 185     
-19     aka 222, aka 222     
-22     aka 259, aka 259     
-25     aka 296, aka 296     
-28     aka 333, aka 333     
-31     aka 370, aka 370     
-34     aka 407, aka 407     
-37     aka 444, aka 444     
-40     aka 481, aka 481     
-43     aka 518, aka 518     
-46     aka 555, aka 555     
-49     aka 592, aka 592     
-52     aka 629, aka 629     
-55     aka 666, aka 666     
-58     aka 703, aka 703     
+1     aka 335, aka 666     
+4     aka 37, aka 703     
+7     aka 74, aka 740     
+10     aka 111, aka 777     
+13     aka 148, aka 814     
+16     aka 185, aka 851     
+19     aka 222, aka 888     
+22     aka 259, aka 925     
+25     aka 296, aka 962     
+28     aka 2, aka 333     
+31     aka 370, aka 39     
+34     aka 407, aka 76     
+37     aka 113, aka 444     
+40     aka 150, aka 481     
+43     aka 187, aka 518     
+46     aka 224, aka 555     
+49     aka 261, aka 592     
+52     aka 298, aka 629     
+55     aka 335, aka 666     
+58     aka 372, aka 703     
 
 ===================================================
 trace    
@@ -93,26 +93,26 @@ Trace Statistics:
 
 ===================================================
 id    group_concat(a.title order by a.title separator ', ')    
-1     aka 0, aka 0     
-4     aka 37, aka 37     
-7     aka 74, aka 74     
-10     aka 111, aka 111     
-13     aka 148, aka 148     
-16     aka 185, aka 185     
-19     aka 222, aka 222     
-22     aka 259, aka 259     
-25     aka 296, aka 296     
-28     aka 333, aka 333     
-31     aka 370, aka 370     
-34     aka 407, aka 407     
-37     aka 444, aka 444     
-40     aka 481, aka 481     
-43     aka 518, aka 518     
-46     aka 555, aka 555     
-49     aka 592, aka 592     
-52     aka 629, aka 629     
-55     aka 666, aka 666     
-58     aka 703, aka 703     
+1     aka 335, aka 666     
+4     aka 37, aka 703     
+7     aka 74, aka 740     
+10     aka 111, aka 777     
+13     aka 148, aka 814     
+16     aka 185, aka 851     
+19     aka 222, aka 888     
+22     aka 259, aka 925     
+25     aka 296, aka 962     
+28     aka 2, aka 333     
+31     aka 370, aka 39     
+34     aka 407, aka 76     
+37     aka 113, aka 444     
+40     aka 150, aka 481     
+43     aka 187, aka 518     
+46     aka 224, aka 555     
+49     aka 261, aka 592     
+52     aka 298, aka 629     
+55     aka 335, aka 666     
+58     aka 372, aka 703     
 
 ===================================================
     
@@ -208,31 +208,31 @@ Case 3: LEFT OUTER JOIN, two outer keys in three have no inner row; result = use
 
 ===================================================
 id    count(a.id)    max(a.title)    
-1     2     aka 0     
+1     2     aka 666     
 2     0     null     
 3     0     null     
-4     2     aka 37     
+4     2     aka 703     
 5     0     null     
 6     0     null     
-7     2     aka 74     
+7     2     aka 740     
 8     0     null     
 9     0     null     
-10     2     aka 111     
+10     2     aka 777     
 11     0     null     
 12     0     null     
-13     2     aka 148     
+13     2     aka 814     
 14     0     null     
 15     0     null     
-16     2     aka 185     
+16     2     aka 851     
 17     0     null     
 18     0     null     
-19     2     aka 222     
+19     2     aka 888     
 20     0     null     
 21     0     null     
-22     2     aka 259     
+22     2     aka 925     
 23     0     null     
 24     0     null     
-25     2     aka 296     
+25     2     aka 962     
 
 ===================================================
 trace    
@@ -254,31 +254,31 @@ Trace Statistics:
 
 ===================================================
 id    count(a.id)    max(a.title)    
-1     2     aka 0     
+1     2     aka 666     
 2     0     null     
 3     0     null     
-4     2     aka 37     
+4     2     aka 703     
 5     0     null     
 6     0     null     
-7     2     aka 74     
+7     2     aka 740     
 8     0     null     
 9     0     null     
-10     2     aka 111     
+10     2     aka 777     
 11     0     null     
 12     0     null     
-13     2     aka 148     
+13     2     aka 814     
 14     0     null     
 15     0     null     
-16     2     aka 185     
+16     2     aka 851     
 17     0     null     
 18     0     null     
-19     2     aka 222     
+19     2     aka 888     
 20     0     null     
 21     0     null     
-22     2     aka 259     
+22     2     aka 925     
 23     0     null     
 24     0     null     
-25     2     aka 296     
+25     2     aka 962     
 
 ===================================================
     
@@ -395,47 +395,47 @@ id    count(*)
 Case 5: COUNT DISTINCT, SUM, MIN, MAX and a NULL inner value; result = use_hash     
 
 ===================================================
-id    count(distinct a.v)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
-1     2     0     0     aka 0     2     
-4     2     2     1     aka 37     2     
-7     2     4     2     aka 74     2     
-10     2     6     3     aka 111     2     
-13     2     8     4     aka 148     2     
-16     2     10     5     aka 185     2     
-19     2     6     6     aka 222     1     
-22     2     14     7     aka 259     2     
-25     2     16     8     aka 296     2     
-28     2     18     9     aka 333     2     
-31     2     20     10     aka 370     2     
-34     2     11     11     aka 407     1     
-37     2     24     12     aka 444     2     
-40     2     26     13     aka 481     2     
-43     2     28     14     aka 518     2     
-46     2     30     15     aka 555     2     
-49     2     32     16     aka 592     2     
-52     2     17     17     aka 629     1     
-55     2     36     18     aka 666     2     
-58     2     38     19     aka 703     2     
-61     2     40     20     aka 740     2     
-64     2     42     21     aka 777     2     
-67     2     22     22     aka 814     1     
-70     2     46     23     aka 851     2     
-73     2     48     24     aka 888     2     
-76     2     50     25     aka 925     2     
-79     2     52     26     aka 962     2     
-82     2     54     27     aka 999     2     
-85     2     28     28     aka 36     1     
-88     2     58     29     aka 73     2     
-91     2     60     30     aka 110     2     
-94     2     62     31     aka 147     2     
-97     2     64     32     aka 184     2     
-100     2     33     33     aka 221     1     
-103     2     68     34     aka 258     2     
-106     2     70     35     aka 295     2     
-109     2     72     36     aka 332     2     
-112     2     74     37     aka 369     2     
-115     2     76     38     aka 406     2     
-118     2     39     39     aka 443     1     
+id    count(distinct a.v)    count(distinct a.w)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
+1     2     1     0     0     aka 666     2     
+4     2     1     2     1     aka 703     2     
+7     2     1     4     2     aka 740     2     
+10     2     1     6     3     aka 777     2     
+13     2     1     8     4     aka 814     2     
+16     2     1     10     5     aka 851     2     
+19     2     1     6     6     aka 888     1     
+22     2     1     14     7     aka 925     2     
+25     2     1     16     8     aka 962     2     
+28     2     1     18     9     aka 333     2     
+31     2     1     20     10     aka 39     2     
+34     2     1     11     11     aka 76     1     
+37     2     1     24     12     aka 444     2     
+40     2     1     26     13     aka 481     2     
+43     2     1     28     14     aka 518     2     
+46     2     1     30     15     aka 555     2     
+49     2     1     32     16     aka 592     2     
+52     2     1     17     17     aka 629     1     
+55     2     1     36     18     aka 666     2     
+58     2     1     38     19     aka 703     2     
+61     2     1     40     20     aka 740     2     
+64     2     1     42     21     aka 777     2     
+67     2     1     22     22     aka 814     1     
+70     2     1     46     23     aka 851     2     
+73     2     1     48     24     aka 888     2     
+76     2     1     50     25     aka 925     2     
+79     2     1     52     26     aka 962     2     
+82     2     1     54     27     aka 668     2     
+85     2     1     28     28     aka 705     1     
+88     2     1     58     29     aka 76     2     
+91     2     1     60     30     aka 779     2     
+94     2     1     62     31     aka 816     2     
+97     2     1     64     32     aka 853     2     
+100     2     1     33     33     aka 890     1     
+103     2     1     68     34     aka 927     2     
+106     2     1     70     35     aka 964     2     
+109     2     1     72     36     aka 4     2     
+112     2     1     74     37     aka 41     2     
+115     2     1     76     38     aka 78     2     
+118     2     1     39     39     aka 446     1     
 
 ===================================================
 trace    
@@ -446,7 +446,7 @@ Query Plan:
     INDEX SCAN (a.i_aka_mid) (key range: a.mid=m.id)
   group by nosort: true
 
-  rewritten query: select m.id, count(distinct a.v), sum(a.w), min(a.w), max(a.title), count(a.w) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=?
+  rewritten query: select m.id, count(distinct a.v), count(distinct a.w), sum(a.w), min(a.w), max(a.title), count(a.w) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id group by m.id having groupby_num()<=?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -456,47 +456,47 @@ Trace Statistics:
      
 
 ===================================================
-id    count(distinct a.v)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
-1     2     0     0     aka 0     2     
-4     2     2     1     aka 37     2     
-7     2     4     2     aka 74     2     
-10     2     6     3     aka 111     2     
-13     2     8     4     aka 148     2     
-16     2     10     5     aka 185     2     
-19     2     6     6     aka 222     1     
-22     2     14     7     aka 259     2     
-25     2     16     8     aka 296     2     
-28     2     18     9     aka 333     2     
-31     2     20     10     aka 370     2     
-34     2     11     11     aka 407     1     
-37     2     24     12     aka 444     2     
-40     2     26     13     aka 481     2     
-43     2     28     14     aka 518     2     
-46     2     30     15     aka 555     2     
-49     2     32     16     aka 592     2     
-52     2     17     17     aka 629     1     
-55     2     36     18     aka 666     2     
-58     2     38     19     aka 703     2     
-61     2     40     20     aka 740     2     
-64     2     42     21     aka 777     2     
-67     2     22     22     aka 814     1     
-70     2     46     23     aka 851     2     
-73     2     48     24     aka 888     2     
-76     2     50     25     aka 925     2     
-79     2     52     26     aka 962     2     
-82     2     54     27     aka 999     2     
-85     2     28     28     aka 36     1     
-88     2     58     29     aka 73     2     
-91     2     60     30     aka 110     2     
-94     2     62     31     aka 147     2     
-97     2     64     32     aka 184     2     
-100     2     33     33     aka 221     1     
-103     2     68     34     aka 258     2     
-106     2     70     35     aka 295     2     
-109     2     72     36     aka 332     2     
-112     2     74     37     aka 369     2     
-115     2     76     38     aka 406     2     
-118     2     39     39     aka 443     1     
+id    count(distinct a.v)    count(distinct a.w)    sum(a.w)    min(a.w)    max(a.title)    count(a.w)    
+1     2     1     0     0     aka 666     2     
+4     2     1     2     1     aka 703     2     
+7     2     1     4     2     aka 740     2     
+10     2     1     6     3     aka 777     2     
+13     2     1     8     4     aka 814     2     
+16     2     1     10     5     aka 851     2     
+19     2     1     6     6     aka 888     1     
+22     2     1     14     7     aka 925     2     
+25     2     1     16     8     aka 962     2     
+28     2     1     18     9     aka 333     2     
+31     2     1     20     10     aka 39     2     
+34     2     1     11     11     aka 76     1     
+37     2     1     24     12     aka 444     2     
+40     2     1     26     13     aka 481     2     
+43     2     1     28     14     aka 518     2     
+46     2     1     30     15     aka 555     2     
+49     2     1     32     16     aka 592     2     
+52     2     1     17     17     aka 629     1     
+55     2     1     36     18     aka 666     2     
+58     2     1     38     19     aka 703     2     
+61     2     1     40     20     aka 740     2     
+64     2     1     42     21     aka 777     2     
+67     2     1     22     22     aka 814     1     
+70     2     1     46     23     aka 851     2     
+73     2     1     48     24     aka 888     2     
+76     2     1     50     25     aka 925     2     
+79     2     1     52     26     aka 962     2     
+82     2     1     54     27     aka 668     2     
+85     2     1     28     28     aka 705     1     
+88     2     1     58     29     aka 76     2     
+91     2     1     60     30     aka 779     2     
+94     2     1     62     31     aka 816     2     
+97     2     1     64     32     aka 853     2     
+100     2     1     33     33     aka 890     1     
+103     2     1     68     34     aka 927     2     
+106     2     1     70     35     aka 964     2     
+109     2     1     72     36     aka 4     2     
+112     2     1     74     37     aka 41     2     
+115     2     1     76     38     aka 78     2     
+118     2     1     39     39     aka 446     1     
 
 ===================================================
     

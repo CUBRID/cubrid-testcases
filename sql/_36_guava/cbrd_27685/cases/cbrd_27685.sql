@@ -16,7 +16,7 @@
  *    Case 2:  the join stops: a row past the LIMIT groups divides by zero, so a full join fails
  *    Case 3:  LEFT OUTER JOIN, outer keys without an inner row
  *    Case 4:  LIMIT offset, count, the LIMIT past the last group, and ORDER BY the GROUP BY key
- *    Case 5:  COUNT DISTINCT, SUM, MIN, MAX, a NULL inner value
+ *    Case 5:  COUNT DISTINCT over equal and different values, SUM, MIN, MAX, a NULL inner value
  *    Case 6:  several outer rows per group (a non-unique outer index), and a three-table join
  *    Case 7:  no LIMIT, a HAVING over an aggregate, GROUP BY DESC: the join sorts as before
  *    Case 8:  an inner partitioned class or class hierarchy is read one partition or class after another, each
@@ -33,9 +33,10 @@ create table t_mv (id int primary key, g int not null, y int);
 insert into t_mv select rownum, (rownum - 1) div 10, 1990 + mod(rownum, 35) from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 20000;
 create index i_mv_g on t_mv (g);
 -- 12000 titles of the movies 1, 4, 7, ... (two each, so two movies in three have none), and v is never 0
--- except on the last movie, whose row is added below. w is NULL on every eleventh row
+-- except on the last movie, whose row is added below. The two titles of a movie differ, in title order or
+-- the reverse. The two rows of a movie have the same w unless one is NULL (every eleventh row)
 create table t_aka (id int primary key, mid int not null, title varchar(30), v int, w int);
-insert into t_aka select rownum, mod(rownum, 6000) * 3 + 1, 'aka ' || mod(rownum * 37, 1000), mod(rownum, 7) + 1, case when mod(rownum, 11) = 0 then null else mod(rownum, 50) end from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 12000;
+insert into t_aka select rownum, mod(rownum, 6000) * 3 + 1, 'aka ' || mod(rownum * 37, 997), mod(rownum, 7) + 1, case when mod(rownum, 11) = 0 then null else mod(rownum, 50) end from t_digit a, t_digit b, t_digit c, t_digit d, t_digit e limit 12000;
 insert into t_aka values (12001, 20000, 'last', 0, 0);
 create index i_aka_mid on t_aka (mid);
 -- notes of the titles, for the three-table join
@@ -87,9 +88,9 @@ select /*+ recompile use_hash */ m.id, count(*) from t_mv m join t_aka a on a.mi
 
 
 evaluate 'Case 5: COUNT DISTINCT, SUM, MIN, MAX and a NULL inner value; result = use_hash';
-select /*+ recompile */ m.id, count(distinct a.v), sum(a.w), min(a.w), max(a.title), count(a.w) from t_mv m join t_aka a on a.mid = m.id group by m.id limit 40;
+select /*+ recompile */ m.id, count(distinct a.v), count(distinct a.w), sum(a.w), min(a.w), max(a.title), count(a.w) from t_mv m join t_aka a on a.mid = m.id group by m.id limit 40;
 show trace;
-select /*+ recompile use_hash */ m.id, count(distinct a.v), sum(a.w), min(a.w), max(a.title), count(a.w) from t_mv m join t_aka a on a.mid = m.id group by m.id limit 40;
+select /*+ recompile use_hash */ m.id, count(distinct a.v), count(distinct a.w), sum(a.w), min(a.w), max(a.title), count(a.w) from t_mv m join t_aka a on a.mid = m.id group by m.id limit 40;
 
 
 evaluate 'Case 6: ten outer rows per group (index i_mv_g), and a three-table join; result = use_hash';
