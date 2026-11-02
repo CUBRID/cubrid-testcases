@@ -52,10 +52,9 @@ evaluate 'Case 3e: a sign plus a decimal point still errors';
 select cast('+.' as numeric(15,0));
 
 evaluate 'Case 4: PL/CSQL NUMERIC parameter conversion follows the same rule as SQL';
-drop function if exists pf;
 create or replace function pf(a numeric) return numeric as begin return a; end;
 select pf(''), pf('   ');
-drop function if exists pf;
+drop function pf;
 
 evaluate 'Case 5: return_null_on_function_errors=yes - a coercion failure that becomes NULL during INSERT ... SELECT must still violate the destination NOT NULL column instead of silently storing NULL';
 set system parameters 'return_null_on_function_errors=yes';
