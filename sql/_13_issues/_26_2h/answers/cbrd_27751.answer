@@ -1,0 +1,558 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: index_scan_in_oid_order=yes on a non-covered GROUP BY skip scan; result = IGNORE INDEX     
+
+===================================================
+g    count(*)    sum(v)    
+0     5714     2843975     
+11     5714     2853023     
+12     5714     2864021     
+13     5714     2848019     
+14     5714     2859017     
+15     5714     2842015     
+16     5714     2854013     
+17     5714     2865011     
+18     5714     2848009     
+19     5714     2860007     
+20     5714     2842005     
+21     5714     2854003     
+22     5714     2866001     
+23     5714     2847999     
+24     5714     2859997     
+25     5714     2842995     
+26     5714     2853993     
+27     5714     2865991     
+28     5714     2848989     
+29     5714     2859987     
+30     5714     2843985     
+31     5714     2854983     
+32     5714     2865981     
+33     5714     2849979     
+34     5714     2860977     
+1     5715     2855980     
+2     5715     2866985     
+3     5715     2848990     
+4     5715     2860995     
+5     5715     2843000     
+6     5715     2854005     
+7     5715     2866010     
+8     5715     2848015     
+9     5715     2859020     
+10     5715     2842025     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*), sum([dba.t_main].v) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+g    count(*)    sum(v)    
+0     5714     2843975     
+11     5714     2853023     
+12     5714     2864021     
+13     5714     2848019     
+14     5714     2859017     
+15     5714     2842015     
+16     5714     2854013     
+17     5714     2865011     
+18     5714     2848009     
+19     5714     2860007     
+20     5714     2842005     
+21     5714     2854003     
+22     5714     2866001     
+23     5714     2847999     
+24     5714     2859997     
+25     5714     2842995     
+26     5714     2853993     
+27     5714     2865991     
+28     5714     2848989     
+29     5714     2859987     
+30     5714     2843985     
+31     5714     2854983     
+32     5714     2865981     
+33     5714     2849979     
+34     5714     2860977     
+1     5715     2855980     
+2     5715     2866985     
+3     5715     2848990     
+4     5715     2860995     
+5     5715     2843000     
+6     5715     2854005     
+7     5715     2866010     
+8     5715     2848015     
+9     5715     2859020     
+10     5715     2842025     
+
+===================================================
+    
+Case 2: the same parameter on a covered scan, which never sorted the OIDs; result = IGNORE INDEX     
+
+===================================================
+g    count(*)    
+0     5714     
+11     5714     
+12     5714     
+13     5714     
+14     5714     
+15     5714     
+16     5714     
+17     5714     
+18     5714     
+19     5714     
+20     5714     
+21     5714     
+22     5714     
+23     5714     
+24     5714     
+25     5714     
+26     5714     
+27     5714     
+28     5714     
+29     5714     
+30     5714     
+31     5714     
+32     5714     
+33     5714     
+34     5714     
+1     5715     
+2     5715     
+3     5715     
+4     5715     
+5     5715     
+6     5715     
+7     5715     
+8     5715     
+9     5715     
+10     5715     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ), covered: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+g    count(*)    
+0     5714     
+11     5714     
+12     5714     
+13     5714     
+14     5714     
+15     5714     
+16     5714     
+17     5714     
+18     5714     
+19     5714     
+20     5714     
+21     5714     
+22     5714     
+23     5714     
+24     5714     
+25     5714     
+26     5714     
+27     5714     
+28     5714     
+29     5714     
+30     5714     
+31     5714     
+32     5714     
+33     5714     
+34     5714     
+1     5715     
+2     5715     
+3     5715     
+4     5715     
+5     5715     
+6     5715     
+7     5715     
+8     5715     
+9     5715     
+10     5715     
+
+===================================================
+    
+Case 3: the same parameter, the group count of a derived table and of an early LIMIT; result = IGNORE INDEX     
+
+===================================================
+count(*)    sum(c)    sum(sv)    
+35     200000     99900000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  group by nosort: true
+
+  rewritten query: (select count(*), sum([dba.t_main].v) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.c), sum(x.sv) from (select count(*) as [c], sum([dba.t_main].v) as [sv] from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g using index [dba.t_main].i_g(+)) x (c, sv)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+     
+
+===================================================
+count(*)    sum(c)    sum(sv)    
+35     200000     99900000     
+
+===================================================
+g    count(*)    sum(v)    
+0     5714     2843975     
+1     5715     2855980     
+2     5715     2866985     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  group by nosort: true
+
+  rewritten query: select [dba.t_main].g, count(*), sum([dba.t_main].v) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g having groupby_num()<=? using index [dba.t_main].i_g(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: false, rows: ?)
+     
+
+===================================================
+g    count(*)    sum(v)    
+0     5714     2843975     
+1     5715     2855980     
+2     5715     2866985     
+
+===================================================
+    
+Case 4: the same parameter with ORDER BY skip, which read the index order before the fix too     
+
+===================================================
+g    v    
+0     245     
+0     490     
+0     735     
+0     980     
+0     225     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
+  skip order by: true
+
+  rewritten query: select [dba.t_main].g, [dba.t_main].v from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) using index [dba.t_main].i_g(+) order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 5: a prefix index does not order the groups; result = IGNORE INDEX     
+
+===================================================
+s    count(*)    sum(x)    
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_pfx)
+
+  rewritten query: select [dba.t_pfx].s, count(*), sum([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_pfx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+s    count(*)    sum(x)    
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+    
+Case 6: a prefix index kept in the plan by FORCE INDEX, with MIN and MAX, HAVING, descending; result = IGNORE INDEX     
+
+===================================================
+s    count(*)    sum(x)    
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (dba.t_pfx.i_p) (key range: ([dba.t_pfx].s> ?:? ))
+
+  rewritten query: select [dba.t_pfx].s, count(*), sum([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s using index [dba.t_pfx].i_p(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_pfx.i_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+s    count(*)    sum(x)    
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+s    min(x)    max(x)    
+abc1     1     995     
+abc2     2     996     
+abc3     3     997     
+abc4     4     998     
+abc5     5     999     
+abc6     6     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.t_pfx.i_p) (key range: ([dba.t_pfx].s> ?:? ))
+
+  rewritten query: select [dba.t_pfx].s, min([dba.t_pfx].x), max([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s having count(*)>? using index [dba.t_pfx].i_p(+) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_pfx.i_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+s    min(x)    max(x)    
+abc1     1     995     
+abc2     2     996     
+abc3     3     997     
+abc4     4     998     
+abc5     5     999     
+abc6     6     1000     
+
+===================================================
+s    count(*)    
+abc6     143     
+abc5     143     
+abc4     143     
+abc3     143     
+abc2     143     
+abc1     143     
+abc0     142     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.t_pfx.i_p) (key range: ([dba.t_pfx].s> ?:? ))
+
+  rewritten query: select [dba.t_pfx].s, count(*) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s using index [dba.t_pfx].i_p(+) order by ? desc 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_pfx.i_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+s    count(*)    
+abc6     143     
+abc5     143     
+abc4     143     
+abc3     143     
+abc2     143     
+abc1     143     
+abc0     142     
+
+===================================================
+    
+Case 7: a prefix index whose length covers the whole value gives up the skip as well; result = IGNORE INDEX     
+
+===================================================
+s    count(*)    sum(x)    
+a0     142     71071     
+a1     143     71214     
+a2     143     71357     
+a3     143     71500     
+a4     143     71643     
+a5     143     71786     
+a6     143     71929     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (dba.t_pfxw.i_pw) (key range: ([dba.t_pfxw].s> ?:? ))
+
+  rewritten query: select [dba.t_pfxw].s, count(*), sum([dba.t_pfxw].x) from [dba.t_pfxw] [dba.t_pfxw] where ([dba.t_pfxw].s> ?:? ) group by [dba.t_pfxw].s using index [dba.t_pfxw].i_pw(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_pfxw.i_pw), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+s    count(*)    sum(x)    
+a0     142     71071     
+a1     143     71214     
+a2     143     71357     
+a3     143     71500     
+a4     143     71643     
+a5     143     71786     
+a6     143     71929     
+
+===================================================
+    
+Case 8: keys shorter than the prefix and the empty string, with the parameter on; result = IGNORE INDEX     
+
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+s    count(*)    sum(x)    
+     1     -1     
+ab     2     -5     
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    INDEX SCAN (dba.t_pfx.i_p) (key range: ([dba.t_pfx].s>= ?:? ))
+
+  rewritten query: select [dba.t_pfx].s, count(*), sum([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s>= ?:? ) group by [dba.t_pfx].s using index [dba.t_pfx].i_p(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_pfx.i_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+s    count(*)    sum(x)    
+     1     -1     
+ab     2     -5     
+abc0     142     71071     
+abc1     143     71214     
+abc2     143     71357     
+abc3     143     71500     
+abc4     143     71643     
+abc5     143     71786     
+abc6     143     71929     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
