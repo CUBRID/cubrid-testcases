@@ -36,11 +36,19 @@ insert into t2 values ('0'), ('000'), ('  0  '), ('  000  ');
 select c_num from t2 order by 1;
 drop table if exists t2;
 
-evaluate 'Case 3: a sign-only, decimal-point-only, or sign+point string still errors - only the pure blank/whitespace case changed';
+evaluate 'Case 3a: a sign-only string still errors - only the pure blank/whitespace case changed';
 select cast('+' as numeric(15,0));
+
+evaluate 'Case 3b: the other sign-only string still errors';
 select cast('-' as numeric(15,0));
+
+evaluate 'Case 3c: a decimal-point-only string still errors';
 select cast('.' as numeric(15,0));
+
+evaluate 'Case 3d: a decimal-point-only string with surrounding spaces still errors';
 select cast(' . ' as numeric(15,0));
+
+evaluate 'Case 3e: a sign plus a decimal point still errors';
 select cast('+.' as numeric(15,0));
 
 evaluate 'Case 4: PL/CSQL NUMERIC parameter conversion follows the same rule as SQL';
