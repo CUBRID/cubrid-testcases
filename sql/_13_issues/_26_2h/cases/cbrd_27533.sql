@@ -28,6 +28,8 @@
  *    Case 8:  views with a set operation subquery having ORDER BY and LIMIT (EXISTS, IN, =, UNION, EXCEPT, INTERSECT)
  *    Case 9:  views with a DISTINCT SELECT with LIMIT and without ORDER BY
  *    Case 10: views with a nested set operation, a set operation LIMIT without ORDER BY, and DISTINCT set operands
+ *    Case 11: EXISTS subqueries having analytic functions, whose select list is kept
+ *             (chopping it failed in XASL generation or sorting, also without ORDER BY and LIMIT)
  */
 drop view if exists c_v, c_v2, c_v3, c_v4, c_v5, c_v6, c_v7;
 drop table if exists t;
@@ -129,5 +131,18 @@ select count (*) from n_v4;
 create view n_v5 as select (select count (*) from ((select c from t) union (select c + 10 from t) order by 1 limit 2, 2) d) n from db_root;
 select * from n_v5;
 drop view n_v1, n_v2, n_v3, n_v4, n_v5;
+
+-- Case 11: analytic functions
+select count (*) from t where exists (select c, row_number () over (order by c) from t order by 2 limit 1);
+select count (*) from t where exists (select c, row_number () over (order by c) from t order by 2);
+select count (*) from t where exists (select row_number () over (order by c), c from t order by 2 limit 1);
+select count (*) from t where exists (select c, count (*) over () from t);
+select count (*) from t where exists (select c, row_number () over (order by c) from t order by 2 limit 2, 1);
+select count (*) from t where exists (select c, row_number () over (order by c) from t order by 2 limit 5, 1);
+select count (*) from t where not exists (select c, row_number () over (order by c) from t order by 2 limit 5, 1);
+select count (*) from t where exists ((select c, row_number () over (order by c) from t order by 2 limit 1) union all (select 1, 1));
+create view a_v1 as select c from t where exists (select c, row_number () over (order by c) from t order by 2 limit 1);
+select * from a_v1 order by 1;
+drop view a_v1;
 
 drop table t;
