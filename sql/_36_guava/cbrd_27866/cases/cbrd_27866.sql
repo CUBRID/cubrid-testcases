@@ -8,7 +8,7 @@
 -- for an unpartitioned inner, and the results do not change. An inner whose key does not
 -- repeat and is not the partition key keeps the scan block iteration.
 
-drop table if exists t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob;
+drop table if exists t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi;
 
 create table t_o (a int primary key, k int);
 insert into t_o select rownum, mod (rownum, 6) from db_class a, db_class b limit 60;
@@ -36,6 +36,9 @@ insert into t_po select * from t_o;
 create table t_pk (k int primary key, v int) partition by hash (k) partitions 8;
 insert into t_pk select rownum, rownum * 3 from db_class a, db_class b limit 60;
 
+create table t_pi (k int, id int, primary key (k, id)) partition by hash (id) partitions 8;
+insert into t_pi select * from t_p;
+
 create table t_ob (a int primary key, kb bigint);
 insert into t_ob select a, a from t_o;
 
@@ -50,7 +53,7 @@ create table t_hc under t_hp;
 insert into t_hp values (1, 1), (2, 2), (3, 3);
 insert into t_hc values (1, 10), (4, 40);
 
-update statistics on t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hp, t_hc, t_pk, t_ob with fullscan;
+update statistics on t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hp, t_hc, t_pk, t_ob, t_pi with fullscan;
 
 -- Case 1: keys repeat. The outer is read 60 times as with the unpartitioned inner.
 set @c = 0;
@@ -86,6 +89,18 @@ from t_o o inner join t_pk p on p.k = o.a where o.a between 10 and 14 order by o
 -- the outer column has another type: no pruning by the join value, the same rows
 select /*+ ordered no_use_hash parallel(0) */ count (*), sum (p.v)
 from t_ob o inner join t_pk p on p.k = o.kb;
+
+-- Case 3c: the key repeats on a column that is not the partition key. Walked per row with the memo,
+-- and with the scan block iteration when an expression of the inner keeps the memo off
+set @c = 0;
+select /*+ ordered no_use_hash parallel(0) */ count (*), sum (w.id)
+from t_o o inner join t_pi w on w.k = o.k where o.a + (@c := @c + 1) > 0;
+select @c;
+
+set @c = 0;
+select /*+ ordered no_use_hash parallel(0) */ count (*), sum (w.id)
+from t_o o inner join t_pi w on w.k = o.k and w.id + length (sys_guid ()) > 0 where o.a + (@c := @c + 1) > 0;
+select @c;
 
 -- Case 4: range and list partitioned inners
 set @c = 0;
@@ -152,5 +167,5 @@ select count (*), sum (s) from t_u;
 delete /*+ ordered no_use_hash */ u from t_o o inner join t_u u on u.k = o.a where o.k = 1;
 select count (*), sum (s) from t_u;
 
-drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob;
+drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi;
 drop variable @c;
