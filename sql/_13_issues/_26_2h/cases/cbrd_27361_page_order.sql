@@ -6,6 +6,8 @@
  *  and GROUP_CONCAT keeps the heap's order. INSERT ... SELECT ... ON DUPLICATE KEY UPDATE carries the source
  *  columns its assignments read as hidden columns of the SELECT: over aggregates without GROUP BY they hold the
  *  last row the filter kept, as the row path leaves them, and with GROUP BY the group's first row (CBRD-27870).
+ *  A subquery in the select list of aggregates that aggregates a column of the source gets the column the same
+ *  way: the query becomes a derived table that carries the column as a hidden column.
  *
  *  Coverage:
  *    Case 1: SUM of INT over a new-representation row (2147483647), an old one (-1) and a new one (1): no
@@ -16,6 +18,8 @@
  *    Case 5: ON DUPLICATE KEY UPDATE reading the source of aggregates: with and without a filter, a column the
  *            aggregate reads, an index scan, a heap scan, a join, GROUP BY
  *    Case 6: the same over a source large enough for a parallel scan
+ *    Case 7: a subquery in the select list of aggregates reading a column of the source, over the small and the
+ *            large source
  */
 
 drop table if exists t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7;
@@ -112,5 +116,13 @@ insert into t_po6 values (1, 'a1', 1), (2, 'a2', 2), (3, 'a3', 3);
 insert into t_po6 (id) select max(s.g) + 1 + 0 * stddev(s.g) from t_po5 s where s.g = 2 and s.n < 0
   on duplicate key update c = s.c, n = s.n;
 select * from t_po6 order by id;
+
+evaluate 'Case 7: a subquery in the select list of aggregates reads a column of the source';
+delete from t_po6;
+insert into t_po6 values (1, 'a1', 1), (2, 'a2', 2), (3, 'a3', 3);
+select count(*), (select max(s.c)) from t_po6 s where s.n = 2;
+select count(*), (select count(s.c)) from t_po6 s where s.n > 1;
+select max(s.g), (select max(s.c)) from t_po5 s where s.g = 2 and s.n < 0;
+select max(s.g) + 0 * stddev(s.g), (select max(s.c)) from t_po5 s where s.g = 2 and s.n < 0;
 
 drop table t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7;
