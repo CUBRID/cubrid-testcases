@@ -4,13 +4,13 @@
  *  AC-2: hash join results the node above does not pass through.
  *  TC-2-02: select lists the hash join cannot evaluate.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -46,8 +46,8 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-01: uncorrelated subquery
---
---   expected: no pass through: the node above evaluates the uncorrelated subquery; the joins below it pass through
+--   expected: no pass through: the node above evaluates the uncorrelated subquery, while the joins below it pass
+--   through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-01: uncorrelated subquery';
 select /*+ recompile use_hash */ a.cb, (select max(cb) from td) from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -55,8 +55,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-02: correlated subquery
---
---   expected: no pass through: the node above runs the correlated subquery for each row; the joins below it pass
+--   expected: no pass through: the node above runs the correlated subquery for each row, while the joins below it pass
 --   through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-02: correlated subquery';
@@ -65,8 +64,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-03: ROWNUM
---
---   expected: no pass through: the node above numbers the rows for ROWNUM; the joins below it pass through
+--   expected: no pass through: the node above numbers the rows for ROWNUM, while the joins below it pass through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-03: ROWNUM';
 select /*+ recompile use_hash */ rownum, a.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -74,8 +72,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-04: reading a session variable
---
---   expected: no pass through: the node above reads the session variable; the joins below it pass through
+--   expected: no pass through: the node above reads the session variable, while the joins below it pass through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-04: reading a session variable';
 set @v = 1;
@@ -84,8 +81,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-05: assigning a session variable
---
---   expected: no pass through: the node above assigns the session variable for each row; the joins below it pass
+--   expected: no pass through: the node above assigns the session variable for each row, while the joins below it pass
 --   through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-05: assigning a session variable';
@@ -95,8 +91,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-06: assigning a session variable under a PARALLEL(4) hint
---
---   expected: no pass through: the node above assigns the session variable, with the PARALLEL(4) hint as well
+--   expected: no pass through: the node above assigns the session variable under the PARALLEL(4) hint as well
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-06: assigning a session variable under a PARALLEL(4) hint';
 set @n = 0;

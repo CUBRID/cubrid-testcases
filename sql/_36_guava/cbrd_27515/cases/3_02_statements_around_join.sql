@@ -4,13 +4,13 @@
  *  AC-3.2 to AC-3.4 and AC-4: statements around a hash join result, and the trace.
  *  TC-3-02: joins that open no list file, and statements around a passed-through result.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -48,16 +48,14 @@ update statistics on ta, tb, tc with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-01: RIGHT OUTER above a join of an empty input
---
 --   expected: result only: the join of the empty table writes no row, so the scans read 0 rows with or without pass
---   through; the RIGHT OUTER join above still fills the rows of tc
+--   through. The RIGHT OUTER join above still fills the rows of tc
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-01: RIGHT OUTER above a join of an empty input';
 select /*+ recompile use_hash */ c.cb, b.cb from ta a join tb b on a.ca = b.ca right outer join tc c on b.ca = c.ca;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-02: a UNION branch is an empty join
---
 --   expected: result only: the empty join writes no row, so its scan reads 0 rows with or without pass through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-02: a UNION branch is an empty join';
@@ -75,7 +73,6 @@ update statistics on ta, tb with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-03: a join of an empty input
---
 --   expected: result only: the join of the empty table writes no row, so its scan reads 0 rows with or without pass
 --   through
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -84,7 +81,6 @@ select /*+ recompile use_hash */ a.cb, b.cb from ta a, tb b where a.ca = b.ca;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-04: an empty join in a derived table
---
 --   expected: result only: the empty join in the derived table writes no row, so its scan reads 0 rows with or without
 --   pass through
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -107,7 +103,6 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-05: a scalar subquery returns one row
---
 --   expected: pass through: the hash join in the scalar subquery passes through to the node of the subquery
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-05: a scalar subquery returns one row';
@@ -116,9 +111,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-06: a scalar subquery returns several rows
---
---   expected: pass through: the hash join in the scalar subquery passes through; the subquery returns several rows, so
---   the statement fails
+--   expected: pass through: the hash join in the scalar subquery passes through, and the subquery returns several rows,
+--   so the statement fails
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-06: a scalar subquery returns several rows';
 select /*+ recompile */ (select /*+ use_hash */ a.cb from ta a, tb b where a.ca = b.ca) from db_root;
@@ -126,7 +120,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-07: expression in a derived table
---
 --   expected: pass through: the hash join in the derived table passes through to the node of the derived table
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-07: expression in a derived table';
@@ -135,8 +128,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-08: INSERT ... SELECT
---
---   expected: result only: the trace is that of the last SELECT from the target table, which has no join; the case
+--   expected: result only: the trace is that of the last SELECT from the target table, which has no join. The case
 --   checks the rows the INSERT wrote
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-08: INSERT ... SELECT';
@@ -149,9 +141,8 @@ drop table if exists te;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-09: CREATE TABLE ... AS SELECT
---
---   expected: result only: the trace is that of the last SELECT from the new table, which has no join; the case checks
---   the rows CREATE TABLE ... AS SELECT wrote
+--   expected: result only: the trace is that of the last SELECT from the new table, which has no join. The case checks
+--   the rows that CREATE TABLE ... AS SELECT wrote
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-09: CREATE TABLE ... AS SELECT';
 drop table if exists te;
@@ -162,7 +153,6 @@ drop table if exists te;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-10: hash join in a correlated EXISTS subquery
---
 --   expected: pass through: the hash join in the correlated EXISTS subquery passes through to the node of the subquery
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-10: hash join in a correlated EXISTS subquery';

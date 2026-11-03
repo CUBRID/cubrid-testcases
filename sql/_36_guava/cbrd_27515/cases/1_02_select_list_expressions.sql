@@ -4,13 +4,13 @@
  *  AC-1.1 to AC-1.5: the hash join writes the columns and expressions of the node above it.
  *  TC-1-02: the hash join evaluates the select list expressions for each result row.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -52,7 +52,6 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-01: arithmetic on a column of one input
---
 --   expected: pass through: the hash join evaluates the select list expressions for each result row
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-01: arithmetic on a column of one input';
@@ -61,7 +60,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-02: arithmetic on columns of both inputs
---
 --   expected: pass through: the hash join evaluates an expression over the columns of both inputs
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-02: arithmetic on columns of both inputs';
@@ -70,7 +68,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-03: type conversion
---
 --   expected: pass through: the hash join evaluates a CAST
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-03: type conversion';
@@ -79,7 +76,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-04: string function
---
 --   expected: pass through: the hash join evaluates a string function
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-04: string function';
@@ -88,7 +84,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-05: CASE expression
---
 --   expected: pass through: the hash join evaluates a CASE expression
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-05: CASE expression';
@@ -97,7 +92,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-06: arithmetic on a join key column
---
 --   expected: pass through: the hash join evaluates an expression over a join key column
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-06: arithmetic on a join key column';
@@ -106,7 +100,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-07: columns and expressions mixed
---
 --   expected: pass through: the hash join copies the columns and evaluates the expressions
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-07: columns and expressions mixed';
@@ -115,7 +108,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-08: regular expression function
---
 --   expected: pass through: the hash join evaluates a regular expression function
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-08: regular expression function';
@@ -124,7 +116,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-09: the join term is an expression
---
 --   expected: pass through: the join term is an expression, and the hash join evaluates the select list
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-09: the join term is an expression';
@@ -133,7 +124,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-10: host variable
---
 --   expected: pass through: the hash join reads the host variable like a constant
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-10: host variable';
@@ -143,7 +133,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-11: constant not at the front
---
 --   expected: pass through: the hash join writes a constant like an expression
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-11: constant not at the front';
@@ -152,7 +141,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-12: constant at the front
---
 --   expected: pass through: the hash join writes a constant that is the first column
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-12: constant at the front';

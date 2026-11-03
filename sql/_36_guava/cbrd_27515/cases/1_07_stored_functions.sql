@@ -4,13 +4,13 @@
  *  AC-1.5 to AC-1.7: outer, SEMI and ANTI joins, and stored functions.
  *  TC-1-07: a serial hash join evaluates a stored function.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -52,7 +52,6 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-01: function without PARALLEL_ENABLE
---
 --   expected: pass through: these small inputs run serially, so the hash join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-01: function without PARALLEL_ENABLE';
@@ -61,7 +60,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-02: function without PARALLEL_ENABLE in the parent join key
---
 --   expected: pass through: the child hash join evaluates an SP without PARALLEL_ENABLE in the parent join key
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-02: function without PARALLEL_ENABLE in the parent join key';
@@ -70,7 +68,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-03: PARALLEL_ENABLE function
---
 --   expected: pass through: the hash join evaluates a PARALLEL_ENABLE SP
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-03: PARALLEL_ENABLE function';
@@ -79,7 +76,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-04: PARALLEL_ENABLE function in the parent join key
---
 --   expected: pass through: the child hash join evaluates a PARALLEL_ENABLE SP in the parent join key
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-04: PARALLEL_ENABLE function in the parent join key';
@@ -90,7 +86,6 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-05: empty build input
---
 --   expected: result only: the build input is empty, so the join writes no row and the scan above reads 0 rows with or
 --   without pass through
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -122,7 +117,6 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-06: LEFT OUTER, function without PARALLEL_ENABLE
---
 --   expected: pass through: the outer join evaluates an SP without PARALLEL_ENABLE on the rows it fills with NULL
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-06: LEFT OUTER, function without PARALLEL_ENABLE';
@@ -131,7 +125,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-07: LEFT OUTER, PARALLEL_ENABLE function
---
 --   expected: pass through: the outer join evaluates a PARALLEL_ENABLE SP on the rows it fills with NULL
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-07: LEFT OUTER, PARALLEL_ENABLE function';
@@ -140,7 +133,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-08: SEMI, function without PARALLEL_ENABLE
---
 --   expected: pass through: the SEMI join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-08: SEMI, function without PARALLEL_ENABLE';
@@ -149,7 +141,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-09: ANTI, function without PARALLEL_ENABLE
---
 --   expected: pass through: the ANTI join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-09: ANTI, function without PARALLEL_ENABLE';

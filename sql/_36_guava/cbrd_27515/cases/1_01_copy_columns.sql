@@ -4,13 +4,13 @@
  *  AC-1.1 to AC-1.5: the hash join writes the columns and expressions of the node above it.
  *  TC-1-01: the hash join copies the columns from the input tuples.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -46,7 +46,6 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-01: select list in the column order of the join
---
 --   expected: pass through: the select list is columns of the join inputs, which the hash join copies
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-01: select list in the column order of the join';
@@ -57,7 +56,6 @@ show trace;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-02: select list in the reverse column order
---
 --   expected: pass through: the select list is columns of the join inputs, in another order
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-02: select list in the reverse column order';
@@ -66,7 +64,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-03: the same column twice
---
 --   expected: pass through: the select list names the same column twice
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-03: the same column twice';
@@ -75,7 +72,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-04: columns of one table only
---
 --   expected: pass through: the select list is columns of one input
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-04: columns of one table only';
@@ -84,7 +80,6 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-05: join key columns
---
 --   expected: pass through: the select list is the join key columns
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-05: join key columns';
@@ -95,7 +90,6 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-06: rows an outer join fills with NULL
---
 --   expected: pass through: the outer join writes the rows without a match itself, with the columns of tb NULL
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-06: rows an outer join fills with NULL';

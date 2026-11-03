@@ -4,13 +4,13 @@
  *  AC-3.2 to AC-3.4 and AC-4: statements around a hash join result, and the trace.
  *  TC-3-04: the recursive part of a recursive CTE uses a hash join.
  *
- *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
- *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
- *  own tables, from ta, and drops them.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read ta, tb, tc and
+ *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
+ *  named from ta, and drops them afterwards.
  *
  *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
- *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
+ *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
  *  digits of a trace, so the counts are read as a result row.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
@@ -29,9 +29,8 @@ set trace on;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-04-01: hash join in the recursive part
---
---   expected: pass through 1 of 3: the hash join in the recursive part passes through; the other two scans read the
---   result of the CTE itself
+--   expected: pass through 1 of 3: the hash join in the recursive part passes through, while the other two scans read
+--   the result of the CTE itself
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-04-01: hash join in the recursive part';
 
