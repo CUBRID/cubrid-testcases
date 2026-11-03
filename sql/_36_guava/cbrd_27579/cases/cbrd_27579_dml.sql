@@ -6,6 +6,7 @@
  *
  *  Coverage:
  *    Case 1: DML in a function invoked by INSERT, UPDATE, DELETE, MERGE
+ *    Case 1-2: DELETE and MERGE run by a function invoked by SELECT
  *    Case 2: COMMIT and DDL in a function invoked by UPDATE
  *    Case 3: a function reading the table the statement is changing
  *    Case 4: nothing was written by the functions
@@ -25,6 +26,8 @@ insert into s values (1);
 create table log_t (x int);
 
 create or replace function f_dml (n int) return int as begin insert into log_t values (n); return 1; end;
+create or replace function f_del return int as begin delete from log_t; return 1; end;
+create or replace function f_merge return int as begin merge into log_t using s on (log_t.x = s.a) when not matched then insert values (s.a); return 1; end;
 create or replace function f_sel return int as c int; begin select count (*) into c from t; return c; end;
 create or replace function f_commit return int as begin commit; return 1; end;
 create or replace function f_ddl return int as begin execute immediate 'create table t_new (a int)'; return 1; end;
@@ -37,6 +40,14 @@ insert into log_t select f_dml (2) from s;
 update t set b = f_dml (3);
 delete from t where f_dml (4) > 1;
 merge into t using s on (t.a = s.a) when matched then update set t.b = f_dml (5);
+
+
+evaluate 'Case 1-2: DELETE and MERGE run by a function invoked by SELECT';
+insert into log_t values (0);
+select f_del () from s;
+select f_merge () from s;
+select x from log_t order by x;
+delete from log_t;
 
 
 evaluate 'Case 2: COMMIT and DDL in a function invoked by UPDATE';
@@ -56,6 +67,8 @@ select count (*) from db_class where class_name = 't_new';
 --+ server-message off
 
 drop function f_dml;
+drop function f_del;
+drop function f_merge;
 drop function f_sel;
 drop function f_commit;
 drop function f_ddl;
