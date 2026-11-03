@@ -94,8 +94,9 @@ select /*+ recompile no_parallel_scan */ count(*), sum(n), sum(r * (nvl(h, 99) *
 evaluate 'Case 7: ORDER BY skip with a DESC key stays serial; result = no_parallel_scan';
 select /*+ recompile */ count(*), sum(r * (g * 1000 + v)) from (select rownum r, g, v from (select g, v from t_main force index (i_gv) where g >= 0 order by g desc, v desc) y) x;
 show trace;
-select /*+ recompile no_parallel_scan */ count(*), sum(r * (g * 1000 + v)) from (select /*+ no_parallel_scan */ rownum r, g, v from (select /*+ no_parallel_scan */ g, v from t_main force index (i_gv) where g >= 0 order by g desc, v desc) y) x;
-
+-- trace goes off before the last query that no show trace reads: its plan would stay in the
+-- session and the next case's first show trace over a cached plan would print it
 set trace off;
+select /*+ recompile no_parallel_scan */ count(*), sum(r * (g * 1000 + v)) from (select /*+ no_parallel_scan */ rownum r, g, v from (select /*+ no_parallel_scan */ g, v from t_main force index (i_gv) where g >= 0 order by g desc, v desc) y) x;
 
 drop table t_digit, t_main, t_dsc;
