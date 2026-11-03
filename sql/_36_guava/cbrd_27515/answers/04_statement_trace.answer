@@ -1,0 +1,436 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+TC-3-02-01: RIGHT OUTER above a join of an empty input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+cb    cb    
+1001     null     
+40     null     
+
+===================================================
+0
+===================================================
+    
+TC-3-02-02: a UNION branch is an empty join     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+cb    cb    
+40     40     
+1001     1001     
+
+===================================================
+0
+===================================================
+    
+TC-3-02-03: a join of an empty input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+cb    cb    
+
+===================================================
+0
+===================================================
+    
+TC-3-02-04: an empty join in a derived table     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c2    
+
+===================================================
+0
+===================================================
+    
+TC-3-02-05: a scalar subquery returns one row     
+
+===================================================
+(select /*+ USE_HASH */ c.cb from tc c, td d where c.ca=d.ca)    
+1001     
+
+===================================================
+    
+TC-3-02-06: a scalar subquery returns several rows     
+
+===================================================
+Error:-459
+===================================================
+    
+TC-3-02-07: expression in a derived table     
+
+===================================================
+c1    
+22     
+22     
+22     
+22     
+
+===================================================
+temp_scans    taken_over    
+2     2     
+
+===================================================
+    
+TC-3-02-08: INSERT ... SELECT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+c1    c2    
+22     7     
+22     7     
+22     7     
+22     7     
+
+===================================================
+    
+TC-3-02-09: CREATE TABLE ... AS SELECT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c2    
+22     7     
+22     7     
+22     7     
+22     7     
+
+===================================================
+    
+TC-3-02-10: hash join in a correlated EXISTS subquery     
+
+===================================================
+cb    
+7     
+
+===================================================
+    
+TC-3-03-01: columns, first run     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+temp_scans    taken_over    
+3     3     
+
+===================================================
+    
+TC-3-03-02: columns, second run     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+temp_scans    taken_over    
+3     3     
+
+===================================================
+    
+TC-3-03-03: columns, third run     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+temp_scans    taken_over    
+3     3     
+
+===================================================
+    
+TC-3-03-04: expressions, first run     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+temp_scans    taken_over    
+2     2     
+
+===================================================
+    
+TC-3-03-05: expressions, second run     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+temp_scans    taken_over    
+2     2     
+
+===================================================
+    
+TC-3-04-01: hash join in the recursive part     
+
+===================================================
+n    
+1     
+2     
+2     
+3     
+3     
+
+===================================================
+    
+TC-4-01-01: join of four tables     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+temp_scans    taken_over    
+3     3     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        TABLE SCAN (c)
+        TABLE SCAN (d)
+      TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb, b.cb, c.cb, d.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                        SUBQUERY (uncorrelated)
+                                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC-4-01-02: join of three tables     
+
+===================================================
+cb    cb    cb    
+11     101     1001     
+11     101     1001     
+11     101     1001     
+11     101     1001     
+
+===================================================
+temp_scans    taken_over    
+2     2     
+
+===================================================
+cb    cb    cb    
+11     101     1001     
+11     101     1001     
+11     101     1001     
+11     101     1001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (c)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb, b.cb, c.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and b.ca=c.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC-4-01-03: join of three tables, expressions     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+temp_scans    taken_over    
+2     2     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (c)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb*?, b.cb+c.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and b.ca=c.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
