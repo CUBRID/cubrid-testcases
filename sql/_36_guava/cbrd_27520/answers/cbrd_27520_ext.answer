@@ -62,8 +62,11 @@ Case 3: OUT and INOUT parameters
 
 ===================================================
     
-Case 4: quoted and case-varying identifiers. The fully qualified one needs no owner to be added.     
+Case 4: quoted and case-varying identifiers. p_q3 is fully qualified and needs no owner to be added; p_q4 takes its owner from a quoted SP name.     
 
+
+===================================================
+0
 
 ===================================================
 0
@@ -84,7 +87,7 @@ Case 5: %TYPE in the signature and in the body at once
 
 ===================================================
     
-Case 6: system class in the return type. No owner is added to a system class.     
+Case 6: guard. A system class never gets an owner, on the return path as well as on the parameter path.     
 
 
 ===================================================
@@ -110,7 +113,7 @@ Table column 'cbrd27520_u1.ytbl.b' has not been defined create or replace proced
 
 ===================================================
     
-Case 9: %TYPE is allowed only for PL/CSQL, not for a Java SP     
+Case 9: guard. %TYPE is rejected for a Java SP, in a parameter and in the return type alike.     
 
 
 ===================================================
@@ -119,8 +122,12 @@ Semantic: before ' ) return ztbl.s%type as language java name 'Foo.bar(int) retu
 %TYPE type specification is allowed only for PL/CSQL create or replace function [cbrd27520_u1.f_java](a  [cbrd275...
 
 ===================================================
+Error:-494
+Semantic: %TYPE type specification is allowed only for PL/CSQL create or replace function [cbrd27520_u1.f_java2](a  integer...
+
+===================================================
     
-Case 10: AUTHID CALLER is rejected for a PL/CSQL SP     
+Case 10: guard. AUTHID CALLER is rejected for a PL/CSQL SP.     
 
 
 ===================================================
@@ -129,7 +136,7 @@ PL/CSQL Stored procedure/function does not support Invoker's rights.
 
 ===================================================
     
-Case 11: nobody is not a database user     
+Case 11: guard. nobody is not a database user, and that is checked before any %TYPE name is resolved.     
 
 
 ===================================================
@@ -139,7 +146,7 @@ User nobody is not in the database. create or replace procedure [nobody.p_x](i  
 
 ===================================================
     
-Case 12: the owner has no SELECT on cbrd27520_u2.ytbl. The SP owner rights apply, though dba is the session user.     
+Case 12: guard, unrelated to the fix. cbrd27520_u2.ytbl already carries an owner, so it never reaches the code this issue fixed. The first create fails because the SP owner cannot select the table; after the grant the same create succeeds, which is what tells the two apart.     
 
 
 ===================================================
@@ -147,8 +154,38 @@ Error:-1360
 Stored procedure compile error: Failed to get attribute information
 
 ===================================================
+0
+
+===================================================
+0
+
+===================================================
     
-Case 13: call the SPs and check the stored types     
+Case 13: the session user is a DBA group member, not dba, and owns a ztbl whose columns have other types. The types of cbrd27520_u1.ztbl must be used.     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 14: call the SPs and check the stored types     
 
 
 ===================================================
@@ -162,10 +199,13 @@ f_body     CBRD27520_U1     4
 f_mix     CBRD27520_U1     4     
 f_syn     CBRD27520_U1     1     
 f_sys     CBRD27520_U1     4     
+p_grp     CBRD27520_U1     0     
 p_io     CBRD27520_U1     0     
+p_nopriv     CBRD27520_U1     0     
 p_q1     CBRD27520_U1     0     
 p_q2     CBRD27520_U1     0     
 p_q3     CBRD27520_U1     0     
+p_q4     CBRD27520_U1     0     
 p_view     CBRD27520_U1     0     
 p_xsyn     CBRD27520_U1     0     
 
@@ -177,14 +217,26 @@ f_mix     a     1     1
 f_mix     b     1     1     
 f_mix     c     4     1     
 f_mix     d     4     1     
+p_grp     i     1     1     
 p_io     io     1     3     
 p_io     o     4     2     
+p_nopriv     b     31     1     
 p_q1     i     1     1     
 p_q2     i     1     1     
 p_q3     i     1     1     
+p_q4     i     1     1     
 p_view     i     1     1     
 p_xsyn     c     25     1     
 
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
 
 ===================================================
 0
