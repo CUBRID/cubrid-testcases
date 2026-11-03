@@ -29,8 +29,9 @@ set trace on;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-03-01: division by zero only in the dropped rows
--- expected: pass through: the hash join evaluates cb / cc on joined rows only; the row with cc = 0 joins nothing, so
--- the statement does not divide by zero
+--
+--   expected: pass through: the hash join evaluates cb / cc on joined rows only; the row with cc = 0 joins nothing, so
+--   the statement does not divide by zero
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-03-01: division by zero only in the dropped rows';
 

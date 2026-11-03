@@ -52,7 +52,8 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-01: function without PARALLEL_ENABLE
--- expected: pass through: these small inputs run serially, so the hash join evaluates an SP without PARALLEL_ENABLE
+--
+--   expected: pass through: these small inputs run serially, so the hash join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-01: function without PARALLEL_ENABLE';
 select /*+ recompile use_hash */ f_plus (a.cb), b.cb from ta a, tb b where a.ca = b.ca;
@@ -60,7 +61,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-02: function without PARALLEL_ENABLE in the parent join key
--- expected: pass through: the child hash join evaluates an SP without PARALLEL_ENABLE in the parent join key
+--
+--   expected: pass through: the child hash join evaluates an SP without PARALLEL_ENABLE in the parent join key
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-02: function without PARALLEL_ENABLE in the parent join key';
 select /*+ recompile use_hash ordered */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and f_plus (a.ca) = c.cb;
@@ -68,7 +70,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-03: PARALLEL_ENABLE function
--- expected: pass through: the hash join evaluates a PARALLEL_ENABLE SP
+--
+--   expected: pass through: the hash join evaluates a PARALLEL_ENABLE SP
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-03: PARALLEL_ENABLE function';
 select /*+ recompile use_hash */ f_plus_px (a.cb), b.cb from ta a, tb b where a.ca = b.ca;
@@ -76,7 +79,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-04: PARALLEL_ENABLE function in the parent join key
--- expected: pass through: the child hash join evaluates a PARALLEL_ENABLE SP in the parent join key
+--
+--   expected: pass through: the child hash join evaluates a PARALLEL_ENABLE SP in the parent join key
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-04: PARALLEL_ENABLE function in the parent join key';
 select /*+ recompile use_hash ordered */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and f_plus_px (a.ca) = c.cb;
@@ -86,8 +90,9 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-05: empty build input
--- expected: result only: the build input is empty, so the join writes no row and the scan above reads 0 rows with or
--- without pass through
+--
+--   expected: result only: the build input is empty, so the join writes no row and the scan above reads 0 rows with or
+--   without pass through
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-05: empty build input';
 
@@ -117,7 +122,8 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-06: LEFT OUTER, function without PARALLEL_ENABLE
--- expected: pass through: the outer join evaluates an SP without PARALLEL_ENABLE on the rows it fills with NULL
+--
+--   expected: pass through: the outer join evaluates an SP without PARALLEL_ENABLE on the rows it fills with NULL
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-06: LEFT OUTER, function without PARALLEL_ENABLE';
 select /*+ recompile use_hash */ f_plus (nvl (b.cb, 0)), a.cb from ta a left outer join tb b on a.ca = b.ca;
@@ -125,7 +131,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-07: LEFT OUTER, PARALLEL_ENABLE function
--- expected: pass through: the outer join evaluates a PARALLEL_ENABLE SP on the rows it fills with NULL
+--
+--   expected: pass through: the outer join evaluates a PARALLEL_ENABLE SP on the rows it fills with NULL
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-07: LEFT OUTER, PARALLEL_ENABLE function';
 select /*+ recompile use_hash */ f_plus_px (nvl (b.cb, 0)), a.cb from ta a left outer join tb b on a.ca = b.ca;
@@ -133,7 +140,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-08: SEMI, function without PARALLEL_ENABLE
--- expected: pass through: the SEMI join evaluates an SP without PARALLEL_ENABLE
+--
+--   expected: pass through: the SEMI join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-08: SEMI, function without PARALLEL_ENABLE';
 select /*+ recompile use_hash */ f_plus (ta.cb) from ta semi join tb on tb.ca = ta.ca;
@@ -141,7 +149,8 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-07-09: ANTI, function without PARALLEL_ENABLE
--- expected: pass through: the ANTI join evaluates an SP without PARALLEL_ENABLE
+--
+--   expected: pass through: the ANTI join evaluates an SP without PARALLEL_ENABLE
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-07-09: ANTI, function without PARALLEL_ENABLE';
 select /*+ recompile use_hash */ f_plus (ta.cb) from ta anti join tb on tb.ca = ta.ca;
