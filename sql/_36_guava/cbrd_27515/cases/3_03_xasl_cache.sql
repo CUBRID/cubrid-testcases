@@ -45,7 +45,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-01: columns, first run
---   expected: pass through: the first run caches the plan, and the result passes through
+--
+-- expected: pass through
+--   The first run caches the plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-01: columns, first run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -53,7 +55,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-02: columns, second run
---   expected: pass through: the second run executes a copy of the cached plan, and the result passes through
+--
+-- expected: pass through
+--   The second run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-02: columns, second run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -61,7 +65,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-03: columns, third run
---   expected: pass through: the third run executes a copy of the cached plan, and the result passes through
+--
+-- expected: pass through
+--   The third run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-03: columns, third run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -69,7 +75,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-04: expressions, first run
---   expected: pass through: the first run caches the plan with expressions, and the result passes through
+--
+-- expected: pass through
+--   The first run caches the plan with expressions, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-04: expressions, first run';
 select /*+ use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -77,7 +85,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-05: expressions, second run
---   expected: pass through: the second run executes a copy of the cached plan, and the result passes through
+--
+-- expected: pass through
+--   The second run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-05: expressions, second run';
 select /*+ use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;

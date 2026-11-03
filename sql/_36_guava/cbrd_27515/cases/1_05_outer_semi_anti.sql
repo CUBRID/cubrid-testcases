@@ -58,7 +58,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-01: LEFT OUTER, matched and unmatched rows
---   expected: pass through: the outer join writes the rows without a match itself and evaluates the expressions on them
+--
+-- expected: pass through
+--   The outer join writes the rows without a match itself and evaluates the expressions on them.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-01: LEFT OUTER, matched and unmatched rows';
 select /*+ recompile use_hash */ a.cb * 2, b.cb + 1 from ta a left outer join tb b on a.ca = b.ca;
@@ -66,7 +68,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-02: LEFT OUTER, NVL on the NULL-filled side
---   expected: pass through: the outer join evaluates NVL on the rows it fills with NULL
+--
+-- expected: pass through
+--   The outer join evaluates NVL on the rows it fills with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-02: LEFT OUTER, NVL on the NULL-filled side';
 select /*+ recompile use_hash */ a.cb, nvl (b.cb, -1) from ta a left outer join tb b on a.ca = b.ca;
@@ -74,7 +78,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-03: RIGHT OUTER, NVL on the NULL-filled side
---   expected: pass through: the RIGHT OUTER join evaluates NVL on the rows it fills with NULL
+--
+-- expected: pass through
+--   The RIGHT OUTER join evaluates NVL on the rows it fills with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-03: RIGHT OUTER, NVL on the NULL-filled side';
 select /*+ recompile use_hash */ nvl (a.cb, -1), b.cb * 2 from ta a right outer join tb b on a.ca = b.ca;
@@ -84,7 +90,9 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-04: LEFT OUTER, no matching row
---   expected: pass through: the outer join fills every row with NULL and evaluates the expression
+--
+-- expected: pass through
+--   The outer join fills every row with NULL and evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-04: LEFT OUTER, no matching row';
 
@@ -104,7 +112,9 @@ drop table if exists ta, tb;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-05: LEFT OUTER, empty build input
---   expected: pass through: the build input is empty, so the outer join writes every row with NULL without probing
+--
+-- expected: pass through
+--   The build input is empty, so the outer join writes every row with NULL without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-05: LEFT OUTER, empty build input';
 
@@ -123,7 +133,9 @@ drop table if exists ta, tb;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-06: LEFT OUTER, a row with a NULL join key
---   expected: pass through: the outer join writes the row with a NULL key with NULL without probing
+--
+-- expected: pass through
+--   The outer join writes the row with a NULL key with NULL without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-06: LEFT OUTER, a row with a NULL join key';
 
@@ -155,7 +167,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-07: LEFT OUTER, a non-equi ON term drops every row
---   expected: pass through: the ON term drops every match, and the outer join writes every row with NULL
+--
+-- expected: pass through
+--   The ON term drops every match, and the outer join writes every row with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-07: LEFT OUTER, a non-equi ON term drops every row';
 select /*+ recompile use_hash */ a.cb + 1, nvl (b.cb, -1) from ta a left outer join tb b on a.ca = b.ca and b.cb > a.cb * 100;
@@ -163,7 +177,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-08: SEMI, column
---   expected: pass through: the SEMI join writes the column of its outer input
+--
+-- expected: pass through
+--   The SEMI join writes the column of its outer input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-08: SEMI, column';
 select /*+ recompile use_hash */ ta.ca from ta semi join tb on tb.ca = ta.ca;
@@ -171,7 +187,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-09: ANTI, column
---   expected: pass through: the ANTI join writes the column of its outer input
+--
+-- expected: pass through
+--   The ANTI join writes the column of its outer input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-09: ANTI, column';
 select /*+ recompile use_hash */ ta.ca from ta anti join tb on tb.ca = ta.ca;
@@ -179,7 +197,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-10: SEMI, expression on the join key column
---   expected: pass through: the SEMI join evaluates the expression over the join key column
+--
+-- expected: pass through
+--   The SEMI join evaluates the expression over the join key column.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-10: SEMI, expression on the join key column';
 select /*+ recompile use_hash */ ta.ca + 1 from ta semi join tb on tb.ca = ta.ca;
@@ -189,7 +209,9 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-11: ANTI, empty build input
---   expected: pass through: the build input is empty, so the ANTI join writes every row without probing
+--
+-- expected: pass through
+--   The build input is empty, so the ANTI join writes every row without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-11: ANTI, empty build input';
 
@@ -220,7 +242,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-12: ANTI, expression on the join key column
---   expected: pass through: the ANTI join evaluates the expression over the join key column
+--
+-- expected: pass through
+--   The ANTI join evaluates the expression over the join key column.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-12: ANTI, expression on the join key column';
 select /*+ recompile use_hash */ ta.ca + 1 from ta anti join tb on tb.ca = ta.ca;
@@ -228,7 +252,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-13: SEMI, expression
---   expected: pass through: the SEMI join evaluates the expression
+--
+-- expected: pass through
+--   The SEMI join evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-13: SEMI, expression';
 select /*+ recompile use_hash */ ta.cb * 2 from ta semi join tb on tb.ca = ta.ca;
@@ -236,7 +262,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-14: ANTI, expression
---   expected: pass through: the ANTI join evaluates the expression
+--
+-- expected: pass through
+--   The ANTI join evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-14: ANTI, expression';
 select /*+ recompile use_hash */ ta.cb * 2 from ta anti join tb on tb.ca = ta.ca;
@@ -244,8 +272,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-15: IS NULL term after an outer join
---   expected: pass through: the hash join evaluates the IS NULL term after the outer join, so the node above has
---   nothing left to do
+--
+-- expected: pass through
+--   The hash join evaluates the IS NULL term after the outer join, so the node above has nothing left to do.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-15: IS NULL term after an outer join';
 select /*+ recompile use_hash */ a.cb + 1, nvl (b.cb, -1) from ta a left outer join tb b on a.ca = b.ca where b.cb is null;
@@ -253,7 +282,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-16: expression term after an outer join
---   expected: pass through: the hash join evaluates the expression term after the outer join
+--
+-- expected: pass through
+--   The hash join evaluates the expression term after the outer join.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-16: expression term after an outer join';
 select /*+ recompile use_hash */ a.cb + 1, nvl (b.cb, -1) from ta a left outer join tb b on a.ca = b.ca where nvl (b.cb, 0) + a.cb > 100;
@@ -261,7 +292,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-17: EXISTS turned into a SEMI join
---   expected: pass through: EXISTS becomes a SEMI join, which passes through like TC-1-05-13
+--
+-- expected: pass through
+--   EXISTS becomes a SEMI join, which passes through like TC-1-05-13.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-17: EXISTS turned into a SEMI join';
 select /*+ recompile use_hash */ d.cb * 2 from td d where exists (select 1 from ta a where a.ca = d.ca);
@@ -269,7 +302,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-18: NOT EXISTS turned into an ANTI join
---   expected: pass through: NOT EXISTS becomes an ANTI join, which passes through like TC-1-05-14
+--
+-- expected: pass through
+--   NOT EXISTS becomes an ANTI join, which passes through like TC-1-05-14.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-18: NOT EXISTS turned into an ANTI join';
 select /*+ recompile use_hash */ d.cb * 2 from td d where not exists (select 1 from ta a where a.ca = d.ca);

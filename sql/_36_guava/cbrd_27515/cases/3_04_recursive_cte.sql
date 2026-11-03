@@ -29,8 +29,9 @@ set trace on;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-04-01: hash join in the recursive part
---   expected: pass through 1 of 3: the hash join in the recursive part passes through, while the other two scans read
---   the result of the CTE itself
+--
+-- expected: pass through 1 of 3
+--   The hash join in the recursive part passes through, while the other two scans read the result of the CTE itself.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-04-01: hash join in the recursive part';
 

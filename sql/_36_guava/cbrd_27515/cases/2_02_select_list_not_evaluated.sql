@@ -46,8 +46,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-01: uncorrelated subquery
---   expected: no pass through: the node above evaluates the uncorrelated subquery, while the joins below it pass
---   through
+--
+-- expected: no pass through
+--   The node above evaluates the uncorrelated subquery, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-01: uncorrelated subquery';
 select /*+ recompile use_hash */ a.cb, (select max(cb) from td) from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -55,8 +56,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-02: correlated subquery
---   expected: no pass through: the node above runs the correlated subquery for each row, while the joins below it pass
---   through
+--
+-- expected: no pass through
+--   The node above runs the correlated subquery for each row, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-02: correlated subquery';
 select /*+ recompile use_hash */ a.cb, (select max(d.cb) from td d where d.ca = a.ca) from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -64,7 +66,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-03: ROWNUM
---   expected: no pass through: the node above numbers the rows for ROWNUM, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above numbers the rows for ROWNUM, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-03: ROWNUM';
 select /*+ recompile use_hash */ rownum, a.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
@@ -72,7 +76,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-04: reading a session variable
---   expected: no pass through: the node above reads the session variable, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above reads the session variable, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-04: reading a session variable';
 set @v = 1;
@@ -81,8 +87,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-05: assigning a session variable
---   expected: no pass through: the node above assigns the session variable for each row, while the joins below it pass
---   through
+--
+-- expected: no pass through
+--   The node above assigns the session variable for each row, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-05: assigning a session variable';
 set @n = 0;
@@ -91,7 +98,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-06: assigning a session variable under a PARALLEL(4) hint
---   expected: no pass through: the node above assigns the session variable under the PARALLEL(4) hint as well
+--
+-- expected: no pass through
+--   The node above assigns the session variable under the PARALLEL(4) hint as well.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-06: assigning a session variable under a PARALLEL(4) hint';
 set @n = 0;

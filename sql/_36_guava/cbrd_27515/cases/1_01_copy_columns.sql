@@ -46,7 +46,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-01: select list in the column order of the join
---   expected: pass through: the select list is columns of the join inputs, which the hash join copies
+--
+-- expected: pass through
+--   The select list is columns of the join inputs, which the hash join copies.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-01: select list in the column order of the join';
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -56,7 +58,9 @@ show trace;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-02: select list in the reverse column order
---   expected: pass through: the select list is columns of the join inputs, in another order
+--
+-- expected: pass through
+--   The select list is columns of the join inputs, in another order.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-02: select list in the reverse column order';
 select /*+ recompile use_hash */ d.cb, c.cb, b.cb, a.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -64,7 +68,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-03: the same column twice
---   expected: pass through: the select list names the same column twice
+--
+-- expected: pass through
+--   The select list names the same column twice.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-03: the same column twice';
 select /*+ recompile use_hash */ a.cb, d.cb, a.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -72,7 +78,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-04: columns of one table only
---   expected: pass through: the select list is columns of one input
+--
+-- expected: pass through
+--   The select list is columns of one input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-04: columns of one table only';
 select /*+ recompile use_hash */ c.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -80,7 +88,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-05: join key columns
---   expected: pass through: the select list is the join key columns
+--
+-- expected: pass through
+--   The select list is the join key columns.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-05: join key columns';
 select /*+ recompile use_hash */ a.ca, a.cb, d.ca, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -90,7 +100,9 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-06: rows an outer join fills with NULL
---   expected: pass through: the outer join writes the rows without a match itself, with the columns of tb NULL
+--
+-- expected: pass through
+--   The outer join writes the rows without a match itself, with the columns of tb NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-06: rows an outer join fills with NULL';
 

@@ -47,7 +47,9 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-01: ORDER BY
---   expected: no pass through: the node above sorts the rows for ORDER BY, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above sorts the rows for ORDER BY, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-01: ORDER BY';
 select /*+ recompile use_hash */ a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca order by a.cb, d.cb;
@@ -55,7 +57,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-02: LIMIT
---   expected: no pass through: the node above counts the rows for LIMIT, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above counts the rows for LIMIT, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-02: LIMIT';
 select /*+ recompile use_hash */ a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca limit 2;
@@ -63,7 +67,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-03: GROUP BY
---   expected: no pass through: the node above groups the rows, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above groups the rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-03: GROUP BY';
 select /*+ recompile use_hash */ a.cb, count(*) from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca group by a.cb;
@@ -71,7 +77,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-04: DISTINCT
---   expected: no pass through: the node above removes duplicate rows, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above removes duplicate rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-04: DISTINCT';
 select /*+ recompile use_hash */ distinct a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -79,7 +87,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-05: aggregate functions
---   expected: no pass through: the node above aggregates the rows, while the joins below it pass through
+--
+-- expected: no pass through
+--   The node above aggregates the rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-05: aggregate functions';
 select /*+ recompile use_hash */ count(*), sum(a.cb), sum(b.cb), sum(c.cb), sum(d.cb) from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
@@ -87,7 +97,9 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-06: FOR UPDATE
---   expected: no pass through: a SELECT ... FOR UPDATE keeps its plan, while the joins below the top pass through
+--
+-- expected: no pass through
+--   A SELECT ... FOR UPDATE keeps its plan, while the joins below the top pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-06: FOR UPDATE';
 select /*+ recompile use_hash */ a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca for update;
@@ -97,8 +109,10 @@ drop table if exists ta, tb, tc, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-07: click counter
---   expected: result only: one table and no hash join, so nothing passes through. qo_check_pass_through_wrapper ()
---   still checks the statement, and a click counter (INCR) must not trip its assert
+--
+-- expected: result only
+--   One table and no hash join, so nothing passes through. qo_check_pass_through_wrapper () still checks the statement,
+--   and a click counter (INCR) must not trip its assert.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-07: click counter';
 
