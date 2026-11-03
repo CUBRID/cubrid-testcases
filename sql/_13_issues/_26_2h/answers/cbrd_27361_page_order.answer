@@ -229,7 +229,27 @@ Case 6: the same over a source large enough for a parallel scan
 ===================================================
 3
 ===================================================
+0
+===================================================
 2
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (s)
+
+  rewritten query: select max(s.g)+?, s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and s.g= ?:? 
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_po?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 id    c    n    
 1     a1     1     
@@ -241,7 +261,27 @@ id    c    n
 ===================================================
 3
 ===================================================
+0
+===================================================
 2
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (s)
+
+  rewritten query: select  cast(max(s.g)+? as double)+ cast(? as double)*stddev(s.g), s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and s.g= ?:? 
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_po?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 id    c    n    
 1     a1     1     
