@@ -20,9 +20,11 @@
  *    Case 6: the same over a source large enough for a parallel scan
  *    Case 7: a subquery in the select list of aggregates reading a column of the source, over the small and the
  *            large source
+ *    Case 8: the same two forms where the index or the statistics could answer the aggregate without the rows
+ *            (MAX and MIN without a filter, COUNT(*) over a key range only)
  */
 
-drop table if exists t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7;
+drop table if exists t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7, t_po8, t_po9;
 
 evaluate 'Case 1: SUM over two representations, no overflow in the heap order';
 create table t_po1 (k int, i int);
@@ -125,4 +127,16 @@ select count(*), (select count(s.c)) from t_po6 s where s.n > 1;
 select max(s.g), (select max(s.c)) from t_po5 s where s.g = 2 and s.n < 0;
 select max(s.g) + 0 * stddev(s.g), (select max(s.c)) from t_po5 s where s.g = 2 and s.n < 0;
 
-drop table t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7;
+evaluate 'Case 8: the index or the statistics could answer the aggregate without the rows';
+create table t_po8 (g int, c varchar(10), n int);
+create index i_t_po8_g on t_po8 (g);
+insert into t_po8 values (1, 'h1', 1), (2, 'h2', 2), (3, 'h3', 3);
+update statistics on t_po8 with fullscan;
+create table t_po9 (id int primary key, c varchar(10));
+insert into t_po9 values (4, 'b4');
+insert into t_po9 (id) select max(s.g) + 1 from t_po8 s on duplicate key update c = s.c;
+select * from t_po9 order by id;
+select count(*), (select max(s.c)) from t_po8 s where s.g > 0;
+select min(s.g), (select max(s.c)) from t_po8 s;
+
+drop table t_po1, t_po2, t_po3, t_po4, t_po5, t_po6, t_po7, t_po8, t_po9;
