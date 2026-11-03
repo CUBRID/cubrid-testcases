@@ -3,19 +3,19 @@
  * by CBRD-26354, so this TC has no effect there): a host-variable LIMIT/
  * OFFSET on ORDER BY <pk> DESC must pick the same PK-descending order-by-
  * skip index scan a constant LIMIT already does, not a full scan + sort.
- * The misplan is cost-based and surfaces once the index scan's cost is far
- * enough above the full-scan-plus-sort cost; col_c rides along in the
- * SELECT so the chosen index cannot cover it, forcing that cost - unlike
- * the other columns it is a constant literal through every doubling
- * INSERT, so it alone is scan-order independent.
+ * The misplan is cost-based and surfaces once the index scan's cost is far above the full-scan-plus-sort cost; col_c rides along in the SELECT so the
+ * chosen index cannot cover it, forcing that cost. Like col_e it is copied unchanged through every doubling INSERT, so its value does not depend on
+ * scan order; the id-derived columns (col_a, col_b, col_d, enum_col1/2, dt_col) do.
  *
  * Coverage:
- * 1. host-variable LIMIT+OFFSET - the issue's exact repro (regression)
- * 2. constant LIMIT - already picked this plan; must keep matching
- * 3. host-variable LIMIT alone (no OFFSET) - rewrites differently from
- *    case 1; the fix's own PR measured this form as regressed too
- * 4. host-variable LIMIT on a join - the fix reuses the constant-LIMIT
- *    comparison here too, which can change join plans - asserts both agree
+ * 1. host-variable LIMIT+OFFSET - the issue's exact repro (regression),
+ *    re-EXECUTEd with a non-zero OFFSET too
+ * 2. constant LIMIT - already picked this plan, must keep matching
+ * 3. host-variable LIMIT alone (no OFFSET) - also regressed per the fix's PR
+ * 4. host-variable LIMIT on a join - the comparison can change join plans
+ *    too, asserts both agree
+ * 5. ORDER BY ... FOR ORDERBY_NUM() <= ? bound - the fix's check covers
+ *    this form too, not only LIMIT
  */
 
 drop table if exists tbl;
@@ -60,6 +60,7 @@ evaluate 'Case 1: a host-variable LIMIT/OFFSET must pick the PK-descending order
 --@queryplan
 PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT ? OFFSET ?';
 EXECUTE st USING 30, 0;
+EXECUTE st USING 30, 30;
 deallocate prepare st;
 
 evaluate 'Case 2: a constant LIMIT already picks the same plan and must keep matching';
@@ -79,6 +80,12 @@ EXECUTE st USING 3;
 deallocate prepare st;
 --@queryplan
 SELECT t.id, t.col_c FROM tbl t, tbl_u u WHERE t.id = u.id ORDER BY t.id DESC LIMIT 3;
+
+evaluate 'Case 5: a host-variable bound in ORDER BY ... FOR ORDERBY_NUM() <= ? must pick the PK-descending order-by-skip scan';
+--@queryplan
+PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC FOR ORDERBY_NUM() <= ?';
+EXECUTE st USING 30;
+deallocate prepare st;
 
 drop table if exists tbl_u;
 drop table if exists tbl;
