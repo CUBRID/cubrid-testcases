@@ -1,0 +1,124 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the nation pair joins fact before the other alias -- the pair is 4900 rows, not 87     
+
+===================================================
+count(*)    
+4900     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: sn node[?]
+                          index: i_nat_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: fact node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: cn node[?]
+               index: i_nat_name term[?] (covers)
+               filtr: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (cn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? ))
+===================================================
+    
+Case 2: the same rows written as independent conditions keep their plan     
+
+===================================================
+count(*)    
+4900     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: sn node[?]
+                          index: i_nat_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: fact node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: cn node[?]
+               index: i_nat_name term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? )) and sn.n_name<>cn.n_name
+===================================================
+    
+Case 3: one table keeps its covering index scan: 100 rows     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.a= ?:? ) or (pair.b= ?:? )) and ((pair.b= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 4: three branches on one table: 150 rows     
+
+===================================================
+count(*)    
+150     
+
+===================================================
+    
+Case 5: clauses written apart over the same columns: 1000 rows     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+    
+Case 6: an outer join ON condition is left as it is: 5801 rows     
+
+===================================================
+count(*)    
+5801     
+
+===================================================
+0
