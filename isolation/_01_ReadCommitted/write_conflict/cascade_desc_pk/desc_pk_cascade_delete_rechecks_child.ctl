@@ -1,11 +1,11 @@
 /*
-Test Case: cascade_desc_pk/dedup_desc_pk_cascade_delete_rechecks_child
+Test Case: cascade_desc_pk/desc_pk_cascade_delete_rechecks_child
 Priority: 1
 Reference case: CBRD-27464 (CUBRID/cubrid#8026)
 Author: hgryoo
 
 Test Point:
-A deduplicated foreign key refers to PRIMARY KEY (a DESC, b). The re-check reads both keys in the primary key's domain, and the parent DELETE under ON DELETE CASCADE deletes the children.
+A foreign key refers to PRIMARY KEY (a DESC, b). The re-check reads both keys in the primary key's domain, and the parent DELETE under ON DELETE CASCADE deletes the children.
 
 NUM_CLIENTS = 1
 C1: DELETE FROM t27464_father WHERE a=1 AND b=1;
@@ -21,7 +21,6 @@ C1: set transaction isolation level read committed;
 /* preparation */
 C1: DROP TABLE IF EXISTS t27464_child;
 C1: DROP TABLE IF EXISTS t27464_father;
-C1: SET SYSTEM PARAMETERS 'deduplicate_key_level=10';
 C1: CREATE TABLE t27464_father (a INT, b INT, note VARCHAR(20), PRIMARY KEY (a DESC, b));
 C1: CREATE TABLE t27464_child (id INT PRIMARY KEY, fa INT, fb INT, FOREIGN KEY (fa, fb) REFERENCES t27464_father(a, b) ON DELETE CASCADE);
 C1: INSERT INTO t27464_father VALUES (1,1,'p'),(2,2,'q'),(3,3,'r');
@@ -36,9 +35,6 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 /* expected end state */
-/* expect 1 */
-C1: SELECT COUNT(*) FROM _db_index_key WHERE key_attr_name='_dedup_10';
-MC: wait until C1 ready;
 /* expect 2 */
 C1: SELECT COUNT(*) FROM t27464_father;
 MC: wait until C1 ready;

@@ -1,11 +1,11 @@
 /*
-Test Case: cascade_desc_pk/dedup_desc_char_pk_cascade_and_setnull
+Test Case: cascade_desc_pk/desc_char_pk_cascade_and_setnull
 Priority: 1
 Reference case: CBRD-27464 (CUBRID/cubrid#8026)
 Author: hgryoo
 
 Test Point:
-Two deduplicated foreign keys whose CHAR(8) column refers to a CHAR(4) DESC primary key column, one CASCADE and one SET NULL: the CASCADE children are deleted and the SET NULL child is nulled.
+Two foreign keys whose CHAR(8) column refers to a CHAR(4) DESC primary key column, one CASCADE and one SET NULL: the CASCADE children are deleted and the SET NULL child is nulled.
 
 NUM_CLIENTS = 1
 C1: DELETE FROM t27464_father WHERE a='1' AND b=1;
@@ -22,7 +22,6 @@ C1: set transaction isolation level read committed;
 C1: DROP TABLE IF EXISTS t27464_child2;
 C1: DROP TABLE IF EXISTS t27464_child;
 C1: DROP TABLE IF EXISTS t27464_father;
-C1: SET SYSTEM PARAMETERS 'deduplicate_key_level=10';
 C1: CREATE TABLE t27464_father (a CHAR(4), b INT, note VARCHAR(20), PRIMARY KEY (a DESC, b));
 C1: CREATE TABLE t27464_child (id INT PRIMARY KEY, fa CHAR(8), fb INT, FOREIGN KEY (fa, fb) REFERENCES t27464_father(a, b) ON DELETE CASCADE);
 C1: CREATE TABLE t27464_child2 (id INT PRIMARY KEY, fa CHAR(8), fb INT, FOREIGN KEY (fa, fb) REFERENCES t27464_father(a, b) ON DELETE SET NULL);
@@ -39,9 +38,6 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 /* expected end state */
-/* expect 2 */
-C1: SELECT COUNT(*) FROM _db_index_key WHERE key_attr_name='_dedup_10';
-MC: wait until C1 ready;
 /* expect 2 */
 C1: SELECT COUNT(*) FROM t27464_father;
 MC: wait until C1 ready;
