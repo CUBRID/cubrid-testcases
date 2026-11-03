@@ -87,6 +87,15 @@ id    col_c
 16356     some message text here     
 16355     some message text here     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_id  (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 id    col_c    
 16354     some message text here     
@@ -120,6 +129,15 @@ id    col_c
 16326     some message text here     
 16325     some message text here     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_id  (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -207,6 +225,15 @@ id    col_c
 16356     some message text here     
 16355     some message text here     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_id  (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -221,6 +248,21 @@ id    col_c
 4     some message text here     
 3     some message text here     
 
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: u node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t node[?]
+                            index: pk_tbl_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.id, t.col_c from tbl t, tbl_u u where t.id=u.id order by ? desc  for orderby_num()<= ?:? 
 ===================================================
 0
 ===================================================
@@ -283,6 +325,15 @@ id    col_c
 16356     some message text here     
 16355     some message text here     
 
+Query plan:
+iscan
+    class: tbl node[?]
+    index: pk_tbl_id  (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select tbl.id, tbl.col_c from tbl tbl order by ? desc  for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
