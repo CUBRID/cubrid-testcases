@@ -29,10 +29,12 @@ set trace on;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-04-01: hash join in the recursive part
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through 1 of 3: the hash join in the recursive part passes through; the other two scans read the
 -- result of the CTE itself
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-04-01: hash join in the recursive part';
+
+-- the tables of TC-3-04-01
 drop table if exists ta, tb, tc, td;
 create table ta (ca int, cb int);
 create table tb (ca int, cb int);
@@ -43,8 +45,10 @@ insert into tb values (1, 101), (1, 101), (3, 30);
 insert into tc values (1, 1001), (4, 40);
 insert into td values (1, 7), (5, 50);
 update statistics on ta, tb, tc, td with fullscan;
+
 with recursive r (n) as (select 1 from db_root union all select /*+ recompile use_hash parallel(4) */ r.n + 1 from r, ta a where r.n < 3 and a.ca = r.n) select n from r;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
+
 drop table if exists ta, tb, tc, td;
 
 

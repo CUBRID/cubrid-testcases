@@ -42,17 +42,17 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-04-01: the parent join key is an expression
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the child hash join evaluates the key expression of the parent hash join, so both pass
 -- through
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-04-01: the parent join key is an expression';
 select /*+ recompile use_hash ordered */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and a.ca + 1000 = c.cb;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-04-02: the parent join key and the select list are expressions
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the child hash join evaluates the parent key expression and the select list expression
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-04-02: the parent join key and the select list are expressions';
 select /*+ recompile use_hash ordered */ a.cb * 2, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and a.ca + 1000 = c.cb;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;

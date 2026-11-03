@@ -43,8 +43,8 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-4-01-01: join of four tables
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: both joins between joins and the top pass through, and the trace tree is that of develop
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-01: join of four tables';
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
@@ -53,8 +53,8 @@ show trace;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-4-01-02: join of three tables
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the join between joins and the top pass through, and the trace tree is that of develop
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-02: join of three tables';
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
@@ -63,8 +63,8 @@ show trace;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-4-01-03: join of three tables, expressions
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the joins evaluate the expressions, and the trace tree is that of develop
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-03: join of three tables, expressions';
 select /*+ recompile use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;

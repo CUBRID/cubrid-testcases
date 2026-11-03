@@ -52,80 +52,80 @@ update statistics on ta, tb, tc, td with fullscan;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-01: arithmetic on a column of one input
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates the select list expressions for each result row
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-01: arithmetic on a column of one input';
 select /*+ recompile use_hash */ a.cb * 2, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-02: arithmetic on columns of both inputs
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates an expression over the columns of both inputs
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-02: arithmetic on columns of both inputs';
 select /*+ recompile use_hash */ a.cb + b.cb, c.cb - b.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-03: type conversion
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates a CAST
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-03: type conversion';
 select /*+ recompile use_hash */ cast(a.cb as bigint), d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-04: string function
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates a string function
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-04: string function';
 select /*+ recompile use_hash */ lpad(cast(a.cb as varchar), 8, '0'), d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-05: CASE expression
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates a CASE expression
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-05: CASE expression';
 select /*+ recompile use_hash */ case when a.cb > 10 then 1 else 0 end, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-06: arithmetic on a join key column
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates an expression over a join key column
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-06: arithmetic on a join key column';
 select /*+ recompile use_hash */ a.ca * 2, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-07: columns and expressions mixed
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join copies the columns and evaluates the expressions
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-07: columns and expressions mixed';
 select /*+ recompile use_hash */ a.cb, b.cb + c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-08: regular expression function
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join evaluates a regular expression function
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-08: regular expression function';
 select /*+ recompile use_hash */ regexp_replace(cast(a.cb as varchar), '1', 'x'), d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-09: the join term is an expression
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the join term is an expression, and the hash join evaluates the select list
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-09: the join term is an expression';
 select /*+ recompile use_hash */ a.ca * 2, b.cb from ta a, tb b where a.ca * 2 = b.ca * 2;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-10: host variable
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join reads the host variable like a constant
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-10: host variable';
 prepare s72 from 'select /*+ recompile use_hash */ a.cb + ?, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca';
 execute s72 using 5;
@@ -133,16 +133,16 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-11: constant not at the front
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join writes a constant like an expression
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-11: constant not at the front';
 select /*+ recompile use_hash */ a.cb, 77, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-02-12: constant at the front
--- ---------------------------------------------------------------------------------------------------------------------
 -- expected: pass through: the hash join writes a constant that is the first column
+-- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-02-12: constant at the front';
 select /*+ recompile use_hash */ 77, a.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
