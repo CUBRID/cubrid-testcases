@@ -56,6 +56,11 @@ select count (*) from t_a force index (i_t_a_k) where k >= (select 10) or k <= (
 select count (*) from t_a force index (i_t_a_k) where k >= (select 10) or k <= (select 20) or k between (select 20) and 10;
 select count (*) from t_d force index (i_t_d_k) where k between (select null) and 50 or k >= (select 10) or k <= (select 20);
 
+-- a range skipped as disjoint is merged once the current range grows to reach it: 1000 rows
+select count (*) from t_a force index (i_t_a_k) where k < (select 7) or k > (select 7) or k between (select 7) and (select 59);
+select count (*) from t_d force index (i_t_d_k) where k < (select 7) or k > (select 7) or k between (select 7) and (select 59);
+select count (*) from t_a force index (i_t_a_k) where k between 10 and 20 or k < (select 7) or k > (select 7) or k between (select 7) and (select 59) or k between null and 50;
+
 -- NOT of the OR: rows with k > 50, 490 rows
 select count (*) from t_a where not (k between 10 and 20 or k between null and 50) using index none;
 
