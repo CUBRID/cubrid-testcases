@@ -1,12 +1,12 @@
 -- CBRD-27866: a partitioned table as a nested-loop inner is walked per outer row
--- instead of running the outer again for every partition, when the outer key repeats
--- or when a join term on the partition key picks the partition of each outer row.
+-- instead of running the outer again for every partition. A join term on the partition
+-- key picks the partition of each outer row.
 --
 -- The outer filter o.a + (@c := @c + 1) > 0 counts how many times the outer rows are read.
 -- Before the fix the scan block iterator ran the outer once per inner partition, so @c was
 -- the outer row count times the partition count. Now @c is the outer row count, the same as
--- for an unpartitioned inner, and the results do not change. An inner whose key does not
--- repeat and is not the partition key keeps the scan block iteration.
+-- for an unpartitioned inner, and the results do not change. An outer join or a class
+-- hierarchy after the inner keeps the scan block iteration.
 
 drop table if exists t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi;
 
@@ -91,7 +91,7 @@ select /*+ ordered no_use_hash parallel(0) */ count (*), sum (p.v)
 from t_ob o inner join t_pk p on p.k = o.kb;
 
 -- Case 3c: the key repeats on a column that is not the partition key. Walked per row with the memo,
--- and with the scan block iteration when an expression of the inner keeps the memo off
+-- and also when an expression of the inner keeps the memo off
 set @c = 0;
 select /*+ ordered no_use_hash parallel(0) */ count (*), sum (w.id)
 from t_o o inner join t_pi w on w.k = o.k where o.a + (@c := @c + 1) > 0;
