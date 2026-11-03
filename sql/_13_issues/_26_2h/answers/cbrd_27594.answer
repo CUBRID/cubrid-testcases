@@ -1,0 +1,437 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: NO_PARALLEL_SCAN on the outer query makes the CTE temp scan serial; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ NO_PARALLEL_SCAN */ count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 2: NO_PARALLEL_SCAN on the CTE body and on the outer query makes both scans serial; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ NO_PARALLEL_SCAN MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ NO_PARALLEL_SCAN */ count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 3: NO_PARALLEL_SCAN on the CTE body only leaves the temp scan parallel; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ NO_PARALLEL_SCAN MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 4: without a hint the CTE temp scan runs in parallel; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 5: PARALLEL(0) and PARALLEL(1) on the outer query make the CTE temp scan serial; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ PARALLEL(?) */ count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ PARALLEL(?) */ count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 6: PARALLEL(2) on the outer query runs the CTE temp scan in parallel; result = derived table     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ PARALLEL(?) */ count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+    
+Case 7: each UNION ALL arm reads the CTE with its own hint, serial then parallel; result = derived tables     
+
+===================================================
+arm    count(*)    sum(v)    
+a     100000     49950000     
+b     100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ 'a', count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: select /*+ PARALLEL(?) */ 'b', count(*), sum([dba.c].v) from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+arm    count(*)    sum(v)    
+a     100000     49950000     
+b     100000     49950000     
+
+===================================================
+    
+Case 8: the hint of the derived table that reads the CTE makes its temp scan serial; result = derived tables     
+
+===================================================
+cnt    s    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ count(*), sum([dba.c].v) from [dba.c] [dba.c])
+
+  TABLE SCAN (x)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select x.cnt, x.s from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ count(*) as [cnt], sum([dba.c].v) as [s] from [dba.c] [dba.c]) x (cnt, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+cnt    s    
+100000     49950000     
+
+===================================================
+    
+Case 9: two CTE references joined by a hash join under NO_PARALLEL_SCAN are both scanned serially; result = derived tables     
+
+===================================================
+count(*)    sum(b.v)    
+100000     49950000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  HASH JOIN (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN */ count(*), sum(b.v) from [dba.c] a, [dba.c] b where a.id=b.id
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(b.v)    
+100000     49950000     
+
+===================================================
+    
+Case 10: NO_PARALLEL_SCAN in the SELECT of INSERT ... WITH ... SELECT makes the CTE temp scan serial; result = derived table     
+
+===================================================
+100000
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap]
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: with c(id, g, v, pad) as (select /*+ MATERIALIZE */ [dba.t_heap].id, [dba.t_heap].g, [dba.t_heap].v, [dba.t_heap].pad from [dba.t_heap] [dba.t_heap])select /*+ NO_PARALLEL_SCAN */ [dba.c].id, [dba.c].v from [dba.c] [dba.c]
+
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          CTE (non_recursive_part)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                   (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+100000
+===================================================
+100000
+===================================================
+count(*)    sum(v)    
+100000     49950000     
+
+===================================================
+0

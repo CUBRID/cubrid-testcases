@@ -1,0 +1,1122 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: Q15 shape with GROUP BY derived tables; result = no_parallel_scan     
+
+===================================================
+g    total    
+4     7136873     
+
+===================================================
+g    total    
+4     7136873     
+
+===================================================
+    
+Case 2: Q15 shape with aggregate derived tables, both scans parallel; result = no_parallel_scan     
+
+===================================================
+total    
+7136291     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum([dba.t_big].v) from [dba.t_big] [dba.t_big] where [dba.t_big].g= ?:? )
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select sum([dba.t_big].v) from [dba.t_big] [dba.t_big] where [dba.t_big].g= ?:? )
+
+  TABLE SCAN (dv)
+
+  rewritten query: (select max(dv.total) from (select sum([dba.t_big].v) as [total] from [dba.t_big] [dba.t_big] where [dba.t_big].g= ?:? ) dv (total))
+
+  TABLE SCAN (dt)
+
+  rewritten query: select dt.total from (select sum([dba.t_big].v) as [total] from [dba.t_big] [dba.t_big] where [dba.t_big].g= ?:? ) dt (total) where dt.total=(select max(dv.total) from (select sum([dba.t_big].v) as [total] from [dba.t_big] [dba.t_big] where [dba.t_big].g= ?:? ) dv (total))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+total    
+7136291     
+
+===================================================
+    
+Case 3: WHERE operand, parallel heap scan inside; result = no_parallel_scan     
+
+===================================================
+g    v    
+1     500     
+2     990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v>=(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+g    v    
+1     500     
+2     990     
+
+===================================================
+    
+Case 4: parallel index scan inside; result = no_parallel_scan     
+
+===================================================
+g    v    
+0     10     
+1     500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_big.i_big_w) (key range: ([dba.t_big].w>= ?:? ), covered: true)
+
+  rewritten query: (select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].w>= ?:? ) using index [dba.t_big].i_big_w(+))
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where [dba.t_small].v*?<=(select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].w>= ?:? ) using index [dba.t_big].i_big_w(+)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_big.i_big_w), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+g    v    
+0     10     
+1     500     
+
+===================================================
+    
+Case 5: three nested scalar subqueries; result = no_parallel_scan     
+
+===================================================
+g    v    
+0     10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v<(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])))
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v<(select max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v<(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])))))
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v<=(select max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v<(select max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v<(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])))))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+g    v    
+0     10     
+
+===================================================
+    
+Case 6: select-list operand parallel, bare select-list subquery serial; result = no_parallel_scan     
+
+===================================================
+(select max(v) from t_big)+0    
+999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])+? from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+(select max(v) from t_big)    
+999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (db_root)
+
+  rewritten query: select (select max([dba.t_big].v) from [dba.t_big] [dba.t_big]) from db_root db_root
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+(select /*+ NO_PARALLEL_SCAN */ max(v) from t_big)+0    
+999     
+
+===================================================
+    
+Case 7: CASE operand and HAVING without GROUP BY; result = no_parallel_scan     
+
+===================================================
+g    case when v<(select avg(v) from t_big) then 'below' else 'above' end    
+0     below     
+1     above     
+2     above     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, case when [dba.t_small].v<(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big]) then 'below' else 'above' end from [dba.t_small] [dba.t_small] order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+g    case when v<(select /*+ NO_PARALLEL_SCAN */ avg(v) from t_big) then 'below' else 'above' end    
+0     below     
+1     above     
+2     above     
+
+===================================================
+count(*)    sum(v)    
+3     1500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: select count(*), sum([dba.t_small].v) from [dba.t_small] [dba.t_small] having max([dba.t_small].v)>(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    sum(v)    
+3     1500     
+
+===================================================
+    
+Case 8: DELETE, UPDATE and INSERT SELECT; result = no_parallel_scan     
+
+===================================================
+0
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_target)
+
+  rewritten query: select [dba.t_target],class [dba.t_target] from [dba.t_target] [dba.t_target] where ([dba.t_target].b>(select max([dba.t_big].v) from [dba.t_big] [dba.t_big]))
+
+
+Trace Statistics:
+  DELETE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_target), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+2
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_target)
+
+  rewritten query: select [dba.t_target],class [dba.t_target],[dba.t_target].b as [t_target.b] from [dba.t_target] [dba.t_target] where ([dba.t_target].b<=(select max([dba.t_big].v) from [dba.t_big] [dba.t_big]))
+
+
+Trace Statistics:
+  UPDATE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_target), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+2
+===================================================
+3
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v<=(select max([dba.t_big].v) from [dba.t_big] [dba.t_big]))
+
+
+Trace Statistics:
+  INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+a    b    
+0     10     
+1     500     
+2     990     
+10     100     
+20     200     
+
+===================================================
+3
+===================================================
+3
+===================================================
+a    b    
+0     10     
+1     500     
+2     990     
+10     100     
+20     200     
+
+===================================================
+3
+===================================================
+    
+Case 9: CTE read twice under UNION ALL; result = no_parallel_scan     
+
+===================================================
+g    v    
+1     500     
+1     500     
+2     990     
+2     990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v>=(select avg([dba.t_big].v) from [dba.t_big] [dba.t_big]))
+
+  TABLE SCAN (dba.cte_small)
+
+  rewritten query: select [dba.cte_small].g, [dba.cte_small].v from [dba.cte_small] [dba.cte_small]
+
+  TABLE SCAN (dba.cte_small)
+
+  rewritten query: select [dba.cte_small].g, [dba.cte_small].v from [dba.cte_small] [dba.cte_small]
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    CTE (non_recursive_part)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+g    v    
+1     500     
+1     500     
+2     990     
+2     990     
+
+===================================================
+    
+Case 10: correlated, uncorrelated inside correlated and ALL subqueries stay serial; result = no_parallel_scan     
+
+===================================================
+g    
+0     
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (tb)
+
+  rewritten query: (select max(tb.v) from [dba.t_big] tb where tb.g=ts.g)
+
+  SORT (order by)
+    TABLE SCAN (ts)
+
+  rewritten query: select ts.g from [dba.t_small] ts where (ts.v<=(select max(tb.v) from [dba.t_big] tb where tb.g=ts.g)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+g    
+0     
+1     
+2     
+
+===================================================
+g    
+0     
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (tb)
+
+  rewritten query: (select max(tb.v) from [dba.t_big] tb where tb.g=ts.g and (tb.v<(select max([dba.t_big].v) from [dba.t_big] [dba.t_big])))
+
+  SORT (order by)
+    TABLE SCAN (ts)
+
+  rewritten query: select ts.g from [dba.t_small] ts where (ts.v<=(select max(tb.v) from [dba.t_big] tb where tb.g=ts.g and (tb.v<(select max([dba.t_big].v) from [dba.t_big] [dba.t_big])))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+g    
+0     
+1     
+2     
+
+===================================================
+g    v    
+0     10     
+1     500     
+2     990     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: (select distinct [dba.t_big].v from [dba.t_big] [dba.t_big] where ([dba.t_big].v> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where [dba.t_small].v< all (select distinct [dba.t_big].v from [dba.t_big] [dba.t_big] where ([dba.t_big].v> ?:? )) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+g    v    
+0     10     
+1     500     
+2     990     
+
+===================================================
+    
+Case 11: NO_PARALLEL_SCAN and PARALLEL(0) inside the subquery keep it serial; result = without hint     
+
+===================================================
+g    v    
+1     500     
+2     990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v>=(select /*+ NO_PARALLEL_SCAN */ avg([dba.t_big].v) from [dba.t_big] [dba.t_big])) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+g    v    
+1     500     
+2     990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select /*+ PARALLEL(?) */ avg([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  SORT (order by)
+    TABLE SCAN (dba.t_small)
+
+  rewritten query: select [dba.t_small].g, [dba.t_small].v from [dba.t_small] [dba.t_small] where ([dba.t_small].v>=(select /*+ PARALLEL(?) */ avg([dba.t_big].v) from [dba.t_big] [dba.t_big])) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+g    v    
+1     500     
+2     990     
+
+===================================================
+    
+Case 12: parallel outer scan reading an int value and a NULL value; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(v)    min(v)    max(v)    
+49900     37425000     501     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select avg([dba.t_small].v) from [dba.t_small] [dba.t_small])
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), sum([dba.t_big].v), min([dba.t_big].v), max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>(select avg([dba.t_small].v) from [dba.t_small] [dba.t_small]))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(v)    min(v)    max(v)    
+49900     37425000     501     999     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select [dba.t_small].v from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? )
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>(select [dba.t_small].v from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 13: varchar, datetime, numeric and BETWEEN operands; result = no_parallel_scan     
+
+===================================================
+count(*)    min(w)    max(w)    
+50000     500     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select [dba.t_small].s from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? )
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].w), max([dba.t_big].w) from [dba.t_big] [dba.t_big] where ([dba.t_big].s>=(select [dba.t_small].s from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(w)    max(w)    
+50000     500     999     
+
+===================================================
+count(*)    min(w)    max(w)    
+99000     10     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select [dba.t_small].d from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? )
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].w), max([dba.t_big].w) from [dba.t_big] [dba.t_big] where ([dba.t_big].d>=(select [dba.t_small].d from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(w)    max(w)    
+99000     10     999     
+
+===================================================
+count(*)    min(w)    max(w)    
+900     991     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select [dba.t_small].n from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? )
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].w), max([dba.t_big].w) from [dba.t_big] [dba.t_big] where ([dba.t_big].n>(select [dba.t_small].n from [dba.t_small] [dba.t_small] where [dba.t_small].g= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(w)    max(w)    
+900     991     999     
+
+===================================================
+count(*)    min(v)    max(v)    
+98100     10     990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select min([dba.t_small].v) from [dba.t_small] [dba.t_small])
+
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select max([dba.t_small].v) from [dba.t_small] [dba.t_small])
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].v), max([dba.t_big].v) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>=(select min([dba.t_small].v) from [dba.t_small] [dba.t_small]) and [dba.t_big].v<=(select max([dba.t_small].v) from [dba.t_small] [dba.t_small]))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    min(v)    max(v)    
+98100     10     990     
+
+===================================================
+    
+Case 14: parallel outer scan gathered as a list; result = no_parallel_scan     
+
+===================================================
+k    w    
+1270     270     
+8270     270     
+15270     270     
+22270     270     
+29270     270     
+36270     270     
+43270     270     
+50270     270     
+57270     270     
+64270     270     
+71270     270     
+78270     270     
+85270     270     
+92270     270     
+99270     270     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_small)
+
+  rewritten query: (select max([dba.t_small].v) from [dba.t_small] [dba.t_small])
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].k, [dba.t_big].w from [dba.t_big] [dba.t_big] where [dba.t_big].v=(select max([dba.t_small].v) from [dba.t_small] [dba.t_small]) and [dba.t_big].g= ?:?  order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    w    
+1270     270     
+8270     270     
+15270     270     
+22270     270     
+29270     270     
+36270     270     
+43270     270     
+50270     270     
+57270     270     
+64270     270     
+71270     270     
+78270     270     
+85270     270     
+92270     270     
+99270     270     
+
+===================================================
+    
+Case 15: outer scan and subquery scan both parallel; result = no_parallel_scan     
+
+===================================================
+count(*)    min(k)    max(k)    
+1100     27     99297     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), min([dba.t_big].k), max([dba.t_big].k) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>=(select max([dba.t_big].v) from [dba.t_big] [dba.t_big])-?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    min(k)    max(k)    
+1100     27     99297     
+
+===================================================
+    
+Case 16: nested loop join, subquery on the inner table; result = no_parallel_scan     
+
+===================================================
+g    count(*)    sum(tb.w)    
+1     14286     7135571     
+2     14286     7135857     
+
+===================================================
+g    count(*)    sum(tb.w)    
+1     14286     7135571     
+2     14286     7135857     
+
+===================================================
+    
+Case 17: a serial in the subquery advances by one per query; result = no_parallel_scan     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_once], ?) from db_root db_root)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*) from [dba.t_big] [dba.t_big] where ([dba.t_big].v>=(select serial_next_value([dba.s_once], ?) from db_root db_root)* cast(? as numeric))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_once)    
+1     
+
+===================================================
+k    w    
+1270     270     
+8270     270     
+15270     270     
+22270     270     
+29270     270     
+36270     270     
+43270     270     
+50270     270     
+57270     270     
+64270     270     
+71270     270     
+78270     270     
+85270     270     
+92270     270     
+99270     270     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_once], ?) from db_root db_root)
+
+  SORT (order by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].k, [dba.t_big].w from [dba.t_big] [dba.t_big] where ?>=(select serial_next_value([dba.s_once], ?) from db_root db_root)* cast(? as numeric) and [dba.t_big].g= ?:?  and [dba.t_big].v= ?:?  order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+serial_current_value(s_once)    
+2     
+
+===================================================
+count(*)    max(v+(select serial_next_value(s_once, 1) from db_root)*0)    
+100000     999     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_once], ?) from db_root db_root)
+
+  TABLE SCAN (dba.t_big)
+
+  rewritten query: select count(*), max( cast([dba.t_big].v as numeric)+(select serial_next_value([dba.s_once], ?) from db_root db_root)* cast(? as numeric)) from [dba.t_big] [dba.t_big]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?, agl: pk_t_big_k)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+serial_current_value(s_once)    
+3     
+
+===================================================
+count(*)    
+100000     
+
+===================================================
+serial_current_value(s_once)    
+4     
+
+===================================================
+0
+===================================================
+0

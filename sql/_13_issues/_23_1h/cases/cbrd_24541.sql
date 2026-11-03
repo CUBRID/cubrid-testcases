@@ -9,7 +9,7 @@ insert into ta(a, b) values(1, 'a');
 insert into ta(a, b) values(2, 'b');
 create table tb(a int, b char(10) default 'abc', primary key(a)) partition by hash(a) partitions 5;
 insert into tb(a,b) values (1, 'e');
-select ta.a, ta.b from ta ta where exists (select b from tb where tb.a = ta.a); 
+select ta.a, ta.b from ta ta where exists (select /*+ NO_UNNEST */ b from tb where tb.a = ta.a); 
 
 drop table if exists tb, ta;
 create table ta(a int, b char(10) default 'abc');
