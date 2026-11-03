@@ -841,7 +841,6 @@ Trace Statistics:
           SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -856,7 +855,7 @@ count(*)    sum(a)
 trace    
 
 Query Plan:
-  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+  TABLE SCAN (z)
 
   rewritten query: (select count(z.b) from [dba.t_small] z start with z.a= mod([dba.t_big].a, ?)+? connect by  prior z.a=[dba.f_pn](z.a)-?)
 
@@ -872,10 +871,9 @@ Trace Statistics:
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -909,7 +907,6 @@ Trace Statistics:
         SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -943,7 +940,6 @@ Trace Statistics:
         SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

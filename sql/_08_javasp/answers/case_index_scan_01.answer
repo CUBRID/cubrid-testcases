@@ -78,7 +78,7 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct inttest(?) from dual dual)
+(select /*+ NO_UNNEST */ distinct inttest(?) from dual dual)
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -90,7 +90,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl, (select distinct inttest(?) from dual dual) av? (av_?) where tbl.ord=av?.av_?
+select count(*) from tbl tbl, (select /*+ NO_UNNEST */ distinct inttest(?) from dual dual) av? (av_?) where tbl.ord=av?.av_?
 ===================================================
 in    
 10     
@@ -102,7 +102,7 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct inttest(tbl.ord) from tbl tbl)
+(select /*+ NO_UNNEST */ distinct inttest(tbl.ord) from tbl tbl)
 Query plan:
 idx-join (inner join)
     outer: sscan
@@ -114,7 +114,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl tbl, (select distinct inttest(tbl.ord) from tbl tbl) av? (av_?) where tbl.ord=av?.av_?
+select count(*) from tbl tbl, (select /*+ NO_UNNEST */ distinct inttest(tbl.ord) from tbl tbl) av? (av_?) where tbl.ord=av?.av_?
 ===================================================
 like    
 1     
