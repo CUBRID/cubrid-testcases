@@ -60,6 +60,26 @@ Query stmt:
 select t?.a, t?.b from t? t? where (t?.a> ?:? ) order by ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
+    
+Case 6: WHERE ... ROWNUM <= n takes the index scan, as before     
+
+===================================================
+a    b    
+11     1     
+12     2     
+13     3     
+14     4     
+15     5     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where (t?.a> ?:? ) and (rownum<= ?:? )
+===================================================
 0
 ===================================================
 0
