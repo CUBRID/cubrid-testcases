@@ -8,21 +8,22 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-2-02-01   result, no pass through        uncorrelated subquery
- *    TC-2-02-02   result, no pass through        correlated subquery
- *    TC-2-02-03   result, no pass through        ROWNUM
- *    TC-2-02-04   result, no pass through        reading a session variable
- *    TC-2-02-05   result, no pass through        assigning a session variable
- *    TC-2-02-06   result, no pass through        assigning a session variable under a PARALLEL(4) hint
+ *    Sub-case     Counts         Case
+ *    TC-2-02-01   2 / 1          uncorrelated subquery
+ *    TC-2-02-02   2 / 1          correlated subquery
+ *    TC-2-02-03   2 / 1          ROWNUM
+ *    TC-2-02-04   3 / 2          reading a session variable
+ *    TC-2-02-05   2 / 1          assigning a session variable
+ *    TC-2-02-06   2 / 1          assigning a session variable under a PARALLEL(4) hint
  */
 
 set trace on;
@@ -47,7 +48,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-01: uncorrelated subquery
 --
--- expected: no pass through
+-- expected: temp_scans 2, pass_through 1
 --   The node above evaluates the uncorrelated subquery, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-01: uncorrelated subquery';
@@ -57,7 +58,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-02: correlated subquery
 --
--- expected: no pass through
+-- expected: temp_scans 2, pass_through 1
 --   The node above runs the correlated subquery for each row, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-02: correlated subquery';
@@ -67,7 +68,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-03: ROWNUM
 --
--- expected: no pass through
+-- expected: temp_scans 2, pass_through 1
 --   The node above numbers the rows for ROWNUM, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-03: ROWNUM';
@@ -77,7 +78,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-04: reading a session variable
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above reads the session variable, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-04: reading a session variable';
@@ -88,7 +89,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-05: assigning a session variable
 --
--- expected: no pass through
+-- expected: temp_scans 2, pass_through 1
 --   The node above assigns the session variable for each row, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-05: assigning a session variable';
@@ -99,7 +100,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-02-06: assigning a session variable under a PARALLEL(4) hint
 --
--- expected: no pass through
+-- expected: temp_scans 2, pass_through 1
 --   The node above assigns the session variable under the PARALLEL(4) hint as well.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-02-06: assigning a session variable under a PARALLEL(4) hint';

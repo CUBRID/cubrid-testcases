@@ -8,21 +8,22 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-1-01-01   result, pass through, trace    select list in the column order of the join
- *    TC-1-01-02   result, pass through           select list in the reverse column order
- *    TC-1-01-03   result, pass through           the same column twice
- *    TC-1-01-04   result, pass through           columns of one table only
- *    TC-1-01-05   result, pass through           join key columns
- *    TC-1-01-06   result, pass through           rows an outer join fills with NULL
+ *    Sub-case     Counts         Case
+ *    TC-1-01-01   3 / 3, trace   select list in the column order of the join
+ *    TC-1-01-02   3 / 3          select list in the reverse column order
+ *    TC-1-01-03   3 / 3          the same column twice
+ *    TC-1-01-04   3 / 3          columns of one table only
+ *    TC-1-01-05   3 / 3          join key columns
+ *    TC-1-01-06   1 / 1          rows an outer join fills with NULL
  */
 
 set trace on;
@@ -47,7 +48,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-01: select list in the column order of the join
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The select list is columns of the join inputs, which the hash join copies.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-01: select list in the column order of the join';
@@ -59,7 +60,7 @@ show trace;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-02: select list in the reverse column order
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The select list is columns of the join inputs, in another order.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-02: select list in the reverse column order';
@@ -69,7 +70,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-03: the same column twice
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The select list names the same column twice.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-03: the same column twice';
@@ -79,7 +80,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-04: columns of one table only
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The select list is columns of one input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-04: columns of one table only';
@@ -89,7 +90,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-05: join key columns
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The select list is the join key columns.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-05: join key columns';
@@ -101,7 +102,7 @@ drop table if exists ta, tb, tc, td;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-01-06: rows an outer join fills with NULL
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The outer join writes the rows without a match itself, with the columns of tb NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-01-06: rows an outer join fills with NULL';

@@ -8,20 +8,21 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-3-03-01   result, pass through           columns, first run
- *    TC-3-03-02   result, pass through           columns, second run
- *    TC-3-03-03   result, pass through           columns, third run
- *    TC-3-03-04   result, pass through           expressions, first run
- *    TC-3-03-05   result, pass through           expressions, second run
+ *    Sub-case     Counts         Case
+ *    TC-3-03-01   3 / 3          columns, first run
+ *    TC-3-03-02   3 / 3          columns, second run
+ *    TC-3-03-03   3 / 3          columns, third run
+ *    TC-3-03-04   2 / 2          expressions, first run
+ *    TC-3-03-05   2 / 2          expressions, second run
  */
 
 set trace on;
@@ -46,7 +47,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-01: columns, first run
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The first run caches the plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-01: columns, first run';
@@ -56,7 +57,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-02: columns, second run
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The second run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-02: columns, second run';
@@ -66,7 +67,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-03: columns, third run
 --
--- expected: pass through
+-- expected: temp_scans 3, pass_through 3
 --   The third run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-03: columns, third run';
@@ -76,7 +77,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-04: expressions, first run
 --
--- expected: pass through
+-- expected: temp_scans 2, pass_through 2
 --   The first run caches the plan with expressions, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-04: expressions, first run';
@@ -86,7 +87,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-05: expressions, second run
 --
--- expected: pass through
+-- expected: temp_scans 2, pass_through 2
 --   The second run executes a copy of the cached plan, and the result passes through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-05: expressions, second run';

@@ -8,33 +8,34 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-1-05-01   result, pass through           LEFT OUTER, matched and unmatched rows
- *    TC-1-05-02   result, pass through           LEFT OUTER, NVL on the NULL-filled side
- *    TC-1-05-03   result, pass through           RIGHT OUTER, NVL on the NULL-filled side
- *    TC-1-05-04   result, pass through           LEFT OUTER, no matching row
- *    TC-1-05-05   result, pass through           LEFT OUTER, empty build input
- *    TC-1-05-06   result, pass through           LEFT OUTER, a row with a NULL join key
- *    TC-1-05-07   result, pass through           LEFT OUTER, a non-equi ON term drops every row
- *    TC-1-05-08   result, pass through           SEMI, column
- *    TC-1-05-09   result, pass through           ANTI, column
- *    TC-1-05-10   result, pass through           SEMI, expression on the join key column
- *    TC-1-05-11   result, pass through           ANTI, empty build input
- *    TC-1-05-12   result, pass through           ANTI, expression on the join key column
- *    TC-1-05-13   result, pass through           SEMI, expression
- *    TC-1-05-14   result, pass through           ANTI, expression
- *    TC-1-05-15   result, pass through           IS NULL term after an outer join
- *    TC-1-05-16   result, pass through           expression term after an outer join
- *    TC-1-05-17   result, pass through           EXISTS turned into a SEMI join
- *    TC-1-05-18   result, pass through           NOT EXISTS turned into an ANTI join
+ *    Sub-case     Counts         Case
+ *    TC-1-05-01   1 / 1          LEFT OUTER, matched and unmatched rows
+ *    TC-1-05-02   1 / 1          LEFT OUTER, NVL on the NULL-filled side
+ *    TC-1-05-03   1 / 1          RIGHT OUTER, NVL on the NULL-filled side
+ *    TC-1-05-04   1 / 1          LEFT OUTER, no matching row
+ *    TC-1-05-05   1 / 1          LEFT OUTER, empty build input
+ *    TC-1-05-06   1 / 1          LEFT OUTER, a row with a NULL join key
+ *    TC-1-05-07   1 / 1          LEFT OUTER, a non-equi ON term drops every row
+ *    TC-1-05-08   1 / 1          SEMI, column
+ *    TC-1-05-09   1 / 1          ANTI, column
+ *    TC-1-05-10   1 / 1          SEMI, expression on the join key column
+ *    TC-1-05-11   1 / 1          ANTI, empty build input
+ *    TC-1-05-12   1 / 1          ANTI, expression on the join key column
+ *    TC-1-05-13   1 / 1          SEMI, expression
+ *    TC-1-05-14   1 / 1          ANTI, expression
+ *    TC-1-05-15   1 / 1          IS NULL term after an outer join
+ *    TC-1-05-16   1 / 1          expression term after an outer join
+ *    TC-1-05-17   1 / 1          EXISTS turned into a SEMI join
+ *    TC-1-05-18   1 / 1          NOT EXISTS turned into an ANTI join
  */
 
 set trace on;
@@ -59,7 +60,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-01: LEFT OUTER, matched and unmatched rows
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The outer join writes the rows without a match itself and evaluates the expressions on them.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-01: LEFT OUTER, matched and unmatched rows';
@@ -69,7 +70,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-02: LEFT OUTER, NVL on the NULL-filled side
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The outer join evaluates NVL on the rows it fills with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-02: LEFT OUTER, NVL on the NULL-filled side';
@@ -79,7 +80,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-03: RIGHT OUTER, NVL on the NULL-filled side
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The RIGHT OUTER join evaluates NVL on the rows it fills with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-03: RIGHT OUTER, NVL on the NULL-filled side';
@@ -91,7 +92,7 @@ drop table if exists ta, tb, tc, td;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-04: LEFT OUTER, no matching row
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The outer join fills every row with NULL and evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-04: LEFT OUTER, no matching row';
@@ -113,7 +114,7 @@ drop table if exists ta, tb;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-05: LEFT OUTER, empty build input
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The build input is empty, so the outer join writes every row with NULL without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-05: LEFT OUTER, empty build input';
@@ -134,7 +135,7 @@ drop table if exists ta, tb;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-06: LEFT OUTER, a row with a NULL join key
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The outer join writes the row with a NULL key with NULL without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-06: LEFT OUTER, a row with a NULL join key';
@@ -168,7 +169,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-07: LEFT OUTER, a non-equi ON term drops every row
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The ON term drops every match, and the outer join writes every row with NULL.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-07: LEFT OUTER, a non-equi ON term drops every row';
@@ -178,7 +179,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-08: SEMI, column
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The SEMI join writes the column of its outer input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-08: SEMI, column';
@@ -188,7 +189,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-09: ANTI, column
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The ANTI join writes the column of its outer input.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-09: ANTI, column';
@@ -198,7 +199,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-10: SEMI, expression on the join key column
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The SEMI join evaluates the expression over the join key column.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-10: SEMI, expression on the join key column';
@@ -210,7 +211,7 @@ drop table if exists ta, tb, tc, td;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-11: ANTI, empty build input
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The build input is empty, so the ANTI join writes every row without probing.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-11: ANTI, empty build input';
@@ -243,7 +244,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-12: ANTI, expression on the join key column
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The ANTI join evaluates the expression over the join key column.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-12: ANTI, expression on the join key column';
@@ -253,7 +254,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-13: SEMI, expression
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The SEMI join evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-13: SEMI, expression';
@@ -263,7 +264,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-14: ANTI, expression
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The ANTI join evaluates the expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-14: ANTI, expression';
@@ -273,7 +274,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-15: IS NULL term after an outer join
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The hash join evaluates the IS NULL term after the outer join, so the node above has nothing left to do.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-15: IS NULL term after an outer join';
@@ -283,7 +284,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-16: expression term after an outer join
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   The hash join evaluates the expression term after the outer join.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-16: expression term after an outer join';
@@ -293,7 +294,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-17: EXISTS turned into a SEMI join
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   EXISTS becomes a SEMI join, which passes through like TC-1-05-13.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-17: EXISTS turned into a SEMI join';
@@ -303,7 +304,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-05-18: NOT EXISTS turned into an ANTI join
 --
--- expected: pass through
+-- expected: temp_scans 1, pass_through 1
 --   NOT EXISTS becomes an ANTI join, which passes through like TC-1-05-14.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-05-18: NOT EXISTS turned into an ANTI join';

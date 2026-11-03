@@ -8,17 +8,18 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-1-04-01   result, pass through           the parent join key is an expression
- *    TC-1-04-02   result, pass through           the parent join key and the select list are expressions
+ *    Sub-case     Counts         Case
+ *    TC-1-04-01   2 / 2          the parent join key is an expression
+ *    TC-1-04-02   2 / 2          the parent join key and the select list are expressions
  */
 
 set trace on;
@@ -43,7 +44,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-04-01: the parent join key is an expression
 --
--- expected: pass through
+-- expected: temp_scans 2, pass_through 2
 --   The child hash join evaluates the key expression of the parent hash join, so both pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-04-01: the parent join key is an expression';
@@ -53,7 +54,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-1-04-02: the parent join key and the select list are expressions
 --
--- expected: pass through
+-- expected: temp_scans 2, pass_through 2
 --   The child hash join evaluates the parent key expression and the select list expression.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-1-04-02: the parent join key and the select list are expressions';

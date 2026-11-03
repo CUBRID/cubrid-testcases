@@ -8,22 +8,23 @@
  *  td unchanged share one copy of them. A sub-case that needs other tables or other rows makes its own,
  *  named from ta, and drops them afterwards.
  *
- *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
- *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A passed-through result reads no
- *  rows, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
- *  digits of a trace, so the counts are read as a result row.
+ *  Every sub-case is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines (temp_scans) and those with readrows: 0 (pass_through). A passed-through result reads no rows, so
+ *  the two counts are equal when every scan passes through. Without the change pass_through is 0, except
+ *  where the comment of a sub-case says the counts are the same on develop. CTP masks the digits of a
+ *  trace, so the counts are read as a result row. The Counts column below is temp_scans / pass_through.
  *
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                          Case
- *    TC-2-01-01   result, no pass through        ORDER BY
- *    TC-2-01-02   result, no pass through        LIMIT
- *    TC-2-01-03   result, no pass through        GROUP BY
- *    TC-2-01-04   result, no pass through        DISTINCT
- *    TC-2-01-05   result, no pass through        aggregate functions
- *    TC-2-01-06   result, no pass through        FOR UPDATE
- *    TC-2-01-07   result only                    click counter
+ *    Sub-case     Counts         Case
+ *    TC-2-01-01   3 / 2          ORDER BY
+ *    TC-2-01-02   3 / 2          LIMIT
+ *    TC-2-01-03   3 / 2          GROUP BY
+ *    TC-2-01-04   3 / 2          DISTINCT
+ *    TC-2-01-05   3 / 2          aggregate functions
+ *    TC-2-01-06   3 / 2          FOR UPDATE
+ *    TC-2-01-07   0 / 0          click counter
  */
 
 set trace on;
@@ -48,7 +49,7 @@ update statistics on ta, tb, tc, td with fullscan;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-01: ORDER BY
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above sorts the rows for ORDER BY, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-01: ORDER BY';
@@ -58,7 +59,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-02: LIMIT
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above counts the rows for LIMIT, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-02: LIMIT';
@@ -68,7 +69,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-03: GROUP BY
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above groups the rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-03: GROUP BY';
@@ -78,7 +79,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-04: DISTINCT
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above removes duplicate rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-04: DISTINCT';
@@ -88,7 +89,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-05: aggregate functions
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   The node above aggregates the rows, while the joins below it pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-05: aggregate functions';
@@ -98,7 +99,7 @@ select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-06: FOR UPDATE
 --
--- expected: no pass through
+-- expected: temp_scans 3, pass_through 2
 --   A SELECT ... FOR UPDATE keeps its plan, while the joins below the top pass through.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-06: FOR UPDATE';
@@ -110,9 +111,9 @@ drop table if exists ta, tb, tc, td;
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-2-01-07: click counter
 --
--- expected: result only
---   One table and no hash join, so nothing passes through. qo_check_pass_through_wrapper () still checks the statement,
---   and a click counter (INCR) must not trip its assert.
+-- expected: temp_scans 0, pass_through 0
+--   The counts are the same on develop. One table and no hash join, so nothing passes through.
+--   qo_check_pass_through_wrapper () still checks the statement, and a click counter (INCR) must not trip its assert.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-2-01-07: click counter';
 
@@ -123,6 +124,7 @@ insert into ta values (1, 10, 2), (2, 10, 0);
 update statistics on ta with fullscan;
 
 select /*+ recompile */ incr (a.cb) from ta a where a.ca = 2;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 drop table if exists ta;
 
