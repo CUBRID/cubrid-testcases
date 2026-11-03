@@ -11,9 +11,10 @@
  * Fix: the group count is multiplied by the HAVING selectivity. SUM, AVG, MIN
  * and MAX compared with constants (>, <, BETWEEN, =, IN) are estimated with
  * the histogram of the aggregated column, COUNT (*) with the histogram of the
- * GROUP BY column, and AND, OR and NOT combine them. A comparison with a host
- * variable is replanned under its value. Any other aggregate predicate takes
- * a default selectivity.
+ * GROUP BY column, and AND, OR and NOT combine them. An aggregate compared
+ * with a host variable is planned under the value of the first execution, and
+ * AVG, MIN and MAX are replanned when the value moves far. Any other
+ * aggregate predicate takes a default selectivity.
  *
  * Data: t_ord 20,000 orders, t_line 1 to 7 lines per order (80,003 rows),
  * l_qty 1..50, l_date in 2020, l_n NULL for every line of every fifth order.
@@ -39,8 +40,12 @@
  *            counted -> hash join (a group size of one row is not assumed)
  *   Case 17: control, sum (l_qty) > -1e30, beyond the histogram keys, keeps
  *            every group -> hash join
- *   Case 18: sum (l_qty) > ? executed with 10 -> hash join, then with 300 ->
+ *   Case 18: max (l_qty) > ? executed with 10 -> hash join, then with 49 ->
  *            nested loops
+ *   Case 19: sum (l_qty) > ? first executed with 300 -> nested loops
+ *   Case 20: control, count (*) > ? first executed with 1 -> hash join, as the
+ *            literal
+ *   Case 21: avg (l_qty) > 49 -> idx-join
  */
 drop table if exists t_ord, t_line;
 
@@ -134,16 +139,32 @@ evaluate '[17] control, sum (l_qty) > -1e30: hash join';
 --@queryplan
 select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having sum (l_qty) > -1e30) av where o.o_id = av.l_oid;
 
-evaluate '[18] sum (l_qty) > ? with 10: hash join, then with 300: nested loops';
+evaluate '[18] max (l_qty) > ? with 10: hash join, then with 49: nested loops';
 --+ holdcas on;
 set trace on;
-prepare st from 'select count (*) from t_ord o, (select l_oid from t_line group by l_oid having sum (l_qty) > ?) av where o.o_id = av.l_oid';
+prepare st from 'select count (*) from t_ord o, (select l_oid from t_line group by l_oid having max (l_qty) > ?) av where o.o_id = av.l_oid';
 execute st using 10;
 show trace;
+execute st using 49;
+show trace;
+deallocate prepare st;
+
+evaluate '[19] sum (l_qty) > ? first with 300: nested loops';
+prepare st from 'select count (*) from t_ord o, (select l_oid from t_line group by l_oid having sum (l_qty) > ?) av where o.o_id = av.l_oid';
 execute st using 300;
+show trace;
+deallocate prepare st;
+
+evaluate '[20] control, count (*) > ? first with 1: hash join';
+prepare st from 'select count (*) from t_ord o, (select l_oid from t_line group by l_oid having count (*) > ?) av where o.o_id = av.l_oid';
+execute st using 1;
 show trace;
 deallocate prepare st;
 set trace off;
 --+ holdcas off;
+
+evaluate '[21] avg (l_qty) > 49: idx-join';
+--@queryplan
+select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having avg (l_qty) > 49) av where o.o_id = av.l_oid;
 
 drop table t_ord, t_line;

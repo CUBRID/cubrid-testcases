@@ -527,7 +527,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>-?e?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[18] sum (l_qty) > ? with 10: hash join, then with 300: nested loops     
+[18] max (l_qty) > ? with 10: hash join, then with 49: nested loops     
 
 ===================================================
 0
@@ -544,13 +544,13 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (dba.t_line)
 
-  rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having sum([dba.t_line].l_qty)> ?:? )
+  rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? )
 
   HASH JOIN (inner join)
     TABLE SCAN (o)
     TABLE SCAN (av)
 
-  rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having sum([dba.t_line].l_qty)> ?:? ) av (l_oid) where o.o_id=av.l_oid
+  rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? ) av (l_oid) where o.o_id=av.l_oid
 
 
 Trace Statistics:
@@ -574,6 +574,46 @@ Trace Statistics:
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 
+===================================================
+count(*)    
+1602     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_line)
+
+  rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (av)
+    INDEX SCAN (o.pk_t_ord_o_id) (key range: o.o_id=av.l_oid, covered: true)
+
+  rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? ) av (l_oid) where o.o_id=av.l_oid
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_ord.pk_t_ord_o_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_line), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+0
+===================================================
+    
+[19] sum (l_qty) > ? first with 300: nested loops     
+
+===================================================
+0
 ===================================================
 count(*)    
 0     
@@ -609,6 +649,83 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+    
+[20] control, count (*) > ? first with 1: hash join     
+
+===================================================
 0
+===================================================
+count(*)    
+17143     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_line.pk_t_line_l_oid_l_no) (covered: true)
+  group by nosort: true
+
+  rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having count(*)> ?:? )
+
+  HASH JOIN (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (av)
+
+  rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having count(*)> ?:? ) av (l_oid) where o.o_id=av.l_oid
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_line.pk_t_line_l_oid_l_no), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_ord), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+[21] avg (l_qty) > 49: idx-join     
+
+===================================================
+count(*)    
+57     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having avg(t_line.l_qty)>?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having avg(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
 0
