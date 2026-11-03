@@ -20,7 +20,7 @@
 --                                   i_s 18 runs: to 2, then 2; i_gs 21 runs: to 2, then 2; i_g 10 runs: one pass
 --   256K, index_build_merge_fanin 3: i_k 20 runs: to 7, to 3, then 3
 --   256K, index_build_merge_fanin 1: i_s 37 runs, 2 at a time in six passes
---   256K, index_build_merge_fanin 2147483647: no cap, the passes of 256K
+--   256K, index_build_merge_fanin 2147483647 and 0: no cap, the passes of 256K
 -- A value below 0 or above 2147483647, or one that is not a number, is refused and leaves the value as it was.
 
 drop table if exists t;
@@ -91,7 +91,7 @@ drop index i_s on t;
 drop index i_gs on t;
 drop index i_g on t;
 
--- the cap: 3, then 1 (taken as 2), then the largest value (no cap)
+-- the cap: 3, then 1 (taken as 2), then the largest value and 0 (no cap)
 set system parameters 'index_build_buffer_size=256K';
 set system parameters 'index_build_merge_fanin=3';
 create index i_k on t (k);
@@ -112,6 +112,13 @@ create index i_k on t (k);
 create index i_s on t (s);
 insert into sig select 'k', '256K cap max', count (*), sum (mod (cast (r as bigint) * id, 1000003)) from (select rownum as r, id from t where k >= -500000 using index i_k) x;
 insert into sig select 's', '256K cap max', count (*), sum (mod (cast (r as bigint) * id, 1000003)) from (select rownum as r, id from t where s >= '' using index i_s) x;
+drop index i_k on t;
+drop index i_s on t;
+set system parameters 'index_build_merge_fanin=0';
+create index i_k on t (k);
+create index i_s on t (s);
+insert into sig select 'k', '256K cap 0', count (*), sum (mod (cast (r as bigint) * id, 1000003)) from (select rownum as r, id from t where k >= -500000 using index i_k) x;
+insert into sig select 's', '256K cap 0', count (*), sum (mod (cast (r as bigint) * id, 1000003)) from (select rownum as r, id from t where s >= '' using index i_s) x;
 drop index i_k on t;
 drop index i_s on t;
 

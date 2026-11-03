@@ -7,7 +7,9 @@
 -- among the short ones in the heap and a build flushes 600 runs: the 300 long keys in runs of their own and the
 -- 300 runs of short keys between them. lk is built with 2M (fan-in 64: to 10, then 10), 256K (fan-in 8: to 75,
 -- 10, 2, then 2), 512K (fan-in 16: to 38, 3, then 3) and 256K with index_build_merge_fanin 2 (ten passes), and
--- every build must read back the same rows in the same order, the long keys among them.
+-- every build must read back the same rows in the same order, the long keys among them. Every build merges, so
+-- the reference is the heap sorted by the query sort, which is apart from the sort of an index build: the first
+-- 6 characters of the keys differ from row to row, so the keys have one order.
 
 drop table if exists lk;
 drop table if exists lv;
@@ -30,6 +32,10 @@ set system parameters 'group_concat_max_len=DEFAULT';
 update lk inner join lv on lk.id = lv.id set lk.s = concat (substr (lk.s, 1, 6), lv.v);
 
 create table sig (tag varchar(10), cfg varchar(20), cnt int, sg bigint, nlong int);
+
+-- the reference: the heap in key order, with no index
+insert into sig select 's', 'heap', count (*), sum (mod (cast (r as bigint) * id, 1000003)), sum (case when length (s) > 16000 then 1 else 0 end)
+  from (select rownum as r, id, s from (select id, s from lk where s >= '' using index none order by s) y) x;
 
 set system parameters 'index_build_buffer_size=2M';
 create index i_s on lk (s);
@@ -58,7 +64,7 @@ drop index i_s on lk;
 set system parameters 'index_build_merge_fanin=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
--- every build holds the same rows in the same order: 1 sum, 30000 rows of which 300 long
+-- every build holds the rows of the heap in the same order: 1 sum, 30000 rows of which 300 long
 select tag, count (*) as builds, count (distinct sg) as sums, min (cnt), max (cnt), min (nlong), max (nlong) from sig group by tag order by tag;
 
 drop table lk;
