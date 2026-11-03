@@ -69,7 +69,10 @@ select /*+ recompile */ g, count(*), sum(v) from t_main ignore index (i_g) where
 
 
 evaluate 'Case 4: the same parameter with ORDER BY skip, which read the index order before the fix too';
-select /*+ recompile */ g, v from t_main force index (i_g) where g between 0 and 1 order by g limit 5;
+-- v sits in the predicate only: that keeps the scan non-covered, which is the shape the parameter
+-- acts on, while the answer holds the key column alone and pins no row order inside one key. The
+-- OID sort makes the two keys interleave (1, 0, 1, ...) instead of staying in index order.
+select /*+ recompile */ g from t_main force index (i_g) where g between 0 and 1 and v >= 0 order by g limit 5;
 show trace;
 set system parameters 'index_scan_in_oid_order=default';
 

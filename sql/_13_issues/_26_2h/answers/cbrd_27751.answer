@@ -289,12 +289,12 @@ g    count(*)    sum(v)
 Case 4: the same parameter with ORDER BY skip, which read the index order before the fix too     
 
 ===================================================
-g    v    
-0     245     
-0     490     
-0     735     
-0     980     
-0     225     
+g    
+0     
+0     
+0     
+0     
+0     
 
 ===================================================
 trace    
@@ -303,7 +303,7 @@ Query Plan:
   INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
   skip order by: true
 
-  rewritten query: select [dba.t_main].g, [dba.t_main].v from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) using index [dba.t_main].i_g(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [dba.t_main].g from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) and ([dba.t_main].v>= ?:? ) using index [dba.t_main].i_g(+) order by ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
