@@ -4,12 +4,16 @@
  *  AC-3.2 to AC-3.4 and AC-4: statements around a hash join result, and the trace.
  *  TC-3-03: runs on a copy from the XASL cache.
  *
- *  Every sub-case makes its own tables (ta, tb, ...), compares its result rows with the answer, and drops
- *  the tables. A sub-case marked "pass through" or "no pass through" is followed by a query that counts,
- *  in the trace of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed
- *  through reads no row, so the two counts are equal. Without the change every count of pass_through is 0.
- *  CTP masks the digits of a trace, so the counts are read as a result row. A sub-case marked "trace" also
- *  shows its trace: the node tree is the same as without the change.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
+ *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
+ *  own tables, from ta, and drops them.
+ *
+ *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
+ *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  digits of a trace, so the counts are read as a result row.
+ *
+ *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
  *    Sub-case     Check                          Case
@@ -27,7 +31,7 @@ set trace on;
 -- TC-3-03: runs on a copy from the XASL cache
 -- =====================================================================================================================
 
--- the tables of every sub-case below: each run reuses the plan the first run cached
+-- the tables of TC-3-03-01 to TC-3-03-05
 drop table if exists ta, tb, tc, td;
 create table ta (ca int, cb int);
 create table tb (ca int, cb int);

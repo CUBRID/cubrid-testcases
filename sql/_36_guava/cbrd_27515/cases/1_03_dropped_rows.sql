@@ -4,12 +4,16 @@
  *  AC-1.1 to AC-1.5: the hash join writes the columns and expressions of the node above it.
  *  TC-1-03: the expressions of rows the join drops are not evaluated.
  *
- *  Every sub-case makes its own tables (ta, tb, ...), compares its result rows with the answer, and drops
- *  the tables. A sub-case marked "pass through" or "no pass through" is followed by a query that counts,
- *  in the trace of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed
- *  through reads no row, so the two counts are equal. Without the change every count of pass_through is 0.
- *  CTP masks the digits of a trace, so the counts are read as a result row. A sub-case marked "trace" also
- *  shows its trace: the node tree is the same as without the change.
+ *  Every sub-case compares its result rows with the answer. Consecutive sub-cases that read the tables
+ *  ta, tb, tc and td as they are share them. A sub-case that needs other tables or other rows makes its
+ *  own tables, from ta, and drops them.
+ *
+ *  A sub-case marked "pass through" or "no pass through" is followed by a query that counts, in the trace
+ *  of the sub-case, the SCAN (temp ...) lines and those with readrows: 0. A result passed through reads no
+ *  row, so the two counts are equal. Without the change every count of pass_through is 0. CTP masks the
+ *  digits of a trace, so the counts are read as a result row.
+ *
+ *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
  *    Sub-case     Check                          Case
