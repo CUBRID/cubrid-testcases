@@ -69,20 +69,20 @@ select 'eq_bdsc', sum (case when a <> b then 1 else 0 end) as mismatches, sum (a
 
 evaluate 'Case 2: ranges and index order';
 select 'rng_i', count (*) from (select x * 351 - 17000 v from d27862 where x % 4 = 1) q
-  where (select count (*) || ':' || sum (id) from t27862 where i > v and i <= v + 3500 using index ix_i)
-     <> (select count (*) || ':' || sum (id) from t27862 where i > v and i <= v + 3500 using index none);
+  where (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where i > v and i <= v + 3500 using index ix_i)
+     <> (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where i > v and i <= v + 3500 using index none);
 select 'rng_s', count (*) from (select x - 1001 v from d27862 where x % 4 = 1) q
-  where (select count (*) || ':' || sum (id) from t27862 where s >= v and s < v + 13 using index ix_s)
-     <> (select count (*) || ':' || sum (id) from t27862 where s >= v and s < v + 13 using index none);
+  where (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where s >= v and s < v + 13 using index ix_s)
+     <> (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where s >= v and s < v + 13 using index none);
 select 'rng_b', count (*) from (select cast (x * 41 - 2000 as bigint) * 1000000007 v from d27862 where x % 4 = 1) q
-  where (select count (*) || ':' || sum (id) from t27862 where b between v and v + 50000000000 using index ix_b)
-     <> (select count (*) || ':' || sum (id) from t27862 where b between v and v + 50000000000 using index none);
+  where (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where b between v and v + 50000000000 using index ix_b)
+     <> (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where b between v and v + 50000000000 using index none);
 select 'rng_idsc', count (*) from (select x * 31 - 1501 v from d27862 where x % 4 = 1) q
-  where (select count (*) || ':' || sum (id) from t27862 where idsc < v and idsc >= v - 40 using index ix_idsc)
-     <> (select count (*) || ':' || sum (id) from t27862 where idsc < v and idsc >= v - 40 using index none);
+  where (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where idsc < v and idsc >= v - 40 using index ix_idsc)
+     <> (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where idsc < v and idsc >= v - 40 using index none);
 select 'rng_bdsc', count (*) from (select cast (x * 31 - 1501 as bigint) * 3000000019 v from d27862 where x % 4 = 1) q
-  where (select count (*) || ':' || sum (id) from t27862 where bdsc <= v and bdsc > v - 90000000000 using index ix_bdsc)
-     <> (select count (*) || ':' || sum (id) from t27862 where bdsc <= v and bdsc > v - 90000000000 using index none);
+  where (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where bdsc <= v and bdsc > v - 90000000000 using index ix_bdsc)
+     <> (select count (*) || ':' || coalesce (sum (id), 0) from t27862 where bdsc <= v and bdsc > v - 90000000000 using index none);
 select 'ord_idsc', idsc, id from t27862 where idsc between -3 and 3 using index ix_idsc order by idsc desc, id limit 12;
 select 'ord_i', i, id from t27862 where i >= 100 using index ix_i order by i, id limit 8;
 
