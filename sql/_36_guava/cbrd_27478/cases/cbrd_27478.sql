@@ -144,6 +144,32 @@ drop table t_27478_s;
 drop table t_27478_mi;
 drop table t_27478_it;
 
+evaluate 'Case 16: a trigger action whose join is read while it is compiled leaves LAST_INSERT_ID alone: every item takes the order id';
+create table t_27478_r1 (k int, x int);
+create index i_27478_r1_x on t_27478_r1 (x);
+create table t_27478_r2 (k int, y int);
+create index i_27478_r2_k on t_27478_r2 (k);
+insert into t_27478_r1 values (1, 10), (2, 10), (3, 20);
+insert into t_27478_r2 values (1, 0), (2, 0), (3, 0);
+update statistics on t_27478_r1, t_27478_r2 with fullscan;
+create table t_27478_ord (id int auto_increment primary key, v int);
+create table t_27478_item (order_id int, sku int);
+create table t_27478_audit (id int auto_increment (900, 1) primary key, v int);
+create trigger t_27478_ti after insert on t_27478_item execute
+  insert into t_27478_audit (v) select r1.k from t_27478_r1 r1, t_27478_r2 r2 where r1.k = r2.k and r1.x = 10;
+insert into t_27478_ord (v) values (1);
+insert into t_27478_item (order_id, sku) values (last_insert_id (), 1);
+insert into t_27478_item (order_id, sku) values (last_insert_id (), 2);
+insert into t_27478_item (order_id, sku) values (last_insert_id (), 3);
+select order_id, sku from t_27478_item order by sku;
+select count (*) from t_27478_audit;
+drop trigger t_27478_ti;
+drop table t_27478_audit;
+drop table t_27478_item;
+drop table t_27478_ord;
+drop table t_27478_r2;
+drop table t_27478_r1;
+
 drop table t_27478_c;
 drop table t_27478_f;
 drop table t_27478_g;
