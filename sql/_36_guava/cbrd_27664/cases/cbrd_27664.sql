@@ -21,7 +21,7 @@
  *    Case 9:  a prefix of a two-column index, with a filter on the second column
  *    Case 10: three keys on long overflow chains that several workers read
  *    Case 11: COUNT DISTINCT, GROUP_CONCAT (with SEPARATOR), MEDIAN, PERCENTILE stay serial
- *    Case 12: an empty range, GROUP BY DESC and a small index stay serial
+ *    Case 12: an empty range and a small index stay serial, GROUP BY DESC runs in parallel (CBRD-27728)
  *    Case 13: ORDER BY the key with LIMIT stops at the first, a middle, the last group and after
  *    Case 14: index_scan_in_oid_order keeps the index order of the scan (develop split groups)
  *    Case 15: a GROUP BY skip in a correlated subquery, run once for every outer row
@@ -191,7 +191,7 @@ show trace;
 select /*+ recompile no_parallel_scan */ g, round(percentile_cont(g / 100.0) within group (order by v), 4), percentile_disc(g / 100.0) within group (order by v) from t_main force index (i_g) where g between 0 and 34 group by g order by g;
 
 
-evaluate 'Case 12: an empty range, GROUP BY DESC and a small index stay serial; result = no_parallel_scan';
+evaluate 'Case 12: an empty range and a small index stay serial, GROUP BY DESC runs in parallel (CBRD-27728); result = no_parallel_scan';
 select /*+ recompile */ g, count(*), sum(v) from t_main force index (i_g) where g between 100 and 200 group by g order by g;
 show trace;
 select /*+ recompile no_parallel_scan */ g, count(*), sum(v) from t_main force index (i_g) where g between 100 and 200 group by g order by g;
