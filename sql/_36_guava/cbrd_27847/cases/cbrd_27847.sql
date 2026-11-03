@@ -11,10 +11,13 @@
  *  Coverage:
  *    Case 1:  INSERT ... SELECT from columns of the same domain stores the values the cast stores in the twin table
  *    Case 2:  UPDATE from columns of the same domain, of a joined table, and from expressions
- *    Case 3:  MERGE, INSERT ... ON DUPLICATE KEY UPDATE and REPLACE
+ *    Case 3:  MERGE, INSERT ... ON DUPLICATE KEY UPDATE (from constants, and from the old row of a table and of a
+ *             hash-partitioned table) and REPLACE
  *    Case 4:  values of another precision, collation, codeset or type, a shorter CHAR, a default value, literals
  *             and host variables are cast as before
  *    Case 5:  values longer than the column fail with Error:-427 and store nothing
+ *    Case 6:  CHAR of the euckr and binary codesets, whose cast pads with a character other than a space, keeps the
+ *             bytes of the cast
  */
 
 
@@ -110,6 +113,15 @@ select id, d32, octet_length (d32), d10, hex (d10), dvb64, char_length (dl), md5
 insert into t27847_d (id, d32, d10) select id, v32, c10 from t27847_s on duplicate key update d32 = 'odku', d10 = 'x';
 insert into t27847_d (id, d32, d10) select id + 10, v32, c10 from t27847_s on duplicate key update d32 = 'odku';
 select id, d32, octet_length (d32), d10, hex (d10), ddef from t27847_d order by id;
+-- the duplicate key update reads the old row, so d32 takes its ds
+insert into t27847_d (id, d32) select id, v64 from t27847_s on duplicate key update d32 = ds;
+select id, d32, octet_length (d32), ds from t27847_d order by id;
+drop table if exists t27847_p;
+create table t27847_p (k int primary key, c1 varchar(32) collate utf8_bin, c2 varchar(32) collate utf8_bin)
+  partition by hash (k) partitions 2;
+insert into t27847_p values (1, 'a', 'x'), (2, 'b', 'y'), (3, 'c', _utf8'가나');
+insert into t27847_p values (1, 'p', 'q'), (2, 'r', 's'), (3, 't', 'u') on duplicate key update c1 = c2;
+select k, c1, octet_length (c1), c2 from t27847_p order by k;
 replace into t27847_d (id, d32, d10, db16, dl) select id, v32, c10, b16, vl from t27847_s;
 select id, d32, octet_length (d32), d10, hex (d10), db16, dvb64, char_length (dl), md5 (dl), ds, ddef
 from t27847_d order by id;
@@ -150,4 +162,21 @@ select count (*) from t27847_d where id >= 200;
 select id, d32, octet_length (d32) from t27847_d where id = 2;
 
 
-drop table t27847_s, t27847_d, t27847_t;
+evaluate 'Case 6: CHAR of the euckr and binary codesets keeps the bytes of the cast';
+drop table if exists t27847_e, t27847_f;
+-- the cast pads a CHAR with its codeset's pad character: 0xA1A1 in euckr, 0x00 in binary
+create table t27847_e (id int primary key, ce char(5) charset euckr, cb char(5) charset binary, c3 char(3) charset euckr,
+  ve varchar(5) charset euckr);
+insert into t27847_e values (1, 'ab', 'ab', 'ab', 'ab'), (2, 'abcde', 'abcde', 'abc', 'abcde'), (3, '', '', '', ''),
+  (4, null, null, null, null);
+create table t27847_f like t27847_e;
+insert into t27847_f select * from t27847_e;
+select id, octet_length (ce), ascii (substr (ce, 3, 1)), octet_length (cb), ascii (substr (cb, 3, 1)), octet_length (c3),
+  octet_length (ve)
+from t27847_f order by id;
+update t27847_f f, t27847_e e set f.ce = e.c3, f.cb = e.cb where f.id = e.id;
+select id, octet_length (ce), ascii (substr (ce, 4, 1)), octet_length (cb), ascii (substr (cb, 3, 1)) from t27847_f
+order by id;
+
+
+drop table t27847_s, t27847_d, t27847_t, t27847_p, t27847_e, t27847_f;

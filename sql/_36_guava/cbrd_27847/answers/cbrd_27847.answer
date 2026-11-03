@@ -128,6 +128,39 @@ id    d32    octet_length(d32)    d10    hex(d10)    ddef
 ===================================================
 14
 ===================================================
+id    d32    octet_length(d32)    ds    
+1     abc     3     abc     
+2     abcdefghijabcdefghijabcdefghij12     32     abcdefghijabcdefghijabcdefghij12     
+3     abc        6     abc        
+4     null     null     null     
+5     null     null     null     
+6     null     null     null     
+7     null     null     null     
+11     abc     3     null     
+12     abcdefghijabcdefghijabcdefghij12     32     null     
+13     abc        6     null     
+14          0     null     
+15     한글 문자열     16     null     
+16     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     null     
+17     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+6
+===================================================
+k    c1    octet_length(c1)    c2    
+1     x     1     x     
+2     y     1     y     
+3     가나     6     가나     
+
+===================================================
+14
+===================================================
 id    d32    octet_length(d32)    d10    hex(d10)    db16    dvb64    char_length(dl)    md5(dl)    ds    ddef    
 1     abc     3     abc            616263     00ff     null     601     245fc3483ba872f63909f65d24b60856     null     dflt     
 2     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     ffff     null     601     798faac9e90f193c194784f0feb78187     null     dflt     
@@ -248,6 +281,36 @@ count(*)
 ===================================================
 id    d32    octet_length(d32)    
 2     abcdefghijabcdefghijabcdefghij12     32     
+
+===================================================
+    
+Case 6: CHAR of the euckr and binary codesets keeps the bytes of the cast     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+id    octet_length(ce)    ascii( substr(ce, 3, 1))    octet_length(cb)    ascii( substr(cb, 3, 1))    octet_length(c3)    octet_length(ve)    
+1     8     161     5     0     4     2     
+2     5     99     5     99     3     5     
+3     10     161     5     0     6     0     
+4     null     null     null     null     null     null     
+
+===================================================
+4
+===================================================
+id    octet_length(ce)    ascii( substr(ce, 4, 1))    octet_length(cb)    ascii( substr(cb, 3, 1))    
+1     8     161     5     0     
+2     7     161     5     99     
+3     10     161     5     0     
+4     null     null     null     null     
 
 ===================================================
 0
