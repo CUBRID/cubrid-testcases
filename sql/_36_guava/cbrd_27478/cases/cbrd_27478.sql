@@ -50,6 +50,26 @@ evaluate 'Case 3: a rare code selects 250 rows: index nested loop into t_27478_g
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'rare2' and f.c_id = c.id and g.k = f.k;
 
+evaluate 'Case 3b: no recompile -- a statement differing in its literal only shares the plan compiled for the first one (common first: both run the hash join)';
+set trace on;
+select 'S1', count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+show trace;
+select 'S1', count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'rare2' and f.c_id = c.id and g.k = f.k;
+show trace;
+set trace off;
+
+evaluate 'Case 3c: the same in the other order (rare first: both run the index nested loop)';
+set trace on;
+select 'S2', count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'rare2' and f.c_id = c.id and g.k = f.k;
+show trace;
+select 'S2', count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+show trace;
+set trace off;
+
 evaluate 'Case 4: an IN list of rare codes is read too';
 --@queryplan
 select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
@@ -144,7 +164,7 @@ drop table t_27478_s;
 drop table t_27478_mi;
 drop table t_27478_it;
 
-evaluate 'Case 16: a trigger action whose join is read while it is compiled leaves LAST_INSERT_ID alone: every item takes the order id';
+evaluate 'Case 16: a trigger action is compiled at every firing and reads no rows; LAST_INSERT_ID stays the order id for every item';
 create table t_27478_r1 (k int, x int);
 create index i_27478_r1_x on t_27478_r1 (x);
 create table t_27478_r2 (k int, y int);
@@ -169,6 +189,40 @@ drop table t_27478_item;
 drop table t_27478_ord;
 drop table t_27478_r2;
 drop table t_27478_r1;
+
+evaluate 'Case 17: UPDATE and DELETE hand both hints to the SELECT they plan (NO_ROW_SNAPSHOT: nested loop, ROW_SNAPSHOT with the parameter at 0: hash join)';
+autocommit off;
+--@queryplan
+update /*+ recompile no_row_snapshot */ t_27478_c c, t_27478_f f, t_27478_g g set g.v = g.v
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+rollback;
+set system parameters 'row_snapshot_max_rows=0';
+--@queryplan
+delete /*+ recompile row_snapshot */ g from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+rollback;
+set system parameters 'row_snapshot_max_rows=100';
+autocommit on;
+
+evaluate 'Case 18: the hints of a trigger action UPDATE / DELETE are kept apart from the hint before them in the stored action';
+create table t_27478_th (id int);
+create trigger t_27478_thu after insert on t_27478_th execute
+  update /*+ bind_sensitive no_row_snapshot */ t_27478_x set name = name where id = 0;
+create trigger t_27478_thd after insert on t_27478_th execute
+  delete /*+ no_logging row_snapshot */ from t_27478_x where id = 0;
+select name, action_definition from _db_trigger where name in ('t_27478_thu', 't_27478_thd') order by 1;
+insert into t_27478_th values (1);
+drop trigger t_27478_thu;
+drop trigger t_27478_thd;
+drop table t_27478_th;
+
+evaluate 'Case 19: under REPEATABLE READ the rows are not read: the common code is priced at 1/NDV (nested loop, as in Case 2)';
+set transaction isolation level repeatable read;
+--@queryplan
+select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
+where c.name = 'common' and f.c_id = c.id and g.k = f.k;
+commit;
+set transaction isolation level read committed;
 
 drop table t_27478_c;
 drop table t_27478_f;

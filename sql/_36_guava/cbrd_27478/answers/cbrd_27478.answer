@@ -117,6 +117,116 @@ Query stmt:
 select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
     
+Case 3b: no recompile -- a statement differing in its literal only shares the plan compiled for the first one (common first: both run the hash join)     
+
+===================================================
+0
+===================================================
+'S1'    count(*)    
+S1     39000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (c.i_?_c_name) (key range: c.[name]= ?:? )
+      INDEX SCAN (f.i_?_f_c) (key range: f.c_id=c.id)
+    TABLE SCAN (g)
+
+  rewritten query: select 'S?', count(*) from [dba.t_?_c] c, [dba.t_?_f] f, [dba.t_?_g] g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_g), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+'S1'    count(*)    
+S1     250     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_g), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+     
+
+===================================================
+0
+===================================================
+    
+Case 3c: the same in the other order (rare first: both run the index nested loop)     
+
+===================================================
+0
+===================================================
+'S2'    count(*)    
+S2     250     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (c.i_?_c_name) (key range: c.[name]= ?:? )
+      INDEX SCAN (f.i_?_f_c) (key range: f.c_id=c.id)
+    INDEX SCAN (g.i_?_g_k) (key range: g.k=f.k, covered: true)
+
+  rewritten query: select 'S?', count(*) from [dba.t_?_c] c, [dba.t_?_f] f, [dba.t_?_g] g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_g.i_?_g_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+'S2'    count(*)    
+S2     39000     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (index: dba.t_?_g.i_?_g_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+    
 Case 4: an IN list of rare codes is read too     
 
 ===================================================
@@ -494,7 +604,7 @@ id    (select max(c) from t_27478_s)
 0
 ===================================================
     
-Case 16: a trigger action whose join is read while it is compiled leaves LAST_INSERT_ID alone: every item takes the order id     
+Case 16: a trigger action is compiled at every firing and reads no rows; LAST_INSERT_ID stays the order id for every item     
 
 ===================================================
 0
@@ -544,6 +654,119 @@ count(*)
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 17: UPDATE and DELETE hand both hints to the SELECT they plan (NO_ROW_SNAPSHOT: nested loop, ROW_SNAPSHOT with the parameter at 0: hash join)     
+
+===================================================
+39000
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: idx-join (inner join)
+                            outer: iscan
+                                       class: c node[?]
+                                       index: i_?_c_name term[?]
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: f node[?]
+                                       index: i_?_f_c term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: g node[?]
+                            index: i_?_g_k term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_HASH_AGGREGATE NO_ROW_SNAPSHOT */ g,class g,g.v as [g.v] from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:?  group by g
+===================================================
+0
+===================================================
+0
+===================================================
+39000
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: g node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ROW_SNAPSHOT */ g,class g from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 18: the hints of a trigger action UPDATE / DELETE are kept apart from the hint before them in the stored action     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+name    action_definition    
+t_27478_thd     delete /*+ NO_LOGGING ROW_SNAPSHOT  */ [dba.t_27478_x] from [dba.t_27478_x] [dba.t_27478_x] where [dba.t_27478_x].[id]=0     
+t_27478_thu     update /*+ BIND_SENSITIVE NO_ROW_SNAPSHOT  */ [dba.t_27478_x] [dba.t_27478_x] set [dba.t_27478_x].[name]=[dba.t_27478_x].[name] where [dba.t_27478_x].[id]=0     
+
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 19: under REPEATABLE READ the rows are not read: the common code is priced at 1/NDV (nested loop, as in Case 2)     
+
+===================================================
+0
+===================================================
+count(*)    
+39000     
+
+Query plan:
+idx-join (inner join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: c node[?]
+                          index: i_?_c_name term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: f node[?]
+                          index: i_?_f_c term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: g node[?]
+               index: i_?_g_k term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_?_c c, t_?_f f, t_?_g g where f.c_id=c.id and g.k=f.k and c.[name]= ?:? 
 ===================================================
 0
 ===================================================
