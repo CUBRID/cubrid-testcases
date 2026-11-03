@@ -2074,7 +2074,7 @@ g    round(percentile_cont( cast(g/100.0 as double)) within group (order by v), 
 
 ===================================================
     
-Case 12: an empty range, GROUP BY DESC and a small index stay serial; result = no_parallel_scan     
+Case 12: an empty range and a small index stay serial, GROUP BY DESC runs in parallel (CBRD-27728); result = no_parallel_scan     
 
 ===================================================
 g    count(*)    sum(v)    
@@ -2147,6 +2147,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_main.i_g), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
