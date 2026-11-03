@@ -1,16 +1,16 @@
 /**
  *  This test case verifies CBRD-27819: the faster NUMERIC code (DOUBLE and FLOAT to
  *  NUMERIC conversion, integer and NUMERIC comparison, add, subtract, multiply, ROUND,
- *  TRUNC, FLOOR, CEIL, hashing and reading) returns the values it returned before
- *  (Cases 1-5; DOUBLE/FLOAT to NUMERIC keeps 16/7 significant digits), and a BIGINT,
- *  INTEGER or NUMERIC key compared with a DOUBLE or FLOAT value the key type cannot
- *  hold exactly (beyond 2^53, 2^24, or 17 and more digits) runs on every access path
- *  without an error (Cases 6-12). That comparison is done in DOUBLE (FLOAT against a
- *  FLOAT), so an index scan, pruning, a join method or a copied equality can return
- *  other rows than a sequential scan: a documented limitation (ADR 0040, CBRD-27797,
- *  CBRD-27799, CBRD-27703); the expected rows are what each path returns.
- *  Labels with one prefix are one query on several paths: n USING INDEX NONE, no
- *  partitions or nested-loop join, i index, p RANGE, q LIST, r HASH partition,
+ *  TRUNC, FLOOR, CEIL, hashing and reading) and the faster DOUBLE and FLOAT to string
+ *  conversion return the values they returned before (Cases 1-5 and 13, correctness
+ *  cases that every build passes), and a BIGINT, INTEGER or NUMERIC key compared with a
+ *  DOUBLE or FLOAT value the key type cannot hold exactly (beyond 2^53, 2^24, or 17 and
+ *  more digits) runs on every access path without an error (Cases 6-12). That comparison
+ *  is done in DOUBLE (FLOAT against a FLOAT), so an index scan, pruning, a join method or
+ *  a copied equality can return other rows than a sequential scan, a limitation left as
+ *  it is (CBRD-27797, CBRD-27799, CBRD-27703); the expected rows are what each path
+ *  returns. Labels with one prefix are one query on several paths: n USING INDEX NONE,
+ *  no partitions or nested-loop join, i index, p RANGE, q LIST, r HASH partition,
  *  h hash join, m merge join, e the query with an equality term.
  *
  *  Coverage:
@@ -26,9 +26,10 @@
  *    Case 10: RANGE, LIST and HASH partitions, UPDATE and DELETE, binds
  *    Case 11: nested-loop, hash and sort-merge join on a mixed key
  *    Case 12: an equality term copied into another term (col = const and col2 = col)
+ *    Case 13: DOUBLE and FLOAT to CHAR and VARCHAR by CAST, concatenation and assignment
  */
 
-drop table if exists t_cast, t_ic, t_ar, t_rd, t_sz, t_big, t_num, t_wide, t_flt, t_rng, t_lst, t_hsh, t_flat, t_mix, t_eq;
+drop table if exists t_cast, t_ic, t_ar, t_rd, t_sz, t_big, t_num, t_wide, t_flt, t_rng, t_lst, t_hsh, t_flat, t_mix, t_eq, t_dstr, t_fstr, t_sv;
 
 
 evaluate 'Case 1: DOUBLE and FLOAT to NUMERIC by CAST and by assignment';
@@ -362,4 +363,64 @@ select /*+ recompile */ 'c12be' q, count(*) from t_eq where n = 1234567890123456
 select /*+ recompile */ 'c12bn' q, count(*) from t_eq where n + 0 = 12345678901234568e0 and m = n + 0 using index none;
 select /*+ recompile */ 'c12c' q, b, c from t_eq where b = 9007199254740992e0 order by b, c;
 
-drop table t_cast, t_ic, t_ar, t_rd, t_sz, t_big, t_num, t_wide, t_flt, t_rng, t_lst, t_hsh, t_flat, t_mix, t_eq;
+
+evaluate 'Case 13: DOUBLE and FLOAT to CHAR and VARCHAR by CAST, concatenation and assignment';
+-- one row per digit path: the 16 (FLOAT 7) digit cut, fixed and exponent notation on both sides of
+-- decpt 16 (7) and -4, powers of two, odd significands whose interval end is a short decimal,
+-- subnormals, and for FLOAT an integer below and above 10^15
+create table t_dstr (id int, d double);
+insert into t_dstr values (1, 0);
+insert into t_dstr values (2, -0.0e0);
+insert into t_dstr values (3, 1.7976931348623157e308);
+insert into t_dstr values (4, -2.2250738585072014e-308);
+insert into t_dstr values (5, 2.2250738585072014e-308 / 1e10);
+insert into t_dstr values (6, 2.2250738585072014e-308 / 4503599627370496);
+insert into t_dstr values (7, 0.1e0);
+insert into t_dstr values (8, 1e0 / 3);
+insert into t_dstr values (9, 0.1e0 + 0.2e0);
+insert into t_dstr values (10, 12345678901234567e0);
+insert into t_dstr values (11, 1234567890123456e0);
+insert into t_dstr values (12, 1e16);
+insert into t_dstr values (13, 1e15);
+insert into t_dstr values (14, 0.0001e0);
+insert into t_dstr values (15, 0.00001e0);
+insert into t_dstr values (16, 2.0194839173657902e-28);
+insert into t_dstr values (17, 7.120236347223045e-307);
+insert into t_dstr values (18, 3.3378601074218748e16);
+insert into t_dstr values (19, -1.5e0);
+insert into t_dstr values (20, 9007199254740993e0);
+create table t_fstr (id int, f float);
+insert into t_fstr values (1, 0);
+insert into t_fstr values (2, cast(-0.0e0 as float));
+insert into t_fstr values (3, cast(0.1 as float));
+insert into t_fstr values (4, cast(1234567936 as float));
+insert into t_fstr values (5, cast(999999986991104 as float));
+insert into t_fstr values (6, cast(1000000993624064 as float));
+insert into t_fstr values (7, cast(1966079932891136 as float));
+insert into t_fstr values (8, cast(3.094850098213451e26 as float));
+insert into t_fstr values (9, cast(1.1754943508222875e-38 as float));
+insert into t_fstr values (10, cast(1.401298464324817e-45 as float));
+insert into t_fstr values (11, cast(4.203895392974451e-45 as float));
+insert into t_fstr values (12, cast(1.1754942106924411e-38 as float));
+insert into t_fstr values (13, cast(1e-46 as float));
+insert into t_fstr values (14, cast(1000000 as float));
+insert into t_fstr values (15, cast(1e7 as float));
+insert into t_fstr values (16, cast(12345678 as float));
+insert into t_fstr values (17, cast(1.0000001192092896e0 as float));
+insert into t_fstr values (18, cast(-1.5 as float));
+insert into t_fstr values (19, cast(140737488355328 as float));
+insert into t_fstr values (20, cast(34160768 as float));
+insert into t_fstr values (21, cast(3.4028234e38 as float));
+select 'c13a' q, id, cast(d as varchar) from t_dstr order by id;
+select 'c13b' q, id, cast(d as char(30)), d || '', concat('x', d) from t_dstr order by id;
+select 'c13c' q, id, cast(f as varchar), cast(f as char(20)), f || '', concat('x', f) from t_fstr order by id;
+select 'c13d' q, id, cast(d * 7 as varchar) from t_dstr where id between 7 and 20 order by id;
+select 'c13e' q, cast(3.3378601074218748e16 as varchar), cast(cast(1966079932891136 as float) as varchar), cast(0.1e0 + 0.2e0 as varchar), cast(cast(140737488355328 as float) as varchar);
+create table t_sv (id int, s varchar(40));
+insert into t_sv select id, d from t_dstr;
+insert into t_sv select 100 + id, f from t_fstr;
+select 'c13f' q, id, s from t_sv order by id;
+select 'c13g' q, cast(json_extract('[1.5, 0.1, 3.3378601074218748e16]', '$[2]') as varchar), cast(1.25e0 as varchar(4));
+select 'c13h' q, cast(1.25e0 as varchar(3));
+
+drop table t_cast, t_ic, t_ar, t_rd, t_sz, t_big, t_num, t_wide, t_flt, t_rng, t_lst, t_hsh, t_flat, t_mix, t_eq, t_dstr, t_fstr, t_sv;
