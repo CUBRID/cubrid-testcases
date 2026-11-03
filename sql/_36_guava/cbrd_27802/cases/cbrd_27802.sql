@@ -27,9 +27,10 @@
  *    Case 13: agg_hash_respect_order=no
  *    Case 14: empty input, serial and parallel
  *    Case 15: LIMIT and GROUPBY_NUM stop the output, serial, parallel, after giving up and with unhashed rows
+ *    Case 16: LIMIT and GROUPBY_NUM stop the output before the only unhashed row, which is longer than a page
  */
 
-drop table if exists t_grp, t_wide, t_uniq, t_big, t_set, t_ref;
+drop table if exists t_grp, t_wide, t_uniq, t_big, t_set, t_ref, t_one;
 
 -- 200,000 rows in about 820 heap pages (25 times the 32-page parallel scan threshold of CTP). k: 50,000 groups of 4
 -- consecutive rows, more than the 2 MB hash table holds, at a group per row ratio of 0.25 that never gives up hashing.
@@ -61,7 +62,15 @@ insert into t_set select (rownum - 1) / 4, {rownum, rownum + 1} from db_class a,
 create table t_ref (x int);
 insert into t_ref select mod(rownum, 300) from db_class a, db_class b, db_class c limit 3000;
 
-update statistics on t_grp, t_wide, t_uniq, t_big, t_set, t_ref with fullscan;
+-- 5,000 hashed groups of 4 rows, then one row whose 25,601-character key (md5 chain, so it does not compress) sorts
+-- after them and is longer than a page: the sort of the unhashed rows holds that single row
+create table t_one (id int, s varchar(30000), v int);
+insert into t_one select rownum, 'a' || lpad(to_char((rownum - 1) / 4), 30, '0'), mod(rownum, 7) from db_class a, db_class b, db_class c limit 20000;
+insert into t_one
+  with recursive r (n, s) as (select 1, cast(md5('0') as varchar(30000)) union all select n + 1, s || md5(s) from r where n < 800)
+  select 99999, 'z' || s, 1 from r where n = 800;
+
+update statistics on t_grp, t_wide, t_uniq, t_big, t_set, t_ref, t_one with fullscan;
 
 set trace on;
 
@@ -201,4 +210,13 @@ select /*+ recompile no_parallel_scan no_hash_aggregate */ k, count(*), sum(v) f
 select /*+ recompile no_parallel_scan no_hash_aggregate */ k, count(*), sum(length(big)) from t_big group by k limit 3;
 select /*+ recompile no_parallel_scan no_hash_aggregate */ k, count(*), sum(length(big)) from t_big group by k limit 19, 3;
 
-drop table t_grp, t_wide, t_uniq, t_big, t_set, t_ref;
+
+evaluate 'Case 16: LIMIT and GROUPBY_NUM stop before the only unhashed row, longer than a page; result = no_hash_aggregate';
+select /*+ recompile no_parallel_scan */ substr(s, 1, 32), count(*), sum(v) from t_one group by s limit 1;
+select /*+ recompile no_parallel_scan */ groupby_num(), substr(s, 1, 32), count(*) from t_one group by s having groupby_num() <= 2;
+select /*+ recompile no_parallel_scan */ substr(s, 1, 32), count(*), sum(v), max(length(s)) from t_one group by s limit 4999, 2;
+select /*+ recompile no_parallel_scan no_hash_aggregate */ substr(s, 1, 32), count(*), sum(v) from t_one group by s limit 1;
+select /*+ recompile no_parallel_scan no_hash_aggregate */ groupby_num(), substr(s, 1, 32), count(*) from t_one group by s having groupby_num() <= 2;
+select /*+ recompile no_parallel_scan no_hash_aggregate */ substr(s, 1, 32), count(*), sum(v), max(length(s)) from t_one group by s limit 4999, 2;
+
+drop table t_grp, t_wide, t_uniq, t_big, t_set, t_ref, t_one;
