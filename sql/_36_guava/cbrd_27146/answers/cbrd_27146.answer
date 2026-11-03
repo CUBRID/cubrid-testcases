@@ -1,0 +1,157 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a range that reads almost all the rows takes the sequential scan     
+
+===================================================
+count(pad)    
+2990     
+
+Query plan:
+sscan
+    class: t? node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t?.pad) from t? t? where (t?.a> ?:? )
+===================================================
+    
+Case 2: a range that reads few rows takes the index scan     
+
+===================================================
+count(pad)    
+10     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t?.pad) from t? t? where (t?.a> ?:? )
+===================================================
+    
+Case 3: ORDER BY ... LIMIT takes the index scan that skips the ORDER BY     
+
+===================================================
+a    b    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i_t?_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.a, t?.b from t? t? where (t?.a> ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 4: the same index for both tables     
+
+===================================================
+count(*)    
+300     
+
+Query plan:
+iscan
+    class: t?_x node[?]
+    index: i_t?_ba term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from t?_x t?_x where t?_x.b= ?:? 
+===================================================
+count(*)    
+300     
+
+Query plan:
+iscan
+    class: t?_y node[?]
+    index: i_t?_ba term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from t?_y t?_y where t?_y.b= ?:? 
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: the same join order for both FROM lists (the outer is p)     
+
+===================================================
+count(*)    
+3000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: p node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: q node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t?_p p, t?_q q where p.k=q.k
+===================================================
+count(*)    
+3000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: p node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: q node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t?_q q, t?_p p where p.k=q.k
+===================================================
+0
