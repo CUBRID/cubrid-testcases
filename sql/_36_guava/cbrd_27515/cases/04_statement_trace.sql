@@ -1,35 +1,36 @@
 /**
  *  This test case verifies CBRD-27515: a hash join writes the columns and expressions of the node above it,
- *  and that node takes over the hash join's list file instead of reading it again.
+ *  and that node passes the hash join's list file through instead of reading it again.
  *  AC-3.2 to AC-3.4 and AC-4: statements around a hash join result, and the trace.
  *
- *  Every sub-case checks its rows. A sub-case marked "taken over" or "not taken over" is followed by a
- *  query that counts, in the trace of the sub-case, the SCAN (temp ...) lines and those with readrows: 0.
- *  A taken-over result reads no row, so the two counts are equal; without the change every count of
- *  taken_over is 0. CTP masks the digits of a trace, so the counts are read as a result row.
+ *  Every sub-case compares its result rows with the answer. A sub-case marked "pass through" or
+ *  "no pass through" is followed by a query that counts, in the trace of the sub-case, the SCAN (temp ...)
+ *  lines and those with readrows: 0. A result passed through reads no row, so the two counts are equal.
+ *  Without the change every count of pass_through is 0. CTP masks the digits of a trace, so the counts
+ *  are read as a result row.
  *  A sub-case marked "trace" also shows its trace: the node tree is the same as without the change.
  *
  *  Sub-cases:
- *    Sub-case     Check                      Case
- *    TC-3-02-01   rows                       RIGHT OUTER above a join of an empty input
- *    TC-3-02-02   rows                       a UNION branch is an empty join
- *    TC-3-02-03   rows                       a join of an empty input
- *    TC-3-02-04   rows                       an empty join in a derived table
- *    TC-3-02-05   rows                       a scalar subquery returns one row
- *    TC-3-02-06   rows                       a scalar subquery returns several rows
- *    TC-3-02-07   taken over                 expression in a derived table
- *    TC-3-02-08   rows                       INSERT ... SELECT
- *    TC-3-02-09   rows                       CREATE TABLE ... AS SELECT
- *    TC-3-02-10   rows                       hash join in a correlated EXISTS subquery
- *    TC-3-03-01   taken over                 columns, first run
- *    TC-3-03-02   taken over                 columns, second run
- *    TC-3-03-03   taken over                 columns, third run
- *    TC-3-03-04   taken over                 expressions, first run
- *    TC-3-03-05   taken over                 expressions, second run
- *    TC-3-04-01   rows                       hash join in the recursive part
- *    TC-4-01-01   taken over, trace          join of four tables
- *    TC-4-01-02   taken over, trace          join of three tables
- *    TC-4-01-03   taken over, trace          join of three tables, expressions
+ *    Sub-case     Check                        Case
+ *    TC-3-02-01   result only                  RIGHT OUTER above a join of an empty input
+ *    TC-3-02-02   result only                  a UNION branch is an empty join
+ *    TC-3-02-03   result only                  a join of an empty input
+ *    TC-3-02-04   result only                  an empty join in a derived table
+ *    TC-3-02-05   result only                  a scalar subquery returns one row
+ *    TC-3-02-06   result only                  a scalar subquery returns several rows
+ *    TC-3-02-07   result, pass through         expression in a derived table
+ *    TC-3-02-08   result only                  INSERT ... SELECT
+ *    TC-3-02-09   result only                  CREATE TABLE ... AS SELECT
+ *    TC-3-02-10   result only                  hash join in a correlated EXISTS subquery
+ *    TC-3-03-01   result, pass through         columns, first run
+ *    TC-3-03-02   result, pass through         columns, second run
+ *    TC-3-03-03   result, pass through         columns, third run
+ *    TC-3-03-04   result, pass through         expressions, first run
+ *    TC-3-03-05   result, pass through         expressions, second run
+ *    TC-3-04-01   result only                  hash join in the recursive part
+ *    TC-4-01-01   result, pass through, trace  join of four tables
+ *    TC-4-01-02   result, pass through, trace  join of three tables
+ *    TC-4-01-03   result, pass through, trace  join of three tables, expressions
  */
 
 drop table if exists ta, tb, tc, td;
@@ -49,7 +50,7 @@ set trace on;
 
 
 -- =====================================================================================================================
--- TC-3-02: joins that open no list file, and statements around a taken-over result
+-- TC-3-02: joins that open no list file, and statements around a passed-through result
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ select /*+ recompile */ (select /*+ use_hash */ a.cb from ta a, tb b where a.ca 
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-02-07: expression in a derived table';
 select /*+ recompile */ * from (select /*+ use_hash */ a.cb * 2 c1 from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca) x where c1 > 0;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-02-08: INSERT ... SELECT
@@ -143,35 +144,35 @@ select /*+ recompile */ d.cb from td d where exists (select /*+ use_hash */ a.cb
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-01: columns, first run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-02: columns, second run
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-02: columns, second run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-03: columns, third run
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-03: columns, third run';
 select /*+ use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-04: expressions, first run
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-04: expressions, first run';
 select /*+ use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC-3-03-05: expressions, second run
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-3-03-05: expressions, second run';
 select /*+ use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 
 -- =====================================================================================================================
 -- TC-3-04: the recursive part of a recursive CTE uses a hash join
@@ -192,7 +193,7 @@ with recursive r (n) as (select 1 from db_root union all select /*+ recompile us
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-01: join of four tables';
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb, d.cb from ta a, tb b, tc c, td d where a.ca = b.ca and b.ca = c.ca and c.ca = d.ca;
 show trace;
 
@@ -201,7 +202,7 @@ show trace;
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-02: join of three tables';
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 select /*+ recompile use_hash */ a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
 show trace;
 
@@ -210,7 +211,7 @@ show trace;
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC-4-01-03: join of three tables, expressions';
 select /*+ recompile use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
-select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as taken_over from db_root;
+select regexp_count (trace_stats (), 'SCAN \(temp') as temp_scans, regexp_count (trace_stats (), 'SCAN \(temp[^)]*readrows: 0,') as pass_through from db_root;
 select /*+ recompile use_hash */ a.cb * 2, b.cb + c.cb from ta a, tb b, tc c where a.ca = b.ca and b.ca = c.ca;
 show trace;
 
