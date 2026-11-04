@@ -1,156 +1,271 @@
-/*
- * This test case verifies CBRD-27505 : a join read through a hash list scan
- * failed with a coercion error or missed rows when the two join keys had
- * different domains or a key had host variable arithmetic.
+/**
+ *  This test case verifies CBRD-27505 : a single table CONNECT BY without an index on the child key runs its
+ *  connect condition as a hash list scan also when the PRIOR key and the child key differ in type or in NUMERIC
+ *  scale, since both keys are hashed in one domain common to the pair, and must return the same rows as the
+ *  single table plan (the NO_HASH_LIST_SCAN hint).
  *
- * Bug: the hash list scan hashed each build key after converting it into the
- * probe key's domain, and hashed equal types as they were.
- * (1) A build value with no image in the narrower probe domain (BIGINT beyond
- *     INT, a VARCHAR longer than a CHAR(n)) failed the whole query with -181.
- * (2) A probe key over a host variable (a.i + ?) has a variable compiled
- *     domain, so every build value failed to coerce into it (-181), or, with
- *     both keys over host variables, the two sides hashed by different types
- *     and rows were lost.
- * (3) Two NUMERIC keys of different precision or scale hashed their digits
- *     unscaled (1.50 as 150, 1.5000 as 15000) and no row matched.
+ *  Every case counts the rows of the query and a checksum of its levels, compares both with the same query with
+ *  NO_HASH_LIST_SCAN, and prints PASS when both equal the expected values.
  *
- * Fix: both keys of a pair are hashed in one domain chosen from the domain the
- * comparison of the pair coerces into, which never narrows a side: INT and
- * BIGINT as BIGINT, CHAR and VARCHAR as they are (the string hash ignores
- * trailing spaces), NUMERIC pairs as DOUBLE. The probe key's domain is the one
- * the execution resolved for it before any row (a host variable's arithmetic
- * too). The hash scan is kept in every case below.
- *
- * Every hash statement is followed by the same statement with
- * NO_HASH_LIST_SCAN, and the two must give the same answer.
- *   Case 1: INT outer key, BIGINT GROUP BY key holding 3000000000 -> (1, 1)
- *   Case 2: CHAR(3) outer key, VARCHAR(20) key holding 'abcdefgh' -> (1, 1)
- *   Case 3: outer key a.i + ? bound to 0, 1 and NULL
- *   Case 4: both keys over host variables (0 and 0e0), also in a correlated
- *           subquery -> (1, 1), (2, 1), (3, 2), (4, 0)
- *   Case 5: keys of other types (DOUBLE against INT, INT against DOUBLE,
- *           CHAR with trailing spaces) keep the hash scan answer
- *   Case 6: a build value the probe domain cannot parse (VARCHAR against DATE)
- *           raises the same error as the list scan
- *   Case 7: NUMERIC(10,2) against NUMERIC(12,4), NUMERIC(20,6) and INT
- *           -> (1, 1), (2, 1)
- *   Case 8: TIMESTAMP against DATETIME, with a DATETIME past the TIMESTAMP
- *           range
+ *  Coverage:
+ *    Case 1:  SMALLINT parent key, INT child key holding 100000
+ *    Case 2:  INT parent key holding 70000, SMALLINT child key
+ *    Case 3:  CHAR(3) parent key, VARCHAR(10) child key holding 'abcdef'
+ *    Case 4:  BIGINT 9007199254740993 parent key, DOUBLE child key 9007199254740992 (equal as DOUBLE)
+ *    Case 5:  DOUBLE parent key, BIGINT child keys
+ *    Case 6:  NUMERIC(12,4) parent key, NUMERIC(10,2) child key
+ *    Case 7:  NUMERIC(10,2) parent key, NUMERIC(12,4) child key, 1.0001 must not match 1
+ *    Case 8:  NUMERIC expression on the child side, prior k = pk + 0
+ *    Case 9:  NUMERIC expression on the parent side, prior k + 0 = pk
+ *    Case 10: INT parent key, NUMERIC(10,2) child key
+ *    Case 11: NUMERIC(10,2) parent key, INT child key
+ *    Case 12: DOUBLE parent key, NUMERIC(20,2) child key
+ *    Case 13: FLOAT parent key, DOUBLE child key
+ *    Case 14: two keys, INT = BIGINT and SMALLINT = INT
+ *    Case 15: INT parent key, VARCHAR child key holding 'abc', no START WITH row: no error, 0 rows.
+ *             The child key is cast to DOUBLE, which the hash list scan would evaluate on every row,
+ *             so this query keeps the single table plan.
+ *    Case 16: as Case 15 with a NULL root key: 1 row, no error
+ *    Case 17: prior NUMERIC(3,0) = CAST(k AS NUMERIC(2,0)) with k holding 100, no START WITH row: no error, 0 rows.
+ *             A cast written on the build side keeps the single table plan, since the hash list scan would
+ *             evaluate it on every row.
+ *    Case 18: prior VARCHAR = CAST(DOUBLE 1000.5 AS VARCHAR(2)), no START WITH row: no error, 0 rows
+ *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
+ *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
+ *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
+ *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed as DOUBLE, which
+ *             rounds a coefficient above 2^53, so this query keeps the single table plan.
+ *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
+ *    Case 23: trace: Cases 21 and 22 keep the single table plan
+ *    Case 24: prior INT = INT and CAST(BIGINT 3000000000 AS INT) = 1, no START WITH row: no error, 0 rows. A side
+ *             with a column paired with a constant is a build key too, so a cast there keeps the single table plan.
+ *    Case 25: as Case 24 with the cast conjunct written first and START WITH rows: 2 rows
+ *    Case 26: prior INT = INT and BIGINT = 1 without a cast: 2 rows
+ *    Case 27: trace: Cases 24 and 25 keep the single table plan, Case 26 runs as a hash list scan
  */
-drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i, nm_o, nm_i, tm_o, tm_i;
 
-evaluate '[1] INT key joined with a BIGINT key beyond the INT range';
-create table hk_r (k int, i int);
-create table hk_r1 (k int, bi bigint);
-insert into hk_r values (1, 1), (2, 2);
-insert into hk_r1 values (1, 1), (2, 3000000000);
+drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;
 
-select a.k, b.c from hk_r a, (select bi, count(*) c from hk_r1 group by bi) b where a.i = b.bi order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from hk_r a, (select bi, count(*) c from hk_r1 group by bi) b where a.i = b.bi order by 1, 2;
-select a.k, b.c from hk_r a, (select bi, count(*) c from hk_r1 group by bi) b where b.bi = a.i order by 1, 2;
+create table hs_si (id smallint, pid int, n int);
+insert into hs_si values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
+create table hs_is (id int, pid smallint, n int);
+insert into hs_is values (1, null, 1), (70000, 1, 2), (3, 1, 3), (4, 3, 4);
+create table hs_cv (id char(3), pid varchar(10), n int);
+insert into hs_cv values ('abc', null, 1), ('def', 'abc', 2), ('x', 'abcdef', 3), ('y', 'def', 4);
+create table hs_bd (id bigint, pid double, n int);
+insert into hs_bd values (9007199254740993, null, 1), (2, 9007199254740992, 2), (3, 2, 3);
+create table hs_db (id double, pid bigint, n int);
+insert into hs_db values (9007199254740992, null, 1), (2, 9007199254740993, 2), (3, 2, 3), (4, 9007199254740992, 4);
+create table hs_na (id numeric(12,4), pid numeric(10,2), n int);
+insert into hs_na values (1, null, 1), (2, 1, 2), (3, 2, 3), (4, 1.5, 4), (1.5, null, 5);
+create table hs_nb (id numeric(10,2), pid numeric(12,4), n int);
+insert into hs_nb values (1, null, 1), (2, 1.0, 2), (3, 2.0000, 3), (4, 1.0001, 4);
+create table hs_in (id int, pid numeric(10,2), n int);
+insert into hs_in values (1, null, 1), (2, 1.00, 2), (3, 1.50, 3), (4, 2, 4);
+create table hs_ni (id numeric(10,2), pid int, n int);
+insert into hs_ni values (1.00, null, 1), (2, 1, 2), (1.5, 2, 3), (3, 2, 4);
+create table hs_dn (id double, pid numeric(20,2), n int);
+insert into hs_dn values (1.5, null, 1), (2, 1.50, 2), (3, 2, 3), (4, 2.01, 4);
+create table hs_fd (id float, pid double, n int);
+insert into hs_fd values (0.5, null, 1), (0.1, 0.5, 2), (3, 0.1, 3), (4, 0.5, 4);
+create table hs_mk (id int, pid bigint, g smallint, pg int, n int);
+insert into hs_mk values (1, null, 1, 1, 1), (2, 1, 1, 2, 2), (3, 1, 1, 1, 3), (4, 2, 1, 1, 4), (5, 3, 1, 1, 5);
+create table hs_iv (id int, pid varchar(10), n int);
+insert into hs_iv values (1, null, 1), (2, '1', 2), (3, 'abc', 3);
+create table hs_ivn (id int, pid varchar(10), n int);
+insert into hs_ivn values (null, null, 1), (2, '1', 2), (3, 'abc', 3);
+create table hs_cg (k numeric(3,0), d double, s varchar(10), n int);
+insert into hs_cg values (100, 1000.5, 'x', 1), (5, 5, '5', 2);
+create table hs_cp (id int, pid double, n int);
+insert into hs_cp values (1, null, 1), (2, 1, 2), (3, 2, 3), (4, 1, 4);
 
-evaluate '[2] CHAR(3) key joined with a longer VARCHAR key';
-create table hc_o (k int, c char(3));
-create table hc_i (k int, v varchar(20));
-insert into hc_o values (1, 'abc'), (2, 'xyz');
-insert into hc_i values (1, 'abc'), (2, 'abcdefgh');
+create table hs_nl (id numeric(14,0), pid numeric(18,4), n int);
+insert into hs_nl values (63427896765467,NULL,1),(57868758049228,63427896765467,2),(65998847102851,57868758049228,3),(1,65998847102851,4);
 
-select a.k, b.n from hc_o a, (select v, count(*) n from hc_i group by v) b where a.c = b.v order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.n from hc_o a, (select v, count(*) n from hc_i group by v) b where a.c = b.v order by 1, 2;
+create table hs_nq (id numeric(38,0), pid numeric(38,-5), n int);
+insert into hs_nq values (100000,NULL,1),(1200000,100000,2),(-500000,1200000,3),(7,-500000,4);
 
-evaluate '[3] outer key with host variable arithmetic';
-create table hk_o (k int, i int, bi bigint, d double);
-create table hk_i (k int, i int, bi bigint, d double);
-insert into hk_o values (1, 1, 1, 1.0), (2, 2, 2, 2.5), (3, 3, 3, 3.0), (4, null, null, null);
-insert into hk_i select * from hk_o;
-insert into hk_i values (5, 5, 5, 5.0), (6, 3, 3, 3.0);
+create table hs_kc (id int, pid int, k bigint, n int);
+insert into hs_kc values (1, null, 10, 1), (2, 5, 3000000000, 2), (3, 1, 1, 3);
 
-prepare s1 from 'select a.k, b.c from hk_o a, (select i, count(*) c from hk_i group by i) b where a.i + ? = b.i order by 1, 2';
-execute s1 using 0;
-execute s1 using 1;
-execute s1 using null;
-deallocate prepare s1;
 
-prepare s1n from 'select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from hk_o a, (select i, count(*) c from hk_i group by i) b where a.i + ? = b.i order by 1, 2';
-execute s1n using 0;
-execute s1n using 1;
-execute s1n using null;
-deallocate prepare s1n;
+evaluate 'Case 1: prior smallint = int; 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 76 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_si start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_si start with n = 1 connect by prior id = pid) t) b;
 
-prepare s2 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + ? = b.i order by 1, 2';
-execute s2 using 0;
-execute s2 using null;
-deallocate prepare s2;
 
-prepare s2n from 'select /*+ ordered NO_HASH_LIST_SCAN */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ * from hk_i where k > 0) b where a.i + ? = b.i order by 1, 2';
-execute s2n using 0;
-execute s2n using null;
-deallocate prepare s2n;
+evaluate 'Case 2: prior int = smallint; 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 108 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_is start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_is start with n = 1 connect by prior id = pid) t) b;
 
-evaluate '[4] both keys with host variable arithmetic';
-prepare s9 from 'select a.k, (select count(*) from hk_o x, (select /*+ NO_MERGE */ k, i + ? v from hk_i where k > 0) b where x.i + ? = b.v and x.k = a.k) c from hk_o a order by 1';
-execute s9 using 0, 0e0;
-deallocate prepare s9;
 
-prepare s9n from 'select a.k, (select /*+ NO_HASH_LIST_SCAN */ count(*) from hk_o x, (select /*+ NO_MERGE */ k, i + ? v from hk_i where k > 0) b where x.i + ? = b.v and x.k = a.k) c from hk_o a order by 1';
-execute s9n using 0, 0e0;
-deallocate prepare s9n;
+evaluate 'Case 3: prior char(3) = varchar(10); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 76 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cv start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cv start with n = 1 connect by prior id = pid) t) b;
 
-prepare s6 from 'select /*+ ordered */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ k, i + ? v from hk_i where k > 0) b where a.i + ? = b.v order by 1, 2';
-execute s6 using 0, 0e0;
-deallocate prepare s6;
 
-prepare s6n from 'select /*+ ordered NO_HASH_LIST_SCAN */ a.k, b.k from hk_o a, (select /*+ NO_MERGE */ k, i + ? v from hk_i where k > 0) b where a.i + ? = b.v order by 1, 2';
-execute s6n using 0, 0e0;
-deallocate prepare s6n;
+evaluate 'Case 4: prior bigint = double; 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_bd start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_bd start with n = 1 connect by prior id = pid) t) b;
 
-evaluate '[5] keys that convert keep the hash scan answer';
-select a.k, b.d from hk_o a, (select d, count(*) c from hk_i group by d) b where a.i = b.d order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.d from hk_o a, (select d, count(*) c from hk_i group by d) b where a.i = b.d order by 1, 2;
-select a.k, b.i from hk_o a, (select i, count(*) c from hk_i group by i) b where a.d = b.i order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.i from hk_o a, (select i, count(*) c from hk_i group by i) b where a.d = b.i order by 1, 2;
-select a.k, b.c from hk_o a, (select bi, count(*) c from hk_i group by bi) b where a.i = b.bi order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from hk_o a, (select bi, count(*) c from hk_i group by bi) b where a.i = b.bi order by 1, 2;
 
-create table ts_o (k int, c char(3));
-create table ts_i (k int, v varchar(20));
-insert into ts_o values (1, 'ab'), (2, 'abc');
-insert into ts_i values (1, 'ab '), (2, 'abc   '), (3, 'ab');
-select a.k, b.n from ts_o a, (select v, count(*) n from ts_i group by v) b where a.c = b.v order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.n from ts_o a, (select v, count(*) n from ts_i group by v) b where a.c = b.v order by 1, 2;
+evaluate 'Case 5: prior double = bigint; 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 108 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_db start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_db start with n = 1 connect by prior id = pid) t) b;
 
-evaluate '[6] a build value the probe domain cannot parse raises the list scan error';
-create table dt_o (k int, d date);
-create table dt_i (k int, v varchar(20));
-insert into dt_o values (1, date'2026-01-01'), (2, date'2026-01-02');
-insert into dt_i values (1, '2026-01-01'), (2, 'not a date');
-select a.k, b.n from dt_o a, (select v, count(*) n from dt_i group by v) b where a.d = b.v order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.n from dt_o a, (select v, count(*) n from dt_i group by v) b where a.d = b.v order by 1, 2;
-delete from dt_i where k = 2;
-select a.k, b.n from dt_o a, (select v, count(*) n from dt_i group by v) b where a.d = b.v order by 1, 2;
 
-evaluate '[7] NUMERIC keys of different precision and scale';
-create table nm_o (k int, n numeric(10,2));
-create table nm_i (k int, n numeric(12,4), m numeric(20,6));
-insert into nm_o values (1, 1.50), (2, 2.00), (3, null);
-insert into nm_i values (1, 1.5, 1.5), (2, 2, 2), (3, 2.5, 7);
+evaluate 'Case 6: prior numeric(12,4) = numeric(10,2); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_na start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_na start with n = 1 connect by prior id = pid) t) b;
 
-select a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.n = b.n order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.n = b.n order by 1, 2;
-select a.k, b.c from nm_o a, (select m, count(*) c from nm_i group by m) b where a.n = b.m order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select m, count(*) c from nm_i group by m) b where a.n = b.m order by 1, 2;
-select a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.k = b.n order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from nm_o a, (select n, count(*) c from nm_i group by n) b where a.k = b.n order by 1, 2;
 
-evaluate '[8] TIMESTAMP against DATETIME';
-create table tm_o (k int, ts timestamp, dt datetime);
-create table tm_i (k int, ts timestamp, dt datetime);
-insert into tm_o values (1, timestamp'2026-01-01 10:00:00', datetime'2026-01-01 10:00:00'), (2, timestamp'2030-05-05 00:00:00', datetime'2100-01-01 00:00:00'), (3, null, null);
-insert into tm_i values (1, timestamp'2026-01-01 10:00:00', datetime'2026-01-01 10:00:00'), (2, timestamp'2030-05-05 00:00:00', datetime'2100-01-01 00:00:00'), (3, timestamp'2031-01-01 00:00:00', datetime'2030-05-05 00:00:00');
+evaluate 'Case 7: prior numeric(10,2) = numeric(12,4); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nb start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nb start with n = 1 connect by prior id = pid) t) b;
 
-select a.k, b.c from tm_o a, (select dt, count(*) c from tm_i group by dt) b where a.ts = b.dt order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from tm_o a, (select dt, count(*) c from tm_i group by dt) b where a.ts = b.dt order by 1, 2;
-select a.k, b.c from tm_o a, (select ts, count(*) c from tm_i group by ts) b where a.dt = b.ts order by 1, 2;
-select /*+ NO_HASH_LIST_SCAN */ a.k, b.c from tm_o a, (select ts, count(*) c from tm_i group by ts) b where a.dt = b.ts order by 1, 2;
 
-drop table if exists hk_r, hk_r1, hc_o, hc_i, hk_o, hk_i, ts_o, ts_i, dt_o, dt_i, nm_o, nm_i, tm_o, tm_i;
+evaluate 'Case 8: prior numeric(12,4) = numeric(10,2) + 0; 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_na start with n = 1 connect by prior id = pid + 0) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_na start with n = 1 connect by prior id = pid + 0) t) b;
+
+
+evaluate 'Case 9: prior numeric(10,2) + 0 = numeric(12,4); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nb start with n = 1 connect by prior id + 0 = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nb start with n = 1 connect by prior id + 0 = pid) t) b;
+
+
+evaluate 'Case 10: prior int = numeric(10,2); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 76 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_in start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_in start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 11: prior numeric(10,2) = int; 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 109 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_ni start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_ni start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 12: prior double = numeric(20,2); 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 66 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_dn start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_dn start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 13: prior float = double; 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 75 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_fd start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_fd start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 14: prior int = bigint and prior smallint = int; 3 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 3 and nvl(a.s, -1) = 96 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_mk start with n = 1 connect by prior id = pid and prior g = pg) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_mk start with n = 1 connect by prior id = pid and prior g = pg) t) b;
+
+
+evaluate 'Case 15: prior int = varchar holding abc, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_iv start with n = 99 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_iv start with n = 99 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 16: prior int = varchar holding abc, NULL root key; 1 row';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 1 and nvl(a.s, -1) = 11 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_ivn start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_ivn start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 17: prior numeric(3,0) = cast(k as numeric(2,0)) with k holding 100, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0))) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0))) t) b;
+
+
+evaluate 'Case 18: prior varchar = cast(double 1000.5 as varchar(2)), no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cg start with n = 99 connect by prior s = cast(d as varchar(2))) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cg start with n = 99 connect by prior s = cast(d as varchar(2))) t) b;
+
+
+evaluate 'Case 19: prior int = cast(double as int); 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 108 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_cp start with n = 1 connect by prior id = cast(pid as int)) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_cp start with n = 1 connect by prior id = cast(pid as int)) t) b;
+
+
+evaluate 'Case 20: trace of Cases 1, 6, 4 (hash temp) and 15, 17 (single table plan)';
+set trace on;
+select n, level lv from hs_si start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_na start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_bd start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_iv start with n = 99 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_cg start with n = 99 connect by prior k = cast(k as numeric(2,0)) order siblings by n;
+show trace;
+set trace off;
+
+
+evaluate 'Case 21: prior numeric(14,0) = numeric(18,4) with 14 digit keys; 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nl start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nl start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 22: prior numeric(38,0) = numeric(38,-5); 4 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 4 and nvl(a.s, -1) = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) b;
+
+
+evaluate 'Case 23: trace of Cases 21 and 22 (single table plan)';
+set trace on;
+select n, level lv from hs_nl start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_nq start with n = 1 connect by prior id = pid order siblings by n;
+show trace;
+set trace off;
+
+
+evaluate 'Case 24: prior int = int and cast(bigint 3000000000 as int) = 1, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1) t) b;
+
+
+evaluate 'Case 25: cast(bigint 3000000000 as int) = 1 and prior int = int; 2 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 2 and nvl(a.s, -1) = 43 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid) t) b;
+
+
+evaluate 'Case 26: prior int = int and bigint = 1; 2 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 2 and nvl(a.s, -1) = 43 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1) t) b;
+
+
+evaluate 'Case 27: trace of Cases 24, 25 (single table plan) and 26 (hash temp)';
+set trace on;
+select n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1 order siblings by n;
+show trace;
+select n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1 order siblings by n;
+show trace;
+set trace off;
+
+
+drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;

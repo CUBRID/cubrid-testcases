@@ -9,8 +9,7 @@
  *  derived table kept as a list by NO_MERGE and its WHERE clause, the probe side is the outer table, and the trace
  *  of each query shows the hash list scan.
  *
- *  Every answer here hashes both keys of a pair in one common domain, including build values the conversion
- *  still refuses.
+ *  Every answer here is the develop answer, including build values the conversion refuses.
  *
  *  Coverage:
  *    Case 1: one query per pair of key types the compiler fixes
