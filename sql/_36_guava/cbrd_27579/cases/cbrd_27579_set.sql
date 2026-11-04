@@ -3,7 +3,8 @@
  *  may not run a SET statement that changes the transaction or the session settings.
  *
  *  SET TRANSACTION, SET SYSTEM PARAMETERS, SET OPTIMIZATION, SET TRIGGER, SET NAMES and SET TIME ZONE
- *  are judged as transaction control. SET @v only holds a value in the session and is allowed.
+ *  are judged as transaction control. SET @v and SET TRACE do not change how the outer statement runs
+ *  and are allowed.
  *
  *  Covered by other test cases, not repeated here:
  *    SET in a procedure called alone, and SET run directly
@@ -11,6 +12,7 @@
  *  Coverage:
  *    Case 1: the SET statements in a function invoked by SELECT
  *    Case 2: SET @v in a function invoked by SELECT
+ *    Case 3: SET TRACE in a function invoked by SELECT
  */
 
 --+ server-message on
@@ -32,6 +34,12 @@ begin
   execute immediate 'select @v_set' into x;
   return x;
 end;
+create or replace function f_set_trace return int as
+begin
+  execute immediate 'set trace on';
+  execute immediate 'set trace off';
+  return 1;
+end;
 commit;
 
 
@@ -47,6 +55,10 @@ select f_set_timezone () from s;
 evaluate 'Case 2: SET @v in a function invoked by SELECT';
 select f_set_var () from s;
 
+
+evaluate 'Case 3: SET TRACE in a function invoked by SELECT';
+select f_set_trace () from s;
+
 --+ server-message off
 
 drop function f_set_xaction;
@@ -56,5 +68,6 @@ drop function f_set_trigger;
 drop function f_set_names;
 drop function f_set_timezone;
 drop function f_set_var;
+drop function f_set_trace;
 drop variable @v_set;
 drop table s;

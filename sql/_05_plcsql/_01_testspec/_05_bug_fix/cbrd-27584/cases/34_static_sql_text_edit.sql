@@ -63,7 +63,8 @@ begin
     return n;
 end;
 
-select g1 (2), g2 (1), g3 (5), g4 (1), g5 (1);
+select g1 (2), g2 (1), g4 (1), g5 (1);
+call g3 (5);
 
 evaluate 'INSERT ... PARTITION with ON DUPLICATE KEY UPDATE';
 create or replace procedure p6 (k int) as

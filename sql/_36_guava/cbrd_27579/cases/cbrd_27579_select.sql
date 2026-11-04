@@ -18,6 +18,7 @@
  *    Case 2: a function invoked by a subquery or DO
  *    Case 3: a view whose query calls a function
  *    Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE
+ *    Case 4-2: INCR () in a set operation run by a function invoked by SELECT
  *    Case 5: nothing was written
  */
 
@@ -53,6 +54,13 @@ begin
   execute immediate 'execute s_incr';
   return 1;
 end;
+create or replace function f_exec (q varchar) return int as begin execute immediate q; return 1; end;
+create or replace function f_incr_set_execute return int as
+begin
+  execute immediate 'prepare s_incr_set from ''select incr (cnt) from cnt_t where id = 1 union all select 1 from s''';
+  execute immediate 'execute s_incr_set';
+  return 1;
+end;
 
 create view v_sel as select a, f_sel () as c from t;
 create view v_dml as select a, f_dml (1) as c from t;
@@ -83,6 +91,14 @@ select f_incr () from s;
 select f_incr_execute () from s;
 
 
+evaluate 'Case 4-2: INCR () in a set operation run by a function invoked by SELECT';
+select f_exec ('select incr (cnt) from cnt_t where id = 1 union all select 1 from s') from s;
+select f_exec ('select 1 from s intersect select incr (cnt) from cnt_t where id = 1') from s;
+select f_exec ('select incr (cnt) from cnt_t where id = 1 difference select 2 from s') from s;
+select f_exec ('with c as (select 1 x) select incr (cnt) from cnt_t where id = 1 union all select x from c') from s;
+select f_incr_set_execute () from s;
+
+
 evaluate 'Case 5: nothing was written';
 select count (*) from log_t;
 select cnt from cnt_t;
@@ -101,6 +117,8 @@ drop function f_prepare_to_commit;
 drop function f_attach;
 drop function f_incr;
 drop function f_incr_execute;
+drop function f_exec;
+drop function f_incr_set_execute;
 drop table t;
 drop table s;
 drop table log_t;

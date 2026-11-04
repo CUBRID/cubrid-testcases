@@ -11,6 +11,7 @@
  *    Case 1: a name prepared again in a loop runs the new statement
  *    Case 2: the second statement is INCR (), and is refused in a function invoked by SELECT
  *    Case 3: a comment before EXECUTE
+ *    Case 3-2: a string that starts with many -- comment lines and is not EXECUTE (compiled without a long backtracking)
  *    Case 4: nothing was written
  */
 
@@ -68,6 +69,21 @@ EXECUTE s_cmt' into x;
   end loop;
   return r;
 end;
+create or replace function f_comment_lines return int as x int; n int := 0;
+begin
+  for i in 1 .. 2 loop
+    execute immediate '
+        -- step
+        -- step
+        -- step
+        -- step
+        -- step
+        -- step
+        select 1 from db_root' into x;
+    n := n + x;
+  end loop;
+  return n;
+end;
 commit;
 
 
@@ -83,6 +99,10 @@ evaluate 'Case 3: a comment before EXECUTE';
 select f_comment_execute () from s;
 
 
+evaluate 'Case 3-2: a string that starts with many -- comment lines and is not EXECUTE (compiled without a long backtracking)';
+select f_comment_lines () from s;
+
+
 evaluate 'Case 4: nothing was written';
 select cnt from cnt_t;
 
@@ -91,5 +111,6 @@ select cnt from cnt_t;
 drop function f_reprepare;
 drop function f_reprepare_incr;
 drop function f_comment_execute;
+drop function f_comment_lines;
 drop table s;
 drop table cnt_t;
