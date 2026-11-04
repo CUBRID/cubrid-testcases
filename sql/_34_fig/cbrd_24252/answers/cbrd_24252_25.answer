@@ -45,14 +45,15 @@ col_a    col_b
 trace    
 
 Query Plan:
-  INDEX SCAN (ca.pk_t_childa_col_a) ()
-  skip order by: true
+  SORT (order by)
+    TABLE SCAN (ca)
 
   rewritten query: select ca.col_a, ca.col_b from [dba.t_childa] ca where ca.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_childa.pk_t_childa_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_childa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -64,14 +65,15 @@ col_a    col_b
 trace    
 
 Query Plan:
-  INDEX SCAN (ca.pk_t_childa_col_a) ()
-  skip order by: true
+  SORT (order by)
+    TABLE SCAN (ca)
 
   rewritten query: select ca.col_a, ca.col_b from [dba.t_childa] ca where ca.col_b= ?:?  order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_childa.pk_t_childa_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_childa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================

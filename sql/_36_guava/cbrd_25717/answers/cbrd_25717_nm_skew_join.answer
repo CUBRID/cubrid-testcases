@@ -102,8 +102,8 @@ trace
 
 Query Plan:
   HASH JOIN (inner join)
-    TABLE SCAN (u)
     TABLE SCAN (s)
+    TABLE SCAN (u)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*), sum( cast(u.ckey as bigint)), sum(s.cval) from [dba.t_sk_uniq] u, [dba.t_sk_skew] s where u.ckey=s.ckey
 
@@ -117,9 +117,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_sk_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sk_skew), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sk_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -135,8 +135,8 @@ trace
 
 Query Plan:
   HASH JOIN (inner join)
-    TABLE SCAN (u)
     TABLE SCAN (s)
+    TABLE SCAN (u)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), sum( cast(u.ckey as bigint)), sum(s.cval) from [dba.t_sk_uniq] u, [dba.t_sk_skew] s where u.ckey=s.ckey
 
@@ -149,9 +149,9 @@ Trace Statistics:
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_sk_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sk_skew), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_sk_uniq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

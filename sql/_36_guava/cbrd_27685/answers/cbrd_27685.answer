@@ -627,8 +627,8 @@ trace
 Query Plan:
   SORT (group by)
     HASH JOIN (inner join)
-      TABLE SCAN (m)
       TABLE SCAN (a)
+      TABLE SCAN (m)
 
   rewritten query: (select count(*) from [dba.t_mv] m, [dba.t_aka] a where a.mid=m.id and (a.v> ?:? ) group by m.id)
 
@@ -652,10 +652,10 @@ Trace Statistics:
             SUBQUERY (uncorrelated)
                      (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                      (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_aka), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SCAN (table: dba.t_mv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                      (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
      
 

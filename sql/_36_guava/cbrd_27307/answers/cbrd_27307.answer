@@ -457,9 +457,9 @@ Query Plan:
   SORT (temp)
     MERGE JOIN (inner join)
       SORT (temp)
-        TABLE SCAN (v)
-      SORT (temp)
         TABLE SCAN (c)
+      SORT (temp)
+        TABLE SCAN (v)
 
   rewritten query: select /*+ USE_MERGE */ count(*) from [dba.mj_vc] v, [dba.mj_ch] c where v.s=c.s
 
@@ -468,11 +468,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.mj_vc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.mj_ch), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.mj_ch), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.mj_vc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -506,9 +506,9 @@ Query Plan:
   SORT (temp)
     MERGE JOIN (inner join)
       SORT (temp)
-        TABLE SCAN (dba.t?)
-      SORT (temp)
         TABLE SCAN (b)
+      SORT (temp)
+        TABLE SCAN (dba.t?)
 
   rewritten query: select /*+ USE_MERGE */ count(*) from [dba.t?] [dba.t?], [dba.mj_big] b where [dba.t?].k=b.k
 
@@ -518,11 +518,11 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       MERGELIST (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.mj_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.mj_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      

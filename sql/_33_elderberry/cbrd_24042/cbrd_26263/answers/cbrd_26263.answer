@@ -300,10 +300,10 @@ Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: b_? node[?]
+               class: b node[?]
                cost:  ? card ?
     inner: sscan
-               class: b node[?]
+               class: b_? node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -409,17 +409,17 @@ count(*)
 6     
 
 Query plan:
-idx-join (left outer join)
+nl-join (left outer join)
+    edge:  term[?] AND term[?]
     outer: sscan
                class: b node[?]
                cost:  ? card ?
     inner: iscan
                class: a node[?]
-               index: pk term[?] AND term[?]
-               filtr: term[?]
-               sargs: term[?]
+               index: pk term[?] (covers)
+               filtr: term[?] AND term[?] AND term[?]
                cost:  ? card ?
-    sargs: term[?]
+    during:term[?]
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl a right outer join tbl b on a.cola=b.cola and a.cola= ?:?  and b.cola= ?:?  and a.colb=b.colb

@@ -118,10 +118,9 @@ select t.e from t t where  cast(t.e as integer)<? order by ?
 i    e    
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: t_? term[?] (covers)
-    filtr: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
 select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:? 
@@ -130,10 +129,9 @@ i    e
 2     33     
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: t_? term[?] (covers)
-    filtr: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
 select t.i, t.e from t t where  cast(t.e as varchar)< cast('Wednesday' as varchar) and t.i= ?:? 
@@ -165,8 +163,8 @@ i    e
 Query plan:
 iscan
     class: t node[?]
-    index: t_? term[?]
-    sargs: term[?]
+    index: t_? (covers)
+    filtr: term[?] AND term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -178,8 +176,8 @@ i    e
 Query plan:
 iscan
     class: t node[?]
-    index: t_? term[?]
-    sargs: term[?]
+    index: t_? (covers)
+    filtr: term[?] AND term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:

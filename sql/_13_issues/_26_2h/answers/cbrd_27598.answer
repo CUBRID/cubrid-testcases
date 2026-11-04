@@ -74,8 +74,8 @@ trace
 
 Query Plan:
   HASH JOIN (inner join)
-    INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
     TABLE SCAN (y)
+    TABLE SCAN (z)
 
   rewritten query: (select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a and z.a=[dba.t_big].a)
 
@@ -99,7 +99,7 @@ Trace Statistics:
                 SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -128,7 +128,7 @@ a    b
 trace    
 
 Query Plan:
-  INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
+  TABLE SCAN (z)
 
   rewritten query: select z.b from [dba.t_small] z where z.a=[dba.t_big].a
 
@@ -156,7 +156,7 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -194,7 +194,7 @@ a    b
 trace    
 
 Query Plan:
-  INDEX SCAN (z.pk_t_small_a) (key range: z.a=[dba.t_big].a)
+  TABLE SCAN (z)
 
   rewritten query: select z.b from [dba.t_small] z where z.a=[dba.t_big].a
 
@@ -222,7 +222,7 @@ Trace Statistics:
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -254,7 +254,7 @@ a    b
 trace    
 
 Query Plan:
-  INDEX SCAN (z.pk_t_small_a) (key range: z.a=y.a)
+  TABLE SCAN (z)
 
   rewritten query: select z.b from [dba.t_small] z where z.a=y.a
 
@@ -284,7 +284,7 @@ Trace Statistics:
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SUBQUERY (uncorrelated)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+              SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -310,8 +310,8 @@ trace
 
 Query Plan:
   HASH JOIN (inner join)
-    TABLE SCAN (z)
     TABLE SCAN (y)
+    TABLE SCAN (z)
 
   rewritten query: (select /*+ USE_HASH */ max(z.b) from [dba.t_small] z, [dba.t_small] y where z.a=y.a)
 

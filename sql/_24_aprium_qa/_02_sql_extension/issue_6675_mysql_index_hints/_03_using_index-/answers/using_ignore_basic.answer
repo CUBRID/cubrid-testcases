@@ -43,14 +43,14 @@
 ===================================================
 i1    i2    i3    i4    
 1     8.0     ccc     1999-01-01     
-2     null     bbb     1991-01-01     
 3     18.0     bbb     1996-01-01     
+2     null     bbb     1991-01-01     
 4     10.0     ccc     1994-01-01     
 
 Query plan:
-iscan
+sscan
     class: ui node[?]
-    index: idx_i?_i? term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.pk_ui_i?(-)
@@ -146,9 +146,9 @@ i1    i2    i3    i4
 
 Query plan:
 temp(order by)
-    subplan: iscan
+    subplan: sscan
                  class: ui node[?]
-                 index: idx_i?_i?_i? term[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -156,18 +156,18 @@ Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?(-) order by ?, ?
 ===================================================
 i1    i2    i3    i4    
-8     100.0     aaa     1998-01-01     
-7     null     aaa     1995-01-01     
-3     18.0     bbb     1996-01-01     
-2     null     bbb     1991-01-01     
 1     8.0     ccc     1999-01-01     
+3     18.0     bbb     1996-01-01     
+8     100.0     aaa     1998-01-01     
+2     null     bbb     1991-01-01     
 4     10.0     ccc     1994-01-01     
+7     null     aaa     1995-01-01     
 6     3.3     ccc     1999-01-01     
 
 Query plan:
-iscan
+sscan
     class: ui node[?]
-    index: idx_i? term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?_i?(-)
@@ -207,15 +207,15 @@ Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_i?(-)
 ===================================================
 i1    i2    i3    i4    
-2     null     bbb     1991-01-01     
 5     28.0     null     1992-01-01     
+2     null     bbb     1991-01-01     
 4     10.0     ccc     1994-01-01     
 7     null     aaa     1995-01-01     
 
 Query plan:
-iscan
+sscan
     class: ui node[?]
-    index: idx_i? term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_i?_i?(-)
@@ -256,9 +256,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i? 
+    index: idx_i?_i? 
     sargs: term[?] AND term[?]
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where ((ui.i?= ?:? ) or (ui.i?= ?:? )) and ui.i?= ?:?  using index ui.idx_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-) order by ?

@@ -2053,8 +2053,8 @@ Query Plan:
   rewritten query: select /*+ INLINE */ cte.ca from [dba.ta] cte
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tb)
 
   rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select /*+ INLINE */ cte.ca from [dba.ta] cte union select /*+ INLINE */ cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
 
@@ -2064,9 +2064,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -2122,8 +2121,8 @@ Query Plan:
   rewritten query: select /*+ INLINE */ cte.ca from [dba.ta] cte
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tb)
 
   rewritten query: select [dba.tb],class [dba.tb] from [dba.tb] [dba.tb], (select /*+ INLINE */ cte.ca from [dba.ta] cte union select /*+ INLINE */ cte.ca from [dba.ta] cte) av? (av_?) where [dba.tb].ca=av?.av_?
 
@@ -2133,9 +2132,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -3321,8 +3319,8 @@ Query Plan:
   rewritten query: (select distinct cte.ca from (select [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta] union all select /*+ INLINE */ [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb))
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tb)
 
   rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from (select [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta] union all select /*+ INLINE */ [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb)) av? (av_?) where [dba.tb].ca=av?.av_?
 
@@ -3332,9 +3330,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -3821,8 +3818,8 @@ Query Plan:
   rewritten query: (select distinct cte.ca from (select /*+ INLINE */ [dba.ta].ca from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?)) cte (ca))
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tb)
 
   rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from (select /*+ INLINE */ [dba.ta].ca from [dba.ta] [dba.ta] group by [dba.ta].ca having (count(*)>?)) cte (ca)) av? (av_?) where [dba.tb].ca=av?.av_?
 
@@ -3832,8 +3829,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -3912,8 +3909,8 @@ Query Plan:
   rewritten query: (select distinct cte.ca from (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb))
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tb)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tb)
 
   rewritten query: select [dba.tb],class [dba.tb],[dba.tb].ca+? as [tb.ca] from [dba.tb] [dba.tb], (select distinct cte.ca from (select /*+ INLINE */ distinct [dba.ta].ca, [dba.ta].cb from [dba.ta] [dba.ta]) cte (ca, cb)) av? (av_?) where [dba.tb].ca=av?.av_?
 
@@ -3923,8 +3920,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
