@@ -31,13 +31,13 @@ insert into u select i from t;
 
 update statistics on u;
 
-select /*+ recompile */ t.e, u.i from t, u where t.e = u.i order by t.e;
+select /*+ recompile */ t.e, u.i from t, u where t.e = u.i using index t.i_t_e order by t.e;
 
 select /*+ recompile */ t.e, u.i from t, u where t.e = u.i and u.i = 4 order by u.i;
 
 select /*+ recompile */ t.s, u.i from t, u where t.i = u.i order by t.e,2;
 
-select /*+ recompile */ t.e from t, u where t.i = u.i and t.s = 'Monday' order by t.e;
+select /*+ recompile */ t.e from t, u where t.i = u.i and t.s = 'Monday' using index t.i_t_s order by t.e;
 
 drop table u;
 

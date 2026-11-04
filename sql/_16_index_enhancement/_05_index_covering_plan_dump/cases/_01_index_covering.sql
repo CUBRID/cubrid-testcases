@@ -4061,12 +4061,12 @@ create index i_t7_id_parentid_text on t7(id, parentid, text);
 create reverse index ri_t7_id_parentid_text on t7(id, parentid, text);
 
 update statistics on all classes with fullscan;
-select /*+ recompile */ id2, id1 from t1 where id1 = 10;
-select /*+ recompile */ id2, id1 from t1 where id1 < 100;
-select /*+ recompile */ id2, id1 from t1 where id1 = 10 and length(id2) = 4;
-select /*+ recompile */ id2, id1 from t1 where id1 = 10 and length(id2) > 3;
-select /*+ recompile */ id2 from t1 where id1 < 100 and id2 > 'abc';
-select /*+ recompile */ id2 from t1 where id1 = 10;
+select /*+ recompile */ id2, id1 from t1 where id1 = 10 using index idx_covering_t1;
+select /*+ recompile */ id2, id1 from t1 where id1 < 100 using index idx_covering_t1;
+select /*+ recompile */ id2, id1 from t1 where id1 = 10 and length(id2) = 4 using index idx_covering_t1;
+select /*+ recompile */ id2, id1 from t1 where id1 = 10 and length(id2) > 3 using index idx_covering_t1;
+select /*+ recompile */ id2 from t1 where id1 < 100 and id2 > 'abc' using index idx_covering_t1;
+select /*+ recompile */ id2 from t1 where id1 = 10 using index idx_covering_t1;
 
 select /*+ recompile */ id1 from t2 where id3 = 10 and id1 is not null;
 select /*+ recompile */ id1 from t2 where id3 < 100 and id1 is not null order by id1;
@@ -4076,23 +4076,23 @@ select /*+ recompile */ id1,id3 from t2 where id3 * id3 < 300 and id1 is not nul
 select /*+ recompile */ id3 from t2 where id1 + id1  < id3 * id3 and id3 is not null order by id3;
 
 select /*+ recompile */ id3, count (id3) from t3 where id1 = 10 and id3 > 10 group by id3;
-select /*+ recompile */ id3, count (id1) from t3 where id1 < 7 and id3 > 10 group by id3;
+select /*+ recompile */ id3, count (id1) from t3 where id1 < 7 and id3 > 10 group by id3 using index idx_covering_t3;
 select /*+ recompile */ id3, count (id3) from t3 where id3 > 10 and id1 is not null group by id3;
 select /*+ recompile */ id1, id3 from t3 where id1 = 10 order by id3;
-select /*+ recompile */ id1, id3 from t3 where id1 < 100 order by id3;
+select /*+ recompile */ id1, id3 from t3 where id1 < 100 using index idx_covering_t3 order by id3;
 
-select /*+ recompile */ id3 from t4 where id1 = 10;
-select /*+ recompile */ id3 from t4 where id1 = 10 and id3 = 100;
-select /*+ recompile */ id3 from t4 where id1 = 10 and id3 > 15;
-select /*+ recompile */ id3 from t4 where id1 > 10;
+select /*+ recompile */ id3 from t4 where id1 = 10 using index idx_covering_t4;
+select /*+ recompile */ id3 from t4 where id1 = 10 and id3 = 100 using index idx_covering_t4;
+select /*+ recompile */ id3 from t4 where id1 = 10 and id3 > 15 using index idx_covering_t4;
+select /*+ recompile */ id3 from t4 where id1 > 10 using index idx_covering_t4;
 
 SELECT /*+ recompile */ clno,fname FROM clients WHERE clno IN (SELECT clno FROM firms WHERE city = 'leduc');
 SELECT /*+ recompile */ clno,fname FROM clients WHERE clno IN (SELECT clno FROM firms WHERE city = 'leduc' and clno > 30);
 
-select /*+ recompile */ id2 from t6 where id2 = 'abc';
-select /*+ recompile */ id2 from t6 where id2 > 'abmn';
-select /*+ recompile */ id2 from t6 where id2 > 'abmn' and id2 < 'fgh';
-select /*+ recompile */ id2 from t6 where id2 > 'abc' and length(id2) > 3;
+select /*+ recompile */ id2 from t6 where id2 = 'abc' using index idx_covering_t6;
+select /*+ recompile */ id2 from t6 where id2 > 'abmn' using index idx_covering_t6;
+select /*+ recompile */ id2 from t6 where id2 > 'abmn' and id2 < 'fgh' using index idx_covering_t6;
+select /*+ recompile */ id2 from t6 where id2 > 'abc' and length(id2) > 3 using index idx_covering_t6;
 
 select /*+ recompile */ parentid from t7 where id = 3000;
 select /*+ recompile */ id from t7 where id > 3000 and parentid > 3901 order by 1;

@@ -21,31 +21,31 @@ create table tx (id int, va int, vb int, vc int);
 insert into tx values(1,1,10,100), (2,2,20,200);
 create index idx on tx(va, ln(vb), vc);
 update statistics on tx;
-select /*+ recompile */ vc from tx where va = 1 and vc = 100;
-select /*+ recompile */ ln(vb), vc from tx where va = 1 and vc = 100;
-select /*+ recompile */ vb, ln(vb), vc from tx where va = 1 and vc = 100;
-select /*+ recompile */ vc from tx where va > 1 and vc = 100;
+select /*+ recompile */ vc from tx where va = 1 and vc = 100 using index idx;
+select /*+ recompile */ ln(vb), vc from tx where va = 1 and vc = 100 using index idx;
+select /*+ recompile */ vb, ln(vb), vc from tx where va = 1 and vc = 100 using index idx;
+select /*+ recompile */ vc from tx where va > 1 and vc = 100 using index idx;
 
 drop index idx on tx;
 create index idx on tx(va, ln(va), vc);
 update statistics on tx;
-select /*+ recompile */ vc from tx where va = 1 and vc = 100;
+select /*+ recompile */ vc from tx where va = 1 and vc = 100 using index idx;
 select /*+ recompile */ vc from tx where ln(va) >0 order by vc;
 select /*+ recompile */ vc from tx where vc >0 order by vc;
 
 drop index idx on tx;
 create index idx on tx(va, ln(va), vc, vb);
 update statistics on tx;
-select /*+ recompile */ vc from tx where va = 1 and vc = 100;
-select /*+ recompile */ ln(va), vb, vc from tx where va = 1 and vc = 100;
+select /*+ recompile */ vc from tx where va = 1 and vc = 100 using index idx;
+select /*+ recompile */ ln(va), vb, vc from tx where va = 1 and vc = 100 using index idx;
 
 drop index idx on tx;
 create index idx on tx(ln(va), vb, vc);
 create index idx_length on tx(length(vb), va, vc);
 update statistics on tx;
-select /*+ recompile */ vc from tx where ln(va) > 0 and vc = 100;
-select /*+ recompile */ va, vc from tx where length(vb) = 2 and vc = 100;
-select /*+ recompile */ va, vc from tx where length(vb) = 2 and vc > 100;
+select /*+ recompile */ vc from tx where ln(va) > 0 and vc = 100 using index idx;
+select /*+ recompile */ va, vc from tx where length(vb) = 2 and vc = 100 using index idx_length;
+select /*+ recompile */ va, vc from tx where length(vb) = 2 and vc > 100 using index idx_length;
 
 drop table tx;
 
@@ -60,9 +60,9 @@ create index idx_ln on tx(ln(va));
 create index idx_exp on tx(exp(vb));
 create index idx_sqrt on tx(sqrt(vc));
 update statistics on tx;
-select /*+ recompile */ vc from tx where ln(va) > 0;
-select /*+ recompile */ vc from tx where exp(vb) < 1000;
-select /*+ recompile */ vc from tx where sqrt(vc) > 30;
+select /*+ recompile */ vc from tx where ln(va) > 0 using index idx_ln;
+select /*+ recompile */ vc from tx where exp(vb) < 1000 using index idx_exp;
+select /*+ recompile */ vc from tx where sqrt(vc) > 30 using index idx_sqrt;
 
 drop table tx;
 
@@ -90,7 +90,7 @@ insert into tx values (1,1,10,100), (2,2,20,200), (3,3,30,300);
 create index idx on tx(va, ln(vb), vc);
 update statistics on tx;
 
-select /*+ recompile NO_COVERING_IDX */ vc from tx where va = 1 and vc = 100;
+select /*+ recompile NO_COVERING_IDX */ vc from tx where va = 1 and vc = 100 using index idx;
 
 drop table tx;
 

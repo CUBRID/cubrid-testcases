@@ -25,15 +25,15 @@ update statistics on t;
 
 select /*+ recompile */ e from t where e < 2;
 
-select /*+ recompile */ i, e from t where i = 2 and e < 3;
+select /*+ recompile */ i, e from t where i = 2 and e < 3 using index i_t_i_e;
 
-select /*+ recompile */ i, e from t where i = 2 and e < 'Wednesday';
+select /*+ recompile */ i, e from t where i = 2 and e < 'Wednesday' using index i_t_i_e;
 
 select /*+ recompile */ e from t where e between 'Tuesday' and 'Saturday';
 
-select /*+ recompile */ i, e from t where e = 3 and s < 'x' order by e,s,i;
+select /*+ recompile */ i, e from t where e = 3 and s < 'x' using index i_t_e_s order by e,s,i;
 
-select /*+ recompile */ i, e from t where e = 'Wednesday' and s < 'x' order by e,s,i;
+select /*+ recompile */ i, e from t where e = 'Wednesday' and s < 'x' using index i_t_e_s order by e,s,i;
 
 select /*+ recompile */ e from t where e < 10;
 

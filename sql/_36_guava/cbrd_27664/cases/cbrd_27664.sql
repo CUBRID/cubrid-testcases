@@ -244,7 +244,7 @@ create table t_pfx (s varchar(20) not null, x int);
 insert into t_pfx select 'abc' || mod(id, 7), id from t_main where id <= 1000;
 create index i_p on t_pfx (s(3));
 update statistics on t_pfx with fullscan;
-select /*+ recompile */ s, count(*), sum(x) from t_pfx where s > '' group by s order by s;
+select /*+ recompile */ s, count(*), sum(x) from t_pfx where s > '' group by s using index i_p order by s;
 show trace;
 select /*+ recompile */ s, count(*), sum(x) from t_pfx ignore index (i_p) where s > '' group by s order by s;
 

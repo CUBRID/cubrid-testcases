@@ -124,7 +124,7 @@ idx-join (inner join)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.e, u.i from t t, u u where u.i= cast(t.e as integer) order by ?
+select t.e, u.i from t t, u u where u.i= cast(t.e as integer) using index t.i_t_e order by ?
 /* ---> skip ORDER BY */
 ===================================================
 e    i    
@@ -260,7 +260,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.e from t t, u u where t.i=u.i and t.s= ?:?  order by ?
+select t.e from t t, u u where t.i=u.i and t.s= ?:?  using index t.i_t_s order by ?
 ===================================================
 0
 ===================================================

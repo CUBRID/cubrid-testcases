@@ -18,11 +18,11 @@ insert into s values (5,5,5,5,5);
 insert into s values (null,null,null,null,null);
 update statistics on all classes;
 
-select /*+ recompile */ t.*,s.* from t,s where t.a=s.a and t.a>-1  order by t.a;
+select /*+ recompile */ t.*,s.* from t,s where t.a=s.a and t.a>-1 using index t.i_t_abc  order by t.a;
 
-select /*+ USE_IDX i_s_abc */ t.*,s.* from t,s where t.a=s.a and t.a>-1 and s.a > -1  order by s.a;
+select /*+ USE_IDX i_s_abc */ t.*,s.* from t,s where t.a=s.a and t.a>-1 and s.a > -1 using index s.i_s_abc  order by s.a;
 
-select /*+ USE_IDX i_s_abc ORDERED */ t.*,s.* from t,s where t.a=s.a and t.a>-1 and s.a > -1  order by t.a,t.b, t.c;
+select /*+ USE_IDX i_s_abc ORDERED */ t.*,s.* from t,s where t.a=s.a and t.a>-1 and s.a > -1 using index t.i_t_abc  order by t.a,t.b, t.c;
 
 drop table t;
 drop table s;

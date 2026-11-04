@@ -16,13 +16,13 @@ alter table t1 change column i newi int;
 update statistics on all classes;
 SHOW INDEXES FROM t1;
 
-select /*+ recompile */ * from t1 where sqrt(newd) > 5;
+select /*+ recompile */ * from t1 where sqrt(newd) > 5 using index idx;
 
 select /*+ recompile */ * from t1 where newi < 20 using index idx2(+);
 
 insert into t1 values (30, 900);
 
-select /*+ recompile */ * from t1 where sqrt(newd) > 5;
+select /*+ recompile */ * from t1 where sqrt(newd) > 5 using index idx;
 
 select /*+ recompile */ * from t1 where newi < 20 using index idx2(+);
 

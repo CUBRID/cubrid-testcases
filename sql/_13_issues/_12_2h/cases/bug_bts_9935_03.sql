@@ -43,7 +43,7 @@ select /*+ recompile */ * from t partition (p0) where i in(5,6) order by j limit
 select /*+ recompile */ * from t partition (p0) , t1 partition (p0);
 
 --ORDER BY skip
-select /*+ recompile */ t.i ,t.j from t partition (p0),t1 partition (p0) where t.i=t1.i and t.i=5 order by t.i , t.j;
+select /*+ recompile */ t.i ,t.j from t partition (p0),t1 partition (p0) where t.i=t1.i and t.i=5 using index t.t_i_j, t1.t1_i order by t.i , t.j;
 
 --GROUP BY skip
 select /*+ recompile */ * from t partition (p0) where t.i> 4 group by i;

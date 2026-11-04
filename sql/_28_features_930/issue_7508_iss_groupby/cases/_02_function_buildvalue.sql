@@ -23,88 +23,88 @@ update statistics on t;
 --
 -- index skip scan, covers
 --
-select /*+ recompile index_ss */  sum(k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  sum(k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  sum(k3)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  sum(distinct k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  sum(distinct k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  sum(distinct k3)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  avg(k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  avg(k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  avg(k3)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  avg(distinct k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  avg(distinct k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  avg(distinct k3)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  stddev_pop(k3)   from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_pop(k3)   from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_pop(k3)   from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  stddev_pop(distinct k3)   from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_pop(distinct k3)   from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_pop(distinct k3)   from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  stddev_samp(k3)  from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_samp(k3)  from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_samp(k3)  from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  stddev_samp(distinct k3)  from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_samp(distinct k3)  from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_samp(distinct k3)  from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  var_pop(k3)      from t where k2 > -1 
+select /*+ recompile index_ss */  var_pop(k3)      from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_pop(k3)      from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  var_pop(distinct k3)      from t where k2 > -1 
+select /*+ recompile index_ss */  var_pop(distinct k3)      from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_pop(distinct k3)      from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  var_samp(k3)     from t where k2 > -1 
+select /*+ recompile index_ss */  var_samp(k3)     from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_samp(k3)     from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  var_samp(distinct k3)     from t where k2 > -1 
+select /*+ recompile index_ss */  var_samp(distinct k3)     from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_samp(distinct k3)     from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  min(k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  min(k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  min(k3)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  min(distinct k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  min(distinct k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  min(distinct k3)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  max(k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  max(k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  max(k3)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  max(distinct k3)          from t where k2 > -1 
+select /*+ recompile index_ss */  max(distinct k3)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  max(distinct k3)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  count(k3)        from t where k2 > -1 
+select /*+ recompile index_ss */  count(k3)        from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(k3)        from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  count(distinct k3)        from t where k2 > -1 
+select /*+ recompile index_ss */  count(distinct k3)        from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(distinct k3)        from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  count(*)         from t where k2 > -1 
+select /*+ recompile index_ss */  count(*)         from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(*)         from t where k2 > -1  using index none;
 
@@ -112,88 +112,88 @@ select /*+ recompile index_ss */  count(*)         from t where k2 > -1  using i
 --
 -- index skip scan, does not cover
 --
-select /*+ recompile index_ss */  sum(v)          from t where k2 > -1 
+select /*+ recompile index_ss */  sum(v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  sum(v)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  sum(distinct v)          from t where k2 > -1 
+select /*+ recompile index_ss */  sum(distinct v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  sum(distinct v)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  avg(v)          from t where k2 > -1 
+select /*+ recompile index_ss */  avg(v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  avg(v)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  avg(distinct v)          from t where k2 > -1 
+select /*+ recompile index_ss */  avg(distinct v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  avg(distinct v)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  stddev_pop(v)   from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_pop(v)   from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_pop(v)   from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  stddev_pop(distinct v)   from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_pop(distinct v)   from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_pop(distinct v)   from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  stddev_samp(v)  from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_samp(v)  from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_samp(v)  from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  stddev_samp(distinct v)  from t where k2 > -1 
+select /*+ recompile index_ss */  stddev_samp(distinct v)  from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  stddev_samp(distinct v)  from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  var_pop(v)      from t where k2 > -1 
+select /*+ recompile index_ss */  var_pop(v)      from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_pop(v)      from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  var_pop(distinct v)      from t where k2 > -1 
+select /*+ recompile index_ss */  var_pop(distinct v)      from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_pop(distinct v)      from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  var_samp(v)     from t where k2 > -1 
+select /*+ recompile index_ss */  var_samp(v)     from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_samp(v)     from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  var_samp(distinct v)     from t where k2 > -1 
+select /*+ recompile index_ss */  var_samp(distinct v)     from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  var_samp(distinct v)     from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  min(v)          from t where k2 > -1 
+select /*+ recompile index_ss */  min(v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  min(v)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  min(distinct v)          from t where k2 > -1 
+select /*+ recompile index_ss */  min(distinct v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  min(distinct v)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  max(v)          from t where k2 > -1 
+select /*+ recompile index_ss */  max(v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  max(v)          from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  max(distinct v)          from t where k2 > -1 
+select /*+ recompile index_ss */  max(distinct v)          from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  max(distinct v)          from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  count(v)        from t where k2 > -1 
+select /*+ recompile index_ss */  count(v)        from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(v)        from t where k2 > -1  using index none;
 
-select /*+ recompile index_ss */  count(distinct v)        from t where k2 > -1 
+select /*+ recompile index_ss */  count(distinct v)        from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(distinct v)        from t where k2 > -1  using index none;
 
 
-select /*+ recompile index_ss */  count(*)        from t where k2 > -1 
+select /*+ recompile index_ss */  count(*)        from t where k2 > -1 using index idx
 difference
 select /*+ recompile index_ss */  count(*)        from t where k2 > -1  using index none;
 

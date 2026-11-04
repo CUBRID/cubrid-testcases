@@ -27,26 +27,26 @@ update statistics on all classes with fullscan;
 -- use_desc_idx hint.
 select /*+ recompile use_desc_idx */ t.y
 from t_a inner join t_b as t on t_a.x = t.x
-where t.x = 1
+where t.x = 1 using index t.idx_asc, t_a.idx_t_a
 order by t.y desc;
 
 -- use spcified index without hint.
 select /*+ recompile */ t.y
 from t_a inner join t_b as t on t_a.x = t.x
 where t.x = 1
-using index t.idx_desc(+)
+using index t.idx_desc(+), t_a.idx_t_a
 order by t.y desc;
 
 -- without hint.
 select /*+ recompile */ t.y
 from t_a inner join t_c as t on t_a.x = t.x
-where t.x = 1
+where t.x = 1 using index t.idx_desc, t_a.idx_t_a
 order by t.y desc;
 
 -- use ordered, use_desc_idx hint
 select /*+ recompile ordered use_desc_idx */ t.y
 from t_a inner join t_c as t on t_a.x = t.x
-where t.x = 1
+where t.x = 1 using index t_a.idx_t_a, t.idx_desc
 order by t.y desc;
 
 drop t_a, t_b, t_c;

@@ -20,13 +20,13 @@ alter index idx2 on t1 rebuild;
 update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
-select /*+ recompile */ * from t1 where sqrt(d) > 5;
+select /*+ recompile */ * from t1 where sqrt(d) > 5 using index idx;
 --Test
 select /*+ recompile */ * from t1 where i < 20 using index idx2(+);
 
 insert into t1 values (30, 900);
 --Test
-select /*+ recompile */ * from t1 where sqrt(d) > 5;
+select /*+ recompile */ * from t1 where sqrt(d) > 5 using index idx;
 --Test
 select /*+ recompile */ * from t1 where i < 20 using index idx2(+);
 --Test
@@ -42,7 +42,7 @@ SHOW INDEXES FROM t1;
 
 insert into t1 values (40, 5);
 --Test
-select /*+ recompile */ * from t1 where sqrt(d) > 5;
+select /*+ recompile */ * from t1 where sqrt(d) > 5 using index idx;
 --Test
 select /*+ recompile */ * from t1 where i < 20 using index idx2(+);
 

@@ -54,7 +54,7 @@ create index idx on t(i, abs(i));
 
 update statistics on t;
 
-select /*+ recompile */ i from t where i > 2;
+select /*+ recompile */ i from t where i > 2 using index idx;
 
 drop table t;
 create table t (i int, j int);
@@ -71,9 +71,9 @@ insert into t values (-5,-5);
 
 update statistics on t;
 
-select /*+ recompile */ i,j from t where abs(i) > 2;
+select /*+ recompile */ i,j from t where abs(i) > 2 using index idx1;
 
-select /*+ recompile */ i,j from t where abs(i) = 2 and j < 0;
+select /*+ recompile */ i,j from t where abs(i) = 2 and j < 0 using index idx2;
 
 drop table t;
 -- 4000 records for each i: 0,1,2,3,4.
@@ -242,7 +242,7 @@ select /*+ recompile INDEX_SS */ j,k,l from t where j >= 9 and k > 4000;
 select /*+ recompile INDEX_SS */ j,k,l from t where j = 9 and k > 4000;
 select /*+ recompile INDEX_SS */ j,k,l from t where j = 9 and k = 4861;
 select /*+ recompile INDEX_SS */ j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1064;
-select /*+ recompile INDEX_SS */ j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0;
+select /*+ recompile INDEX_SS */ j,k,l from t where (j = 2 or j = 3) and l between 1063 and 1080 and i <> 0 using index idx;
 select /*+ recompile INDEX_SS */ j,k,l from t where (j = 2 or j = 3);
 
 -- this one has a bigger selectivity and thus yields a sscan (!)

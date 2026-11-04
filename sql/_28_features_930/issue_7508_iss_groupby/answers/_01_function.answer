@@ -442,7 +442,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, sum(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, sum(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -464,7 +464,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, sum(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, sum(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -486,7 +486,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, avg(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, avg(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -508,7 +508,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, avg(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, avg(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -530,7 +530,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, stddev_pop(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, stddev_pop(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -552,7 +552,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, stddev_pop(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, stddev_pop(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -574,7 +574,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, stddev_samp(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, stddev_samp(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -596,7 +596,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, stddev_samp(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, stddev_samp(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -618,7 +618,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, var_pop(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, var_pop(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -640,7 +640,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, var_pop(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, var_pop(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -662,7 +662,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, var_samp(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, var_samp(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -684,7 +684,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, var_samp(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, var_samp(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -706,7 +706,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, min(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, min(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -728,7 +728,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, min(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, min(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -750,7 +750,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, max(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, max(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -772,7 +772,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, max(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, max(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -794,7 +794,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, count(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, count(t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)
@@ -816,7 +816,7 @@ iscan
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k?, t.k?, count(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k?
+select /*+ INDEX_SS */ t.k?, t.k?, count(distinct t.v) from t t where (t.k?> ?:? ) group by t.k?, t.k? using index t.idx
 /* ---> skip GROUP BY */
 Query plan:
 temp(group by)

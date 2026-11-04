@@ -27,7 +27,7 @@ create index i_t1_a2a on t1(LOWER(b));
 --TEST: should use i_t1_a2a
 select /*+ RECOMPILE */ count(length(a)),10 from t1 where exists (select t1.a from t1 where LOWER(b)>'0');
 --TEST: should use i_t1_a2a
-select /*+ RECOMPILE */ count(length(a)),10 from t1 where exists (select t1.a) and LOWER(b)>'0';
+select /*+ RECOMPILE */ count(length(a)),10 from t1 where exists (select t1.a) and LOWER(b)>'0' using index i_t1_a2a;
 --TEST: should not use i_t1_a2a
 select /*+ RECOMPILE */ count(length(a)),10 from t1 where exists (select t1.a) or LOWER(b)>'0';
 

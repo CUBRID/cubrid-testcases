@@ -4,7 +4,7 @@ insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (6, 'Friday'), (7, 7), (4, 
 create index idx1 on t1(e1);
 update statistics on t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where e1 = 10 order by 1; 
+select /*+ recompile */ e1 from t1 where e1 = 10 using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 int );
@@ -12,7 +12,7 @@ insert into t1 values (1, 1), (3, 3), (2,1), (6, 5), (7, 7), (4, 4), (5, 5), (8,
 create index idx1 on t1(e1);
 update statistics on t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where e1 = 10 order by 1; 
+select /*+ recompile */ e1 from t1 where e1 = 10 using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 int );
@@ -20,7 +20,7 @@ insert into t1 values (1, 1), (3, 3), (2,1), (6, 5), (7, 7), (4, 4), (5, 5), (8,
 create index idx1 on t1(e1);
 update statistics on t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where e1 = 5 order by 1; 
+select /*+ recompile */ e1 from t1 where e1 = 5 using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', '01/01/2012'));
@@ -28,7 +28,7 @@ insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (6, 'Friday'), (7, 7), (4, 
 create index idx1 on t1(e1);
 update statistics on t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where e1 = 'Monday' order by 1; 
+select /*+ recompile */ e1 from t1 where e1 = 'Monday' using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', '01/01/2012'));
@@ -36,7 +36,7 @@ insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (6, 'Friday'), (7,'Monday')
 create index idx1 on t1(e1);
 update statistics on  t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where i<7 and e1 = 'Monday' order by 1; 
+select /*+ recompile */ e1 from t1 where i<7 and e1 = 'Monday' using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', '01/01/2012'));
@@ -44,12 +44,12 @@ insert into t1 values (1, 1), (3, 3), (2, 'Monday'), (2, 'Friday'), (7,'Monday')
 create index idx1 on t1(i,e1);
 update statistics on t1;
 set optimization level 513;
-select /*+ recompile */ e1 from t1 where i<7 and e1 = 'Monday' order by 1; 
+select /*+ recompile */ e1 from t1 where i<7 and e1 = 'Monday' using index idx1 order by 1;
 select /*+ recompile */ i, e1 from t1 where i<7 and e1 = 'Monday' order by 1;
 select /*+ recompile */ e1 from t1 where i=2 and e1 < 6 order by 1; 
-select /*+ recompile */ i,e1 from t1 where i=2 and e1 < 6 order by 1;
-select /*+ recompile */ e1 from t1 where i=2 and e1 = 'Friday' order by 1; 
-select /*+ recompile */ i,e1 from t1 where i = 2 and e1 = 'Friday' order by 1;
+select /*+ recompile */ i,e1 from t1 where i=2 and e1 < 6 using index idx1 order by 1;
+select /*+ recompile */ e1 from t1 where i=2 and e1 = 'Friday' using index idx1 order by 1;
+select /*+ recompile */ i,e1 from t1 where i = 2 and e1 = 'Friday' using index idx1 order by 1;
 drop t1;
 
 create table t1(i int, e1 enum ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', '01/01/2012'));
@@ -71,5 +71,5 @@ set optimization level 513;
 
 select /*+ recompile */ e1 from t1 where  e1 in (select k from a order by k limit 1) order by 1; 
 select /*+ recompile */ e1 from t1 where  e1 < (select k from a order by k  desc limit 1) order by 1; 
-select /*+ recompile */ e1 from t1 where  e1='11/08/2014' order by 1; 
+select /*+ recompile */ e1 from t1 where  e1='11/08/2014' using index idx1 order by 1;
 drop t1,a;
