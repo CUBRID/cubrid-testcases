@@ -10,7 +10,8 @@
  *       When the argument itself is a key column (e.g. (d1, sqrt(d1))) the result is still read from
  *       the key. CONNECT BY and click counter queries never use the result slot, and a scan whose
  *       rows reach the join through a list file (merge / hash join input) is not covered when the
- *       argument is missing from the key.
+ *       argument is missing from the key. A function index that covers a query without the expression
+ *       anywhere in it (e.g. max(d1) with the index (d1, sqrt(d1))) is covered without the result attribute.
  *
  *  Coverage: each check compares the plain query against the same query with the NO_COVERING_IDX
  *            hint and emits PASS / FAIL; plans are dumped where the shape itself is the contract.
@@ -24,10 +25,13 @@
  *    8. merge / hash join hints over a covered function index scan (list file input)
  *    9. click counter (INCR) joined with a function index scan: each twin increments its own counter
  *       row and checks the expression against 4 * i1 in the same row
+ *   10. covering without the expression in the query: aggregate / analytic over key columns, the
+ *       expression only in a key filter, only in a subquery over another table, inline view -
+ *       results over fi_d are also checked against its heap-only copy fi_dh
  *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved.
  */
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_w, fi_k;
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -47,6 +51,7 @@ create index idx_fi_c on fi_c (s, sqrt(d1));
 create table fi_d (id int, d1 double);
 insert into fi_d select rownum, rownum * rownum * 16 from db_class limit 20;
 create index idx_fi_d on fi_d (d1, sqrt(d1));
+create table fi_dh as select * from fi_d;
 
 create table fi_w (x int, y double);
 insert into fi_w values (1, 16), (2, 64), (3, 144), (4, 256), (5, 400);
@@ -54,7 +59,7 @@ insert into fi_w values (1, 16), (2, 64), (3, 144), (4, 256), (5, 400);
 create table fi_k (x int primary key, cnt int);
 insert into fi_k values (1, 0), (2, 0), (3, 0), (4, 0);
 
-update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_w, fi_k with fullscan;
+update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k with fullscan;
 
 evaluate '[1-1] covering + key filter on (i1, sqrt(d1))';
 --@queryplan
@@ -266,4 +271,52 @@ select /*+ ORDERED */ incr(k.cnt) c, t.i1, sqrt(t.d1) r, case when sqrt(t.d1) = 
 select /*+ ORDERED NO_COVERING_IDX */ incr(k.cnt) c, t.i1, sqrt(t.d1) r, case when sqrt(t.d1) = 4 * t.i1 then 'PASS' else 'FAIL' end chk from fi_k k, fi_t t where k.x = 4 and t.i1 between 3 and 3 and sqrt(t.d1) > 1;
 select case when count(*) = 4 and min(cnt) = 1 and max(cnt) = 1 then 'PASS' else 'FAIL' end as result from fi_k;
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_w, fi_k;
+evaluate '[10-1] (d1, sqrt(d1)) covering an aggregate over the argument only';
+--@queryplan
+select max(d1) mx, count(*) c from fi_d where d1 > 0 using index idx_fi_d;
+select case when p.mx <=> s.mx and p.mx <=> h.mx and p.c = s.c and p.c = h.c then 'PASS' else 'FAIL' end as result
+from (select max(d1) mx, count(*) c from fi_d where d1 > 0 using index idx_fi_d) p,
+     (select /*+ NO_COVERING_IDX */ max(d1) mx, count(*) c from fi_d where d1 > 0 using index idx_fi_d) s,
+     (select max(d1) mx, count(*) c from fi_dh where d1 > 0) h;
+
+evaluate '[10-2] (d1, sqrt(d1)) covering min / max / count over a key range of the argument';
+--@queryplan
+select max(d1) mx, min(d1) mn, count(*) c from fi_d where d1 between 16 and 1600 using index idx_fi_d;
+select case when p.mx <=> s.mx and p.mx <=> h.mx and p.mn <=> s.mn and p.mn <=> h.mn and p.c = s.c and p.c = h.c then 'PASS' else 'FAIL' end as result
+from (select max(d1) mx, min(d1) mn, count(*) c from fi_d where d1 between 16 and 1600 using index idx_fi_d) p,
+     (select /*+ NO_COVERING_IDX */ max(d1) mx, min(d1) mn, count(*) c from fi_d where d1 between 16 and 1600 using index idx_fi_d) s,
+     (select max(d1) mx, min(d1) mn, count(*) c from fi_dh where d1 between 16 and 1600) h;
+
+evaluate '[10-3] (i1, sqrt(d1)) covering an analytic function over the leading key column';
+--@queryplan
+select i1, max(i1) over () mx from fi_t where i1 between 1 and 5 using index idx_fi_t order by 1;
+select case when count(*) = 5 then 'PASS' else 'FAIL' end as result
+from (select i1, max(i1) over () mx from fi_t where i1 between 1 and 5 using index idx_fi_t) p
+     join (select /*+ NO_COVERING_IDX */ i1, max(i1) over () mx from fi_t where i1 between 1 and 5 using index idx_fi_t) s
+     on p.i1 = s.i1 and p.mx <=> s.mx;
+
+evaluate '[10-4] (i1, sqrt(d1)) expression only in the key filter, not projected';
+--@queryplan
+select i1 from fi_t where i1 between 1 and 10 and sqrt(d1) > 20 using index idx_fi_t order by 1;
+select case when count(*) = 5 then 'PASS' else 'FAIL' end as result
+from (select i1 from fi_t where i1 between 1 and 10 and sqrt(d1) > 20 using index idx_fi_t) p
+     join (select /*+ NO_COVERING_IDX */ i1 from fi_t where i1 between 1 and 10 and sqrt(d1) > 20 using index idx_fi_t) s
+     on p.i1 = s.i1;
+
+evaluate '[10-5] (d1, sqrt(d1)) expression only in a subquery over the heap-only copy';
+--@queryplan
+select max(d1) mx from fi_d where d1 > 0 and d1 < (select max(sqrt(d1)) * 25 from fi_dh) using index idx_fi_d;
+select case when p.mx <=> s.mx and p.mx <=> h.mx then 'PASS' else 'FAIL' end as result
+from (select max(d1) mx from fi_d where d1 > 0 and d1 < (select max(sqrt(d1)) * 25 from fi_dh) using index idx_fi_d) p,
+     (select /*+ NO_COVERING_IDX */ max(d1) mx from fi_d where d1 > 0 and d1 < (select max(sqrt(d1)) * 25 from fi_dh) using index idx_fi_d) s,
+     (select max(d1) mx from fi_dh where d1 > 0 and d1 < (select max(sqrt(d1)) * 25 from fi_dh)) h;
+
+evaluate '[10-6] (d1, sqrt(d1)) covered scan inside an inline view, argument only';
+--@queryplan
+select max(x) mx from (select d1 x from fi_d where d1 > 0 using index idx_fi_d) v;
+select case when p.mx <=> s.mx and p.mx <=> h.mx then 'PASS' else 'FAIL' end as result
+from (select max(x) mx from (select d1 x from fi_d where d1 > 0 using index idx_fi_d) v) p,
+     (select /*+ NO_COVERING_IDX */ max(x) mx from (select d1 x from fi_d where d1 > 0 using index idx_fi_d) v) s,
+     (select max(x) mx from (select d1 x from fi_dh where d1 > 0) v) h;
+
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k;

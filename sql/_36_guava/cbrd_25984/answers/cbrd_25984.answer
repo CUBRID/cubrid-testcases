@@ -31,6 +31,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 5
 ===================================================
 0
@@ -611,6 +613,144 @@ c    i1    r    chk
 c    i1    r    chk    
 0     3     12.0     PASS     
 
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-1] (d1, sqrt(d1)) covering an aggregate over the argument only     
+
+===================================================
+mx    c    
+6400.0     20     
+
+Query plan:
+iscan
+    class: fi_d node[?]
+    index: idx_fi_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select max(fi_d.d?), count(*) from fi_d fi_d where (fi_d.d?> ?:? ) using index fi_d.idx_fi_d
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-2] (d1, sqrt(d1)) covering min / max / count over a key range of the argument     
+
+===================================================
+mx    mn    c    
+1600.0     16.0     10     
+
+Query plan:
+iscan
+    class: fi_d node[?]
+    index: idx_fi_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select max(fi_d.d?), min(fi_d.d?), count(*) from fi_d fi_d where (fi_d.d?>= ?:?  and fi_d.d?<= ?:? ) using index fi_d.idx_fi_d
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-3] (i1, sqrt(d1)) covering an analytic function over the leading key column     
+
+===================================================
+i1    mx    
+1     5     
+2     5     
+3     5     
+4     5     
+5     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_t node[?]
+                 index: idx_fi_t term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key ()
+           func[?]: max partition by () order by ()
+Query stmt:
+select fi_t.i?, max(fi_t.i?) over () from fi_t fi_t where (fi_t.i?>= ?:?  and fi_t.i?<= ?:? ) using index fi_t.idx_fi_t order by ?
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-4] (i1, sqrt(d1)) expression only in the key filter, not projected     
+
+===================================================
+i1    
+6     
+7     
+8     
+9     
+10     
+
+Query plan:
+iscan
+    class: fi_t node[?]
+    index: idx_fi_t term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_t.i? from fi_t fi_t where (fi_t.i?>= ?:?  and fi_t.i?<= ?:? ) and ( sqrt(fi_t.d?)> ?:? ) using index fi_t.idx_fi_t order by ?
+/* ---> skip ORDER BY */
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-5] (d1, sqrt(d1)) expression only in a subquery over the heap-only copy     
+
+===================================================
+mx    
+1936.0     
+
+Query plan:
+sscan
+    class: fi_dh node[?]
+    cost:  ? card ?
+Query stmt:
+(select max( sqrt(fi_dh.d?))* cast(? as double) from fi_dh fi_dh)
+Query plan:
+iscan
+    class: fi_d node[?]
+    index: idx_fi_d term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select max(fi_d.d?) from fi_d fi_d where (fi_d.d?> ?:? ) and (fi_d.d?<(select max( sqrt(fi_dh.d?))* cast(? as double) from fi_dh fi_dh)) using index fi_d.idx_fi_d
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[10-6] (d1, sqrt(d1)) covered scan inside an inline view, argument only     
+
+===================================================
+mx    
+6400.0     
+
+Query plan:
+iscan
+    class: v node[?]
+    index: idx_fi_d term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select max(v.d?) from fi_d v where (v.d?> ?:? ) using index v.idx_fi_d
 ===================================================
 result    
 PASS     
