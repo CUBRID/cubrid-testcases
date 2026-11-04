@@ -32,7 +32,7 @@ count(*)
 
 Query plan:
 nl-join (inner join)
-    edge:  term[?] AND term[?]
+    edge:  term[?]
     outer: hash-join (inner join)
                edge:  term[?]
                outer: iscan
@@ -46,11 +46,11 @@ nl-join (inner join)
     inner: iscan
                class: cn node[?]
                index: i_nat_name term[?] (covers)
-               filtr: term[?] AND term[?]
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (cn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? ))
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:?  and cn.n_name= ?:? ) or (sn.n_name= ?:?  and cn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? ))
 ===================================================
     
 Case 2: the same rows written as independent conditions keep their plan     
@@ -92,10 +92,10 @@ Query plan:
 iscan
     class: pair node[?]
     index: i_pair_ab term[?] (covers)
-    filtr: term[?] AND term[?] AND term[?]
+    filtr: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select count(*) from pair pair where ((pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.a= ?:? ) or (pair.b= ?:? )) and ((pair.b= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
+select count(*) from pair pair where ((pair.a= ?:?  and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
 ===================================================
     
 Case 4: three branches on one table: 150 rows     
@@ -114,11 +114,88 @@ count(*)
 
 ===================================================
     
-Case 6: an outer join ON condition is left as it is: 5801 rows     
+Case 6: an outer join ON condition keeps the null padded rows: 5801 rows     
 
 ===================================================
 count(*)    
 5801     
+
+===================================================
+    
+Case 7: a subquery in one branch is planned once, not once per distributed clause     
+
+===================================================
+count(*)    
+300     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: pair node[?]
+                 index: pk_pair_id term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct pair.b from pair pair where (pair.id< ?:? ))
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((pair.a= ?:?  and pair.b in (select distinct pair.b from pair pair where (pair.id< ?:? ))) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ))
+===================================================
+    
+Case 8: eight branches give a key range on a: 400 rows     
+
+===================================================
+count(*)    
+400     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((((((((pair.a= ?:?  and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 9: a disjunction over a inside a branch still gives the key range: 150 rows     
+
+===================================================
+count(*)    
+150     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where (((pair.a= ?:?  or pair.a= ?:? ) and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 10: restrictions derived from an ON condition, on the inner side and on the preserved side     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+68     
 
 ===================================================
 0
