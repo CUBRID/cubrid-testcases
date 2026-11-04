@@ -16,7 +16,7 @@
  *    Case 9:  controls - column, literal, CAST of the host variable in the query text
  *    Case 10: MEDIAN on a literal or a host variable returns DOUBLE
  *    Case 11: PERCENTILE_CONT returns DOUBLE, PERCENTILE_DISC keeps INT
- *    Case 12: a CHAR bind of MEDIAN and PERCENTILE_CONT casts to DOUBLE, a DATE bind keeps DATE
+ *    Case 12: a CHAR bind casts to DOUBLE, a date string bind raises -1118, a DATE bind keeps DATE
  */
 
 drop table if exists tdist;
@@ -200,12 +200,22 @@ execute s using @v;
 deallocate prepare s;
 
 
-evaluate 'Case 12: a CHAR bind of MEDIAN and PERCENTILE_CONT casts to DOUBLE; a DATE bound directly keeps DATE, the aggregate part as an unchanged control';
+evaluate 'Case 12: a CHAR bind of MEDIAN and PERCENTILE_CONT casts to DOUBLE; a date string bind raises -1118 like the string literal control; a DATE bound directly keeps DATE, the aggregate part as an unchanged control';
 set @v = cast('10' as char(2));
 select typeof(@v) as bind_type, @v as bind_value;
 prepare s from 'select median(?), median(distinct ?), percentile_cont(0.5) within group (order by ?) from tdist';
 execute s using @v, @v, @v;
 deallocate prepare s;
+-- a session variable set from a DATE literal holds a string, and a string argument that does not cast to DOUBLE raises -1118 (CBRD-27583)
+set @v = date'2024-01-01';
+select typeof(@v) as bind_type, @v as bind_value;
+prepare s from 'select median(?), median(distinct ?), percentile_cont(0.5) within group (order by ?) from tdist';
+execute s using @v, @v, @v;
+deallocate prepare s;
+prepare s from 'select distinct median(distinct ?) over () from tdist';
+execute s using @v;
+deallocate prepare s;
+select median('01/01/2024') from tdist;
 -- a DATE literal in EXECUTE USING binds a DATE; the aggregate MEDIAN of a DATE already returned DATE before the fix
 prepare s from 'select median(?), typeof(median(?)), percentile_cont(0.5) within group (order by ?), typeof(percentile_cont(0.5) within group (order by ?)) from tdist';
 execute s using date'2024-01-01', date'2024-01-01', date'2024-01-01', date'2024-01-01';

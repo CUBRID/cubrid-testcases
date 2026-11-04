@@ -444,7 +444,7 @@ g    percentile_cont( cast(0.5 as double)) within group (order by  ?:0 )
 0
 ===================================================
     
-Case 12: a CHAR bind of MEDIAN and PERCENTILE_CONT casts to DOUBLE; a DATE bound directly keeps DATE, the aggregate part as an unchanged control     
+Case 12: a CHAR bind of MEDIAN and PERCENTILE_CONT casts to DOUBLE; a date string bind raises -1118 like the string literal control; a DATE bound directly keeps DATE, the aggregate part as an unchanged control     
 
 ===================================================
 0
@@ -460,6 +460,26 @@ median( ?:0 )    median( ?:1 )    percentile_cont( cast(0.5 as double)) within g
 
 ===================================================
 0
+===================================================
+0
+===================================================
+bind_type    bind_value    
+character varying (1073741823)     01/01/2024     
+
+===================================================
+0
+===================================================
+Error:-1118
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-1118
+===================================================
+0
+===================================================
+Error:-1118
 ===================================================
 0
 ===================================================
