@@ -37,9 +37,14 @@
  *             rounds a coefficient above 2^53, so this query keeps the single table plan.
  *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
  *    Case 23: trace: Cases 21 and 22 keep the single table plan
+ *    Case 24: prior INT = INT and CAST(BIGINT 3000000000 AS INT) = 1, no START WITH row: no error, 0 rows. A side
+ *             with a column paired with a constant is a build key too, so a cast there keeps the single table plan.
+ *    Case 25: as Case 24 with the cast conjunct written first and START WITH rows: 2 rows
+ *    Case 26: prior INT = INT and BIGINT = 1 without a cast: 2 rows
+ *    Case 27: trace: Cases 24 and 25 keep the single table plan, Case 26 runs as a hash list scan
  */
 
-drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq;
+drop table if exists hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;
 
 create table hs_si (id smallint, pid int, n int);
 insert into hs_si values (1, null, 1), (2, 1, 2), (3, 100000, 3), (4, 2, 4);
@@ -79,6 +84,9 @@ insert into hs_nl values (63427896765467,NULL,1),(57868758049228,63427896765467,
 
 create table hs_nq (id numeric(38,0), pid numeric(38,-5), n int);
 insert into hs_nq values (100000,NULL,1),(1200000,100000,2),(-500000,1200000,3),(7,-500000,4);
+
+create table hs_kc (id int, pid int, k bigint, n int);
+insert into hs_kc values (1, null, 10, 1), (2, 5, 3000000000, 2), (3, 1, 1, 3);
 
 
 evaluate 'Case 1: prior smallint = int; 3 rows';
@@ -231,4 +239,33 @@ show trace;
 set trace off;
 
 
-drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq;
+evaluate 'Case 24: prior int = int and cast(bigint 3000000000 as int) = 1, no START WITH row; 0 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 0 and nvl(a.s, -1) = -1 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1) t) b;
+
+
+evaluate 'Case 25: cast(bigint 3000000000 as int) = 1 and prior int = int; 2 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 2 and nvl(a.s, -1) = 43 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid) t) b;
+
+
+evaluate 'Case 26: prior int = int and bigint = 1; 2 rows';
+select case when a.c = b.c and nvl(a.s, -1) = nvl(b.s, -1) and a.c = 2 and nvl(a.s, -1) = 43 then 'PASS' else 'FAIL' end res, a.c cnt
+from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1) t) a,
+     (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1) t) b;
+
+
+evaluate 'Case 27: trace of Cases 24, 25 (single table plan) and 26 (hash temp)';
+set trace on;
+select n, level lv from hs_kc start with n = 99 connect by prior id = pid and cast(k as int) = 1 order siblings by n;
+show trace;
+select n, level lv from hs_kc start with n = 1 connect by cast(k as int) = 1 and prior id = pid order siblings by n;
+show trace;
+select n, level lv from hs_kc start with n = 1 connect by prior id = pid and k = 1 order siblings by n;
+show trace;
+set trace off;
+
+
+drop table hs_si, hs_is, hs_cv, hs_bd, hs_db, hs_na, hs_nb, hs_in, hs_ni, hs_dn, hs_fd, hs_mk, hs_iv, hs_ivn, hs_cg, hs_cp, hs_nl, hs_nq, hs_kc;
