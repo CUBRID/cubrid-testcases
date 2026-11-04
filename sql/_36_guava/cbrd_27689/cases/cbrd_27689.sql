@@ -1,6 +1,7 @@
 -- Verification for CBRD-27689 : Allow parallel index scan when the first ORDER BY column is DESC but the order is not skipped
 -- A DESC first ORDER BY / GROUP BY column used to turn the parallel index scan off even when the sort is not done by the index.
--- Parallel scan must now be used in that case, and must still be off when ORDER BY / GROUP BY is skipped by the index.
+-- Parallel scan must now be used in that case, and must still be off when ORDER BY is skipped by the index.
+-- A GROUP BY skipped by the index runs in parallel since CBRD-27664 (ascending) and CBRD-27728 (DESC first column).
 -- The name prefix groups (Char000 .. Char009) have different sizes, so ORDER BY count DESC and ASC give different orders.
 
 drop table if exists t_27689;
@@ -42,7 +43,7 @@ evaluate 'Q5. ORDER BY skipped by a descending index scan -> serial even with a 
 select /*+ recompile PARALLEL(4) */ name from t_27689 where name > 'Char009_0000149990' order by name desc;
 show trace;
 
-evaluate 'Q6. GROUP BY skipped by a descending index scan -> serial even with a PARALLEL hint, groups in descending order';
+evaluate 'Q6. GROUP BY skipped by a descending index scan -> parallel since CBRD-27728, groups in descending order';
 select /*+ recompile PARALLEL(4) */ name, count (*) from t_27689 where name > 'Char009_0000149995' group by name desc;
 show trace;
 
