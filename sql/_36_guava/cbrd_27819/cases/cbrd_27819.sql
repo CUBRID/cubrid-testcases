@@ -120,6 +120,9 @@ select 'c4f' q, typeof(round(cast(2.5 as numeric(3,1)), 0)), typeof(trunc(cast(2
 create table t_rd (id int, n numeric(12,4));
 insert into t_rd values (1, 12345678.5555), (2, -12345678.5555), (3, 0.0050), (4, -0.0050), (5, 99999999.9999), (6, null);
 select 'c4g' q, id, round(n, 2), round(n, -3), trunc(n, 1), trunc(n, -1), floor(n), ceil(n), round(n) from t_rd order by id;
+-- a DOUBLE place past the BIGINT range keeps every digit
+select 'c4h' q, round(cast(1.5 as numeric(2,1)), 1e19), round(cast(-123.45 as numeric(5,2)), 1e300), round(cast(1.5 as numeric(2,1)), 9.3e18);
+select 'c4i' q, id, round(n, 1e19 + id) from t_rd order by id;
 
 
 evaluate 'Case 5: NUMERIC of every stored size, hash GROUP BY and query cache with NUMERIC binds';

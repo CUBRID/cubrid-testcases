@@ -437,6 +437,19 @@ c4g     5     100000000.0000     100000000.0000     99999999.9000     99999990.0
 c4g     6     null     null     null     null     null     null     null     
 
 ===================================================
+q    round( cast(1.5 as numeric(2,1)), 1e19)    round( cast(-123.45 as numeric(5,2)), 1e300)    round( cast(1.5 as numeric(2,1)), 9.3e18)    
+c4h     1.5     -123.45     1.5     
+
+===================================================
+q    id    round(n, 1e19+id)    
+c4i     1     12345678.5555     
+c4i     2     -12345678.5555     
+c4i     3     0.0050     
+c4i     4     -0.0050     
+c4i     5     99999999.9999     
+c4i     6     null     
+
+===================================================
     
 Case 5: NUMERIC of every stored size, hash GROUP BY and query cache with NUMERIC binds     
 
