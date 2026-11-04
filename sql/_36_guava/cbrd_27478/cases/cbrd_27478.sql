@@ -4,6 +4,7 @@
 -- reads the rows its constant filters select from the table while it plans (through an index on a filter column,
 -- at most row_snapshot_max_rows of them; hinted ROW_SNAPSHOT, also a table the statistics count at most 1000 rows
 -- without the index) and prices the join by their keys.
+-- row_snapshot_max_rows is 0 by default (only a statement hinted ROW_SNAPSHOT reads); the cases set it to 100.
 
 drop table if exists t_27478_c;
 drop table if exists t_27478_f;
@@ -32,6 +33,7 @@ create index i_27478_f_c on t_27478_f (c_id);
 create index i_27478_g_k on t_27478_g (k);
 
 update statistics on t_27478_c, t_27478_f, t_27478_g, t_27478_x with fullscan;
+set system parameters 'row_snapshot_max_rows=100';
 
 evaluate 'Case 1: the common code selects 39000 rows: hash join with t_27478_g';
 --@queryplan
@@ -223,6 +225,7 @@ select /*+ recompile */ count (*) from t_27478_c c, t_27478_f f, t_27478_g g
 where c.name = 'common' and f.c_id = c.id and g.k = f.k;
 commit;
 set transaction isolation level read committed;
+set system parameters 'row_snapshot_max_rows=0';
 
 drop table t_27478_c;
 drop table t_27478_f;
