@@ -84,6 +84,97 @@ begin
 end;
 select f_field_tree (2), f_field_tree (5) from db_root;
 
+evaluate 'FIELD, DECODE and CASE comparing the variable with values of mixed types';
+create or replace function f_mixed_field (v varchar) return int as
+    r int;
+begin
+    select field (v, 1, 'a') into r from dual;
+    return r;
+end;
+select f_mixed_field ('a'), f_mixed_field ('1'), f_mixed_field ('x') from db_root;
+create or replace function f_mixed_decode (v int) return varchar as
+    r varchar;
+begin
+    select decode (v, 1, 'x', 'a', 'y') into r from dual;
+    return r;
+end;
+select f_mixed_decode (1) from db_root;
+create or replace function f_mixed_decode_s (v varchar) return varchar as
+    r varchar;
+begin
+    select decode (v, 1, 'x', 'a', 'y') into r from dual;
+    return r;
+end;
+select f_mixed_decode_s ('1') from db_root;
+evaluate 'a string compared with 1 is converted to double, as with a host variable or a literal in a SQL: error';
+create or replace procedure p_mixed_case () as
+    v varchar := 'a';
+    r varchar;
+begin
+    select case v when 1 then 'int' when 'a' then 'str' end into r from dual;
+    dbms_output.put_line (r);
+end;
+call p_mixed_case ();
+select case 'a' when 1 then 'int' when 'a' then 'str' end from db_root;
+
+evaluate 'a field of a record as the first argument of FIELD';
+create or replace function f_field_rec return varchar as
+    res varchar := '';
+    x int;
+begin
+    for r in (select i from tf union all select 5 from db_root order by 1) loop
+        select field (r.i, 1, 2, 3) into x from dual;
+        res := res || x;
+    end loop;
+    return res;
+end;
+select f_field_rec () from db_root;
+
+evaluate 'FIELD in GROUP BY and HAVING (the names there are made host variables after the aliases)';
+create or replace function f_field_group (v int) return varchar as
+    res varchar := '';
+begin
+    for r in (select field (v, i, 9) f, count (*) c from tf group by field (v, i, 9) order by 1) loop
+        res := res || r.f || ':' || r.c || ' ';
+    end loop;
+    return res;
+end;
+select f_field_group (1), f_field_group (2) from db_root;
+create or replace function f_field_having (v int) return int as
+    n int;
+begin
+    select max (i) into n from tf group by i having field (v, i, 9) = 1;
+    return n;
+end;
+select f_field_having (2), f_field_having (3) from db_root;
+
+evaluate 'CONCAT_WS with a variable as the separator';
+create or replace function f_concat_ws (sep varchar) return varchar as
+    r varchar;
+begin
+    select concat_ws (sep, 'a', 'b', 'c') into r from dual;
+    return r;
+end;
+select f_concat_ws ('-'), f_concat_ws (', ') from db_root;
+
+evaluate 'FIELD in a derived table';
+create or replace function f_field_derived (v int) return int as
+    r int;
+begin
+    select * into r from (select field (v, 1, 2) f from dual) t;
+    return r;
+end;
+select f_field_derived (2), f_field_derived (3) from db_root;
+
+evaluate 'two variables in two FIELD get their own host variables';
+create or replace function f_field_two (v int, w int) return int as
+    r int;
+begin
+    select field (v, 1, 2) * 10 + field (w, 1, 2) into r from dual;
+    return r;
+end;
+select f_field_two (1, 2), f_field_two (2, 1), f_field_two (2, 5) from db_root;
+
 drop procedure p351_field;
 drop procedure p351_limit;
 drop function f_field2;
@@ -91,4 +182,14 @@ drop function f_field3;
 drop function f_field4;
 drop function f_copied;
 drop function f_field_tree;
+drop procedure p_mixed_case;
+drop function f_mixed_field;
+drop function f_mixed_decode;
+drop function f_mixed_decode_s;
+drop function f_field_rec;
+drop function f_field_group;
+drop function f_field_having;
+drop function f_concat_ws;
+drop function f_field_derived;
+drop function f_field_two;
 drop table t351, tf;
