@@ -45,6 +45,8 @@
  *  TC-1-05 compares the two modes on the same tables by EXCEPT ALL in both directions. Both counts must be 0.
  *  CTP masks the numbers in a SHOW TRACE output, so time, fetch and row values are not compared.
  *  The trace asserts the presence of the SPLIT line, and of the parallel workers line on HASHJOIN or under PROBE.
+ *  The traced queries on ta, tb and tc, td add NO_PARALLEL_SCAN: whether a heap or list scan gets parallel workers
+ *  can differ from run to run, and the trace would show it in lines this file does not assert.
  */
 
 -- =====================================================================================================================
@@ -168,14 +170,14 @@ evaluate 'TC-1-05-01: ta SEMI JOIN tb';
 
 -- TC-1-05-01-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-01-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
 
 -- TC-1-05-01-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-01-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
@@ -213,14 +215,14 @@ evaluate 'TC-1-05-02: ta ANTI JOIN tb';
 
 -- TC-1-05-02-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-02-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
 
 -- TC-1-05-02-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-02-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
@@ -258,14 +260,14 @@ evaluate 'TC-1-05-03: tc SEMI JOIN td';
 
 -- TC-1-05-03-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-03-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-05-03-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-03-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
@@ -303,14 +305,14 @@ evaluate 'TC-1-05-04: tc ANTI JOIN td';
 
 -- TC-1-05-04-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-04-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-05-04-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-04-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
@@ -348,14 +350,14 @@ evaluate 'TC-1-05-05: ta SEMI JOIN tb, ON clause term on the outer table only';
 
 -- TC-1-05-05-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-05-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-05-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-05-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0');
 SHOW TRACE;
@@ -393,14 +395,14 @@ evaluate 'TC-1-05-06: ta ANTI JOIN tb, ON clause term on the outer table only';
 
 -- TC-1-05-06-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-06-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-06-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-06-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (50000, 200, '0');
 SHOW TRACE;
@@ -438,14 +440,14 @@ evaluate 'TC-1-05-07: tc SEMI JOIN td, ON clause term on the outer table only';
 
 -- TC-1-05-07-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-07-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-07-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-07-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0');
 SHOW TRACE;
@@ -483,14 +485,14 @@ evaluate 'TC-1-05-08: tc ANTI JOIN td, ON clause term on the outer table only';
 
 -- TC-1-05-08-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-08-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-08-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-08-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (150000, 200, '0');
 SHOW TRACE;
@@ -528,14 +530,14 @@ evaluate 'TC-1-05-09: ta SEMI JOIN tb, ON clause term on both tables';
 
 -- TC-1-05-09-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-09-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0;
 SHOW TRACE;
 
 -- TC-1-05-09-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-09-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0;
 SHOW TRACE;
@@ -573,14 +575,14 @@ evaluate 'TC-1-05-10: ta ANTI JOIN tb, ON clause term on both tables';
 
 -- TC-1-05-10-01: SINGLE mode, result and trace
 evaluate 'TC-1-05-10-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0;
 SHOW TRACE;
 
 -- TC-1-05-10-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-10-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca AND MOD (CAST (ta.ca AS INT) + CAST (tb.ca AS INT), 16) = 0;
 SHOW TRACE;
@@ -618,14 +620,14 @@ evaluate 'TC-1-05-11: tc SEMI JOIN td, ON clause term on both tables';
 
 -- TC-1-05-11-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-11-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0;
 SHOW TRACE;
 
 -- TC-1-05-11-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-11-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0;
 SHOW TRACE;
@@ -663,14 +665,14 @@ evaluate 'TC-1-05-12: tc ANTI JOIN td, ON clause term on both tables';
 
 -- TC-1-05-12-01: PARTITION mode, result and trace
 evaluate 'TC-1-05-12-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0;
 SHOW TRACE;
 
 -- TC-1-05-12-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-12-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN td ON td.ca = tc.ca AND MOD (CAST (tc.ca AS INT) + CAST (td.ca AS INT), 16) = 0;
 SHOW TRACE;
@@ -712,14 +714,14 @@ evaluate 'TC-1-06-01: ta LEFT OUTER JOIN tb';
 
 -- TC-1-06-01-01: SINGLE mode, result and trace
 evaluate 'TC-1-06-01-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*), COUNT (tb.ca)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*), COUNT (tb.ca)
 FROM ta
   LEFT JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
 
 -- TC-1-06-01-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-06-01-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*), COUNT (tb.ca)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*), COUNT (tb.ca)
 FROM ta
   LEFT JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
@@ -731,14 +733,14 @@ evaluate 'TC-1-06-02: ta RIGHT OUTER JOIN tb';
 
 -- TC-1-06-02-01: SINGLE mode, result and trace
 evaluate 'TC-1-06-02-01: SINGLE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*), COUNT (ta.ca)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*), COUNT (ta.ca)
 FROM ta
   RIGHT JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
 
 -- TC-1-06-02-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-06-02-02: PARALLEL_PROBE mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*), COUNT (ta.ca)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*), COUNT (ta.ca)
 FROM ta
   RIGHT JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
@@ -750,14 +752,14 @@ evaluate 'TC-1-06-03: tc LEFT OUTER JOIN td';
 
 -- TC-1-06-03-01: PARTITION mode, result and trace
 evaluate 'TC-1-06-03-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*), COUNT (td.ca)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*), COUNT (td.ca)
 FROM tc
   LEFT JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-06-03-02: PARALLEL mode, result and trace
 evaluate 'TC-1-06-03-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*), COUNT (td.ca)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*), COUNT (td.ca)
 FROM tc
   LEFT JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
@@ -769,14 +771,14 @@ evaluate 'TC-1-06-04: tc RIGHT OUTER JOIN td';
 
 -- TC-1-06-04-01: PARTITION mode, result and trace
 evaluate 'TC-1-06-04-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*), COUNT (tc.ca)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*), COUNT (tc.ca)
 FROM tc
   RIGHT JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-06-04-02: PARALLEL mode, result and trace
 evaluate 'TC-1-06-04-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*), COUNT (tc.ca)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*), COUNT (tc.ca)
 FROM tc
   RIGHT JOIN td ON td.ca = tc.ca;
 SHOW TRACE;
@@ -792,14 +794,14 @@ evaluate 'TC-1-07-01: SEMI JOIN, partitions without inner rows';
 
 -- TC-1-07-01-01: PARTITION mode, result and trace
 evaluate 'TC-1-07-01-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN te ON te.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-07-01-02: PARALLEL mode, result and trace
 evaluate 'TC-1-07-01-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   SEMI JOIN te ON te.ca = tc.ca;
 SHOW TRACE;
@@ -811,14 +813,14 @@ evaluate 'TC-1-07-02: ANTI JOIN, partitions without inner rows';
 
 -- TC-1-07-02-01: PARTITION mode, result and trace
 evaluate 'TC-1-07-02-01: PARTITION mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN te ON te.ca = tc.ca;
 SHOW TRACE;
 
 -- TC-1-07-02-02: PARALLEL mode, result and trace
 evaluate 'TC-1-07-02-02: PARALLEL mode, result and trace';
-SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN */ COUNT (*)
 FROM tc
   ANTI JOIN te ON te.ca = tc.ca;
 SHOW TRACE;
