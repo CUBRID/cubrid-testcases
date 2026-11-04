@@ -21,6 +21,12 @@ select id, p, o, row_number () over (partition by p order by o, id) as rn, rank 
 select id, p, s, o, rank () over (partition by p order by o) as rk, dense_rank () over (partition by s order by o nulls first) as dr
   from t27683 order by id;
 
+-- Case 2b: the three functions over one sort key with ties, listed by the row number. A row's place among its peers
+-- is not fixed, but the sort key and the ranks at each row number are.
+select p, o, rn, rk, dr from (select p, o, row_number () over (partition by p order by o) as rn,
+       rank () over (partition by p order by o) as rk, dense_rank () over (partition by p order by o) as dr from t27683) x
+  order by p, rn;
+
 -- Case 3: no PARTITION BY, and an expression over the functions
 select id, o, rank () over (order by o) as rk, dense_rank () over (order by o) * 10 + 1 as dr10 from t27683 order by id;
 
