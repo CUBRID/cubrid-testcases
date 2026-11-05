@@ -210,7 +210,7 @@ Trace Statistics:
 
 ===================================================
     
-Q6. GROUP BY skipped by a descending index scan -> serial even with a PARALLEL hint, groups in descending order     
+Q6. GROUP BY skipped by a descending index scan -> parallel since CBRD-27728, groups in descending order     
 
 ===================================================
 name    count(*)    
@@ -232,6 +232,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
     GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
