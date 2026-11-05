@@ -1353,35 +1353,35 @@ null     null     17143
 Case 6: COUNT DISTINCT, GROUP_CONCAT and MEDIAN aggregate serially; result = IGNORE INDEX     
 
 ===================================================
-g    v    count(distinct w)    median(w)    char_length(group_concat(w order by w separator ','))    
-0     0     200     497.5     1024     
-0     1     200     495.0     1024     
-0     2     200     500.0     1024     
-0     null     200     500.0     1024     
-1     0     200     497.0     1024     
-1     1     200     502.0     1024     
-1     2     200     502.0     1024     
-1     null     200     502.0     1024     
-2     0     200     504.0     1024     
-2     1     200     504.0     1024     
-2     2     200     499.0     1024     
-2     null     200     499.0     1024     
-3     0     200     496.0     1024     
-3     1     200     501.0     1024     
-3     2     200     496.0     1024     
-3     null     200     496.0     1024     
-4     0     200     503.0     1024     
-4     1     200     503.0     1024     
-4     2     200     498.0     1024     
-4     null     200     498.0     1024     
-5     0     200     495.0     1024     
-5     1     200     500.0     1024     
-5     2     200     495.0     1024     
-5     null     200     495.0     1024     
-6     0     200     502.0     1024     
-6     1     200     497.0     1024     
-6     2     200     497.0     1024     
-6     null     200     497.0     1024     
+g    v    count(distinct w)    median(w)    group_concat(distinct  mod(id, 6) order by  mod(id, 6) separator ',')    
+0     0     200     497.5     0,3     
+0     1     200     495.0     1,4     
+0     2     200     500.0     2,5     
+0     null     200     500.0     2,5     
+1     0     200     497.0     0,3     
+1     1     200     502.0     1,4     
+1     2     200     502.0     2,5     
+1     null     200     502.0     2,5     
+2     0     200     504.0     0,3     
+2     1     200     504.0     1,4     
+2     2     200     499.0     2,5     
+2     null     200     499.0     2,5     
+3     0     200     496.0     0,3     
+3     1     200     501.0     1,4     
+3     2     200     496.0     2,5     
+3     null     200     496.0     2,5     
+4     0     200     503.0     0,3     
+4     1     200     503.0     1,4     
+4     2     200     498.0     2,5     
+4     null     200     498.0     2,5     
+5     0     200     495.0     0,3     
+5     1     200     500.0     1,4     
+5     2     200     495.0     2,5     
+5     null     200     495.0     2,5     
+6     0     200     502.0     0,3     
+6     1     200     497.0     1,4     
+6     2     200     497.0     2,5     
+6     null     200     497.0     2,5     
 null     null     0     null     null     
 
 ===================================================
@@ -1391,7 +1391,7 @@ Query Plan:
   INDEX SCAN (dba.t_roll.i_gv) (key range: ([dba.t_roll].g>= ?:?  and [dba.t_roll].g<= ?:? ))
   group by nosort: true
 
-  rewritten query: select [dba.t_roll].g, [dba.t_roll].v, count(distinct [dba.t_roll].w), median([dba.t_roll].w),  char_length(group_concat([dba.t_roll].w order by ? separator ',')) from [dba.t_roll] [dba.t_roll] where ([dba.t_roll].g>= ?:?  and [dba.t_roll].g<= ?:? ) group by [dba.t_roll].g, [dba.t_roll].v with rollup using index [dba.t_roll].i_gv(+)
+  rewritten query: select [dba.t_roll].g, [dba.t_roll].v, count(distinct [dba.t_roll].w), median([dba.t_roll].w), group_concat(distinct  mod([dba.t_roll].id, ?) order by ? separator ',') from [dba.t_roll] [dba.t_roll] where ([dba.t_roll].g>= ?:?  and [dba.t_roll].g<= ?:? ) group by [dba.t_roll].g, [dba.t_roll].v with rollup using index [dba.t_roll].i_gv(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1400,35 +1400,35 @@ Trace Statistics:
      
 
 ===================================================
-g    v    count(distinct w)    median(w)    char_length(group_concat(w order by w separator ','))    
-0     0     200     497.5     1024     
-0     1     200     495.0     1024     
-0     2     200     500.0     1024     
-0     null     200     500.0     1024     
-1     0     200     497.0     1024     
-1     1     200     502.0     1024     
-1     2     200     502.0     1024     
-1     null     200     502.0     1024     
-2     0     200     504.0     1024     
-2     1     200     504.0     1024     
-2     2     200     499.0     1024     
-2     null     200     499.0     1024     
-3     0     200     496.0     1024     
-3     1     200     501.0     1024     
-3     2     200     496.0     1024     
-3     null     200     496.0     1024     
-4     0     200     503.0     1024     
-4     1     200     503.0     1024     
-4     2     200     498.0     1024     
-4     null     200     498.0     1024     
-5     0     200     495.0     1024     
-5     1     200     500.0     1024     
-5     2     200     495.0     1024     
-5     null     200     495.0     1024     
-6     0     200     502.0     1024     
-6     1     200     497.0     1024     
-6     2     200     497.0     1024     
-6     null     200     497.0     1024     
+g    v    count(distinct w)    median(w)    group_concat(distinct  mod(id, 6) order by  mod(id, 6) separator ',')    
+0     0     200     497.5     0,3     
+0     1     200     495.0     1,4     
+0     2     200     500.0     2,5     
+0     null     200     500.0     2,5     
+1     0     200     497.0     0,3     
+1     1     200     502.0     1,4     
+1     2     200     502.0     2,5     
+1     null     200     502.0     2,5     
+2     0     200     504.0     0,3     
+2     1     200     504.0     1,4     
+2     2     200     499.0     2,5     
+2     null     200     499.0     2,5     
+3     0     200     496.0     0,3     
+3     1     200     501.0     1,4     
+3     2     200     496.0     2,5     
+3     null     200     496.0     2,5     
+4     0     200     503.0     0,3     
+4     1     200     503.0     1,4     
+4     2     200     498.0     2,5     
+4     null     200     498.0     2,5     
+5     0     200     495.0     0,3     
+5     1     200     500.0     1,4     
+5     2     200     495.0     2,5     
+5     null     200     495.0     2,5     
+6     0     200     502.0     0,3     
+6     1     200     497.0     1,4     
+6     2     200     497.0     2,5     
+6     null     200     497.0     2,5     
 null     null     0     null     null     
 
 ===================================================
@@ -1487,34 +1487,348 @@ null     null     3810
 
 ===================================================
     
-Case 8: GROUP BY DESC with ROLLUP and a GROUP BY order the index does not have sort the groups     
+Case 8: GROUP BY DESC with ROLLUP reads the index backwards, also with a LIMIT; result = IGNORE INDEX     
 
 ===================================================
-g    v    count(*)    
-31     2     1904     
-31     1     1905     
-31     0     1905     
-31     null     5714     
-30     2     1905     
-30     1     1904     
-30     0     1905     
-30     null     5714     
-null     null     11428     
+g    v    count(*)    sum(v)    
+34     2     1904     3808     
+34     1     1905     1905     
+34     0     1905     0     
+34     null     5714     5713     
+33     2     1905     3810     
+33     1     1904     1904     
+33     0     1905     0     
+33     null     5714     5714     
+32     2     1905     3810     
+32     1     1905     1905     
+32     0     1904     0     
+32     null     5714     5715     
+31     2     1904     3808     
+31     1     1905     1905     
+31     0     1905     0     
+31     null     5714     5713     
+30     2     1905     3810     
+30     1     1904     1904     
+30     0     1905     0     
+30     null     5714     5714     
+29     2     1905     3810     
+29     1     1905     1905     
+29     0     1904     0     
+29     null     5714     5715     
+28     2     1904     3808     
+28     1     1905     1905     
+28     0     1905     0     
+28     null     5714     5713     
+27     2     1905     3810     
+27     1     1904     1904     
+27     0     1905     0     
+27     null     5714     5714     
+26     2     1905     3810     
+26     1     1905     1905     
+26     0     1904     0     
+26     null     5714     5715     
+25     2     1904     3808     
+25     1     1905     1905     
+25     0     1905     0     
+25     null     5714     5713     
+24     2     1905     3810     
+24     1     1904     1904     
+24     0     1905     0     
+24     null     5714     5714     
+23     2     1905     3810     
+23     1     1905     1905     
+23     0     1904     0     
+23     null     5714     5715     
+22     2     1904     3808     
+22     1     1905     1905     
+22     0     1905     0     
+22     null     5714     5713     
+21     2     1905     3810     
+21     1     1904     1904     
+21     0     1905     0     
+21     null     5714     5714     
+20     2     1905     3810     
+20     1     1905     1905     
+20     0     1904     0     
+20     null     5714     5715     
+19     2     1904     3808     
+19     1     1905     1905     
+19     0     1905     0     
+19     null     5714     5713     
+18     2     1905     3810     
+18     1     1904     1904     
+18     0     1905     0     
+18     null     5714     5714     
+17     2     1905     3810     
+17     1     1905     1905     
+17     0     1904     0     
+17     null     5714     5715     
+16     2     1904     3808     
+16     1     1905     1905     
+16     0     1905     0     
+16     null     5714     5713     
+15     2     1905     3810     
+15     1     1904     1904     
+15     0     1905     0     
+15     null     5714     5714     
+14     2     1905     3810     
+14     1     1905     1905     
+14     0     1904     0     
+14     null     5714     5715     
+13     2     1904     3808     
+13     1     1905     1905     
+13     0     1905     0     
+13     null     5714     5713     
+12     2     1905     3810     
+12     1     1904     1904     
+12     0     1905     0     
+12     null     5714     5714     
+11     2     1905     3810     
+11     1     1905     1905     
+11     0     1904     0     
+11     null     5714     5715     
+10     2     1905     3810     
+10     1     1905     1905     
+10     0     1905     0     
+10     null     5715     5715     
+9     2     1905     3810     
+9     1     1905     1905     
+9     0     1905     0     
+9     null     5715     5715     
+8     2     1905     3810     
+8     1     1905     1905     
+8     0     1905     0     
+8     null     5715     5715     
+7     2     1905     3810     
+7     1     1905     1905     
+7     0     1905     0     
+7     null     5715     5715     
+6     2     1905     3810     
+6     1     1905     1905     
+6     0     1905     0     
+6     null     5715     5715     
+5     2     1905     3810     
+5     1     1905     1905     
+5     0     1905     0     
+5     null     5715     5715     
+4     2     1905     3810     
+4     1     1905     1905     
+4     0     1905     0     
+4     null     5715     5715     
+3     2     1905     3810     
+3     1     1905     1905     
+3     0     1905     0     
+3     null     5715     5715     
+2     2     1905     3810     
+2     1     1905     1905     
+2     0     1905     0     
+2     null     5715     5715     
+1     2     1905     3810     
+1     1     1905     1905     
+1     0     1905     0     
+1     null     5715     5715     
+0     2     1905     3810     
+0     1     1905     1905     
+0     0     1904     0     
+0     null     5714     5715     
+null     null     200000     200001     
 
 ===================================================
 trace    
 
 Query Plan:
-  SORT (group by)
-    INDEX SCAN (dba.t_roll.i_gv) (key range: ([dba.t_roll].g>= ?:?  and [dba.t_roll].g<= ?:? ), covered: true)
+  INDEX SCAN (dba.t_roll.i_gv) (key range: ([dba.t_roll].g>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
 
-  rewritten query: select [dba.t_roll].g, [dba.t_roll].v, count(*) from [dba.t_roll] [dba.t_roll] where ([dba.t_roll].g>= ?:?  and [dba.t_roll].g<= ?:? ) group by [dba.t_roll].g desc , [dba.t_roll].v desc  with rollup using index [dba.t_roll].i_gv(+)
+  rewritten query: select [dba.t_roll].g, [dba.t_roll].v, count(*), sum([dba.t_roll].v) from [dba.t_roll] [dba.t_roll] where ([dba.t_roll].g>= ?:? ) group by [dba.t_roll].g desc , [dba.t_roll].v desc  with rollup using index [dba.t_roll].i_gv(+)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_roll.i_gv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
+
+===================================================
+g    v    count(*)    sum(v)    
+34     2     1904     3808     
+34     1     1905     1905     
+34     0     1905     0     
+34     null     5714     5713     
+33     2     1905     3810     
+33     1     1904     1904     
+33     0     1905     0     
+33     null     5714     5714     
+32     2     1905     3810     
+32     1     1905     1905     
+32     0     1904     0     
+32     null     5714     5715     
+31     2     1904     3808     
+31     1     1905     1905     
+31     0     1905     0     
+31     null     5714     5713     
+30     2     1905     3810     
+30     1     1904     1904     
+30     0     1905     0     
+30     null     5714     5714     
+29     2     1905     3810     
+29     1     1905     1905     
+29     0     1904     0     
+29     null     5714     5715     
+28     2     1904     3808     
+28     1     1905     1905     
+28     0     1905     0     
+28     null     5714     5713     
+27     2     1905     3810     
+27     1     1904     1904     
+27     0     1905     0     
+27     null     5714     5714     
+26     2     1905     3810     
+26     1     1905     1905     
+26     0     1904     0     
+26     null     5714     5715     
+25     2     1904     3808     
+25     1     1905     1905     
+25     0     1905     0     
+25     null     5714     5713     
+24     2     1905     3810     
+24     1     1904     1904     
+24     0     1905     0     
+24     null     5714     5714     
+23     2     1905     3810     
+23     1     1905     1905     
+23     0     1904     0     
+23     null     5714     5715     
+22     2     1904     3808     
+22     1     1905     1905     
+22     0     1905     0     
+22     null     5714     5713     
+21     2     1905     3810     
+21     1     1904     1904     
+21     0     1905     0     
+21     null     5714     5714     
+20     2     1905     3810     
+20     1     1905     1905     
+20     0     1904     0     
+20     null     5714     5715     
+19     2     1904     3808     
+19     1     1905     1905     
+19     0     1905     0     
+19     null     5714     5713     
+18     2     1905     3810     
+18     1     1904     1904     
+18     0     1905     0     
+18     null     5714     5714     
+17     2     1905     3810     
+17     1     1905     1905     
+17     0     1904     0     
+17     null     5714     5715     
+16     2     1904     3808     
+16     1     1905     1905     
+16     0     1905     0     
+16     null     5714     5713     
+15     2     1905     3810     
+15     1     1904     1904     
+15     0     1905     0     
+15     null     5714     5714     
+14     2     1905     3810     
+14     1     1905     1905     
+14     0     1904     0     
+14     null     5714     5715     
+13     2     1904     3808     
+13     1     1905     1905     
+13     0     1905     0     
+13     null     5714     5713     
+12     2     1905     3810     
+12     1     1904     1904     
+12     0     1905     0     
+12     null     5714     5714     
+11     2     1905     3810     
+11     1     1905     1905     
+11     0     1904     0     
+11     null     5714     5715     
+10     2     1905     3810     
+10     1     1905     1905     
+10     0     1905     0     
+10     null     5715     5715     
+9     2     1905     3810     
+9     1     1905     1905     
+9     0     1905     0     
+9     null     5715     5715     
+8     2     1905     3810     
+8     1     1905     1905     
+8     0     1905     0     
+8     null     5715     5715     
+7     2     1905     3810     
+7     1     1905     1905     
+7     0     1905     0     
+7     null     5715     5715     
+6     2     1905     3810     
+6     1     1905     1905     
+6     0     1905     0     
+6     null     5715     5715     
+5     2     1905     3810     
+5     1     1905     1905     
+5     0     1905     0     
+5     null     5715     5715     
+4     2     1905     3810     
+4     1     1905     1905     
+4     0     1905     0     
+4     null     5715     5715     
+3     2     1905     3810     
+3     1     1905     1905     
+3     0     1905     0     
+3     null     5715     5715     
+2     2     1905     3810     
+2     1     1905     1905     
+2     0     1905     0     
+2     null     5715     5715     
+1     2     1905     3810     
+1     1     1905     1905     
+1     0     1905     0     
+1     null     5715     5715     
+0     2     1905     3810     
+0     1     1905     1905     
+0     0     1904     0     
+0     null     5714     5715     
+null     null     200000     200001     
+
+===================================================
+g    v    count(*)    sum(v)    
+34     2     1904     3808     
+34     1     1905     1905     
+34     0     1905     0     
+34     null     5714     5713     
+33     2     1905     3810     
+33     1     1904     1904     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_roll.i_gv) (key range: ([dba.t_roll].g>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: select [dba.t_roll].g, [dba.t_roll].v, count(*), sum([dba.t_roll].v) from [dba.t_roll] [dba.t_roll] where ([dba.t_roll].g>= ?:? ) group by [dba.t_roll].g desc , [dba.t_roll].v desc  with rollup having groupby_num()<=? using index [dba.t_roll].i_gv(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_roll.i_gv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+g    v    count(*)    sum(v)    
+34     2     1904     3808     
+34     1     1905     1905     
+34     0     1905     0     
+34     null     5714     5713     
+33     2     1905     3810     
+33     1     1904     1904     
+
+===================================================
+    
+Case 9: a GROUP BY order the index does not have sorts the groups     
 
 ===================================================
 v    g    count(*)    

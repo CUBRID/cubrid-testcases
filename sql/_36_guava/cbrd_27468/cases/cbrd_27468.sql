@@ -17,9 +17,14 @@
  *    Case 3:  one key, and three keys over a range
  *    Case 4:  NULL group keys: the NULL group of a key and its subtotal are different rows
  *    Case 5:  HAVING, and ORDER BY over the subtotals
- *    Case 6:  COUNT DISTINCT, GROUP_CONCAT and MEDIAN, which aggregate serially
+ *    Case 6:  COUNT DISTINCT, GROUP_CONCAT and MEDIAN, which aggregate serially. GROUP_CONCAT takes
+ *             a few values, so its result is compared whole, not cut at group_concat_max_len.
+ *             Their subtotal and total rows are wrong in both plans (CBRD-27930): this case only
+ *             checks that the two plans agree, and its answer changes when CBRD-27930 is fixed.
  *    Case 7:  an empty range, and the range of one key of g
- *    Case 8:  GROUP BY DESC with ROLLUP and a GROUP BY order the index does not have still sort
+ *    Case 8:  GROUP BY DESC with ROLLUP reads the index backwards, in parallel (CBRD-27728), also
+ *             with a LIMIT that stops the scan
+ *    Case 9:  a GROUP BY order the index does not have still sorts
  */
 
 drop table if exists t_digit, t_roll;
@@ -78,9 +83,9 @@ select /*+ recompile */ g, v, count(*) from t_roll ignore index (i_gv, i_gvx, i_
 
 
 evaluate 'Case 6: COUNT DISTINCT, GROUP_CONCAT and MEDIAN aggregate serially; result = IGNORE INDEX';
-select /*+ recompile */ g, v, count(distinct w), median(w), length(group_concat(w order by w separator ',')) from t_roll force index (i_gv) where g between 0 and 6 group by g, v with rollup;
+select /*+ recompile */ g, v, count(distinct w), median(w), group_concat(distinct mod(id, 6) order by mod(id, 6) separator ',') from t_roll force index (i_gv) where g between 0 and 6 group by g, v with rollup;
 show trace;
-select /*+ recompile */ g, v, count(distinct w), median(w), length(group_concat(w order by w separator ',')) from t_roll ignore index (i_gv, i_gvx, i_hg) where g between 0 and 6 group by g, v with rollup;
+select /*+ recompile */ g, v, count(distinct w), median(w), group_concat(distinct mod(id, 6) order by mod(id, 6) separator ',') from t_roll ignore index (i_gv, i_gvx, i_hg) where g between 0 and 6 group by g, v with rollup;
 
 
 evaluate 'Case 7: an empty range, and the range of one key of g; result = IGNORE INDEX';
@@ -92,9 +97,16 @@ show trace;
 select /*+ recompile */ g, v, count(*) from t_roll ignore index (i_gv, i_gvx, i_hg) where g = 7 and v < 2 group by g, v with rollup;
 
 
-evaluate 'Case 8: GROUP BY DESC with ROLLUP and a GROUP BY order the index does not have sort the groups';
-select /*+ recompile */ g, v, count(*) from t_roll force index (i_gv) where g between 30 and 31 group by g desc, v desc with rollup;
+evaluate 'Case 8: GROUP BY DESC with ROLLUP reads the index backwards, also with a LIMIT; result = IGNORE INDEX';
+select /*+ recompile */ g, v, count(*), sum(v) from t_roll force index (i_gv) where g >= 0 group by g desc, v desc with rollup;
 show trace;
+select /*+ recompile */ g, v, count(*), sum(v) from t_roll ignore index (i_gv, i_gvx, i_hg) where g >= 0 group by g desc, v desc with rollup;
+select /*+ recompile */ g, v, count(*), sum(v) from t_roll force index (i_gv) where g >= 0 group by g desc, v desc with rollup limit 6;
+show trace;
+select /*+ recompile */ g, v, count(*), sum(v) from t_roll ignore index (i_gv, i_gvx, i_hg) where g >= 0 group by g desc, v desc with rollup limit 6;
+
+
+evaluate 'Case 9: a GROUP BY order the index does not have sorts the groups';
 select /*+ recompile */ v, g, count(*) from t_roll force index (i_gv) where g between 30 and 31 group by v, g with rollup;
 show trace;
 
