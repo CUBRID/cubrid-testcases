@@ -41,6 +41,12 @@
 ===================================================
 0
 ===================================================
+20
+===================================================
+0
+===================================================
+0
+===================================================
     
 [1-1] covering + key filter on (i1, sqrt(d1))     
 
@@ -754,6 +760,116 @@ select max(v.d?) from fi_d v where (v.d?> ?:? ) using index v.idx_fi_d
 ===================================================
 result    
 PASS     
+
+===================================================
+    
+[11-1] (i1, j, sqrt(d1)) multi-range optimization projecting the expression     
+
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
+
+Query plan:
+iscan
+    class: fi_r node[?]
+    index: idx_fi_r term[?] (covers) (multi_range_opt)
+    cost:  ? card ?
+Query stmt:
+select fi_r.j,  sqrt(fi_r.d?), case when  sqrt(fi_r.d?)=?*(?-fi_r.j) then 'PASS' else 'FAIL' end from fi_r fi_r where ((fi_r.i?= ?:? ) or (fi_r.i?= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
+
+===================================================
+    
+[11-2] (i1, j, sqrt(d1)) multi-range optimization with the expression in the key filter     
+
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
+
+Query plan:
+iscan
+    class: fi_r node[?]
+    index: idx_fi_r term[?] (covers) (multi_range_opt)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_r.j,  sqrt(fi_r.d?), case when  sqrt(fi_r.d?)=?*(?-fi_r.j) then 'PASS' else 'FAIL' end from fi_r fi_r where ((fi_r.i?= ?:? ) or (fi_r.i?= ?:? )) and ( sqrt(fi_r.d?)> ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
+
+===================================================
+    
+[11-3] (i1, j, sqrt(d1)) multi-range optimization in descending order     
+
+===================================================
+i1    j    r    chk    
+1     999     4.0     PASS     
+2     998     8.0     PASS     
+1     994     24.0     PASS     
+2     993     28.0     PASS     
+1     989     44.0     PASS     
+
+Query plan:
+iscan
+    class: fi_r node[?]
+    index: idx_fi_r term[?] (covers) (multi_range_opt) (desc_index)
+    sort:  ? desc, ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select fi_r.i?, fi_r.j,  sqrt(fi_r.d?), case when  sqrt(fi_r.d?)=?*(?-fi_r.j) and fi_r.i?=(?-fi_r.j) mod ? then 'PASS' else 'FAIL' end from fi_r fi_r where ((fi_r.i?= ?:? ) or (fi_r.i?= ?:? )) order by ? desc  for orderby_num()<= ?:? 
+===================================================
+i1    j    r    chk    
+1     999     4.0     PASS     
+2     998     8.0     PASS     
+1     994     24.0     PASS     
+2     993     28.0     PASS     
+1     989     44.0     PASS     
+
+===================================================
+    
+[11-4] (i1, j, sqrt(d1)) multi-range optimization by FOR ORDERBY_NUM ()     
+
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
+
+Query plan:
+iscan
+    class: fi_r node[?]
+    index: idx_fi_r term[?] (covers) (multi_range_opt)
+    cost:  ? card ?
+Query stmt:
+select fi_r.j,  sqrt(fi_r.d?), case when  sqrt(fi_r.d?)=?*(?-fi_r.j) then 'PASS' else 'FAIL' end from fi_r fi_r where ((fi_r.i?= ?:? ) or (fi_r.i?= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+j    r    chk    
+983     68.0     PASS     
+984     64.0     PASS     
+988     48.0     PASS     
+989     44.0     PASS     
+993     28.0     PASS     
 
 ===================================================
 0

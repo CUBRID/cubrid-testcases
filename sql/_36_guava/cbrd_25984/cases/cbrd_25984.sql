@@ -28,10 +28,14 @@
  *   10. covering without the expression in the query: aggregate / analytic over key columns, the
  *       expression only in a key filter, only in a subquery over another table, inline view -
  *       results over fi_d are also checked against its heap-only copy fi_dh
+ *   11. multi-range optimization (IN list + ORDER BY ... LIMIT / FOR ORDERBY_NUM ()) covered by
+ *       (i1, j, sqrt(d1)): the expression read back from the kept top-N keys, also in the key filter
+ *       and in descending order; each row checks the expression against 4 * (1000 - j) and the
+ *       NO_COVERING_IDX twin (without the optimization for the key filter) prints the same rows
  *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved.
  */
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k;
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -59,7 +63,11 @@ insert into fi_w values (1, 16), (2, 64), (3, 144), (4, 256), (5, 400);
 create table fi_k (x int primary key, cnt int);
 insert into fi_k values (1, 0), (2, 0), (3, 0), (4, 0);
 
-update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k with fullscan;
+create table fi_r (i1 int, j int, d1 double);
+insert into fi_r select rownum % 5, 1000 - rownum, rownum * rownum * 16 from db_class limit 20;
+create index idx_fi_r on fi_r (i1, j, sqrt(d1));
+
+update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r with fullscan;
 
 evaluate '[1-1] covering + key filter on (i1, sqrt(d1))';
 --@queryplan
@@ -319,4 +327,24 @@ from (select max(x) mx from (select d1 x from fi_d where d1 > 0 using index idx_
      (select /*+ NO_COVERING_IDX */ max(x) mx from (select d1 x from fi_d where d1 > 0 using index idx_fi_d) v) s,
      (select max(x) mx from (select d1 x from fi_dh where d1 > 0) v) h;
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k;
+evaluate '[11-1] (i1, j, sqrt(d1)) multi-range optimization projecting the expression';
+--@queryplan
+select j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j limit 5;
+select /*+ NO_COVERING_IDX */ j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j limit 5;
+
+evaluate '[11-2] (i1, j, sqrt(d1)) multi-range optimization with the expression in the key filter';
+--@queryplan
+select j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) and sqrt(d1) > 20 order by j limit 5;
+select /*+ NO_COVERING_IDX NO_MULTI_RANGE_OPT */ j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) and sqrt(d1) > 20 order by j limit 5;
+
+evaluate '[11-3] (i1, j, sqrt(d1)) multi-range optimization in descending order';
+--@queryplan
+select i1, j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) and i1 = (1000 - j) % 5 then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j desc limit 5;
+select /*+ NO_COVERING_IDX */ i1, j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) and i1 = (1000 - j) % 5 then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j desc limit 5;
+
+evaluate '[11-4] (i1, j, sqrt(d1)) multi-range optimization by FOR ORDERBY_NUM ()';
+--@queryplan
+select j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j for orderby_num () <= 5;
+select /*+ NO_COVERING_IDX */ j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j for orderby_num () <= 5;
+
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r;
