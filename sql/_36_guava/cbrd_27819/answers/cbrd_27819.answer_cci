@@ -589,12 +589,15 @@ c6ai     9007199254740992
 c6ai     9007199254740993     
 
 Query plan:
-iscan
-    class: t_big node[?]
-    index: i_big_b term[?] (covers)
+temp(order by)
+    subplan: iscan
+                 class: t_big node[?]
+                 index: i_big_b term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select 'c?ai', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+select 'c?ai', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+) order by ?
 ===================================================
 q    b    
 c6an     9007199254740992     
@@ -605,12 +608,15 @@ q    b
 c6bi     9007199254740994     
 
 Query plan:
-iscan
-    class: t_big node[?]
-    index: i_big_b term[?] (covers)
+temp(order by)
+    subplan: iscan
+                 class: t_big node[?]
+                 index: i_big_b term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select 'c?bi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+select 'c?bi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+) order by ?
 ===================================================
 q    b    
 c6bn     9007199254740994     
@@ -677,12 +683,15 @@ c6fi     144115188075855872
 c6fi     144115188075855873     
 
 Query plan:
-iscan
-    class: t_big node[?]
-    index: i_big_b term[?] (covers)
+temp(order by)
+    subplan: iscan
+                 class: t_big node[?]
+                 index: i_big_b term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select 'c?fi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+)
+select 'c?fi', t_big.b from t_big t_big where t_big.b= ?:?  using index t_big.i_big_b(+) order by ?
 ===================================================
 q    b    
 c6fn     144115188075855870     
@@ -1553,7 +1562,6 @@ Case 12: an equality term copied into another term (col = const and col2 = col)
 
 ===================================================
 q    id    
-c12ai     1     
 c12ai     2     
 
 Query plan:
@@ -1566,10 +1574,9 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select 'c?ai', t_eq.id from t_eq t_eq where t_eq.c= ?:?  and t_eq.b= ?:?  using index t_eq.i_eq_b(+) order by ?
+select 'c?ai', t_eq.id from t_eq t_eq where t_eq.b= ?:?  and t_eq.c=t_eq.b using index t_eq.i_eq_b(+) order by ?
 ===================================================
 q    id    
-c12ae     1     
 c12ae     2     
 
 ===================================================
@@ -1578,7 +1585,7 @@ c12an     2
 
 ===================================================
 q    count(*)    
-c12bi     0     
+c12bi     1     
 
 Query plan:
 iscan
@@ -1587,10 +1594,10 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select 'c?bi', count(*) from t_eq t_eq where t_eq.m= ?:?  and t_eq.n= ?:?  using index t_eq.i_eq_n(+)
+select 'c?bi', count(*) from t_eq t_eq where t_eq.n= ?:?  and t_eq.m=t_eq.n using index t_eq.i_eq_n(+)
 ===================================================
 q    count(*)    
-c12be     0     
+c12be     1     
 
 ===================================================
 q    count(*)    
