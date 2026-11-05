@@ -32,10 +32,18 @@
  *       (i1, j, sqrt(d1)): the expression read back from the kept top-N keys, also in the key filter
  *       and in descending order; each row checks the expression against 4 * (1000 - j) and the
  *       NO_COVERING_IDX twin (without the optimization for the key filter) prints the same rows
+ *   12. covering decisions that must follow what is read from the key: a self join mixing both aliases
+ *       in mod(a, b), a plain index (d) next to a function index on sqrt(d), FOR UPDATE / DELETE without
+ *       the expression (key filter kept), to_datetime_tz and utf8_en_ci results whose equal keys differ,
+ *       during / after join terms of an outer join, a loose index scan under hash / merge join, and
+ *       single-column indexes over two arguments (mod(a, b), left(s, n)) read from the key; an expression
+ *       whose value depends on the session time zone or date language (date_format over a TIMESTAMP,
+ *       date_format(d, '%W')) is not read from the key, and the parameters are restored afterwards
  *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved.
  */
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r;
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
+  fi_ts, fi_dl;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -67,7 +75,52 @@ create table fi_r (i1 int, j int, d1 double);
 insert into fi_r select rownum % 5, 1000 - rownum, rownum * rownum * 16 from db_class limit 20;
 create index idx_fi_r on fi_r (i1, j, sqrt(d1));
 
-update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r with fullscan;
+create table fi_s (k int, a int, b int);
+insert into fi_s select rownum, rownum + 6, rownum % 4 + 2 from db_class limit 5;
+create index idx_fi_s on fi_s (k, mod(a, b));
+
+create table fi_p (d double);
+insert into fi_p values (1), (4), (9);
+create index idx_fi_pd on fi_p (d);
+create index idx_fi_pf on fi_p (sqrt(d));
+
+create table fi_q (i int, j int, d double);
+insert into fi_q values (1, 1, 1), (2, 3, 4), (3, 2, 9), (4, 3, 16);
+create index idx_fi_q on fi_q (i, j, sqrt(d));
+
+create table fi_z (i int, s varchar(40));
+insert into fi_z values (1, '2020-01-01 10:00:00 +09:00'), (1, '2020-01-01 01:00:00 +00:00');
+create index idx_fi_z on fi_z (i, to_datetime_tz(s));
+
+create table fi_e (n int, s varchar(10) collate utf8_bin);
+insert into fi_e values (1, 'ABC'), (1, 'abc');
+create index idx_fi_e on fi_e (n, s collate utf8_en_ci);
+
+create table fi_g (x int, d double);
+insert into fi_g values (1, 4), (2, 0.25);
+create index idx_fi_g on fi_g (x, sqrt(d));
+create table fi_h (k int);
+insert into fi_h values (1), (2);
+
+create table fi_v (x int);
+insert into fi_v values (1), (2), (3);
+create table fi_n (k int, d double);
+insert into fi_n values (1, 4), (3, 9);
+create index idx_fi_n on fi_n (k, d, sqrt(d));
+
+create table fi_l (a int, d double, j int);
+insert into fi_l values (1, 4, 1), (1, 4, 2), (2, 9, 1);
+create index idx_fi_l on fi_l (a, sqrt(d), j);
+
+create table fi_mo (a int, b int);
+insert into fi_mo values (7, 3), (9, 4), (8, 4);
+create index idx_fi_mo on fi_mo (mod(a, b));
+
+create table fi_ls (s varchar(20), n int);
+insert into fi_ls values ('abcdef', 3), ('xyz', 2), ('ab', 1);
+create index idx_fi_ls on fi_ls (left(s, n));
+
+update statistics on fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls with fullscan;
 
 evaluate '[1-1] covering + key filter on (i1, sqrt(d1))';
 --@queryplan
@@ -347,4 +400,92 @@ evaluate '[11-4] (i1, j, sqrt(d1)) multi-range optimization by FOR ORDERBY_NUM (
 select j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j for orderby_num () <= 5;
 select /*+ NO_COVERING_IDX */ j, sqrt(d1) r, case when sqrt(d1) = 4 * (1000 - j) then 'PASS' else 'FAIL' end chk from fi_r where i1 in (1, 2) order by j for orderby_num () <= 5;
 
-drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r;
+evaluate '[12-1] self join over (k, mod(a, b)): an expression mixing both aliases is not read from the key';
+--@queryplan
+select o.k, mod(o.a, o.b) r, mod(o.a, i.b) m, case when mod(o.a, i.b) <=> mod(o.a, o.b) then 'PASS' else 'FAIL' end chk from fi_s o, fi_s i where o.k > 0 and i.k = o.k order by 1;
+select /*+ NO_COVERING_IDX */ o.k, mod(o.a, o.b) r, mod(o.a, i.b) m, case when mod(o.a, i.b) <=> mod(o.a, o.b) then 'PASS' else 'FAIL' end chk from fi_s o, fi_s i where o.k > 0 and i.k = o.k order by 1;
+select o.k, mod(o.a, o.b) r, mod(i.a, o.b) m, case when mod(i.a, o.b) <=> mod(o.a, o.b) then 'PASS' else 'FAIL' end chk from fi_s o, fi_s i where o.k > 0 and i.k = o.k order by 1;
+
+evaluate '[12-2] plain index (d) of a table with a function index on sqrt(d): not covered, as before';
+--@queryplan
+select sqrt(d) r from fi_p where d > 0 using index idx_fi_pd order by 1;
+select /*+ NO_COVERING_IDX */ sqrt(d) r from fi_p where d > 0 using index idx_fi_pd order by 1;
+
+evaluate '[12-3] (i, j, sqrt(d)) without the expression: FOR UPDATE / DELETE keep the key filter';
+--@queryplan
+select i, j from fi_q where i > 0 and j <> 3 order by 1 for update;
+commit;
+--@queryplan
+delete from fi_q where i > 0 and j <> 3;
+select case when count(*) = 2 and min(j) = 3 then 'PASS' else 'FAIL' end as result from fi_q;
+
+evaluate '[12-4] (i, to_datetime_tz(s)): equal keys of different time zones are not read from the key';
+--@queryplan
+select to_char(to_datetime_tz(s), 'YYYY-MM-DD HH24:MI:SS TZH:TZM') r from fi_z where i = 1 order by 1;
+select /*+ NO_COVERING_IDX */ to_char(to_datetime_tz(s), 'YYYY-MM-DD HH24:MI:SS TZH:TZM') r from fi_z where i = 1 order by 1;
+select i from fi_z where i = 1 and to_char(to_datetime_tz(s), 'TZH:TZM') = '+00:00';
+select /*+ NO_COVERING_IDX */ i from fi_z where i = 1 and to_char(to_datetime_tz(s), 'TZH:TZM') = '+00:00';
+select case when p.g = s.g then 'PASS' else 'FAIL' end as result
+from (select group_concat(r order by r separator ',') g from (select /*+ NO_MERGE */ to_char(to_datetime_tz(s), 'TZH:TZM') r from fi_z where i = 1) v) p,
+     (select group_concat(r order by r separator ',') g from (select /*+ NO_MERGE NO_COVERING_IDX */ to_char(to_datetime_tz(s), 'TZH:TZM') r from fi_z where i = 1) v) s;
+
+evaluate '[12-5] (n, s collate utf8_en_ci): case-insensitive equal keys are not read from the key';
+--@queryplan
+select ascii(s collate utf8_en_ci) a from fi_e where n > 0 using index idx_fi_e(+) order by 1;
+select /*+ NO_COVERING_IDX */ ascii(s collate utf8_en_ci) a from fi_e where n > 0 using index idx_fi_e(+) order by 1;
+
+evaluate '[12-6] outer join: expression in the ON condition of the preserved side (during join)';
+--@queryplan
+select o.x, i.k from fi_g o left join fi_h i on o.x = i.k and sqrt(o.d) > 1 where o.x > 0 order by 1;
+select /*+ NO_COVERING_IDX */ o.x, i.k from fi_g o left join fi_h i on o.x = i.k and sqrt(o.d) > 1 where o.x > 0 order by 1;
+
+evaluate '[12-7] outer join: expression in the WHERE clause of the null-supplying side (after join)';
+--@queryplan
+select o.x, sqrt(i.d) r from fi_v o left join fi_n i on o.x = i.k where sqrt(i.d) is null order by 1;
+select /*+ NO_COVERING_IDX */ o.x, sqrt(i.d) r from fi_v o left join fi_n i on o.x = i.k where sqrt(i.d) is null order by 1;
+
+evaluate '[12-8] loose index scan under a hash / merge join with the expression projected';
+--@queryplan
+select /*+ INDEX_LS USE_HASH */ distinct o.a, sqrt(o.d) r from fi_l o, fi_h i where o.a = i.k and o.a > 0 order by 1;
+select /*+ INDEX_LS USE_MERGE */ distinct o.a, sqrt(o.d) r from fi_l o, fi_h i where o.a = i.k and o.a > 0 order by 1;
+select /*+ NO_COVERING_IDX */ distinct o.a, sqrt(o.d) r from fi_l o, fi_h i where o.a = i.k and o.a > 0 order by 1;
+
+evaluate '[12-9] single-column function index over two arguments: mod(a, b)';
+--@queryplan
+select mod(a, b) r from fi_mo where mod(a, b) > 0 using index idx_fi_mo(+) order by 1;
+select /*+ NO_COVERING_IDX */ mod(a, b) r from fi_mo where mod(a, b) > 0 using index idx_fi_mo(+) order by 1;
+
+evaluate '[12-10] single-column function index over two arguments: left(s, n)';
+--@queryplan
+select left(s, n) r from fi_ls where left(s, n) > 'a' using index idx_fi_ls(+) order by 1;
+select /*+ NO_COVERING_IDX */ left(s, n) r from fi_ls where left(s, n) > 'a' using index idx_fi_ls(+) order by 1;
+
+evaluate '[12-11] (i, date_format(ts, ''%H'')) over a TIMESTAMP stored in another session time zone';
+set system parameters 'timezone=+09:00';
+create table fi_ts (i int, ts timestamp);
+create index idx_fi_ts on fi_ts (i, date_format(ts, '%H'));
+insert into fi_ts values (1, timestamp'2015-02-24 12:30');
+set system parameters 'timezone=+00:00';
+--@queryplan
+select /*+ recompile */ i from fi_ts where i = 1 and date_format(ts, '%H') <> '12' using index idx_fi_ts;
+select /*+ recompile NO_COVERING_IDX */ i from fi_ts where i = 1 and date_format(ts, '%H') <> '12' using index idx_fi_ts;
+--@queryplan
+select /*+ recompile */ date_format(ts, '%H') r from fi_ts where i = 1 using index idx_fi_ts;
+select /*+ recompile NO_COVERING_IDX */ date_format(ts, '%H') r from fi_ts where i = 1 using index idx_fi_ts;
+set system parameters 'timezone=default';
+
+evaluate '[12-12] (i, date_format(d, ''%W'')) read in another session date language';
+create table fi_dl (i int, d date);
+create index idx_fi_dl on fi_dl (i, date_format(d, '%W'));
+insert into fi_dl values (1, date '2020-01-06');
+set system parameters 'intl_date_lang=ko_KR';
+--@queryplan
+select /*+ recompile */ date_format(d, '%W') r from fi_dl where i = 1;
+select /*+ recompile NO_COVERING_IDX */ date_format(d, '%W') r from fi_dl where i = 1;
+--@queryplan
+select /*+ recompile */ i from fi_dl where i = 1 and date_format(d, '%W') <> 'Monday';
+select /*+ recompile NO_COVERING_IDX */ i from fi_dl where i = 1 and date_format(d, '%W') <> 'Monday';
+set system parameters 'intl_date_lang=en_US';
+
+drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
+  fi_ts, fi_dl;

@@ -47,6 +47,76 @@
 ===================================================
 0
 ===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
     
 [1-1] covering + key filter on (i1, sqrt(d1))     
 
@@ -871,5 +941,402 @@ j    r    chk
 989     44.0     PASS     
 993     28.0     PASS     
 
+===================================================
+    
+[12-1] self join over (k, mod(a, b)): an expression mixing both aliases is not read from the key     
+
+===================================================
+k    r    m    chk    
+1     1     1     PASS     
+2     0     0     PASS     
+3     4     4     PASS     
+4     0     0     PASS     
+5     2     2     PASS     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: idx_fi_s term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: idx_fi_s term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select o.k,  mod(o.a, o.b),  mod(o.a, i.b), case when  mod(o.a, i.b)<=> mod(o.a, o.b) then 'PASS' else 'FAIL' end from fi_s o, fi_s i where (o.k> ?:? ) and i.k=o.k order by ?
+/* ---> skip ORDER BY */
+===================================================
+k    r    m    chk    
+1     1     1     PASS     
+2     0     0     PASS     
+3     4     4     PASS     
+4     0     0     PASS     
+5     2     2     PASS     
+
+===================================================
+k    r    m    chk    
+1     1     1     PASS     
+2     0     0     PASS     
+3     4     4     PASS     
+4     0     0     PASS     
+5     2     2     PASS     
+
+===================================================
+    
+[12-2] plain index (d) of a table with a function index on sqrt(d): not covered, as before     
+
+===================================================
+r    
+1.0     
+2.0     
+3.0     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_p node[?]
+                 index: idx_fi_pd term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  sqrt(fi_p.d) from fi_p fi_p where (fi_p.d> ?:? ) using index fi_p.idx_fi_pd order by ?
+===================================================
+r    
+1.0     
+2.0     
+3.0     
+
+===================================================
+    
+[12-3] (i, j, sqrt(d)) without the expression: FOR UPDATE / DELETE keep the key filter     
+
+===================================================
+i    j    
+1     1     
+3     2     
+
+Query plan:
+iscan
+    class: fi_q node[?]
+    index: idx_fi_q term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_q.i, fi_q.j from fi_q fi_q where (fi_q.i> ?:? ) and fi_q.j<>? for update of fi_q order by ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+2
+Query plan:
+iscan
+    class: fi_q node[?]
+    index: idx_fi_q term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_q,class fi_q from fi_q fi_q where (fi_q.i> ?:? ) and fi_q.j<>?
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[12-4] (i, to_datetime_tz(s)): equal keys of different time zones are not read from the key     
+
+===================================================
+r    
+2020-01-01 01:00:00 +00:00     
+2020-01-01 10:00:00 +09:00     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_z node[?]
+                 index: idx_fi_z term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  to_char( to_datetime_tz(fi_z.s), 'YYYY-MM-DD HH?:MI:SS TZH:TZM') from fi_z fi_z where fi_z.i= ?:?  order by ?
+===================================================
+r    
+2020-01-01 01:00:00 +00:00     
+2020-01-01 10:00:00 +09:00     
+
+===================================================
+i    
+1     
+
+===================================================
+i    
+1     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+[12-5] (n, s collate utf8_en_ci): case-insensitive equal keys are not read from the key     
+
+===================================================
+a    
+65     
+97     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_e node[?]
+                 index: idx_fi_e term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  ascii(fi_e.s collate utf?_en_ci) from fi_e fi_e where (fi_e.n> ?:? ) using index fi_e.idx_fi_e(+) order by ?
+===================================================
+a    
+65     
+97     
+
+===================================================
+    
+[12-6] outer join: expression in the ON condition of the preserved side (during join)     
+
+===================================================
+x    k    
+1     1     
+2     null     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: iscan
+               class: o node[?]
+               index: idx_fi_g term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: i node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.x, i.k from fi_g o left outer join fi_h i on ( sqrt(o.d)> ?:? ) and o.x=i.k where (o.x> ?:? ) order by ?
+/* ---> skip ORDER BY */
+===================================================
+x    k    
+1     1     
+2     null     
+
+===================================================
+    
+[12-7] outer join: expression in the WHERE clause of the null-supplying side (after join)     
+
+===================================================
+x    r    
+2     null     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (left outer join)
+                 outer: sscan
+                            class: o node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: i node[?]
+                            index: idx_fi_n term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.x,  sqrt(i.d) from fi_v o left outer join fi_n i on o.x=i.k where  sqrt(i.d) is null  order by ?
+===================================================
+x    r    
+2     null     
+
+===================================================
+    
+[12-8] loose index scan under a hash / merge join with the expression projected     
+
+===================================================
+a    r    
+1     2.0     
+2     3.0     
+
+Query plan:
+temp(distinct)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: o node[?]
+                            index: idx_fi_l term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: i node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH INDEX_LS */ distinct o.a,  sqrt(o.d) from fi_l o, fi_h i where o.a=i.k and (o.a> ?:? ) order by ?
+===================================================
+a    r    
+1     2.0     
+2     3.0     
+
+===================================================
+a    r    
+1     2.0     
+2     3.0     
+
+===================================================
+    
+[12-9] single-column function index over two arguments: mod(a, b)     
+
+===================================================
+r    
+1     
+1     
+
+Query plan:
+iscan
+    class: fi_mo node[?]
+    index: idx_fi_mo term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  mod(fi_mo.a, fi_mo.b) from fi_mo fi_mo where ( mod(fi_mo.a, fi_mo.b)> ?:? ) using index fi_mo.idx_fi_mo(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+r    
+1     
+1     
+
+===================================================
+    
+[12-10] single-column function index over two arguments: left(s, n)     
+
+===================================================
+r    
+abc     
+xy     
+
+Query plan:
+iscan
+    class: fi_ls node[?]
+    index: idx_fi_ls term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select  left(fi_ls.s, fi_ls.n) from fi_ls fi_ls where ( left(fi_ls.s, fi_ls.n)> ?:? ) using index fi_ls.idx_fi_ls(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+r    
+abc     
+xy     
+
+===================================================
+    
+[12-11] (i, date_format(ts, '%H')) over a TIMESTAMP stored in another session time zone     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+i    
+1     
+
+Query plan:
+iscan
+    class: fi_ts node[?]
+    index: idx_fi_ts term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_ts.i from fi_ts fi_ts where  date_format(fi_ts.ts, '%H')<>'?' and fi_ts.i= ?:?  using index fi_ts.idx_fi_ts
+===================================================
+i    
+1     
+
+===================================================
+r    
+03     
+
+Query plan:
+iscan
+    class: fi_ts node[?]
+    index: idx_fi_ts term[?]
+    cost:  ? card ?
+Query stmt:
+select  date_format(fi_ts.ts, '%H') from fi_ts fi_ts where fi_ts.i= ?:?  using index fi_ts.idx_fi_ts
+===================================================
+r    
+03     
+
+===================================================
+0
+===================================================
+    
+[12-12] (i, date_format(d, '%W')) read in another session date language     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+r    
+월요일     
+
+Query plan:
+iscan
+    class: fi_dl node[?]
+    index: idx_fi_dl term[?]
+    cost:  ? card ?
+Query stmt:
+select  date_format(fi_dl.d, '%W') from fi_dl fi_dl where fi_dl.i= ?:? 
+===================================================
+r    
+월요일     
+
+===================================================
+i    
+1     
+
+Query plan:
+iscan
+    class: fi_dl node[?]
+    index: idx_fi_dl term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_dl.i from fi_dl fi_dl where  date_format(fi_dl.d, '%W')<>'Monday' and fi_dl.i= ?:? 
+===================================================
+i    
+1     
+
+===================================================
+0
 ===================================================
 0
