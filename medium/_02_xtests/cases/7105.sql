@@ -27,6 +27,6 @@ rollback;
 create class eeeoo1 (a int, b int, c int, unique(a,b));
 create class eeeoo2 (a int, b int, d int, unique(b,d));
 create class subeeeoo under eeeoo1, eeeoo2 inherit a of eeeoo1, b of eeeoo2;
-select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where  class_name like '%eeeoo%';
+select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class where  class_name like '%eeeoo%' order by class_name;
 
 rollback;
