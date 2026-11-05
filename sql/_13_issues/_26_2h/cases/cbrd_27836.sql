@@ -11,9 +11,11 @@
  *    Case 2: ALL CLASSES (sampling) collects the same histograms again: SAMPLING and SAMPLING SCAN
  *    Case 3: one class WITH FULLSCAN collects its histograms again: FULLSCAN and FULL SCAN for that class only
  *    Case 4: ALL CLASSES WITH FULLSCAN, NO HISTOGRAM: FULLSCAN, and the histograms are left as they are
+ *    Case 5: ALL CLASSES WITH FULLSCAN on a class without a histogrammable column (its statistics come from the
+ *            histogram pass all the same) and on a partitioned class and its partitions: FULLSCAN for each
  */
 
-drop table if exists t_27836_1, t_27836_2;
+drop table if exists t_27836_1, t_27836_2, t_27836_3, t_27836_4;
 
 create table t_27836_1 (a int, b int);
 create index i_27836_1 on t_27836_1 (a, b);
@@ -41,4 +43,13 @@ update statistics on all classes with fullscan, no histogram;
 select class_name, statistics_strategy from db_class where class_name in ('t_27836_1', 't_27836_2') order by 1;
 select class_name, attr_name, scan_type from db_histogram where class_name in ('t_27836_1', 't_27836_2') order by 1, 2;
 
-drop table t_27836_1, t_27836_2;
+evaluate 'Case 5: ALL CLASSES WITH FULLSCAN, a class without a histogrammable column and a partitioned class';
+create table t_27836_3 (j json);
+insert into t_27836_3 values ('{"a": 1}');
+create table t_27836_4 (a int) partition by hash (a) partitions 2;
+insert into t_27836_4 select level from db_root connect by level <= 10;
+update statistics on all classes with fullscan;
+select class_name, statistics_strategy from db_class
+ where class_name in ('t_27836_3', 't_27836_4', 't_27836_4__p__p0', 't_27836_4__p__p1') order by 1;
+
+drop table t_27836_1, t_27836_2, t_27836_3, t_27836_4;
