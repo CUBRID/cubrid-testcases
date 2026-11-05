@@ -60,8 +60,9 @@ C1: COMMIT;
 MC: wait until C2 ready;
 C2: SELECT * FROM t3 order by 1,2;
 MC: wait until C2 ready;
+/* CBRD-27463: C2 still holds the locks of its DELETE that failed on the foreign key, but the foreign key check takes no lock on a committed parent row, so the child INSERT does not wait */
 C1: insert into t3(valueid, str) SELECT a.id, a.col+'xx' FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
-MC: wait until C1 blocked;
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C1 ready;
 C2: COMMIT;

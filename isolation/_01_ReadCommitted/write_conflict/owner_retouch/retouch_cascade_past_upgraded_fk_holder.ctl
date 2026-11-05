@@ -49,6 +49,7 @@ MC: wait until C2 blocked;
 C1: set transaction lock timeout 0;
 MC: wait until C1 ready;
 /* the owner must wait for C2, whose X covers the S of its foreign-key check */
+/* CBRD-27463: the foreign key check takes no lock on a committed parent row, so the owner waits for the child's transaction, not for a row lock, and times out there */
 C1: DELETE FROM t27034_p WHERE id=1;
 MC: wait until C1 ready;
 C1: COMMIT;
