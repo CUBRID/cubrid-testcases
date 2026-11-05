@@ -208,5 +208,17 @@ select count (*), sum (s) from t_u;
 delete /*+ ordered no_use_hash */ u from t_o o inner join t_u u on u.k = o.a where o.k = 1;
 select count (*), sum (s) from t_u;
 
+-- Case 16 (CBRD-27928): ORDER BY is skipped because the outer index returns the rows in order.
+-- The scan block iteration returned them in partition order instead. Walked per outer row,
+-- the order of the outer index is kept, with and without pruning, ascending and descending.
+select /*+ ordered no_use_hash parallel(0) */ o.a, p.v
+from t_o o inner join t_pk p on p.k = o.a where o.a between 10 and 14 order by o.a desc;
+
+select /*+ ordered no_use_hash parallel(0) */ o.a, w.id
+from t_o o inner join t_p w on w.k = o.k where o.a between 10 and 14 order by o.a;
+
+select /*+ ordered no_use_hash parallel(0) */ o.a, w.id
+from t_o o inner join t_p w on w.k = o.k where o.a between 10 and 14 order by o.a desc;
+
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
