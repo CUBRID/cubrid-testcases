@@ -17,7 +17,7 @@
  *    Case 4: the same after the third row was grown out of its page (larger than a page)
  *    Case 5: ON DUPLICATE KEY UPDATE reading the source of aggregates: with and without a filter, a column the
  *            aggregate reads, an index scan, a heap scan, a join, GROUP BY
- *    Case 6: the same over a source large enough for a parallel scan; the trace shows the source on the serial row loop
+ *    Case 6: the same over a source large enough for a parallel scan, and the trace shows the source on the serial row loop
  *    Case 7: a subquery in the select list of aggregates reading a column of the source, over the small and the
  *            large source
  *    Case 8: the same two forms where the index or the statistics could answer the aggregate without the rows
