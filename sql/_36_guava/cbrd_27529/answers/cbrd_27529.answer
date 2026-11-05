@@ -1,0 +1,1005 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  1. three-valued logic     
+
+===================================================
+id    
+1     
+4     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+1     
+4     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+1     
+
+===================================================
+id    
+
+===================================================
+id    
+
+===================================================
+id    
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+id    case when ta.ca not in (select tb.ca from tb where tb.k='null') then 'T' when  not (ta.ca not in (select tb.ca from tb where tb.k='null')) then 'F' else 'U' end    
+1     F     
+2     U     
+3     U     
+4     U     
+5     U     
+
+===================================================
+id    case when ta.ca in (select tb.ca from tb where tb.k='plain') then 'T' when  not (ta.ca in (select tb.ca from tb where tb.k='plain')) then 'F' else 'U' end    
+1     T     
+2     F     
+3     U     
+4     T     
+5     T     
+
+===================================================
+0
+===================================================
+    
+####  2. type pairs     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+5     
+
+===================================================
+id    
+2     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+1     
+2     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+1     
+2     
+4     
+5     
+
+===================================================
+id    
+1     
+2     
+4     
+5     
+
+===================================================
+id    
+2     
+4     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+4     
+5     
+
+===================================================
+id    
+2     
+5     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+4     
+
+===================================================
+0
+===================================================
+    
+####  3. NUMERIC values an expression makes     
+
+===================================================
+id    
+1     
+2     
+4     
+
+===================================================
+id    
+2     
+
+===================================================
+0
+===================================================
+    
+####  4. a list that holds the same values many times     
+
+===================================================
+id    
+
+===================================================
+id    
+2     
+4     
+5     
+
+===================================================
+0
+===================================================
+    
+####  5. a value no conversion reads     
+
+===================================================
+Error:-181
+===================================================
+id    
+2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+####  6. trace: the hash answers     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  7. trace: one outer row     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? ) and [dba.ta].id= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  8. trace: a correlated subquery     
+
+===================================================
+count(*)    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].cb<>[dba.ta].id and [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].cb<>[dba.ta].id and [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+####  9. trace: tuple positions in memory (max_hash_list_scan_size below a page)     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: hybrid, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+#### 10. trace: none for a list too large for memory (max_hash_list_scan_size below the positions): the lookups read the list     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+2     
+
+===================================================
+id    
+2     
+
+===================================================
+0
+===================================================
+    
+#### 11. trace: max_hash_list_scan_size 0 turns the hash off     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 12. trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].cb from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? ) and [dba.ta].cb not in (select distinct [dba.tb].cb from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select /*+ NO_HASH_LOOKUP */ count(*) from [dba.ta] [dba.ta] where [dba.ta].ca not in (select distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+count(*)    
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where ([dba.ta].ca in (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? ) or ([dba.ta].id< ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+VIEW    CREATE VIEW    
+dba.v27529     select [dba.ta].[id] from [dba.ta] [dba.ta] where [dba.ta].[ca] not in (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].[ca] from [dba.tb] [dba.tb] where [dba.tb].[k]=_utf8'plain' collate utf8_bin)     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? )
+
+  TABLE SCAN (dba.v?)
+
+  rewritten query: select count(*) from [dba.ta] [dba.v?] where ([dba.v?].ca not in (select /*+ NO_HASH_LOOKUP */ distinct [dba.tb].ca from [dba.tb] [dba.tb] where [dba.tb].k= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 13. strings a byte collation compares equal: a space and a NUL, trailing NULs     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+2
+===================================================
+id    
+1     
+3     
+4     
+
+===================================================
+id    
+1     
+3     
+4     
+
+===================================================
+id    
+1     
+3     
+4     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 14. strings the other built-in collations and a locale's collation compare equal: a space, a NUL and an EUC space, trailing ones     
+
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+id    
+1     
+4     
+8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select distinct [dba.td].ca from [dba.td] [dba.td])
+
+  SORT (order by)
+    TABLE SCAN (dba.tc)
+
+  rewritten query: select [dba.tc].id from [dba.tc] [dba.tc] where [dba.tc].ca not in (select distinct [dba.td].ca from [dba.td] [dba.td]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+id    
+1     
+2     
+3     
+5     
+7     
+8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select distinct [dba.td].ca from [dba.td] [dba.td])
+
+  SORT (order by)
+    TABLE SCAN (dba.tc)
+
+  rewritten query: select [dba.tc].id from [dba.tc] [dba.tc] where [dba.tc].ca not in (select distinct [dba.td].ca from [dba.td] [dba.td]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+3     
+5     
+7     
+8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+6     
+8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select distinct [dba.td].ca from [dba.td] [dba.td])
+
+  SORT (order by)
+    TABLE SCAN (dba.tc)
+
+  rewritten query: select [dba.tc].id from [dba.tc] [dba.tc] where [dba.tc].ca not in (select distinct [dba.td].ca from [dba.td] [dba.td]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+3     
+8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+6     
+8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select distinct [dba.td].ca from [dba.td] [dba.td])
+
+  SORT (order by)
+    TABLE SCAN (dba.tc)
+
+  rewritten query: select [dba.tc].id from [dba.tc] [dba.tc] where [dba.tc].ca not in (select distinct [dba.td].ca from [dba.td] [dba.td]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+3     
+8     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+5
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select distinct [dba.td].ca from [dba.td] [dba.td])
+
+  SORT (order by)
+    TABLE SCAN (dba.tc)
+
+  rewritten query: select [dba.tc].id from [dba.tc] [dba.tc] where [dba.tc].ca not in (select distinct [dba.td].ca from [dba.td] [dba.td]) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 15. a character an expanding collation gives no weight (U+00AD)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+1
+===================================================
+id    
+1     
+2     
+4     
+
+===================================================
+id    
+1     
+2     
+4     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 16. long compressed strings in the list     
+
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+20
+===================================================
+count(*)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+#### 17. negative NUMERIC values of other scales an expression makes     
+
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+5
+===================================================
+id    
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+5     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
