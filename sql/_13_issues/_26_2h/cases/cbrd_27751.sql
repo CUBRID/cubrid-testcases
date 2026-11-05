@@ -6,9 +6,10 @@
  *      the rows of one key do not arrive together
  *    - a prefix index (col(n)) orders only the first n characters, so one index key holds several
  *      column values and its order is not the order of the column
- *  Every query is read back against the same query over the heap (IGNORE INDEX) or against the
- *  group count, neither of which depends on the index order. Cases 1 and 5 are Case 14 and Case 16
- *  of the develop test cbrd_27664, which covers the same two fixes.
+ *  Every GROUP BY query is read back against the same query over the heap (IGNORE INDEX) or against
+ *  the group count, neither of which depends on the index order; Case 4 holds a fixed answer of key
+ *  values. Cases 1 and 5 are Case 14 and Case 16 of the develop test cbrd_27664, which covers the
+ *  same two fixes.
  *  CTP masks digits, so a count in the trace proves nothing: the plan line is what names the scan.
  *  Coverage:
  *    Case 1: index_scan_in_oid_order=yes on a non-covered GROUP BY skip scan
@@ -60,9 +61,9 @@ select /*+ recompile */ g, count(*) from t_main ignore index (i_g) where g betwe
 
 
 evaluate 'Case 3: the same parameter, the group count of a derived table and of an early LIMIT; result = IGNORE INDEX';
-select count(*), sum(c), sum(sv) from (select /*+ recompile */ g, count(*) c, sum(v) sv from t_main force index (i_g) where g between 0 and 34 group by g) x;
+select /*+ recompile */ count(*), sum(c), sum(sv) from (select g, count(*) c, sum(v) sv from t_main force index (i_g) where g between 0 and 34 group by g) x;
 show trace;
-select count(*), sum(c), sum(sv) from (select /*+ recompile */ g, count(*) c, sum(v) sv from t_main ignore index (i_g) where g between 0 and 34 group by g) x;
+select /*+ recompile */ count(*), sum(c), sum(sv) from (select g, count(*) c, sum(v) sv from t_main ignore index (i_g) where g between 0 and 34 group by g) x;
 select /*+ recompile */ g, count(*), sum(v) from t_main force index (i_g) where g between 0 and 34 group by g order by g limit 3;
 show trace;
 select /*+ recompile */ g, count(*), sum(v) from t_main ignore index (i_g) where g between 0 and 34 group by g order by g limit 3;
@@ -71,8 +72,10 @@ select /*+ recompile */ g, count(*), sum(v) from t_main ignore index (i_g) where
 evaluate 'Case 4: the same parameter with ORDER BY skip, which read the index order before the fix too';
 -- v sits in the predicate only: that keeps the scan non-covered, which is the shape the parameter
 -- acts on, while the answer holds the key column alone and pins no row order inside one key. The
--- OID sort makes the two keys interleave (1, 0, 1, ...) instead of staying in index order.
-select /*+ recompile */ g from t_main force index (i_g) where g between 0 and 1 and v >= 0 order by g limit 5;
+-- window straddles the two keys (g = 0 holds 5714 rows), so it differs from the OID-sorted order
+-- whatever the OID buffer holds. That buffer is four pages: on a smaller page size a window at the
+-- start of the scan would read key 0 alone and would come out the same either way.
+select /*+ recompile */ g from t_main force index (i_g) where g between 0 and 1 and v >= 0 order by g limit 5712, 5;
 show trace;
 set system parameters 'index_scan_in_oid_order=default';
 
@@ -96,6 +99,8 @@ select /*+ recompile */ s, count(*) from t_pfx ignore index (i_p) where s > '' g
 
 
 evaluate 'Case 7: a prefix index whose length covers the whole value gives up the skip as well; result = IGNORE INDEX';
+-- the plan line pins the current behavior only: if the planner learns to keep the skip here, the
+-- result still has to equal IGNORE INDEX and only the trace in the answer changes
 select /*+ recompile */ s, count(*), sum(x) from t_pfxw force index (i_pw) where s > '' group by s order by s;
 show trace;
 select /*+ recompile */ s, count(*), sum(x) from t_pfxw ignore index (i_pw) where s > '' group by s order by s;

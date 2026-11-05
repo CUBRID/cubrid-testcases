@@ -292,9 +292,9 @@ Case 4: the same parameter with ORDER BY skip, which read the index order before
 g    
 0     
 0     
-0     
-0     
-0     
+1     
+1     
+1     
 
 ===================================================
 trace    
@@ -303,7 +303,7 @@ Query Plan:
   INDEX SCAN (dba.t_main.i_g) (key range: ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ))
   skip order by: true
 
-  rewritten query: select [dba.t_main].g from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) and ([dba.t_main].v>= ?:? ) using index [dba.t_main].i_g(+) order by ? for orderby_num()<= ?:? 
+  rewritten query: select [dba.t_main].g from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) and ([dba.t_main].v>= ?:? ) using index [dba.t_main].i_g(+) order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
