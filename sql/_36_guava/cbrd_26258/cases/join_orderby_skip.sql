@@ -6,7 +6,7 @@ create table tbl_a (cola int not null, colb int, colc int);
 create index idx_cola on tbl_a (cola);
 
 -- Keep the data volume at around 100000 rows so that a partitioned hash join can be chosen.
--- With max_hash_list_scan_size=16k, the hash list is split into 5 partitions during the hash join. (Q116~Q119)
+-- With max_hash_list_scan_size=16k, the hash join is split into partitions. (Q116~Q119)
 insert into tbl_a
 with recursive cte (n) as (
     select 1
