@@ -59,7 +59,9 @@ UPDATE STATISTICS ON tbl WITH FULLSCAN;
 evaluate 'Case 1: a host-variable LIMIT/OFFSET must pick the PK-descending order-by-skip scan';
 --@queryplan
 PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT ? OFFSET ?';
+--@queryplan
 EXECUTE st USING 30, 0;
+--@queryplan
 EXECUTE st USING 30, 30;
 deallocate prepare st;
 
@@ -70,12 +72,14 @@ SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT 30 OFFSET 0;
 evaluate 'Case 3: a host-variable LIMIT alone must pick the PK-descending order-by-skip scan';
 --@queryplan
 PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC LIMIT ?';
+--@queryplan
 EXECUTE st USING 30;
 deallocate prepare st;
 
 evaluate 'Case 4: a host-variable LIMIT on a join must pick the same plan as a constant LIMIT';
 --@queryplan
 PREPARE st FROM 'SELECT t.id, t.col_c FROM tbl t, tbl_u u WHERE t.id = u.id ORDER BY t.id DESC LIMIT ?';
+--@queryplan
 EXECUTE st USING 3;
 deallocate prepare st;
 --@queryplan
@@ -84,6 +88,7 @@ SELECT t.id, t.col_c FROM tbl t, tbl_u u WHERE t.id = u.id ORDER BY t.id DESC LI
 evaluate 'Case 5: a host-variable bound in ORDER BY ... FOR ORDERBY_NUM() <= ? must pick the PK-descending order-by-skip scan';
 --@queryplan
 PREPARE st FROM 'SELECT id, col_c FROM tbl ORDER BY id DESC FOR ORDERBY_NUM() <= ?';
+--@queryplan
 EXECUTE st USING 30;
 deallocate prepare st;
 
