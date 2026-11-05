@@ -1339,4 +1339,336 @@ i
 ===================================================
 0
 ===================================================
+    
+[13-1] non-covered (i, sqrt(d)) scan: the expression is a key filter while p is read from the heap     
+
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+0
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_a node[?]
+                 index: idx_fi_a term[?]
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_a.p from fi_a fi_a where (fi_a.i>= ?:?  and fi_a.i<= ?:? ) and ( sqrt(fi_a.d)> ?:? ) using index fi_a.idx_fi_a order by ?
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+===================================================
+    
+[13-2] (c1, abs(c2), c3) with c4 outside the key: function and plain column key filters     
+
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+c1    c4    
+1     c     
+1     d     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_b node[?]
+                 index: idx_fi_b term[?] AND term[?]
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_b.c?, fi_b.c? from fi_b fi_b where ( abs(fi_b.c?)> ?:? ) and fi_b.c?= ?:?  and fi_b.c?= ?:?  using index fi_b.idx_fi_b order by ?
+===================================================
+c1    c4    
+1     c     
+1     d     
+
+===================================================
+c4    
+c     
+d     
+e     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_b node[?]
+                 index: idx_fi_b term[?]
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_b.c? from fi_b fi_b where fi_b.c?= ?:?  and fi_b.c?= ?:?  using index fi_b.idx_fi_b order by ?
+===================================================
+c4    
+c     
+d     
+e     
+
+===================================================
+    
+[13-3] key filter of a merged derived table (parenthesized expression)     
+
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: x node[?]
+                 index: idx_fi_a term[?]
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.p from fi_a x where ( sqrt(x.d)>?) and (x.i>= ?:?  and x.i<= ?:? ) using index x.idx_fi_a order by ?
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+===================================================
+    
+[13-4] key filter next to a raw argument term (d < 5000 stays a data filter)     
+
+===================================================
+p    
+p10     
+p11     
+p13     
+p14     
+p15     
+p17     
+p6     
+p7     
+p9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_a node[?]
+                 index: idx_fi_a term[?]
+                 filtr: term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_a.p from fi_a fi_a where (fi_a.i>= ?:?  and fi_a.i<= ?:? ) and ( sqrt(fi_a.d)> ?:? ) and (fi_a.d< ?:? ) using index fi_a.idx_fi_a order by ?
+===================================================
+p    
+p10     
+p11     
+p13     
+p14     
+p15     
+p17     
+p6     
+p7     
+p9     
+
+===================================================
+    
+[13-5] (i, date_format(d, '%W')) read in another session date language: data filter     
+
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+p    
+mon     
+tue     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_x node[?]
+                 index: idx_fi_x term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_x.p from fi_x fi_x where  date_format(fi_x.d, '%W')<>'Monday' and fi_x.i= ?:?  using index fi_x.idx_fi_x order by ?
+===================================================
+p    
+mon     
+tue     
+
+===================================================
+0
+===================================================
+    
+[13-6] to_datetime_tz and utf8_en_ci results whose equal keys differ: data filter     
+
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+p    
+utc     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_y node[?]
+                 index: idx_fi_y term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_y.p from fi_y fi_y where  to_char( to_datetime_tz(fi_y.s), 'TZH:TZM')='+?:?' and fi_y.i= ?:?  using index fi_y.idx_fi_y order by ?
+===================================================
+p    
+utc     
+
+===================================================
+p    
+lower     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_i node[?]
+                 index: idx_fi_i term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_i.p from fi_i fi_i where  ascii( trim(both  from fi_i.s))=? and fi_i.i= ?:?  using index fi_i.idx_fi_i order by ?
+===================================================
+p    
+lower     
+
+===================================================
+    
+[13-7] UPDATE / DELETE / FOR UPDATE keep the expression as a data filter (heap re-evaluation)     
+
+===================================================
+p    
+p10     
+p13     
+p14     
+p17     
+p18     
+p6     
+p9     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: fi_a node[?]
+                 index: idx_fi_a term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select fi_a.p from fi_a fi_a where (fi_a.i>= ?:?  and fi_a.i<= ?:? ) and ( sqrt(fi_a.d)> ?:? ) using index fi_a.idx_fi_a for update of fi_a order by ?
+===================================================
+0
+===================================================
+7
+Query plan:
+iscan
+    class: fi_a node[?]
+    index: idx_fi_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_a,class fi_a,fi_a.p|| cast('u' as varchar) as [fi_a.p] from fi_a fi_a where (fi_a.i>= ?:?  and fi_a.i<= ?:? ) and ( sqrt(fi_a.d)> ?:? ) using index fi_a.idx_fi_a
+===================================================
+result    
+PASS     
+
+===================================================
+4
+Query plan:
+iscan
+    class: fi_a node[?]
+    index: idx_fi_a term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select fi_a,class fi_a from fi_a fi_a where (fi_a.i>= ?:? ) and ( sqrt(fi_a.d)> ?:? ) using index fi_a.idx_fi_a
+===================================================
+result    
+PASS     
+
+===================================================
 0

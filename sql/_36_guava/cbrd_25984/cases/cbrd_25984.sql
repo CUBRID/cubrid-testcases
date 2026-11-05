@@ -4,7 +4,8 @@
  *  Bug: a function index (e.g. (i1, sqrt(d1))) stores only the function result in the key, so the
  *       optimizer refused covering scans and key filters whenever the indexed expression appeared.
  *  Fix: the projected / key-filtered expression is read from the precomputed result slot of the key
- *       through a dedicated result attribute. Covering stays disabled when the raw argument is needed
+ *       through a dedicated result attribute, and a non-covered scan reads its key filter from that slot too.
+ *       Covering stays disabled when the raw argument is needed
  *       (raw projection, join or subquery referencing the expression, GROUP BY / aggregates,
  *       UPDATE / DELETE / FOR UPDATE targets, which the server re-evaluates from the heap).
  *       When the argument itself is a key column (e.g. (d1, sqrt(d1))) the result is still read from
@@ -39,11 +40,16 @@
  *       single-column indexes over two arguments (mod(a, b), left(s, n)) read from the key; an expression
  *       whose value depends on the session time zone or date language (date_format over a TIMESTAMP,
  *       date_format(d, '%W')) is not read from the key, and the parameters are restored afterwards
+ *   13. key filter on a non-covered function index scan (a column outside the key is read from the heap):
+ *       the expression and a plain key column (c3 of (c1, abs(c2), c3)) as key filters, a merged derived
+ *       table, a raw argument term next to the expression; session dependent, to_datetime_tz and
+ *       utf8_en_ci expressions and UPDATE / DELETE / FOR UPDATE keep it a data filter; every query is
+ *       compared with its USING INDEX NONE twin
  *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved.
  */
 
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -487,5 +493,74 @@ select /*+ recompile */ i from fi_dl where i = 1 and date_format(d, '%W') <> 'Mo
 select /*+ recompile NO_COVERING_IDX */ i from fi_dl where i = 1 and date_format(d, '%W') <> 'Monday';
 set system parameters 'intl_date_lang=en_US';
 
+evaluate '[13-1] non-covered (i, sqrt(d)) scan: the expression is a key filter while p is read from the heap';
+create table fi_a (i int, d double, p varchar(10));
+insert into fi_a select rownum % 4, rownum * rownum * 16, 'p' || rownum from db_class limit 20;
+create index idx_fi_a on fi_a (i, sqrt(d));
+update statistics on fi_a with fullscan;
+--@queryplan
+select p from fi_a where i between 1 and 2 and sqrt(d) > 20 using index idx_fi_a order by 1;
+select /*+ NO_COVERING_IDX */ p from fi_a where i between 1 and 2 and sqrt(d) > 20 using index idx_fi_a order by 1;
+select p from fi_a where i between 1 and 2 and sqrt(d) > 20 using index none order by 1;
+
+evaluate '[13-2] (c1, abs(c2), c3) with c4 outside the key: function and plain column key filters';
+create table fi_b (c1 int, c2 int, c3 int, c4 varchar(10));
+insert into fi_b values (1, 1, -1, 'a'), (1, 2, -2, 'b'), (1, 3, -3, 'c'), (1, -4, -3, 'd'), (1, 0, -3, 'e'), (2, 3, -3, 'f');
+create index idx_fi_b on fi_b (c1, abs(c2), c3);
+update statistics on fi_b with fullscan;
+--@queryplan
+select c1, c4 from fi_b where c1 = 1 and abs(c2) > 1 and c3 = -3 using index idx_fi_b order by 2;
+select c1, c4 from fi_b where c1 = 1 and abs(c2) > 1 and c3 = -3 using index none order by 2;
+--@queryplan
+select c4 from fi_b where c1 = 1 and c3 = -3 using index idx_fi_b order by 1;
+select c4 from fi_b where c1 = 1 and c3 = -3 using index none order by 1;
+
+evaluate '[13-3] key filter of a merged derived table (parenthesized expression)';
+--@queryplan
+select x.p from (select p, i, d from fi_a where i between 1 and 2 using index idx_fi_a) x where sqrt(x.d) > 20 order by 1;
+select x.p from (select p, i, d from fi_a where i between 1 and 2 using index none) x where sqrt(x.d) > 20 order by 1;
+
+evaluate '[13-4] key filter next to a raw argument term (d < 5000 stays a data filter)';
+--@queryplan
+select p from fi_a where i between 1 and 3 and sqrt(d) > 20 and d < 5000 using index idx_fi_a order by 1;
+select p from fi_a where i between 1 and 3 and sqrt(d) > 20 and d < 5000 using index none order by 1;
+
+evaluate '[13-5] (i, date_format(d, ''%W'')) read in another session date language: data filter';
+create table fi_x (i int, d date, p varchar(10));
+insert into fi_x values (1, date '2020-01-06', 'mon'), (1, date '2020-01-07', 'tue'), (2, date '2020-01-06', 'mon2');
+create index idx_fi_x on fi_x (i, date_format(d, '%W'));
+update statistics on fi_x with fullscan;
+set system parameters 'intl_date_lang=ko_KR';
+--@queryplan
+select /*+ recompile */ p from fi_x where i = 1 and date_format(d, '%W') <> 'Monday' using index idx_fi_x order by 1;
+select /*+ recompile */ p from fi_x where i = 1 and date_format(d, '%W') <> 'Monday' using index none order by 1;
+set system parameters 'intl_date_lang=en_US';
+
+evaluate '[13-6] to_datetime_tz and utf8_en_ci results whose equal keys differ: data filter';
+create table fi_y (i int, s varchar(40), p varchar(10));
+insert into fi_y values (1, '2020-01-01 10:00:00 +09:00', 'kst'), (1, '2020-01-01 01:00:00 +00:00', 'utc');
+create index idx_fi_y on fi_y (i, to_datetime_tz(s));
+create table fi_i (i int, s varchar(20) collate utf8_en_ci, p varchar(10));
+insert into fi_i values (1, 'Ab', 'upper'), (1, 'ab', 'lower'), (2, 'AB', 'other');
+create index idx_fi_i on fi_i (i, trim(s));
+update statistics on fi_y, fi_i with fullscan;
+--@queryplan
+select p from fi_y where i = 1 and to_char(to_datetime_tz(s), 'TZH:TZM') = '+00:00' using index idx_fi_y order by 1;
+select p from fi_y where i = 1 and to_char(to_datetime_tz(s), 'TZH:TZM') = '+00:00' using index none order by 1;
+--@queryplan
+select p from fi_i where i = 1 and ascii(trim(s)) = 97 using index idx_fi_i order by 1;
+select p from fi_i where i = 1 and ascii(trim(s)) = 97 using index none order by 1;
+
+evaluate '[13-7] UPDATE / DELETE / FOR UPDATE keep the expression as a data filter (heap re-evaluation)';
+--@queryplan
+select p from fi_a where i between 1 and 2 and sqrt(d) > 20 using index idx_fi_a order by 1 for update;
+commit;
+--@queryplan
+update fi_a set p = p || 'u' where i between 1 and 2 and sqrt(d) > 20 using index idx_fi_a;
+select case when count(*) = 7 then 'PASS' else 'FAIL' end as result from fi_a where p like '%u';
+--@queryplan
+delete from fi_a where i >= 3 and sqrt(d) > 20 using index idx_fi_a;
+select case when count(*) = 16 and count(case when i = 3 then 1 end) = 1 then 'PASS' else 'FAIL' end as result from fi_a;
+
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i;
