@@ -15,12 +15,20 @@
  *  Every query is written with the ordered and use_hash hints, which produce nested hash
  *  joins, and is followed by the same query with use_nl. The two result blocks must match.
  *
+ *  A hash join whose result needs no rewriting hands it straight to the node above, which
+ *  skips the failing list scan, so cases 1 to 5 also pass without the fix and stay as
+ *  guards. In cases 6 to 8 a subquery predicate is left to the node above a lower join,
+ *  which keeps that list scan; without the fix these fail.
+ *
  *  Coverage:
  *    Case 1:  the reported query, COUNT(*) over two joined derived tables
  *    Case 2:  the function-index values of both derived tables in the select list
  *    Case 3:  a third derived table joined on top (three levels of nesting)
  *    Case 4:  the function-index expression wrapped in an arithmetic expression
  *    Case 5:  a predicate on the derived function-index column above the nested join
+ *    Case 6:  a correlated subquery predicate over both derived tables' i1
+ *    Case 7:  a correlated subquery predicate over p.x and s.i1
+ *    Case 8:  an uncorrelated subquery in a predicate over both derived tables' i1
  */
 
 drop table if exists fi_t, fi_u;
@@ -99,6 +107,51 @@ from (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u w
      join (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
      on p.i1 = s.i1
 where p.r > s.x + 5
+order by 1;
+
+-- Case 6
+select /*+ use_hash */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where (select p.i1 + s.i1 from db_root) > 0
+order by 1;
+
+select /*+ use_nl */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where (select p.i1 + s.i1 from db_root) > 0
+order by 1;
+
+-- Case 7
+select /*+ use_hash */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where (select p.x + s.i1 from db_root) > 0
+order by 1;
+
+select /*+ use_nl */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where (select p.x + s.i1 from db_root) > 0
+order by 1;
+
+-- Case 8
+select /*+ use_hash */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_hash */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where p.i1 + s.i1 > (select min(x) from fi_u)
+order by 1;
+
+select /*+ use_nl */ p.i1, p.r, s.r, p.x
+from (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) p
+     join (select /*+ ordered use_nl */ t.i1, sqrt(t.d1) r, u.x from fi_t t, fi_u u where t.i1 between 1 and 3 and sqrt(t.d1) = u.y) s
+     on p.i1 = s.i1
+where p.i1 + s.i1 > (select min(x) from fi_u)
 order by 1;
 
 drop table fi_t, fi_u;
