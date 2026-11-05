@@ -11,15 +11,12 @@ upper(a)
 A     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: t? node[?]
-                 index: i_t?_upper_a term[?]
-                 cost:  ? card ?
-    sort:  ? desc
+iscan
+    class: t? node[?]
+    index: i_t?_upper_a term[?]
     cost:  ? card ?
 Query stmt:
-select  upper(t?.a) from t? t? where  upper(t?.a)= ?:?  using index t?.i_t?_upper_a order by ? desc 
+select  upper(t?.a) from t? t? where  upper(t?.a)= ?:?  using index t?.i_t?_upper_a
 ===================================================
 upper(a)    
 B     
@@ -39,14 +36,11 @@ upper(a)
 A     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: t? node[?]
-                 index: i_t?_upper_a term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t? node[?]
+    index: i_t?_upper_a term[?]
     cost:  ? card ?
 Query stmt:
-select  upper(t?.a) from t? t? where  upper(t?.a)= ?:?  order by ?
+select  upper(t?.a) from t? t? where  upper(t?.a)= ?:? 
 ===================================================
 0
