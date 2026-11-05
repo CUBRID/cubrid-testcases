@@ -1,3 +1,4 @@
+--+ holdcas on;
 -- CBRD-27782: the server switches the execution rights of a DEFINER stored routine (push/pop of the owner) on the
 -- client and now waits for the client to finish the switch. Check that the rights are switched and restored right:
 -- lowu calls routines owned by u4, and only u4 can read u4.t.
@@ -5,13 +6,18 @@
 evaluate 'setup: u4 owns table t and the routines; lowu may only execute them';
 create user lowu;
 create user u4;
+
+drop table if exists nums;
 create table nums (n int);
 insert into nums select rownum from db_class a, db_class b, db_class c where rownum <= 4000;
+
+drop table if exists dst;
 create table dst (n int, v int);
 grant select on nums to lowu;
 grant insert, select on dst to lowu;
 
 call login('u4','') on class db_user;
+drop table if exists t;
 create table t (c int);
 insert into t values (4);
 
@@ -107,3 +113,4 @@ drop table t;
 call login('dba','') on class db_user;
 drop user lowu;
 drop user u4;
+--+ holdcas off;
