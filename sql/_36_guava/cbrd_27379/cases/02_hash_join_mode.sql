@@ -7,9 +7,10 @@
  *    PARTITION       tc, td with NO_PARALLEL_HASH_JOIN: SPLIT line, no parallel workers on HASHJOIN or PROBE
  *    PARALLEL_PROBE  ta, tb with PARALLEL(4): no SPLIT line, parallel workers under PROBE
  *    PARALLEL        tc, td with PARALLEL(4): SPLIT line, parallel workers on HASHJOIN
- *  The file lowers max_hash_list_scan_size to 4M for TC-1-05 to TC-1-07-02 to keep the tables small. ta, tb (50001
- *  rows each) stay below its split threshold even as the build input, and tc, td (150001 rows each) exceed it.
- *  The join key is CHAR(200) so that the input lists reach parallel_hash_join_page_threshold even at its default value.
+ *  The file lowers max_hash_list_scan_size to 2M for TC-1-05 to TC-1-07-02 to keep the tables small. ta, tb (30001
+ *  rows each) stay below its split threshold even as the build input, and tc, td (80001 rows each) exceed it.
+ *  The join key is CHAR(200) so that the input lists of ta, tb fill more than 4 sectors of 64 pages with few rows, and
+ *  each of the 4 workers of PARALLEL(4) gets a sector to scan.
  *  Run this file with test_mode=yes, as CTP does, for the parallel modes:
  *  test_mode lowers parallel_scan_page_threshold to 32, and parallel_hash_join_page_threshold
  *  and parallel_sort_page_threshold to 0, when they keep their default values.
@@ -45,9 +46,8 @@
  *  TC-1-05 compares the two modes on the same tables by EXCEPT ALL in both directions. Both counts must be 0.
  *  CTP masks the numbers in a SHOW TRACE output, so time, fetch and row values are not compared.
  *  The trace asserts the presence of the SPLIT line, and of the parallel workers line on HASHJOIN or under PROBE.
- *  The traced queries add NO_PARALLEL_SUBQUERY, and those on ta, tb and tc, td also NO_PARALLEL_SCAN: whether a
- *  subquery or a scan gets parallel workers can differ from run to run, and the trace would show it in lines this
- *  file does not assert.
+ *  The traced queries add NO_PARALLEL_SUBQUERY and NO_PARALLEL_SCAN: whether a subquery or a scan gets parallel
+ *  workers can differ from run to run, and the trace would show it in lines this file does not assert.
  */
 
 -- =====================================================================================================================
@@ -55,17 +55,18 @@
 -- =====================================================================================================================
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
 
--- With max_hash_list_scan_size=4M, a build input of more than 64527 rows (4 MB x 0.8 / 52 bytes per entry) splits:
--- ta, tb (50001 rows each) stay in one context, and tc, td, te (150001 rows each) split into 3 partitions.
-SET SYSTEM PARAMETERS 'max_hash_list_scan_size=4M';
+-- With max_hash_list_scan_size=2M, a build input of more than 32263 rows (2 MB x 0.8 / 52 bytes per entry) splits:
+-- ta, tb (30001 rows each) stay in one context, and tc, td, te (80001 rows each) split into 3 partitions.
+-- ta, tb hold 30001 rows of 215 bytes in 457 heap pages, 7 sectors of 64 pages: the 4 workers of PARALLEL(4) need 4.
+SET SYSTEM PARAMETERS 'max_hash_list_scan_size=2M';
 
--- ta: 50000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row
+-- ta: 30000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0001'    199 '0' + '1'
 --   ROWNUM 2       -> '0000...0002'    199 '0' + '2'
 --   ...
---   ROWNUM 50000   -> '0000...50000'   195 '0' + '50000'
+--   ROWNUM 30000   -> '0000...30000'   195 '0' + '30000'
 --   NULL
---   Stored: 50001 rows, keys 1 .. 50000 with 1 row per key, and 1 NULL
+--   Stored: 30001 rows, keys 1 .. 30000 with 1 row per key, and 1 NULL
 CREATE TABLE ta (ca CHAR(200));
 INSERT INTO ta
   WITH RECURSIVE cte (n) AS (
@@ -75,19 +76,19 @@ INSERT INTO ta
   )
   SELECT LPAD (ROWNUM, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 50000;
+  WHERE ROWNUM <= 30000;
 INSERT INTO ta VALUES (NULL);
 
--- tb: 50000 rows of LPAD (MOD (ROWNUM - 1, 10000) * 4 + 4, 200, '0'), and one NULL row
+-- tb: 30000 rows of LPAD (MOD (ROWNUM - 1, 6000) * 4 + 4, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0004'    199 '0' + '4'
 --   ROWNUM 2       -> '0000...0008'    199 '0' + '8'
 --   ...
---   ROWNUM 10000   -> '0000...40000'   195 '0' + '40000'
---   ROWNUM 10001   -> '0000...0004'    199 '0' + '4'       the same keys repeat, 5 rows per key
+--   ROWNUM 6000    -> '0000...24000'   195 '0' + '24000'
+--   ROWNUM 6001    -> '0000...0004'    199 '0' + '4'       the same keys repeat, 5 rows per key
 --   ...
---   ROWNUM 50000   -> '0000...40000'   195 '0' + '40000'
+--   ROWNUM 30000   -> '0000...24000'   195 '0' + '24000'
 --   NULL
---   Stored: 50001 rows, 10000 keys 4 .. 40000 (multiples of 4) with 5 rows per key, and 1 NULL
+--   Stored: 30001 rows, 6000 keys 4 .. 24000 (multiples of 4) with 5 rows per key, and 1 NULL
 CREATE TABLE tb (ca CHAR(200));
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (
@@ -95,18 +96,18 @@ INSERT INTO tb
     UNION ALL
     SELECT n + 1 FROM cte WHERE n < 400
   )
-  SELECT LPAD (MOD (ROWNUM - 1, 10000) * 4 + 4, 200, '0')
+  SELECT LPAD (MOD (ROWNUM - 1, 6000) * 4 + 4, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 50000;
+  WHERE ROWNUM <= 30000;
 INSERT INTO tb VALUES (NULL);
 
--- tc: 150000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row
+-- tc: 80000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0001'    199 '0' + '1'
 --   ROWNUM 2       -> '0000...0002'    199 '0' + '2'
 --   ...
---   ROWNUM 150000  -> '0000...150000'  194 '0' + '150000'
+--   ROWNUM 80000   -> '0000...80000'   195 '0' + '80000'
 --   NULL
---   Stored: 150001 rows, keys 1 .. 150000 with 1 row per key, and 1 NULL
+--   Stored: 80001 rows, keys 1 .. 80000 with 1 row per key, and 1 NULL
 CREATE TABLE tc (ca CHAR(200));
 INSERT INTO tc
   WITH RECURSIVE cte (n) AS (
@@ -116,19 +117,19 @@ INSERT INTO tc
   )
   SELECT LPAD (ROWNUM, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 150000;
+  WHERE ROWNUM <= 80000;
 INSERT INTO tc VALUES (NULL);
 
--- td: 150000 rows of LPAD (MOD (ROWNUM - 1, 37500) * 4 + 4, 200, '0'), and one NULL row
+-- td: 80000 rows of LPAD (MOD (ROWNUM - 1, 20000) * 4 + 4, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0004'    199 '0' + '4'
 --   ROWNUM 2       -> '0000...0008'    199 '0' + '8'
 --   ...
---   ROWNUM 37500   -> '0000...150000'  194 '0' + '150000'
---   ROWNUM 37501   -> '0000...0004'    199 '0' + '4'       the same keys repeat, 4 rows per key
+--   ROWNUM 20000   -> '0000...80000'   195 '0' + '80000'
+--   ROWNUM 20001   -> '0000...0004'    199 '0' + '4'       the same keys repeat, 4 rows per key
 --   ...
---   ROWNUM 150000  -> '0000...150000'  194 '0' + '150000'
+--   ROWNUM 80000   -> '0000...80000'   195 '0' + '80000'
 --   NULL
---   Stored: 150001 rows, 37500 keys 4 .. 150000 (multiples of 4) with 4 rows per key, and 1 NULL
+--   Stored: 80001 rows, 20000 keys 4 .. 80000 (multiples of 4) with 4 rows per key, and 1 NULL
 CREATE TABLE td (ca CHAR(200));
 INSERT INTO td
   WITH RECURSIVE cte (n) AS (
@@ -136,17 +137,17 @@ INSERT INTO td
     UNION ALL
     SELECT n + 1 FROM cte WHERE n < 600
   )
-  SELECT LPAD (MOD (ROWNUM - 1, 37500) * 4 + 4, 200, '0')
+  SELECT LPAD (MOD (ROWNUM - 1, 20000) * 4 + 4, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 150000;
+  WHERE ROWNUM <= 80000;
 INSERT INTO td VALUES (NULL);
 
--- te: 150000 rows of LPAD (2, 200, '0'), and one NULL row
+-- te: 80000 rows of LPAD (2, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0002'    199 '0' + '2'
 --   ...
---   ROWNUM 150000  -> '0000...0002'    199 '0' + '2'
+--   ROWNUM 80000   -> '0000...0002'    199 '0' + '2'
 --   NULL
---   Stored: 150001 rows, key 2 in 150000 rows, and 1 NULL
+--   Stored: 80001 rows, key 2 in 80000 rows, and 1 NULL
 CREATE TABLE te (ca CHAR(200));
 INSERT INTO te
   WITH RECURSIVE cte (n) AS (
@@ -156,7 +157,7 @@ INSERT INTO te
   )
   SELECT LPAD (2, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 150000;
+  WHERE ROWNUM <= 80000;
 INSERT INTO te VALUES (NULL);
 
 UPDATE STATISTICS ON ta, tb, tc, td, te WITH FULLSCAN;
@@ -357,14 +358,14 @@ evaluate 'TC-1-05-05: ta SEMI JOIN tb, ON clause term on the outer table only';
 evaluate 'TC-1-05-05-01: SINGLE mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0');
+  SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-05-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-05-02: PARALLEL_PROBE mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0');
+  SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-05-03: rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result
@@ -373,11 +374,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS single_minus_parallel_probe
 FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
-    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
-    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
 ) r;
 
 -- TC-1-05-05-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
@@ -386,11 +387,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS parallel_probe_minus_single
 FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
-    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
-    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    SEMI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
 ) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -402,14 +403,14 @@ evaluate 'TC-1-05-06: ta ANTI JOIN tb, ON clause term on the outer table only';
 evaluate 'TC-1-05-06-01: SINGLE mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0');
+  ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-06-02: PARALLEL_PROBE mode, result and trace
 evaluate 'TC-1-05-06-02: PARALLEL_PROBE mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0');
+  ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-06-03: rows in the SINGLE mode result EXCEPT ALL the PARALLEL_PROBE mode result
@@ -418,11 +419,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS single_minus_parallel_probe
 FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
-    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
-    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
 ) r;
 
 -- TC-1-05-06-04: rows in the PARALLEL_PROBE mode result EXCEPT ALL the SINGLE mode result
@@ -431,11 +432,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS parallel_probe_minus_single
 FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ ta.ca
   FROM ta
-    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ ta.ca
   FROM ta
-    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (25000, 200, '0')
+    ANTI JOIN tb ON tb.ca = ta.ca AND ta.ca <= LPAD (15000, 200, '0')
 ) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -447,14 +448,14 @@ evaluate 'TC-1-05-07: tc SEMI JOIN td, ON clause term on the outer table only';
 evaluate 'TC-1-05-07-01: PARTITION mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0');
+  SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-07-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-07-02: PARALLEL mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0');
+  SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-07-03: rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result
@@ -463,11 +464,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS partition_minus_parallel
 FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
-    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
-    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
 ) r;
 
 -- TC-1-05-07-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
@@ -476,11 +477,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS parallel_minus_partition
 FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
-    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
-    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    SEMI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
 ) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -492,14 +493,14 @@ evaluate 'TC-1-05-08: tc ANTI JOIN td, ON clause term on the outer table only';
 evaluate 'TC-1-05-08-01: PARTITION mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0');
+  ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-08-02: PARALLEL mode, result and trace
 evaluate 'TC-1-05-08-02: PARALLEL mode, result and trace';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0');
+  ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0');
 SHOW TRACE;
 
 -- TC-1-05-08-03: rows in the PARTITION mode result EXCEPT ALL the PARALLEL mode result
@@ -508,11 +509,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS partition_minus_parallel
 FROM (
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
-    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
-    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
 ) r;
 
 -- TC-1-05-08-04: rows in the PARALLEL mode result EXCEPT ALL the PARTITION mode result
@@ -521,11 +522,11 @@ SELECT /*+ RECOMPILE */ COUNT (*) AS parallel_minus_partition
 FROM (
   SELECT /*+ USE_HASH PARALLEL(4) */ tc.ca
   FROM tc
-    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
   EXCEPT ALL
   SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN */ tc.ca
   FROM tc
-    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (75000, 200, '0')
+    ANTI JOIN td ON td.ca = tc.ca AND tc.ca <= LPAD (40000, 200, '0')
 ) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -854,7 +855,7 @@ UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-1-07-03-01: hash join, result and trace
 evaluate 'TC-1-07-03-01: hash join, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SUBQUERY */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
@@ -882,7 +883,7 @@ UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 -- TC-1-07-04-01: hash join, result and trace
 evaluate 'TC-1-07-04-01: hash join, result and trace';
-SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SUBQUERY */ COUNT (*)
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
