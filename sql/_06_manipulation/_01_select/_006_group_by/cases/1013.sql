@@ -8,5 +8,5 @@ insert into DML_0001 values (2,'test1', {1,'test1'});
 insert into DML_0001 values (3,'test2', {1,'test2'});
 insert into DML_0001 values (4,'test1', {2,'test1'});
 insert into DML_0001 values (5,'test2', {2,'test2'});
-select {int_col} from DML_0001 group by set_col;
+select {max(int_col)} from DML_0001 group by set_col;
 drop class DML_0001;
