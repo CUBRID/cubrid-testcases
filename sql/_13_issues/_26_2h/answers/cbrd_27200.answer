@@ -1030,15 +1030,15 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (v)
       TABLE SCAN (dba.tright)
+      TABLE SCAN (v)
 
   rewritten query: select v.a, [dba.tright].y from [dba.tleft] v, [dba.tright] [dba.tright] where v.a=[dba.tright].x order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tright), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tleft), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 

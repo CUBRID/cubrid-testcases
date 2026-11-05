@@ -252,7 +252,7 @@ evaluate 'Case 15: derived table correlated to the outer row right after an ANTI
 -- the plan attaches d, which reads o0, to the scan before it, here the anti inner cs a. a matches only g = 0
 -- (a.pk = 4), so the rows with g = 1 and g = 2 survive and each must run d for itself. Before the fix no surviving
 -- row ran d and the query returned no row. d is not a scalar subquery, so the anti inner is not memoized
-select /*+ recompile use_nl ordered */ o0.pk, o0.g, d.cnt from cy o0 anti join cs a on a.pk = o0.g + 4, (select count(*) cnt from cs x where x.pk <= o0.g + 1) d order by 1;
+select /*+ recompile use_nl ordered */ o0.pk, o0.g, d.cnt from cy o0 anti join cs a on a.pk = o0.g + 4, (select count(*) cnt from cs x where x.pk <= o0.g + 1) d using index o0.pk_cy_pk order by 1;
 show trace;
 
 

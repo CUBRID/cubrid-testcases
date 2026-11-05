@@ -611,11 +611,11 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (a.pk_ta_range_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )))
+  TABLE SCAN (a)
 
   rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_range] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
 
-  INDEX SCAN (a.pk_ta_list_ca_cd) (key range: ((a.ca= ?:? ) or (a.ca= ?:? )))
+  TABLE SCAN (a)
 
   rewritten query: select a.ca, a.cb, a.cc, a.cd from [dba.ta_list] a where ((a.ca= ?:? ) or (a.ca= ?:? ))
 
@@ -630,13 +630,13 @@ Trace Statistics:
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.ta_range.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-                 PARTITION (index: dba.ta_range__p__p?.pk_ta_range_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.ta_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.ta_list.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-                 PARTITION (index: dba.ta_list__p__p?.pk_ta_list_ca_cd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (table: dba.ta_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.ta_list__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

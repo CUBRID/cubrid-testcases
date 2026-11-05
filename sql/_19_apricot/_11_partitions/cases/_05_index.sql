@@ -20,7 +20,7 @@ show indexes from tpl__p__prime;
 show indexes from tpl__p__mul_3;
 show indexes from tpl__p__pow_4;
 
-select /*+ recompile */ * from tpl where i > 0 order by 1;
+select /*+ recompile */ * from tpl where i > 0 using index idx_tpl order by 1;
 select /*+ recompile */ * from tpl__p__prime where i > 0 order by 1;
 select /*+ recompile */ * from tpl__p__mul_3 where i > 0 order by 1;
 select /*+ recompile */ * from tpl__p__pow_4 where i > 0 order by 1;

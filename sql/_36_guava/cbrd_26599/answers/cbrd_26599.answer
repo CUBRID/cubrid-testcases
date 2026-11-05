@@ -174,11 +174,11 @@ hash-join (inner join)
     outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: supp node[?]
-                          cost:  ? card ?
-               inner: sscan
                           class: nations node[?]
                           sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: supp node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
@@ -834,12 +834,12 @@ nl-join (inner join)
                           class: nl_a node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: nl_m node[?]
+                          class: nl_b node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: nl_b node[?]
+               class: nl_m node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -876,20 +876,20 @@ count(*)
 1     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: idx-join (inner join)
+idx-join (inner join)
+    outer: nl-join (inner join)
+               edge:  term[?]
                outer: sscan
                           class: anchor node[?]
                           cost:  ? card ?
-               inner: iscan
-                          class: keytab node[?]
-                          index: ix_keytab term[?] AND term[?] (covers)
+               inner: sscan
+                          class: bridge node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
-    inner: sscan
-               class: bridge node[?]
-               sargs: term[?]
+    inner: iscan
+               class: keytab node[?]
+               index: ix_keytab term[?] AND term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -934,11 +934,11 @@ hash-join (inner join)
     outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: dv node[?]
-                          cost:  ? card ?
-               inner: sscan
                           class: nations node[?]
                           sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: dv node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
@@ -963,11 +963,11 @@ hash-join (inner join)
     outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
-                          class: v_supp node[?]
-                          cost:  ? card ?
-               inner: sscan
                           class: nations node[?]
                           sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: v_supp node[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan

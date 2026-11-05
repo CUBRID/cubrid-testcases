@@ -36,27 +36,27 @@ select ? from left_tbl lt left outer join right_tbl rt on lt.col_a=rt.col_a
 1    
 
 Query plan:
-nl-join (left outer join)
+nl-join (inner join)
     edge:  term[?]
     outer: nl-join (inner join)
                edge:  term[?]
-               outer: nl-join (inner join)
+               outer: nl-join (left outer join)
                           edge:  term[?]
                           outer: sscan
-                                     class: t_a node[?]
+                                     class: lt node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_b node[?]
+                                     class: rt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: lt node[?]
+                          class: t_a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: rt node[?]
+               class: t_b node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -113,17 +113,17 @@ nl-join (left outer join)
                                      class: t_a node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_b node[?]
+                                     class: lt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: lt node[?]
+                          class: rt node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: rt node[?]
+               class: t_b node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -144,20 +144,20 @@ nl-join (left outer join)
                outer: nl-join (left outer join)
                           edge:  term[?]
                           outer: sscan
-                                     class: t_a node[?]
+                                     class: lt node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_b node[?]
+                                     class: rt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: lt node[?]
+                          class: t_a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: rt node[?]
+               class: t_b node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -216,17 +216,17 @@ nl-join (left outer join)
                                      class: t_a node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_b node[?]
+                                     class: lt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: lt node[?]
+                          class: rt node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: rt node[?]
+               class: t_b node[?]
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
@@ -443,20 +443,20 @@ select ? from left_tbl lt left outer join right_tbl rt on lt.col_a=rt.col_a left
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: nl-join (left outer join)
+    outer: nl-join (inner join)
                edge:  term[?]
-               outer: nl-join (inner join)
+               outer: nl-join (left outer join)
                           edge:  term[?]
                           outer: sscan
                                      class: lt node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_a node[?]
+                                     class: rt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: rt node[?]
+                          class: t_a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
@@ -484,12 +484,12 @@ nl-join (cross join)
                                      class: lt node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_a node[?]
+                                     class: rt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: rt node[?]
+                          class: t_a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
@@ -517,12 +517,12 @@ nl-join (left outer join)
                                      class: lt node[?]
                                      cost:  ? card ?
                           inner: sscan
-                                     class: t_a node[?]
+                                     class: rt node[?]
                                      sargs: term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: rt node[?]
+                          class: t_a node[?]
                           sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?

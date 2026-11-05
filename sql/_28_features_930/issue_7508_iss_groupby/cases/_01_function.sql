@@ -112,83 +112,83 @@ select /*+ recompile index_ss */ k1, k2, count(*)         from t where k2 > -1 g
 --
 -- index skip scan, does not cover
 --
-select /*+ recompile index_ss */ k1, k2, sum(v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, sum(v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, sum(v)          from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, sum(distinct v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, sum(distinct v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, sum(distinct v)          from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, avg(v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, avg(v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, avg(v)          from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, avg(distinct v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, avg(distinct v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, avg(distinct v)          from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, stddev_pop(v)   from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, stddev_pop(v)   from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, stddev_pop(v)   from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, stddev_pop(distinct v)   from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, stddev_pop(distinct v)   from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, stddev_pop(distinct v)   from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, stddev_samp(v)  from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, stddev_samp(v)  from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, stddev_samp(v)  from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, stddev_samp(distinct v)  from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, stddev_samp(distinct v)  from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, stddev_samp(distinct v)  from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, var_pop(v)      from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, var_pop(v)      from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, var_pop(v)      from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, var_pop(distinct v)      from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, var_pop(distinct v)      from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, var_pop(distinct v)      from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, var_samp(v)     from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, var_samp(v)     from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, var_samp(v)     from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, var_samp(distinct v)     from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, var_samp(distinct v)     from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, var_samp(distinct v)     from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, min(v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, min(v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, min(v)          from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, min(distinct v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, min(distinct v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, min(distinct v)          from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, max(v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, max(v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, max(v)          from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, max(distinct v)          from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, max(distinct v)          from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, max(distinct v)          from t where k2 > -1 group by k1, k2 using index none;
 
 
-select /*+ recompile index_ss */ k1, k2, count(v)        from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, count(v)        from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, count(v)        from t where k2 > -1 group by k1, k2 using index none;
 
-select /*+ recompile index_ss */ k1, k2, count(distinct v)        from t where k2 > -1 group by k1, k2
+select /*+ recompile index_ss */ k1, k2, count(distinct v)        from t where k2 > -1 group by k1, k2 using index idx
 difference
 select /*+ recompile index_ss */ k1, k2, count(distinct v)        from t where k2 > -1 group by k1, k2 using index none;
 

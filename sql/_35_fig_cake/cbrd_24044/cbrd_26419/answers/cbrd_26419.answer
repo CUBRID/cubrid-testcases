@@ -489,12 +489,12 @@ idx-join (inner join)
                           class: a node[?]
                           cost:  ? card ?
                inner: iscan
-                          class: v node[?]
+                          class: c node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: c node[?]
+               class: v node[?]
                index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?
@@ -573,8 +573,8 @@ count(*)
 10     
 
 Query plan:
-idx-join (semi join)
-    outer: idx-join (inner join)
+idx-join (inner join)
+    outer: idx-join (semi join)
                outer: idx-join (inner join)
                           outer: sscan
                                      class: b node[?]
@@ -585,12 +585,12 @@ idx-join (semi join)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: iscan
-                          class: x node[?]
+                          class: c node[?]
                           index: idx term[?] (covers)
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
-               class: c node[?]
+               class: x node[?]
                index: idx term[?] (covers)
                cost:  ? card ?
     cost:  ? card ?

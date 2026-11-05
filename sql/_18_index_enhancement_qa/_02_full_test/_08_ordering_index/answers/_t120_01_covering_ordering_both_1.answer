@@ -47,7 +47,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.b from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) and t?.c= ?:?  order by ?
+select t?.b from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) and t?.c= ?:?  using index t?.i_t?_a_b_c order by ?
 ===================================================
 a    b    c    d    
 2     3     4     234     
@@ -121,7 +121,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.b, t?.c from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) order by ?
+select t?.b, t?.c from t? t? where (t?.a< ?:? ) and (t?.b> ?:? ) using index t?.i_t?_a_b_c order by ?
 ===================================================
 b    
 3     
@@ -139,7 +139,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.b, t?.c from t? t? where (t?.a< ?:? ) order by ?
+select t?.b, t?.c from t? t? where (t?.a< ?:? ) using index t?.i_t?_a_b_c order by ?
 ===================================================
 b    
 3     
@@ -157,7 +157,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.b, t?.c from t? t? where (t?.b> ?:? ) order by ?
+select t?.b, t?.c from t? t? where (t?.b> ?:? ) using index t?.i_t?_b_c order by ?
 ===================================================
 b    
 8     

@@ -20,13 +20,13 @@ alter table t1 change column i newi int;
 update statistics on t1;
 SHOW INDEXES FROM t1;
 --Test
-select /*+ recompile */ * from t1 where sqrt(newd) > 5;
+select /*+ recompile */ * from t1 where sqrt(newd) > 5 using index idx;
 --Test
 select /*+ recompile */ * from t1 where newi < 20 using index idx2(+);
 
 insert into t1 values (30, 900);
 --Test
-select /*+ recompile */ * from t1 where sqrt(newd) > 5;
+select /*+ recompile */ * from t1 where sqrt(newd) > 5 using index idx;
 --Test
 select /*+ recompile */ * from t1 where newi < 20 using index idx2(+);
 

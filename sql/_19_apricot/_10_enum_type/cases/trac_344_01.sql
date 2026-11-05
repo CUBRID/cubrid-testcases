@@ -25,7 +25,7 @@ select /*+ recompile */ * from t1, t2 where t1.e1 in (t2.i, t2.s) order by 1, 2,
 select /*+ recompile */ * from t1, t2 where t1.e1 in (1, t2.s, 'Friday') order by 1, 2, 3, 4;
 select /*+ recompile */ * from t1, t2 where t1.e1 =t2.s order by 1, 2, 3, 4;
 select /*+ recompile */ e1 from t1 where e1 in (select s from t2) order by i;
-select /*+ recompile */ e1 from t1 where e1 in (select s from t2 where t2.s = 'Saturday') order by i;
+select /*+ recompile */ e1 from t1 where e1 in (select s from t2 where t2.s = 'Saturday') using index t1.idx1 order by i;
 select /*+ recompile */ e1 from t1 where e1 in (select s from t2 where t2.s = 'Saturday' union select s from t2 where t2.s <> 'Saturday') order by i;
 select /*+ recompile */ e1 from t1 where not e1 in (select s from t2) order by i;
 select /*+ recompile */ e1 from t1 where not e1 in (select s from t2 where t2.s = 'Saturday') order by i;

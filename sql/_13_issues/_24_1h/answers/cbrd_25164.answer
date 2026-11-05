@@ -94,7 +94,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 ln(vb)    vc    
 2.302585092994046     100     
@@ -106,7 +106,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 vb    ln(vb)    vc    
 10     2.302585092994046     100     
@@ -118,7 +118,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vb,  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select tx.vb,  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 vc    
 
@@ -129,7 +129,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where (tx.va> ?:? ) and tx.vc= ?:? 
+select tx.vc from tx tx where (tx.va> ?:? ) and tx.vc= ?:?  using index tx.idx
 ===================================================
 0
 ===================================================
@@ -147,7 +147,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 vc    
 200     
@@ -194,7 +194,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 ln(va)    vb    vc    
 0.0     10     100     
@@ -206,7 +206,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select  ln( cast(tx.va as double)), tx.vb, tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select  ln( cast(tx.va as double)), tx.vb, tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 0
 ===================================================
@@ -225,7 +225,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:? 
+select tx.vc from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:?  using index tx.idx
 ===================================================
 va    vc    
 1     100     
@@ -237,7 +237,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and tx.vc= ?:? 
+select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and tx.vc= ?:?  using index tx.idx_length
 ===================================================
 va    vc    
 2     200     
@@ -249,7 +249,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and (tx.vc> ?:? )
+select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and (tx.vc> ?:? ) using index tx.idx_length
 ===================================================
 0
 ===================================================
@@ -287,7 +287,7 @@ iscan
     index: idx_ln term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where  ln( cast(tx.va as double))>?
+select tx.vc from tx tx where  ln( cast(tx.va as double))>? using index tx.idx_ln
 ===================================================
 vc    
 
@@ -297,7 +297,7 @@ iscan
     index: idx_exp term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where  exp( cast(tx.vb as double))<?
+select tx.vc from tx tx where  exp( cast(tx.vb as double))<? using index tx.idx_exp
 ===================================================
 vc    
 1000     
@@ -309,7 +309,7 @@ iscan
     index: idx_sqrt term[?]
     cost:  ? card ?
 Query stmt:
-select tx.vc from tx tx where  sqrt( cast(tx.vc as double))>?
+select tx.vc from tx tx where  sqrt( cast(tx.vc as double))>? using index tx.idx_sqrt
 ===================================================
 0
 ===================================================
@@ -391,6 +391,6 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ NO_COVERING_IDX */ tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
+select /*+ NO_COVERING_IDX */ tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:?  using index tx.idx
 ===================================================
 0

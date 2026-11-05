@@ -24,20 +24,20 @@ create table tbl3(id int,prefix varchar(2));
 insert into tbl3 select id,substring(text,1,2) from tbl;
 create index idx_tbl3 on tbl3(id, prefix);
 update statistics on all classes;
-select /*+ recompile */ t1.id, t2.id from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1;
-select /*+ recompile */ t1.id, t2.id, t1.text from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1;
-select /*+ recompile */ t1.id, t2.id, t2.prefix from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1;
-select /*+ recompile */ t1.id, t2.id, t1.text, t2.prefix from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1;
+select /*+ recompile */ t1.id, t2.id from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
+select /*+ recompile */ t1.id, t2.id, t1.text from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
+select /*+ recompile */ t1.id, t2.id, t2.prefix from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
+select /*+ recompile */ t1.id, t2.id, t1.text, t2.prefix from tbl as t1, tbl2 as t2 where t1.id = t2.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
 
-select /*+ recompile */ t1.id, t2.id, t3.id from tbl as t1, tbl2 as t2, tbl3 as t3 where t1.id = t2.id and t2.id = t3.id and t1.id = 1;
-select /*+ recompile */ t1.id, t2.id, t3.prefix from tbl as t1, tbl2 as t2, tbl3 as t3 where t1.id = t2.id and t2.id = t3.id and t1.id = 1;
+select /*+ recompile */ t1.id, t2.id, t3.id from tbl as t1, tbl2 as t2, tbl3 as t3 where t1.id = t2.id and t2.id = t3.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2, t3.idx_tbl3;
+select /*+ recompile */ t1.id, t2.id, t3.prefix from tbl as t1, tbl2 as t2, tbl3 as t3 where t1.id = t2.id and t2.id = t3.id and t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2, t3.idx_tbl3;
 
-select /*+ recompile */ t1.id from tbl as t1 right join tbl2 as t2 on t1.id = t2.id where t1.id = 1;
-select /*+ recompile */ t1.id from tbl as t1 left join tbl2 as t2 on t1.id = t2.id where t1.id = 1;
-select /*+ recompile */ t1.id from tbl as t1 join tbl2 as t2 on t1.id = t2.id where t1.id = 1;
+select /*+ recompile */ t1.id from tbl as t1 right join tbl2 as t2 on t1.id = t2.id where t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
+select /*+ recompile */ t1.id from tbl as t1 left join tbl2 as t2 on t1.id = t2.id where t1.id = 1 using index t1.idx_tbl1;
+select /*+ recompile */ t1.id from tbl as t1 join tbl2 as t2 on t1.id = t2.id where t1.id = 1 using index t1.idx_tbl1, t2.idx_tbl2;
 
-select /*+ recompile */ t1.id, (select t2.id from tbl2 as t2 where t1.id = t2.id) from tbl as t1  where t1.id = 1;
-select /*+ recompile */ t1.id from tbl as t1 where t1.id IN ( select t2.id from tbl2 as t2 where t1.id = t2.id)  and t1.id = 1;
+select /*+ recompile */ t1.id, (select t2.id from tbl2 as t2 where t1.id = t2.id using index idx_tbl2) from tbl as t1  where t1.id = 1 using index idx_tbl1;
+select /*+ recompile */ t1.id from tbl as t1 where t1.id IN ( select t2.id from tbl2 as t2 where t1.id = t2.id using index t2.idx_tbl2)  and t1.id = 1 using index t1.idx_tbl1;
 
 drop table tbl2;
 drop table tbl3;

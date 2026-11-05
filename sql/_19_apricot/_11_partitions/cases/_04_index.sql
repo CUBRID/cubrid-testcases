@@ -25,7 +25,7 @@ show indexes from tph__p__p7;
 show indexes from tph__p__p8;
 show indexes from tph__p__p9;
 
-select /*+ recompile */ * from tph where i > 0 order by 1;
+select /*+ recompile */ * from tph where i > 0 using index idx_tph order by 1;
 select /*+ recompile */ * from tph__p__p0 where i > 0 order by 1;
 select /*+ recompile */ * from tph__p__p1 where i > 0 order by 1;
 select /*+ recompile */ * from tph__p__p2 where i > 0 order by 1;

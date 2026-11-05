@@ -48,7 +48,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) order by ?
+select t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) using index t.i_t_abc order by ?
 /* ---> skip ORDER BY */
 ===================================================
 a    b    c    d    e    a    b    c    d    e    
@@ -71,7 +71,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_IDX */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) and (s.a> ?:? ) order by ?
+select /*+ USE_IDX */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) and (s.a> ?:? ) using index s.i_s_abc order by ?
 /* ---> skip ORDER BY */
 ===================================================
 a    b    c    d    e    a    b    c    d    e    
@@ -94,7 +94,7 @@ idx-join (inner join)
     sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_IDX */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) and (s.a> ?:? ) order by ?, ?, ?
+select /*+ ORDERED USE_IDX */ t.a, t.b, t.c, t.d, t.e, s.a, s.b, s.c, s.d, s.e from t t, s s where t.a=s.a and (t.a> ?:? ) and (s.a> ?:? ) using index t.i_t_abc order by ?, ?, ?
 /* ---> skip ORDER BY */
 ===================================================
 0

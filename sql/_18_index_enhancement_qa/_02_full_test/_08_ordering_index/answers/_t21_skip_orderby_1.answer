@@ -51,16 +51,15 @@ mnpde
 mnpqrt     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: cov_t? node[?]
-                 index: idx_covering_t? term[?] (covers)
-                 filtr: term[?]
-                 cost:  ? card ?
+iscan
+    class: cov_t? node[?]
+    index: idx_t?_?_? term[?]
+    sargs: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 id2    
 mnpqrt     
@@ -70,16 +69,15 @@ abcde
 abcd     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: cov_t? node[?]
-                 index: idx_covering_t? term[?] (covers)
-                 filtr: term[?]
-                 cost:  ? card ?
+iscan
+    class: cov_t? node[?]
+    index: idx_t?_?_? term[?] (desc_index)
+    sargs: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select cov_t?.id? from cov_t? cov_t? where (cov_t?.id?< ?:? ) and (cov_t?.id?> ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
 id2    
 mnpde     

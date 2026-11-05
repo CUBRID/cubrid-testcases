@@ -70,9 +70,9 @@ original    translated
 abcabc     dbcdbc     
 
 Query plan:
-iscan
+sscan
     class: foo node[?]
-    index: idx_foo_translate term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select foo.str,  translate(foo.str, foo.c?, foo.c?) from foo foo where (( translate(foo.str, foo.c?, foo.c?)= ?:? ) or ( translate(foo.str, foo.c?, foo.c?)= ?:? ))
@@ -96,13 +96,13 @@ dba.foo     1     idx_foo_elt     1     null     A     3     null     null     Y
 
 ===================================================
 a    b    c    
-ccc     aaa     bbb     
 aaa     bbb     ccc     
+ccc     aaa     bbb     
 
 Query plan:
-iscan
+sscan
     class: foo node[?]
-    index: idx_foo_elt term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select foo.a, foo.b, foo.c from foo foo where (elt(?, foo.a, foo.b, foo.c)> ?:? )

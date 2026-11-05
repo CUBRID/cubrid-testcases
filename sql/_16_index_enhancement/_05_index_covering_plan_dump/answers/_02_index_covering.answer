@@ -60,7 +60,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id, t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    id    text    
 1     1     AAABC     
@@ -77,7 +77,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id, t?.[text] from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id, t?.id, t?.[text] from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    id    prefix    
 1     1     AAA     
@@ -94,7 +94,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id, t?.prefix from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id, t?.id, t?.prefix from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    id    text    prefix    
 1     1     AAABC     AAA     
@@ -111,7 +111,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id, t?.[text], t?.prefix from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id, t?.id, t?.[text], t?.prefix from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    id    id    
 1     1     1     
@@ -134,7 +134,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id, t?.id from tbl t?, tbl? t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id and t?.id=t?.id
+select t?.id, t?.id, t?.id from tbl t?, tbl? t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    id    prefix    
 1     1     AA     
@@ -157,7 +157,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id, t?.id, t?.prefix from tbl t?, tbl? t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id and t?.id=t?.id
+select t?.id, t?.id, t?.prefix from tbl t?, tbl? t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    
 1     
@@ -174,7 +174,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 id    
 1     
@@ -192,7 +192,7 @@ idx-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id from tbl t? left outer join tbl? t? on t?.id=t?.id and t?.id= ?:?  where t?.id= ?:? 
+select t?.id from tbl t? left outer join tbl? t? on t?.id=t?.id and t?.id= ?:?  where t?.id= ?:?  using index t?.idx_tbl?
 ===================================================
 id    
 1     
@@ -209,9 +209,9 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+select t?.id from tbl t?, tbl? t? where t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
-id    (select t2.id from tbl2 t2 where t1.id=t2.id)    
+id    (select t2.id from tbl2 t2 where t1.id=t2.id using index idx_tbl2)    
 1     1     
 
 Query plan:
@@ -220,14 +220,14 @@ iscan
     index: idx_tbl? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-(select t?.id from tbl? t? where t?.id=t?.id)
+(select t?.id from tbl? t? where t?.id=t?.id using index t?.idx_tbl?)
 Query plan:
 iscan
     class: t? node[?]
     index: idx_tbl? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id, (select t?.id from tbl? t? where t?.id=t?.id) from tbl t? where t?.id= ?:? 
+select t?.id, (select t?.id from tbl? t? where t?.id=t?.id using index t?.idx_tbl?) from tbl t? where t?.id= ?:?  using index t?.idx_tbl?
 ===================================================
 id    
 1     
@@ -244,7 +244,7 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select t?.id from tbl t? semi join tbl? t? on t?.id=t?.id and t?.id= ?:?  where t?.id= ?:? 
+select t?.id from tbl t? semi join tbl? t? on t?.id=t?.id and t?.id= ?:?  where t?.id= ?:?  using index t?.idx_tbl?, t?.idx_tbl?
 ===================================================
 0
 ===================================================
