@@ -25,35 +25,29 @@ a    b    c    d
 5     2.1     BBBBB     BBBBB     
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: i_t_abcd (covers)
-    sort:  ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d from t t group by t.a
-/* ---> skip GROUP BY */
+select t.a, t.b, t.c, t.d from t t
 ===================================================
 0
 ===================================================
 0
 ===================================================
 a    b    c    d    
-5     2.1     BBBBB     BBBBB     
-4     null     null     null     
-3     1.1     AAAAA     AABBB     
-2     1.1     AAAAA     AAAAA     
 1     1.1     AAAAA     AAAAA     
+2     1.1     AAAAA     AAAAA     
+3     1.1     AAAAA     AABBB     
+4     null     null     null     
+5     2.1     BBBBB     BBBBB     
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: i_t_abcd (covers) (desc_index)
-    sort:  ? desc, ? desc, ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b, t.c, t.d from t t group by t.a desc 
-/* ---> skip GROUP BY */
+select t.a, t.b, t.c, t.d from t t
 ===================================================
 0
 ===================================================
