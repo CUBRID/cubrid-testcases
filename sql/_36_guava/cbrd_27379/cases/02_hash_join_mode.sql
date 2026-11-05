@@ -7,8 +7,8 @@
  *    PARTITION       tc, td with NO_PARALLEL_HASH_JOIN: SPLIT line, no parallel workers on HASHJOIN or PROBE
  *    PARALLEL_PROBE  ta, tb with PARALLEL(4): no SPLIT line, parallel workers under PROBE
  *    PARALLEL        tc, td with PARALLEL(4): SPLIT line, parallel workers on HASHJOIN
- *  ta, tb (100001 rows on the smaller side) stay below the split threshold of the default max_hash_list_scan_size,
- *  and tc, td (300001 rows each) exceed it.
+ *  ta, tb (100001 and 125001 rows) stay below the split threshold of the default max_hash_list_scan_size even as the
+ *  build input, and tc, td (300001 rows each) exceed it.
  *  The join key is CHAR(200) so that the input lists reach parallel_hash_join_page_threshold even at its default value.
  *  Run this file with test_mode=yes, as CTP does, for the parallel modes:
  *  test_mode lowers parallel_scan_page_threshold to 32, and parallel_hash_join_page_threshold
@@ -71,16 +71,16 @@ INSERT INTO ta
   WHERE ROWNUM <= 100000;
 INSERT INTO ta VALUES (NULL);
 
--- tb: 150000 rows of LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0'), and one NULL row
+-- tb: 125000 rows of LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0'), and one NULL row
 --   ROWNUM 1       -> '0000...0004'    199 '0' + '4'
 --   ROWNUM 2       -> '0000...0008'    199 '0' + '8'
 --   ...
 --   ROWNUM 25000   -> '0000...100000'  194 '0' + '100000'
---   ROWNUM 25001   -> '0000...0004'    199 '0' + '4'       the same keys repeat, 6 rows per key
+--   ROWNUM 25001   -> '0000...0004'    199 '0' + '4'       the same keys repeat, 5 rows per key
 --   ...
---   ROWNUM 150000  -> '0000...100000'  194 '0' + '100000'
+--   ROWNUM 125000  -> '0000...100000'  194 '0' + '100000'
 --   NULL
---   Stored: 150001 rows, 25000 keys 4 .. 100000 (multiples of 4) with 6 rows per key, and 1 NULL
+--   Stored: 125001 rows, 25000 keys 4 .. 100000 (multiples of 4) with 5 rows per key, and 1 NULL
 CREATE TABLE tb (ca CHAR(200));
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (
@@ -90,7 +90,7 @@ INSERT INTO tb
   )
   SELECT LPAD (MOD (ROWNUM - 1, 25000) * 4 + 4, 200, '0')
   FROM cte x, cte y
-  WHERE ROWNUM <= 150000;
+  WHERE ROWNUM <= 125000;
 INSERT INTO tb VALUES (NULL);
 
 -- tc: 300000 rows of LPAD (ROWNUM, 200, '0'), and one NULL row

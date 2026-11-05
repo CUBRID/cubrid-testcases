@@ -22,4 +22,4 @@ create or replace procedure test_proc2(a blob) as language java name 'SpTest9.te
 
 drop function test_proc2;
 
---_ server-message off
+--+ server-message off
