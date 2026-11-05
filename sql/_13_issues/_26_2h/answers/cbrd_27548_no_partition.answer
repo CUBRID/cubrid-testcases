@@ -185,14 +185,18 @@ Query Plan:
   SORT (order by)
     NESTED LOOPS (left outer join)
       TABLE SCAN (o)
-      TABLE SCAN (l)
+      SORT (temp)
+        TABLE SCAN (l)
 
   rewritten query: select /*+ ORDERED USE_NL */ o.k, l.n from [dba.t_outer] o left outer join [dba.t_list] l on l.k= any {?, ?} and l.k=o.k order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.t_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
