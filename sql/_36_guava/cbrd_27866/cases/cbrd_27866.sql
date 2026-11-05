@@ -220,5 +220,30 @@ from t_o o inner join t_p w on w.k = o.k where o.a between 10 and 14 order by o.
 select /*+ ordered no_use_hash parallel(0) */ o.a, w.id
 from t_o o inner join t_p w on w.k = o.k where o.a between 10 and 14 order by o.a desc;
 
+-- Case 17: a subquery run again opens its partitioned inner again. The last outer row it pruned
+-- (k = 7) left out every partition, and the next run starts from all of them again.
+create table t_o2 (k int);
+insert into t_o2 values (3), (1), (2), (5), (7);
+create table t_rp (k int, a int) partition by range (k)
+  (partition p0 values less than (1), partition p1 values less than (2), partition p2 values less than (3),
+   partition p3 values less than (4), partition p4 values less than (5), partition p5 values less than (6),
+   partition p6 values less than (7), partition p7 values less than (8));
+create index i_rp_k on t_rp (k);
+insert into t_rp values (1, 1), (3, 3), (2, 2), (4, 4);
+update statistics on t_o2, t_rp with fullscan;
+
+select o.a, (select /*+ ordered use_nl */ count (*) from t_o2 o2, t_rp r
+             where r.k = o2.k and r.k in (1, 3) and o.a > 0) cnt
+from t_o o where o.a <= 5 order by 1;
+
+-- Case 18: an outer join on a term that prunes no partition, the inner read from a temp list or per outer row
+select count (*), count (w.id), sum (w.id)
+from t_o o left join t_p w on w.k between o.k and o.k + 1;
+
+select count (*), count (w.id), sum (w.id)
+from t_o o left join t_p w on w.k between o.k and o.k + 1 and w.id > 20;
+
+drop table t_o2, t_rp;
+
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
