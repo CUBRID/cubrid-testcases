@@ -30,8 +30,11 @@
  *    Case 10: views with a nested set operation, a set operation LIMIT without ORDER BY, and DISTINCT set operands
  *    Case 11: EXISTS subqueries having analytic functions, whose select list is kept
  *             (chopping it failed in XASL generation or sorting, also without ORDER BY and LIMIT)
+ *    Case 12: LIMIT with host variables, where ORDER BY and LIMIT are kept (PL/CSQL and JDBC use this path)
+ *    Case 13: an upper-bound-only LIMIT removed with ORDER BY, so that the select list is chopped
  */
-drop view if exists c_v, c_v2, c_v3, c_v4, c_v5, c_v6, c_v7;
+drop view if exists c_v, c_v2, c_v3, c_v4, c_v5, c_v6, c_v7, s_v1, s_v2, s_v3, s_v4, s_v5, s_v6,
+  d_v1, d_v2, d_v3, d_v4, d_v5, n_v1, n_v2, n_v3, n_v4, n_v5, a_v1;
 drop table if exists t;
 create table t (c int);
 insert into t values (3), (1), (2);
@@ -144,5 +147,18 @@ select count (*) from t where exists ((select c, row_number () over (order by c)
 create view a_v1 as select c from t where exists (select c, row_number () over (order by c) from t order by 2 limit 1);
 select * from a_v1 order by 1;
 drop view a_v1;
+
+-- Case 12: LIMIT with host variables
+prepare s1 from 'select c from t where exists (select c from t order by 1 limit ?, 1) order by 1';
+execute s1 using 2;
+execute s1 using 3;
+deallocate prepare s1;
+prepare s2 from 'select c from t where exists (select distinct c from t limit ?, 1) order by 1';
+execute s2 using 2;
+execute s2 using 3;
+deallocate prepare s2;
+
+-- Case 13: upper-bound-only LIMIT, the select list is chopped
+select c from t where exists (select c, 1/(c-c) from t order by 1 limit 1) order by 1;
 
 drop table t;
