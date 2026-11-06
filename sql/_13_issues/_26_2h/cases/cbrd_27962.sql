@@ -11,12 +11,18 @@
  *    Case 2: NULLIF (1, 1) as that argument, and NVL, IFNULL, NVL2
  *    Case 3: the same column in a derived table of a UNION ALL, and in a derived table inside a derived table
  *    Case 4: forms whose type does not change (control)
+ *    Case 5: a session variable assignment with ORDER BY on a column not in the select list, which is read from a sorted
+ *            derived table whose hidden sort column comes before the columns added to it: each item stays with its own
+ *            column (an item cast to the type of the sort column failed on a string and rounded a NUMERIC)
  */
 
 drop table if exists t_27962;
+drop table if exists t5_27962;
 
 create table t_27962 (c int);
 insert into t_27962 values (123456789);
+create table t5_27962 (k int, s varchar (10), d numeric (5, 1));
+insert into t5_27962 values (2, 'b', 2.5), (1, 'a', 1.5), (3, 'c', 3.5);
 
 evaluate 'Case 1: COALESCE with a second argument that folds to NULL';
 select a from (select coalesce (c, cast (null as int)) as a from t_27962) x;
@@ -38,4 +44,11 @@ select a from (select coalesce (cast (null as int), c) as a from t_27962) x;
 select a from (select case when c > 0 then c else cast (null as int) end as a from t_27962) x;
 select coalesce (c, cast (null as int)) from t_27962;
 
+evaluate 'Case 5: a session variable assignment with ORDER BY on a column not in the select list';
+set @n = 0;
+select concat (s, @n := @n + 1) from t5_27962 order by k;
+set @m = 0;
+select d + (@m := @m + 1) from t5_27962 order by k;
+
 drop table t_27962;
+drop table t5_27962;
