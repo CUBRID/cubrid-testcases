@@ -102,8 +102,8 @@ ln(vb)    vc
 Query plan:
 iscan
     class: tx node[?]
-    index: idx term[?]
-    sargs: term[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
 select  ln( cast(tx.vb as double)), tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
@@ -202,8 +202,8 @@ ln(va)    vb    vc
 Query plan:
 iscan
     class: tx node[?]
-    index: idx term[?]
-    sargs: term[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
 select  ln( cast(tx.va as double)), tx.vb, tx.vc from tx tx where tx.vc= ?:?  and tx.va= ?:? 
@@ -221,8 +221,8 @@ vc
 Query plan:
 iscan
     class: tx node[?]
-    index: idx term[?]
-    sargs: term[?]
+    index: idx term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
 select tx.vc from tx tx where  ln( cast(tx.va as double))>? and tx.vc= ?:? 
@@ -233,8 +233,8 @@ va    vc
 Query plan:
 iscan
     class: tx node[?]
-    index: idx_length term[?]
-    sargs: term[?]
+    index: idx_length term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
 select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and tx.vc= ?:? 
@@ -245,8 +245,8 @@ va    vc
 Query plan:
 iscan
     class: tx node[?]
-    index: idx_length term[?]
-    sargs: term[?]
+    index: idx_length term[?] (covers)
+    filtr: term[?]
     cost:  ? card ?
 Query stmt:
 select tx.va, tx.vc from tx tx where  char_length( cast(tx.vb as varchar))=? and (tx.vc> ?:? )
