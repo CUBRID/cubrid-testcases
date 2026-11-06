@@ -45,11 +45,14 @@
  *       table, a raw argument term next to the expression; session dependent, to_datetime_tz and
  *       utf8_en_ci expressions and UPDATE / DELETE / FOR UPDATE keep it a data filter; every query is
  *       compared with its USING INDEX NONE twin
- *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved.
+ *   14. hash / merge join input over (k, sqrt(d)) reading the whole key range: the input is not covered
+ *       under a list file, so the optimizer prices its heap fetches and takes the heap scan
+ *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved. Section 14
+ *          uses 3000 rows of 200 bytes so that the heap fetches of the index scan outweigh the heap scan.
  */
 
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -562,5 +565,22 @@ select case when count(*) = 7 then 'PASS' else 'FAIL' end as result from fi_a wh
 delete from fi_a where i >= 3 and sqrt(d) > 20 using index idx_fi_a;
 select case when count(*) = 16 and count(case when i = 3 then 1 end) = 1 then 'PASS' else 'FAIL' end as result from fi_a;
 
+evaluate '[14-1] hash / merge join over the whole range of (k, sqrt(d)): heap scan input';
+create table fi_ha (k int, d double, pad varchar(200));
+insert into fi_ha select rownum, rownum * 4.0, md5(rownum) || md5(rownum + 1) || md5(rownum + 2) || md5(rownum + 3) || md5(rownum + 4) || md5(rownum + 5)
+  from db_class a, db_class b, db_class c limit 3000;
+create index idx_fi_ha on fi_ha (k, sqrt(d));
+create table fi_hb (k int);
+insert into fi_hb select rownum from db_class a, db_class b, db_class c limit 3000;
+update statistics on fi_ha, fi_hb with fullscan;
+--@queryplan
+select /*+ USE_HASH */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b where a.k = b.k and a.k >= 1 order by 1 limit 3;
+--@queryplan
+select /*+ USE_MERGE */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b where a.k = b.k and a.k >= 1 order by 1 limit 3;
+select /*+ ordered use_nl */ case when count(*) = 3000 then 'PASS' else 'FAIL' end as result
+from (select /*+ NO_MERGE USE_HASH */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b where a.k = b.k and a.k >= 1) p
+     join (select /*+ NO_MERGE USE_HASH NO_COVERING_IDX */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b where a.k = b.k and a.k >= 1) s
+     on p.k = s.k and p.r <=> s.r;
+
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb;

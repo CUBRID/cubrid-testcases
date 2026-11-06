@@ -1671,4 +1671,77 @@ result
 PASS     
 
 ===================================================
+    
+[14-1] hash / merge join over the whole range of (k, sqrt(d)): heap scan input     
+
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+k    r    
+1     2.0     
+2     2.8284271247461903     
+3     3.4641016151377544     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.k,  sqrt(a.d) from fi_ha a, fi_hb b where a.k=b.k and (a.k>= ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+k    r    
+1     2.0     
+2     2.8284271247461903     
+3     3.4641016151377544     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: k[?]
+                 subplan: m-join (inner join)
+                              edge:  term[?]
+                              outer: temp
+                                         order: k[?]
+                                         subplan: sscan
+                                                      class: a node[?]
+                                                      sargs: term[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: temp
+                                         order: k[?]
+                                         subplan: sscan
+                                                      class: b node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ a.k,  sqrt(a.d) from fi_ha a, fi_hb b where a.k=b.k and (a.k>= ?:? ) order by ? for orderby_num()<= ?:? 
+===================================================
+result    
+PASS     
+
+===================================================
 0
