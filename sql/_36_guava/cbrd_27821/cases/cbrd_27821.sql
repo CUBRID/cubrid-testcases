@@ -1,9 +1,10 @@
 -- Verification for CBRD-27821
--- A hash join whose probe evaluates a join term with a session variable or a serial must keep
--- the probe serial. Before the fix the parallel probe workers updated the session variable list
--- (or the serial) of the leader concurrently and the server crashed.
---   Case 1-6 : the term reaches the probe workers -> COUNT(*) is 4096 and PROBE has no parallel workers
---   Case 7   : a plain hash join -> PROBE still runs with parallel workers
+-- A hash join whose probe evaluates a join term that assigns a session variable must keep the
+-- probe serial. Before the fix the parallel probe workers updated the session variable list of
+-- the leader concurrently and the server crashed. Reading a session variable or a serial is safe.
+--   Case 1-3, 6 : an assignment reaches the probe workers -> COUNT(*) is 4096 and PROBE has no parallel workers
+--   Case 4, 5   : a session variable read or a serial keeps the parallel probe -> COUNT(*) is 4096
+--   Case 7      : a plain hash join -> PROBE still runs with parallel workers
 -- Sizing: CTP runs with test_mode=yes, which lowers parallel_hash_join_page_threshold to its 2-page
 -- floor; 4096 rows give a probe list above it, so Case 7 shows the parallel probe.
 
@@ -30,11 +31,11 @@ evaluate 'Case 3 : session variable assignment in a LEFT JOIN ON term (during jo
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_sv a left join t_sv b on a.id = b.id and (@v := a.c + b.c) > 0;
 show trace;
 
-evaluate 'Case 4 : session variable read in a residual join term';
+evaluate 'Case 4 : session variable read in a residual join term keeps the parallel probe';
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_sv a join t_sv b on a.id = b.id where a.c + @w >= b.c;
 show trace;
 
-evaluate 'Case 5 : serial NEXT_VALUE in a residual join term';
+evaluate 'Case 5 : serial NEXT_VALUE in a residual join term keeps the parallel probe';
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_sv a join t_sv b on a.id = b.id where a.c + b.c + 0 * s_sv.next_value > 0;
 show trace;
 
@@ -42,7 +43,7 @@ evaluate 'Case 6 : the PARALLEL hint does not override the restriction';
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery parallel(4) */ count(*) from t_sv a join t_sv b on a.id = b.id where (@v := a.c + b.c) > 0;
 show trace;
 
-evaluate 'Case 7 : a hash join without session variables or serials keeps the parallel probe';
+evaluate 'Case 7 : a hash join without session variables keeps the parallel probe';
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_sv a join t_sv b on a.id = b.id where a.c + b.c > 0;
 show trace;
 
