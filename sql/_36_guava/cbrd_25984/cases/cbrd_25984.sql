@@ -412,7 +412,7 @@ select o.k, mod(o.a, o.b) r, mod(o.a, i.b) m, case when mod(o.a, i.b) <=> mod(o.
 select /*+ NO_COVERING_IDX */ o.k, mod(o.a, o.b) r, mod(o.a, i.b) m, case when mod(o.a, i.b) <=> mod(o.a, o.b) then 'PASS' else 'FAIL' end chk from fi_s o, fi_s i where o.k > 0 and i.k = o.k order by 1;
 select o.k, mod(o.a, o.b) r, mod(i.a, o.b) m, case when mod(i.a, o.b) <=> mod(o.a, o.b) then 'PASS' else 'FAIL' end chk from fi_s o, fi_s i where o.k > 0 and i.k = o.k order by 1;
 
-evaluate '[12-2] plain index (d) of a table with a function index on sqrt(d): not covered, as before';
+evaluate '[12-2] plain index (d) of a table with a function index on sqrt(d): covered, sqrt(d) computed from the key value';
 --@queryplan
 select sqrt(d) r from fi_p where d > 0 using index idx_fi_pd order by 1;
 select /*+ NO_COVERING_IDX */ sqrt(d) r from fi_p where d > 0 using index idx_fi_pd order by 1;
