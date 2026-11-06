@@ -1,7 +1,7 @@
 --+ server-message on
--- error: an argument for an OUT or IN OUT parameter of CALL must be a host variable (CBRD-25140)
+-- error: an argument for an OUT or IN OUT parameter of CALL must be a bind variable (CBRD-25140)
 -- A constant, an expression, a session variable or a function call has no place for the returned value.
--- It fails with -1392 before the arguments are evaluated, so the procedure does not run.
+-- It fails with a semantic error (-494) when the statement is compiled, so the procedure does not run.
 
 create or replace procedure t25140_out (a OUT int) as begin a := 7; end;
 create or replace procedure t25140_inout (a INOUT int) as begin a := nvl (a, -1) + 100; end;
