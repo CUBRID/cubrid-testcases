@@ -2,6 +2,12 @@
  *  This test case verifies CBRD-27510: collations decided at the gate keep develop's answers where the collation
  *  comes from outside the statement's own columns.
  *
+ *  CBRD-27583: Case 3 no longer checks what it was written for, that a statement prepared before SET NAMES keeps
+ *  the collation of PREPARE time. A PREPARE whose statement has a position typed by its value makes no plan, and the
+ *  first EXECUTE compiles it, so the statement takes the collation of EXECUTE time. In Case 5 the character sets
+ *  that do not match across the rows of VALUES are a compile error, -494, where they were -1150. The other answers
+ *  are develop's.
+ *
  *  CBRD-27510 decides the collation of every string whose collation the compiler leaves open at the gate
  *  (qexec_resolve_domains, before the first row). This case probes an ENUM sibling, GROUP_CONCAT over NULL and over
  *  string binds, a statement prepared before SET NAMES or before ALTER ... COLLATE and executed after it, and

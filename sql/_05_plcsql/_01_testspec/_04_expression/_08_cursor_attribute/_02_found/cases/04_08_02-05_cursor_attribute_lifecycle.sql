@@ -394,3 +394,5 @@ END;
 call cursor_status_nation_athletes();
 drop procedure cursor_status_nation_athletes;
 drop table if exists athlete_t;
+
+--+ server-message off
