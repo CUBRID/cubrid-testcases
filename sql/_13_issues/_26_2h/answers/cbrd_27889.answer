@@ -13,7 +13,7 @@
 ===================================================
 0
 ===================================================
-4
+5
 ===================================================
 3
 ===================================================
@@ -34,7 +34,23 @@ t1_c1    t2_c2
 
 ===================================================
     
-Case 2: the WHERE condition holds a correlated subquery; only the t1 row with no t3 match and a true condition stays     
+Case 2: t2.c2 is null holds only on the rows with no t2 row; only the one of them with no t3 match stays     
+
+===================================================
+t1_c1    t2_c2    
+5     null     
+
+===================================================
+    
+Case 3: a RIGHT OUTER JOIN with t2.c1 is null; only the t1 row with no t2 row and no t3 match stays     
+
+===================================================
+t1_c1    t2_c1    
+5     null     
+
+===================================================
+    
+Case 4: an explicit ANTI JOIN with the WHERE condition of case 1; only the t1 row with no t3 match and a true condition stays     
 
 ===================================================
 t1_c1    t2_c2    
@@ -42,7 +58,7 @@ t1_c1    t2_c2
 
 ===================================================
     
-Case 3: the NOT EXISTS table t5 is partitioned; only the t1 row with no t5 match and a true condition stays     
+Case 5: the WHERE condition holds a correlated subquery; only the t1 row with no t3 match and a true condition stays     
 
 ===================================================
 t1_c1    t2_c2    
@@ -50,7 +66,15 @@ t1_c1    t2_c2
 
 ===================================================
     
-Case 4: 50 outer rows for each of 1 to 4, answered from memoize; only the rows of 3 stay     
+Case 6: the NOT EXISTS table t5 is partitioned; only the t1 row with no t5 match and a true condition stays     
+
+===================================================
+t1_c1    t2_c2    
+3     1     
+
+===================================================
+    
+Case 7: 50 outer rows for each of 1 to 4, answered from memoize; only the rows of 3 stay     
 
 ===================================================
 t6_c1    cnt    
@@ -58,13 +82,14 @@ t6_c1    cnt
 
 ===================================================
     
-Case 5: an ANTI JOIN whose ON condition reads t1, t2 and t3; the t1 row with no t2 row matches no t3 row and stays     
+Case 8: an ANTI JOIN whose ON condition reads t1, t2 and t3; the t1 rows with no t2 row match no t3 row and stay     
 
 ===================================================
 t1_c1    t2_c2    
 2     null     
 3     1     
 4     5     
+5     null     
 
 ===================================================
 0
