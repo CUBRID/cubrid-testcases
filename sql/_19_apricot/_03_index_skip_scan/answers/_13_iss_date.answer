@@ -206,28 +206,28 @@ select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) orde
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 null     3     
@@ -238,15 +238,15 @@ null     3
 2015-01-01     3     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -262,57 +262,57 @@ i    j
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers) (desc_index)
+    filtr: term[?]
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j= ?:?  order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? desc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers) (desc_index)
+    filtr: term[?]
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where (t.j<= ?:? ) order by ? desc 
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 1     1     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -495,28 +495,28 @@ select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j<= ?:? ) or (t.j= ?:? )) ord
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 null     3     
@@ -527,15 +527,15 @@ null     3
 2015-01-01     3     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================
@@ -663,28 +663,28 @@ select /*+ INDEX_SS */ t.i, t.j from t t where ((t.j< ?:? ) or (t.j= ?:? )) orde
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j is null  and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?] AND term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.j<=>null and t.k= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i    j    
 null     1900-01-04     
@@ -695,15 +695,15 @@ null     1900-01-04
 2010-01-01 12:00:05.0     2400-01-04     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.i, t.j from t t where t.k= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

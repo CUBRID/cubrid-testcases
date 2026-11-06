@@ -84,14 +84,14 @@ temp(group by)
 Query stmt:
 (select tab_b.col_a from tab_b tab_b group by tab_b.col_a)
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?] AND term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
@@ -113,14 +113,14 @@ temp(group by)
 Query stmt:
 (select b.col_a from tab_b b group by b.col_a)
 Query plan:
-nl-join (left outer join)
+hash-join (left outer join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
-               sargs: term[?] AND term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
     during:term[?]
     cost:  ? card ?
