@@ -5,13 +5,15 @@
 -- one that builds the leaves. A build sorts 256K (fan-in 8: 25 runs to 4, then 4), 512K (fan-in 16: 12 runs in
 -- one pass) or 256K with index_build_merge_fanin 3 (25 runs to 9, to 3, then 3), and each must fail with the
 -- unique violation and leave no index. With the last row changed to a k of its own, the same builds succeed
--- and read back every row in the order of the 16M build, which sorts the rows in memory with no merge.
+-- and read back every row in the order of the 16M build, which sorts the rows in memory with no merge. A pad
+-- of 100 characters keeps the heap at 23 sectors: a sort makes no more run files than its heap holds data
+-- sectors, and two INTs alone would leave 6, below the 8 and 16 of the buffers.
 
 drop table if exists u;
 drop table if exists sig;
 
-create table u (id int not null, k int);
-insert into u select n, n from (select rownum as n from db_class a, db_class b, db_class c limit 150000) x;
+create table u (id int not null, k int, p char(100));
+insert into u select n, n, 'p' from (select rownum as n from db_class a, db_class b, db_class c limit 150000) x;
 update u set k = 1 where id = 150000;
 
 create table sig (tag varchar(10), cfg varchar(20), cnt int, sg bigint);

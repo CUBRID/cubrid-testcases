@@ -11,9 +11,11 @@
 -- must give one count and one sum over all its builds.
 --
 -- Rows: 150000, a scattered INT, a VARCHAR of signed numbers with a suffix of up to 29 characters (NULL every
--- 101st row), and an INT of 7 values, whose index i_g merges keys that tie across 8 and 16 runs in the order of
--- their OIDs. The passes each setting takes (merge log of log_btree_operations on a debug build, whose radix
--- sorter flushes more runs than the merge sorter of a release build):
+-- 101st row), an INT of 7 values, whose index i_g merges keys that tie across 8 and 16 runs in the order of
+-- their OIDs, and a pad of 100 characters, which is not indexed: a sort makes no more run files than its heap
+-- holds data sectors (a temp file takes a sector at least), and the pad keeps the heap at 28 sectors, above the
+-- 16 run files of 512K. The passes each setting takes (merge log of log_btree_operations on a debug build,
+-- whose radix sorter flushes more runs than the merge sorter of a release build):
 --   256K (16 pages, fan-in 8):      i_k 20 runs: 8 at a time to 3, then 3 into the index
 --                                   i_s 37 runs: to 5, then 5; i_gs 42 runs: to 6, then 6; i_g 20 runs: to 3, then 3
 --   512K (32 pages, fan-in 16):     i_k 10 runs: 10 into the index in one pass
@@ -26,12 +28,12 @@
 drop table if exists t;
 drop table if exists sig;
 
-create table t (id int not null, k int, s varchar(60) collate utf8_bin, g int);
+create table t (id int not null, k int, s varchar(60) collate utf8_bin, g int, p char(100));
 insert into t
   select n, mod (n * 7919, 1000003) - 500000,
          case when mod (n, 101) = 0 then null
               else concat (mod (n * 104729, 2000003) - 1000000, repeat ('x', mod (n, 30))) end,
-         mod (n, 7)
+         mod (n, 7), 'p'
   from (select rownum as n from db_class a, db_class b, db_class c limit 150000) x;
 
 -- one row per build of an index: the setting, the rows read in index order, and their position-weighted sum

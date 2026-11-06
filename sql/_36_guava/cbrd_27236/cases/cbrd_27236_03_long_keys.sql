@@ -5,20 +5,26 @@
 -- rows, every 100th with a key of 17000 characters. A long key is a run of SHA-512 digests, which the string
 -- compression cannot shrink below a page, and an update gives it to rows already in place, so the long keys lie
 -- among the short ones in the heap and a build flushes 600 runs: the 300 long keys in runs of their own and the
--- 300 runs of short keys between them. lk is built with 2M (fan-in 64: to 10, then 10), 256K (fan-in 8: to 75,
--- 10, 2, then 2), 512K (fan-in 16: to 38, 3, then 3) and 256K with index_build_merge_fanin 2 (ten passes), and
--- every build must read back the same rows in the same order, the long keys among them. Every build merges, so
--- the reference is the heap sorted by the query sort, which is apart from the sort of an index build: the first
--- 6 characters of the keys differ from row to row, so the keys have one order.
+-- 300 runs of short keys between them. Every row also carries a pad of 768 characters (6 digests), which is not
+-- indexed: a sort makes no more run files than its heap holds data sectors (a temp file takes a sector at least),
+-- and the long records live in the overflow file apart from the heap, so the pad keeps the heap at 28 sectors,
+-- above the 16 run files of 512K, and below the 2048 pages from which a build goes parallel by default. lk is
+-- built with 2M (fan-in 28, the sectors of the heap, below the 64 of the buffer: to 22, then 22), 256K (fan-in
+-- 8: to 75, 10, 2, then 2), 512K (fan-in 16: to 38, 3, then 3) and 256K with index_build_merge_fanin 2 (ten
+-- passes), and every build must read back the same rows in the same order, the long keys among them. Every
+-- build merges, so the reference is the heap sorted by the query sort, which is apart from the sort of an index
+-- build: the first 6 characters of the keys differ from row to row, so the keys have one order.
 
 drop table if exists lk;
 drop table if exists lv;
 drop table if exists nums;
 drop table if exists sig;
 
-create table lk (id int not null, s varchar(20000) collate utf8_bin);
+create table lk (id int not null, s varchar(20000) collate utf8_bin, p varchar(768));
 insert into lk
-  select n, concat (lpad (mod (n * 7919, 30011), 6, '0'), repeat ('a', mod (n, 20)))
+  select n, concat (lpad (mod (n * 7919, 30011), 6, '0'), repeat ('a', mod (n, 20))),
+         concat (sha2 (n * 8 + 1, 512), sha2 (n * 8 + 2, 512), sha2 (n * 8 + 3, 512), sha2 (n * 8 + 4, 512),
+                 sha2 (n * 8 + 5, 512), sha2 (n * 8 + 6, 512))
   from (select rownum as n from db_class a, db_class b, db_class c limit 30000) x;
 
 -- the long keys: 140 digests of 128 characters each, cut to 16994 after the 6 characters of the short key
