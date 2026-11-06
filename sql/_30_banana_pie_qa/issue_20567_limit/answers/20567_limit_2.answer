@@ -160,18 +160,15 @@ a    a
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: temp(sort limit)
                             subplan: sscan
                                          class: t? node[?]
                                          cost:  ? card ?
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: t? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: pk_t?_a term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
