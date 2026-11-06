@@ -19,9 +19,10 @@
  *            JOIN chain, CONNECT BY
  *    Case 2: guards that were already right - single-table terms on the NULL-filled table, the later table
  *            listed first, an IS NULL term, an OR term, the RIGHT JOIN and LEFT JOIN spellings, a null-rejecting
- *            equality that turns the outer join into an inner join, the outer join inside a derived table
+ *            equality that turns the outer join into an inner join, the outer join inside a derived table, an OR
+ *            term over a LEFT JOIN's NULL-filled table and a later table
  */
-drop table if exists t2, t3, wa, wb, wc, wd;
+drop table if exists t2, t3, wa, wb, wc, wd, aaa, bbb, ccc, ddd, eee;
 create table t2 (a int, b int, c int);
 insert into t2 values (1,3,1),(NULL,4,0),(0,NULL,0),(4,4,3),(3,3,2),(NULL,NULL,4),(4,3,0),(1,2,4),(4,2,2),(4,0,4),(3,1,4);
 create index i_t2_a on t2(a);
@@ -146,4 +147,21 @@ select 'C2-9' id, case when nvl(t.r, 'EMPTY') = '1:2:N:2' then 'PASS' else 'FAIL
 from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') || ':' || nvl(to_char(q.c4), 'N') order by 1 separator ',') r
       from (select d.waa c1, d.wab c2, d.wbb c3, wc.a c4 from (select wa.a waa, wa.b wab, wb.b wbb from wa left outer join wb on wb.a = wa.a) d, wc where wc.a = nvl(d.wbb, 2) and wc.a = d.wab) q) t;
 
-drop table if exists t2, t3, wa, wb, wc, wd;
+-- C2-10: OR term over the NULL-filled ddd of a LEFT JOIN chain and the later eee
+create table aaa (id int primary key);
+create table bbb (id int primary key, key1 int, key2 int);
+create table ccc (id int);
+create table ddd (key1 int, nm varchar(200));
+create table eee (key1 int primary key, nm varchar(200));
+insert into aaa values (1), (2), (3);
+insert into bbb values (1, 1, 9), (2, 2, 2), (3, 3, 3);
+insert into ccc values (1), (2), (3);
+insert into ddd values (1, 'aaa'), (2, 'aaa'), (3, '333');
+insert into eee values (1, 'bbb'), (2, '222'), (3, '333');
+update statistics on aaa, bbb, ccc, ddd, eee;
+select aaa.id c1, eee.nm c2, ddd.nm c3 from aaa, bbb left outer join ccc on bbb.id = ccc.id left outer join ddd on bbb.key2 = ddd.key1, eee where aaa.id = bbb.id and bbb.key1 = eee.key1 and (ddd.nm = 'aaa' or eee.nm = 'bbb') order by 1, 2, 3;
+select 'C2-10' id, case when nvl(t.r, 'EMPTY') = '1:bbb:N,2:222:aaa' then 'PASS' else 'FAIL' end res, nvl(t.r, 'EMPTY') got, '1:bbb:N,2:222:aaa' expected
+from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') order by 1 separator ',') r
+      from (select aaa.id c1, eee.nm c2, ddd.nm c3 from aaa, bbb left outer join ccc on bbb.id = ccc.id left outer join ddd on bbb.key2 = ddd.key1, eee where aaa.id = bbb.id and bbb.key1 = eee.key1 and (ddd.nm = 'aaa' or eee.nm = 'bbb')) q) t;
+
+drop table if exists t2, t3, wa, wb, wc, wd, aaa, bbb, ccc, ddd, eee;
