@@ -12,6 +12,7 @@
  *    Case 19-20: duplicate middle with inequality ON and edge collections
  *    Case 21-23: outer and middle references, collection-first, correlated ON
  *    Case 24: class, subquery and literal right inputs after a middle join
+ *    Case 25-27: ORDERED for the SET, JSON and control chains
  */
 
 drop table if exists t_outer,t_unique,t_duplicate,t_empty,t_plain,t_edge,t_rhs;
@@ -42,6 +43,7 @@ evaluate 'Case 1: retained middle and SET preserve NULL extension';
 select /*+ recompile */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1,2,3;
 show trace;
 select /*+ recompile NO_ELIMINATE_JOIN */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1,2,3;
+show trace;
 
 
 evaluate 'Case 2: retained middle and JSON preserve NULL extension';
@@ -198,5 +200,40 @@ select /*+ recompile */ o.id,s.v from t_outer o left join t_unique u on u.v=1 le
 select /*+ recompile NO_ELIMINATE_JOIN */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join (select v from t_rhs) s on s.v=1 order by 1,2;
 select /*+ recompile */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join table({1,2}) s(v) on s.v=1 order by 1,2;
 select /*+ recompile NO_ELIMINATE_JOIN */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join table({1,2}) s(v) on s.v=1 order by 1,2;
+
+
+evaluate 'Case 25: ORDERED keeps every outer row with SET right inputs';
+select /*+ recompile ORDERED */ o.id from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ count(*),count(s.v) from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1;
+select /*+ recompile ORDERED */ o.id from t_outer o left join t_plain u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id from t_outer o inner join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=9 left join table(o.st) s(v) on s.v=1 order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_edge o left join t_duplicate u on u.v=1 left join table(o.st) s(v) on s.v>=o.id order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,s.v from t_edge o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=o.id and s.v=u.v order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join table(o.st) s(v) on s.v=1 left join t_unique u on u.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join table(o.st) s(v) on s.v=o.id order by 1,2;
+
+
+evaluate 'Case 26: ORDERED keeps every outer row with JSON right inputs';
+select /*+ recompile ORDERED */ o.id from t_outer o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ count(*),count(s.v) from t_outer o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile ORDERED */ o.id from t_outer o left join t_plain u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id from t_outer o inner join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=9 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_edge o left join t_duplicate u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v>=o.id order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,s.v from t_edge o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,u.v,s.v from t_outer o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=o.id and s.v=u.v order by 1,2,3;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 left join t_unique u on u.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=o.id order by 1,2;
+
+
+evaluate 'Case 27: ORDERED with class, subquery and literal right inputs';
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join t_rhs s on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join (select v from t_rhs) s on s.v=1 order by 1,2;
+select /*+ recompile ORDERED */ o.id,s.v from t_outer o left join t_unique u on u.v=1 left join table({1,2}) s(v) on s.v=1 order by 1,2;
 
 drop table t_outer,t_unique,t_duplicate,t_empty,t_plain,t_edge,t_rhs;
