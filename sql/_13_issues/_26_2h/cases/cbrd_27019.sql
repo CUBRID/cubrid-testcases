@@ -4,9 +4,9 @@
  *  A cached serial that does not cycle and whose values fit BIGINT now counts the values it hands
  *  out in an atomic counter: the k-th value is the last value issued before the entry opened plus
  *  k times the increment. Only a draw past the end of the reserved block takes the entry mutex to
- *  reserve the next block. At the end of the range, past the BIGINT end, for a block of more than
- *  INT_MAX values, or when the block is wider than BIGINT can count, the entry goes back to the
- *  existing path. A decache (ALTER SERIAL) closes the count and writes the last issued value back.
+ *  reserve the next block. At the end of the range, past the BIGINT end, or when the block is wider
+ *  than BIGINT can count, the entry goes back to the existing path. A decache (ALTER SERIAL) closes
+ *  the count and writes the last issued value back.
  *  The values, the errors, CURRENT_VALUE and the value left in db_serial must stay the same as
  *  before the change, so this file passes without the change as well.
  *
