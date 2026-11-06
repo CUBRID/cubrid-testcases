@@ -1,5 +1,5 @@
 /**
- *  This test verifies CBRD-27759: non-class right inputs of LEFT JOIN
+ *  This test case verifies CBRD-27759: non-class right inputs of LEFT JOIN
  *  must compile safely and preserve duplicate and NULL-extended rows.
  *  Before the fix, reading the right column only in ON can crash CAS.
  *  Results match the finite input oracle and NO_ELIMINATE_JOIN twins.
@@ -8,22 +8,16 @@
  *  The pre-fix compiler crash proves the risky path.
  *  Traces distinguish real-class elimination from non-class preservation.
  *  Coverage:
- *    Case 1: collection column, ON-only constant equality
- *    Case 2: JSON_TABLE, ON-only constant equality
- *    Case 3: collection literal, ON-only constant equality
- *    Case 4: correlated equality with the left column
- *    Case 5: MULTISET duplicates must not be eliminated
- *    Case 6: JSON duplicate matches and unmatched left rows
- *    Case 7: empty collection NULL-extension and both COUNT forms
- *    Case 8: SQL NULL collection NULL-extension
- *    Case 9: ordinary unique class remains eligible for elimination
- *    Case 10: ordinary nonunique class preserves duplicates
- *    Case 11: nonmergeable derived table preserves duplicate matches
- *    Case 12: CTE right input preserves duplicate matches
+ *    Case 1-4: SET column, JSON_TABLE, literal and correlated ON-only equality
+ *    Case 5-8: MULTISET and JSON duplicates, empty and SQL NULL inputs
+ *    Case 9-12: unique and nonunique classes, UNION ALL and CTE right inputs
  *    Case 13: mixed class and collection joins in both positions
+ *    Case 14-17: COUNT, projected and correlated forms of the same joins
+ *    Case 18-19: inequality ON and empty, NULL or NULL-element columns
+ *    Case 20: class and subquery right inputs with equality and inequality
  */
 
-drop table if exists t_outer, t_unique, t_duplicate;
+drop table if exists t_outer, t_unique, t_duplicate, t_edge, t_rhs;
 -- Two left rows are sufficient: this compile-time guard has no size threshold.
 create table t_outer (id int, st set(int), j json);
 insert into t_outer values (1,{1,2},'[1,1,2]'),(2,{3},'[3]');
@@ -33,7 +27,12 @@ insert into t_unique values (1),(2);
 -- Duplicate keys make erroneous elimination visible as lost output rows.
 create table t_duplicate (v int);
 insert into t_duplicate values (1),(1),(2);
-update statistics on t_outer,t_unique,t_duplicate with fullscan;
+-- Empty, SQL NULL, three-element and NULL-element inputs held in columns.
+create table t_edge (id int, st set(int), j json);
+insert into t_edge values (1,{1,2},'[1,2]'),(2,{3},'[3]'),(3,{},'[]'),(4,NULL,NULL),(5,{1,2,3},'[1,2,3]'),(6,{NULL,1},'[null,1]');
+create table t_rhs (v int);
+insert into t_rhs values (1),(2),(3);
+update statistics on t_outer,t_unique,t_duplicate,t_edge,t_rhs with fullscan;
 set trace on;
 
 
@@ -122,4 +121,73 @@ show trace;
 set trace off;
 select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_outer o left outer join table(o.st) s(v) on s.v=1 left outer join t_unique u on u.v=1 order by 1;
 
-drop table t_outer,t_unique,t_duplicate;
+
+evaluate 'Case 14: COUNT star with the right column read only in ON';
+select /*+ recompile */ count(*) from t_outer o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*) from t_outer o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile */ count(*) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile */ count(*) from t_outer o left outer join table({1,2}) s(v) on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*) from t_outer o left outer join table({1,2}) s(v) on s.v=1;
+
+
+evaluate 'Case 15: COUNT of the right column excludes NULL extension';
+select /*+ recompile */ count(s.v) from t_outer o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(s.v) from t_outer o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile */ count(s.v) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(s.v) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+
+
+evaluate 'Case 16: projected right column shows matches and NULL extension';
+select /*+ recompile */ o.id, s.v from t_outer o left outer join table(o.st) s(v) on s.v=1 order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_outer o left outer join table(o.st) s(v) on s.v=1 order by 1, 2;
+select /*+ recompile */ o.id, s.v from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1, 2;
+
+
+evaluate 'Case 17: correlated equality in COUNT and literal forms';
+select /*+ recompile */ count(*) from t_outer o left outer join table(o.st) s(v) on s.v=o.id;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*) from t_outer o left outer join table(o.st) s(v) on s.v=o.id;
+select /*+ recompile */ count(*) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=o.id;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*) from t_outer o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=o.id;
+select /*+ recompile */ o.id, s.v from t_outer o left outer join table({1,2}) s(v) on s.v=o.id order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_outer o left outer join table({1,2}) s(v) on s.v=o.id order by 1, 2;
+
+
+evaluate 'Case 18: inequality ON keeps every match and unmatched row';
+select /*+ recompile */ o.id, s.v from t_edge o left outer join table(o.st) s(v) on s.v>0 order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_edge o left outer join table(o.st) s(v) on s.v>0 order by 1, 2;
+select /*+ recompile */ o.id, s.v from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v>0 order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v>0 order by 1, 2;
+select /*+ recompile */ o.id from t_outer o left outer join table({1,2}) s(v) on s.v>0 order by 1;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_outer o left outer join table({1,2}) s(v) on s.v>0 order by 1;
+select /*+ recompile */ count(*), count(s.v) from t_outer o left outer join table({1,2}) s(v) on s.v>0;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_outer o left outer join table({1,2}) s(v) on s.v>0;
+
+
+evaluate 'Case 19: empty, NULL and NULL-element columns are NULL-extended';
+select /*+ recompile */ count(*), count(s.v) from t_edge o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_edge o left outer join table(o.st) s(v) on s.v=1;
+select /*+ recompile */ count(*), count(s.v) from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1;
+select /*+ recompile */ o.id from t_edge o left outer join table(o.st) s(v) on s.v=1 order by 1;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_edge o left outer join table(o.st) s(v) on s.v=1 order by 1;
+select /*+ recompile */ o.id from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=1 order by 1;
+select /*+ recompile */ count(*), count(s.v) from t_edge o left outer join table(o.st) s(v) on s.v=99;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_edge o left outer join table(o.st) s(v) on s.v=99;
+select /*+ recompile */ count(*), count(s.v) from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=99;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_edge o left outer join json_table(o.j,'$[*]' columns(v int path '$')) s on s.v=99;
+
+
+evaluate 'Case 20: class and subquery right inputs match the oracle';
+select /*+ recompile */ count(*), count(s.v) from t_outer o left outer join t_rhs s on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_outer o left outer join t_rhs s on s.v=1;
+select /*+ recompile */ o.id, s.v from t_outer o left outer join t_rhs s on s.v>o.id order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_outer o left outer join t_rhs s on s.v>o.id order by 1, 2;
+select /*+ recompile */ count(*), count(s.v) from t_outer o left outer join (select v from t_rhs) s on s.v=1;
+select /*+ recompile NO_ELIMINATE_JOIN */ count(*), count(s.v) from t_outer o left outer join (select v from t_rhs) s on s.v=1;
+select /*+ recompile */ o.id, s.v from t_outer o left outer join (select v from t_rhs) s on s.v>o.id order by 1, 2;
+select /*+ recompile NO_ELIMINATE_JOIN */ o.id, s.v from t_outer o left outer join (select v from t_rhs) s on s.v>o.id order by 1, 2;
+
+drop table t_outer,t_unique,t_duplicate,t_edge,t_rhs;
