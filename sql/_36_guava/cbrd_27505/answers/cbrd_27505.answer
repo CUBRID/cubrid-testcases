@@ -1,0 +1,517 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+3
+===================================================
+    
+Case 1: prior smallint = int; 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 2: prior int = smallint; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 3: prior char(3) = varchar(10); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 4: prior bigint = double; 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 5: prior double = bigint; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 6: prior numeric(12,4) = numeric(10,2); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 7: prior numeric(10,2) = numeric(12,4); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 8: prior numeric(12,4) = numeric(10,2) + 0; 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 9: prior numeric(10,2) + 0 = numeric(12,4); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 10: prior int = numeric(10,2); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 11: prior numeric(10,2) = int; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 12: prior double = numeric(20,2); 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 13: prior float = double; 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 14: prior int = bigint and prior smallint = int; 3 rows     
+
+===================================================
+res    cnt    
+PASS     3     
+
+===================================================
+    
+Case 15: prior int = varchar holding abc, no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 16: prior int = varchar holding abc, NULL root key; 1 row     
+
+===================================================
+res    cnt    
+PASS     1     
+
+===================================================
+    
+Case 17: prior numeric(3,0) = cast(k as numeric(2,0)) with k holding 100, no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 18: prior varchar = cast(double 1000.5 as varchar(2)), no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 19: prior int = cast(double as int); 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 20: trace of Cases 1, 6, 4 (hash temp) and 15, 17 (single table plan)     
+
+===================================================
+0
+===================================================
+n    lv    
+1     1     
+2     2     
+4     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_si)
+
+  rewritten query: select [dba.hs_si].n, level from [dba.hs_si] [dba.hs_si] start with [dba.hs_si].n= ?:?  connect by  prior [dba.hs_si].id=[dba.hs_si].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_si), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_na)
+
+  rewritten query: select [dba.hs_na].n, level from [dba.hs_na] [dba.hs_na] start with [dba.hs_na].n= ?:?  connect by  prior [dba.hs_na].id=[dba.hs_na].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_na), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_bd)
+
+  rewritten query: select [dba.hs_bd].n, level from [dba.hs_bd] [dba.hs_bd] start with [dba.hs_bd].n= ?:?  connect by  prior [dba.hs_bd].id=[dba.hs_bd].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_bd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_iv)
+
+  rewritten query: select [dba.hs_iv].n, level from [dba.hs_iv] [dba.hs_iv] start with [dba.hs_iv].n= ?:?  connect by  prior [dba.hs_iv].id= cast([dba.hs_iv].pid as double) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_iv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_iv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_cg)
+
+  rewritten query: select [dba.hs_cg].n, level from [dba.hs_cg] [dba.hs_cg] start with [dba.hs_cg].n= ?:?  connect by  prior [dba.hs_cg].k= cast([dba.hs_cg].k as numeric(?,?)) order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_cg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 21: prior numeric(14,0) = numeric(18,4) with 14 digit keys; 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 22: prior numeric(38,0) = numeric(38,-5); 4 rows     
+
+===================================================
+res    cnt    
+PASS     4     
+
+===================================================
+    
+Case 23: trace of Cases 21 and 22 (single table plan)     
+
+===================================================
+0
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_nl)
+
+  rewritten query: select [dba.hs_nl].n, level from [dba.hs_nl] [dba.hs_nl] start with [dba.hs_nl].n= ?:?  connect by  prior [dba.hs_nl].id=[dba.hs_nl].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_nl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+2     2     
+3     3     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_nq)
+
+  rewritten query: select [dba.hs_nq].n, level from [dba.hs_nq] [dba.hs_nq] start with [dba.hs_nq].n= ?:?  connect by  prior [dba.hs_nq].id=[dba.hs_nq].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_nq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 24: prior int = int and cast(bigint 3000000000 as int) = 1, no START WITH row; 0 rows     
+
+===================================================
+res    cnt    
+PASS     0     
+
+===================================================
+    
+Case 25: cast(bigint 3000000000 as int) = 1 and prior int = int; 2 rows     
+
+===================================================
+res    cnt    
+PASS     2     
+
+===================================================
+    
+Case 26: prior int = int and bigint = 1; 2 rows     
+
+===================================================
+res    cnt    
+PASS     2     
+
+===================================================
+    
+Case 27: trace of Cases 24, 25 (single table plan) and 26 (hash temp)     
+
+===================================================
+0
+===================================================
+n    lv    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_kc)
+
+  rewritten query: select [dba.hs_kc].n, level from [dba.hs_kc] [dba.hs_kc] start with [dba.hs_kc].n= ?:?  connect by  prior [dba.hs_kc].id=[dba.hs_kc].pid and  cast([dba.hs_kc].k as integer)=? order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_kc)
+
+  rewritten query: select [dba.hs_kc].n, level from [dba.hs_kc] [dba.hs_kc] start with [dba.hs_kc].n= ?:?  connect by  cast([dba.hs_kc].k as integer)=? and  prior [dba.hs_kc].id=[dba.hs_kc].pid order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+n    lv    
+1     1     
+3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.hs_kc)
+
+  rewritten query: select [dba.hs_kc].n, level from [dba.hs_kc] [dba.hs_kc] start with [dba.hs_kc].n= ?:?  connect by  prior [dba.hs_kc].id=[dba.hs_kc].pid and [dba.hs_kc].k= ?:?  order siblings by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.hs_kc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
