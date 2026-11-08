@@ -1,0 +1,126 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+k    case when k=1 then e else  ?:0  end    
+1     a     
+2     z     
+3     z     
+
+===================================================
+k    case when k=1 then e else  ?:0  end    
+1     a     
+2     a     
+3     a     
+
+===================================================
+0
+===================================================
+0
+===================================================
+k    case when k=1 then  ?:0  else e end    
+1     z     
+2     b     
+3     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+k    decode(k, 1, e,  ?:0 )    
+1     a     
+2     z     
+3     z     
+
+===================================================
+0
+===================================================
+k    case when k=1 then e else 'z' end    case when k=1 then 'z' else e end    decode(k, 1, e, 'z')    
+1     a     z     a     
+2     z     b     z     
+3     z     null     z     
+
+===================================================
+0
+===================================================
+k    case k when 1 then e when 2 then  ?:0  else 'z' end    
+1     a     
+2     y     
+3     z     
+
+===================================================
+k    case k when 1 then e when 2 then 'y' else 'z' end    
+1     a     
+2     y     
+3     z     
+
+===================================================
+0
+===================================================
+0
+===================================================
+k    case when k=1 then e else  ?:0  end    typeof(case when k=1 then e else  ?:1  end)    collation(case when k=1 then e else  ?:2  end)    
+1     a     character varying (1073741823)     utf8_bin     
+2     z     character varying (1073741823)     utf8_bin     
+3     z     character varying (1073741823)     utf8_bin     
+
+===================================================
+k    case when k=1 then e else  ?:0  end    typeof(case when k=1 then e else  ?:1  end)    collation(case when k=1 then e else  ?:2  end)    
+1     a     character varying (1073741823)     utf8_bin     
+2     1     character varying (1073741823)     utf8_bin     
+3     1     character varying (1073741823)     utf8_bin     
+
+===================================================
+k    case when k=1 then e else  ?:0  end    typeof(case when k=1 then e else  ?:1  end)    collation(case when k=1 then e else  ?:2  end)    
+1     a     character varying (1073741823)     utf8_bin     
+2     null     *NULL*     null     
+3     null     *NULL*     null     
+
+===================================================
+k    case when k=1 then e else 'z' end    typeof(case when k=1 then e else 'z' end)    collation(case when k=1 then e else 'z' end)    
+1     a     character varying (1073741823)     utf8_bin     
+2     z     character varying (1073741823)     utf8_bin     
+3     z     character varying (1073741823)     utf8_bin     
+
+===================================================
+0
+===================================================
+0
+===================================================
+k    case when k=1 then eb else  ?:0  end    collation(case when k=1 then eb else  ?:1  end)    
+1     a     utf8_en_ci     
+2     z     utf8_en_ci     
+3     z     utf8_en_ci     
+
+===================================================
+k    case when k=1 then eb else 'z' end    collation(case when k=1 then eb else 'z' end)    
+1     a     utf8_en_ci     
+2     z     utf8_en_ci     
+3     z     utf8_en_ci     
+
+===================================================
+0
+===================================================
+0
+===================================================
+k    if(k=1, e,  ?:0 )    if(k=1,  ?:1 , e)    typeof( if(k=1, e,  ?:2 ))    
+1     a     z     character varying (1073741823)     
+2     z     b     character varying (1073741823)     
+3     z     null     character varying (1073741823)     
+
+===================================================
+k    if(k=1, e, 'z')    if(k=1, 'z', e)    typeof( if(k=1, e, 'z'))    
+1     a     z     character varying (1073741823)     
+2     z     b     character varying (1073741823)     
+3     z     null     character varying (1073741823)     
+
+===================================================
+0
+===================================================
+0

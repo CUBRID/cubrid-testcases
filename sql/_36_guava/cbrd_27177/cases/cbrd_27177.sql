@@ -5,7 +5,8 @@
  *  Before the fix (engine PR #7625) such a GROUP BY never sorted in parallel. The fix decides
  *  on the run-time hash state: once the hash aggregation gives up, the GROUP BY sort may ask
  *  for workers, and the sort of the partial list the hash table leaves may ask for them too.
- *  While the hash aggregation is kept, the GROUP BY sort stays serial as before.
+ *  Since CBRD-27727 the GROUP BY sort asks for workers whatever the hash state, so it also
+ *  runs in parallel while the hash aggregation is kept.
  *
  *  Each tested query is followed by the same query with no_hash_aggregate parallel(0), and
  *  the result blocks must match. The trace shows the path: hash true or partial on the
@@ -16,7 +17,7 @@
  *    Case 1:  serial scan, hashing gives up at its first check, parallel GROUP BY sort
  *    Case 2:  serial scan, hashing kept, its partial list sorted in parallel
  *    Case 3:  parallel heap scan, the partial lists of the workers sorted in parallel
- *    Case 4:  hashing kept, GROUP BY sort and one-page partial list serial
+ *    Case 4:  hashing kept, GROUP BY sort parallel, one-page partial list serial
  *    Case 5:  hashing gives up midway, its partial results merged into the parallel sort
  *    Case 6:  WITH ROLLUP after hashing gives up
  *    Case 7:  parallel(1) and parallel(2) on the GROUP BY sort after hashing gives up
@@ -85,7 +86,7 @@ show trace;
 select /*+ recompile no_hash_aggregate parallel(0) */ k, count(*), sum(v), min(v), max(v) from t_keep group by k, pad having count(*) > 50 order by k;
 
 
-evaluate 'Case 4: hashing kept, GROUP BY sort and one-page partial list serial, no_hash_aggregate sorts in parallel; result = no_hash_aggregate parallel(0)';
+evaluate 'Case 4: hashing kept, GROUP BY sort parallel since CBRD-27727, one-page partial list serial; result = no_hash_aggregate parallel(0)';
 select /*+ recompile no_parallel_scan */ k, count(*), count(pad), sum(v), min(v), max(v) from t_small group by k having count(*) > 1 order by k;
 show trace;
 select /*+ recompile no_hash_aggregate no_parallel_scan */ k, count(*), count(pad), sum(v), min(v), max(v) from t_small group by k having count(*) > 1 order by k;
