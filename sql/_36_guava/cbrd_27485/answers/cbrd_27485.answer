@@ -76,7 +76,7 @@ Query Plan:
     TABLE SCAN (o)
     INDEX SCAN (s.pk_part_inner_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner] s on s.k=o.k
+  rewritten query: select /*+ USE_NL */ count(*) from [dba.outer_big] o semi join [dba.part_inner] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -99,7 +99,7 @@ Query Plan:
     TABLE SCAN (o)
     INDEX SCAN (s.pk_part_inner_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o anti join [dba.part_inner] s on s.k=o.k
+  rewritten query: select /*+ USE_NL */ count(*) from [dba.outer_big] o anti join [dba.part_inner] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -122,7 +122,7 @@ Query Plan:
     TABLE SCAN (o)
     INDEX SCAN (s.pk_part_inner_r_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o semi join [dba.part_inner_r] s on s.k=o.k
+  rewritten query: select /*+ USE_NL */ count(*) from [dba.outer_big] o semi join [dba.part_inner_r] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -145,7 +145,7 @@ Query Plan:
     TABLE SCAN (o)
     INDEX SCAN (s.pk_part_inner_r_k_a) (key range: s.k=o.k, covered: true)
 
-  rewritten query: select count(*) from [dba.outer_big] o anti join [dba.part_inner_r] s on s.k=o.k
+  rewritten query: select /*+ USE_NL */ count(*) from [dba.outer_big] o anti join [dba.part_inner_r] s on s.k=o.k
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

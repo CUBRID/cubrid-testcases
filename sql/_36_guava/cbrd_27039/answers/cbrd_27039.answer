@@ -1,0 +1,362 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+a    count(*)    
+1     5     
+2     5     
+3     5     
+4     5     
+5     9960     
+6     5     
+7     5     
+8     5     
+9     5     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+count(*)    
+500     
+
+===================================================
+    
+[1] reversed comparison: const OP attr must be priced like its mirror attr OP const     
+
+===================================================
+    
+[1-1] a > 5 (0.2%) -> iscan ix_dir_a     
+
+===================================================
+count(pad)    
+20     
+
+Query plan:
+iscan
+    class: t_dir node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where (t_dir.a> ?:? )
+===================================================
+    
+[1-2] 5 < a -> same plan as a > 5 (iscan)     
+
+===================================================
+count(pad)    
+20     
+
+Query plan:
+iscan
+    class: d node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where (d.a> ?:? )
+===================================================
+    
+[1-3] a >= 5 (99.8%) -> sscan     
+
+===================================================
+count(pad)    
+9980     
+
+Query plan:
+sscan
+    class: t_dir node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where (t_dir.a>= ?:? )
+===================================================
+    
+[1-4] 5 <= a -> same plan as a >= 5 (sscan)     
+
+===================================================
+count(pad)    
+9980     
+
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where (d.a>= ?:? )
+===================================================
+    
+[1-5] a < 5 (0.2%) -> iscan ix_dir_a     
+
+===================================================
+count(pad)    
+20     
+
+Query plan:
+iscan
+    class: t_dir node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where (t_dir.a< ?:? )
+===================================================
+    
+[1-6] 5 > a -> same plan as a < 5 (iscan)     
+
+===================================================
+count(pad)    
+20     
+
+Query plan:
+iscan
+    class: d node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where (d.a< ?:? )
+===================================================
+    
+[1-7] a <= 5 (99.8%) -> sscan     
+
+===================================================
+count(pad)    
+9980     
+
+Query plan:
+sscan
+    class: t_dir node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where (t_dir.a<= ?:? )
+===================================================
+    
+[1-8] 5 >= a -> same plan as a <= 5 (sscan)     
+
+===================================================
+count(pad)    
+9980     
+
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where (d.a<= ?:? )
+===================================================
+    
+[2] reversed equality: const = attr must be priced like attr = const     
+
+===================================================
+    
+[2-1] a = 7 (5 rows) -> iscan ix_dir_a     
+
+===================================================
+count(pad)    
+5     
+
+Query plan:
+iscan
+    class: t_dir node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where t_dir.a= ?:? 
+===================================================
+    
+[2-2] 7 = a -> iscan ix_dir_a     
+
+===================================================
+count(pad)    
+5     
+
+Query plan:
+iscan
+    class: d node[?]
+    index: ix_dir_a term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where d.a= ?:? 
+===================================================
+    
+[2-3] a = 5 (99.6%) -> sscan     
+
+===================================================
+count(pad)    
+9960     
+
+Query plan:
+sscan
+    class: t_dir node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_dir.pad) from t_dir t_dir where t_dir.a= ?:? 
+===================================================
+    
+[2-4] 5 = a -> sscan     
+
+===================================================
+count(pad)    
+9960     
+
+Query plan:
+sscan
+    class: d node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(d.pad) from t_dir d where d.a= ?:? 
+===================================================
+    
+[3] LIKE inside an OR chain: non-LIKE siblings must be counted once     
+
+===================================================
+    
+[3-1] (cs like OR ck in) matches 30 rows -> t_dir is the OUTER, t_ref inner via pk_t_ref_id     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: r node[?]
+               index: pk_t_ref_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL NO_USE_HASH */ count(*) from t_dir d, t_ref r where d.id=r.id and ((d.cs>= ?:?  and d.cs< ?:? ) or ((d.ck= ?:? ) or (d.ck= ?:? ))) and r.f= ?:? 
+===================================================
+    
+[3-2] operands swapped (ck in OR cs like) -> same join order     
+
+===================================================
+count(*)    
+10     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: dd node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: rr node[?]
+               index: pk_t_ref_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL NO_USE_HASH */ count(*) from t_dir dd, t_ref rr where dd.id=rr.id and (((dd.ck= ?:? ) or (dd.ck= ?:? )) or (dd.cs>= ?:?  and dd.cs< ?:? )) and rr.f= ?:? 
+===================================================
+    
+[4] NULL restoration must use the CURRENT node's column, not the chain head     
+
+===================================================
+    
+[4-1] (ck >= 990 OR cn <= 100), cn 99.8% NULL behind null-free ck -> t_dir is the OUTER     
+
+===================================================
+count(*)    
+20     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: d node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: r node[?]
+               index: pk_t_ref_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL NO_USE_HASH */ count(*) from t_dir d, t_ref r where d.id=r.id and ((d.ck>= ?:? ) or (d.cn<= ?:? )) and r.f= ?:? 
+===================================================
+    
+[4-2] operands swapped (cn <= 100 OR ck >= 990) -> same join order     
+
+===================================================
+count(*)    
+20     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: dd node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: rr node[?]
+               index: pk_t_ref_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL NO_USE_HASH */ count(*) from t_dir dd, t_ref rr where dd.id=rr.id and ((dd.cn<= ?:? ) or (dd.ck>= ?:? )) and rr.f= ?:? 
+===================================================
+    
+[5] CBRD-27059: constant-folded PT_VALUE siblings in an OR chain must not crash the compile     
+
+===================================================
+    
+[5-1] a = 5 and (a < 7 or a > 9) -> (5<7 or 5>9) -> 9960     
+
+===================================================
+count(*)    
+9960     
+
+===================================================
+    
+[5-2] folded siblings around a LIKE node -> 9     
+
+===================================================
+count(*)    
+9     
+
+===================================================
+    
+[5-3] LIKE head with a folded tail -> 5     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+    
+[5-4] folded siblings around IS NOT NULL on the nullable column -> 19 (row 10000 has a = 9)     
+
+===================================================
+count(*)    
+19     
+
+===================================================
+0

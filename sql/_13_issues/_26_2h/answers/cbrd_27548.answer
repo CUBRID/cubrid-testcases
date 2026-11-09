@@ -1,0 +1,588 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: issue repro, hash partitioned driving table; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_hdrv] o, [dba.t_mid] w, [dba.t_inn] x where w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_hdrv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_hdrv__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_hdrv__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_hdrv__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+    
+Case 2: driving blocks without and with a match; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+    
+Case 3: three driving blocks, the first matching block last, second or first; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+297     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+297     3     3     
+
+===================================================
+id    id    id    
+293     3     3     
+297     3     3     
+
+===================================================
+id    id    id    
+293     3     3     
+297     3     3     
+
+===================================================
+id    id    id    
+293     3     3     
+297     3     3     
+
+===================================================
+id    id    id    
+293     3     3     
+297     3     3     
+
+===================================================
+    
+Case 4: the inner row in the last or middle partition of the inner table; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+298     3     7     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_e), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+298     3     7     
+
+===================================================
+id    id    id    
+299     3     5     
+
+===================================================
+id    id    id    
+299     3     5     
+
+===================================================
+    
+Case 5: pruning on the inner leaves its first partition only, or drops it; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb and x.pc= ?:?  order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+id    id    id    
+299     3     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb and ((x.pc= ?:? ) or (x.pc= ?:? ) or (x.pc= ?:? )) order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_f), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+299     3     5     
+
+===================================================
+    
+Case 6: four-table chain with two partitioned inner tables; result = non-partitioned copies     
+
+===================================================
+id    id    id    id    
+293     3     3     8     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        NESTED LOOPS (inner join)
+          TABLE SCAN (o)
+          INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+        INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+      INDEX SCAN (y.i_four_k) (key range: x.k=y.k)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id, y.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x, [dba.t_four] y where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb and y.k=o.kb order by ?, ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          SCAN (index: dba.t_four.i_four_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.t_four__p__p_a.i_four_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                 PARTITION (index: dba.t_four__p__p_b.i_four_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    id    
+293     3     3     8     
+
+===================================================
+    
+Case 7: memoize_memory_limit=0; result = non-partitioned copies     
+
+===================================================
+0
+===================================================
+id    id    id    
+297     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_d), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+297     3     3     
+
+===================================================
+0
+===================================================
+    
+Case 8: the join in a correlated scalar subquery; result = non-partitioned copies     
+
+===================================================
+a    cnt    
+0     1     
+294     0     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+    INDEX SCAN (x.i_inn_k) (key range: x.k=o.kb, covered: true)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ count(*) from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and (o.id>p.a) and w.k=o.k and x.k=o.kb)
+
+  SORT (order by)
+    TABLE SCAN (p)
+
+  rewritten query: select p.a, (select /*+ ORDERED USE_NL */ count(*) from [dba.t_drv] o, [dba.t_mid] w, [dba.t_inn] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and (o.id>p.a) and w.k=o.k and x.k=o.kb) from [dba.t_par] p order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_drv__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+                 PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.t_inn.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+                   PARTITION (index: dba.t_inn__p__p_a.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+                   PARTITION (index: dba.t_inn__p__p_b.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+                   PARTITION (index: dba.t_inn__p__p_c.i_inn_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+a    cnt    
+0     1     
+294     0     
+
+===================================================
+    
+Case 9: heap scan of the inner table, no index; result = non-partitioned copies     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (o)
+        INDEX SCAN (w.i_mid_k_id) (key range: w.k=o.k, covered: true)
+      TABLE SCAN (x)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id, w.id, x.id from [dba.t_drv] o, [dba.t_mid] w, [dba.t_heap] x where ((o.pc= ?:? ) or (o.pc= ?:? )) and w.k=o.k and x.k=o.kb order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_drv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_drv__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_a.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_b.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_c.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             PARTITION (index: dba.t_mid__p__p_d.i_mid_k_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_heap__p__p_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_heap__p__p_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_heap__p__p_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    id    id    
+293     3     3     
+
+===================================================
+0
+===================================================
+    
+Case 10: INSERT ... SELECT of the join; result = non-partitioned copies     
+
+===================================================
+1
+===================================================
+o_id    w_id    x_id    
+297     3     3     
+
+===================================================
+1
+===================================================
+1
+===================================================
+o_id    w_id    x_id    
+297     3     3     
+
+===================================================
+    
+Case 11: multi-table UPDATE whose target is the driving table; result = non-partitioned copies     
+
+===================================================
+2
+===================================================
+id    k    kb    pc    
+295     2     2     0     
+296     2     2     2     
+298     6     1     4     
+299     6     2     5     
+1293     6     0     1     
+1297     6     0     3     
+
+===================================================
+2
+===================================================
+id    k    kb    pc    
+295     2     2     0     
+296     2     2     2     
+298     6     1     4     
+299     6     2     5     
+1293     6     0     1     
+1297     6     0     3     
+
+===================================================
+0
