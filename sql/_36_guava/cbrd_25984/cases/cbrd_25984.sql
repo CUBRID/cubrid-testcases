@@ -47,12 +47,15 @@
  *       compared with its USING INDEX NONE twin
  *   14. hash / merge join input over (k, sqrt(d)) reading the whole key range: the input is not covered
  *       under a list file, so the optimizer prices its heap fetches and takes the heap scan
+ *   15. results that can be -0 from a nonzero argument (ceil, round, trunc, mod over DOUBLE / FLOAT /
+ *       MONETARY): -0 and 0 are equal keys, so the result is computed from the row (no covering, data
+ *       filter) and -0 / 0 are kept per row; sqrt over DOUBLE and ceil over NUMERIC are still covered
  *  Sizing: 20 rows are enough; every scan is a short key range, no parallelism involved. Section 14
  *          uses 3000 rows of 200 bytes so that the heap fetches of the index scan outweigh the heap scan.
  */
 
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb, fi_nz;
 
 create table fi_t (i1 int, d1 double, k int);
 insert into fi_t select rownum, rownum * rownum * 16, rownum % 3 from db_class limit 20;
@@ -582,5 +585,55 @@ from (select /*+ NO_MERGE USE_HASH */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b whe
      join (select /*+ NO_MERGE USE_HASH NO_COVERING_IDX */ a.k, sqrt(a.d) r from fi_ha a, fi_hb b where a.k = b.k and a.k >= 1) s
      on p.k = s.k and p.r <=> s.r;
 
+evaluate '[15-1] (i, ceil(d)): -0 and 0 are equal keys, each row keeps its own result';
+create table fi_nz (i int, d double, f float, m monetary, n numeric(10, 2), q double, p varchar(10));
+insert into fi_nz values (1, -0.4, -0.4, -0.4, -0.4, 4, 'neg'), (1, 0, 0, 0, 0, 9, 'zero'), (1, -2, -2, -2, -2, 16, 'm2'),
+  (2, 3, 3, 3, 3, 25, 'other');
+create index idx_fi_nz_c on fi_nz (i, ceil(d));
+create index idx_fi_nz_r on fi_nz (i, round(d));
+create index idx_fi_nz_t on fi_nz (i, trunc(d, 0));
+create index idx_fi_nz_m on fi_nz (i, mod(d, 2));
+create index idx_fi_nz_f on fi_nz (i, ceil(f));
+create index idx_fi_nz_y on fi_nz (i, round(m));
+create index idx_fi_nz_n on fi_nz (i, ceil(n));
+create index idx_fi_nz_s on fi_nz (i, sqrt(q));
+update statistics on fi_nz with fullscan;
+--@queryplan
+select i, cast(ceil(d) as varchar(30)) r from fi_nz where i = 1 using index idx_fi_nz_c order by 2;
+select i, cast(ceil(d) as varchar(30)) r from fi_nz where i = 1 using index none order by 2;
+select case when count(*) = 1 then 'PASS' else 'FAIL' end as result
+from (select i from fi_nz where i = 1 and cast(ceil(d) as varchar(30)) = '0' using index idx_fi_nz_c) x;
+--@queryplan
+select /*+ NO_COVERING_IDX */ p from fi_nz where i = 1 and cast(ceil(d) as varchar(30)) like '-%' using index idx_fi_nz_c order by 1;
+select p from fi_nz where i = 1 and cast(ceil(d) as varchar(30)) like '-%' using index none order by 1;
+
+evaluate '[15-2] round, trunc, mod over DOUBLE, ceil over FLOAT, round over MONETARY: not read from the key';
+--@queryplan
+select i, cast(round(d) as varchar(30)) r from fi_nz where i = 1 using index idx_fi_nz_r order by 2;
+select i, cast(round(d) as varchar(30)) r from fi_nz where i = 1 using index none order by 2;
+--@queryplan
+select p from fi_nz where i = 1 and cast(round(d) as varchar(30)) = '0' using index idx_fi_nz_r order by 1;
+select p from fi_nz where i = 1 and cast(round(d) as varchar(30)) = '0' using index none order by 1;
+--@queryplan
+select i, cast(trunc(d, 0) as varchar(30)) r from fi_nz where i = 1 using index idx_fi_nz_t order by 2;
+select i, cast(trunc(d, 0) as varchar(30)) r from fi_nz where i = 1 using index none order by 2;
+--@queryplan
+select p from fi_nz where i = 1 and cast(mod(d, 2) as varchar(30)) = '-0' using index idx_fi_nz_m order by 1;
+select p from fi_nz where i = 1 and cast(mod(d, 2) as varchar(30)) = '-0' using index none order by 1;
+--@queryplan
+select i, cast(ceil(f) as varchar(30)) r from fi_nz where i = 1 using index idx_fi_nz_f order by 2;
+select i, cast(ceil(f) as varchar(30)) r from fi_nz where i = 1 using index none order by 2;
+--@queryplan
+select i, cast(round(m) as varchar(30)) r from fi_nz where i = 1 using index idx_fi_nz_y order by 2;
+select i, cast(round(m) as varchar(30)) r from fi_nz where i = 1 using index none order by 2;
+select case when count(*) = 1 then 'PASS' else 'FAIL' end as result
+from (select i from fi_nz where i = 1 and cast(round(m) as varchar(30)) = '$0' using index idx_fi_nz_y) x;
+
+evaluate '[15-3] results that are -0 only for a -0 argument: ceil over NUMERIC and sqrt over DOUBLE stay covered';
+--@queryplan
+select i, ceil(n) r from fi_nz where i = 1 using index idx_fi_nz_n order by 2;
+--@queryplan
+select i, sqrt(q) r from fi_nz where i = 1 using index idx_fi_nz_s order by 2;
+
 drop table if exists fi_t, fi_u, fi_m, fi_c, fi_d, fi_dh, fi_w, fi_k, fi_r, fi_s, fi_p, fi_q, fi_z, fi_e, fi_g, fi_h, fi_v, fi_n, fi_l, fi_mo, fi_ls,
-  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb;
+  fi_ts, fi_dl, fi_a, fi_b, fi_x, fi_y, fi_i, fi_ha, fi_hb, fi_nz;
