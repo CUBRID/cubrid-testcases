@@ -203,12 +203,12 @@ end;
 -- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
 -- So the result is normal.
 -- An argument for an INOUT parameter must be a host variable.
-SELECT 
+SELECT
       -32768, -32768, -2147483648, -2147483648,
       -9223372036854775808, 0.1, 0.1, -3.402823466E+38, -3.402823466E+38, -1.7976931348623157E+308,
       '0001-01-01', TIME '00:00:00', '1970-01-01 09:00:01', '0001-01-01 00:00:00.000',
       '1234567890abcdef','1234567890abcdef'
-      INTO 
+      INTO
       :v_SHORT     , :v_SMALLINT  , :v_INTEGER   , :v_INT       , :v_BIGINT    , :v_NUMERIC   , :v_DECIMAL   , :v_FLOAT     , :v_REAL      , :v_DOUBLE    , :v_DATE      , :v_TIME      , :v_TIMESTAMP , :v_DATETIME  , :v_CHAR      , :v_VARCHAR
 FROM db_root;
 
@@ -228,18 +228,18 @@ call type_support(
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 );
 
 -- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
 -- So the result is normal.
 -- An argument for an INOUT parameter must be a host variable.
-SELECT 
+SELECT
       32767, 32767, 2147483647, 2147483647,
       9223372036854775807, 9876543210987654321098.7654321098765432, 987654321054321, 3.402823466E+38, 3.402823466E+38, 3.402823466E+38,
       '9999-12-31', TIME '23:59:59', '2038-01-19 03:14:07', '9999-12-31 23:59:59.999',
       '1234567890abcdef','1234567890abcdef'
-      INTO 
+      INTO
       :v_SHORT     , :v_SMALLINT  , :v_INTEGER   , :v_INT       , :v_BIGINT    , :v_NUMERIC   , :v_DECIMAL   , :v_FLOAT     , :v_REAL      , :v_DOUBLE    , :v_DATE      , :v_TIME      , :v_TIMESTAMP , :v_DATETIME  , :v_CHAR      , :v_VARCHAR
 FROM db_root;
 
@@ -259,7 +259,7 @@ call type_support(
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 );
 
 
@@ -304,9 +304,9 @@ begin
    v_VARCHAR    := '1234567890abcdef';
 end;
 
-SELECT 
+SELECT
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL
-      INTO 
+      INTO
       :v_SHORT     , :v_SMALLINT  , :v_INTEGER   , :v_INT       , :v_BIGINT    , :v_NUMERIC   , :v_DECIMAL   , :v_FLOAT     , :v_REAL      , :v_DOUBLE    , :v_DATE      , :v_TIME      , :v_TIMESTAMP , :v_DATETIME  , :v_CHAR      , :v_VARCHAR 
 FROM db_root;
 
@@ -327,7 +327,7 @@ call type_support(
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 );
 
 -- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
@@ -348,7 +348,7 @@ select
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 FROM db_root;
 
 
@@ -392,9 +392,9 @@ begin
 
 end;
 
-SELECT 
+SELECT
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL
-      INTO 
+      INTO
       :v_SHORT     , :v_SMALLINT  , :v_INTEGER   , :v_INT       , :v_BIGINT    , :v_NUMERIC   , :v_DECIMAL   , :v_FLOAT     , :v_REAL      , :v_DOUBLE    , :v_DATE      , :v_TIME      , :v_TIMESTAMP , :v_DATETIME  , :v_CHAR      , :v_VARCHAR 
 FROM db_root;
 
@@ -415,7 +415,7 @@ call type_support(
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 );
 
 -- The precision and scale of the NUMERIC (DECIMAL) type specified in the argument or return type are ignored.
@@ -436,7 +436,7 @@ select
    :v_TIMESTAMP ,
    :v_DATETIME  ,
    :v_CHAR      ,
-   :v_VARCHAR   
+   :v_VARCHAR
 FROM db_root;
 
 

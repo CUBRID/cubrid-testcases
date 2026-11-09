@@ -1,6 +1,6 @@
 --+ server-message on
 -- normal: a host variable still takes the value of an OUT or IN OUT parameter (CBRD-25140)
--- A :name gets the value. A ? is accepted on every path, as Oracle accepts any bind variable.
+-- A :name gets the value. A ? is accepted on every path. csql PREPARE is checked here, JDBC in the private-ex shell test cbrd_25140.
 
 create or replace procedure t25140_out (a OUT int) as begin a := 7; end;
 create or replace procedure t25140_inout (a INOUT int) as begin a := nvl (a, -1) + 100; end;
@@ -14,6 +14,9 @@ call t25140_inout (:h25140);
 select :h25140 from db_root;
 call t25140_out2 (3, :h25140);
 select :h25140 from db_root;
+select 0 into :r25140 from db_root;
+call t25140_fout (:h25140) into :r25140;
+select :h25140, :r25140 from db_root;
 
 -- a ? of a prepared CALL
 prepare st25140 from 'call t25140_out(?)';

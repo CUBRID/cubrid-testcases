@@ -10,6 +10,10 @@ call ptestint1(x);
 call ptestint1('10');
 call ptestint1('xx');
 call ptestint1(null);
+select 'xx' into y from db_root;
+call ptestint1(y);
+select null into z from db_root;
+call ptestint1(z);
 $varchar,$10;
 call ptestint1(?) ;
 
