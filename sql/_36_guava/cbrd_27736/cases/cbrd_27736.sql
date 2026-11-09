@@ -2,9 +2,10 @@
 -- aggregate argument, HAVING) or in a subquery of ORDER BY let the outer heap scan run in parallel. Every
 -- parallel worker ran the subquery and updated the session's variable list at the same time, and the server
 -- crashed in update_session_variable. A serial NEXT_VALUE there was called by the workers concurrently too.
--- The scan now stays serial when a correlated subquery reads or writes a session variable or a serial; a
--- correlated subquery without them keeps the parallel scan. An uncorrelated scalar subquery is evaluated once
--- before the scan opens and the workers only read its value, so it keeps the parallel scan even with them.
+-- The scan now stays serial when a correlated subquery writes a session variable or a serial. One that only
+-- reads them keeps the parallel scan, unless the main block writes them while the workers scan (an aggregate
+-- argument evaluated row by row). An uncorrelated scalar subquery is evaluated once before the scan opens and
+-- the workers only read its value, so it keeps the parallel scan even with an assignment or NEXT_VALUE.
 --
 -- ta holds 4000 rows of about 70 heap pages, twice the 32 pages test_mode needs for a parallel heap scan.
 -- The subqueries correlate on the unique ta.id, so no subquery result is reused and each one runs once per
@@ -103,6 +104,23 @@ show trace;
 select @v;
 set @v = 0;
 select /*+ recompile no_parallel_scan */ count (*) from ta s where s.id > (select max ((select @v := @v + 1 + x.id * 0 from db_root)) from ta x) - 100;
+select @v;
+
+evaluate 'Case 10: correlated subqueries that only read a session variable and a serial; parallel scan';
+drop serial s_cnt;
+create serial s_cnt;
+set @v = 5;
+select /*+ recompile */ count (*), sum (cast ((select @v + t.id from db_root) as bigint)) from ta t where (select s_cnt.current_value + t.id from db_root) > 100;
+show trace;
+select /*+ recompile no_parallel_scan */ count (*), sum (cast ((select @v + t.id from db_root) as bigint)) from ta t where (select s_cnt.current_value + t.id from db_root) > 100;
+
+evaluate 'Case 11: a correlated read of @v while the main block assigns @v in an aggregate; serial scan';
+set @v = 0;
+select /*+ recompile */ sum (@v := @v + 1) from ta t where (select @v + t.id from db_root) > 0;
+show trace;
+select @v;
+set @v = 0;
+select /*+ recompile no_parallel_scan */ sum (@v := @v + 1) from ta t where (select @v + t.id from db_root) > 0;
 select @v;
 
 set trace off;

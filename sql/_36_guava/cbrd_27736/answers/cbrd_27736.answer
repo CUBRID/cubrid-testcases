@@ -437,6 +437,97 @@ count(*)
 4000     
 
 ===================================================
+    
+Case 10: correlated subqueries that only read a session variable and a serial; parallel scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum( cast((select @v+t.id from db_root) as bigint))    
+3901     8016555     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select @v+t.id from db_root db_root)
+
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_current_value([dba.s_cnt])+ cast(t.id as numeric) from db_root db_root)
+
+  TABLE SCAN (t)
+
+  rewritten query: select count(*), sum( cast((select @v+t.id from db_root db_root) as bigint)) from [dba.ta] t where (select serial_current_value([dba.s_cnt])+ cast(t.id as numeric) from db_root db_root)>?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast((select @v+t.id from db_root) as bigint))    
+3901     8016555     
+
+===================================================
+    
+Case 11: a correlated read of @v while the main block assigns @v in an aggregate; serial scan     
+
+===================================================
+0
+===================================================
+sum(@v := @v+1)    
+8002000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select @v+t.id from db_root db_root)
+
+  TABLE SCAN (t)
+
+  rewritten query: select sum(@v := @v+?) from [dba.ta] t where (select @v+t.id from db_root db_root)>?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+@v    
+4000     
+
+===================================================
+0
+===================================================
+sum(@v := @v+1)    
+8002000     
+
+===================================================
+@v    
+4000     
+
+===================================================
 0
 ===================================================
 0
