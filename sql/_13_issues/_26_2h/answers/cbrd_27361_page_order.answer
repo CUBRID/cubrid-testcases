@@ -238,7 +238,7 @@ trace
 Query Plan:
   TABLE SCAN (s)
 
-  rewritten query: select max(s.g)+?, s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and s.g= ?:? 
+  rewritten query: select  cast(max(s.g)+? as double)+ cast(? as double)*stddev(s.g), s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and (rownum<= ?:? ) and s.g= ?:? 
 
 Trace Statistics:
   INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -246,6 +246,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_po?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
      
 
 ===================================================
@@ -270,7 +271,7 @@ trace
 Query Plan:
   TABLE SCAN (s)
 
-  rewritten query: select  cast(max(s.g)+? as double)+ cast(? as double)*stddev(s.g), s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and s.g= ?:? 
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  cast(max(s.g)+? as double)+ cast(? as double)*stddev(s.g), s.c, s.n from [dba.t_po?] s where (s.n< ?:? ) and (rownum<= ?:? ) and s.g= ?:? 
 
 Trace Statistics:
   INSERT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -311,36 +312,6 @@ max(s.g)    (select max(s.c))
 ===================================================
 max(s.g)+0*stddev(s.g)    (select max(s.c))    
 2.0     g2b     
-
-===================================================
-    
-Case 8: the index or the statistics could answer the aggregate without the rows     
-
-===================================================
-0
-===================================================
-0
-===================================================
-3
-===================================================
-0
-===================================================
-0
-===================================================
-1
-===================================================
-2
-===================================================
-id    c    
-4     h3     
-
-===================================================
-count(*)    (select max(s.c))    
-3     h3     
-
-===================================================
-min(s.g)    (select max(s.c))    
-1     h3     
 
 ===================================================
 0
