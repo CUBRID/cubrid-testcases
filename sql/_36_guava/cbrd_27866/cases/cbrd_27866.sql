@@ -280,5 +280,24 @@ select o.id, t.k, t.v from t_fo o, t_fe t where t.k = o.i order by 1;
 
 drop table t_fe, t_fo;
 
+-- Case 21: the range terms of an index scan carry the conjuncts after them, and one compares the partition key with a
+-- column of the scan after the partitioned inner. That value is not read yet for the outer row: it must not prune.
+create table t_co (id int, a int, b int);
+insert into t_co values (1, 5, 2), (2, 6, 0), (3, 5, 9), (4, 7, -1);
+create table t_cp (k int, c int, v int) partition by hash (k) partitions 4;
+create index i_cp_kc on t_cp (k, c);
+insert into t_cp select mod(rownum, 4) + 5, mod(rownum, 12), rownum from db_class a, db_class b limit 96;
+create table t_cy (k int, v int);
+create index i_cy_k on t_cy (k);
+insert into t_cy values (5, 50), (6, 60), (7, 70), (5, 51);
+
+select /*+ ordered use_nl */ count (*), sum (x.v), sum (y.v) from t_co o, t_cp x, t_cy y
+where x.k = o.a and x.c > o.b and x.c >= 0 and y.k = x.k using index x.i_cp_kc;
+
+select /*+ ordered use_nl */ o.id, count (*) from t_co o, t_cp x use index (i_cp_kc), t_cy y
+where x.k = o.a and x.c > o.b and x.c between 0 and 10 and y.k = x.k group by o.id order by 1;
+
+drop table t_co, t_cp, t_cy;
+
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
