@@ -1,0 +1,181 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 1: the reported simple CASE     
+
+===================================================
+case 'q' when c then 1.5 when 'z' then 1 when c then null else 2 end    
+2     
+
+===================================================
+    
+Case 2: NUMERIC with SMALLINT, INTEGER and BIGINT branches     
+
+===================================================
+case when k='q' then n when 1=0 then si when k='q' then null else si end    
+1     
+
+===================================================
+case when k='q' then n when 1=0 then i when k='q' then null else i end    
+1     
+
+===================================================
+case when k='q' then n when 1=0 then bi when k='q' then null else bi end    
+1     
+
+===================================================
+case 'q' when k then 1.5 when 'z' then 1 when k then null else 2 end    
+2     
+
+===================================================
+decode('q', k, 1.5, 'z', 1, k, null, 2)    
+2     
+
+===================================================
+decode('q', k, n, 'z', bi, k, null, bi)    
+1     
+
+===================================================
+    
+Case 3: VARCHAR result from CHAR, VARCHAR, BIT and ENUM with JSON branches     
+
+===================================================
+case when k='q' then c when 1=0 then j when k='q' then null else j end    
+{"a":1}     
+
+===================================================
+case when k='q' then v when 1=0 then j when k='q' then null else j end    
+{"a":1}     
+
+===================================================
+case when k='q' then b when 1=0 then j when k='q' then null else j end    
+{"a":1}     
+
+===================================================
+case when k='q' then e when 1=0 then j when k='q' then null else j end    
+{"a":1}     
+
+===================================================
+decode('q', k, v, 'z', j, k, null, j)    
+{"a":1}     
+
+===================================================
+    
+Case 4: THEN NULL before the constant-false branch, two constant-false branches, ELSE NULL, a column ELSE     
+
+===================================================
+case when k='q' then 1.5 when k='q' then null when 1=0 then 1 when k='q' then null else 2 end    
+2     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then null when 1=0 then 1 when k='q' then null else 2 end    
+2     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then 1 when 1=0 then 2 when k='q' then null else 3 end    
+3     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then 1 when k='q' then null end    
+null     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then 1 when k='q' then null else i end    
+1     
+
+===================================================
+case when k='q' then 1.5 when k='a' then 1 when 1=0 then 1 when k='q' then null else 2 end    
+1     
+
+===================================================
+    
+Case 5: the same result type and value as a condition that is false only at run time     
+
+===================================================
+0
+===================================================
+0
+===================================================
+r1    r2    
+2     {"a":1}     
+
+===================================================
+r1    r2    
+2     {"a":1}     
+
+===================================================
+attr_name    data_type    prec    scale    
+r1     NUMERIC     null     null     
+r2     STRING     1073741823     0     
+
+===================================================
+attr_name    data_type    prec    scale    
+r1     NUMERIC     null     null     
+r2     STRING     1073741823     0     
+
+===================================================
+    
+Case 6: forms that did not crash     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then 1 else 2 end    
+2     
+
+===================================================
+case when k='q' then 1.5 when k='q' then 1 when k='q' then null else 2 end    
+2     
+
+===================================================
+case when k='q' then 1 when 1=0 then 1 when k='q' then null else 2 end    
+2     
+
+===================================================
+case when k='q' then 1.5 when 1=0 then 1 when k='q' then 3 else 2 end    
+2     
+
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 7: VARCHAR (10) and a longer JSON return the JSON value     
+
+===================================================
+case when k='q' then v else j end    
+{"key":"0123456789abcdef"}     
+
+===================================================
+case k when 'q' then v else j end    
+{"key":"0123456789abcdef"}     
+
+===================================================
+decode(k, 'q', v, j)    
+{"key":"0123456789abcdef"}     
+
+===================================================
+case when k='q' then v when k='z' then null else j end    
+{"key":"0123456789abcdef"}     
+
+===================================================
+case when k='q' then v when k='z' then j else j end    
+{"key":"0123456789abcdef"}     
+
+===================================================
+    
+Case 8: the result domain of a single-branch CASE does not depend on the order of the branches     
+
+===================================================
+0
+===================================================
+attr_name    data_type    prec    scale    
+r1     STRING     1073741823     0     
+r2     STRING     1073741823     0     
+
+===================================================
+0
