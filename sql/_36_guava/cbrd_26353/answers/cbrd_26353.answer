@@ -385,7 +385,8 @@ trace
 
 Query Plan:
   SORT (order by)
-    INDEX SCAN (dba.ta.i_ta_upper_a) (key range:  upper([dba.ta].a)= ?:? )
+    SORT (group by)
+      INDEX SCAN (dba.ta.i_ta_upper_a) (key range:  upper([dba.ta].a)= ?:? )
 
   rewritten query: select  upper([dba.ta].a), count(*) from [dba.ta] [dba.ta] where  upper([dba.ta].a)= ?:?  group by  upper([dba.ta].a) with rollup order by ? nulls first 
 
@@ -426,7 +427,8 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.ta)
+    SORT (group by)
+      TABLE SCAN (dba.ta)
 
   rewritten query: select [dba.ta].a, count(*) from [dba.ta] [dba.ta] where [dba.ta].a= ?:?  group by [dba.ta].a with rollup order by ? nulls first 
 
