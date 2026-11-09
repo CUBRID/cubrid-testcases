@@ -3,10 +3,11 @@
  *  and a table joined later is evaluated after that outer join, not merged into it.
  *
  *  For (wa LEFT JOIN wb ON ..), wc WHERE wc.a = nvl(wb.b, 2) AND wc.a = wa.b the term wc.a = nvl(wb.b, 2) must see
- *  the NULL-filled wb of unmatched wa rows. Before the fix nothing ordered wc after the outer join, so the planner
+ *  the NULL-filled wb of unmatched wa rows. Before the fix the term stayed an ordinary join term, so the planner
  *  joined wc with the preserved wa first and attached the LEFT JOIN on top, merging the term into the outer join
  *  step. The term then only decided whether wb matched, and rows it should reject survived NULL-filled. The fix
- *  makes such a term depend on the outer join so it is evaluated after the NULL filling.
+ *  classifies a WHERE term that reads a table NULL-filled by a preceding outer join as an after-join term,
+ *  regardless of the FROM order, so it is evaluated after the NULL filling, not as that outer join's condition.
  *
  *  Every check runs the query (rows in order) and then one row: id, PASS/FAIL, the rows as a sorted string
  *  (column values joined by ':', NULL as N, rows by ',', EMPTY for no rows), and the expected string, which equals
@@ -15,7 +16,7 @@
  *  Coverage:
  *    Case 1: WHERE terms reading the NULL-filled side - a RIGHT JOIN followed by a LEFT JOIN with an OR term in
  *            its ON (with and without an extra term on the NULL-filled table), the term joined to a later table
- *            by comma, CROSS JOIN and INNER JOIN, the LEADING hint that conflicts with the outer join, a LEFT
+ *            by comma, CROSS JOIN and INNER JOIN, the LEADING hint putting the later table first, a LEFT
  *            JOIN chain, CONNECT BY
  *    Case 2: guards that were already right - single-table terms on the NULL-filled table, the later table
  *            listed first, an IS NULL term, an OR term, the RIGHT JOIN and LEFT JOIN spellings, a null-rejecting
@@ -73,7 +74,7 @@ select 'C1-5' id, case when nvl(t.r, 'EMPTY') = '1:2:N:2' then 'PASS' else 'FAIL
 from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') || ':' || nvl(to_char(q.c4), 'N') order by 1 separator ',') r
       from (select wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = wa.a inner join wc on wc.a = wa.b where wc.a = nvl(wb.b, 2)) q) t;
 
--- C1-6: same with the LEADING hint putting wc before wa (hint cannot be honored)
+-- C1-6: same with the LEADING hint putting wc before wa
 select /*+ leading(wc, wa) */ wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = wa.a, wc where wc.a = nvl(wb.b, 2) and wc.a = wa.b order by 1, 2, 3, 4;
 select 'C1-6' id, case when nvl(t.r, 'EMPTY') = '1:2:N:2' then 'PASS' else 'FAIL' end res, nvl(t.r, 'EMPTY') got, '1:2:N:2' expected
 from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') || ':' || nvl(to_char(q.c4), 'N') order by 1 separator ',') r
