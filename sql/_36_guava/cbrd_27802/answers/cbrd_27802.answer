@@ -160,8 +160,8 @@ Query Plan:
   rewritten query: (select distinct [dba.t_grp].k from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k having sum([dba.t_grp].v)>?)
 
   HASH JOIN (inner join)
-    TABLE SCAN (dba.t_grp)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.t_grp)
 
   rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.t_grp].id as bigint)), sum( cast([dba.t_grp].k as bigint)), sum([dba.t_grp].v) from [dba.t_grp] [dba.t_grp], (select distinct [dba.t_grp].k from [dba.t_grp] [dba.t_grp] group by [dba.t_grp].k having sum([dba.t_grp].v)>?) av? (av_?) where [dba.t_grp].k=av?.av_?
 

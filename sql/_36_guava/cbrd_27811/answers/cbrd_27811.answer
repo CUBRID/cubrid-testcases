@@ -213,10 +213,10 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: o node[?]
+               class: av node[?]
                cost:  ? card ?
     inner: sscan
-               class: av node[?]
+               class: o node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -242,10 +242,10 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: o node[?]
+               class: av node[?]
                cost:  ? card ?
     inner: sscan
-               class: av node[?]
+               class: o node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -488,10 +488,10 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: o node[?]
+               class: av node[?]
                cost:  ? card ?
     inner: sscan
-               class: av node[?]
+               class: o node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -517,10 +517,10 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: sscan
-               class: o node[?]
+               class: av node[?]
                cost:  ? card ?
     inner: sscan
-               class: av node[?]
+               class: o node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -547,8 +547,8 @@ Query Plan:
   rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? )
 
   HASH JOIN (inner join)
-    TABLE SCAN (o)
     TABLE SCAN (av)
+    TABLE SCAN (o)
 
   rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having max([dba.t_line].l_qty)> ?:? ) av (l_oid) where o.o_id=av.l_oid
 
@@ -668,8 +668,8 @@ Query Plan:
   rewritten query: (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having count(*)> ?:? )
 
   HASH JOIN (inner join)
-    TABLE SCAN (o)
     TABLE SCAN (av)
+    TABLE SCAN (o)
 
   rewritten query: select count(*) from [dba.t_ord] o, (select [dba.t_line].l_oid from [dba.t_line] [dba.t_line] group by [dba.t_line].l_oid having count(*)> ?:? ) av (l_oid) where o.o_id=av.l_oid
 
