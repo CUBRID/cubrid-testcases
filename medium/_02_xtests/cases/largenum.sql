@@ -4,7 +4,7 @@ insert into huge_tiny values( 12e+4,  12e+4);
 insert into huge_tiny values(-12e+4, -12e+4);
 insert into huge_tiny values( 12e-4,  12e-4);
 insert into huge_tiny values(-12e-4, -12e-4);
-select * from huge_tiny;
+select * from huge_tiny order by 1;
 rollback work;
 create class huge_tiny (f float, d double);
 insert into huge_tiny values( 1.17E-145F,  2.2250E-1323);

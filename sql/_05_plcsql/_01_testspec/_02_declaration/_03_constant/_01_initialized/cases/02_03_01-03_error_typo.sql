@@ -35,4 +35,4 @@ begin
     dbms_output.put_line('a =' || a );
 end;
 
---+ server-message on
+--+ server-message off

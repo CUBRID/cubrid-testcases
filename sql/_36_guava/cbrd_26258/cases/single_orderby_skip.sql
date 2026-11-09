@@ -91,7 +91,7 @@ with q as (
 select /*+ recompile */ 'Q008', q.* from q limit 10;
 show trace;
 
-evaluate 'Q009. When the first column of ORDER BY has no NOT NULL constraint, skip ORDER BY cannot be applied. (TODO: improvement needed)';
+evaluate 'Q009. Even when the first column of ORDER BY (colb) is nullable, skip ORDER BY can be applied because another composite index column (cola) is NOT NULL.';
 drop index i1_cola_colb on tbl_a;
 create index i1_colb_cola on tbl_a (colb, cola);
 with q as (
