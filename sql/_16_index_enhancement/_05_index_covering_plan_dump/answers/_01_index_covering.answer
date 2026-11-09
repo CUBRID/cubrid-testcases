@@ -130,7 +130,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id?, t?.id? from t? t? where t?.id?= ?:? 
+select t?.id?, t?.id? from t? t? where t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id2    id1    
 abcde     5     
@@ -158,7 +158,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id?, t?.id? from t? t? where (t?.id?< ?:? )
+select t?.id?, t?.id? from t? t? where (t?.id?< ?:? ) using index t?.idx_covering_t?
 ===================================================
 id2    id1    
 abcd     10     
@@ -170,7 +170,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id?, t?.id? from t? t? where  char_length(t?.id?)=? and t?.id?= ?:? 
+select t?.id?, t?.id? from t? t? where  char_length(t?.id?)=? and t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id2    id1    
 abcd     10     
@@ -182,7 +182,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id?, t?.id? from t? t? where  char_length(t?.id?)>? and t?.id?= ?:? 
+select t?.id?, t?.id? from t? t? where  char_length(t?.id?)>? and t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id2    
 abcde     
@@ -207,7 +207,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?< ?:? ) and (t?.id?> ?:? )
+select t?.id? from t? t? where (t?.id?< ?:? ) and (t?.id?> ?:? ) using index t?.idx_covering_t?
 ===================================================
 id2    
 abc     
@@ -222,7 +222,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where t?.id?= ?:? 
+select t?.id? from t? t? where t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id1    
 
@@ -359,7 +359,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.id?, count(t?.id?) from t? t? where (t?.id?< ?:? ) and (t?.id?> ?:? ) group by t?.id?
+select t?.id?, count(t?.id?) from t? t? where (t?.id?< ?:? ) and (t?.id?> ?:? ) group by t?.id? using index t?.idx_covering_t?
 ===================================================
 id3    count(id3)    
 55     3     
@@ -429,7 +429,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t?.id?, t?.id? from t? t? where (t?.id?< ?:? ) order by ?
+select t?.id?, t?.id? from t? t? where (t?.id?< ?:? ) using index t?.idx_covering_t? order by ?
 ===================================================
 id3    
 100     
@@ -444,7 +444,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where t?.id?= ?:? 
+select t?.id? from t? t? where t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id3    
 100     
@@ -459,7 +459,7 @@ iscan
     index: idx_covering_t? term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where t?.id?= ?:?  and t?.id?= ?:? 
+select t?.id? from t? t? where t?.id?= ?:?  and t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id3    
 100     
@@ -474,7 +474,7 @@ iscan
     index: idx_covering_t? term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?> ?:? ) and t?.id?= ?:? 
+select t?.id? from t? t? where (t?.id?> ?:? ) and t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id3    
 111     
@@ -493,7 +493,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?> ?:? )
+select t?.id? from t? t? where (t?.id?> ?:? ) using index t?.idx_covering_t?
 ===================================================
 clno    fname    
 10     sam     
@@ -540,7 +540,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where t?.id?= ?:? 
+select t?.id? from t? t? where t?.id?= ?:?  using index t?.idx_covering_t?
 ===================================================
 id2    
 abmnp     
@@ -561,7 +561,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?> ?:? )
+select t?.id? from t? t? where (t?.id?> ?:? ) using index t?.idx_covering_t?
 ===================================================
 id2    
 abmnp     
@@ -577,7 +577,7 @@ iscan
     index: idx_covering_t? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?> ?:?  and t?.id?< ?:? )
+select t?.id? from t? t? where (t?.id?> ?:?  and t?.id?< ?:? ) using index t?.idx_covering_t?
 ===================================================
 id2    
 abcd     
@@ -599,7 +599,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.id? from t? t? where (t?.id?> ?:? ) and  char_length(t?.id?)>?
+select t?.id? from t? t? where (t?.id?> ?:? ) and  char_length(t?.id?)>? using index t?.idx_covering_t?
 ===================================================
 parentid    
 3004     

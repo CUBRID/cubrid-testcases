@@ -539,17 +539,16 @@ Query Plan:
   rewritten query: (select /*+ NO_UNNEST */ distinct [dba.tbl].cola from [dba.tbl] [dba.tbl])
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.tbl)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.tbl)
 
   rewritten query: select count([dba.tbl].cola) from [dba.tbl] [dba.tbl], (select /*+ NO_UNNEST */ distinct [dba.tbl].cola from [dba.tbl] [dba.tbl]) av? (av_?) where [dba.tbl].cola=av?.av_?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1148,8 +1147,8 @@ Query Plan:
   rewritten query: (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? ))
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.new_tbl)
 
   rewritten query: select [dba.new_tbl],class [dba.new_tbl], ?:?  as [new_tbl.cola] from [dba.new_tbl] [dba.new_tbl], (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].cola>= ?:?  and [dba.tbl].cola< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
@@ -1159,8 +1158,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -1185,8 +1184,8 @@ Query Plan:
   rewritten query: (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? ))
 
   NESTED LOOPS (inner join)
-    TABLE SCAN (dba.new_tbl)
     TABLE SCAN (av?)
+    TABLE SCAN (dba.new_tbl)
 
   rewritten query: select [dba.new_tbl],class [dba.new_tbl] from [dba.new_tbl] [dba.new_tbl], (select /*+ NO_UNNEST PARALLEL(?) */ distinct [dba.tbl].id from [dba.tbl] [dba.tbl] where ([dba.tbl].colb>= ?:?  and [dba.tbl].colb< ?:? )) av? (av_?) where [dba.new_tbl].id=av?.av_?
 
@@ -1196,8 +1195,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.new_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

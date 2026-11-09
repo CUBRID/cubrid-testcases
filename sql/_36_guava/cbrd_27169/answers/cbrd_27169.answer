@@ -416,7 +416,7 @@ Query Plan:
       NESTED LOOPS (inner join)
         TABLE SCAN (dba.tb)
         INDEX SCAN (dba.ta.pk_ta_a) (key range: [dba.ta].a=[dba.tb].a, covered: true)
-      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tb].b=[dba.tc].b, key filter: [dba.tc].b= ?:? )
+      INDEX SCAN (dba.tc.pk_tc_b_c) (key range: [dba.tc].b= ?:? , key filter: [dba.tb].b=[dba.tc].b, key filter: [dba.tb].b= ?:? , covered: true)
 
   rewritten query: (select distinct [dba.ta].a, [dba.tb].b, [dba.tc].c from [dba.ta] [dba.ta] inner join [dba.tb] [dba.tb] on [dba.ta].a=[dba.tb].a left outer join [dba.tc] [dba.tc] on [dba.tb].b=[dba.tc].b and [dba.tb].b= ?:?  and [dba.tc].b= ?:? )
 
@@ -434,7 +434,7 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SCAN (index: dba.ta.pk_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (index: dba.tc.pk_tc_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
             MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      

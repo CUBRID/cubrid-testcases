@@ -28,9 +28,9 @@ create index i_t1_a2b1 on t1(a,b) where a>'0';
 
 
 --TEST: should use i_t1_a2b
-create view v_t1_a2b as select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a)  and lower(a) > '0' ;
+create view v_t1_a2b as select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a)  and lower(a) > '0' using index i_t1_a2b ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
-alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a)  and lower(a) > '0' ;
+alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a)  and lower(a) > '0' using index i_t1_a2b ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
 
 alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a from t1 where lower(a) > '0') ;
@@ -40,14 +40,14 @@ select /*+ RECOMPILE */ * from v_t1_a2b ;
 alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a from t1 where lower(a) > '0')and a>'0' ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
 
-alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a from t1 where lower(a) > '0')and lower(a)>'0' ;
+alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a from t1 where lower(a) > '0')and lower(a)>'0' using index i_t1_a2b ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
 
-alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a ) and a>'0' and lower(a) > '0' ;
+alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a ) and a>'0' and lower(a) > '0' using index i_t1_a2b ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
 
 
-alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a )  and lower(a) > '0' and a>'0' ;
+alter view v_t1_a2b add query  select /*+ RECOMPILE */ count(b) as num1,10 as num2 from t1 where exists (select t1.a )  and lower(a) > '0' and a>'0' using index i_t1_a2b ;
 select /*+ RECOMPILE */ * from v_t1_a2b ;
 
 

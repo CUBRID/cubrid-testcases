@@ -42,7 +42,7 @@ nl-join (cross join)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
+select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x using index t.idx_asc, t_a.idx_t_a order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
 y    
@@ -64,7 +64,7 @@ nl-join (cross join)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x using index t.idx_desc(+) order by ? desc 
+select t.y from t_a t_a, t_b t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x using index t.idx_desc(+), t_a.idx_t_a order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
 y    
@@ -86,7 +86,7 @@ nl-join (cross join)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select t.y from t_a t_a, t_c t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x order by ? desc 
+select t.y from t_a t_a, t_c t where t_a.x= ?:?  and t.x= ?:?  and t_a.x=t.x using index t.idx_desc, t_a.idx_t_a order by ? desc 
 /* ---> skip ORDER BY */
 ===================================================
 y    
@@ -110,7 +110,7 @@ temp(order by)
     sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_DESC_IDX */ t.y from t_a t_a inner join t_c t on t_a.x=t.x and t_a.x= ?:?  where t.x= ?:?  order by ? desc 
+select /*+ ORDERED USE_DESC_IDX */ t.y from t_a t_a inner join t_c t on t_a.x=t.x and t_a.x= ?:?  where t.x= ?:?  using index t.idx_desc, t_a.idx_t_a order by ? desc 
 ===================================================
 0
 ===================================================

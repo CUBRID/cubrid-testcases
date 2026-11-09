@@ -20,7 +20,7 @@ update statistics on all classes;
 select /*+ recompile */ b from t2 where a < 100 and b > 0 order by b;
 
 --should use covering index i_t2_a_b_c
-select /*+ recompile */ b from t2 where a < 100 and b > 0 and c=0 order by b;
+select /*+ recompile */ b from t2 where a < 100 and b > 0 and c=0 using index i_t2_a_b_c order by b;
 
 --should use covering index i_t2_b_c
 select /*+ recompile */ * from t2 where a < 100 and b > 0 using index i_t2_b_c order by b;
@@ -32,13 +32,13 @@ select /*+ recompile */ * from t2 where a < 100 and b > 0 using index i_t2_a_b o
 select /*+ recompile */ b from t2 where a < 100 and b > 0 using index none order by b;
 
 --should use index i_t2_a_b_c
-select /*+ recompile */ b from t2 where a < 100 and b > 0 order by c;
+select /*+ recompile */ b from t2 where a < 100 and b > 0 using index i_t2_a_b_c order by c;
 
 --should use index i_t2_a_b_c
-select /*+ recompile */ b from t2 where a < 100 order by c;
+select /*+ recompile */ b from t2 where a < 100 using index i_t2_a_b_c order by c;
 
 --should use index i_t2_b_c
-select /*+ recompile */ b from t2 where b>0 order by c;
+select /*+ recompile */ b from t2 where b>0 using index i_t2_b_c order by c;
 
 --should use index i_t2_b_c
 select /*+ recompile */ b from t2 where b=8 order by c;

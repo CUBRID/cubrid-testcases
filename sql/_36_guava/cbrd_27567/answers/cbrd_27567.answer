@@ -126,7 +126,7 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
@@ -147,7 +147,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -170,11 +170,11 @@ count(*)    sum(o1.pk)    sum((select /*+ NO_SUBQUERY_CACHE */ cs.v*10 from cs w
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
@@ -195,9 +195,9 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -245,7 +245,7 @@ pk    pk    v
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
@@ -267,7 +267,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -283,11 +283,11 @@ count(*)    sum(o1.pk)    sum((select cs.v*10 from cs where cs.pk=o1.pk))    sum
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.pk)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.pk)
 
@@ -308,10 +308,10 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -335,7 +335,7 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.pk))
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ max([dba.cs].v+o?.g*?) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk))
 
@@ -356,7 +356,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -381,7 +381,7 @@ g    count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: ([dba.cs].pk<=o?.pk))
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ count([dba.cs].v) from [dba.cs] [dba.cs] where ([dba.cs].pk<=o?.pk) having count([dba.cs].v)>o?.g*?)
 
@@ -403,7 +403,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
      
 
@@ -594,7 +594,7 @@ pk    g    v
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.g)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select /*+ NO_SUBQUERY_CACHE */ [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g)
 
@@ -616,7 +616,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -650,7 +650,7 @@ pk    g    v
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.cs.pk_cs_pk) (key range: [dba.cs].pk=o?.g)
+  TABLE SCAN (dba.cs)
 
   rewritten query: (select [dba.cs].v*? from [dba.cs] [dba.cs] where [dba.cs].pk=o?.g)
 
@@ -672,7 +672,7 @@ Trace Statistics:
         MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -885,7 +885,7 @@ Query Plan:
     TABLE SCAN (d)
   skip order by: true
 
-  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.g, d.cnt from [dba.cy] o? anti join [dba.cs] a on a.pk=o?.g+?, (select count(*) from [dba.cs] x where (x.pk<=o?.g+?)) d (cnt) order by ?
+  rewritten query: select /*+ ORDERED USE_NL */ o?.pk, o?.g, d.cnt from [dba.cy] o? anti join [dba.cs] a on a.pk=o?.g+?, (select count(*) from [dba.cs] x where (x.pk<=o?.g+?)) d (cnt) using index o?.pk_cy_pk order by ?
 
 
 Trace Statistics:

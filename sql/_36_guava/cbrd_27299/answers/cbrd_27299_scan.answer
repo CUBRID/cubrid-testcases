@@ -401,7 +401,7 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (z.pk_t_small_a) (key range: z.a= mod([dba.t_big].a, ?)+?)
+  TABLE SCAN (z)
 
   rewritten query: (select min([dba.f_jp](z.b)) from [dba.t_small] z where z.a= mod([dba.t_big].a, ?)+?)
 
@@ -417,7 +417,7 @@ Trace Statistics:
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.t_small.pk_t_small_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

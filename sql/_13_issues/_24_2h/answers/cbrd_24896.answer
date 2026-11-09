@@ -40,9 +40,9 @@ col_a    col_b    col_c    col_d
 2     2     2     2     
 
 Query plan:
-iscan
+sscan
     class: tbl node[?]
-    index: idx term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_b}={?, ?}) or ({tbl.col_a, tbl.col_b}={?, ?}))
@@ -52,10 +52,9 @@ col_a    col_b    col_c    col_d
 2     2     2     2     
 
 Query plan:
-iscan
+sscan
     class: tbl node[?]
-    index: idx term[?]
-    filtr: term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select tbl.col_a, tbl.col_b, tbl.col_c, tbl.col_d from tbl tbl where (({tbl.col_a, tbl.col_c}={?, ?}) or ({tbl.col_a, tbl.col_c}={?, ?}))
@@ -65,9 +64,8 @@ col_a    col_b    col_c    col_d
 2     2     2     2     
 
 Query plan:
-iscan
+sscan
     class: tbl node[?]
-    index: idx term[?]
     sargs: term[?]
     cost:  ? card ?
 Query stmt:

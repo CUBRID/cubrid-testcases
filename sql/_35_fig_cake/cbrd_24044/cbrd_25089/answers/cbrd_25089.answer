@@ -581,21 +581,21 @@ select 'test?' from tbl tbl
 cola    colb    
 
 Query plan:
-nl-join (semi join)
+nl-join (inner join)
     edge:  term[?]
-    outer: nl-join (inner join)
+    outer: nl-join (semi join)
                edge:  term[?]
                outer: sscan
                           class: b node[?]
                           cost:  ? card ?
                inner: sscan
-                          class: s node[?]
-                          sargs: term[?] AND term[?]
+                          class: c node[?]
+                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: c node[?]
-               sargs: term[?]
+               class: s node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -635,12 +635,12 @@ nl-join (semi join)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: tbl_? node[?]
+                          class: tbl node[?]
                           sargs: term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: tbl node[?]
+               class: tbl_? node[?]
                sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?

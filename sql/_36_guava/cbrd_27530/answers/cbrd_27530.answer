@@ -272,9 +272,9 @@ Query Plan:
   SORT (temp)
     MERGE JOIN (inner join)
       SORT (temp)
-        INDEX SCAN (x.i_ta_a) (covered: true)
-      SORT (temp)
         INDEX SCAN (dba.tb.i_tb_a) (covered: true)
+      SORT (temp)
+        INDEX SCAN (x.i_ta_a) (covered: true)
 
   rewritten query: select count(*) from [dba.ta] x, [dba.tb] [dba.tb] where (x.a=[dba.tb].a)
 
@@ -283,10 +283,10 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MERGELIST (parallel merge workers: ?) (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (index: dba.tb.i_tb_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (index: dba.tb.i_tb_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (index: dba.ta.i_ta_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 

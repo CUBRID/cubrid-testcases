@@ -1134,7 +1134,7 @@ Query Plan:
 
   rewritten query: (select [dba.t_main].g, count(*), count(*) from [dba.t_main] [dba.t_main] where ([dba.t_main].g>= ?:?  and [dba.t_main].g<= ?:? ) group by [dba.t_main].g)
 
-  INDEX SCAN (dba.t_small.i_sv) (key range: [dba.t_small].v=a_?, covered: true)
+  TABLE SCAN (dba.t_small)
 
   rewritten query: (select count(*) from [dba.t_small] [dba.t_small] where [dba.t_small].v=a_?)
 
@@ -1155,7 +1155,7 @@ Trace Statistics:
         GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: dba.t_small.i_sv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -3018,7 +3018,7 @@ Query Plan:
   SORT (group by)
     INDEX SCAN (dba.t_pfx.i_p) (key range: ([dba.t_pfx].s> ?:? ))
 
-  rewritten query: select [dba.t_pfx].s, count(*), sum([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s
+  rewritten query: select [dba.t_pfx].s, count(*), sum([dba.t_pfx].x) from [dba.t_pfx] [dba.t_pfx] where ([dba.t_pfx].s> ?:? ) group by [dba.t_pfx].s using index [dba.t_pfx].i_p
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

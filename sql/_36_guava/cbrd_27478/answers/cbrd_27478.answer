@@ -44,9 +44,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -72,9 +72,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -101,9 +101,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -133,7 +133,7 @@ trace
 Query Plan:
   HASH JOIN (inner join)
     NESTED LOOPS (inner join)
-      INDEX SCAN (c.i_?_c_name) (key range: c.[name]= ?:? )
+      TABLE SCAN (c)
       INDEX SCAN (f.i_?_f_c) (key range: f.c_id=c.id)
     TABLE SCAN (g)
 
@@ -149,7 +149,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.t_?_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_?_g), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -173,7 +173,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: dba.t_?_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_?_g), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -198,7 +198,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     NESTED LOOPS (inner join)
-      INDEX SCAN (c.i_?_c_name) (key range: c.[name]= ?:? )
+      TABLE SCAN (c)
       INDEX SCAN (f.i_?_f_c) (key range: f.c_id=c.id)
     INDEX SCAN (g.i_?_g_k) (key range: g.k=f.k, covered: true)
 
@@ -206,7 +206,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_?_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SCAN (index: dba.t_?_g.i_?_g_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
      
@@ -220,7 +220,7 @@ trace
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_?_c.i_?_c_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (table: dba.t_?_c), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_?_f.i_?_f_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SCAN (index: dba.t_?_g.i_?_g_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
      
@@ -238,9 +238,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -265,9 +265,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -292,9 +292,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -348,9 +348,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -374,9 +374,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -403,9 +403,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -431,9 +431,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -461,9 +461,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -670,9 +670,9 @@ Query plan:
 temp(group by)
     subplan: idx-join (inner join)
                  outer: idx-join (inner join)
-                            outer: iscan
+                            outer: sscan
                                        class: c node[?]
-                                       index: i_?_c_name term[?]
+                                       sargs: term[?]
                                        cost:  ? card ?
                             inner: iscan
                                        class: f node[?]
@@ -698,9 +698,9 @@ Query plan:
 hash-join (inner join)
     edge:  term[?]
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]
@@ -753,9 +753,9 @@ count(*)
 Query plan:
 idx-join (inner join)
     outer: idx-join (inner join)
-               outer: iscan
+               outer: sscan
                           class: c node[?]
-                          index: i_?_c_name term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: f node[?]

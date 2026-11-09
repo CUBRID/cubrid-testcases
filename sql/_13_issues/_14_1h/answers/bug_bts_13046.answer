@@ -19,7 +19,7 @@ iscan
     index: idx? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?=?
+select t?.e? from t? t? where t?.e?=? using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -41,7 +41,7 @@ iscan
     index: idx? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?= ?:? 
+select t?.e? from t? t? where t?.e?= ?:?  using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -65,7 +65,7 @@ iscan
     index: idx? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?= ?:? 
+select t?.e? from t? t? where t?.e?= ?:?  using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -88,7 +88,7 @@ iscan
     index: idx? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?= ?:? 
+select t?.e? from t? t? where t?.e?= ?:?  using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -112,7 +112,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where (t?.i< ?:? ) and t?.e?= ?:? 
+select t?.e? from t? t? where (t?.i< ?:? ) and t?.e?= ?:?  using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -136,7 +136,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where (t?.i< ?:? ) and t?.e?= ?:? 
+select t?.e? from t? t? where (t?.i< ?:? ) and t?.e?= ?:?  using index t?.idx?
 ===================================================
 i    e1    
 2     Monday     
@@ -176,7 +176,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where  cast(t?.e? as integer)<? and t?.i= ?:? 
+select t?.i, t?.e? from t? t? where  cast(t?.e? as integer)<? and t?.i= ?:?  using index t?.idx?
 ===================================================
 e1    
 Friday     
@@ -187,7 +187,7 @@ iscan
     index: idx? term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?= ?:?  and t?.i= ?:? 
+select t?.e? from t? t? where t?.e?= ?:?  and t?.i= ?:?  using index t?.idx?
 ===================================================
 i    e1    
 2     Friday     
@@ -198,7 +198,7 @@ iscan
     index: idx? term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.i, t?.e? from t? t? where t?.e?= ?:?  and t?.i= ?:? 
+select t?.i, t?.e? from t? t? where t?.e?= ?:?  and t?.i= ?:?  using index t?.idx?
 ===================================================
 0
 ===================================================
@@ -324,6 +324,6 @@ iscan
     index: idx? term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select t?.e? from t? t? where t?.e?= ?:? 
+select t?.e? from t? t? where t?.e?= ?:?  using index t?.idx?
 ===================================================
 0

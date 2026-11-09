@@ -98,15 +98,15 @@ i1    i2    i3    i4
 10     11.1     ddd     1997-01-01     
 
 Query plan:
-temp(order by)
-    subplan: iscan
-                 class: ui node[?]
-                 index: idx_all term[?] (covers)
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: ui node[?]
+    index: idx_i?_i? 
+    filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?> ?:? ) using index ui.idx_i?(-), ui.idx_i?(-) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 i1    i2    i3    i4    
 2     null     bbb     1991-01-01     
@@ -155,9 +155,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i? 
+    index: idx_i?_i? 
     sargs: term[?]
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?(-), ui.idx_i?_i?(-) order by ?
@@ -175,9 +175,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i? 
+    index: idx_i?_i? 
     sargs: term[?]
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_i?_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?_i?(-) order by ?
@@ -212,9 +212,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i?  (desc_index)
+    index: idx_i?_i?  (desc_index)
     sargs: term[?]
-    sort:  ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where  to_date( cast(ui.i? as varchar))< cast('?-?-?' as date) using index ui.idx_i?(-), ui.idx_i?_i?(-) order by ? desc 
@@ -229,9 +229,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i?  (desc_index)
+    index: idx_i?_i?  (desc_index)
     sargs: term[?]
-    sort:  ? desc
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where (ui.i?< ?:? ) using index ui.idx_all(-), ui.idx_i?(-), ui.idx_i?_i?(-) order by ? desc 
@@ -273,9 +273,9 @@ i1    i2    i3    i4
 Query plan:
 iscan
     class: ui node[?]
-    index: pk_ui_i? 
+    index: idx_i?_i? 
     sargs: term[?] AND term[?]
-    sort:  ? asc
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select ui.i?, ui.i?, ui.i?, ui.i? from ui ui where ((ui.i?= ?:? ) or (ui.i?= ?:? )) and ui.i?= ?:?  using index ui.idx_all(-), ui.idx_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?_i?(-), ui.idx_i?(-), ui.idx_i?_i?(-) order by ?

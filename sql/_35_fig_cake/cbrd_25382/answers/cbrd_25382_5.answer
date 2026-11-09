@@ -192,9 +192,8 @@ temp(order by)
                             edge:  term[?]
                             outer: hash-join (inner join)
                                        edge:  term[?]
-                                       outer: iscan
+                                       outer: sscan
                                                   class: a node[?]
-                                                  index: i_c 
                                                   sargs: term[?]
                                                   cost:  ? card ?
                                        inner: sscan
@@ -211,7 +210,6 @@ temp(order by)
                             class: d node[?]
                             sargs: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -225,7 +223,7 @@ Query Plan:
     HASH JOIN (inner join)
       HASH JOIN (inner join)
         HASH JOIN (inner join)
-          INDEX SCAN (a.i_c) ()
+          TABLE SCAN (a)
           TABLE SCAN (b)
         TABLE SCAN (c)
       TABLE SCAN (d)
@@ -259,7 +257,7 @@ Trace Statistics:
                             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (index: dba.ta.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -391,11 +389,11 @@ temp(order by)
                                        class: a node[?]
                                        cost:  ? card ?
                             inner: sscan
-                                       class: b node[?]
+                                       class: av? node[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: sscan
-                            class: av? node[?]
+                            class: b node[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
@@ -427,8 +425,8 @@ Query Plan:
     HASH JOIN (inner join)
       HASH JOIN (inner join)
         TABLE SCAN (a)
-        TABLE SCAN (b)
-      TABLE SCAN (av?)
+        TABLE SCAN (av?)
+      TABLE SCAN (b)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 
@@ -450,6 +448,9 @@ Trace Statistics:
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -457,9 +458,6 @@ Trace Statistics:
                 PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.td.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -568,16 +566,14 @@ Query plan:
 temp(order by)
     subplan: hash-join (inner join)
                  edge:  term[?]
-                 outer: iscan
+                 outer: sscan
                             class: a node[?]
-                            index: i_c 
                             sargs: term[?]
                             cost:  ? card ?
                  inner: sscan
                             class: b node[?]
                             sargs: term[?]
                             cost:  ? card ?
-                 sort:  ? asc
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
@@ -590,10 +586,8 @@ trace
     "SORT (order by)": {
       "HASH JOIN (inner join)": [
         {
-          "INDEX SCAN": {
-            "table": "a",
-            "index": "i_c",
-            "key range": []
+          "TABLE SCAN": {
+            "table": "a"
           }
         },
         {
@@ -678,17 +672,12 @@ trace
                   "fetch_time": ?,
                   "ioread": ?,
                   "SCAN": {
-                    "access": "index (dba.ta.i_c)",
-                    "btree": {
+                    "access": "table (dba.ta)",
+                    "heap": {
                       "time": ?,
                       "fetch": ?,
                       "ioread": ?,
-                      "readkeys": ?,
-                      "filteredkeys": ?,
-                      "rows": ?
-                    },
-                    "lookup": {
-                      "time": ?,
+                      "readrows": ?,
                       "rows": ?
                     }
                   }

@@ -63,7 +63,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:? 
+select t.i, t.e from t t where  cast(t.e as integer)<? and t.i= ?:?  using index t.i_t_i_e
 ===================================================
 i    e    
 
@@ -74,7 +74,7 @@ iscan
     filtr: term[?]
     cost:  ? card ?
 Query stmt:
-select t.i, t.e from t t where  cast(t.e as varchar)< cast('Wednesday' as varchar) and t.i= ?:? 
+select t.i, t.e from t t where  cast(t.e as varchar)< cast('Wednesday' as varchar) and t.i= ?:?  using index t.i_t_i_e
 ===================================================
 e    
 
@@ -106,7 +106,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  using index t.i_t_e_s order by ?, ?
 ===================================================
 i    e    
 2     Wednesday     
@@ -128,7 +128,7 @@ temp(order by)
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  order by ?, ?
+select t.i, t.e, t.s from t t where (t.s< ?:? ) and t.e= ?:?  using index t.i_t_e_s order by ?, ?
 ===================================================
 e    
 Tuesday     

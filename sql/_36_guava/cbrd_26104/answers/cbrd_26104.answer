@@ -752,21 +752,21 @@ trace
 Query Plan:
   FOLLOW (edge: t.g=[_db_user])
     NESTED LOOPS (inner join)
-      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (u)
       TABLE SCAN (t)
 
   rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 
   FOLLOW (edge: t.g=[_db_user])
     NESTED LOOPS (inner join)
-      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (u)
       TABLE SCAN (t)
 
   rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
 
   FOLLOW (edge: t.g=[_db_user])
     NESTED LOOPS (inner join)
-      INDEX SCAN (u.u__db_user_name) (key range: u.[name]= CURRENT_USER )
+      TABLE SCAN (u)
       TABLE SCAN (t)
 
   rewritten query: (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER )
@@ -776,10 +776,10 @@ Query Plan:
 
   rewritten query: (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )
 
-  FOLLOW (edge: show_tables.[owner]=[_db_user])
-    NESTED LOOPS (inner join)
+  NESTED LOOPS (inner join)
+    FOLLOW (edge: show_tables.[owner]=[_db_user])
       INDEX SCAN (show_tables.i__db_class_class_name_owner) (key range: (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ), key filter: (show_tables.class_name like  ?:? ))
-      INDEX SCAN (coll.pk__db_collation_coll_id) (key range: (show_tables.collation_id=coll.coll_id), covered: true)
+    INDEX SCAN (coll.pk__db_collation_coll_id) (key range: (show_tables.collation_id=coll.coll_id), covered: true)
   skip order by: true
 
   rewritten query: select show_tables.class_name from [_db_class] show_tables, [_db_collation] coll where (show_tables.class_name like  ?:? ) and (show_tables.class_name>= ?:?  and show_tables.class_name< ?:? ) and (( cast(case when show_tables.is_system_class=? then 'YES' else 'NO' end as varchar(?)))='NO') and (show_tables.collation_id=coll.coll_id) and ({'DBA'} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) or {show_tables.[owner].[name]}*(select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) setneq multiset{} or {show_tables.class_of} subseteq (select sum(set{au.object_of}) from [_db_auth] au where {au.grantee.[name]} subseteq (select set{ CURRENT_USER }+coalesce(sum(set{t.g.[name]}), set{}) from [_db_user] u, table(u.[groups]) t (g) where u.[name]= CURRENT_USER ) and au.auth_type= ?:? )) order by ?
@@ -791,16 +791,16 @@ Trace Statistics:
       SCAN (index: _db_collation.pk__db_collation_coll_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (table: _db_user), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SCAN (set time: ?, fetch: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        SCAN (table: _db_user), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SCAN (set time: ?, fetch: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: _db_auth), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: _db_user.u__db_user_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+            SCAN (table: _db_user), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               SCAN (set time: ?, fetch: ?, ioread: ?)
      
 

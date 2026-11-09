@@ -13,9 +13,9 @@ a
 a              
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: i? term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select t.a from t t where  upper(t.a)= ?:? 
@@ -34,11 +34,11 @@ Query stmt:
 Query plan:
 nl-join (cross join)
     outer: sscan
-               class: av? node[?]
-               cost:  ? card ?
-    inner: iscan
                class: t node[?]
-               index: i? term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
