@@ -299,5 +299,29 @@ where x.k = o.a and x.c > o.b and x.c between 0 and 10 and y.k = x.k group by o.
 
 drop table t_co, t_cp, t_cy;
 
+-- Case 22: the memo of the middle scan is keyed by the outer values its terms read. Its range terms also carry
+-- the terms of the scan after it, whose values change while the middle scan's rows are collected: they must not
+-- key the memo. The partitioned and the unpartitioned last scan return the same rows.
+create table t_mo (id int, a int, b int);
+insert into t_mo select rownum, mod(rownum * 7, 30) + 5, mod(rownum * 11, 25) from db_class a, db_class b limit 200;
+create table t_mx (k int, c int, v int);
+insert into t_mx select mod(rownum * 3, 50), mod(rownum * 7, 60) - 5, rownum from db_class a, db_class b limit 400;
+create index i_mx_kc on t_mx (k, c);
+create table t_my (k int, c int, v int) partition by hash (k) partitions 5;
+insert into t_my select k, c, v * 3 from t_mx;
+create index i_my_kc on t_my (k, c);
+create table t_mn (k int, c int, v int);
+insert into t_mn select k, c, v from t_my;
+create index i_mn_kc on t_mn (k, c);
+update statistics on t_mo, t_mx, t_my, t_mn with fullscan;
+
+select /*+ ordered use_nl */ count (*), sum (y.v) from t_mo o, t_mx x, t_my y
+where x.k = o.a and x.c > o.b and x.k > 10 and y.k = x.k + 0 and y.c = x.c;
+
+select /*+ ordered use_nl */ count (*), sum (y.v) from t_mo o, t_mx x, t_mn y
+where x.k = o.a and x.c > o.b and x.k > 10 and y.k = x.k + 0 and y.c = x.c;
+
+drop table t_mo, t_mx, t_my, t_mn;
+
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
