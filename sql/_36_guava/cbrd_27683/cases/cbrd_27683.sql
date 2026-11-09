@@ -49,15 +49,16 @@ select id, rank () over (order by o) from t27683 where id < 0;
 select p, count (*) as c, rank () over (order by count (*) desc) as rk, dense_rank () over (order by count (*)) as dr
   from t27683 group by p order by p;
 
--- Case 8: running aggregates over sort key groups with ties, and aggregates over the partition
+-- Case 8: running aggregates over sort key groups with ties, and aggregates over the partition. The functions that
+-- wait in one query end their groups at the same key (an evaluation whose groups end apart keeps the existing path)
 select id, p, o, sum (o) over (partition by p order by o) as so, count (*) over (partition by p order by o) as c,
        avg (o) over (partition by p order by o) as ao, min (s) over (partition by p order by o) as mi
   from t27683 order by id;
-select id, p, sum (o) over (partition by p) as so, count (o) over (partition by p) as co, max (o) over () as mx
+select id, p, sum (o) over (partition by p) as so, count (o) over (partition by p) as co, var_samp (o) over (partition by p) as vs,
+       count (distinct s) over (partition by p) as cds
   from t27683 order by id;
-select id, p, o, stddev_pop (o) over (partition by p order by o) as sd, var_samp (o) over (partition by p) as vs
-  from t27683 order by id;
-select id, p, o, sum (distinct o) over (partition by p order by o) as sdo, count (distinct s) over (partition by p) as cds
+select id, max (o) over () as mx, count (*) over () as c from t27683 order by id;
+select id, p, o, stddev_pop (o) over (partition by p order by o) as sd, sum (distinct o) over (partition by p order by o) as sdo
   from t27683 order by id;
 
 -- Case 9: FIRST_VALUE and LAST_VALUE, with IGNORE NULLS
@@ -67,18 +68,20 @@ select id, p, o, first_value (o) ignore nulls over (partition by p order by id) 
        last_value (o) ignore nulls over (partition by p order by id) as lvn
   from t27683 order by id;
 
--- Case 10: NTILE, CUME_DIST and PERCENT_RANK, which need the partition's row count
-select id, p, o, ntile (3) over (partition by p order by o, id) as nt, cume_dist () over (partition by p order by o) as cd,
-       percent_rank () over (partition by p order by o) as pr
+-- Case 10: NTILE and PERCENT_RANK, which need the partition's row count. CUME_DIST, which needs where each row's sort
+-- key group ends, keeps the existing path, so it is in a query of its own (a function in the same evaluation would
+-- keep the others on that path as well)
+select id, p, o, ntile (3) over (partition by p order by o, id) as nt, percent_rank () over (partition by p order by o) as pr
   from t27683 order by id;
-select id, o, ntile (4) over (order by o, id) as nt, cume_dist () over (order by o) as cd from t27683 order by id;
+select id, o, ntile (4) over (order by o, id) as nt, percent_rank () over (order by o) as pr from t27683 order by id;
+select id, p, o, cume_dist () over (partition by p order by o) as cd from t27683 order by id;
 
 -- Case 11: the functions of one window together, and next to LAG, which keeps the existing path
 select id, p, o, row_number () over (partition by p order by o, id) as rn, sum (o) over (partition by p order by o, id) as so,
        first_value (s) over (partition by p order by o, id) as fs
   from t27683 order by id;
 select id, p, o, sum (o) over (partition by p) as so, ntile (2) over (partition by p order by o, id) as nt,
-       cume_dist () over (partition by p order by o) as cd
+       percent_rank () over (partition by p order by o) as pr
   from t27683 order by id;
 select id, p, o, sum (o) over (partition by p order by o, id) as so, lag (o) over (partition by p order by o, id) as lg
   from t27683 order by id;
@@ -89,12 +92,18 @@ select count (*), max (so) from (select id, sum (o) over (partition by p order b
 
 drop table t27683;
 
--- Case 13: a partition larger than what the waiting rows keep in memory
+-- Case 13: groups larger than what the waiting rows keep in memory (max_agg_hash_size, 2MB by default), whose next
+-- rows and their row values go to list files. The functions that wait in one query end their groups at the same key.
 drop table if exists t27683b;
-create table t27683b (id int primary key, g int, h varchar(40));
-insert into t27683b select rownum, mod (rownum, 2), md5 (to_char (rownum)) from db_root connect by level <= 40000;
-select count (*), min (c), max (c), min (s), max (s), count (distinct r) from (select id, count (*) over () as c,
-       sum (id) over (partition by g) as s, rank () over (partition by g order by h) as r from t27683b) x;
-select count (*), min (cd), max (cd), sum (nt) from (select id, cume_dist () over (order by h) as cd,
-       ntile (5) over (order by h) as nt from t27683b) x;
+create table t27683b (id int primary key, g int, h varchar(64));
+insert into t27683b select rownum, mod (rownum, 2), md5 (to_char (rownum)) || md5 (to_char (rownum + 1))
+  from db_root connect by level <= 100000;
+-- the whole table is one group
+select count (*), min (c), max (c), count (distinct rn), min (rn), max (rn) from (select id, count (*) over () as c,
+       row_number () over (order by h) as rn from t27683b) x;
+-- two partitions of 50000 rows
+select count (*), min (m), max (m), count (distinct r), max (r), count (distinct pr), min (pr), max (pr), sum (nt)
+  from (select id, max (id) over (partition by g) as m, rank () over (partition by g order by h) as r,
+               percent_rank () over (partition by g order by h) as pr, ntile (5) over (partition by g order by h, id) as nt
+          from t27683b) x;
 drop table t27683b;
