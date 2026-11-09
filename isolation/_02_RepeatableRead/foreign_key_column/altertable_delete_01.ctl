@@ -49,6 +49,7 @@ C1: commit;
 C1: INSERT INTO t_foreign VALUES(1,'make'),(2,'spell');
 C1: ALTER TABLE t_foreign ADD COLUMN age INT;
 MC: wait until C1 ready;
+/* CBRD-27464: C1 commits a child of this parent while C2 waits, so under REPEATABLE READ the child is newer than the snapshot of C2 and the cascade ends with a serialization conflict instead of leaving the child as an orphan */
 C2: DELETE FROM t_primary WHERE id=2;
 MC: wait until C2 blocked;
 MC: sleep 1;
