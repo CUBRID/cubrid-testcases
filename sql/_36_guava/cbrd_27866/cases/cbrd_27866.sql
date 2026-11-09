@@ -236,6 +236,10 @@ select o.a, (select /*+ ordered use_nl */ count (*) from t_o2 o2, t_rp r
              where r.k = o2.k and r.k in (1, 3) and o.a > 0) cnt
 from t_o o where o.a <= 5 order by 1;
 
+-- an anti join whose outer row leaves no partition (k = 2, 5, 7): one partition is opened and the row passes
+select /*+ ordered use_nl */ count (*) from t_o2 o2
+where not exists (select 1 from t_rp r where r.k = o2.k and r.k in (1, 3));
+
 -- Case 18: an outer join on a term that prunes no partition, the inner read from a temp list or per outer row
 select count (*), count (w.id), sum (w.id)
 from t_o o left join t_p w on w.k between o.k and o.k + 1;
@@ -244,6 +248,37 @@ select count (*), count (w.id), sum (w.id)
 from t_o o left join t_p w on w.k between o.k and o.k + 1 and w.id > 20;
 
 drop table t_o2, t_rp;
+
+-- Case 19: a term of the inner compares the partition key with an expression of an inner column. Pruned per
+-- outer row, the column still holds the value read for the previous outer row; it must not prune.
+create table t_ja (id int, k int);
+create table t_jb (k int, c int) partition by range (k)
+  (partition p0 values less than (10), partition p1 values less than (20), partition p2 values less than maxvalue);
+insert into t_ja values (1, 25), (2, 15);
+insert into t_jb values (25, 0), (15, 100);
+
+select /*+ recompile ordered use_nl(b) */ a.id, b.k, b.c from t_ja a, t_jb b
+where b.k = a.k and b.k <= b.c + 1 order by 1;
+
+select /*+ recompile ordered use_nl(b) */ a.id, b.k, b.c from t_ja a left join t_jb b
+on b.k = a.k and b.k <= b.c + 1 order by 1;
+
+select /*+ recompile */ a.id from t_ja a
+where not exists (select 1 from t_jb b where b.k = a.k and b.k <= b.c + 1) order by 1;
+
+drop table t_ja, t_jb;
+
+-- Case 20: a partition expression of the key. A join term prunes once the outer value is set, not before
+create table t_fe (k int, v int) partition by hash (k * 2 + 1) partitions 4;
+insert into t_fe values (0, 10), (1, 11), (2, 12), (3, 13), (5, 15);
+create table t_fo (id int, i int);
+insert into t_fo values (1, 0), (2, 1), (3, 2), (4, 3), (5, 5), (6, 9);
+
+select o.id, t.k, t.v from t_fo o left join t_fe t on t.k = o.i order by 1;
+select o.id, t.k, t.v from t_fo o right join t_fe t on t.k = o.i order by 2;
+select o.id, t.k, t.v from t_fo o, t_fe t where t.k = o.i order by 1;
+
+drop table t_fe, t_fo;
 
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
