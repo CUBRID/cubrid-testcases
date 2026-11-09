@@ -20,7 +20,7 @@
 10
 ===================================================
     
-Case 1: XASL cache - the false-arm query compiles first, the plain query reuses its entry; result = 10, 10     
+Case 1: XASL cache - the false-arm query compiles first, the plain query reuses its entry, result = 10, 10     
 
 ===================================================
 count(*)    
@@ -32,7 +32,7 @@ count(*)
 
 ===================================================
     
-Case 2: scalar subquery in WHERE; result = 10     
+Case 2: scalar subquery in WHERE, result = 10     
 
 ===================================================
 count(*)    
@@ -40,7 +40,7 @@ count(*)
 
 ===================================================
     
-Case 3: scalar subquery in the SELECT list; result = s equals v     
+Case 3: scalar subquery in the SELECT list, result = s equals v     
 
 ===================================================
 v    s    
@@ -57,7 +57,7 @@ v    s
 
 ===================================================
     
-Case 4: false arm on the left; result = 10     
+Case 4: false arm on the left, result = 10     
 
 ===================================================
 count(*)    
@@ -65,7 +65,7 @@ count(*)
 
 ===================================================
     
-Case 5: UNION distinct; result = 10     
+Case 5: UNION distinct, result = 10     
 
 ===================================================
 count(*)    
@@ -73,7 +73,7 @@ count(*)
 
 ===================================================
     
-Case 6: DIFFERENCE; result = 10     
+Case 6: DIFFERENCE, result = 10     
 
 ===================================================
 count(*)    
@@ -81,7 +81,7 @@ count(*)
 
 ===================================================
     
-Case 7: a folded set operation nested as an operand of another UNION; result = 10     
+Case 7: a folded set operation nested as an operand of another UNION, result = 10     
 
 ===================================================
 count(*)    
@@ -89,7 +89,7 @@ count(*)
 
 ===================================================
     
-Case 8: the remaining operand is itself a UNION; result = 10     
+Case 8: the remaining operand is itself a UNION, result = 10     
 
 ===================================================
 count(*)    
@@ -97,7 +97,7 @@ count(*)
 
 ===================================================
     
-Case 9: correlated subquery nested in the remaining arm; result = s equals v     
+Case 9: correlated subquery nested in the remaining arm, result = s equals v     
 
 ===================================================
 v    s    
@@ -114,7 +114,7 @@ v    s
 
 ===================================================
     
-Case 10: two levels of correlation; result = 10     
+Case 10: two levels of correlation, result = 10     
 
 ===================================================
 count(*)    
@@ -122,7 +122,7 @@ count(*)
 
 ===================================================
     
-Case 11: EXISTS; result = 5     
+Case 11: EXISTS, result = 5     
 
 ===================================================
 count(*)    
@@ -130,7 +130,7 @@ count(*)
 
 ===================================================
     
-Case 12: IN; result = 10     
+Case 12: IN, result = 10     
 
 ===================================================
 count(*)    
@@ -138,7 +138,7 @@ count(*)
 
 ===================================================
     
-Case 13: false arm folded inside a derived table; result = s equals 2v     
+Case 13: false arm folded inside a derived table, result = s equals 2v     
 
 ===================================================
 v    s    
@@ -155,7 +155,7 @@ v    s
 
 ===================================================
     
-Case 14: WITH clause of the folded set operation moves to the remaining arm; result = 10     
+Case 14: WITH clause of the folded set operation moves to the remaining arm, result = 10     
 
 ===================================================
 count(*)    
@@ -163,7 +163,7 @@ count(*)
 
 ===================================================
     
-Case 15: ORDER BY and LIMIT of the folded set operation; result = s equals v     
+Case 15: ORDER BY and LIMIT of the folded set operation, result = s equals v     
 
 ===================================================
 v    s    
@@ -180,7 +180,7 @@ v    s
 
 ===================================================
     
-Case 16: LIMIT on both the remaining arm and the set operation, rewritten as a derived table; result = 10     
+Case 16: LIMIT on both the remaining arm and the set operation, rewritten as a derived table, result = 10     
 
 ===================================================
 count(*)    
@@ -188,7 +188,7 @@ count(*)
 
 ===================================================
     
-Case 17: UPDATE; result = 10 rows with w equal to v     
+Case 17: UPDATE, result = 10 rows with w equal to v     
 
 ===================================================
 10
@@ -198,7 +198,7 @@ count(*)
 
 ===================================================
     
-Case 18: DELETE; result = all 10 rows deleted     
+Case 18: DELETE, result = all 10 rows deleted     
 
 ===================================================
 10
@@ -208,7 +208,7 @@ count(*)
 
 ===================================================
     
-Case 19: a correlated set operation nested inside the remaining arm, in the SELECT list; result = s equals v     
+Case 19: a correlated set operation nested inside the remaining arm, in the SELECT list, result = s equals v     
 
 ===================================================
 v    s    
@@ -225,7 +225,7 @@ v    s
 
 ===================================================
     
-Case 20: a correlated set operation nested inside the remaining arm, in WHERE; result = 10     
+Case 20: a correlated set operation nested inside the remaining arm, in WHERE, result = 10     
 
 ===================================================
 count(*)    
@@ -233,7 +233,7 @@ count(*)
 
 ===================================================
     
-Case 21: a correlated set operation nested inside the remaining arm, in EXISTS; result = 5     
+Case 21: a correlated set operation nested inside the remaining arm, in EXISTS, result = 5     
 
 ===================================================
 count(*)    
@@ -241,7 +241,7 @@ count(*)
 
 ===================================================
     
-Case 22: a view with a constant-false query spec inside the remaining arm; result = s equals v     
+Case 22: a view with a constant-false query spec inside the remaining arm, result = s equals v     
 
 ===================================================
 0
@@ -262,7 +262,7 @@ v    s
 0
 ===================================================
     
-Case 23: control - uncorrelated subquery; result = 10     
+Case 23: control - uncorrelated subquery, result = 10     
 
 ===================================================
 count(*)    
@@ -270,7 +270,7 @@ count(*)
 
 ===================================================
     
-Case 24: control - both arms false; result = 0     
+Case 24: control - both arms false, result = 0     
 
 ===================================================
 count(*)    
