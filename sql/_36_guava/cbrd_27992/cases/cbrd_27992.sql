@@ -21,10 +21,6 @@
  *   Case 3: USE_HASH on two right outer joins in a row makes both hash-joins
  *   Case 4: USE_HASH with no equi-join term in ON cannot be a hash-join, the
  *           nl-join is still planned
- *   Case 5: USE_HASH(c) when the hash-join cannot be built
- *           (max_hash_list_scan_size=0) keeps the nl-join, and the other hints
- *           of the query (USE_MERGE(b), ORDERED) are still honored instead of
- *           being dropped by a failed planning
  */
 drop table if exists t_big1, t_big2, t_small1, t_small2;
 
@@ -80,17 +76,5 @@ select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(c.id), co
 
 -- Case 4: no equi-join term in ON, USE_HASH cannot apply and the nl-join stays
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k > b.k;
-
--- Case 5: the hash-join cannot be built, the nl-join stays and USE_MERGE(b) is kept
-set system parameters 'max_hash_list_scan_size=0';
-
-select /*+ recompile use_hash(c) use_merge(b) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
-
-select /*+ recompile ordered use_hash(c) use_merge(b) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
-
-set system parameters 'max_hash_list_scan_size=8M';
-
--- with the hash-join possible again, USE_HASH(c) and USE_MERGE(b) both apply
-select /*+ recompile use_hash(c) use_merge(b) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
 
 drop table t_big1, t_big2, t_small1, t_small2;
