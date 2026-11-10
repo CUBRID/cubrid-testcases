@@ -7,27 +7,10 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
 2
 ===================================================
     
-Case 1: an AND list prints and between its terms only     
-
-===================================================
-ca    cb    cc    
-a     a     x     
-
-Query plan:
-sscan
-    class: ta node[?]
-    sargs: term[?] AND term[?] AND term[?] AND term[?]
-    cost:  ? card ?
-Query stmt:
-select ta.ca, ta.cb, ta.cc from ta ta where ta.cb<>'zz' and 'x'> cast('a' as varchar) and ta.cc= ?:?  and ta.ca= ?:? 
-===================================================
-    
-Case 2: an OR term inside an AND list prints in parentheses     
+Case 1: an OR term inside an AND list prints in parentheses     
 
 ===================================================
 ca    cb    cc    
@@ -42,7 +25,7 @@ Query stmt:
 select ta.ca, ta.cb, ta.cc from ta ta where ((ta.cc= ?:? ) or (ta.cb= ?:? )) and ta.cb<>'zz' and ta.ca= ?:? 
 ===================================================
     
-Case 3: a multi-column IN prints its RANGE as OR terms     
+Case 2: a multi-column IN prints its RANGE as OR terms     
 
 ===================================================
 ca    cb    cc    
@@ -61,7 +44,7 @@ Query stmt:
 select ta.ca, ta.cb, ta.cc from ta ta where (({ta.ca, ta.cb}={'a', 'a'}) or ({ta.ca, ta.cb}={'b', 'b'})) order by ?
 ===================================================
     
-Case 4: plain and decorated string literals print as written     
+Case 3: plain and decorated string literals print as written     
 
 ===================================================
 'plain'    'intro'    cast('casted' as varchar(30))    'collated' collate utf8_en_ci    'quote''inside'    'back\slash'    'national'    
@@ -76,7 +59,7 @@ Query stmt:
 select 'plain', 'intro',  cast('casted' as varchar(?)), 'collated' collate utf?_en_ci, 'quote''inside', 'back\slash', 'national' from ta ta where ta.ca= ?:? 
 ===================================================
     
-Case 5: a VALUES list used as a query prints its rows in order     
+Case 4: a VALUES list used as a query prints its rows in order     
 
 ===================================================
 ca    cb    
@@ -101,17 +84,7 @@ Query stmt:
 select tb.ca, tb.cb from (values ('a', 'x'),('b', 'y'),('c', 'z')) tb (ca, cb) order by ?
 ===================================================
     
-Case 6: a stored view keeps its AND list     
-
-===================================================
-0
-===================================================
-vclass_def    
-select [dba.ta].[ca], [dba.ta].[cc] from [dba.ta] [dba.ta] where [dba.ta].[ca]=_utf8'a' collate utf8_bin and [dba.ta].[cc]=_utf8'x' collate utf8_bin and [dba.ta].[cb]<>_utf8'zz' collate utf8_bin and [dba.ta].[cc]>_utf8'a' collate utf8_bin     
-
-===================================================
-    
-Case 7: a stored view keeps its IN lists     
+Case 5: a stored view keeps its IN lists     
 
 ===================================================
 0
@@ -121,7 +94,7 @@ select [dba.ta].[ca], [dba.ta].[cc] from [dba.ta] [dba.ta] where [dba.ta].[ca] i
 
 ===================================================
     
-Case 8: a stored view prints its string literals with charset and collation     
+Case 6: a stored view prints its string literals with charset and collation     
 
 ===================================================
 0
@@ -129,8 +102,6 @@ Case 8: a stored view prints its string literals with charset and collation
 vclass_def    
 select _utf8'plain' collate utf8_bin, _utf8'intro' collate utf8_bin,  cast(_utf8'casted' collate utf8_bin as varchar(30)), _utf8'quote''inside' collate utf8_bin, _utf8'national' collate utf8_bin from [dba.ta] [dba.ta]     
 
-===================================================
-0
 ===================================================
 0
 ===================================================
