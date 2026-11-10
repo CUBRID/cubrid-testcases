@@ -299,5 +299,29 @@ where x.k = o.a and x.c > o.b and x.c between 0 and 10 and y.k = x.k group by o.
 
 drop table t_co, t_cp, t_cy;
 
+-- Case 22: an outer key no range or list partition holds joins with no partition; it is not probed in every
+-- partition. The NULL row of an outer join and the row an ANTI join lets through stay.
+create table t_ok (id int, k int);
+insert into t_ok values (1, 1), (2, 10), (3, 4), (4, 20), (5, null), (6, 8), (7, -3);
+create table t_kr (k int, v int) partition by range (k)
+  (partition p0 values less than (3), partition p1 values less than (6), partition p2 values less than (9));
+create index i_kr_k on t_kr (k);
+insert into t_kr values (0, 10), (1, 11), (2, 12), (4, 14), (5, 15), (8, 18), (7, 17);
+create table t_kl (k int, v int) partition by list (k)
+  (partition p0 values in (0, 1, 2), partition p1 values in (4, 5), partition p2 values in (7, 8));
+create index i_kl_k on t_kl (k);
+insert into t_kl select * from t_kr;
+update statistics on t_ok, t_kr, t_kl with fullscan;
+
+select /*+ ordered use_nl */ o.id, x.k, x.v from t_ok o left join t_kr x on x.k = o.k order by 1;
+select /*+ ordered use_nl */ o.id, x.k, x.v from t_ok o left join t_kl x on x.k = o.k order by 1;
+select /*+ ordered use_nl */ o.id, x.k, x.v from t_ok o, t_kr x where x.k = o.k order by 1;
+select /*+ ordered use_nl */ o.id, x.k, x.v from t_ok o, t_kl x where x.k = o.k order by 1;
+select o.id from t_ok o where not exists (select 1 from t_kr x where x.k = o.k) order by 1;
+select o.id from t_ok o where not exists (select 1 from t_kl x where x.k = o.k) order by 1;
+select o.id from t_ok o where exists (select 1 from t_kl x where x.k = o.k) order by 1;
+
+drop table t_ok, t_kr, t_kl;
+
 drop table t_o, t_x, t_p, t_np, t_pr, t_pl, t_po, t_s, t_u, t_hc, t_hp, t_pk, t_ob, t_pi, t_rn, t_uv;
 drop variable @c;
