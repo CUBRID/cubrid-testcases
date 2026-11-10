@@ -872,10 +872,9 @@ Query plan:
 iscan
     class: t_pk node[?]
     index: pk_t_pk_id keylimit ? term[?] (covers)
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select ? from t_pk t_pk where (t_pk.id=t_o.id) and inst_num()<= ?:?  using index t_pk.pk_t_pk_id keylimit  ?:? )
+(select ? from t_pk t_pk where t_pk.id=t_o.id using index t_pk.pk_t_pk_id keylimit  ?:? )
 Query plan:
 sscan
     class: t_o node[?]
@@ -883,18 +882,18 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select /*+ PARALLEL(?) */ count(*) from t_o t_o where  exists (select ? from t_pk t_pk where (t_pk.id=t_o.id) and inst_num()<= ?:?  using index t_pk.pk_t_pk_id keylimit  ?:? )
+select /*+ PARALLEL(?) */ count(*) from t_o t_o where  exists (select ? from t_pk t_pk where t_pk.id=t_o.id using index t_pk.pk_t_pk_id keylimit  ?:? )
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.t_pk.pk_t_pk_id) (key range: ([dba.t_pk].id=[dba.t_o].id), covered: true)
+  INDEX SCAN (dba.t_pk.pk_t_pk_id) (key range: [dba.t_pk].id=[dba.t_o].id, covered: true)
 
-  rewritten query: (select ? from [dba.t_pk] [dba.t_pk] where ([dba.t_pk].id=[dba.t_o].id) and inst_num()<= ?:?  using index [dba.t_pk].pk_t_pk_id keylimit  ?:? )
+  rewritten query: (select ? from [dba.t_pk] [dba.t_pk] where [dba.t_pk].id=[dba.t_o].id using index [dba.t_pk].pk_t_pk_id keylimit  ?:? )
 
   TABLE SCAN (dba.t_o)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] where  exists (select ? from [dba.t_pk] [dba.t_pk] where ([dba.t_pk].id=[dba.t_o].id) and inst_num()<= ?:?  using index [dba.t_pk].pk_t_pk_id keylimit  ?:? )
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.t_o] [dba.t_o] where  exists (select ? from [dba.t_pk] [dba.t_pk] where [dba.t_pk].id=[dba.t_o].id using index [dba.t_pk].pk_t_pk_id keylimit  ?:? )
 
 
 Trace Statistics:
