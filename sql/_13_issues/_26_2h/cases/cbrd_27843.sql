@@ -1,12 +1,12 @@
 /**
  *  This test case verifies CBRD-27843: ROUND of a SMALLINT, INTEGER or BIGINT wrapped around past the
  *  range of its type and was off by one where a power of ten is not exact in binary, and WIDTH_BUCKET of a
- *  NaN returned INT_MIN or a bucket picked by the order of its comparisons
+ *  NaN returned INT_MIN or a bucket picked by the order of its comparisons, and a NaN converted to NUMERIC became 0
  *
  *  ROUND of an integer type now rounds to an integer place in integers: past the range of the type it
  *  raises "Data overflow" as a CAST does, and inside the range the value is exact. WIDTH_BUCKET raises
  *  "Invalid parameter for function" for a NaN operand or bound and "Invalid bucket number" for a NaN
- *  bucket count.
+ *  bucket count. A DOUBLE or FLOAT NaN converted to NUMERIC raises "Data overflow" as an infinity does.
  *
  *  Coverage:
  *    Case 1:  ROUND past the range of SMALLINT, INTEGER and BIGINT columns and constants is an error
@@ -15,8 +15,9 @@
  *    Case 4:  results that the fix does not change
  *    Case 5:  WIDTH_BUCKET with a NaN operand, bound or bucket count, and with other values
  *    Case 6:  return_null_on_function_errors=yes gives NULL for the errors of Case 1 and Case 5
+ *    Case 7:  a NaN cast, inserted or updated into a NUMERIC column raises Data overflow
  */
-drop table if exists t_r, t_w;
+drop table if exists t_r, t_w, t_n;
 create table t_r (k varchar(8), s smallint, i int, b bigint);
 insert into t_r values ('max', 32767, 2147483647, 9223372036854775807);
 insert into t_r values ('min', -32768, -2147483648, -9223372036854775808);
@@ -85,4 +86,17 @@ select width_bucket (5, 0, 10, d) from t_w where k = 'nan';
 select width_bucket (cast (5 as bigint), d, 10, 5) from t_w where k = 'nan';
 set system parameters 'return_null_on_function_errors=no';
 
-drop table t_r, t_w;
+evaluate 'Case 7: a NaN converted to NUMERIC raises Data overflow as an infinity does; result = five errors, then 1.50, then an error and 1.50';
+create table t_n (n numeric (10, 2));
+insert into t_n values (cast ('nan' as double));
+insert into t_n values (cast ('nan' as float));
+select cast (cast ('nan' as double) as numeric (10, 2));
+select cast (d as numeric (10, 2)) from t_w where k = 'nan';
+insert into t_n values (1.5);
+update t_n set n = cast ('nan' as double);
+select n from t_n;
+-- an infinity raises the same error as before, and a finite value converts as before
+select cast (cast ('inf' as double) as numeric (10, 2));
+select cast (cast (1.5 as double) as numeric (10, 2));
+
+drop table t_r, t_w, t_n;
