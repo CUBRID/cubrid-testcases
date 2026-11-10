@@ -17,7 +17,7 @@
  *    Case 1: WHERE terms reading the NULL-filled side - a RIGHT JOIN followed by a LEFT JOIN with an OR term in
  *            its ON (with and without an extra term on the NULL-filled table), the term joined to a later table
  *            by comma, CROSS JOIN and INNER JOIN, the LEADING hint putting the later table first, a LEFT
- *            JOIN chain, CONNECT BY
+ *            JOIN chain, CONNECT BY, a NOT EXISTS subquery on the later table
  *    Case 2: guards that were already right - single-table terms on the NULL-filled table, the later table
  *            listed first, an IS NULL term, an OR term, the RIGHT JOIN and LEFT JOIN spellings, a null-rejecting
  *            equality that turns the outer join into an inner join, the outer join inside a derived table, an OR
@@ -91,6 +91,12 @@ select wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = w
 select 'C1-8' id, case when nvl(t.r, 'EMPTY') = '1:2:N:2' then 'PASS' else 'FAIL' end res, nvl(t.r, 'EMPTY') got, '1:2:N:2' expected
 from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') || ':' || nvl(to_char(q.c4), 'N') order by 1 separator ',') r
       from (select wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = wa.a, wc where wc.a = nvl(wb.b, 2) and wc.a = wa.b connect by level <= 1) q) t;
+
+-- C1-9: same as C1-3 with a NOT EXISTS on wc
+select wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = wa.a, wc where wc.a = nvl(wb.b, 2) and wc.a = wa.b and not exists (select 1 from wd where wd.a = wc.a) order by 1, 2, 3, 4;
+select 'C1-9' id, case when nvl(t.r, 'EMPTY') = '1:2:N:2' then 'PASS' else 'FAIL' end res, nvl(t.r, 'EMPTY') got, '1:2:N:2' expected
+from (select group_concat(nvl(to_char(q.c1), 'N') || ':' || nvl(to_char(q.c2), 'N') || ':' || nvl(to_char(q.c3), 'N') || ':' || nvl(to_char(q.c4), 'N') order by 1 separator ',') r
+      from (select wa.a c1, wa.b c2, wb.b c3, wc.a c4 from wa left outer join wb on wb.a = wa.a, wc where wc.a = nvl(wb.b, 2) and wc.a = wa.b and not exists (select 1 from wd where wd.a = wc.a)) q) t;
 
 -- Case 2: guards
 evaluate 'Case 2: guards';
