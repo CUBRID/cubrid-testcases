@@ -27,8 +27,7 @@
  *  6    the NOT EXISTS table is partitioned, so the outer row is kept after every partition
  *  7    the outer rows repeat, so the ANTI JOIN answers them from memoize
  *  8    an ON condition of the ANTI JOIN that reads three tables still decides the match
- *  9    a WHERE condition that joins t9 with t8, the table the outer join fills with NULL
- *       (evaluated after the outer join since CBRD-27762, so it then goes to the ANTI JOIN)
+ *  9    a WHERE condition that joins another table with the table an outer join fills with NULL
  */
 
 drop table if exists t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
@@ -58,38 +57,38 @@ update statistics on t7, t8, t9, t10 with fullscan;
 
 evaluate 'Case 1: a WHERE condition after the outer join and NOT EXISTS; only the t1 row with no t3 match and a true condition stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
- where not exists (select 1 from t3 where t3.c1 = t1.c1) and (t2.c2 = 1 or t1.c1 is null) order by 1;
+ where not exists (select 1 from t3 where t3.c1 = t1.c1) and (t2.c2 = 1 or t1.c1 is null);
 
 
 evaluate 'Case 2: t2.c2 is null holds only on the rows with no t2 row; only the one of them with no t3 match stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
- where not exists (select 1 from t3 where t3.c1 = t1.c1) and t2.c2 is null order by 1;
+ where not exists (select 1 from t3 where t3.c1 = t1.c1) and t2.c2 is null;
 
 
 evaluate 'Case 3: a RIGHT OUTER JOIN with t2.c1 is null; only the t1 row with no t2 row and no t3 match stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c1 as t2_c1 from t2 right outer join t1 on t2.c1 = t1.c1
- where not exists (select 1 from t3 where t3.c1 = t1.c1) and t2.c1 is null order by 1;
+ where not exists (select 1 from t3 where t3.c1 = t1.c1) and t2.c1 is null;
 
 
 evaluate 'Case 4: an explicit ANTI JOIN with the WHERE condition of case 1; only the t1 row with no t3 match and a true condition stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
- anti join t3 on t3.c1 = t1.c1 where (t2.c2 = 1 or t1.c1 is null) order by 1;
+ anti join t3 on t3.c1 = t1.c1 where (t2.c2 = 1 or t1.c1 is null);
 
 
 evaluate 'Case 5: the WHERE condition holds a correlated subquery; only the t1 row with no t3 match and a true condition stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
  where not exists (select 1 from t3 where t3.c1 = t1.c1)
-   and (t2.c2 = (select t4.c2 from t4 where t4.c1 = t1.c1) or t1.c1 is null) order by 1;
+   and (t2.c2 = (select t4.c2 from t4 where t4.c1 = t1.c1) or t1.c1 is null);
 
 
 evaluate 'Case 6: the NOT EXISTS table t5 is partitioned; only the t1 row with no t5 match and a true condition stays';
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
- where not exists (select 1 from t5 where t5.c2 = t1.c1) and (t2.c2 = 1 or t1.c1 is null) order by 1;
+ where not exists (select 1 from t5 where t5.c2 = t1.c1) and (t2.c2 = 1 or t1.c1 is null);
 
 
 evaluate 'Case 7: 50 outer rows for each of 1 to 4, answered from memoize; only the rows of 3 stay';
 select /*+ recompile */ t6.c1 as t6_c1, count (*) as cnt from t6 left outer join t2 on t2.c1 = t6.c1
- where not exists (select 1 from t3 where t3.c1 = t6.c1) and (t2.c2 = 1 or t6.c1 is null) group by t6.c1 order by 1;
+ where not exists (select 1 from t3 where t3.c1 = t6.c1) and (t2.c2 = 1 or t6.c1 is null) group by t6.c1;
 
 
 evaluate 'Case 8: an ANTI JOIN whose ON condition reads t1, t2 and t3; the t1 rows with no t2 row match no t3 row and stay';
@@ -98,10 +97,8 @@ select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t
 
 
 evaluate 'Case 9: a WHERE condition joining t9 with t8, which the outer join fills with NULL, and NOT EXISTS; no row stays';
-select /*+ recompile */ t7.c1 as t7_c1, t7.c2 as t7_c2, t8.c2 as t8_c2, t9.c1 as t9_c1
-  from t7 left outer join t8 on t8.c1 = t7.c1, t9
+select /*+ recompile */ t7.c1 as t7_c1 from t7 left outer join t8 on t8.c1 = t7.c1, t9
  where t9.c1 = nvl (t8.c2, 2) and t9.c1 = t7.c2
-   and not exists (select 1 from t10 where t10.c1 = nvl (t8.c2, 1))
- order by 1, 2, 3, 4;
+   and not exists (select 1 from t10 where t10.c1 = nvl (t8.c2, 1));
 
 drop table t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
