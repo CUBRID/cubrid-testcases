@@ -12,6 +12,11 @@
  *  t2 (c1, c2) = (1, 1), (3, 1), (4, 5)   outer joined on t2.c1 = t1.c1, no row for 2 and 5
  *  t3 (c1, c2) = (1, 2), (2, 9)           NOT EXISTS on t3.c1 = t1.c1, a match for 1 and 2
  *
+ *  t7 (c1, c2) = (1, 2), (5, 3)           case 9: outer joined with t8 on t8.c1 = t7.c1, then t9
+ *  t8 (c1, c2) = (5, 7)                   a row only for t7.c1 = 5
+ *  t9 (c1)     = (2), (3)
+ *  t10 (c1)    = (0), (1)                 NOT EXISTS on t10.c1 = nvl (t8.c2, 1)
+ *
  *  Coverage:
  *  1    a WHERE condition with no subquery, rows with and without a match and with the
  *       condition true, NULL and false
@@ -22,21 +27,33 @@
  *  6    the NOT EXISTS table is partitioned, so the outer row is kept after every partition
  *  7    the outer rows repeat, so the ANTI JOIN answers them from memoize
  *  8    an ON condition of the ANTI JOIN that reads three tables still decides the match
+ *  9    a WHERE condition that joins t9 with t8, the table the outer join fills with NULL
+ *       (evaluated after the outer join since CBRD-27762, so it then goes to the ANTI JOIN)
  */
 
-drop table if exists t1, t2, t3, t4, t5, t6;
+drop table if exists t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
 create table t1 (c1 int);
 create table t2 (c1 int, c2 int);
 create table t3 (c1 int, c2 int);
 create table t4 (c1 int, c2 int);
 create table t5 (c1 int, c2 int) partition by hash (c1) partitions 4;
 create table t6 (c1 int);
+create table t7 (c1 int, c2 int);
+create table t8 (c1 int, c2 int);
+create table t9 (c1 int);
+create table t10 (c1 int);
 insert into t1 values (1), (2), (3), (4), (5);
 insert into t2 values (1, 1), (3, 1), (4, 5);
 insert into t3 values (1, 2), (2, 9);
 insert into t4 values (1, 1), (2, 2), (3, 1), (4, 4);
 insert into t5 values (1, 1), (2, 2), (5, 7), (6, 8);
 insert into t6 select mod (rownum - 1, 4) + 1 from db_class a, db_class b limit 200;
+insert into t7 values (1, 2), (5, 3);
+insert into t8 values (5, 7);
+insert into t9 values (2), (3);
+insert into t10 values (0), (1);
+create index t7_idx on t7 (c2);
+update statistics on t7, t8, t9, t10 with fullscan;
 
 
 evaluate 'Case 1: a WHERE condition after the outer join and NOT EXISTS; only the t1 row with no t3 match and a true condition stays';
@@ -79,4 +96,12 @@ evaluate 'Case 8: an ANTI JOIN whose ON condition reads t1, t2 and t3; the t1 ro
 select /*+ recompile */ t1.c1 as t1_c1, t2.c2 as t2_c2 from t1 left outer join t2 on t2.c1 = t1.c1
  anti join t3 on t3.c1 = t1.c1 and t3.c2 = t1.c1 + t2.c2 order by 1;
 
-drop table t1, t2, t3, t4, t5, t6;
+
+evaluate 'Case 9: a WHERE condition joining t9 with t8, which the outer join fills with NULL, and NOT EXISTS; no row stays';
+select /*+ recompile */ t7.c1 as t7_c1, t7.c2 as t7_c2, t8.c2 as t8_c2, t9.c1 as t9_c1
+  from t7 left outer join t8 on t8.c1 = t7.c1, t9
+ where t9.c1 = nvl (t8.c2, 2) and t9.c1 = t7.c2
+   and not exists (select 1 from t10 where t10.c1 = nvl (t8.c2, 1))
+ order by 1, 2, 3, 4;
+
+drop table t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
