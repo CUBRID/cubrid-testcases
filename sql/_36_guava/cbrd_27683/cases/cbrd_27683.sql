@@ -107,3 +107,13 @@ select count (*), min (m), max (m), count (distinct r), max (r), count (distinct
                percent_rank () over (partition by g order by h) as pr, ntile (5) over (partition by g order by h, id) as nt
           from t27683b) x;
 drop table t27683b;
+
+-- Case 14: ROWNUM selected when the first evaluation skips its sort by the index order and a later one sorts
+-- (CBRD-27989 evaluates it for the sorting evaluation as its rows are written), with a function that waits and without
+drop table if exists t27683c;
+create table t27683c (a int, b int, c int);
+insert into t27683c select rownum, mod (rownum, 3), mod (rownum, 2) from db_root connect by level <= 12;
+create index i_t27683c_a on t27683c (a);
+select rownum, a, row_number () over (order by a) as rn, sum (c) over (order by b) as sc from t27683c where a > 0;
+select rownum, a, row_number () over (order by a) as rn, rank () over (order by b) as rk from t27683c where a > 0;
+drop table t27683c;
