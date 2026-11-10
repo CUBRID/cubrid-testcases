@@ -242,15 +242,15 @@ j    k
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.j, t.k, t.i from t t where (t.j<= ?:? ) order by ?
+/* ---> skip ORDER BY */
 ===================================================
 j    k    
 2     2     
@@ -267,15 +267,16 @@ j    k
 2     2     
 
 Query plan:
-temp(order by)
-    subplan: sscan
-                 class: t node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
-    sort:  ? asc
+iscan
+    class: t node[?]
+    index: i_t_i_j_k 
+    filtr: term[?]
+    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select t.j, t.k, t.i from t t where (t.j<= ?:? ) and t.s= ?:?  order by ?
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

@@ -595,7 +595,7 @@ idx-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, a) */ count(*) from tc x, ta v, tb b semi join tc c on c.cola=v.cola where (x.cola=v.cola) and (v.cola=b.cola)
+select /*+ LEADING(b, a) */ count(*) from tc x, ta v semi join tc c on c.cola=v.cola, tb b where (x.cola=v.cola) and (v.cola=b.cola)
 ===================================================
     
 Case 20: correlated EXISTS inline-view; outer LEADING exists -> subquery LEADING should be removed due to conflict after view merge     
@@ -627,7 +627,7 @@ idx-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(x, v) */ count(*) from tc x, ta v, tb b semi join tc c on c.cola=v.cola where (x.cola=v.cola) and (v.cola=b.cola)
+select /*+ LEADING(x, v) */ count(*) from tc x, ta v semi join tc c on c.cola=v.cola, tb b where (x.cola=v.cola) and (v.cola=b.cola)
 ===================================================
 0
 ===================================================
