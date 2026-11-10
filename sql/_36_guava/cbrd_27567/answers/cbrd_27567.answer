@@ -800,7 +800,7 @@ g    count(*)
 0
 ===================================================
     
-Case 14: outer column only in the CONNECT BY clause of the subquery, not memoized; result = memoize off     
+Case 14: outer column only in the CONNECT BY clause of the subquery, memoized; result = memoize off     
 
 ===================================================
 g    count(*)    
@@ -832,6 +832,7 @@ Trace Statistics:
     SCAN (table: dba.cz), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.cy.i_cy_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         SCAN (index: dba.cx.i_cx_nu), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.cs), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -893,6 +894,7 @@ Trace Statistics:
     SCAN (index: dba.cy.pk_cy_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
       SUBQUERY (correlated)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: dba.cs.pk_cs_pk), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
