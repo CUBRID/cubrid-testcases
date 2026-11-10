@@ -207,13 +207,13 @@ select /*+ recompile ordered use_nl */ count (*), sum (x.c) from t_sq_out o, t_s
 show trace;
 select /*+ recompile */ sum (n) from (select z.id, (select /*+ ordered use_nl */ count (*) from t_sq_out o, t_sq_in x where x.k = o.a and x.c = z.v) n from t_sq_sub z) s;
 show trace;
-select /*+ recompile ordered use_nl */ count (*), sum (d.c) from t_sq_out o, (select k, c, f_nondet (0) n from t_sq_in) d where d.k = o.a;
+select /*+ recompile ordered use_nl */ count (*), sum (d.c + d.n) from t_sq_out o, (select k, c, f_nondet (0) n from t_sq_in) d where d.k = o.a;
 show trace;
 set trace off;
 set system parameters 'memoize_memory_limit=0';
 select /*+ recompile ordered use_nl */ count (*), sum (x.c) from t_sq_out o, t_sq_in x where x.c > 45;
 select /*+ recompile */ sum (n) from (select z.id, (select /*+ ordered use_nl */ count (*) from t_sq_out o, t_sq_in x where x.k = o.a and x.c = z.v) n from t_sq_sub z) s;
-select /*+ recompile ordered use_nl */ count (*), sum (d.c) from t_sq_out o, (select k, c, f_nondet (0) n from t_sq_in) d where d.k = o.a;
+select /*+ recompile ordered use_nl */ count (*), sum (d.c + d.n) from t_sq_out o, (select k, c, f_nondet (0) n from t_sq_in) d where d.k = o.a;
 set system parameters 'memoize_memory_limit=default';
 
 

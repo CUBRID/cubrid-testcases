@@ -793,7 +793,7 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    sum(d.c)    
+count(*)    sum(d.c+d.n)    
 3000     73500     
 
 ===================================================
@@ -802,22 +802,24 @@ trace
 Query Plan:
   TABLE SCAN (dba.t_sq_in)
 
-  rewritten query: (select [dba.t_sq_in].c, [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in])
+  rewritten query: (select [dba.t_sq_in].c, [dba.f_nondet](?), [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in])
 
   NESTED LOOPS (inner join)
     TABLE SCAN (o)
     TABLE SCAN (d)
 
-  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(d.c) from [dba.t_sq_out] o, (select [dba.t_sq_in].c, [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in]) d (c, k) where d.k=o.a
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(d.c+d.n) from [dba.t_sq_out] o, (select [dba.t_sq_in].c, [dba.f_nondet](?), [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in]) d (c, n, k) where d.k=o.a
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
         SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -834,7 +836,7 @@ sum(n)
 7200     
 
 ===================================================
-count(*)    sum(d.c)    
+count(*)    sum(d.c+d.n)    
 3000     73500     
 
 ===================================================
