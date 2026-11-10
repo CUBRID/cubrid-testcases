@@ -5,6 +5,8 @@
  *              columns span multiple pages, here bit(32000) x 10) exist.
  * Coverage: single / partition / parallel hash join over overflow records; A/C: parallel result == single/NL
  * Source: JIRA attachment cbrd-25717_test-case_20260811.zip (adapted)
+ * Note: the wide columns are bit varying(32000) holding 4000-byte values. They are demoted to OOS,
+ *       so the heap rows stay inside one page; the list-file tuples still carry the full values.
  */
 
 --
@@ -15,17 +17,17 @@ drop table if exists t_overflow;
 
 create table t_overflow (
     ckey int,
-    dummya bit(32000),
-    dummyb bit(32000),
-    dummyc bit(32000),
-    dummyd bit(32000),
-    dummye bit(32000),
-    dummyf bit(32000),
+    dummya bit varying(32000),
+    dummyb bit varying(32000),
+    dummyc bit varying(32000),
+    dummyd bit varying(32000),
+    dummye bit varying(32000),
+    dummyf bit varying(32000),
     cval int,
-    dummyg bit(32000),
-    dummyh bit(32000),
-    dummyi bit(32000),
-    dummyj bit(32000),
+    dummyg bit varying(32000),
+    dummyh bit varying(32000),
+    dummyi bit varying(32000),
+    dummyj bit varying(32000),
     cext int
   );
 
@@ -35,7 +37,7 @@ insert into t_overflow
     union all
     select n + 1 from cte where n < 2000
   )
-  select rownum, B'1', B'1', B'1', B'1', B'1', B'1', rownum, B'1', B'1', B'1', B'1', rownum from cte a, cte b limit 10000;
+  select rownum, CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), rownum, CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), rownum from cte a, cte b limit 10000;
 
 set trace on;
 

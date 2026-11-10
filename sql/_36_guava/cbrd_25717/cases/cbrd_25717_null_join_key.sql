@@ -22,6 +22,8 @@
  *       and Cases 5/6 would pass even if that handling were broken. Forcing the wide columns into
  *       the list file is what makes the NULL-key partition and the overflow path run together.
  * Source: own addition (not in the JIRA attachment) - targets the CBRD-26666 NULL-key partition.
+ * Note: the wide columns are bit varying(32000) holding 4000-byte values. They are demoted to OOS,
+ *       so the heap rows stay inside one page; the list-file tuples still carry the full values.
  */
 
 --
@@ -45,19 +47,19 @@ insert into t_nkb
   from cte a, cte b limit 100000;
 
 -- same NULL pattern, but the tuples are overflow records (A/C 6 pairs NULL keys with overflow)
-create table t_nkoa (ckey int, da bit(32000), db bit(32000), dc bit(32000), dd bit(32000), de bit(32000));
-create table t_nkob (ckey int, da bit(32000), db bit(32000), dc bit(32000), dd bit(32000), de bit(32000));
+create table t_nkoa (ckey int, da bit varying(32000), db bit varying(32000), dc bit varying(32000), dd bit varying(32000), de bit varying(32000));
+create table t_nkob (ckey int, da bit varying(32000), db bit varying(32000), dc bit varying(32000), dd bit varying(32000), de bit varying(32000));
 
 insert into t_nkoa
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select case when mod (rownum, 10) = 0 then null else rownum end,
-         B'1', B'1', B'1', B'1', B'1'
+         CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000))
   from cte a, cte b limit 10000;
 
 insert into t_nkob
   with recursive cte(n) as (select 1 union all select n + 1 from cte where n < 2000)
   select case when mod (rownum, 10) = 0 then null else rownum end,
-         B'1', B'1', B'1', B'1', B'1'
+         CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000))
   from cte a, cte b limit 10000;
 
 update statistics on t_nka, t_nkb, t_nkoa, t_nkob;
