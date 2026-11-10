@@ -7,7 +7,7 @@
  *  rounded to 0 and the division by it raised SIGFPE: the server process died. A width just above that lost digits and
  *  gave a wrong bucket. The bucket is now the operand's fraction of the range times the count.
  *  In a descending range, an operand below the end of the range went through the formula instead of getting the
- *  count + 1 that a DOUBLE operand gets.
+ *  count + 1 that a DOUBLE operand gets: a bucket past count + 1, or an overflow error when the operand was far below.
  *
  *  Coverage:
  *    Case 1: a range so small that the width of a bucket rounds to 0 - constants only, a BIGINT column ascending and
@@ -15,7 +15,8 @@
  *    Case 2: a width near the smallest NUMERIC that lost digits
  *    Case 3: forms that were right - ascending bounds, between them and outside, BIGINT and NUMERIC (5, 1) beside
  *            DOUBLE; a range near the largest NUMERIC
- *    Case 4: a descending range, the operand below it included, BIGINT and NUMERIC (5, 1) beside DOUBLE
+ *    Case 4: a descending range, the operand below it included, BIGINT and NUMERIC (5, 1) beside DOUBLE; an operand
+ *            far below the range, which overflowed
  */
 
 drop table if exists d_28024, e_28024, n_28024;
@@ -47,10 +48,13 @@ select x, width_bucket (x, 0, 6, 9) as wb, width_bucket (cast (x as double), 0, 
 select width_bucket (cast (1e250 as numeric), 0, cast (2e250 as numeric), 1000000) as wb_asc,
        width_bucket (cast (1e250 as numeric), cast (2e250 as numeric), 0, 1000000) as wb_desc;
 
-evaluate 'Case 4: descending, below the range = 10; wb = wb_double';
+evaluate 'Case 4: descending, below the range = count + 1 (10, then 11); wb = wb_double';
 select b, width_bucket (b, 6, 0, 9) as wb, width_bucket (cast (b as double), 6, 0, 9) as wb_double
   from d_28024 order by b;
 select x, width_bucket (x, 6, 0, 9) as wb, width_bucket (cast (x as double), 6, 0, 9) as wb_double
   from e_28024 order by x;
+select width_bucket (cast (-1e20 as numeric), 5, 0, 10) as wb_num,
+       width_bucket (cast (-9000000000000000000 as bigint), 5, 0, 10) as wb_big,
+       width_bucket (cast (-1e20 as double), 5, 0, 10) as wb_double;
 
 drop table d_28024, e_28024, n_28024;
