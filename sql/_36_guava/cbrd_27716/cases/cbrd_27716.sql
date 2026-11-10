@@ -15,7 +15,7 @@
  *    Case 14-16:  WITH clause, ORDER BY and LIMIT, LIMIT rewritten as a derived table
  *    Case 17-18:  UPDATE and DELETE
  *    Case 19-22:  correlated set operation or view inside the remaining arm
- *    Case 23-24:  controls - uncorrelated, both arms false
+ *    Case 23-25:  controls - uncorrelated, both arms false, a false condition that is not folded
  */
 drop view if exists v_27716;
 drop table if exists t_27716, one_27716, u_27716, c_27716;
@@ -105,5 +105,7 @@ evaluate 'Case 23: control - uncorrelated subquery, result = 10';
 select /*+ recompile */ count(*) from t_27716 t where (select 1 from db_root union all select 2 from db_root where 1 = 0) = 1;
 evaluate 'Case 24: control - both arms false, result = 0';
 select /*+ recompile */ count(*) from t_27716 t where (select t.v from one_27716 where 1 = 0 union all select 2 from one_27716 where 1 = 0) is not null;
+evaluate 'Case 25: control - a false condition that is not folded, result = 10';
+select /*+ recompile */ count(*) from t_27716 t where (select t.v from db_root union all select 2 from db_root where t.v < 0) = t.v;
 
 drop table t_27716, one_27716, u_27716, c_27716;
