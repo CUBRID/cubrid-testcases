@@ -1,0 +1,164 @@
+===================================================
+0
+===================================================
+0
+===================================================
+12000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    count(distinct c)    count(distinct s)    
+12000     1     1     
+
+===================================================
+count(*)    count(distinct c)    
+5000     1     
+
+===================================================
+    
+[1] c >= 7 matches every row -> sscan     
+
+===================================================
+count(pad)    
+12000     
+
+Query plan:
+sscan
+    class: t_eq node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.c>= ?:? )
+===================================================
+    
+[2] c < 7 matches no row -> iscan ix_eq_c     
+
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_eq node[?]
+    index: ix_eq_c term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.c< ?:? )
+===================================================
+    
+[3] c between 7 and 7 matches every row -> sscan     
+
+===================================================
+count(pad)    
+12000     
+
+Query plan:
+sscan
+    class: t_eq node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.c>= ?:?  and t_eq.c<= ?:? )
+===================================================
+    
+[4] controls: c > 7 -> iscan, c <= 7 -> sscan, c = 7 -> sscan     
+
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_eq node[?]
+    index: ix_eq_c term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.c> ?:? )
+===================================================
+count(pad)    
+12000     
+
+Query plan:
+sscan
+    class: t_eq node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.c<= ?:? )
+===================================================
+count(pad)    
+12000     
+
+Query plan:
+sscan
+    class: t_eq node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where t_eq.c= ?:? 
+===================================================
+    
+[5] string column: s >= '1' -> sscan, s < '1' -> iscan ix_eq_s     
+
+===================================================
+count(pad)    
+12000     
+
+Query plan:
+sscan
+    class: t_eq node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.s>= ?:? )
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_eq node[?]
+    index: ix_eq_s term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq.pad) from t_eq t_eq where (t_eq.s< ?:? )
+===================================================
+    
+[6] fully sampled table keeps the value as an MCV: c >= 7 -> sscan, c < 7 -> iscan (unchanged by the fix)     
+
+===================================================
+count(pad)    
+5000     
+
+Query plan:
+sscan
+    class: t_eq_small node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq_small.pad) from t_eq_small t_eq_small where (t_eq_small.c>= ?:? )
+===================================================
+count(pad)    
+0     
+
+Query plan:
+iscan
+    class: t_eq_small node[?]
+    index: ix_eq_small_c term[?]
+    cost:  ? card ?
+Query stmt:
+select count(t_eq_small.pad) from t_eq_small t_eq_small where (t_eq_small.c< ?:? )
+===================================================
+0

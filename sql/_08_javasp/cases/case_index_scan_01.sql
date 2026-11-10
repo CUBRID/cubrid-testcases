@@ -25,8 +25,8 @@ SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(5) FROM dual);
 SELECT count(*) AS "equal" FROM tbl WHERE ord = (SELECT inttest(ord) FROM tbl where ord=5);
 
 -- in
-SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(5) FROM dual);
-SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT inttest(ord) FROM tbl);
+SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT /*+ NO_UNNEST */ inttest(5) FROM dual);
+SELECT count(*) AS "in" FROM tbl WHERE ord IN (SELECT /*+ NO_UNNEST */ inttest(ord) FROM tbl);
 
 -- LIKE
 SELECT count(*) AS "like" FROM tbl WHERE col_char LIKE (SELECT stringTest('a') FROM dual);

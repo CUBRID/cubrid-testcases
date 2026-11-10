@@ -112,7 +112,7 @@ show trace;
 
 
 evaluate '12. contains uncorrelated SUBQUERY (should work) -> row by row, mergeable list';
-select count(cola) from tbl where cola in (select cola from tbl);
+select count(cola) from tbl where cola in (select /*+ NO_UNNEST */ cola from tbl);
 show trace;
 
 
@@ -258,12 +258,12 @@ show trace;
 
 
 evaluate '30. UPDATE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
-update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) */ id from tbl where cola like '000%');
+update new_tbl set cola = 'updated' where id in (select /*+ PARALLEL(2) NO_UNNEST */ id from tbl where cola like '000%');
 show trace;
 
 
 evaluate '31. DELETE statement with subquery in WHERE clause. subquery SELECT part (should work) -> mergeable list';
-delete from new_tbl where id in (select /*+ PARALLEL(2) */ id from tbl where colb like '000%');
+delete from new_tbl where id in (select /*+ PARALLEL(2) NO_UNNEST */ id from tbl where colb like '000%');
 show trace;
 
 
