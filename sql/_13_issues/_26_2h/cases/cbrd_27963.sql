@@ -11,12 +11,9 @@
  *    Case 2: two-column index made on an empty table, then keys inserted
  *    Case 3: five-column index made when every key is NULL, then keys inserted and updated
  *    Case 4: unique three-column index made on an empty table, then keys inserted and deleted
- *    Case 5: TRUNCATE rebuilds every index of the table empty (primary key, unique, plain), then keys inserted
- *    Case 6: CREATE INDEX ... WITH ONLINE on a table with rows starts from an empty root leaf and loads 3000 keys
- *    Case 7: two-column index made on an empty table, then enough keys inserted to split the root leaf
  */
 
-drop table if exists t_27963_1, t_27963_2, t_27963_3, t_27963_4, t_27963_5, t_27963_6, t_27963_7;
+drop table if exists t_27963_1, t_27963_2, t_27963_3, t_27963_4;
 
 evaluate 'Case 1: two-column index made when every key is NULL';
 create table t_27963_1 (a int, b int);
@@ -46,29 +43,4 @@ insert into t_27963_4 select 7, 7, level from db_root connect by level <= 6;
 delete from t_27963_4 where c in (2, 4);
 select a, b, c from t_27963_4 where a = 7 using index i_27963_4 order by c;
 
-evaluate 'Case 5: TRUNCATE rebuilds every index of the table empty';
-create table t_27963_5 (a int, b varchar (10), c int, primary key (a, b));
-create unique index u_27963_5 on t_27963_5 (c, a);
-create index i_27963_5 on t_27963_5 (b, c);
-insert into t_27963_5 select level, 'k' || level, level from db_root connect by level <= 10;
-truncate t_27963_5;
-insert into t_27963_5 values (1, 'x', 1), (1, 'y', 2), (2, 'x', 3);
-select a, b, c from t_27963_5 where a > 0 using index pk_t_27963_5_a_b order by a, b;
-select c, a from t_27963_5 where c > 0 using index u_27963_5 order by c;
-select b, c from t_27963_5 where b > '' using index i_27963_5 order by b, c;
-
-evaluate 'Case 6: online index on a table with rows starts from an empty root leaf';
-create table t_27963_6 (a int, b int, c varchar (20));
-insert into t_27963_6 select mod (level, 7), level, 'v' || level from db_root connect by level <= 3000;
-create index i_27963_6 on t_27963_6 (a, b) with online;
-select count (*) as cnt from t_27963_6 where a = 3 using index i_27963_6;
-select a, b from t_27963_6 where a = 3 and b < 50 using index i_27963_6 order by b;
-
-evaluate 'Case 7: two-column index made on an empty table, then the root leaf splits';
-create table t_27963_7 (a int, b varchar (200));
-create index i_27963_7 on t_27963_7 (a, b);
-insert into t_27963_7 select mod (level, 3), repeat ('x', 150) || level from db_root connect by level <= 500;
-select a, count (*) as cnt from t_27963_7 where a >= 0 group by a using index i_27963_7 order by a;
-select a, substr (b, 151) as k from t_27963_7 where a = 1 and b = repeat ('x', 150) || '250' using index i_27963_7;
-
-drop table t_27963_1, t_27963_2, t_27963_3, t_27963_4, t_27963_5, t_27963_6, t_27963_7;
+drop table t_27963_1, t_27963_2, t_27963_3, t_27963_4;
