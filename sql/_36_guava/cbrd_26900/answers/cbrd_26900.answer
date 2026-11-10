@@ -1460,3 +1460,91 @@ Query stmt:
 select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, b.cb, b.cc from ta a left outer join tb b on (a.cc<b.cc*?) and a.ca=b.ca where (b.ca is null  or (a.cb<b.cb)) order by ?, ?, ?, ?, ?
 ===================================================
 0
+===================================================
+    
+Case 23: ROWNUM and INST_NUM() conditions, which the parent scan evaluates     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+8
+===================================================
+cnt    
+2     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (rownum<= ?:? )
+===================================================
+cnt    
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (rownum<= ?:? )
+===================================================
+cnt    
+3     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (inst_num()<= ?:? )
+===================================================
+cnt    
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (inst_num()<= ?:? )
+===================================================
+0

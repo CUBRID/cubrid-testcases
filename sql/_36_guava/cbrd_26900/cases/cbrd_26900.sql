@@ -30,6 +30,7 @@
  *    Case 20:  Cached plan reuse
  *    Case 21:  During/after predicate shared column
  *    Case 22:  During/after predicate column order
+ *    Case 23:  ROWNUM and INST_NUM() conditions, which the parent scan evaluates
  */
 
 evaluate 'Case 1: Comparison predicate';
@@ -647,6 +648,49 @@ select /*+ ordered use_nl */
   from ta a left join tb b on a.ca = b.ca and a.cc < b.cc * 10
  where (b.ca is null or a.cb < b.cb)
  order by a_ca, a_cb, a_cc, b_cb, b_cc;
+
+drop table if exists ta, tb;
+
+evaluate 'Case 23: ROWNUM and INST_NUM() conditions, which the parent scan evaluates';
+
+-- the pairs of ca 1 to 4 fail a.cb < b.cb and those of ca 5 to 8 pass, so a cap of 2 or 3 rows counts 2 or 3 only if the cap counts the pairs that passed it
+drop table if exists ta, tb;
+create table ta (ca int, cb int);
+create table tb (ca int, cb int);
+insert into ta values (1, 10), (2, 20), (3, 30), (4, 40), (5, 50), (6, 60), (7, 70), (8, 80);
+insert into tb values (1, 5), (2, 15), (3, 25), (4, 35), (5, 55), (6, 65), (7, 75), (8, 85);
+
+--@queryplan
+select /*+ ordered use_hash */
+       count(*) as cnt
+  from ta a, tb b
+ where a.ca = b.ca
+   and a.cb < b.cb
+   and rownum <= 2;
+
+--@queryplan
+select /*+ ordered use_nl */
+       count(*) as cnt
+  from ta a, tb b
+ where a.ca = b.ca
+   and a.cb < b.cb
+   and rownum <= 2;
+
+--@queryplan
+select /*+ ordered use_hash */
+       count(*) as cnt
+  from ta a, tb b
+ where a.ca = b.ca
+   and a.cb < b.cb
+   and inst_num() <= 3;
+
+--@queryplan
+select /*+ ordered use_nl */
+       count(*) as cnt
+  from ta a, tb b
+ where a.ca = b.ca
+   and a.cb < b.cb
+   and inst_num() <= 3;
 
 drop table if exists ta, tb;
 
