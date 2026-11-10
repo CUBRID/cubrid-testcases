@@ -14,15 +14,21 @@
  *    Case 5: a session variable assignment with ORDER BY on a column not in the select list, which is read from a sorted
  *            derived table whose hidden sort column comes before the columns added to it: each item stays with its own
  *            column (an item cast to the type of the sort column failed on a string and rounded a NUMERIC)
+ *    Case 6: a BIGINT column in a derived table of a UNION ALL whose other operand folds to VARCHAR: the set operation
+ *            unifies the two in DOUBLE, and the value goes to BIGINT without passing through it (2^53 + 1 and the
+ *            largest BIGINT come back whole)
  */
 
 drop table if exists t_27962;
 drop table if exists t5_27962;
+drop table if exists t6_27962;
 
 create table t_27962 (c int);
 insert into t_27962 values (123456789);
 create table t5_27962 (k int, s varchar (10), d numeric (5, 1));
 insert into t5_27962 values (2, 'b', 2.5), (1, 'a', 1.5), (3, 'c', 3.5);
+create table t6_27962 (b bigint);
+insert into t6_27962 values (9007199254740993), (9223372036854775807);
 
 evaluate 'Case 1: COALESCE with a second argument that folds to NULL';
 select a from (select coalesce (c, cast (null as int)) as a from t_27962) x;
@@ -51,4 +57,8 @@ set @m = 0;
 select d + (@m := @m + 1) from t5_27962 order by k;
 
 drop table t_27962;
+evaluate 'Case 6: a BIGINT column in a derived table of a UNION ALL whose other operand folds to VARCHAR';
+select a from (select b as a from t6_27962 union all select coalesce (b, cast (null as bigint)) from t6_27962) x order by 1;
+
 drop table t5_27962;
+drop table t6_27962;
