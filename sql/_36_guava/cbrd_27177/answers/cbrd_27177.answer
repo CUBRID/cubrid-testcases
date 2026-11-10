@@ -300,7 +300,8 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.t_reject)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
 
   rewritten query: select /*+ NO_PARALLEL_SCAN */  mod([dba.t_reject].k, ?), [dba.t_reject].k, count(*), sum([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by  mod([dba.t_reject].k, ?), [dba.t_reject].k with rollup having count(*)>? order by ?, ?, ?
 
