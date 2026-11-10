@@ -124,3 +124,55 @@ a
 
 ===================================================
 0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 6: (x.r.a = 3 OR y.a IS NULL) ANDed with an inner-table condition keeps the row that the join pads with NULL and the row whose path value is 3; result = 1, 2     
+
+===================================================
+a    
+1     
+2     
+
+===================================================
+    
+Case 7: (y.r.r.a = 6 OR y.a IS NULL) ANDed with an inner-table condition is evaluated after both fetches of the path; result = 1, 5     
+
+===================================================
+a    
+1     
+5     
+
+Query plan:
+temp(order by)
+    subplan: follow
+                 edge:  t_chain node[?] r -> t_chain node[?]
+                 head:  follow
+                           edge:  y node[?] r -> t_chain node[?]
+                           head:  nl-join (left outer join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: x node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: y node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     after: term[?]
+                                     cost:  ? card ?
+                           cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.a from t_chain x left outer join t_chain y on y.a=x.a-? where ((y.r.r.a= ?:? ) or y.a is null ) and coalesce(y.a, ?)>=? order by ?
+===================================================
+0
