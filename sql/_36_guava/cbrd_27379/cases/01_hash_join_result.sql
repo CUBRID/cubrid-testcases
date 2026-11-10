@@ -9,7 +9,8 @@
  *    TC-1-01: duplicate inner keys and NULL keys, for explicit SEMI / ANTI JOIN
  *             and for unnested EXISTS / NOT EXISTS / IN / NOT IN subqueries.
  *             An unnested query is followed by the same query with NO_UNNEST, and the two results must match
- *    TC-1-02: empty inner table and empty outer table
+ *    TC-1-02: empty inner table and empty outer table, and an empty derived table as the inner input,
+ *             whose result is known before the outer runs: SEMI skips the outer scan, ANTI scans it
  *    TC-1-03: ON clause with terms other than the equi-join term
  *    TC-1-04: ROWNUM, LIMIT, several joins in one query, two-column join key
  *
@@ -25,16 +26,18 @@
  *    8   TC-1-02-02  ta ANTI JOIN tb               empty inner table
  *    9   TC-1-02-03  ta SEMI JOIN tb               empty outer table
  *    10  TC-1-02-04  ta ANTI JOIN tb               empty outer table
- *    11  TC-1-03-01  ta SEMI JOIN tb               ON terms tb.cb > ta.cb, ta.cc IS NOT NULL
- *    12  TC-1-03-02  ta ANTI JOIN tb               ON terms tb.cb > ta.cb, ta.cc IS NOT NULL
- *    13  TC-1-03-03  ta SEMI JOIN tb               ON term tb.cb > 20
- *    14  TC-1-03-04  ta ANTI JOIN tb               ON term tb.cb > 20
- *    15  TC-1-04-01  ta SEMI JOIN tb               ROWNUM
- *    16  TC-1-04-02  ta ANTI JOIN tb               LIMIT
- *    17  TC-1-04-03  ta SEMI JOIN tb ANTI JOIN tc  two joins in one query
- *    18  TC-1-04-04  ta JOIN tb SEMI JOIN tc       two joins in one query
- *    19  TC-1-04-05  ta SEMI JOIN tb               two-column join key
- *    20  TC-1-04-06  ta ANTI JOIN tb               two-column join key
+ *    11  TC-1-02-05  ta SEMI JOIN derived table    empty derived table, outer scan skipped
+ *    12  TC-1-02-06  ta ANTI JOIN derived table    empty derived table, outer scan kept
+ *    13  TC-1-03-01  ta SEMI JOIN tb               ON terms tb.cb > ta.cb, ta.cc IS NOT NULL
+ *    14  TC-1-03-02  ta ANTI JOIN tb               ON terms tb.cb > ta.cb, ta.cc IS NOT NULL
+ *    15  TC-1-03-03  ta SEMI JOIN tb               ON term tb.cb > 20
+ *    16  TC-1-03-04  ta ANTI JOIN tb               ON term tb.cb > 20
+ *    17  TC-1-04-01  ta SEMI JOIN tb               ROWNUM
+ *    18  TC-1-04-02  ta ANTI JOIN tb               LIMIT
+ *    19  TC-1-04-03  ta SEMI JOIN tb ANTI JOIN tc  two joins in one query
+ *    20  TC-1-04-04  ta JOIN tb SEMI JOIN tc       two joins in one query
+ *    21  TC-1-04-05  ta SEMI JOIN tb               two-column join key
+ *    22  TC-1-04-06  ta ANTI JOIN tb               two-column join key
  *
  *  TC-1-03 and the two-column key cases of TC-1-04 compare the hash join result with the nested loop join result
  *  by EXCEPT ALL in both directions. Both counts must be 0. Each sub-case recreates its tables.
@@ -311,6 +314,59 @@ SELECT /*+ RECOMPILE USE_HASH */ ta.ca
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca
 ORDER BY 1;
+
+-- cleanup
+DROP TABLE IF EXISTS tb, ta;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-1-02-05: SEMI JOIN, empty derived table as the inner input
+--   The derived table runs before the hash join. Once it is empty, a SEMI JOIN has no result, so the outer scan of ta
+--   is skipped and the trace shows it as noscan.
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-1-02-05: SEMI JOIN, empty derived table as the inner input';
+
+DROP TABLE IF EXISTS tb, ta;
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-1-02-05-01: hash join, result and trace
+evaluate 'TC-1-02-05-01: hash join skips the scan of ta, result = no rows';
+SET TRACE ON;
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ ta.ca
+FROM ta
+  SEMI JOIN (SELECT ca FROM tb WHERE ca > 0) d ON d.ca = ta.ca
+ORDER BY 1;
+SHOW TRACE;
+SET TRACE OFF;
+
+-- cleanup
+DROP TABLE IF EXISTS tb, ta;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-1-02-06: ANTI JOIN, empty derived table as the inner input
+--   Every outer row of an ANTI JOIN is unmatched when the inner input is empty, so the outer scan of ta must still run.
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-1-02-06: ANTI JOIN, empty derived table as the inner input';
+
+DROP TABLE IF EXISTS tb, ta;
+CREATE TABLE ta (ca INT);
+CREATE TABLE tb (ca INT);
+INSERT INTO ta VALUES (1), (2), (3);
+
+UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
+
+-- TC-1-02-06-01: hash join, result and trace
+evaluate 'TC-1-02-06-01: hash join scans ta, result = 1, 2, 3';
+SET TRACE ON;
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ ta.ca
+FROM ta
+  ANTI JOIN (SELECT ca FROM tb WHERE ca > 0) d ON d.ca = ta.ca
+ORDER BY 1;
+SHOW TRACE;
+SET TRACE OFF;
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;

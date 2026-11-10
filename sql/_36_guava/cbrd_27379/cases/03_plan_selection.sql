@@ -13,6 +13,8 @@
  *                      in the outer query, USE_HASH or USE_HASH(tb) in the subquery
  *    TC-2-01-05:       EXISTS / NOT EXISTS without an index on tb.ca, without a hint and with NO_USE_HASH
  *                      in the outer query, NO_USE_HASH or NO_USE_HASH(tb) in the subquery
+ *    TC-2-01-06:       USE_MERGE does not apply to an ANTI JOIN, which has no merge join: it stays a hash join,
+ *                      while an INNER JOIN of the same tables becomes a merge join
  *
  *  Sub-cases:
  *    No  Sub-case    Query                         Case
@@ -21,6 +23,7 @@
  *    3   TC-2-01-03  NOT IN subquery               USE_HASH
  *    4   TC-2-01-04  EXISTS / NOT EXISTS subquery  index on tb.ca: no hint, USE_HASH, USE_HASH(tb)
  *    5   TC-2-01-05  EXISTS / NOT EXISTS subquery  no index on tb.ca: no hint, NO_USE_HASH, NO_USE_HASH(tb)
+ *    6   TC-2-01-06  ANTI JOIN, NOT EXISTS         USE_MERGE, subquery USE_MERGE(tb), INNER JOIN with USE_MERGE
  *
  *  CTP masks the numbers in a --@queryplan output, so cost and cardinality are not compared.
  *  Each step asserts the result rows and the plan: the join method, the join type and the scans.
@@ -296,6 +299,34 @@ evaluate 'TC-2-01-05-08: NOT EXISTS, subquery NO_USE_HASH(tb), result and plan';
 SELECT /*+ RECOMPILE */ COUNT (*)
 FROM ta
 WHERE NOT EXISTS (SELECT /*+ NO_USE_HASH(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC-2-01-06: USE_MERGE and an ANTI JOIN, on the tables of TC-2-01-05
+--   There is no merge join for a SEMI JOIN or an ANTI JOIN, so the planner does not apply USE_MERGE to their inner
+--   input and keeps the hash join a candidate. The INNER JOIN shows that the same hint makes a merge join otherwise.
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC-2-01-06: USE_MERGE and an ANTI JOIN';
+
+-- TC-2-01-06-01: INNER JOIN, outer query USE_MERGE, result and plan
+evaluate 'TC-2-01-06-01: INNER JOIN, outer query USE_MERGE, merge join, result = 1996';
+--@queryplan
+SELECT /*+ RECOMPILE USE_MERGE */ COUNT (*)
+FROM ta
+  JOIN tb ON tb.ca = ta.ca;
+
+-- TC-2-01-06-02: ANTI JOIN, outer query USE_MERGE, result and plan
+evaluate 'TC-2-01-06-02: ANTI JOIN, outer query USE_MERGE, hash join, result = 1501';
+--@queryplan
+SELECT /*+ RECOMPILE USE_MERGE */ COUNT (*)
+FROM ta
+  ANTI JOIN tb ON tb.ca = ta.ca;
+
+-- TC-2-01-06-03: NOT EXISTS, subquery USE_MERGE(tb), result and plan
+evaluate 'TC-2-01-06-03: NOT EXISTS, subquery USE_MERGE(tb), hash join, result = 1501';
+--@queryplan
+SELECT /*+ RECOMPILE */ COUNT (*)
+FROM ta
+WHERE NOT EXISTS (SELECT /*+ USE_MERGE(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
 
 -- cleanup
 DROP TABLE IF EXISTS tb, ta;

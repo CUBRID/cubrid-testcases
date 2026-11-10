@@ -425,6 +425,126 @@ ca
 0
 ===================================================
     
+TC-1-02-05: SEMI JOIN, empty derived table as the inner input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+TC-1-02-05-01: hash join skips the scan of ta, result = no rows     
+
+===================================================
+0
+===================================================
+ca    
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].ca from [dba.tb] [dba.tb] where ([dba.tb].ca> ?:? ))
+
+  SORT (order by)
+    HASH JOIN (semi join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ [dba.ta].ca from [dba.ta] [dba.ta] semi join (select [dba.tb].ca from [dba.tb] [dba.tb] where ([dba.tb].ca> ?:? )) d (ca) on d.ca=[dba.ta].ca order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+TC-1-02-06: ANTI JOIN, empty derived table as the inner input     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+TC-1-02-06-01: hash join scans ta, result = 1, 2, 3     
+
+===================================================
+0
+===================================================
+ca    
+1     
+2     
+3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].ca from [dba.tb] [dba.tb] where ([dba.tb].ca> ?:? ))
+
+  SORT (order by)
+    HASH JOIN (anti join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (d)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ [dba.ta].ca from [dba.ta] [dba.ta] anti join (select [dba.tb].ca from [dba.tb] [dba.tb] where ([dba.tb].ca> ?:? )) d (ca) on d.ca=[dba.ta].ca order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
 TC-1-03-01: SEMI JOIN, first ON clause     
 
 ===================================================

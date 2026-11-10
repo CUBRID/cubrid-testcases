@@ -519,4 +519,77 @@ nl-join (anti join)
 Query stmt:
 select /*+ NO_USE_HASH(tb) */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
 ===================================================
+    
+TC-2-01-06: USE_MERGE and an ANTI JOIN     
+
+===================================================
+    
+TC-2-01-06-01: INNER JOIN, outer query USE_MERGE, merge join, result = 1996     
+
+===================================================
+count(*)    
+1996     
+
+Query plan:
+temp
+    order: UNORDERED
+    subplan: m-join (inner join)
+                 edge:  term[?]
+                 outer: temp
+                            order: ca[?]
+                            subplan: sscan
+                                         class: ta node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: ca[?]
+                            subplan: sscan
+                                         class: tb node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ count(*) from ta ta, tb tb where tb.ca=ta.ca
+===================================================
+    
+TC-2-01-06-02: ANTI JOIN, outer query USE_MERGE, hash join, result = 1501     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
+    
+TC-2-01-06-03: NOT EXISTS, subquery USE_MERGE(tb), hash join, result = 1501     
+
+===================================================
+count(*)    
+1501     
+
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: ta node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE(tb) */ count(*) from ta ta anti join tb tb on tb.ca=ta.ca
+===================================================
 0
