@@ -13,6 +13,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 20000
 ===================================================
 20000
@@ -20,6 +24,10 @@
 20000
 ===================================================
 12000
+===================================================
+2000
+===================================================
+2000
 ===================================================
 100
 ===================================================
@@ -111,7 +119,23 @@ Query stmt:
 select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id) from t_small? a, t_small? b where a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
-80000     800040000     800040000     
+8000     8004000     8004000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id) from t_hint? a, t_hint? b where a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    
+8000     8004000     8004000     
 
 Query plan:
 nl-join (inner join)
@@ -125,10 +149,10 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id) from t_big? a, t_big? b where a.k=b.k
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id) from t_hint? a, t_hint? b where a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
-80000     800040000     800040000     
+8000     8004000     8004000     
 
 Query plan:
 nl-join (inner join)
@@ -142,10 +166,10 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_NL */ count(*), sum(a.id), sum(b.id) from t_big? a, t_big? b where a.k=b.k
+select /*+ USE_NL */ count(*), sum(a.id), sum(b.id) from t_hint? a, t_hint? b where a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    
-80000     800040000     800040000     
+8000     8004000     8004000     
 
 Query plan:
 temp
@@ -167,7 +191,7 @@ temp
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*), sum(a.id), sum(b.id) from t_big? a, t_big? b where a.k=b.k
+select /*+ USE_MERGE */ count(*), sum(a.id), sum(b.id) from t_hint? a, t_hint? b where a.k=b.k
 ===================================================
 0
 ===================================================
@@ -226,7 +250,24 @@ select count(*) from t_mid a, t_idx b where a.k=b.k
 0
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(a.id)    
-40000     600020000     400020000     40000     
+4000     6002000     4002000     4000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+4000     6002000     4002000     4000     
 
 Query plan:
 nl-join (left outer join)
@@ -240,10 +281,10 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big? a right outer join t_big? b on (a.id> ?:? ) and a.k=b.k
+select /*+ NO_USE_HASH */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(a.id)    
-40000     600020000     400020000     40000     
+4000     6002000     4002000     4000     
 
 Query plan:
 nl-join (left outer join)
@@ -257,10 +298,10 @@ nl-join (left outer join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_NL */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big? a right outer join t_big? b on (a.id> ?:? ) and a.k=b.k
+select /*+ USE_NL */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(a.id)    
-40000     600020000     400020000     40000     
+4000     6002000     4002000     4000     
 
 Query plan:
 temp
@@ -283,7 +324,75 @@ temp
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ USE_MERGE */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big? a right outer join t_big? b on (a.id> ?:? ) and a.k=b.k
+select /*+ USE_MERGE */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+4000     6002000     4002000     4000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(a) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+4000     6002000     4002000     4000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: b node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+4000     6002000     4002000     4000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(b) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(a.id)    
+4000     6002000     4002000     4000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(b) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint? a right outer join t_hint? b on (a.id> ?:? ) and a.k=b.k
 ===================================================
 count(*)    sum(a.id)    sum(b.id)    count(a.id)    
 420     20200     20490     400     

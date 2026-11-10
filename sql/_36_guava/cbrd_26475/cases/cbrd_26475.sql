@@ -24,27 +24,32 @@
  *           join of two 20,000-row tables without an index on the join column
  *   Case 2: small inputs (100 rows) stay on nl-join, USE_HASH still forces
  *           the hash-join on them
- *   Case 3: hints beat the cost on the large tables - NO_USE_HASH and USE_NL
- *           give nl-join, USE_MERGE gives m-join
+ *   Case 3: hints beat the cost - on two 2,000-row tables the cost picks
+ *           hash-join, NO_USE_HASH and USE_NL give nl-join, USE_MERGE gives
+ *           m-join (smaller tables keep the forced nl-join short)
  *   Case 4: m-join is not chosen by cost even when it is enabled by
  *           optimizer_enable_merge_join, the hash-join stays cheaper
  *   Case 5: spill cost - 12,000 rows joined to a 20,000-row table with a
  *           covering index on the join column: the hash-join wins while the
  *           build fits in memory, lowering max_hash_list_scan_size below the
  *           build size adds the spill IO and switches the plan to idx-join
- *   Case 6: right outer join honors NO_USE_HASH / USE_NL / USE_MERGE on the
- *           hinted table
+ *   Case 6: right outer join honors the join-method hints - the hint is read
+ *           from the null-supplying table (a): USE_NL(a) / NO_USE_HASH(a) give
+ *           nl-join, while USE_NL(b) / NO_USE_HASH(b) on the preserved table do
+ *           not apply and the cost keeps the hash-join
  *   Case 7: the null-supplying side of a right outer join is itself a join
  *           (multi-node), a table hint cannot apply to it, so a bare USE_HASH
  *           is not forced on the outer join and the cost picks nl-join there
  *           (the inner join below it still takes the hint)
  */
-drop table if exists t_big1, t_big2, t_idx, t_mid, t_small1, t_small2;
+drop table if exists t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2;
 
 create table t_big1 (id int, k int, v varchar(20));
 create table t_big2 (id int, k int, v varchar(20));
 create table t_idx (id int, k int, v varchar(20), index i_t_idx_k (k));
 create table t_mid (id int, k int, v varchar(20));
+create table t_hint1 (id int, k int, v varchar(20));
+create table t_hint2 (id int, k int, v varchar(20));
 create table t_small1 (id int, k int);
 create table t_small2 (id int, k int);
 
@@ -63,6 +68,18 @@ limit 20000;
 insert into t_idx select id, k, v from t_big2;
 insert into t_mid select id, k, v from t_big1 where id <= 12000;
 
+insert into t_hint1
+select rownum, mod(rownum, 500), 'hint1_' || rownum
+from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c,
+     table({0,1,2,3,4,5,6,7,8,9}) d
+limit 2000;
+
+insert into t_hint2
+select rownum, mod(rownum * 3, 500), 'hint2_' || rownum
+from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c,
+     table({0,1,2,3,4,5,6,7,8,9}) d
+limit 2000;
+
 insert into t_small1
 select rownum, mod(rownum, 20) from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b
 limit 100;
@@ -71,7 +88,7 @@ insert into t_small2
 select rownum, mod(rownum, 25) from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b
 limit 100;
 
-update statistics on t_big1, t_big2, t_idx, t_mid, t_small1, t_small2 with fullscan;
+update statistics on t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2 with fullscan;
 
 -- Case 1: hash-join by cost without a hint
 select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_big1 a, t_big2 b where a.k = b.k;
@@ -85,12 +102,14 @@ select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_small1 a, t_small2
 
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id) from t_small1 a, t_small2 b where a.k = b.k;
 
--- Case 3: hints beat the cost on the large tables
-select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id) from t_big1 a, t_big2 b where a.k = b.k;
+-- Case 3: hints beat the cost - without a hint the cost picks hash-join on these tables
+select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_hint1 a, t_hint2 b where a.k = b.k;
 
-select /*+ recompile use_nl */ count(*), sum(a.id), sum(b.id) from t_big1 a, t_big2 b where a.k = b.k;
+select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id) from t_hint1 a, t_hint2 b where a.k = b.k;
 
-select /*+ recompile use_merge */ count(*), sum(a.id), sum(b.id) from t_big1 a, t_big2 b where a.k = b.k;
+select /*+ recompile use_nl */ count(*), sum(a.id), sum(b.id) from t_hint1 a, t_hint2 b where a.k = b.k;
+
+select /*+ recompile use_merge */ count(*), sum(a.id), sum(b.id) from t_hint1 a, t_hint2 b where a.k = b.k;
 
 -- Case 4: m-join competes only when enabled, and still loses to the hash-join by cost
 set system parameters 'optimizer_enable_merge_join=yes';
@@ -109,12 +128,24 @@ select /*+ recompile */ count(*) from t_mid a, t_idx b where a.k = b.k;
 
 set system parameters 'max_hash_list_scan_size=8M';
 
--- Case 6: right outer join honors the join-method hints on the hinted table
-select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big1 a right outer join t_big2 b on a.k = b.k and a.id > 10000;
+-- Case 6: right outer join honors the join-method hints - without a hint the cost picks hash-join
+select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
 
-select /*+ recompile use_nl */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big1 a right outer join t_big2 b on a.k = b.k and a.id > 10000;
+select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
 
-select /*+ recompile use_merge */ count(*), sum(a.id), sum(b.id), count(a.id) from t_big1 a right outer join t_big2 b on a.k = b.k and a.id > 10000;
+select /*+ recompile use_nl */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
+
+select /*+ recompile use_merge */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
+
+-- the hint is read from the null-supplying table a
+select /*+ recompile use_nl(a) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
+
+select /*+ recompile no_use_hash(a) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
+
+-- a hint on the preserved table b does not apply, the cost keeps the hash-join
+select /*+ recompile use_nl(b) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
+
+select /*+ recompile no_use_hash(b) */ count(*), sum(a.id), sum(b.id), count(a.id) from t_hint1 a right outer join t_hint2 b on a.k = b.k and a.id > 1000;
 
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(a.id) from t_small1 a right outer join t_small2 b on a.k = b.k;
 
@@ -123,4 +154,4 @@ select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(c.id) fro
 
 select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
 
-drop table t_big1, t_big2, t_idx, t_mid, t_small1, t_small2;
+drop table t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2;
