@@ -151,4 +151,14 @@ update statistics on hg with fullscan;
 select /*+ recompile */ g, sum (x) from hg group by g having (g = 1 and sum (x) > 10) or (g = 2 and sum (x) > 20) order by g;
 drop table hg;
 
+evaluate 'Case 19: a restriction derived from the OR is pushed into a derived table and keeps its key range: 2 rows';
+drop table if exists dg;
+create table dg (a int, b int);
+create index i_dg_ab on dg (a, b);
+insert into dg select mod (rownum, 1000), mod (rownum, 7) from db_class a, db_class b, db_class c limit 20000;
+update statistics on dg with fullscan;
+--@queryplan
+select /*+ recompile */ t.a, t.s from (select a, sum (b) s from dg group by a) t where (t.a = 1 and t.s > 10) or (t.a = 2 and t.s < 100000) order by 1;
+drop table dg;
+
 drop table nat, fact, pair;

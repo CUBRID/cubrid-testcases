@@ -469,4 +469,43 @@ select hg.g, sum(hg.x) from hg hg where ((hg.g= ?:? ) or (hg.g= ?:? )) group by 
 ===================================================
 0
 ===================================================
+    
+Case 19: a restriction derived from the OR is pushed into a derived table and keeps its key range: 2 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+a    s    
+1     61     
+2     60     
+
+Query plan:
+iscan
+    class: dg node[?]
+    index: i_dg_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select dg.a, sum(dg.b) from dg dg where ((dg.a= ?:? ) or (dg.a= ?:? )) group by dg.a having sum(dg.b) is not null  and (sum(dg.b)>? or sum(dg.b)<?) and (sum(dg.b)>? or dg.a= ?:? ) and (dg.a= ?:?  or sum(dg.b)<?) and (dg.a= ?:?  or dg.a= ?:? ))
+/* ---> skip GROUP BY */
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.s from (select dg.a, sum(dg.b) as [s] from dg dg where ((dg.a= ?:? ) or (dg.a= ?:? )) group by dg.a having sum(dg.b) is not null  and (sum(dg.b)>? or sum(dg.b)<?) and (sum(dg.b)>? or dg.a= ?:? ) and (dg.a= ?:?  or sum(dg.b)<?) and (dg.a= ?:?  or dg.a= ?:? )) t (a, s) order by ?
+===================================================
+0
+===================================================
 0
