@@ -1239,7 +1239,7 @@ with cte as (
         select /*+ inline */ * from ta where ca > 1
 )
 update tb set ca = ca + 1
-where ca in (select t1.ca from cte t1 inner join ta t2 on t1.ca = t2.ca);
+where ca in (select /*+ no_unnest */ t1.ca from cte t1 inner join ta t2 on t1.ca = t2.ca);
 
 show trace;
 
