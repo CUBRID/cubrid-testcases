@@ -1,12 +1,14 @@
 /**
  *  This test case verifies CBRD-27843: ROUND of a SMALLINT, INTEGER or BIGINT wrapped around past the
  *  range of its type and was off by one where a power of ten is not exact in binary, and WIDTH_BUCKET of a
- *  NaN returned INT_MIN or a bucket picked by the order of its comparisons, and a NaN converted to NUMERIC became 0
+ *  NaN returned INT_MIN or a bucket picked by the order of its comparisons, a NaN converted to NUMERIC became 0, and
+ *  a NaN compared as equal to every value in one comparison and unequal to every value in another
  *
  *  ROUND of an integer type now rounds to an integer place in integers: past the range of the type it
  *  raises "Data overflow" as a CAST does, and inside the range the value is exact. WIDTH_BUCKET raises
  *  "Invalid parameter for function" for a NaN operand or bound and "Invalid bucket number" for a NaN
- *  bucket count. A DOUBLE or FLOAT NaN converted to NUMERIC raises "Data overflow" as an infinity does.
+ *  bucket count. A DOUBLE or FLOAT NaN converted to NUMERIC raises "Data overflow" as an infinity does. A NaN of
+ *  FLOAT, DOUBLE or MONETARY equals a NaN of either sign and is above every other value in every comparison.
  *
  *  Coverage:
  *    Case 1:  ROUND past the range of SMALLINT, INTEGER and BIGINT columns and constants is an error
@@ -16,8 +18,10 @@
  *    Case 5:  WIDTH_BUCKET with a NaN operand, bound or bucket count, and with other values
  *    Case 6:  return_null_on_function_errors=yes gives NULL for the errors of Case 1 and Case 5
  *    Case 7:  a NaN cast, inserted or updated into a NUMERIC column raises Data overflow
+ *    Case 8:  a NaN in a predicate, ORDER BY, GROUP BY, a join, an index build and scan, a unique index, against a
+ *             NUMERIC column, and in a scan that filters 2000 rows a page at a time
  */
-drop table if exists t_r, t_w, t_n;
+drop table if exists t_r, t_w, t_n, t_q, t_u, t_qn, t_qb;
 create table t_r (k varchar(8), s smallint, i int, b bigint);
 insert into t_r values ('max', 32767, 2147483647, 9223372036854775807);
 insert into t_r values ('min', -32768, -2147483648, -9223372036854775808);
@@ -99,4 +103,59 @@ select n from t_n;
 select cast (cast ('inf' as double) as numeric (10, 2));
 select cast (cast (1.5 as double) as numeric (10, 2));
 
-drop table t_r, t_w, t_n;
+evaluate 'Case 8: a NaN equals a NaN of either sign and is above every other value; keys 2 and 4 hold the NaNs';
+create table t_q (k int, d double, f float, m monetary);
+insert into t_q values (1, 1, 1, 1), (2, cast ('nan' as double), cast ('nan' as double), cast (cast ('nan' as double) as monetary));
+insert into t_q values (3, 2, 2, 2), (4, -cast ('nan' as double), 3, 3), (5, null, null, null);
+insert into t_q values (6, cast ('-inf' as double), -1, -1), (7, cast ('inf' as double), 4, 4);
+-- a DOUBLE constant, an INTEGER constant and the select list answer alike
+select k from t_q where d = cast ('nan' as double) order by 1;
+select k from t_q where d = 1 order by 1;
+select k from t_q where d <> 1 order by 1;
+select k from t_q where d > 1.0e0 order by 1;
+select k from t_q where d < cast ('nan' as double) order by 1;
+select k from t_q where d = d order by 1;
+select k from t_q where d between 2 and cast ('nan' as double) order by 1;
+select k, if (d = 1, 'T', 'F'), if (d > 1, 'T', 'F'), if (d = cast ('nan' as double), 'T', 'F') from t_q order by 1;
+-- the NaNs sort last ascending and first descending, and group and count as one value
+select k from t_q order by d, k;
+select k from t_q order by d desc, k;
+select count (*) from (select d from t_q group by d) x;
+select count (*) from t_q group by d having d = cast ('nan' as double);
+select count (distinct d), if (max (d) = cast ('nan' as double), 'T', 'F') from t_q;
+-- a hash join and a nested loop join find the two NaNs equal
+select /*+ use_hash */ a.k, b.k from t_q a, t_q b where a.d = b.d and a.k < b.k order by 1, 2;
+select /*+ use_nl */ a.k, b.k from t_q a, t_q b where a.d = b.d and a.k < b.k order by 1, 2;
+-- an index over a column holding a NaN builds (a debug server failed an assertion of the index build sort) and scans in the same order
+create index i_q_d on t_q (d);
+create index i_q_dd on t_q (d desc);
+create index i_q_kd on t_q (k, d);
+create index i_q_f on t_q (f);
+select k from t_q where d = cast ('nan' as double) using index i_q_d order by 1;
+select k from t_q where d > 1 using index i_q_d order by 1;
+select k from t_q where d >= 2 using index i_q_dd order by 1;
+select k from t_q where k >= 1 and d = cast ('nan' as double) using index i_q_kd order by 1;
+-- FLOAT and MONETARY order the same way
+select k from t_q where f > 1 using index i_q_f order by 1;
+select k from t_q where m > 1 order by 1;
+-- a unique index holds one NaN, whatever its sign
+create table t_u (d double unique);
+insert into t_u values (1), (cast ('nan' as double));
+insert into t_u values (-cast ('nan' as double));
+select count (*) from t_u;
+-- a NUMERIC column against a DOUBLE NaN, with and without its index: no NUMERIC reaches the NaN
+create table t_qn (k int, n numeric (10, 2));
+insert into t_qn values (1, 0), (2, 1.5), (3, 2);
+create index i_qn on t_qn (n);
+select k from t_qn where n = cast ('nan' as double) order by 1;
+select k from t_qn where n < cast ('nan' as double) order by 1;
+select k from t_qn where n >= cast ('nan' as double) using index i_qn order by 1;
+-- 2000 rows, filtered a page at a time: a column against a constant and two columns; result = 1920, 400, 1800, 200
+create table t_qb (k int, d double, e double);
+insert into t_qb select i, case when mod (i, 10) = 0 then cast ('nan' as double) when mod (i, 10) = 5 then -cast ('nan' as double) else i end, case when mod (i, 10) in (0, 5) then cast ('nan' as double) when mod (i, 10) = 3 then -cast ('nan' as double) else i end from (with recursive s (i) as (select 1 union all select i + 1 from s where i < 2000) select i from s) x;
+select count (*) from t_qb where d > 100.0e0;
+select count (*) from t_qb where d = cast ('nan' as double);
+select count (*) from t_qb where d = e;
+select count (*) from t_qb where d < e;
+
+drop table t_r, t_w, t_n, t_q, t_u, t_qn, t_qb;
