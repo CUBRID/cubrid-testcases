@@ -108,7 +108,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 4 : session variable read in a residual join term keeps the parallel probe     
+Case 4 : session variable read in a residual join term keeps the probe serial     
 
 ===================================================
 count(*)    
@@ -133,14 +133,13 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
     
-Case 5 : serial NEXT_VALUE in a residual join term keeps the parallel probe     
+Case 5 : serial NEXT_VALUE in a residual join term keeps the probe serial     
 
 ===================================================
 count(*)    
@@ -165,7 +164,6 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_sv), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
