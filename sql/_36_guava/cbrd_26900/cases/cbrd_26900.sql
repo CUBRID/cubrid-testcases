@@ -1,11 +1,11 @@
 /**
  *  This test case verifies CBRD-26900: Evaluate eligible after-join predicates in the hash join probe loop
  *
- *  A hash join evaluates a residual condition (a non-equality condition of an inner join, or an after-join
- *  condition of an outer join) when the hash key matches, so a tuple that fails the condition never reaches the
- *  list file. Each case runs one join as a hash join and as a nested loop join with the same statement apart from
- *  the join hint, and the two results must match. The data of a case makes the residual condition TRUE, FALSE, or
- *  UNKNOWN by NULL operands, and leaves one key without a match.
+ *  A hash join evaluates the residual condition of a matched pair (a non-equality condition of an inner join, or an
+ *  after-join condition of an outer join) while it probes, so a tuple that fails the condition never reaches the list
+ *  file. Each case runs one join as a hash join and as a nested loop join with the same statement apart from the hint,
+ *  and the two results must match. The data of a case makes the residual condition TRUE, FALSE, or UNKNOWN by NULL
+ *  operands, and leaves one key without a match.
  *
  *  Coverage:
  *    Case 1:  Comparison predicate
@@ -30,7 +30,7 @@
  *    Case 20:  Cached plan reuse
  *    Case 21:  During/after predicate shared column
  *    Case 22:  During/after predicate column order
- *    Case 23:  ROWNUM and INST_NUM() conditions, which the parent scan evaluates
+ *    Case 23:  ROWNUM and INST_NUM() conditions, which the node above the hash join evaluates
  */
 
 evaluate 'Case 1: Comparison predicate';
@@ -651,9 +651,10 @@ select /*+ ordered use_nl */
 
 drop table if exists ta, tb;
 
-evaluate 'Case 23: ROWNUM and INST_NUM() conditions, which the parent scan evaluates';
+evaluate 'Case 23: ROWNUM and INST_NUM() conditions, which the node above the hash join evaluates';
 
--- ca 1 to 4 fail a.cb < b.cb and ca 5 to 8 pass it, so a count of 2 or 3 means that the cap counted only the pairs that passed
+-- ca 1 to 4 fail a.cb < b.cb and ca 5 to 8 pass it, so a count of 2 or 3 means that the cap counted only the pairs
+-- that passed
 drop table if exists ta, tb;
 create table ta (ca int, cb int);
 create table tb (ca int, cb int);
