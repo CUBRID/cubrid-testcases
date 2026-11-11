@@ -127,6 +127,33 @@ count(*)    count(b.id)    count(c.id)
 20000     396     20000     
 
 Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
 hash-join (right outer join)
     edge:  term[?]
     outer: hash-join (inner join)
