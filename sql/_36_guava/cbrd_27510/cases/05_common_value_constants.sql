@@ -1,16 +1,20 @@
 /**
- *  This test case verifies CBRD-27510: a common value over a constant subtree is decided from the subtree's value.
+ *  This test case was written for CBRD-27510: a common value over a constant subtree is decided from the subtree's
+ *  value.
  *
  *  COALESCE, NVL, IFNULL, NVL2, NULLIF, LEAST and GREATEST take a common type over their operands. When an operand
- *  is a constant subtree over binds - CAST(? AS T), or a node inside it whose type the bind decides - develop
- *  folded the operands' values at the first row, and a NULL without a type dropped out of the fold. CBRD-27510
- *  evaluates the constant subtree once at the gate (qexec_resolve_domains, before the first row) and decides the
- *  common value from that value in the same way, so every consumer - an arithmetic node, a term, an index key, an
- *  aggregate - reads a decision made before the scan.
+ *  is a constant subtree over binds - CAST(? AS T), or a node inside it whose type the bind decides - the operands'
+ *  values were folded at the first row, and a NULL without a type dropped out of the fold. CBRD-27510 evaluated the
+ *  constant subtree once before the first row and decided the common value from that value in the same way.
  *
- *  Every answer here is the develop answer except Case 5. There an operand comes from a row, and the node keeps the
- *  plan's domain for every row, so cv_t and cv_r (the same rows in the opposite heap order) answer alike. develop
- *  typed the node by the first row's value, so its answer followed the heap order.
+ *  CBRD-27583: the case no longer checks a decision from values. The compilation of each bind type signature
+ *  decides the common type from the operands' types - a CAST's type and each bind's own type - by the rule a column
+ *  gets (CUBRIDSUS-6231: the type of the highest precedence when the types convert, VARCHAR when they do not), so a
+ *  NULL value no longer drops out. COALESCE(CAST(? AS datetime), CAST(? AS datetime), ?) with NULL, NULL, 1 is
+ *  VARCHAR, as COALESCE(dt, dt, 1) over a datetime column is; the fold of the values made it INTEGER. The answers of
+ *  Case 1, 2, 3 and 6 are CBRD-27583's. In Case 5 an operand comes from a row, and the node keeps the plan's domain
+ *  for every row, so cv_t and cv_r (the same rows in the opposite heap order) answer alike; typing the node by the
+ *  first row's value made the answer follow the heap order.
  *
  *  Coverage:
  *    Case 1: NULL CAST operands, the type of the last argument across literal types
@@ -32,9 +36,10 @@ create index i_cv_t_k on cv_t (k);
 create table cv_r (k int, d date, dt datetime);
 insert into cv_r values (2, date'2024-01-05', datetime'2024-01-05 10:00:00'), (1, null, null);
 
--- Case 1 [CAST]. COALESCE over two NULL CAST(? AS datetime) operands takes the type of the last argument, run with
--- an integer, a big integer, a numeric, a double, a string, a date, a time, a timestamp and a datetime. NVL,
--- IFNULL, NVL2 and a CHAR CAST follow.
+-- Case 1 [CAST]. COALESCE over two NULL CAST(? AS datetime) operands and a last argument of an integer, a big
+-- integer, a numeric, a double, a string, a date, a time, a timestamp and a datetime. The type comes from the
+-- operands' types: DATETIME with a date or a timestamp, VARCHAR with a number, a string or a time. NVL, IFNULL,
+-- NVL2 and a CHAR CAST follow.
 evaluate 'Case 1: NULL CAST operands and the last argument';
 prepare q from 'select typeof(coalesce(cast(? as datetime), cast(? as datetime), ?)), coalesce(cast(? as datetime), cast(? as datetime), ?) from db_root';
 execute q using null, null, 1, null, null, 1;

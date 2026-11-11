@@ -75,6 +75,10 @@ prepare st from 'select 1 from db_class where USER=? limit 1';
 execute st using 'dba';
 deallocate prepare st;
 
+-- CBRD-27583: the statements below, which run SET NAMES between PREPARE and EXECUTE, were written to check that
+-- a literal of the statement keeps the collation of the session at PREPARE time. Since CBRD-27583 a PREPARE whose
+-- statement has a position typed by its value makes no plan, and the first EXECUTE compiles it, so the literal
+-- takes the collation of the session at EXECUTE time and these statements no longer check that.
 set names utf8 collate utf8_de_exp_ai_ci;
 prepare st from 'select 1 from db_class where ''a''=? limit 1';
 set names utf8;
