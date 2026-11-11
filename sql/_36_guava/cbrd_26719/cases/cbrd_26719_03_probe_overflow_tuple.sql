@@ -29,6 +29,8 @@
  *   parallel-probe cases fall back to a serial probe.
  *
  * Source: JIRA attachment cbrd-26719_test-case_20260921.zip (ported to CTP)
+ * Note: the wide columns are bit varying(32000) holding 4000-byte values. They are demoted to OOS,
+ *   so the heap rows stay inside one page; the probe list-file tuples still carry the full values.
  */
 
 drop table if exists t_b_small, t_p_overflow;
@@ -40,13 +42,13 @@ insert into t_b_small
 
 create table t_p_overflow (
     ckey int,
-    pa bit (32000), pb bit (32000), pc bit (32000), pd bit (32000),
-    pe bit (32000), pf bit (32000), pg bit (32000), ph bit (32000)
+    pa bit varying (32000), pb bit varying (32000), pc bit varying (32000), pd bit varying (32000),
+    pe bit varying (32000), pf bit varying (32000), pg bit varying (32000), ph bit varying (32000)
   );
 
 insert into t_p_overflow
   with recursive cte (n) as (select 1 union all select n + 1 from cte where n < 2000)
-  select rownum, B'1', B'1', B'1', B'1', B'1', B'1', B'1', B'1'
+  select rownum, CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000))
   from cte a, cte b limit 2000;
 
 update statistics on t_b_small, t_p_overflow with fullscan;
