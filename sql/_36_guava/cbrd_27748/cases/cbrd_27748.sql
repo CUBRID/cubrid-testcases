@@ -99,6 +99,19 @@ end;
 select tc_lim ('2', '2') r from db_root;
 drop function tc_lim;
 
+-- FLOAT and DOUBLE bounds: the comparison brings the row number into FLOAT or DOUBLE, which rounds it above
+-- 2^24 (FLOAT) or 2^53 (DOUBLE). There the index scan, which reads the bound exactly, may keep one or two rows
+-- more or fewer than the sequential path (a known limit, CBRD-27819). Below those row numbers every path keeps
+-- the same rows, as Cases 14 and 15 check.
+
+evaluate 'Case 14: rownum <= a FLOAT 2.5 reads floor (2 rows)';
+select nvl (group_concat (i order by i), '-') r from (select i from tc_s where rownum <= cast (2.5 as float)) t;
+select nvl (group_concat (i order by i), '-') r from (select i from tc_k where i > 0 and rownum <= cast (2.5 as float) using index pk_tc_k) t;
+
+evaluate 'Case 15: rownum < a DOUBLE 2.5 reads ceil - 1 (2 rows)';
+select nvl (group_concat (i order by i), '-') r from (select i from tc_s where rownum < 2.5e0) t;
+select nvl (group_concat (i order by i), '-') r from (select i from tc_k where i > 0 and rownum < 2.5e0 using index pk_tc_k) t;
+
 drop table tc_g;
 drop table tc_ja;
 drop table tc_jb;
