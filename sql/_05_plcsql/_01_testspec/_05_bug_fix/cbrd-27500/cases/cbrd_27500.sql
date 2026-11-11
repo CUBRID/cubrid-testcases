@@ -175,6 +175,56 @@ begin
 end;
 select f_field_two (1, 2), f_field_two (2, 1), f_field_two (2, 5) from db_root;
 
+evaluate 'DML and UNION with the functions whose argument the parser copies';
+drop table if exists td;
+create table td (i int, s varchar (10));
+insert into td values (1, 'a'), (2, 'b'), (3, 'c');
+create or replace procedure p_dml_update (v int) as
+begin
+    update td set s = case v when 1 then 'x' else 'y' end where i = decode (v, 1, 1, 2);
+end;
+call p_dml_update (2);
+select * from td order by 1, 2;
+evaluate 'INSERT without a column list: the column list is also inserted in the text';
+create or replace procedure p_dml_insert_select (v int) as
+begin
+    insert into td select field (v, 1, 2), 'z' from dual;
+end;
+create or replace procedure p_dml_insert_values (v int) as
+begin
+    insert into td values (field (v, 1, 2, 3) + 10, decode (v, 1, 'p', 'q'));
+end;
+call p_dml_insert_select (2);
+call p_dml_insert_values (3);
+select * from td order by 1, 2;
+create or replace procedure p_dml_delete (v int) as
+begin
+    delete from td where field (i, v, 99) = 1 and s = 'z';
+end;
+call p_dml_delete (2);
+select * from td order by 1, 2;
+create or replace procedure p_dml_merge (v int) as
+begin
+    merge into td t using (select field (v, 1, 2) k from dual) s on (t.i = s.k)
+    when matched then update set t.s = decode (v, 2, 'm', 'n')
+    when not matched then insert values (s.k + 100, case v when 1 then 'one' else 'other' end);
+end;
+call p_dml_merge (2);
+call p_dml_merge (5);
+select * from td order by 1, 2;
+create or replace function f_union (v int) return varchar as
+    r varchar := '';
+begin
+    for x in (select field (v, 1, 2) a from dual
+              union all
+              select case v when 2 then 20 else 30 end from dual
+              order by 1) loop
+        r := r || x.a || ' ';
+    end loop;
+    return r;
+end;
+select f_union (2), f_union (1) from db_root;
+
 drop procedure p351_field;
 drop procedure p351_limit;
 drop function f_field2;
@@ -192,4 +242,10 @@ drop function f_field_having;
 drop function f_concat_ws;
 drop function f_field_derived;
 drop function f_field_two;
-drop table t351, tf;
+drop procedure p_dml_update;
+drop procedure p_dml_insert_select;
+drop procedure p_dml_insert_values;
+drop procedure p_dml_delete;
+drop procedure p_dml_merge;
+drop function f_union;
+drop table t351, tf, td;
