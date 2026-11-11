@@ -10,7 +10,8 @@
  *
  *  Each tested query is followed by a twin with no_parallel_scan in every query block, run on a serial
  *  created again, and the two blocks must match. The serial's current value is read as a row and counts
- *  the runs of the subquery. CTP masks digits, so the trace asserts the gather token only.
+ *  the runs of the subquery. Since CBRD-27736 a serial in any subquery keeps the outer scan serial, so the
+ *  queries no longer take a parallel gather; the cases still check the result and the run count.
  *
  *  Coverage:
  *    Case 1:  aggregate with ROWNUM, the reported query
