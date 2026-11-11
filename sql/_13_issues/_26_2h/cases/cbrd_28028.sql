@@ -1,8 +1,8 @@
 /**
- *  This test case verifies CBRD-28028: a simple CASE whose ELSE is a dotted name that does not exist reports the
- *  semantic error instead of killing the client
+ *  This test case verifies CBRD-28028: a simple CASE whose ELSE fails to bind (a dotted name or a function that does
+ *  not exist, a subquery that fails to bind) reports the semantic error instead of killing the client
  *
- *  When a dotted name (x.y) fails to bind, its place in the parse tree is left NULL, and the error is reported with
+ *  When name resolution fails for the ELSE, its place in the parse tree is left NULL, and the error is reported with
  *  the statement printed. Printing a simple CASE read the type of its ELSE without checking it, so the client (csql,
  *  or the CAS of a JDBC connection) died with SIGSEGV. The searched CASE and DECODE already checked it.
  *
@@ -14,6 +14,7 @@
  *    Case 3: forms that reported the error before - an undotted name, the THEN and WHEN places, a searched CASE and
  *            DECODE
  *    Case 4: a simple CASE that binds still returns its values, with and without ELSE
+ *    Case 5: other ELSE operands that fail to bind - a function that does not exist, a subquery
  */
 
 drop table if exists t_28028;
@@ -48,5 +49,10 @@ evaluate 'Case 4: a simple CASE that binds; result = 1, 2 then 1, NULL and the t
 select c0, case c1 when 'a' then 1 else c0 end as x from t_28028 order by c0;
 select c0, case c1 when 'a' then 1 end as x from t_28028 order by c0;
 select * from t_28028 order by c0;
+
+evaluate 'Case 5: other ELSE operands that fail to bind; result = semantic error';
+select case 1 when 1 then 1 else nosuchfunc(1) end from db_root;
+select case c1 when 'a' then 1 else nosuchfunc(c0) end from t_28028;
+select case 1 when 1 then 1 else (select x.* from db_root) end from db_root;
 
 drop table t_28028;
