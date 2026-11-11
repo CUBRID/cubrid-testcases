@@ -31,6 +31,7 @@ drop function test2;
 call login('dba','') on class db_user;
 
 -- CBRD-27720: CREATE OR REPLACE keeps the privileges
+-- t1 is a member of DBA and can call test1 without the privilege, so only the db_auth row is checked
 CREATE OR REPLACE FUNCTION test1() RETURN int as
 language java name 'SpTest3.typetestint0() return int';
 SELECT grantor_name, grantee_name, object_type, object_name, owner_name, auth_type, is_grantable FROM db_auth WHERE grantee_name = 'T1';

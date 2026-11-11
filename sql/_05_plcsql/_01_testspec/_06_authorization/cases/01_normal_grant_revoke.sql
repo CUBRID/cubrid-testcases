@@ -83,6 +83,7 @@ SELECT dba.sp1();
 call dba.sp2();
 call login('dba','') on class db_user;
 
+evaluate '5-2. drop after replace.';
 DROP FUNCTION sp1;
 DROP PROCEDURE sp2;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
