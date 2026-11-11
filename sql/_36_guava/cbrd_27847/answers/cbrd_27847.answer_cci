@@ -1,0 +1,316 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+2
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: INSERT ... SELECT from columns of the same domain stores the values the cast stores in the twin table     
+
+===================================================
+7
+===================================================
+id    d32    char_length(d32)    octet_length(d32)    hex(d32)    collation(d32)    d10    octet_length(d10)    hex(d10)    db16    dvb64    char_length(dl)    octet_length(dl)    md5(dl)    ds    octet_length(ds)    ddef    
+1     abc     3     3     616263     utf8_bin     abc            10     616263     00ff     0123456789abcdef     601     601     245fc3483ba872f63909f65d24b60856     abc     3     dflt     
+2     abcdefghijabcdefghijabcdefghij12     32     32     6162636465666768696A6162636465666768696A6162636465666768696A3132     utf8_bin     abcdefghij     10     6162636465666768696A     ffff     ff     601     601     798faac9e90f193c194784f0feb78187     abcdefghijabcdefghijabcdefghij12     32     dflt     
+3     abc        6     6     616263202020     utf8_bin     abc            10     616263     0000     null     6     6     d74771707ace2985a4c9d0bf338fad86     abc        6     dflt     
+4          0     0          utf8_bin                    10          1234     00     0     0     d41d8cd98f00b204e9800998ecf8427e          0     dflt     
+5     한글 문자열     6     16     ED959CEAB88020EBACB8EC9E90EC97B4     utf8_bin     한글             14     ED959CEAB880     abcd     abcdef     501     1501     c9e712dc55ab55b3f30a858e0c0cc1c7     한글 문자열     16     dflt     
+6     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     32     96     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBC     utf8_bin     가나다라마바사아자차     30     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     5a5a     5a5a5a5a5a5a5a5a     32     96     8ec42ca55e92d4188629894a7b5fb051     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     dflt     
+7     null     null     null     null     null     null     null     null     null     null     null     null     null     null     null     dflt     
+
+===================================================
+7
+===================================================
+count(*)    
+7     
+
+===================================================
+count(*)    
+6     
+
+===================================================
+    
+Case 2: UPDATE from columns of the same domain, of a joined table, and from expressions     
+
+===================================================
+7
+===================================================
+7
+===================================================
+7
+===================================================
+id    d32    octet_length(d32)    hex(d32)    d10    hex(d10)    db16    dvb64    char_length(dl)    md5(dl)    ds    ddef    
+1     abc     3     616263     abc            616263     00ff     0123456789abcdef     601     245fc3483ba872f63909f65d24b60856     abc     dflt     
+2     abcdefghijabcdefghijabcdefghij12     32     6162636465666768696A6162636465666768696A6162636465666768696A3132     abcdefghij     6162636465666768696A     ffff     ff     601     798faac9e90f193c194784f0feb78187     abcdefghijabcdefghijabcdefghij12     dflt     
+3     abc        6     616263202020     abc            616263     0000     null     6     d74771707ace2985a4c9d0bf338fad86     abc        dflt     
+4          0                              1234     00     0     d41d8cd98f00b204e9800998ecf8427e          dflt     
+5     한글 문자열     16     ED959CEAB88020EBACB8EC9E90EC97B4     한글             ED959CEAB880     abcd     abcdef     501     c9e712dc55ab55b3f30a858e0c0cc1c7     한글 문자열     dflt     
+6     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBC     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     5a5a     5a5a5a5a5a5a5a5a     32     8ec42ca55e92d4188629894a7b5fb051     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     dflt     
+7     null     null     null     null     null     null     null     null     null     null     dflt     
+
+===================================================
+6
+===================================================
+7
+===================================================
+id    d32    octet_length(d32)    hex(d32)    d10    hex(d10)    dvb64    char_length(dl)    md5(dl)    ds    
+1     ABC     3     414243     abc            616263     0123456789abcdef     300     4718ed95150a65426f23841cac8528f6     abc     
+2     ABCDEFGHIJABCDEFGHIJABCDEFGHIJ12     32     4142434445464748494A4142434445464748494A4142434445464748494A3132     abcdefghij     6162636465666768696A     ff     300     4718ed95150a65426f23841cac8528f6     abcdefghijabcdefghijabcdefghij12     
+3     ABC        6     414243202020     abc            616263     null     6     d74771707ace2985a4c9d0bf338fad86     abc        
+4          0                              00     null     null          
+5     한글 문자열     16     ED959CEAB88020EBACB8EC9E90EC97B4     한글             ED959CEAB880     abcdef     300     e03e0e871abef744d0667204c43ef4e4     한글 문자열     
+6     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8ECB9B4ED8380ED8C8CED9598EAB080EB8298EB8BA4EB9DBC     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     5a5a5a5a5a5a5a5a     32     8ec42ca55e92d4188629894a7b5fb051     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     
+7     null     null     null     null     null     null     null     null     null     
+
+===================================================
+    
+Case 3: MERGE, INSERT ... ON DUPLICATE KEY UPDATE and REPLACE     
+
+===================================================
+4
+===================================================
+7
+===================================================
+id    d32    octet_length(d32)    d10    hex(d10)    dvb64    char_length(dl)    md5(dl)    ddef    
+1     abc     3     abc            616263     0123456789abcdef     300     4718ed95150a65426f23841cac8528f6     dflt     
+2     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     ff     300     4718ed95150a65426f23841cac8528f6     dflt     
+3     abc        6     abc            616263     null     6     d74771707ace2985a4c9d0bf338fad86     dflt     
+4          0                         00     0     d41d8cd98f00b204e9800998ecf8427e     dflt     
+5     한글 문자열     16     한글             ED959CEAB880     abcdef     501     c9e712dc55ab55b3f30a858e0c0cc1c7     dflt     
+6     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     5a5a5a5a5a5a5a5a     32     8ec42ca55e92d4188629894a7b5fb051     dflt     
+7     null     null     null     null     null     null     null     dflt     
+
+===================================================
+14
+===================================================
+7
+===================================================
+id    d32    octet_length(d32)    d10    hex(d10)    ddef    
+1     odku     4     x              78     dflt     
+2     odku     4     x              78     dflt     
+3     odku     4     x              78     dflt     
+4     odku     4     x              78     dflt     
+5     odku     4     x              78     dflt     
+6     odku     4     x              78     dflt     
+7     odku     4     x              78     dflt     
+11     abc     3     abc            616263     dflt     
+12     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     dflt     
+13     abc        6     abc            616263     dflt     
+14          0                         dflt     
+15     한글 문자열     16     한글             ED959CEAB880     dflt     
+16     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     dflt     
+17     null     null     null     null     dflt     
+
+===================================================
+14
+===================================================
+id    d32    octet_length(d32)    ds    
+1     abc     3     abc     
+2     abcdefghijabcdefghijabcdefghij12     32     abcdefghijabcdefghijabcdefghij12     
+3     abc        6     abc        
+4     null     null     null     
+5     null     null     null     
+6     null     null     null     
+7     null     null     null     
+11     abc     3     null     
+12     abcdefghijabcdefghijabcdefghij12     32     null     
+13     abc        6     null     
+14          0     null     
+15     한글 문자열     16     null     
+16     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     null     
+17     null     null     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+6
+===================================================
+k    c1    octet_length(c1)    c2    
+1     x     1     x     
+2     y     1     y     
+3     가나     6     가나     
+
+===================================================
+14
+===================================================
+id    d32    octet_length(d32)    d10    hex(d10)    db16    dvb64    char_length(dl)    md5(dl)    ds    ddef    
+1     abc     3     abc            616263     00ff     null     601     245fc3483ba872f63909f65d24b60856     null     dflt     
+2     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     ffff     null     601     798faac9e90f193c194784f0feb78187     null     dflt     
+3     abc        6     abc            616263     0000     null     6     d74771707ace2985a4c9d0bf338fad86     null     dflt     
+4          0                         1234     null     0     d41d8cd98f00b204e9800998ecf8427e     null     dflt     
+5     한글 문자열     16     한글             ED959CEAB880     abcd     null     501     c9e712dc55ab55b3f30a858e0c0cc1c7     null     dflt     
+6     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     5a5a     null     32     8ec42ca55e92d4188629894a7b5fb051     null     dflt     
+7     null     null     null     null     null     null     null     null     null     dflt     
+11     abc     3     abc            616263     null     null     null     null     null     dflt     
+12     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     null     null     null     null     null     dflt     
+13     abc        6     abc            616263     null     null     null     null     null     dflt     
+14          0                         null     null     null     null     null     dflt     
+15     한글 문자열     16     한글             ED959CEAB880     null     null     null     null     null     dflt     
+16     가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라     96     가나다라마바사아자차     EAB080EB8298EB8BA4EB9DBCEBA788EBB094EC82ACEC9584EC9E90ECB0A8     null     null     null     null     null     dflt     
+17     null     null     null     null     null     null     null     null     null     dflt     
+
+===================================================
+    
+Case 4: values of another precision, collation, codeset or type, defaults, literals and host variables are cast as before     
+
+===================================================
+14
+===================================================
+6
+===================================================
+id    d32    octet_length(d32)    hex(d32)    collation(d32)    d10    octet_length(d10)    hex(d10)    dvb64    ds    collation(ds)    ddef    
+1     abc     3     616263     utf8_bin     abc            10     616263     00ff     abc     utf8_bin     dflt     
+2     abcdefghijabcdefghijabcdefghij12     32     6162636465666768696A6162636465666768696A6162636465666768696A3132     utf8_bin     abcde          10     6162636465     ffff     abcdefghijabcdefghijabcdefghij12     utf8_bin     dflt     
+3     abc        6     616263202020     utf8_bin     a              10     61     0000     abc        utf8_bin     dflt     
+4          0          utf8_bin                    10          1234          utf8_bin     dflt     
+5     한글 문자열     16     ED959CEAB88020EBACB8EC9E90EC97B4     utf8_bin     한              12     ED959C     abcd     한글 문자열     utf8_bin     dflt     
+7     null     null     null     null     null     null     null     null     null     null     dflt     
+
+===================================================
+6
+===================================================
+id    d32    hex(d32)    collation(d32)    
+1     Abc     416263     utf8_bin     
+2     ABCDEFGHIJ     4142434445464748494A     utf8_bin     
+3     abc        616263202020     utf8_bin     
+4               utf8_bin     
+5     한글     ED959CEAB880     utf8_bin     
+7     null     null     null     
+
+===================================================
+6
+===================================================
+id    d32    hex(d32)    charset(d32)    collation(d32)    
+1     abc     616263     utf8     utf8_bin     
+2     abcdefghijabcdefghijabcdefghij12     6162636465666768696A6162636465666768696A6162636465666768696A3132     utf8     utf8_bin     
+3     abc        616263202020     utf8     utf8_bin     
+4               utf8     utf8_bin     
+5     éte     C3A97465     utf8     utf8_bin     
+7     null     null     null     null     
+
+===================================================
+4
+===================================================
+id    d10    octet_length(d10)    hex(d10)    
+1     abc            10     616263     
+2     abcde          10     6162636465     
+3     abc            10     616263     
+4                    10          
+5     한글 문자열         20     ED959CEAB88020EBACB8EC9E90EC97B4     
+7     null     null     null     
+
+===================================================
+3
+===================================================
+id    db16    dvb64    
+1     null     00ff     
+2     ff00     ffff     
+3     0000     0000     
+4     0000     1234     
+5     null     abcd     
+7     null     null     
+
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+id    d32    octet_length(d32)    d10    hex(d10)    dvb64    ddef    octet_length(ddef)    
+100     null     null     null     null     null     dflt     4     
+101     literal     7     null     null     null     dflt     4     
+102     가나다     9     ab             6162     null     dflt     4     
+103     bound     5     xy             7879     0f0f     dflt     4     
+104     abcdefghijabcdefghijabcdefghij12     32     abcdefghij     6162636465666768696A     null     dflt     4     
+
+===================================================
+    
+Case 5: values longer than the column fail with Error:-427 and store nothing     
+
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+count(*)    
+0     
+
+===================================================
+id    d32    octet_length(d32)    
+2     abcdefghijabcdefghijabcdefghij12     32     
+
+===================================================
+    
+Case 6: CHAR of the euckr and binary codesets keeps the bytes of the cast     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+id    octet_length(ce)    ascii( substr(ce, 3, 1))    octet_length(cb)    ascii( substr(cb, 3, 1))    octet_length(c3)    octet_length(ve)    
+1     8     161     5     0     4     2     
+2     5     99     5     99     3     5     
+3     10     161     5     0     6     0     
+4     null     null     null     null     null     null     
+
+===================================================
+4
+===================================================
+id    octet_length(ce)    ascii( substr(ce, 4, 1))    octet_length(cb)    ascii( substr(cb, 3, 1))    
+1     8     161     5     0     
+2     7     161     5     99     
+3     10     161     5     0     
+4     null     null     null     null     
+
+===================================================
+0
