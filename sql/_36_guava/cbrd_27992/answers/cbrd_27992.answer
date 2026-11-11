@@ -107,7 +107,7 @@ nl-join (left outer join)
                cost:  ? card ?
     inner: temp
                order: UNORDERED
-               subplan: hash-join (inner join)
+               subplan: nl-join (inner join)
                             edge:  term[?]
                             outer: sscan
                                        class: a node[?]
@@ -115,12 +115,59 @@ nl-join (left outer join)
                                        cost:  ? card ?
                             inner: sscan
                                        class: b node[?]
+                                       sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
+select /*+ USE_NL(a, b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
 select /*+ USE_NL(c) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
 ===================================================
 count(*)    count(b.id)    count(c.id)    
 20000     396     20000     
@@ -236,18 +283,43 @@ count(*)    sum(a.id)    sum(b.id)    count(c.id)
 Query plan:
 hash-join (right outer join)
     edge:  term[?]
-    outer: nl-join (inner join)
+    outer: hash-join (inner join)
                edge:  term[?]
                outer: sscan
                           class: a node[?]
                           cost:  ? card ?
                inner: sscan
                           class: b node[?]
-                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
                class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
