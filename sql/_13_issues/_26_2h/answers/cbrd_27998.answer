@@ -1,0 +1,96 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1: VARCHAR IN a CHAR column of a UNION ALL view becomes a join with a DISTINCT derived table     
+
+===================================================
+c1    
+a     
+
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.c? from t? v?
+Query plan:
+sscan
+    class: v? node[?]
+    cost:  ? card ?
+Query stmt:
+select v?.c? from t? v?
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: v? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct  cast(v?.c? as varchar(?)) from (select v?.c? from t? v? union all select v?.c? from t? v?) v? (c?))
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t?, (select distinct  cast(v?.c? as varchar(?)) from (select v?.c? from t? v? union all select v?.c? from t? v?) v? (c?)) av? (av_?) where t?.c?=av?.av_? order by ?
+===================================================
+    
+Case 2: VARCHAR > SOME a CHAR column becomes a join with a derived table of the MIN     
+
+===================================================
+c1    
+b     
+
+Query plan:
+sscan
+    class: t? node[?]
+    cost:  ? card ?
+Query stmt:
+(select distinct min( cast(t?.c? as varchar(?))) from t? t?)
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: av? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.c? from t? t?, (select distinct min( cast(t?.c? as varchar(?))) from t? t?) av? (av_?) where (t?.c?>av?.av_?) order by ?
+===================================================
+0
+===================================================
+0
