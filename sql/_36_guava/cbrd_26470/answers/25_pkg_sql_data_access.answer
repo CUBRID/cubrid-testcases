@@ -1,0 +1,168 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: spec only: pm NO SQL. spec then body: pm MODIFIES SQL DATA, pr READS SQL DATA, fn NO SQL     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     NO SQL     
+pm     NO SQL     
+pr     NO SQL     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     NO SQL     
+pm     MODIFIES SQL DATA     
+pr     READS SQL DATA     
+
+
+===================================================
+specific_name    sql_data_access    
+pk25.fn     NO SQL     
+pk25.pm     MODIFIES SQL DATA     
+pk25.pr     READS SQL DATA     
+
+
+===================================================
+    
+Case 2: replaced body with SELECT only: all READS SQL DATA. replaced body without SQL: all NO SQL     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     READS SQL DATA     
+pm     READS SQL DATA     
+pr     READS SQL DATA     
+
+
+===================================================
+specific_name    sql_data_access    
+pk25.fn     READS SQL DATA     
+pk25.pm     READS SQL DATA     
+pk25.pr     READS SQL DATA     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     NO SQL     
+pm     NO SQL     
+pr     NO SQL     
+
+
+===================================================
+specific_name    sql_data_access    
+pk25.fn     NO SQL     
+pk25.pm     NO SQL     
+pk25.pr     NO SQL     
+
+
+===================================================
+    
+Case 3: body with INSERT again (pm MODIFIES SQL DATA), then DROP PACKAGE BODY: all NO SQL     
+
+
+===================================================
+0
+
+===================================================
+sql_data_access    
+MODIFIES SQL DATA     
+
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     NO SQL     
+pm     NO SQL     
+pr     NO SQL     
+
+
+===================================================
+specific_name    sql_data_access    
+pk25.fn     NO SQL     
+pk25.pm     NO SQL     
+pk25.pr     NO SQL     
+
+
+===================================================
+    
+Case 4: body then spec: pm MODIFIES SQL DATA, pr READS SQL DATA, fn NO SQL     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+sp_name    sql_data_access    
+fn     NO SQL     
+pm     MODIFIES SQL DATA     
+pr     READS SQL DATA     
+
+
+===================================================
+specific_name    sql_data_access    
+pk25b.fn     NO SQL     
+pk25b.pm     MODIFIES SQL DATA     
+pk25b.pr     READS SQL DATA     
+
+
+===================================================
+    
+Case 5: pk25b.pm runs through a wrapper and inserts one row     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

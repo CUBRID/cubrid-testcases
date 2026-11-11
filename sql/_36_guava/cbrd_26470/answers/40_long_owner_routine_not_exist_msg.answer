@@ -1,0 +1,57 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: PL/CSQL function call with a too long owner -> the name is in the message     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored procedure/function 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.pk40.g' does not exist.
+
+===================================================
+    
+Case 2: PL/CSQL procedure call with a too long owner -> the name is in the message     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored procedure/function 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.pk40.p' does not exist.
+
+===================================================
+    
+Case 3: SQL CALL with a too long owner -> the name is in the message     
+
+
+===================================================
+Error:-894
+Stored procedure/function 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.p40' does not exist.
+
+===================================================
+    
+Case 4: missing package function (regression) -> dba.pk40.nosuch does not exist     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored procedure/function 'dba.pk40.nosuch' does not exist.
+
+===================================================
+    
+Case 5: one-dot name with a long first part (regression) -> neither stored function nor package function     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Neither stored function 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.g40' nor package function 'dba.uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.g40' exists.
+
+===================================================
+0
+
