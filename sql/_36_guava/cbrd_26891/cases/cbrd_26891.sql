@@ -203,8 +203,8 @@ select attr_name, octet_length(attr_name) from db_attribute where class_name = '
 drop table if exists tbl;
 create table tbl ([c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c___x] int);
 
--- the 255-byte reference starts with the 254-byte column name, which a build
--- without the fix silently cut to 254 bytes and resolved to that column
+-- the 255-byte reference starts with the 254-byte column name; a build
+-- without the fix refuses it with Error:-494 instead of Error:-493
 evaluate 'Case 25: qualified column reference 254 bytes succeeds, 255 bytes - should error';
 drop table if exists tbl;
 create table tbl (c_______10c_______20c_______30c_______40c_______50c_______60c_______70c_______80c_______90c______100c______110c______120c______130c______140c______150c______160c______170c______180c______190c______200c______210c______220c______230c______240c______250c__z int);
