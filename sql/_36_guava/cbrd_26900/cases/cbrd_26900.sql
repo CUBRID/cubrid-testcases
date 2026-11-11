@@ -653,7 +653,7 @@ drop table if exists ta, tb;
 
 evaluate 'Case 23: ROWNUM and INST_NUM() conditions, which the parent scan evaluates';
 
--- the pairs of ca 1 to 4 fail a.cb < b.cb and those of ca 5 to 8 pass, so a cap of 2 or 3 rows counts 2 or 3 only if the cap counts the pairs that passed it
+-- ca 1 to 4 fail a.cb < b.cb and ca 5 to 8 pass it, so a count of 2 or 3 means that the cap counted only the pairs that passed
 drop table if exists ta, tb;
 create table ta (ca int, cb int);
 create table tb (ca int, cb int);
