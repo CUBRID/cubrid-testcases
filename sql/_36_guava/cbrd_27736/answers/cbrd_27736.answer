@@ -326,7 +326,7 @@ count(*)
 
 ===================================================
     
-Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; evaluated once, parallel scan     
+Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan     
 
 ===================================================
 0
@@ -358,7 +358,6 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -386,7 +385,7 @@ serial_current_value(s_cnt)    @v
 
 ===================================================
     
-Case 9: an uncorrelated subquery running a correlated assignment; its own scan stays serial     
+Case 9: an uncorrelated subquery running a correlated assignment; its own scan and the outer scan stay serial     
 
 ===================================================
 0
@@ -438,7 +437,7 @@ count(*)
 
 ===================================================
     
-Case 10: correlated subqueries that only read a session variable and a serial; parallel scan     
+Case 10: correlated subqueries that only read a session variable and a serial; serial scan     
 
 ===================================================
 0
@@ -470,7 +469,6 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

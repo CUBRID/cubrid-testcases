@@ -2,10 +2,8 @@
 -- aggregate argument, HAVING) or in a subquery of ORDER BY let the outer heap scan run in parallel. Every
 -- parallel worker ran the subquery and updated the session's variable list at the same time, and the server
 -- crashed in update_session_variable. A serial NEXT_VALUE there was called by the workers concurrently too.
--- The scan now stays serial when a correlated subquery writes a session variable or a serial. One that only
--- reads them keeps the parallel scan, unless the main block writes them while the workers scan (an aggregate
--- argument evaluated row by row). An uncorrelated scalar subquery is evaluated once before the scan opens and
--- the workers only read its value, so it keeps the parallel scan even with an assignment or NEXT_VALUE.
+-- The scan now stays serial when any of its subqueries, correlated or not, reads or writes a session variable
+-- or a serial, as it does when the query block itself reads or writes them.
 --
 -- ta holds 4000 rows of about 70 heap pages, twice the 32 pages test_mode needs for a parallel heap scan.
 -- The subqueries correlate on the unique ta.id, so no subquery result is reused and each one runs once per
@@ -84,7 +82,7 @@ select /*+ recompile */ count (*) from ta t where (select count (*) from tb x wh
 show trace;
 select /*+ recompile no_parallel_scan */ count (*) from ta t where (select count (*) from tb x where x.id = mod (t.id, 100) + 1) > 0;
 
-evaluate 'Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; evaluated once, parallel scan';
+evaluate 'Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan';
 drop serial s_cnt;
 create serial s_cnt;
 set @v = 0;
@@ -97,7 +95,7 @@ set @v = 0;
 select /*+ recompile no_parallel_scan */ count (*) from ta t where t.id > (select s_cnt.next_value from db_root) and t.c > (select @v := @v + 1 from db_root);
 select s_cnt.current_value, @v;
 
-evaluate 'Case 9: an uncorrelated subquery running a correlated assignment; its own scan stays serial';
+evaluate 'Case 9: an uncorrelated subquery running a correlated assignment; its own scan and the outer scan stay serial';
 set @v = 0;
 select /*+ recompile */ count (*) from ta s where s.id > (select max ((select @v := @v + 1 + x.id * 0 from db_root)) from ta x) - 100;
 show trace;
@@ -106,7 +104,7 @@ set @v = 0;
 select /*+ recompile no_parallel_scan */ count (*) from ta s where s.id > (select max ((select @v := @v + 1 + x.id * 0 from db_root)) from ta x) - 100;
 select @v;
 
-evaluate 'Case 10: correlated subqueries that only read a session variable and a serial; parallel scan';
+evaluate 'Case 10: correlated subqueries that only read a session variable and a serial; serial scan';
 drop serial s_cnt;
 create serial s_cnt;
 set @v = 5;
