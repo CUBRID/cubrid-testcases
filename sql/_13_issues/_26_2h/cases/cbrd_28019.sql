@@ -30,9 +30,20 @@
  *    Case 14: both the set operation and the operand left have a WITH clause - in a query, in CREATE TABLE ... AS
  *             and in CREATE VIEW, typed by the operands
  *    Case 15: the operand left has an INTO and a LIMIT - the statement folds to it and assigns the row
+ *    Case 16: an operand is a set operation whose own operands are all empty - it folds into an empty
+ *             operand, not into a value, under UNION, EXCEPT, INTERSECT and WITH
+ *    Case 17: an operand whose WHERE is the literal FALSE
+ *    Case 18: the operand left has ORDERBY_NUM () or GROUPBY_NUM () in its select list
+ *    Case 19: an operand has FOR UPDATE - the statement folds as before
+ *    Case 20: INTERSECT with one operand and EXCEPT with the left operand that turn empty at execution
+ *             return no row
+ *    Case 21: the operand left orders by a column outside its select list, in a derived table and a CTE, and
+ *             the set operation itself orders by a column outside its select list - that one folds as before
+ *    Case 22: a nested set operation whose operands are all empty by the literal FALSE, in a derived table
+ *             and a CTE, which are typed while their names are resolved
  */
 drop view if exists v_28019_w;
-drop table if exists t, t_dup, t_28019_w;
+drop table if exists t, t_dup, t_ob, t_28019_w;
 create table t (c0 varchar, c1 double);
 insert into t values ('', 1), ('a', 2), ('3', 3);
 create table t_dup (a int);
@@ -98,13 +109,17 @@ select a from t_dup where a < -1000 union all select a from t_dup order by 1;
 select a from t_dup except all select a from t_dup where 1 = 0 order by 1;
 select a from t_dup except all select a from t_dup where a < -1000 order by 1;
 
-evaluate 'Case 10: the operand left has ORDER BY with or without LIMIT - the duplicates are removed after its LIMIT; result = 1, 2 and 1 and 1, 2, 3';
+evaluate 'Case 10: the operand left has ORDER BY with or without LIMIT - the duplicates are removed after its LIMIT; result = 1, 2 and 1 and 1, 2, 3 and 1, 2 named x';
 (select a from t_dup order by a limit 3) union select a from t_dup where 1 = 0 order by 1;
 (select a from t_dup order by a limit 3) union select a from t_dup where a < -1000 order by 1;
 (select a from t_dup order by a limit 3) union select a from t_dup where 1 = 0 order by 1 limit 1;
 (select a from t_dup order by a limit 3) union select a from t_dup where a < -1000 order by 1 limit 1;
 (select a from t_dup order by a desc) union select a from t_dup where 1 = 0 order by 1;
 (select a from t_dup order by a desc) union select a from t_dup where a < -1000 order by 1;
+-- the set operation kept for its DISTINCT is typed as one: its column takes the name of the first operand and the
+-- type both operands share, as when its empty operand is not constant
+select 0.5 x from t_dup where 1 = 0 union (select a y from t_dup order by a limit 3) order by 1;
+select 0.5 x from t_dup where a < -1000 union (select a y from t_dup order by a limit 3) order by 1;
 
 evaluate 'Case 11: the operand left is a UNION ALL or an EXCEPT ALL; result = 1, 2, 3 and 1, 3';
 (select a from t_dup union all select a from t_dup where a > 1) union select a from t_dup where 1 = 0 order by 1;
@@ -149,5 +164,72 @@ evaluate 'Case 15: the operand left has an INTO and a LIMIT - the statement fold
 select a into v_28019 from t_dup where a = 2 limit 1 union (select a from t_dup where 1 = 0);
 select v_28019;
 
+-- the nested set operation used to be folded into a value before its parent marked it, and the parent kept
+-- for its DISTINCT was left with that value as an operand
+evaluate 'Case 16: an operand is a set operation whose own operands are all empty; result = 1, 2 and 1, 2, 3 and 1, 2 and 1, 2, 3 and 1, 2, 3';
+(select a from t_dup where 1 = 0 union all select a from t_dup where 1 = 0) union (select a from t_dup order by a limit 3) order by 1;
+(select a from t_dup where a < -1000 union all select a from t_dup where a < -1000) union (select a from t_dup order by a limit 3) order by 1;
+select a from t_dup union all select a from t_dup union (select a from t_dup where 1 = 0 union all select a from t_dup where 1 = 0) order by 1;
+select a from t_dup union all select a from t_dup union (select a from t_dup where a < -1000 union all select a from t_dup where a < -1000) order by 1;
+(select a from t_dup where 1 = 0 intersect select a from t_dup) union (select a from t_dup order by a limit 3) order by 1;
+(select a from t_dup where a < -1000 intersect select a from t_dup) union (select a from t_dup order by a limit 3) order by 1;
+select a from t_dup union all select a from t_dup except (select a from t_dup where 1 = 0 union all select a from t_dup where 1 = 0) order by 1;
+select a from t_dup union all select a from t_dup except (select a from t_dup where a < -1000 union all select a from t_dup where a < -1000) order by 1;
+with c as (select 1 x) (select x from c where 1 = 0 union all select x from c where 1 = 0) union (with d as (select a y from t_dup) select y from d) order by 1;
+with c as (select 1 x) (select x from c where x < -1000 union all select x from c where x < -1000) union (with d as (select a y from t_dup) select y from d) order by 1;
+
+-- the literal FALSE is false before typing, so the operand used to be folded into a value the same way
+evaluate 'Case 17: an operand whose WHERE is the literal FALSE; result = 1, 2 each';
+(select a from t_dup where false) union (select a from t_dup order by a limit 3) order by 1;
+(select a from t_dup order by a limit 3) union (select a from t_dup where false) order by 1;
+(select a from t_dup where a < -1000) union (select a from t_dup order by a limit 3) order by 1;
+
+-- ORDERBY_NUM () numbers the rows after its block removes duplicates, so the operand does not take DISTINCT
+evaluate 'Case 18: the operand left has ORDERBY_NUM () or GROUPBY_NUM () in its select list; result = 5 rows and 3 rows';
+select a, 0 from t_dup where 1 = 0 union (select a, orderby_num () from t_dup order by a) order by 1, 2;
+select a, 0 from t_dup where a < -1000 union (select a, orderby_num () from t_dup order by a) order by 1, 2;
+select a, 0 from t_dup where 1 = 0 union (select a, groupby_num () from t_dup group by a) order by 1, 2;
+select a, 0 from t_dup where a < -1000 union (select a, groupby_num () from t_dup group by a) order by 1, 2;
+
+-- FOR UPDATE refuses DISTINCT, and a set operation refuses FOR UPDATE in its operands, so the statement folds as
+-- before, also when the operand with FOR UPDATE is the empty one
+evaluate 'Case 19: an operand has FOR UPDATE - the statement folds as before; result = 1, 1, 2, 3, 3 and 1, 1, 2';
+select a from t_dup where 1 = 0 union (select a from t_dup order by a for update);
+(select a from t_dup where 1 = 0 for update) union (select a from t_dup order by a limit 3);
+
+-- like Case 1, the values at execution empty the result of the set operation: INTERSECT with one operand empty
+-- and EXCEPT with the left operand empty
+evaluate 'Case 20: INTERSECT with one operand and EXCEPT with the left operand that turn empty at execution return no row';
+select t.c1 from t
+intersect
+select t.c1 from t
+ where ((case t.c0 when 'x' then t.c0 when t.c0 then t.c0 when t.c0 then t.c0 else null end) >= some (select t.c0 from t where t.c1 = cast(t.c0 as bigint)))
+   and (t.c0 != t.c0 and not (t.c0 <> ''));
+select t.c1 from t
+ where ((case t.c0 when 'x' then t.c0 when t.c0 then t.c0 when t.c0 then t.c0 else null end) >= some (select t.c0 from t where t.c1 = cast(t.c0 as bigint)))
+   and (t.c0 != t.c0 and not (t.c0 <> ''))
+except
+select t.c1 from t;
+
+-- the names of a derived table and of a CTE are resolved, and its set operation folded, before the ORDER BY of
+-- an operand is matched to its select list, where a key outside it becomes a hidden column
+create table t_ob (a int, b int);
+insert into t_ob values (1, 30), (1, 20), (2, 10);
+evaluate 'Case 21: the operand left orders by a column outside its select list; result = 1, 2 each, then 2, 1, 1';
+select * from ((select a from t_ob order by b) union (select a from t_ob where false)) d order by 1;
+select * from ((select a from t_ob order by b) union (select a from t_ob where a < -1000)) d order by 1;
+with w as ((select a from t_ob order by b) union (select a from t_ob where false)) select * from w order by 1;
+-- a set operation that is not folded refuses this key, and folded the statement keeps its rows as before
+select a from t_ob union select a from t_ob where 1 = 0 order by b;
+
+-- the names of a derived table and of a CTE are resolved, and their set operations typed, before the semantic
+-- check: the typing that skips folding still folds a set operation, and marks its operands first
+evaluate 'Case 22: a nested set operation empty by the literal FALSE in a derived table and a CTE; result = 1, 2 and 1, 2 and 1, 2, 3 and 1, 2, 3 and 1, 2';
+select a from ((select a from t_dup where false union all select a from t_dup where false) union (select a from t_dup order by a limit 3)) dt order by 1;
+select a from ((select a from t_dup where a < -1000 union all select a from t_dup where a < -1000) union (select a from t_dup order by a limit 3)) dt order by 1;
+select a from (select a from t_dup union all select a from t_dup union (select a from t_dup where false union all select a from t_dup where false)) dt order by 1;
+select a from (select a from t_dup union all select a from t_dup union (select a from t_dup where a < -1000 union all select a from t_dup where a < -1000)) dt order by 1;
+with c as ((select a from t_dup where false union all select a from t_dup where false) union (select a from t_dup order by a limit 3)) select a from c order by 1;
+
 drop variable v_28019;
-drop table t, t_dup;
+drop table t, t_dup, t_ob;
