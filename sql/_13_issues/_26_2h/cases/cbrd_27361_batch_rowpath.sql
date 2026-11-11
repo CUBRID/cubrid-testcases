@@ -10,7 +10,8 @@
  *    Case 1: 200 small rows, before any record leaves its page
  *    Case 2: ids 7, 8 and 150 grown to 12,800 and 25,600 bytes (hard to compress): the sequential scan, the
  *            serial scan and the index scan agree on COUNT, SUM(v), SUM(id) and SUM(LENGTH(s))
- *    Case 3: a filter on the batch (v > 0, id IN (...)) and the same filter on the index
+ *    Case 3: a filter on the batch (v > 0, id IN (...)) and the same filter on the index (USING INDEX NONE keeps
+ *            the batch side on the heap scan)
  *    Case 4: one grown row deleted and one updated in place, the scans agree again
  */
 
@@ -40,17 +41,17 @@ select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp;
 select /*+ USE_IDX */ count(*), sum(v), sum(id) from t_rp where id > 0;
 
 evaluate 'Case 3: filters on the batch and on the index';
-select count(*), sum(v), sum(id) from t_rp where v > 0;
-select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where v > 0;
+select count(*), sum(v), sum(id) from t_rp where v > 0 using index none;
+select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where v > 0 using index none;
 select /*+ USE_IDX */ count(*), sum(v), sum(id) from t_rp where v > 0;
-select count(*), sum(v), sum(id) from t_rp where v > 5;
-select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where v > 5;
+select count(*), sum(v), sum(id) from t_rp where v > 5 using index none;
+select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where v > 5 using index none;
 select /*+ USE_IDX */ count(*), sum(v), sum(id) from t_rp where v > 5;
-select count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id in (6, 7, 8, 9, 149, 150, 151);
-select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id in (6, 7, 8, 9, 149, 150, 151);
+select count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id in (6, 7, 8, 9, 149, 150, 151) using index none;
+select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id in (6, 7, 8, 9, 149, 150, 151) using index none;
 select /*+ USE_IDX */ count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id in (6, 7, 8, 9, 149, 150, 151);
-select count(*), sum(v), sum(id) from t_rp where id in (7, 8, 150) and v > 0;
-select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where id in (7, 8, 150) and v > 0;
+select count(*), sum(v), sum(id) from t_rp where id in (7, 8, 150) and v > 0 using index none;
+select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id) from t_rp where id in (7, 8, 150) and v > 0 using index none;
 
 evaluate 'Case 4: a grown row deleted, another updated in place';
 delete from t_rp where id = 8;
@@ -58,7 +59,7 @@ update t_rp set v = v + 100 where id = 150;
 select count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp;
 select /*+ NO_PARALLEL_SCAN */ count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp;
 select /*+ USE_IDX */ count(*), sum(v), sum(id), sum(length(s)) as slen from t_rp where id > 0;
-select count(*), sum(v), sum(id) from t_rp where v > 100;
+select count(*), sum(v), sum(id) from t_rp where v > 100 using index none;
 select /*+ USE_IDX */ count(*), sum(v), sum(id) from t_rp where v > 100;
 set system parameters 'group_concat_max_len=default';
 
