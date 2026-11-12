@@ -20,12 +20,13 @@
 0
 ===================================================
     
-Case 1: a view column of undetermined length shows the maximum VARCHAR length     
+Case 1: a view column of undetermined length shows the maximum VARCHAR or BIT VARYING length     
 
 ===================================================
 column_name    character_maximum_length    character_octet_length>0    column_type    
 c_concat     1073741823     1     VARCHAR(1073741823)     
 c_null     1073741823     1     VARCHAR(1073741823)     
+c_nvl_bit     1073741823     null     BIT VARYING(1073741823)     
 
 ===================================================
 0
@@ -63,12 +64,12 @@ i_sub_prefix     c     3
 0
 ===================================================
     
-Case 4: column_key is PRI for the instance column a and empty for the CLASS ATTRIBUTE a     
+Case 4: column_key is PRI for the instance column a and empty for the CLASS ATTRIBUTE a, and only the CLASS ATTRIBUTE a shows class_attribute in extra     
 
 ===================================================
-column_name    is_nullable    column_key    
-a     NO     PRI     
-a     YES          
+column_name    is_nullable    column_key    extra    
+a     NO     PRI     null     
+a     YES          class_attribute     
 
 ===================================================
     
@@ -106,13 +107,17 @@ utf8     utf8_bin     utf8     utf8_bin
 ===================================================
 0
 ===================================================
+0
+===================================================
     
-Case 8: partition_expression is the partition_expr that db_partition shows     
+Case 8: partition_expression is the partition_expr that db_partition shows, also for a key with from inside it     
 
 ===================================================
-partition_name    partition_expression    partition_expr    
-p0     [id]     [id]     
-p1     [id]     [id]     
+table_name    partition_name    partition_expression    partition_expr    
+t_part_expr     p0     extract(year  from [d])     extract(year  from [d])     
+t_part_expr     p1     extract(year  from [d])     extract(year  from [d])     
+t_part_hash     p0     [id]     [id]     
+t_part_hash     p1     [id]     [id]     
 
 ===================================================
 0
@@ -157,12 +162,14 @@ s_cache2     YES
 1000
 ===================================================
     
-Case 12: table_rows and avg_row_length of a partitioned table equal those of the same rows without partitions     
+Case 12: table_rows of a partitioned table equals that of the same rows without partitions, and each partition shows its own row count     
 
 ===================================================
-table_name    table_rows    avg_row_length    
-t_rows_heap     1000     24     
-t_rows_part     1000     24     
+table_name    table_rows    
+t_rows_heap     1000     
+t_rows_part     1000     
+t_rows_part__p__p0     491     
+t_rows_part__p__p1     509     
 
 ===================================================
 0
@@ -210,6 +217,36 @@ numeric (38, 0)     2
 
 ===================================================
 0
+===================================================
+    
+Case 16: data_length and data_free of a partitioned table are at least the sums of estimated_data_length and estimated_data_free over its partitions     
+
+===================================================
+data_length>= estimated_data_length('t_rows_part__p__p0')+ estimated_data_length('t_rows_part__p__p1')    data_free>= estimated_data_free('t_rows_part__p__p0')+ estimated_data_free('t_rows_part__p__p1')    
+1     1     
+
+===================================================
+0
+===================================================
+    
+Case 17: estimated_table_rows and estimated_avg_row_length of an empty partitioned table are 0     
+
+===================================================
+estimated_table_rows('t_empty_part')    estimated_avg_row_length('t_empty_part')    
+0     0     
+
+===================================================
+0
+===================================================
+3
+===================================================
+    
+Case 18: avg_row_length of a partitioned table is the average over all its rows, not over its partitions     
+
+===================================================
+avg_row_length    estimated_avg_row_length('t_avg_part__p__p_short')    estimated_avg_row_length('t_avg_part__p__p_long')    
+53     32     96     
+
 ===================================================
 0
 ===================================================
