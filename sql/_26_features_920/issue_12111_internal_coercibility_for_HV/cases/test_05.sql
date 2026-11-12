@@ -28,6 +28,10 @@ deallocate prepare stmt;
 drop table t1;
 
 
+-- CBRD-27583: the statements below, which run SET NAMES between PREPARE and EXECUTE, were written to check that
+-- a literal of the statement keeps the collation of the session at PREPARE time. Since CBRD-27583 a PREPARE whose
+-- statement has a position typed by its value makes no plan, and the first EXECUTE compiles it, so the literal
+-- takes the collation of the session at EXECUTE time and these statements no longer check that.
 set names utf8 collate utf8_en_cs;
 prepare stmt from 'select coercibility(?), coercibility(''a''), collation(?), collation(''a''), ? = ''a''';
 set names utf8 collate utf8_en_ci;
