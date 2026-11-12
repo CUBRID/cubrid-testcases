@@ -41,8 +41,16 @@
  *             the set operation itself orders by a column outside its select list - that one folds as before
  *    Case 22: a nested set operation whose operands are all empty by the literal FALSE, in a derived table
  *             and a CTE, which are typed while their names are resolved
+ *    Case 23: a view of a set operation with an empty operand, ordered by a column of the select list and by
+ *             a column outside it, which folds as before
+ *    Case 24: the set operation orders by a column outside its select list and the operand left cannot take
+ *             DISTINCT - it folds as before
+ *    Case 25: the set operation has LIMIT without ORDER BY and the operand left has GROUP BY
+ *    Case 26: an operand empty because its derived table or CTE is empty
  */
 drop view if exists v_28019_w;
+drop view if exists v_28019_a;
+drop view if exists v_28019_b;
 drop table if exists t, t_dup, t_ob, t_28019_w;
 create table t (c0 varchar, c1 double);
 insert into t values ('', 1), ('a', 2), ('3', 3);
@@ -94,6 +102,7 @@ order by 1;
 evaluate 'Case 6: UNION with an empty left operand removes the duplicates of the right operand; result = 1, 2, 3';
 select a from t_dup where 1 = 0 union select a from t_dup order by 1;
 select a from t_dup where a < -1000 union select a from t_dup order by 1;
+select a from t_dup where 1 = 0 union select a from t_dup order by a;
 
 evaluate 'Case 7: UNION with an empty right operand removes the duplicates of the left operand; result = 1, 2, 3';
 select a from t_dup union select a from t_dup where 1 = 0 order by 1;
@@ -192,10 +201,12 @@ select a, 0 from t_dup where 1 = 0 union (select a, groupby_num () from t_dup gr
 select a, 0 from t_dup where a < -1000 union (select a, groupby_num () from t_dup group by a) order by 1, 2;
 
 -- FOR UPDATE refuses DISTINCT, and a set operation refuses FOR UPDATE in its operands, so the statement folds as
--- before, also when the operand with FOR UPDATE is the empty one
-evaluate 'Case 19: an operand has FOR UPDATE - the statement folds as before; result = 1, 1, 2, 3, 3 and 1, 1, 2';
+-- before, also when the operand with FOR UPDATE is the empty one. The FOR UPDATE of the empty operand goes with it,
+-- and the operand left takes DISTINCT when it can
+evaluate 'Case 19: an operand has FOR UPDATE - the statement folds as before; result = 1, 1, 2, 3, 3 and 1, 1, 2 and 1, 2, 3';
 select a from t_dup where 1 = 0 union (select a from t_dup order by a for update);
 (select a from t_dup where 1 = 0 for update) union (select a from t_dup order by a limit 3);
+(select a from t_dup where 1 = 0 for update) union select a from t_dup order by 1;
 
 -- like Case 1, the values at execution empty the result of the set operation: INTERSECT with one operand empty
 -- and EXCEPT with the left operand empty
@@ -230,6 +241,33 @@ select a from ((select a from t_dup where a < -1000 union all select a from t_du
 select a from (select a from t_dup union all select a from t_dup union (select a from t_dup where false union all select a from t_dup where false)) dt order by 1;
 select a from (select a from t_dup union all select a from t_dup union (select a from t_dup where a < -1000 union all select a from t_dup where a < -1000)) dt order by 1;
 with c as ((select a from t_dup where false union all select a from t_dup where false) union (select a from t_dup order by a limit 3)) select a from c order by 1;
+
+-- CREATE VIEW keeps an ORDER BY key outside the select list as it is, without a hidden column, so DISTINCT
+-- goes on only when the keys are positions in the select list
+evaluate 'Case 23: a view of a set operation with an empty operand; result = 1, 2, then 2, 1, 1 as before';
+create view v_28019_a as select a from t_ob where 1 = 0 union select a from t_ob order by a;
+select * from v_28019_a order by 1;
+create view v_28019_b as select a from t_ob union select a from t_ob where 1 = 0 order by b;
+select * from v_28019_b;
+drop view v_28019_a;
+drop view v_28019_b;
+
+-- a set operation refuses a key outside its select list, so a set operation that would be kept for its
+-- DISTINCT folds as before
+evaluate 'Case 24: ordered by a column outside the select list with an operand that cannot take DISTINCT; result = 3 rows as before';
+select a, rank () over (order by a) r from t_ob union select a, 0 from t_ob where 1 = 0 order by b;
+
+-- the LIMIT of the set operation without ORDER BY would number the groups before DISTINCT, so the set
+-- operation is kept
+evaluate 'Case 25: LIMIT without ORDER BY over an operand with GROUP BY; result = 1, 2';
+select a from (select a from t_ob group by a, b union select a from t_ob where 1 = 0 limit 2) dt order by 1;
+select a from (select a from t_ob group by a, b union select a from t_ob where a < -1000 limit 2) dt order by 1;
+
+-- an operand is empty when its derived table or CTE is
+evaluate 'Case 26: an operand empty because its derived table or CTE is empty; result = 1, 2 each';
+select a from (select a from t_dup where 1 = 0) d union (select a from t_dup order by a limit 3) order by 1;
+select a from (select a from t_dup where a < -1000) d union (select a from t_dup order by a limit 3) order by 1;
+with c as (select a from t_dup where 1 = 0) select a from c union (select a from t_dup order by a limit 3) order by 1;
 
 drop variable v_28019;
 drop table t, t_dup, t_ob;
