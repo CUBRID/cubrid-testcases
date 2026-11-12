@@ -217,7 +217,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 6: hash join predicate with the function over a column, parallel workers; with NEXTVAL outside the function, no parallel workers     
+Case 6: hash join predicate with the function over a column, or with NEXTVAL outside the function; parallel workers     
 
 ===================================================
 count(*)    
@@ -267,10 +267,11 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

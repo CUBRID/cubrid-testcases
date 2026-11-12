@@ -36,8 +36,8 @@
  *             run serially (the rule covers the whole statement)
  *    Case 5:  NEXTVAL in a PARALLEL_ENABLE function argument of a hash join
  *             predicate, the hash join runs serially
- *    Case 6:  hash join predicate with the function over a column, the hash join
- *             stays parallel; with NEXTVAL outside the function argument it runs serially
+ *    Case 6:  hash join predicate with the function over a column, or with NEXTVAL
+ *             outside the function argument, the hash join stays parallel
  *    Case 7:  NEXTVAL in the argument of a function without PARALLEL_ENABLE, the
  *             subqueries run serially
  *    Case 8:  a session variable in the argument of a function without
@@ -113,7 +113,7 @@ select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) 
 show trace;
 
 
-evaluate 'Case 6: hash join predicate with the function over a column, parallel workers; with NEXTVAL outside the function, no parallel workers';
+evaluate 'Case 6: hash join predicate with the function over a column, or with NEXTVAL outside the function; parallel workers';
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_h1 a, t_h2 b where a.id = b.id and a.v + b.v + 0 * f_pe (a.v) >= 0;
 show trace;
 select /*+ recompile use_hash no_parallel_scan no_parallel_subquery */ count(*) from t_h1 a, t_h2 b where a.id = b.id and a.v + b.v + 0 * f_pe (a.v) + 0 * s_a.nextval >= 0;
