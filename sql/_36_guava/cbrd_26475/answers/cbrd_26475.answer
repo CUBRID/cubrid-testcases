@@ -414,22 +414,19 @@ count(*)    sum(a.id)    sum(b.id)    count(c.id)
 400     19300     19300     400     
 
 Query plan:
-nl-join (left outer join)
+hash-join (right outer join)
     edge:  term[?]
-    outer: sscan
-               class: c node[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
                cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: hash-join (inner join)
-                            edge:  term[?]
-                            outer: sscan
-                                       class: a node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: b node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
+    inner: sscan
+               class: c node[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
