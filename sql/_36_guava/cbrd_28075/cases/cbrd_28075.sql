@@ -1,11 +1,11 @@
 /**
- *  This test case verifies CBRD-26961 : COPY <table> FROM STDIN over the shared
+ *  This test case verifies CBRD-28075 : COPY <table> FROM STDIN over the shared
  *  client->server stream transport -- the statement-level half.
  *
  *  A successful COPY needs its payload streamed over the driver's stream calls
  *  (cci_stream_send_data / cci_stream_end), which this runner cannot do, so the loading
  *  path is covered by the shell TCs (cubrid-testcases-private-ex,
- *  shell/_40_guava/cbrd_26961/). What IS observable here, and is checked, is everything
+ *  shell/_40_guava/cbrd_28075/). What IS observable here, and is checked, is everything
  *  the statement decides before any byte is streamed:
  *
  *  1. The COPY keywords are unreserved -- COPY / CSV / DELIMITER / QUOTE / HEADER /
@@ -34,8 +34,8 @@
  *  succeeded would leave the connection inside the stream, and the next statement
  *  would be refused for that reason instead of its own. The same statements with a
  *  valid target, column list or option pair open and load in the shell TC
- *  cbrd_26961_copy, which is the positive control of each refusal here; the test
- *  design attached to CBRD-26961 maps them (test1 b-k).
+ *  cbrd_28075_copy, which is the positive control of each refusal here; the test
+ *  design attached to CBRD-28075 maps them (test1 b-k).
  */
 
 DROP TABLE IF EXISTS tc;
@@ -123,77 +123,77 @@ COPY tc FROM STDIN WITH (FORMAT CSV, QUOTE ',');
 -- =====================================================
 -- 18. the target has to be an ordinary table
 -- =====================================================
-DROP VIEW IF EXISTS c26961_v;
-CREATE VIEW c26961_v AS SELECT a, b FROM tc;
+DROP VIEW IF EXISTS c28075_v;
+CREATE VIEW c28075_v AS SELECT a, b FROM tc;
 evaluate('18. a view');
-COPY c26961_v FROM STDIN WITH (FORMAT CSV);
-DROP VIEW c26961_v;
+COPY c28075_v FROM STDIN WITH (FORMAT CSV);
+DROP VIEW c28075_v;
 
-DROP TABLE IF EXISTS c26961_pt;
-CREATE TABLE c26961_pt (a INT, b VARCHAR(20)) PARTITION BY HASH (a) PARTITIONS 2;
+DROP TABLE IF EXISTS c28075_pt;
+CREATE TABLE c28075_pt (a INT, b VARCHAR(20)) PARTITION BY HASH (a) PARTITIONS 2;
 evaluate('19. a partitioned table');
-COPY c26961_pt FROM STDIN WITH (FORMAT CSV);
+COPY c28075_pt FROM STDIN WITH (FORMAT CSV);
 
 evaluate('20. one partition of it');
-COPY c26961_pt__p__p0 FROM STDIN WITH (FORMAT CSV);
-DROP TABLE c26961_pt;
+COPY c28075_pt__p__p0 FROM STDIN WITH (FORMAT CSV);
+DROP TABLE c28075_pt;
 
 -- =====================================================
 -- 21. column types COPY cannot decode are refused at open
 -- =====================================================
-DROP TABLE IF EXISTS c26961_ut;
-CREATE TABLE c26961_ut (i INT, bl BLOB, cl CLOB, st SET(INT), ms MULTISET(INT), ls LIST(INT));
+DROP TABLE IF EXISTS c28075_ut;
+CREATE TABLE c28075_ut (i INT, bl BLOB, cl CLOB, st SET(INT), ms MULTISET(INT), ls LIST(INT));
 
 evaluate('21. BLOB');
-COPY c26961_ut (i, bl) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_ut (i, bl) FROM STDIN WITH (FORMAT CSV);
 evaluate('22. CLOB');
-COPY c26961_ut (i, cl) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_ut (i, cl) FROM STDIN WITH (FORMAT CSV);
 evaluate('23. SET');
-COPY c26961_ut (i, st) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_ut (i, st) FROM STDIN WITH (FORMAT CSV);
 evaluate('24. MULTISET');
-COPY c26961_ut (i, ms) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_ut (i, ms) FROM STDIN WITH (FORMAT CSV);
 evaluate('25. LIST');
-COPY c26961_ut (i, ls) FROM STDIN WITH (FORMAT CSV, BULK);
+COPY c28075_ut (i, ls) FROM STDIN WITH (FORMAT CSV, BULK);
 evaluate('26. no column list: the table has such columns');
-COPY c26961_ut FROM STDIN WITH (FORMAT BINARY);
-DROP TABLE c26961_ut;
+COPY c28075_ut FROM STDIN WITH (FORMAT BINARY);
+DROP TABLE c28075_ut;
 
 -- =====================================================
 -- 27. the column list
 -- =====================================================
-DROP TABLE IF EXISTS c26961_cl;
-CREATE TABLE c26961_cl (a INT, b INT NOT NULL, c INT SHARED 5);
+DROP TABLE IF EXISTS c28075_cl;
+CREATE TABLE c28075_cl (a INT, b INT NOT NULL, c INT SHARED 5);
 
 evaluate('27. a NOT NULL column with no default is left out');
-COPY c26961_cl (a) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_cl (a) FROM STDIN WITH (FORMAT CSV);
 
 evaluate('28. a column named twice');
-COPY c26961_cl (a, b, a) FROM STDIN WITH (FORMAT CSV);
+COPY c28075_cl (a, b, a) FROM STDIN WITH (FORMAT CSV);
 
 evaluate('29. a SHARED column');
-COPY c26961_cl (a, b, c) FROM STDIN WITH (FORMAT CSV);
-DROP TABLE c26961_cl;
+COPY c28075_cl (a, b, c) FROM STDIN WITH (FORMAT CSV);
+DROP TABLE c28075_cl;
 
 -- =====================================================
 -- 30. a table with an active INSERT trigger
 --     (the same table with the trigger made INACTIVE loads in the shell TC)
 -- =====================================================
-DROP TABLE IF EXISTS c26961_tr;
-DROP TABLE IF EXISTS c26961_tr_log;
-CREATE TABLE c26961_tr (a INT);
-CREATE TABLE c26961_tr_log (a INT);
-CREATE TRIGGER c26961_tr_ai AFTER INSERT ON c26961_tr EXECUTE INSERT INTO c26961_tr_log VALUES (obj.a);
+DROP TABLE IF EXISTS c28075_tr;
+DROP TABLE IF EXISTS c28075_tr_log;
+CREATE TABLE c28075_tr (a INT);
+CREATE TABLE c28075_tr_log (a INT);
+CREATE TRIGGER c28075_tr_ai AFTER INSERT ON c28075_tr EXECUTE INSERT INTO c28075_tr_log VALUES (obj.a);
 
 evaluate('30. a row INSERT trigger');
-COPY c26961_tr FROM STDIN WITH (FORMAT CSV);
-DROP TRIGGER c26961_tr_ai;
+COPY c28075_tr FROM STDIN WITH (FORMAT CSV);
+DROP TRIGGER c28075_tr_ai;
 
-CREATE TRIGGER c26961_tr_si BEFORE STATEMENT INSERT ON c26961_tr EXECUTE INSERT INTO c26961_tr_log VALUES (-1);
+CREATE TRIGGER c28075_tr_si BEFORE STATEMENT INSERT ON c28075_tr EXECUTE INSERT INTO c28075_tr_log VALUES (-1);
 evaluate('31. a statement INSERT trigger');
-COPY c26961_tr FROM STDIN WITH (FORMAT BINARY, BULK);
-DROP TRIGGER c26961_tr_si;
-DROP TABLE c26961_tr;
-DROP TABLE c26961_tr_log;
+COPY c28075_tr FROM STDIN WITH (FORMAT BINARY, BULK);
+DROP TRIGGER c28075_tr_si;
+DROP TABLE c28075_tr;
+DROP TABLE c28075_tr_log;
 
 -- =====================================================
 -- 32. NULL, ON_ERROR and REJECT_LIMIT
