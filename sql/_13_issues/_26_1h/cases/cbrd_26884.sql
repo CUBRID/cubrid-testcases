@@ -119,14 +119,16 @@ create or replace procedure cbrd_26884_proc (v_numeric inout cbrd_26884_tbl.c_nu
 begin
     null;
 end;
-call cbrd_26884_proc(123456789012345678901234);
+select 123456789012345678901234 into :v_numeric from db_root;
+call cbrd_26884_proc(:v_numeric);
 
 evaluate 'Case 10: INOUT numeric(20,15), assigning a 24 digit value exceeds the precision';
 create or replace procedure cbrd_26884_proc (v_numeric inout cbrd_26884_tbl.c_numeric_20_15%type) as
 begin
     v_numeric := 123456789012345678901234;
 end;
-call cbrd_26884_proc(1);
+select 1 into :v_numeric from db_root;
+call cbrd_26884_proc(:v_numeric);
 
 evaluate 'Case 11: IN numeric(20,15), a 24 digit value is accepted because IN parameters have no constraint';
 create or replace procedure cbrd_26884_proc (v_numeric in cbrd_26884_tbl.c_numeric_20_15%type) as

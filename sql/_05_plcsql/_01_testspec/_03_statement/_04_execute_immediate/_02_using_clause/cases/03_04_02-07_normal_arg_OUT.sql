@@ -18,8 +18,8 @@ BEGIN
     dbms_output.put_line('id: ' || out_id || ' name: ' || out_name);
 END;
 
-select '1', '2' into :a, :b ;
-call t('name1', :a, :b);
+select 'name1', '1', '2' into :p, :a, :b ;
+call t(:p, :a, :b);
 select :a, :b from dual;
 
 
