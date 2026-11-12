@@ -8,7 +8,8 @@
  *  any alternative that does not read the spec. The rows of the preserved table without a match were lost.
  *
  *  Fix: such a term rejects NULL of the spec only when its left operand reads the spec or every alternative
- *  reads it.
+ *  reads it. A right-hand collection whose elements cannot be listed (e.g. a set union) and that reads the
+ *  spec makes the term possibly true without it.
  *
  *  Every check compares count(*) of the query with a reference that counts the same FROM without WHERE as
  *  sum(case when <where> then 1 else 0 end) (CASE is never null-rejecting, so the join stays outer) and with
@@ -17,10 +18,13 @@
  *  Coverage:
  *    P*, Q*: defect cases - OR merged into a range (LEFT and RIGHT JOIN), IN list, = ANY and > SOME over a
  *            collection, a constant alternative, comparison and BETWEEN ranges, three alternatives, HAVING
- *    G*:     guards - every alternative reads the NULL-padded table, the range column is on it, no range
- *            merge, a plain equality, the OR written so that it is not merged
+ *    C*:     defect cases - = ANY over a collection under one or nested CASTs, and over a set union
+ *            whose elements cannot be listed
+ *    G*:     guards - every alternative reads the NULL-padded table (also under nested CASTs), the range
+ *            column is on it, no range merge, a plain equality, the OR written so that it is not merged,
+ *            a correlated subquery
  */
-drop table if exists wa, wb, wc, o, i;
+drop table if exists wa, wb, wc, o, i, t;
 create table wa (a int, b int);
 create table wb (a int, b int);
 create table wc (a int);
@@ -29,8 +33,10 @@ insert into wb values (5, 7);
 insert into wc values (2), (3);
 create table o (b double);
 create table i (c int);
+create table t (x int, y int);
 insert into o values (1), (2), (3);
-update statistics on wa, wb, wc, o, i with fullscan;
+insert into t values (2, 9), (3, 9);
+update statistics on wa, wb, wc, o, i, t with fullscan;
 
 -- P1: OR becomes wc.a range (wb.b = or wa.b =) (defect)
 select 'P1' id, case when t.g = t.e and t.e = 2 then 'PASS' else 'FAIL' end res
@@ -127,4 +133,29 @@ select 'G6' id, case when t.g = t.e and t.e = 2 then 'PASS' else 'FAIL' end res
 from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a + 0 = wb.b or wc.a = wa.b) g,
              (select sum(case when wc.a + 0 = wb.b or wc.a = wa.b then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
 
-drop table if exists wa, wb, wc, o, i;
+-- C1: = ANY over a CAST collection (defect)
+select 'C1' id, case when t.g = t.e and t.e = 2 then 'PASS' else 'FAIL' end res
+from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a = any cast({wb.b, wa.b} as sequence of integer)) g,
+             (select sum(case when wc.a = any cast({wb.b, wa.b} as sequence of integer) then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
+
+-- C2: = ANY over a nested CAST collection (defect)
+select 'C2' id, case when t.g = t.e and t.e = 2 then 'PASS' else 'FAIL' end res
+from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a = any cast(cast({wb.b, wa.b} as sequence of integer) as sequence of integer)) g,
+             (select sum(case when wc.a = any cast(cast({wb.b, wa.b} as sequence of integer) as sequence of integer) then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
+
+-- C3: = ANY over a set union whose elements cannot be listed (defect)
+select 'C3' id, case when t.g = t.e and t.e = 2 then 'PASS' else 'FAIL' end res
+from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a = any ({wb.b} + {wa.b})) g,
+             (select sum(case when wc.a = any ({wb.b} + {wa.b}) then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
+
+-- G7: nested CAST, every element reads wb: still null-rejecting (guard)
+select 'G7' id, case when t.g = t.e and t.e = 1 then 'PASS' else 'FAIL' end res
+from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a = any cast(cast({wb.b, wb.b - 4} as sequence of integer) as sequence of integer)) g,
+             (select sum(case when wc.a = any cast(cast({wb.b, wb.b - 4} as sequence of integer) as sequence of integer) then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
+
+-- G8: correlated subquery: unchanged (guard)
+select 'G8' id, case when t.g = t.e and t.e = 0 then 'PASS' else 'FAIL' end res
+from (select (select count(*) from wa left outer join wb on wb.a = wa.a, wc where wc.a in (select x from t where t.y = wb.b)) g,
+             (select sum(case when wc.a in (select x from t where t.y = wb.b) then 1 else 0 end) from wa left outer join wb on wb.a = wa.a, wc) e from db_root) t;
+
+drop table if exists wa, wb, wc, o, i, t;
