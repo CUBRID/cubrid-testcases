@@ -1,0 +1,110 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+    
+Case 1: an OR term inside an AND list prints in parentheses     
+
+===================================================
+ca    cb    cc    
+a     a     x     
+
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select ta.ca, ta.cb, ta.cc from ta ta where ((ta.cc= ?:? ) or (ta.cb= ?:? )) and ta.cb<>'zz' and ta.ca= ?:? 
+===================================================
+    
+Case 2: a multi-column IN prints its RANGE as OR terms     
+
+===================================================
+ca    cb    cc    
+a     a     x     
+b     b     y     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: ta node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, ta.cb, ta.cc from ta ta where (({ta.ca, ta.cb}={'a', 'a'}) or ({ta.ca, ta.cb}={'b', 'b'})) order by ?
+===================================================
+    
+Case 3: plain and decorated string literals print as written     
+
+===================================================
+'plain'    'intro'    cast('casted' as varchar(30))    'collated' collate utf8_en_ci    'quote''inside'    'back\slash'    'national'    
+plain     intro     casted     collated     quote'inside     back\slash     national     
+
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select 'plain', 'intro',  cast('casted' as varchar(?)), 'collated' collate utf?_en_ci, 'quote''inside', 'back\slash', 'national' from ta ta where ta.ca= ?:? 
+===================================================
+    
+Case 4: a VALUES list used as a query prints its rows in order     
+
+===================================================
+ca    cb    
+a     x     
+b     y     
+c     z     
+
+Query plan:
+sscan
+    class: dual node[?]
+    cost:  ? card ?
+Query stmt:
+(values ('a', 'x'),('b', 'y'),('c', 'z'))
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: tb node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.ca, tb.cb from (values ('a', 'x'),('b', 'y'),('c', 'z')) tb (ca, cb) order by ?
+===================================================
+    
+Case 5: a stored view prints its IN lists as written     
+
+===================================================
+0
+===================================================
+vclass_def    
+select [dba.ta].[ca], [dba.ta].[cc] from [dba.ta] [dba.ta] where [dba.ta].[ca] in set{_utf8'a', _utf8'b', _utf8'c'} and [dba.ta].[cc] in set{_utf8'x', _utf8'y'}     
+
+===================================================
+    
+Case 6: a stored view prints its string literals with charset and collation     
+
+===================================================
+0
+===================================================
+vclass_def    
+select _utf8'plain' collate utf8_bin, _utf8'intro' collate utf8_bin,  cast(_utf8'casted' collate utf8_bin as varchar(30)), _utf8'quote''inside' collate utf8_bin, _utf8'national' collate utf8_bin from [dba.ta] [dba.ta]     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
