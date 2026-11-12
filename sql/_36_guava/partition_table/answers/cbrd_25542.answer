@@ -174,9 +174,9 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), key filter: ([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? ), key filter: ([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? ), covered: true)
+  INDEX SCAN (dba.ta.idx) (key range: (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? ))key range: ([dba.ta].colb> ?:? ), key filter: (([dba.ta].cola= ?:?  and [dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:?  and [dba.ta].colb> ?:? )), covered: true)
 
-  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and (([dba.ta].cola= ?:? ) or ([dba.ta].colb> ?:? )) and (([dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
+  rewritten query: select count(*) from [dba.ta] [dba.ta] where (([dba.ta].cola= ?:?  and [dba.ta].colb> ?:? ) or ([dba.ta].cola= ?:?  and [dba.ta].colb> ?:? )) and (([dba.ta].cola= ?:? ) or ([dba.ta].cola= ?:? )) and ([dba.ta].colb> ?:? ) using index [dba.ta].idx
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
