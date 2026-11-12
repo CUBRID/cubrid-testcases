@@ -61,12 +61,12 @@ idx-join (inner join)
     inner: iscan
                class: l node[?]
                index: i_orl_l_pid term[?]
-               sargs: term[?] AND term[?] AND term[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
                cost:  ? card ?
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) and l.inst= ?:?  and l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ?
+select sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? ) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) and l.inst= ?:?  and l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  and (l.qty>= ?:?  and l.qty<= ?:? ) and ((p.brand= ?:? ) or (p.brand= ?:? ) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and (p.sz>= ?:?  and p.sz<= ?:? )
 ===================================================
     
 [2] orl_p rows passing the derived filter: with IN list / without IN list     
@@ -91,7 +91,7 @@ Query plan:
 idx-join (inner join)
     outer: sscan
                class: p node[?]
-               sargs: term[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     inner: iscan
                class: l node[?]
@@ -101,7 +101,7 @@ idx-join (inner join)
     sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select count(*), sum(l.price) from orl_l l, orl_p p where p.id=l.pid and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and l.mode='AIR') or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and l.mode='AIR REG')) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and l.mode='TRUCK')) and (((p.sz>=? and p.sz<=? and l.inst='DELIVER IN PERSON' and l.price>=? and l.price<=?) or (p.sz>=? and p.sz<=? and l.inst='COLLECT COD' and l.price>=? and l.price<=?)) or (p.sz>=? and p.sz<=? and l.inst='NONE' and l.price>=? and l.price<=?)) and l.qty>=? and l.qty<=? and l.mode='AIR' or l.qty>=? and l.qty<=? and l.mode='AIR REG' or l.qty>=? and l.qty<=? and l.mode='TRUCK' and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.inst='DELIVER IN PERSON' and l.price>=? and l.price<=? or l.inst='COLLECT COD' and l.price>=? and l.price<=? or l.inst='NONE' and l.price>=? and l.price<=? and p.sz>=? and p.sz<=? or p.sz>=? and p.sz<=? or p.sz>=? and p.sz<=?
+select count(*), sum(l.price) from orl_l l, orl_p p where p.id=l.pid and (((p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:? ) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:? )) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:? )) and (((p.sz>= ?:?  and p.sz<= ?:?  and l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:?  and l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:? )) or (p.sz>= ?:?  and p.sz<= ?:?  and l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:? )) and l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and l.mode= ?:?  and p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:?  or l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:?  or l.inst= ?:?  and l.price>= ?:?  and l.price<= ?:?  and p.sz>= ?:?  and p.sz<= ?:?  or p.sz>= ?:?  and p.sz<= ?:?  or p.sz>= ?:?  and p.sz<= ?:?  and (l.qty>= ?:?  and l.qty<= ?:? ) and ((l.mode= ?:? ) or (l.mode= ?:? ) or (l.mode= ?:? )) and ((p.brand= ?:? ) or (p.brand= ?:? ) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and ((l.inst= ?:? ) or (l.inst= ?:? ) or (l.inst= ?:? )) and (l.price>= ?:?  and l.price<= ?:? ) and ((p.sz>= ?:?  and p.sz<= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:? ))
 ===================================================
     
 [4] forced orl_l-driven NL join and hash join return the same revenue as Case 1     
@@ -114,7 +114,7 @@ Query plan:
 idx-join (inner join)
     outer: sscan
                class: l node[?]
-               sargs: term[?] AND term[?]
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     inner: iscan
                class: p node[?]
@@ -124,7 +124,7 @@ idx-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ ORDERED USE_NL */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) and l.inst= ?:?  and l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ?
+select /*+ ORDERED USE_NL */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? ) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) and l.inst= ?:?  and l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  and (l.qty>= ?:?  and l.qty<= ?:? ) and ((p.brand= ?:? ) or (p.brand= ?:? ) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and (p.sz>= ?:?  and p.sz<= ?:? )
 ===================================================
 revenue_hash    
 1932.67     
@@ -134,7 +134,7 @@ hash-join (inner join)
     edge:  term[?]
     outer: sscan
                class: l node[?]
-               sargs: term[?] AND term[?]
+               sargs: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     inner: sscan
                class: p node[?]
@@ -143,7 +143,7 @@ hash-join (inner join)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) or (p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>=? and l.qty<=? and p.sz between ? and ?)) and l.inst= ?:?  and l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? or l.qty>=? and l.qty<=? and p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ? or p.brand='B?' and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between ? and ?
+select /*+ USE_HASH */ sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and (((p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? ) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) and l.inst= ?:?  and l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  and (l.qty>= ?:?  and l.qty<= ?:? ) and ((p.brand= ?:? ) or (p.brand= ?:? ) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and (p.sz>= ?:?  and p.sz<= ?:? )
 ===================================================
     
 [5] two-branch control below the CNF threshold: orl_p drives through ordinary sargs     
@@ -156,17 +156,17 @@ Query plan:
 idx-join (inner join)
     outer: sscan
                class: p node[?]
-               sargs: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
     inner: iscan
                class: l node[?]
                index: i_orl_l_pid term[?]
-               sargs: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+               sargs: term[?] AND term[?] AND term[?] AND term[?]
                cost:  ? card ?
-    sargs: term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-select sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and ((p.brand= ?:? ) or (p.brand= ?:? )) and ((p.brand= ?:? ) or ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ))) and ((p.brand= ?:? ) or (l.qty>= ?:? )) and ((p.brand= ?:? ) or (l.qty<= ?:? )) and ((p.brand= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:? )) and (((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and (((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) or (l.qty>= ?:? )) and (((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) or (l.qty<= ?:? )) and (((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) or (p.sz>= ?:?  and p.sz<= ?:? )) and ((l.qty>= ?:? ) or (p.brand= ?:? )) and ((l.qty>= ?:? ) or ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ))) and (l.qty>= ?:?  and l.qty<= ?:? ) and ((l.qty>= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:? )) and ((l.qty<= ?:? ) or (p.brand= ?:? )) and ((l.qty<= ?:? ) or ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ))) and ((l.qty<= ?:? ) or (p.sz>= ?:?  and p.sz<= ?:? )) and ((p.sz>= ?:?  and p.sz<= ?:? ) or (p.brand= ?:? )) and ((p.sz>= ?:?  and p.sz<= ?:? ) or ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ))) and ((p.sz>= ?:?  and p.sz<= ?:? ) or (l.qty>= ?:? )) and ((p.sz>= ?:?  and p.sz<= ?:? ) or (l.qty<= ?:? )) and (p.sz>= ?:?  and p.sz<= ?:? ) and l.inst= ?:? 
+select sum( cast(l.price as numeric)*( cast(? as numeric)-l.disc)) from orl_l l, orl_p p where p.id=l.pid and ((l.mode= ?:? ) or (l.mode= ?:? )) and ((p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? ) or (p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and l.qty>= ?:?  and l.qty<= ?:?  and p.sz between  ?:?  and  ?:? )) and l.inst= ?:?  and l.qty>= ?:?  and l.qty<= ?:?  or l.qty>= ?:?  and l.qty<= ?:?  and p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  or p.brand= ?:?  and p.container in set{'C?', 'C?', 'C?', 'C?'} and p.sz between  ?:?  and  ?:?  and (l.qty>= ?:?  and l.qty<= ?:? ) and ((p.brand= ?:? ) or (p.brand= ?:? )) and ((p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? ) or (p.container= ?:? )) and (p.sz>= ?:?  and p.sz<= ?:? )
 ===================================================
     
 [6-1] LIKE aa%0 (100-row prefix, 10 matches): iscan on i_orl_s_a     
