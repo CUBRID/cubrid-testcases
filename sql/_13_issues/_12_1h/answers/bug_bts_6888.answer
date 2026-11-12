@@ -18,16 +18,13 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: pt? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -42,16 +39,13 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: pt? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -69,16 +63,13 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: pt? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -96,16 +87,13 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: pt? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -121,19 +109,17 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: iscan
-                                         class: pt? node[?]
-                                         index: idx term[?] (covers)
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?]
+                            filtr: term[?]
+                            sargs: term[?]
                             cost:  ? card ?
-                 during:term[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -148,19 +134,17 @@ i    i
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: pt? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: iscan
-                                         class: pt? node[?]
-                                         index: idx term[?] (covers)
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: pt? node[?]
+                            index: idx term[?]
+                            filtr: term[?]
+                            sargs: term[?]
                             cost:  ? card ?
-                 during:term[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -193,11 +177,9 @@ temp(order by)
                  outer: sscan
                             class: b node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: a node[?]
-                                         cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
