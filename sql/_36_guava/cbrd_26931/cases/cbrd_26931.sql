@@ -26,7 +26,7 @@
  *    Case 14: parallel outer scan gathered as a list (ORDER BY)
  *    Case 15: outer scan and subquery scan both parallel
  *    Case 16: nested loop join with the subquery on the inner table, result = twin
- *    Case 17: a serial in the subquery advances by one per query; the outer scan stays serial (CBRD-27736)
+ *    Case 17: a serial in the subquery advances by one per query under a parallel outer scan
  */
 
 drop table if exists t_big, t_small, t_target;
