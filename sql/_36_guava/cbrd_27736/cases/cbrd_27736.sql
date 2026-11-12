@@ -1,9 +1,9 @@
 -- CBRD-27736: a session variable assigned in a correlated subquery outside its WHERE clause (select list,
 -- aggregate argument, HAVING) or in a subquery of ORDER BY let the outer heap scan run in parallel. Every
 -- parallel worker ran the subquery and updated the session's variable list at the same time, and the server
--- crashed in update_session_variable. A serial NEXT_VALUE there was called by the workers concurrently too.
--- The scan now stays serial when any of its subqueries, correlated or not, reads or writes a session variable
--- or a serial, as it does when the query block itself reads or writes them.
+-- crashed in update_session_variable. The scan now stays serial when any of its subqueries, correlated or not,
+-- reads or writes a session variable, as it does when the query block itself reads or writes one. So does an
+-- assignment in the key filter of the inner index scan of a nested loop join, which every worker evaluates.
 --
 -- ta holds 4000 rows of about 70 heap pages, twice the 32 pages test_mode needs for a parallel heap scan.
 -- The subqueries correlate on the unique ta.id, so no subquery result is reused and each one runs once per
@@ -68,7 +68,7 @@ set @v = 0;
 select /*+ recompile no_parallel_scan */ t.id from ta t order by (select @v := @v + 1 + t.id * 0 from db_root) limit 1;
 select @v;
 
-evaluate 'Case 6: serial NEXT_VALUE in the select list of a correlated subquery; serial scan, one value per row';
+evaluate 'Case 6: serial NEXT_VALUE in the select list of a correlated subquery; parallel scan, same count and current_value';
 select /*+ recompile */ count (*) from ta t where (select s_cnt.next_value + t.id * 0 from db_root) > 0;
 show trace;
 select s_cnt.current_value;
@@ -82,7 +82,7 @@ select /*+ recompile */ count (*) from ta t where (select count (*) from tb x wh
 show trace;
 select /*+ recompile no_parallel_scan */ count (*) from ta t where (select count (*) from tb x where x.id = mod (t.id, 100) + 1) > 0;
 
-evaluate 'Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan';
+evaluate 'Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan for the assignment';
 drop serial s_cnt;
 create serial s_cnt;
 set @v = 0;
@@ -104,7 +104,7 @@ set @v = 0;
 select /*+ recompile no_parallel_scan */ count (*) from ta s where s.id > (select max ((select @v := @v + 1 + x.id * 0 from db_root)) from ta x) - 100;
 select @v;
 
-evaluate 'Case 10: correlated subqueries that only read a session variable and a serial; serial scan';
+evaluate 'Case 10: correlated subqueries that only read a session variable and a serial; serial scan for the @v read';
 drop serial s_cnt;
 create serial s_cnt;
 set @v = 5;
@@ -120,6 +120,17 @@ select @v;
 set @v = 0;
 select /*+ recompile no_parallel_scan */ sum (@v := @v + 1) from ta t where (select @v + t.id from db_root) > 0;
 select @v;
+
+evaluate 'Case 12: assignment in the key filter of the inner index scan of a nested loop join; serial outer scan';
+create index i_tb_id_c on tb (id, c);
+set @v = 0;
+select /*+ recompile ordered use_nl index (x i_tb_id_c) */ count (*) from ta t, tb x where x.id = mod (t.id, 100) + 1 and (@v := @v + 1 + x.c * 0) > 0;
+show trace;
+select @v;
+set @v = 0;
+select /*+ recompile ordered use_nl index (x i_tb_id_c) no_parallel_scan */ count (*) from ta t, tb x where x.id = mod (t.id, 100) + 1 and (@v := @v + 1 + x.c * 0) > 0;
+select @v;
+drop index i_tb_id_c on tb;
 
 set trace off;
 

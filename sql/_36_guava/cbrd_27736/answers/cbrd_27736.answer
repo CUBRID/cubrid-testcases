@@ -247,7 +247,7 @@ id
 
 ===================================================
     
-Case 6: serial NEXT_VALUE in the select list of a correlated subquery; serial scan, one value per row     
+Case 6: serial NEXT_VALUE in the select list of a correlated subquery; parallel scan, same count and current_value     
 
 ===================================================
 count(*)    
@@ -269,6 +269,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -326,7 +327,7 @@ count(*)
 
 ===================================================
     
-Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan     
+Case 8: serial NEXT_VALUE and an assignment in uncorrelated subqueries; serial scan for the assignment     
 
 ===================================================
 0
@@ -437,7 +438,7 @@ count(*)
 
 ===================================================
     
-Case 10: correlated subqueries that only read a session variable and a serial; serial scan     
+Case 10: correlated subqueries that only read a session variable and a serial; serial scan for the @v read     
 
 ===================================================
 0
@@ -525,6 +526,50 @@ sum(@v := @v+1)
 @v    
 4000     
 
+===================================================
+    
+Case 12: assignment in the key filter of the inner index scan of a nested loop join; serial outer scan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+4000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    INDEX SCAN (x.i_tb_id_c) (key range: x.id= mod(t.id, ?)+?, key filter: (@v := @v+?+x.c*?)>?, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.ta] t, [dba.tb] x where x.id= mod(t.id, ?)+? and (@v := @v+?+x.c*?)>?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.tb.i_tb_id_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+@v    
+4000     
+
+===================================================
+0
+===================================================
+count(*)    
+4000     
+
+===================================================
+@v    
+4000     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
