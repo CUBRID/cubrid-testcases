@@ -2,7 +2,9 @@
  *  This test case verifies CBRD-27798: a hash list scan pairs equal NUMERIC keys whatever their scale and whether
  *  they are fixed or floating. A key pair with a floating NUMERIC side hashed in DOUBLE before the fix, and past
  *  15 digits the same value written in two scales rounded to two DOUBLEs, so the scan missed the pair without an
- *  error. Every check compares the hash list scan with NO_HASH_LIST_SCAN.
+ *  error. A floating value of a negative scale hashed normalized from the precision of the fixed NUMERIC it came
+ *  from instead of its digits, which a hash join missed as well. Every check compares the hash list scan with
+ *  NO_HASH_LIST_SCAN, and the hash join with USE_NL.
  *
  *  Coverage:
  *    Case 1: the shapes of the issue - literal and host variable arithmetic keys against NUMERIC(18,2), NUMERIC(38,0)
@@ -12,6 +14,9 @@
  *    Case 3: a floating value spelled with a negative scale against the same value at scale 0
  *    Case 4: CONNECT BY over NUMERIC keys of two scales
  *    Case 5: the hash join and GROUP BY over the same keys
+ *    Case 6: NUMERIC(38,-5) values and floating values cast from them against NUMERIC(20,0) - the hash list scan,
+ *            the hash join and CONNECT BY
+ *    Case 7: NUMERIC(38,0) against NUMERIC(38,2) without arithmetic, whose common domain is floating
  */
 
 drop table if exists t27798;
@@ -21,6 +26,9 @@ drop table if exists i27798;
 drop table if exists v27798;
 drop table if exists w27798;
 drop table if exists tree27798;
+drop table if exists n27798;
+drop table if exists z27798;
+drop table if exists tn27798;
 
 evaluate 'Case 1: the shapes of the issue';
 create table t27798 (a numeric(18,2), b int);
@@ -91,6 +99,30 @@ select /*+ USE_HASH */ 'c5_hj', count (*), sum (a.id) from v27798 a, v27798 b wh
 select /*+ USE_NL */ 'c5_nl', count (*), sum (a.id) from v27798 a, v27798 b where a.f2 = b.f6;
 select 'c5_gby', k, count (*) from (select f2 k from v27798 union all select f6 + 0 from v27798 union all select f6 from v27798) x group by k order by k;
 
+evaluate 'Case 6: a fixed NUMERIC of a negative scale and floating values cast from it';
+create table n27798 (id int, a numeric(38,-5));
+insert into n27798 values (1, 1500000), (2, 2500000), (3, 100000), (4, 0), (5, -300000);
+create table z27798 (id int, b numeric(20,0));
+insert into z27798 values (1, 1500000), (2, 2500000), (3, 100000), (4, 0), (5, -300000);
+select /*+ ORDERED */ 'c6_neg', count (*), sum (o.id) from z27798 o, (select a k from n27798 limit 10) d where o.b = d.k;
+select /*+ ORDERED NO_HASH_LIST_SCAN */ 'c6_neg_nohash', count (*), sum (o.id) from z27798 o, (select a k from n27798 limit 10) d where o.b = d.k;
+select /*+ ORDERED */ 'c6_cast', count (*), sum (o.id) from z27798 o, (select cast (a as numeric) k from n27798 limit 10) d where o.b = d.k;
+select /*+ ORDERED NO_HASH_LIST_SCAN */ 'c6_cast_nohash', count (*), sum (o.id) from z27798 o, (select cast (a as numeric) k from n27798 limit 10) d where o.b = d.k;
+select /*+ ORDERED */ 'c6_rev', count (*), sum (o.id) from n27798 o, (select cast (b as numeric) k from z27798 limit 10) d where o.a = d.k;
+select /*+ ORDERED NO_HASH_LIST_SCAN */ 'c6_rev_nohash', count (*), sum (o.id) from n27798 o, (select cast (b as numeric) k from z27798 limit 10) d where o.a = d.k;
+select /*+ USE_HASH */ 'c6_hj', count (*), sum (z27798.id) from (select cast (a as numeric) k from n27798) d, z27798 where d.k = z27798.b;
+select /*+ USE_NL */ 'c6_nl', count (*), sum (z27798.id) from (select cast (a as numeric) k from n27798) d, z27798 where d.k = z27798.b;
+select /*+ USE_HASH */ 'c6_hj2', count (*) from (select cast (a as numeric) k from n27798) d, (select cast (b as numeric) k from z27798) e where d.k = e.k;
+select /*+ USE_NL */ 'c6_nl2', count (*) from (select cast (a as numeric) k from n27798) d, (select cast (b as numeric) k from z27798) e where d.k = e.k;
+create table tn27798 (id numeric(38,-5), pid numeric(20,0), v int);
+insert into tn27798 values (100000, null, 1), (200000, 100000, 2), (300000, 200000, 3), (400000, 300000, 4);
+select 'c6_cb', count (*), sum (v) from tn27798 start with pid is null connect by prior id = pid;
+select /*+ NO_HASH_LIST_SCAN */ 'c6_cb_nohash', count (*), sum (v) from tn27798 start with pid is null connect by prior id = pid;
+
+evaluate 'Case 7: two fixed NUMERICs beyond 38 digits together';
+select /*+ ORDERED */ 'c7_n38', count (*) from t27798b o, (select b s from t27798b limit 10) d where o.a = d.s;
+select /*+ ORDERED NO_HASH_LIST_SCAN */ 'c7_n38_nohash', count (*) from t27798b o, (select b s from t27798b limit 10) d where o.a = d.s;
+
 drop table t27798;
 drop table t27798b;
 drop table ob27798;
@@ -98,3 +130,6 @@ drop table i27798;
 drop table v27798;
 drop table w27798;
 drop table tree27798;
+drop table n27798;
+drop table z27798;
+drop table tn27798;
