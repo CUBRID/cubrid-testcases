@@ -260,32 +260,26 @@ null     null     4     1     4     1     4
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
+    subplan: hash-join (right outer join)
                  edge:  term[?]
-                 outer: sscan
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
                             class: a node[?]
                             sargs: term[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (left outer join)
-                                         edge:  term[?]
-                                         outer: sscan
-                                                    class: b node[?]
-                                                    cost:  ? card ?
-                                         inner: temp
-                                                    order: UNORDERED
-                                                    subplan: hash-join (right outer join)
-                                                                 edge:  term[?]
-                                                                 outer: sscan
-                                                                            class: d node[?]
-                                                                            cost:  ? card ?
-                                                                 inner: sscan
-                                                                            class: c node[?]
-                                                                            cost:  ? card ?
-                                                                 cost:  ? card ?
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
@@ -318,32 +312,26 @@ null     null     4     1     4     1     4
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
+    subplan: hash-join (right outer join)
                  edge:  term[?]
-                 outer: sscan
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
                             class: a node[?]
                             sargs: term[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (left outer join)
-                                         edge:  term[?]
-                                         outer: sscan
-                                                    class: b node[?]
-                                                    cost:  ? card ?
-                                         inner: temp
-                                                    order: UNORDERED
-                                                    subplan: hash-join (right outer join)
-                                                                 edge:  term[?]
-                                                                 outer: sscan
-                                                                            class: d node[?]
-                                                                            cost:  ? card ?
-                                                                 inner: sscan
-                                                                            class: c node[?]
-                                                                            cost:  ? card ?
-                                                                 cost:  ? card ?
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
@@ -375,33 +363,27 @@ null     null     4     1     4     1     4     1
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
+    subplan: hash-join (right outer join)
                  edge:  term[?]
-                 outer: sscan
-                            class: a node[?]
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       during:term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            during:term[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (left outer join)
-                                         edge:  term[?]
-                                         outer: sscan
-                                                    class: b node[?]
-                                                    cost:  ? card ?
-                                         inner: temp
-                                                    order: UNORDERED
-                                                    subplan: hash-join (right outer join)
-                                                                 edge:  term[?]
-                                                                 outer: sscan
-                                                                            class: d node[?]
-                                                                            cost:  ? card ?
-                                                                 inner: sscan
-                                                                            class: c node[?]
-                                                                            cost:  ? card ?
-                                                                 during:term[?]
-                                                                 cost:  ? card ?
-                                                    cost:  ? card ?
-                                         during:term[?]
-                                         cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
                             cost:  ? card ?
                  during:term[?]
                  cost:  ? card ?
@@ -424,32 +406,26 @@ null     4     4     4
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
+    subplan: hash-join (right outer join)
                  edge:  term[?]
-                 outer: sscan
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
                             class: a node[?]
                             sargs: term[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (left outer join)
-                                         edge:  term[?]
-                                         outer: sscan
-                                                    class: b node[?]
-                                                    cost:  ? card ?
-                                         inner: temp
-                                                    order: UNORDERED
-                                                    subplan: hash-join (right outer join)
-                                                                 edge:  term[?]
-                                                                 outer: sscan
-                                                                            class: d node[?]
-                                                                            cost:  ? card ?
-                                                                 inner: sscan
-                                                                            class: c node[?]
-                                                                            cost:  ? card ?
-                                                                 cost:  ? card ?
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
                             cost:  ? card ?
                  after: term[?] AND term[?] AND term[?]
                  cost:  ? card ?
@@ -472,32 +448,26 @@ null     4     4     4
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
+    subplan: hash-join (right outer join)
                  edge:  term[?]
-                 outer: sscan
+                 outer: hash-join (right outer join)
+                            edge:  term[?]
+                            outer: hash-join (right outer join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: d node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: c node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
                             class: a node[?]
                             sargs: term[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (left outer join)
-                                         edge:  term[?]
-                                         outer: sscan
-                                                    class: b node[?]
-                                                    cost:  ? card ?
-                                         inner: temp
-                                                    order: UNORDERED
-                                                    subplan: hash-join (right outer join)
-                                                                 edge:  term[?]
-                                                                 outer: sscan
-                                                                            class: d node[?]
-                                                                            cost:  ? card ?
-                                                                 inner: sscan
-                                                                            class: c node[?]
-                                                                            cost:  ? card ?
-                                                                 cost:  ? card ?
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
                             cost:  ? card ?
                  after: term[?] AND term[?] AND term[?]
                  cost:  ? card ?
