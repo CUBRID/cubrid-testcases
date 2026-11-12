@@ -1,0 +1,239 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: no_backslash_escapes toggled between runs of the same text; result = 4, 3, 4     
+
+===================================================
+char_length('a\tb')    
+4     
+
+===================================================
+0
+===================================================
+char_length('a	b')    
+3     
+
+===================================================
+0
+===================================================
+char_length('a\tb')    
+4     
+
+===================================================
+    
+Case 2: return_null_on_function_errors toggled; result = error, then NULL     
+
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+hour('25:61:61')    
+null     
+
+===================================================
+0
+===================================================
+    
+Case 3: SET OPTIMIZATION COST iscan i then default; trace = index, table, index     
+
+===================================================
+1
+===================================================
+count(*)    
+101     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb_cost.i_tb_cost_b) (key range: ([dba.tb_cost].col_b>= ?:?  and [dba.tb_cost].col_b<= ?:? ), covered: true)
+
+  rewritten query: select count(*) from [dba.tb_cost] [dba.tb_cost] where ([dba.tb_cost].col_b>= ?:?  and [dba.tb_cost].col_b<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb_cost.i_tb_cost_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+101     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tb_cost)
+
+  rewritten query: select count(*) from [dba.tb_cost] [dba.tb_cost] where ([dba.tb_cost].col_b>= ?:?  and [dba.tb_cost].col_b<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb_cost), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+101     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb_cost.i_tb_cost_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+    
+Case 4: cost_heap_fetch_per_oid raised in the session; trace = index then table     
+
+===================================================
+sum( cast(col_a as bigint))    
+950005000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb_cost.i_tb_cost_b) (key range: ([dba.tb_cost].col_b> ?:? ))
+
+  rewritten query: select sum( cast([dba.tb_cost].col_a as bigint)) from [dba.tb_cost] [dba.tb_cost] where ([dba.tb_cost].col_b> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb_cost.i_tb_cost_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+sum( cast(col_a as bigint))    
+950005000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tb_cost)
+
+  rewritten query: select sum( cast([dba.tb_cost].col_a as bigint)) from [dba.tb_cost] [dba.tb_cost] where ([dba.tb_cost].col_b> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb_cost), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+0
+===================================================
+    
+Case 5: EXECUTE ... USING a session variable; result = 42     
+
+===================================================
+0
+===================================================
+0
+===================================================
+?:0 +1    
+42     
+
+===================================================
+0
+===================================================
+    
+Case 6: a function that commits, in a scan predicate and in the select list; result = 50 rows     
+
+===================================================
+0
+===================================================
+count(*)    
+50     
+
+===================================================
+0
+===================================================
+f_commit_keep(col_a)    
+1     
+2     
+3     
+4     
+5     
+6     
+7     
+8     
+9     
+10     
+11     
+12     
+13     
+14     
+15     
+16     
+17     
+18     
+19     
+20     
+21     
+22     
+23     
+24     
+25     
+26     
+27     
+28     
+29     
+30     
+31     
+32     
+33     
+34     
+35     
+36     
+37     
+38     
+39     
+40     
+41     
+42     
+43     
+44     
+45     
+46     
+47     
+48     
+49     
+50     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
