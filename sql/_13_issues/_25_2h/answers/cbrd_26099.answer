@@ -274,8 +274,8 @@ nl-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select count(*) from tbl a left outer join tbl b on ? <> ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
@@ -290,8 +290,8 @@ nl-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select count(*) from tbl a left outer join tbl b on ? <> ?
+Query stmt:
+select /*+ USE_HASH */ count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
@@ -306,8 +306,8 @@ nl-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select count(*) from tbl a left outer join tbl b on ? <> ?
+Query stmt:
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
 count(*)    
 100     
@@ -322,8 +322,8 @@ nl-join (left outer join)
                sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select count(*) from tbl a left outer join tbl b on ? <> ?
+Query stmt:
+select /*+ USE_MERGE */ count(*) from tbl a left outer join tbl b on ? <> ?
 ===================================================
     
 2. If there is a constant equality condition for the join column of the inline view     
