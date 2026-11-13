@@ -1,50 +1,50 @@
 /**
  *  This test case verifies CBRD-27379: SEMI JOIN and ANTI JOIN run as a hash join.
- *  AC-3: result size estimation (TC-3-01 to TC-3-08).
+ *  AC-3: result size estimation (TC 1 to TC 8).
  *
  *  The fix estimates the rows of a SEMI / ANTI JOIN from the probability that an outer row finds a matching inner row,
  *  instead of the inner join estimate.
  *
  *  Coverage:
- *    TC-3-01: the estimate does not exceed the rows of the outer input
- *    TC-3-02: a WHERE term filters the result and does not take part in matching
- *    TC-3-03: duplicate inner keys (the number of distinct keys is used)
- *    TC-3-04: an ON term that does not read the inner input
- *    TC-3-05: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter (FK table outer uses
- *             NOT EXISTS: since CBRD-27397 an EXISTS whose equalities cover the inner's whole unique key runs as
- *             an INNER JOIN, a NOT EXISTS stays an ANTI JOIN)
- *    TC-3-06: equi-join and non-equi terms together
- *    TC-3-07: NULL outer keys, with unique inner keys and with another equi-join term
- *    TC-3-08: an equality on an expression, whose NDV ratio is unknown, so there is no key
+ *    TC 1: the estimate does not exceed the rows of the outer input
+ *    TC 2: a WHERE term filters the result and does not take part in matching
+ *    TC 3: duplicate inner keys (the number of distinct keys is used)
+ *    TC 4: an ON term that does not read the inner input
+ *    TC 5: composite PK-FK, NOT NULL or nullable FK, with or without an inner filter (FK table outer uses
+ *          NOT EXISTS: since CBRD-27397 an EXISTS whose equalities cover the inner's whole unique key runs as
+ *          an INNER JOIN, a NOT EXISTS stays an ANTI JOIN)
+ *    TC 6: equi-join and non-equi terms together
+ *    TC 7: NULL outer keys, with unique inner keys and with another equi-join term
+ *    TC 8: an equality on an expression, whose NDV ratio is unknown, so there is no key
  *
  *  Sub-cases:
- *    No  Sub-case    Query                               Case
- *    1   TC-3-01-01  ta SEMI JOIN tb                     estimate within the outer rows
- *    2   TC-3-02-01  ta ANTI JOIN tb                     with and without a WHERE term
- *    3   TC-3-02-02  ta LEFT OUTER JOIN tc ANTI JOIN tb  with and without a WHERE term
- *    4   TC-3-03-01  ta ANTI JOIN tb                     duplicate inner keys
- *    5   TC-3-03-02  ta ANTI JOIN tc                     distinct inner keys
- *    6   TC-3-04-01  ta ANTI JOIN tb                     ON term ta.cb > 500
- *    7   TC-3-05-01  NOT EXISTS subquery                 NOT NULL FK, FK table outer
- *    8   TC-3-05-02  EXISTS subquery                     NOT NULL FK, PK table outer
- *    9   TC-3-05-03  NOT EXISTS subquery                 nullable FK, FK table outer
- *    10  TC-3-05-04  EXISTS subquery                     nullable FK, PK table outer
- *    11  TC-3-06-01  EXISTS subquery                     equi and non-equi terms
- *    12  TC-3-07-01  EXISTS subquery                     NULL outer keys
- *    13  TC-3-08-01  NOT EXISTS subquery                 equality on an expression, no key
+ *    Sub-case  Query                               Case
+ *    TC 1-1    ta SEMI JOIN tb                     estimate within the outer rows
+ *    TC 2-1    ta ANTI JOIN tb                     with and without a WHERE term
+ *    TC 2-2    ta LEFT OUTER JOIN tc ANTI JOIN tb  with and without a WHERE term
+ *    TC 3-1    ta ANTI JOIN tb                     duplicate inner keys
+ *    TC 3-2    ta ANTI JOIN tc                     distinct inner keys
+ *    TC 4-1    ta ANTI JOIN tb                     ON term ta.cb > 500
+ *    TC 5-1    NOT EXISTS subquery                 NOT NULL FK, FK table outer
+ *    TC 5-2    EXISTS subquery                     NOT NULL FK, PK table outer
+ *    TC 5-3    NOT EXISTS subquery                 nullable FK, FK table outer
+ *    TC 5-4    EXISTS subquery                     nullable FK, PK table outer
+ *    TC 6-1    EXISTS subquery                     equi and non-equi terms
+ *    TC 7-1    EXISTS subquery                     NULL outer keys
+ *    TC 8-1    NOT EXISTS subquery                 equality on an expression, no key
  *
  *  CTP masks the numbers in a --@queryplan output, so the estimated rows (card) are not compared.
  *  This file asserts the result rows and the plan shape. The estimate itself is not asserted here.
  */
 
 -- =====================================================================================================================
--- TC-3-01: estimated rows of SEMI JOIN do not exceed those of the outer input
+-- TC 1: estimated rows of SEMI JOIN do not exceed those of the outer input
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-01-01: SEMI JOIN
+-- TC 1-1: SEMI JOIN
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-01-01: SEMI JOIN';
+evaluate 'TC 1-1: SEMI JOIN';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -85,8 +85,8 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-01-01-01: hash join, result and plan
-evaluate 'TC-3-01-01-01: hash join, result and plan';
+-- TC 1-1-1: hash join, result and plan
+evaluate 'TC 1-1-1: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -96,13 +96,13 @@ FROM ta
 DROP TABLE IF EXISTS tb, ta;
 
 -- =====================================================================================================================
--- TC-3-02: WHERE terms filter SEMI JOIN / ANTI JOIN rows and do not take part in matching
+-- TC 2: WHERE terms filter SEMI JOIN / ANTI JOIN rows and do not take part in matching
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-02-01: ANTI JOIN, with and without a WHERE term
+-- TC 2-1: ANTI JOIN, with and without a WHERE term
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-02-01: ANTI JOIN, with and without a WHERE term';
+evaluate 'TC 2-1: ANTI JOIN, with and without a WHERE term';
 
 DROP TABLE IF EXISTS tc, tb, ta;
 
@@ -136,15 +136,15 @@ INSERT INTO tc SELECT ca FROM ta;
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- TC-3-02-01-01: no WHERE term, result and plan
-evaluate 'TC-3-02-01-01: no WHERE term, result and plan';
+-- TC 2-1-1: no WHERE term, result and plan
+evaluate 'TC 2-1-1: no WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
 
--- TC-3-02-01-02: with WHERE term, result and plan
-evaluate 'TC-3-02-01-02: with WHERE term, result and plan';
+-- TC 2-1-2: with WHERE term, result and plan
+evaluate 'TC 2-1-2: with WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -155,9 +155,9 @@ WHERE (SELECT MAX (ca) FROM tc) = 5;
 DROP TABLE IF EXISTS tc, tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-02-02: LEFT OUTER JOIN + ANTI JOIN, with and without a WHERE term
+-- TC 2-2: LEFT OUTER JOIN + ANTI JOIN, with and without a WHERE term
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-02-02: LEFT OUTER JOIN + ANTI JOIN, with and without a WHERE term';
+evaluate 'TC 2-2: LEFT OUTER JOIN + ANTI JOIN, with and without a WHERE term';
 
 DROP TABLE IF EXISTS tc, tb, ta;
 
@@ -191,16 +191,16 @@ INSERT INTO tc SELECT ca, CASE WHEN ca <= 5000 THEN ca END FROM ta;
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- TC-3-02-02-01: no WHERE term, result and plan
-evaluate 'TC-3-02-02-01: no WHERE term, result and plan';
+-- TC 2-2-1: no WHERE term, result and plan
+evaluate 'TC 2-2-1: no WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE ORDERED USE_HASH */ COUNT (*)
 FROM ta
   LEFT JOIN tc ON tc.ca = ta.ca
   ANTI JOIN tb ON tb.ca = ta.ca;
 
--- TC-3-02-02-02: with WHERE term, result and plan
-evaluate 'TC-3-02-02-02: with WHERE term, result and plan';
+-- TC 2-2-2: with WHERE term, result and plan
+evaluate 'TC 2-2-2: with WHERE term, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE ORDERED USE_HASH */ COUNT (*)
 FROM ta
@@ -212,13 +212,13 @@ WHERE tc.cb IS NULL;
 DROP TABLE IF EXISTS tc, tb, ta;
 
 -- =====================================================================================================================
--- TC-3-03: duplicate inner keys: match probability uses the number of distinct keys
+-- TC 3: duplicate inner keys: match probability uses the number of distinct keys
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-03-01: ANTI JOIN, inner input tb
+-- TC 3-1: ANTI JOIN, inner input tb
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-03-01: ANTI JOIN, inner input tb';
+evaluate 'TC 3-1: ANTI JOIN, inner input tb';
 
 DROP TABLE IF EXISTS tb, ta, td;
 
@@ -252,8 +252,8 @@ INSERT INTO tb SELECT MOD (ca, 10) FROM td WHERE ca <= 1000;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-03-01-01: hash join, result and plan
-evaluate 'TC-3-03-01-01: hash join, result and plan';
+-- TC 3-1-1: hash join, result and plan
+evaluate 'TC 3-1-1: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -263,9 +263,9 @@ FROM ta
 DROP TABLE IF EXISTS tb, ta, td;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-03-02: ANTI JOIN, inner input tc
+-- TC 3-2: ANTI JOIN, inner input tc
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-03-02: ANTI JOIN, inner input tc';
+evaluate 'TC 3-2: ANTI JOIN, inner input tc';
 
 DROP TABLE IF EXISTS tc, ta, td;
 
@@ -291,7 +291,7 @@ INSERT INTO td
 CREATE TABLE ta (ca INT);
 INSERT INTO ta SELECT MOD (ca, 100) FROM td WHERE ca <= 1000;
 
--- tc: 10 rows of the distinct MOD (ca, 10) of td where ca <= 1000, the keys of tb of TC-3-03-01
+-- tc: 10 rows of the distinct MOD (ca, 10) of td where ca <= 1000, the keys of tb of TC 3-1
 --   0, 1, ..., 9
 --   Stored: 10 rows, keys 0 .. 9
 CREATE TABLE tc (ca INT);
@@ -299,8 +299,8 @@ INSERT INTO tc SELECT DISTINCT MOD (ca, 10) FROM td WHERE ca <= 1000;
 
 UPDATE STATISTICS ON ta, tc WITH FULLSCAN;
 
--- TC-3-03-02-01: hash join, result and plan
-evaluate 'TC-3-03-02-01: hash join, result and plan';
+-- TC 3-2-1: hash join, result and plan
+evaluate 'TC 3-2-1: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -310,13 +310,13 @@ FROM ta
 DROP TABLE IF EXISTS tc, ta, td;
 
 -- =====================================================================================================================
--- TC-3-04: an ON term that does not read the inner input is decided once per outer row
+-- TC 4: an ON term that does not read the inner input is decided once per outer row
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-04-01: ANTI JOIN
+-- TC 4-1: ANTI JOIN
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-04-01: ANTI JOIN';
+evaluate 'TC 4-1: ANTI JOIN';
 
 DROP TABLE IF EXISTS tb, ta, tc;
 
@@ -350,8 +350,8 @@ INSERT INTO tb SELECT ca FROM ta;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-04-01-01: hash join, result and plan
-evaluate 'TC-3-04-01-01: hash join, result and plan';
+-- TC 4-1-1: hash join, result and plan
+evaluate 'TC 4-1-1: hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -361,13 +361,13 @@ FROM ta
 DROP TABLE IF EXISTS tb, ta, tc;
 
 -- =====================================================================================================================
--- TC-3-05: composite PK-FK SEMI JOIN / ANTI JOIN (NOT NULL or nullable FK, with or without inner filter)
+-- TC 5: composite PK-FK SEMI JOIN / ANTI JOIN (NOT NULL or nullable FK, with or without inner filter)
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS
+-- TC 5-1: NOT NULL FK, FK table outer, NOT EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-01: NOT NULL FK, FK table outer, NOT EXISTS';
+evaluate 'TC 5-1: NOT NULL FK, FK table outer, NOT EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -413,8 +413,8 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-05-01-01: unnested, hash join, result and plan
-evaluate 'TC-3-05-01-01: unnested, hash join, result and plan';
+-- TC 5-1-1: unnested, hash join, result and plan
+evaluate 'TC 5-1-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
@@ -424,9 +424,9 @@ WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b AND ta.x < 
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-02: NOT NULL FK, PK table outer, EXISTS
+-- TC 5-2: NOT NULL FK, PK table outer, EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-02: NOT NULL FK, PK table outer, EXISTS';
+evaluate 'TC 5-2: NOT NULL FK, PK table outer, EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -472,8 +472,8 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-05-02-01: unnested, hash join, result and plan
-evaluate 'TC-3-05-02-01: unnested, hash join, result and plan';
+-- TC 5-2-1: unnested, hash join, result and plan
+evaluate 'TC 5-2-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -483,9 +483,9 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.a = ta.a AND tb.b = ta.b AND tb.id < 100
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-03: nullable FK, FK table outer, NOT EXISTS
+-- TC 5-3: nullable FK, FK table outer, NOT EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-03: nullable FK, FK table outer, NOT EXISTS';
+evaluate 'TC 5-3: nullable FK, FK table outer, NOT EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -530,8 +530,8 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-05-03-01: unnested, hash join, result and plan
-evaluate 'TC-3-05-03-01: unnested, hash join, result and plan';
+-- TC 5-3-1: unnested, hash join, result and plan
+evaluate 'TC 5-3-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM tb
@@ -541,9 +541,9 @@ WHERE NOT EXISTS (SELECT 1 FROM ta WHERE ta.a = tb.a AND ta.b = tb.b);
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-05-04: nullable FK, PK table outer, EXISTS
+-- TC 5-4: nullable FK, PK table outer, EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-05-04: nullable FK, PK table outer, EXISTS';
+evaluate 'TC 5-4: nullable FK, PK table outer, EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -589,8 +589,8 @@ INSERT INTO tb
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-05-04-01: unnested, hash join, result and plan
-evaluate 'TC-3-05-04-01: unnested, hash join, result and plan';
+-- TC 5-4-1: unnested, hash join, result and plan
+evaluate 'TC 5-4-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -600,13 +600,13 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.a = ta.a AND tb.b = ta.b AND tb.id < 100
 DROP TABLE IF EXISTS tb, ta;
 
 -- =====================================================================================================================
--- TC-3-06: equi and non-equi terms together: only inner rows with the same key are candidates
+-- TC 6: equi and non-equi terms together: only inner rows with the same key are candidates
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-06-01: EXISTS
+-- TC 6-1: EXISTS
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-06-01: EXISTS';
+evaluate 'TC 6-1: EXISTS';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -634,8 +634,8 @@ INSERT INTO tb SELECT ca, ca FROM ta WHERE ca <= 100;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-06-01-01: unnested, hash join, result and plan
-evaluate 'TC-3-06-01-01: unnested, hash join, result and plan';
+-- TC 6-1-1: unnested, hash join, result and plan
+evaluate 'TC 6-1-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -645,13 +645,13 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca AND tb.cb > ta.cb);
 DROP TABLE IF EXISTS tb, ta;
 
 -- =====================================================================================================================
--- TC-3-07: NULL outer keys are counted once, so they do not shrink the inner rows that share a key
+-- TC 7: NULL outer keys are counted once, so they do not shrink the inner rows that share a key
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-07-01: EXISTS, NULL outer keys
+-- TC 7-1: EXISTS, NULL outer keys
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-07-01: EXISTS, NULL outer keys';
+evaluate 'TC 7-1: EXISTS, NULL outer keys';
 
 DROP TABLE IF EXISTS tc, tb, ta;
 
@@ -702,15 +702,15 @@ INSERT INTO tc SELECT ca FROM tb WHERE cb = 1;
 
 UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
--- TC-3-07-01-01: unique inner keys, unnested, hash join, result and plan
-evaluate 'TC-3-07-01-01: unique inner keys, unnested, hash join, result and plan';
+-- TC 7-1-1: unique inner keys, unnested, hash join, result and plan
+evaluate 'TC 7-1-1: unique inner keys, unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
 WHERE EXISTS (SELECT 1 FROM tc WHERE tc.ca = ta.ca);
 
--- TC-3-07-01-02: another equi-join term, unnested, hash join, result and plan
-evaluate 'TC-3-07-01-02: another equi-join term, unnested, hash join, result and plan';
+-- TC 7-1-2: another equi-join term, unnested, hash join, result and plan
+evaluate 'TC 7-1-2: another equi-join term, unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
@@ -720,13 +720,13 @@ WHERE EXISTS (SELECT 1 FROM tb WHERE tb.ca = ta.ca AND tb.cb = ta.cb);
 DROP TABLE IF EXISTS tc, tb, ta;
 
 -- =====================================================================================================================
--- TC-3-08: without a key, every inner row is a candidate and the match probability does not saturate
+-- TC 8: without a key, every inner row is a candidate and the match probability does not saturate
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC-3-08-01: NOT EXISTS, equality on an expression
+-- TC 8-1: NOT EXISTS, equality on an expression
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC-3-08-01: NOT EXISTS, equality on an expression';
+evaluate 'TC 8-1: NOT EXISTS, equality on an expression';
 
 DROP TABLE IF EXISTS tb, ta;
 
@@ -765,8 +765,8 @@ CREATE INDEX i_tb_ca ON tb (ca);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC-3-08-01-01: unnested, hash join, result and plan
-evaluate 'TC-3-08-01-01: unnested, hash join, result and plan';
+-- TC 8-1-1: unnested, hash join, result and plan
+evaluate 'TC 8-1-1: unnested, hash join, result and plan';
 --@queryplan
 SELECT /*+ RECOMPILE USE_HASH */ COUNT (*)
 FROM ta
