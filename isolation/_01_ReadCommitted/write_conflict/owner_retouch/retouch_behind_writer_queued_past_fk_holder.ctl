@@ -52,7 +52,8 @@ C3: UPDATE t27034_p SET v=v+100 WHERE id=1;
 MC: wait until C3 blocked;
 /* the owner touches the row again: it waits for C2's S, ahead of C3 */
 C1: UPDATE t27034_p SET v=v+1 WHERE id=1;
-MC: wait until C1 blocked;
+/* CBRD-27463: C2's child INSERT leaves no lock on the parent row, so the owner touches it again at once; C3 still waits on C1's stamp */
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
 MC: wait until C1 ready;
