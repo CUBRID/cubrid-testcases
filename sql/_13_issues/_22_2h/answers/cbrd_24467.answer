@@ -35,7 +35,7 @@ Query Plan:
         INDEX SCAN (b.idx) (key range: a.cola=b.cola, covered: true)
       INDEX SCAN (c.idx) (key range: a.cola=c.cola, covered: true)
 
-  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:?  and orderby_num()<= cast( ?:?  as double)+ cast( ?:?  as double)
+  rewritten query: select a.cola, a.colb from [dba.tbl] a left outer join [dba.tbl] b on a.cola=b.cola left outer join [dba.tbl] c on a.cola=c.cola order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

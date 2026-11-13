@@ -92,6 +92,8 @@ Query stmt:
 select ?, t.i from t t where (t.i> ?:? ) and (rownum<= ?:? ) using index none order by ? desc 
 ===================================================
 i    j    s    rownum    
+7     3     seven     3     
+6     4     six     4     
 
 Query plan:
 iscan
@@ -105,6 +107,8 @@ select t.i, t.j, t.s, rownum from t t where (t.i> ?:? ) and (rownum<= ?:? ) usin
 /* ---> skip ORDER BY */
 ===================================================
 i    j    s    rownum    
+3     7     three     3     
+4     6     four     4     
 
 Query plan:
 iscan

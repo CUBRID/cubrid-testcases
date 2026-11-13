@@ -443,13 +443,13 @@ count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: [dba.subquery_small].col?=a.col?, covered: true)
+  INDEX SCAN (dba.subquery_small.idx_col?_col?_col?) (key range: ([dba.subquery_small].col?=a.col?), covered: true)
 
-  rewritten query: (select ? from [dba.subquery_small] [dba.subquery_small] where [dba.subquery_small].col?=a.col? using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
+  rewritten query: (select ? from [dba.subquery_small] [dba.subquery_small] where ([dba.subquery_small].col?=a.col?) and inst_num()<= ?:?  using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
 
   TABLE SCAN (a)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a where  exists (select ? from [dba.subquery_small] [dba.subquery_small] where [dba.subquery_small].col?=a.col? using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.subquery_big] a where  exists (select ? from [dba.subquery_small] [dba.subquery_small] where ([dba.subquery_small].col?=a.col?) and inst_num()<= ?:?  using index [dba.subquery_small].idx_col?_col?_col? keylimit  ?:? )
 
 
 Trace Statistics:
@@ -490,14 +490,14 @@ k    count(*)
 trace    
 
 Query Plan:
-  INDEX SCAN (i.i_klim_inner_k_a) (key range: i.k=o.k, covered: true)
+  INDEX SCAN (i.i_klim_inner_k_a) (key range: (i.k=o.k), covered: true)
 
-  rewritten query: (select ? from [dba.klim_inner] i where i.k=o.k using index i.i_klim_inner_k_a keylimit  ?:? , ?:? )
+  rewritten query: (select ? from [dba.klim_inner] i where (i.k=o.k) and inst_num()<= ?:?  using index i.i_klim_inner_k_a keylimit  ?:? , ?:? )
 
   SORT (group by)
     TABLE SCAN (o)
 
-  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.klim_outer] o where  exists (select ? from [dba.klim_inner] i where i.k=o.k using index i.i_klim_inner_k_a keylimit  ?:? , ?:? ) group by o.k
+  rewritten query: select /*+ PARALLEL(?) */ o.k, count(*) from [dba.klim_outer] o where  exists (select ? from [dba.klim_inner] i where (i.k=o.k) and inst_num()<= ?:?  using index i.i_klim_inner_k_a keylimit  ?:? , ?:? ) group by o.k
 
 
 Trace Statistics:
