@@ -14,52 +14,7 @@
 0
 
 ===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-3
-
-===================================================
-0
-
-===================================================
-1
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-1
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
-
-===================================================
-0
+2
 
 ===================================================
 0
@@ -84,114 +39,185 @@
 
 ===================================================
     
-Case 1: ROLLBACK, SAVEPOINT, 2PC (PREPARE TO COMMIT, ATTACH) and DDL in a function invoked by SELECT     
+Case 1: TCL in a function invoked by SELECT     
 
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 59) Cannot perform ROLLBACK inside a query or DML statement.
+  (line 1, column 57) Cannot perform COMMIT inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 60) Cannot perform SAVEPOINT inside a query or DML statement.
+  (line 1, column 67) Cannot perform ROLLBACK inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 68) Cannot perform PREPARE TO COMMIT inside a query or DML statement.
+  (line 1, column 67) Cannot perform SAVEPOINT inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 57) Cannot perform ATTACH inside a query or DML statement.
+  (line 1, column 67) Cannot perform PREPARE TO COMMIT inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 54) Cannot perform DDL inside a query or DML statement.
+  (line 1, column 67) Cannot perform ATTACH inside a query or DML statement.
 
 ===================================================
     
-Case 2: a function invoked by a subquery or DO     
+Case 2: SET statements in a function invoked by SELECT     
 
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 62) Cannot perform a DML operation inside a query or DML statement.
+  (line 1, column 67) Cannot perform SET TRANSACTION inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 62) Cannot perform a DML operation inside a query or DML statement.
+  (line 1, column 67) Cannot perform SET SYSTEM PARAMETERS inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform SET OPTIMIZATION inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform SET TRIGGER inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform SET NAMES inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform SET TIME ZONE inside a query or DML statement.
+
+===================================================
+f_exec('set @v_r1 = 7')    
+1     
+
+
+===================================================
+@v_r1    
+7     
+
+
+===================================================
+f_exec2('set trace on', 'set trace off')    
+1     
+
 
 ===================================================
     
-Case 3: a view whose query calls a function     
-
-
-===================================================
-a    c    
-1     3     
-2     3     
-3     3     
+Case 3: DDL and method calls with a target in a function invoked by SELECT     
 
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 62) Cannot perform a DML operation inside a query or DML statement.
+  (line 1, column 67) Cannot perform DDL inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform CALL ... ON CLASS inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform CALL ... ON CLASS inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 67) Cannot perform CALL ... ON CLASS inside a query or DML statement.
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 103) Cannot perform CALL ... ON CLASS inside a query or DML statement.
 
 ===================================================
     
-Case 4: INCR () in a function invoked by SELECT, directly or through PREPARE and EXECUTE     
+Case 4: TCL and DDL in a function invoked by DML     
 
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 1, column 62) Cannot perform a DML operation inside a query or DML statement.
+  (line 1, column 67) Cannot perform COMMIT inside a query or DML statement.
 
 ===================================================
 Error:-889
 Stored procedure execute error: 
-  (line 4, column 1) Cannot perform a DML operation inside a query or DML statement.
+  (line 1, column 67) Cannot perform DDL inside a query or DML statement.
 
 ===================================================
     
-Case 4-2: INCR () in a set operation run by a function invoked by SELECT     
+Case 5: TCL and DDL in a procedure called by a trigger action     
 
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 1, column 67) Cannot perform a DML operation inside a query or DML statement.
+0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 1, column 67) Cannot perform a DML operation inside a query or DML statement.
+Error:-528
+Error evaluating action for "dba.tr_r1", Stored procedure execute error: 
+  (line 1, column 57) Cannot perform COMMIT in a trigger.
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 1, column 67) Cannot perform a DML operation inside a query or DML statement.
+0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 1, column 67) Cannot perform a DML operation inside a query or DML statement.
+0
 
 ===================================================
-Error:-889
-Stored procedure execute error: 
-  (line 4, column 1) Cannot perform a DML operation inside a query or DML statement.
+Error:-528
+Error evaluating action for "dba.tr_r1", Stored procedure execute error: 
+  (line 1, column 57) Cannot perform DDL in a trigger.
+
+===================================================
+0
 
 ===================================================
     
-Case 5: nothing was written     
+Case 6: TCL and DDL in a top-level CALL     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+    
+Case 7: nothing was changed by the refused cases     
+
+
+===================================================
+a    
+1     
+2     
 
 
 ===================================================
@@ -200,33 +226,20 @@ count(*)
 
 
 ===================================================
-cnt    
-0     
-
-
-===================================================
 count(*)    
 0     
 
 
 ===================================================
-0
+name    
+U_R1     
+
+
 ===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
+CURRENT_USER    
+DBA     
+
+
 ===================================================
 0
 ===================================================
