@@ -197,7 +197,7 @@ END;
 
 
 call reserved_test1();
-select reserved_test2() from dual;
+call reserved_test2();
 
 drop procedure reserved_test1;
 drop function reserved_test2;
