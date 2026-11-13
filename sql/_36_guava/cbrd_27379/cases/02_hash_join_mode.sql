@@ -17,7 +17,7 @@
  *
  *  Coverage:
  *    TC 1: SEMI JOIN / ANTI JOIN in the four modes, also with an ON clause term on the outer table or on both tables,
- *          and with an ON clause term that only the last of the inner rows with the same key meets
+ *          and with an ON clause term that only a middle one of the inner rows with the same key meets
  *    TC 2: LEFT / RIGHT OUTER JOIN in the four modes
  *    TC 3: partitions without inner rows, and an outer input larger or smaller than the inner
  *          (SEMI JOIN / ANTI JOIN build the inner input even when the outer is smaller, an INNER JOIN builds the outer)
@@ -36,10 +36,10 @@
  *    TC 1-10   ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE, ON term on both tables
  *    TC 1-11   tc SEMI JOIN td         PARTITION, PARALLEL, ON term on both tables
  *    TC 1-12   tc ANTI JOIN td         PARTITION, PARALLEL, ON term on both tables
- *    TC 1-13   ta SEMI JOIN tb         SINGLE, PARALLEL_PROBE, ON term met by the last row of a key only
- *    TC 1-14   ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE, ON term met by the last row of a key only
- *    TC 1-15   tc SEMI JOIN td         PARTITION, PARALLEL, ON term met by the last row of a key only
- *    TC 1-16   tc ANTI JOIN td         PARTITION, PARALLEL, ON term met by the last row of a key only
+ *    TC 1-13   ta SEMI JOIN tb         SINGLE, PARALLEL_PROBE, ON term met by a middle row of a key only
+ *    TC 1-14   ta ANTI JOIN tb         SINGLE, PARALLEL_PROBE, ON term met by a middle row of a key only
+ *    TC 1-15   tc SEMI JOIN td         PARTITION, PARALLEL, ON term met by a middle row of a key only
+ *    TC 1-16   tc ANTI JOIN td         PARTITION, PARALLEL, ON term met by a middle row of a key only
  *    TC 2-1    ta LEFT OUTER JOIN tb   SINGLE, PARALLEL_PROBE
  *    TC 2-2    ta RIGHT OUTER JOIN tb  SINGLE, PARALLEL_PROBE
  *    TC 2-3    tc LEFT OUTER JOIN td   PARTITION, PARALLEL
@@ -99,7 +99,8 @@ INSERT INTO ta VALUES (NULL);
 --   ROWNUM 30000   -> '0000...24000'   195 '0' + '24000'
 --   NULL
 --   Stored: 30001 rows, 6000 keys 4 .. 24000 (multiples of 4) with 5 rows per key, and 1 NULL
---   cb is ROWNUM: the 5 rows of key 4 * k have cb k, k + 6000, ..., k + 24000, and only the last has cb >= k + 24000
+--   cb is ROWNUM: the 5 rows of key 4 * k have cb k, k + 6000, ..., k + 24000,
+--   and only the 3rd, k + 12000, lies between k + 6000 and k + 18000
 CREATE TABLE tb (ca CHAR(200), cb INT);
 INSERT INTO tb
   WITH RECURSIVE cte (n) AS (
@@ -141,7 +142,8 @@ INSERT INTO tc VALUES (NULL);
 --   ROWNUM 80000   -> '0000...80000'   195 '0' + '80000'
 --   NULL
 --   Stored: 80001 rows, 20000 keys 4 .. 80000 (multiples of 4) with 4 rows per key, and 1 NULL
---   cb is ROWNUM: the 4 rows of key 4 * k have cb k, k + 20000, k + 40000, k + 60000, and only the last has cb >= k + 60000
+--   cb is ROWNUM: the 4 rows of key 4 * k have cb k, k + 20000, k + 40000, k + 60000,
+--   and only the 2nd, k + 20000, lies between k and k + 40000
 CREATE TABLE td (ca CHAR(200), cb INT);
 INSERT INTO td
   WITH RECURSIVE cte (n) AS (
@@ -722,81 +724,83 @@ FROM (
 ) r;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 1-13: ta SEMI JOIN tb, ON clause term that only the last row of each key meets
---   Of the 5 rows of a key, the probe must pass the 4 that fail the term and find the last one.
+-- TC 1-13: ta SEMI JOIN tb, ON clause term that only a middle row of each key meets
+--   Of the 5 rows of a key, only the 3rd meets the term, so the probe passes 2 rows that fail it in insert order
+--   or in reverse.
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 1-13: ta SEMI JOIN tb, ON clause term met by the last row of each key only';
+evaluate 'TC 1-13: ta SEMI JOIN tb, ON clause term met by a middle row of each key only';
 
 -- TC 1-13-1: SINGLE mode, result and trace
 evaluate 'TC 1-13-1: SINGLE mode, result and trace, result = 6000';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb >= CAST (ta.ca AS INT) / 4 + 24000;
+  SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > CAST (ta.ca AS INT) / 4 + 6000 AND tb.cb < CAST (ta.ca AS INT) / 4 + 18000;
 SHOW TRACE;
 
 -- TC 1-13-2: PARALLEL_PROBE mode, result and trace
 evaluate 'TC 1-13-2: PARALLEL_PROBE mode, result and trace, result = 6000';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb >= CAST (ta.ca AS INT) / 4 + 24000;
+  SEMI JOIN tb ON tb.ca = ta.ca AND tb.cb > CAST (ta.ca AS INT) / 4 + 6000 AND tb.cb < CAST (ta.ca AS INT) / 4 + 18000;
 SHOW TRACE;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 1-14: ta ANTI JOIN tb, ON clause term that only the last row of each key meets
+-- TC 1-14: ta ANTI JOIN tb, ON clause term that only a middle row of each key meets
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 1-14: ta ANTI JOIN tb, ON clause term met by the last row of each key only';
+evaluate 'TC 1-14: ta ANTI JOIN tb, ON clause term met by a middle row of each key only';
 
 -- TC 1-14-1: SINGLE mode, result and trace
 evaluate 'TC 1-14-1: SINGLE mode, result and trace, result = 24001';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb >= CAST (ta.ca AS INT) / 4 + 24000;
+  ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > CAST (ta.ca AS INT) / 4 + 6000 AND tb.cb < CAST (ta.ca AS INT) / 4 + 18000;
 SHOW TRACE;
 
 -- TC 1-14-2: PARALLEL_PROBE mode, result and trace
 evaluate 'TC 1-14-2: PARALLEL_PROBE mode, result and trace, result = 24001';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
-  ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb >= CAST (ta.ca AS INT) / 4 + 24000;
+  ANTI JOIN tb ON tb.ca = ta.ca AND tb.cb > CAST (ta.ca AS INT) / 4 + 6000 AND tb.cb < CAST (ta.ca AS INT) / 4 + 18000;
 SHOW TRACE;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 1-15: tc SEMI JOIN td, ON clause term that only the last row of each key meets
---   Of the 4 rows of a key, the probe must pass the 3 that fail the term and find the last one.
+-- TC 1-15: tc SEMI JOIN td, ON clause term that only a middle row of each key meets
+--   Of the 4 rows of a key, only the 2nd meets the term, so the probe passes 1 row that fails it in insert order,
+--   2 in reverse.
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 1-15: tc SEMI JOIN td, ON clause term met by the last row of each key only';
+evaluate 'TC 1-15: tc SEMI JOIN td, ON clause term met by a middle row of each key only';
 
 -- TC 1-15-1: PARTITION mode, result and trace
 evaluate 'TC 1-15-1: PARTITION mode, result and trace, result = 20000';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  SEMI JOIN td ON td.ca = tc.ca AND td.cb >= CAST (tc.ca AS INT) / 4 + 60000;
+  SEMI JOIN td ON td.ca = tc.ca AND td.cb > CAST (tc.ca AS INT) / 4 AND td.cb < CAST (tc.ca AS INT) / 4 + 40000;
 SHOW TRACE;
 
 -- TC 1-15-2: PARALLEL mode, result and trace
 evaluate 'TC 1-15-2: PARALLEL mode, result and trace, result = 20000';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  SEMI JOIN td ON td.ca = tc.ca AND td.cb >= CAST (tc.ca AS INT) / 4 + 60000;
+  SEMI JOIN td ON td.ca = tc.ca AND td.cb > CAST (tc.ca AS INT) / 4 AND td.cb < CAST (tc.ca AS INT) / 4 + 40000;
 SHOW TRACE;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 1-16: tc ANTI JOIN td, ON clause term that only the last row of each key meets
+-- TC 1-16: tc ANTI JOIN td, ON clause term that only a middle row of each key meets
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 1-16: tc ANTI JOIN td, ON clause term met by the last row of each key only';
+evaluate 'TC 1-16: tc ANTI JOIN td, ON clause term met by a middle row of each key only';
 
 -- TC 1-16-1: PARTITION mode, result and trace
 evaluate 'TC 1-16-1: PARTITION mode, result and trace, result = 60001';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  ANTI JOIN td ON td.ca = tc.ca AND td.cb >= CAST (tc.ca AS INT) / 4 + 60000;
+  ANTI JOIN td ON td.ca = tc.ca AND td.cb > CAST (tc.ca AS INT) / 4 AND td.cb < CAST (tc.ca AS INT) / 4 + 40000;
 SHOW TRACE;
 
 -- TC 1-16-2: PARALLEL mode, result and trace
 evaluate 'TC 1-16-2: PARALLEL mode, result and trace, result = 60001';
 SELECT /*+ RECOMPILE USE_HASH PARALLEL(4) NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM tc
-  ANTI JOIN td ON td.ca = tc.ca AND td.cb >= CAST (tc.ca AS INT) / 4 + 60000;
+  ANTI JOIN td ON td.ca = tc.ca AND td.cb > CAST (tc.ca AS INT) / 4 AND td.cb < CAST (tc.ca AS INT) / 4 + 40000;
 SHOW TRACE;
 
 -- =====================================================================================================================

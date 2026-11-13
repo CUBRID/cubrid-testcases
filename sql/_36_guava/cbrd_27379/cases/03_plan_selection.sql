@@ -302,8 +302,8 @@ WHERE NOT EXISTS (SELECT /*+ NO_USE_HASH(tb) */ 1 FROM tb WHERE tb.ca = ta.ca);
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TC 6: USE_MERGE and an ANTI JOIN, on the tables of TC 5
---   There is no merge join for a SEMI JOIN or an ANTI JOIN, so the planner does not apply USE_MERGE to their inner
---   input and keeps the hash join a candidate. The INNER JOIN shows that the same hint makes a merge join otherwise.
+--   There is no merge join for an ANTI JOIN, so the planner drops USE_MERGE for it and keeps the hash join a
+--   candidate. The INNER JOIN shows that the same hint makes a merge join otherwise.
 -- ---------------------------------------------------------------------------------------------------------------------
 evaluate 'TC 6: USE_MERGE and an ANTI JOIN';
 

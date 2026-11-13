@@ -1034,7 +1034,7 @@ parallel_minus_partition
 
 ===================================================
     
-TC 1-13: ta SEMI JOIN tb, ON clause term met by the last row of each key only     
+TC 1-13: ta SEMI JOIN tb, ON clause term met by a middle row of each key only     
 
 ===================================================
     
@@ -1052,7 +1052,7 @@ Query Plan:
     TABLE SCAN (dba.ta)
     TABLE SCAN (dba.tb)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.tb].cb>= cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.tb].cb< cast([dba.ta].ca as integer)/?+?) and ([dba.tb].cb> cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1082,7 +1082,7 @@ Query Plan:
     TABLE SCAN (dba.ta)
     TABLE SCAN (dba.tb)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.tb].cb>= cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] semi join [dba.tb] [dba.tb] on ([dba.tb].cb< cast([dba.ta].ca as integer)/?+?) and ([dba.tb].cb> cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1099,7 +1099,7 @@ Trace Statistics:
 
 ===================================================
     
-TC 1-14: ta ANTI JOIN tb, ON clause term met by the last row of each key only     
+TC 1-14: ta ANTI JOIN tb, ON clause term met by a middle row of each key only     
 
 ===================================================
     
@@ -1117,7 +1117,7 @@ Query Plan:
     TABLE SCAN (dba.ta)
     TABLE SCAN (dba.tb)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.tb].cb>= cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.tb].cb< cast([dba.ta].ca as integer)/?+?) and ([dba.tb].cb> cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1147,7 +1147,7 @@ Query Plan:
     TABLE SCAN (dba.ta)
     TABLE SCAN (dba.tb)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.tb].cb>= cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.ta] [dba.ta] anti join [dba.tb] [dba.tb] on ([dba.tb].cb< cast([dba.ta].ca as integer)/?+?) and ([dba.tb].cb> cast([dba.ta].ca as integer)/?+?) and [dba.tb].ca=[dba.ta].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1164,7 +1164,7 @@ Trace Statistics:
 
 ===================================================
     
-TC 1-15: tc SEMI JOIN td, ON clause term met by the last row of each key only     
+TC 1-15: tc SEMI JOIN td, ON clause term met by a middle row of each key only     
 
 ===================================================
     
@@ -1182,7 +1182,7 @@ Query Plan:
     TABLE SCAN (dba.tc)
     TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.td].cb>= cast([dba.tc].ca as integer)/?+?) and [dba.td].ca=[dba.tc].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.td].cb< cast([dba.tc].ca as integer)/?+?) and ([dba.td].cb> cast([dba.tc].ca as integer)/?) and [dba.td].ca=[dba.tc].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1214,7 +1214,7 @@ Query Plan:
     TABLE SCAN (dba.tc)
     TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.td].cb>= cast([dba.tc].ca as integer)/?+?) and [dba.td].ca=[dba.tc].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] semi join [dba.td] [dba.td] on ([dba.td].cb< cast([dba.tc].ca as integer)/?+?) and ([dba.td].cb> cast([dba.tc].ca as integer)/?) and [dba.td].ca=[dba.tc].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1233,7 +1233,7 @@ Trace Statistics:
 
 ===================================================
     
-TC 1-16: tc ANTI JOIN td, ON clause term met by the last row of each key only     
+TC 1-16: tc ANTI JOIN td, ON clause term met by a middle row of each key only     
 
 ===================================================
     
@@ -1251,7 +1251,7 @@ Query Plan:
     TABLE SCAN (dba.tc)
     TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.td].cb>= cast([dba.tc].ca as integer)/?+?) and [dba.td].ca=[dba.tc].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.td].cb< cast([dba.tc].ca as integer)/?+?) and ([dba.td].cb> cast([dba.tc].ca as integer)/?) and [dba.td].ca=[dba.tc].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1283,7 +1283,7 @@ Query Plan:
     TABLE SCAN (dba.tc)
     TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.td].cb>= cast([dba.tc].ca as integer)/?+?) and [dba.td].ca=[dba.tc].ca
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY PARALLEL(?) */ count(*) from [dba.tc] [dba.tc] anti join [dba.td] [dba.td] on ([dba.td].cb< cast([dba.tc].ca as integer)/?+?) and ([dba.td].cb> cast([dba.tc].ca as integer)/?) and [dba.td].ca=[dba.tc].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
