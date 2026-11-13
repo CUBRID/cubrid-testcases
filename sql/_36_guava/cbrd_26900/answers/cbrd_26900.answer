@@ -370,12 +370,12 @@ temp(order by)
                             class: db node[?]
                             sargs: term[?]
                             cost:  ? card ?
-                 sargs: term[?] AND term[?]
+                 sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(a, b, da, c, db) USE_HASH */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((da.cb= ?:? ) or (db.cb= ?:? )) and ((db.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
+select /*+ LEADING(a, b, da, c, db) USE_HASH */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:?  and db.cb= ?:? ) or (da.cb= ?:?  and db.cb= ?:? )) and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
 ===================================================
 a_ca    a_cb    b_cb    da_cb    db_cb    
 10     1     20     A     B     
@@ -384,7 +384,7 @@ a_ca    a_cb    b_cb    da_cb    db_cb
 Query plan:
 temp(order by)
     subplan: nl-join (inner join)
-                 edge:  term[?] AND term[?] AND term[?]
+                 edge:  term[?] AND term[?]
                  outer: nl-join (inner join)
                             edge:  term[?]
                             outer: nl-join (inner join)
@@ -411,13 +411,13 @@ temp(order by)
                             cost:  ? card ?
                  inner: sscan
                             class: db node[?]
-                            sargs: term[?] AND term[?] AND term[?] AND term[?]
+                            sargs: term[?] AND term[?] AND term[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(a, b, da, c, db) USE_NL */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((da.cb= ?:? ) or (db.cb= ?:? )) and ((db.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
+select /*+ LEADING(a, b, da, c, db) USE_NL */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:?  and db.cb= ?:? ) or (da.cb= ?:?  and db.cb= ?:? )) and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
 ===================================================
 0
 ===================================================
