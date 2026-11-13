@@ -1,0 +1,249 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+50
+===================================================
+50
+===================================================
+10
+===================================================
+10
+===================================================
+5
+===================================================
+5
+===================================================
+0
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, c) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_MERGE(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_HASH */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, c) USE_IDX(a) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+250     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: a node[?]
+               index: pk_table_a term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, c) USE_HASH(c) */ count(*) from table_a a, table_c c where (c.comp_cd< ?:? ) and a.comp_cd= ?:?  and (c.comp_cd<a.comp_cd)
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_HASH(b) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: idx-join (inner join)
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.comp_cd=b.comp_cd and a.empno=b.empno and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) USE_NL(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+count(*)    
+50     
+
+Query plan:
+nl-join (cross join)
+    outer: idx-join (inner join)
+               outer: iscan
+                          class: a node[?]
+                          index: pk_table_a term[?] (covers)
+                          cost:  ? card ?
+               inner: iscan
+                          class: b node[?]
+                          index: pk_table_b term[?] AND term[?] (covers)
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, c) NO_USE_HASH(c) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+===================================================
+0
