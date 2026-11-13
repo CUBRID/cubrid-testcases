@@ -1,0 +1,444 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+1
+===================================================
+0
+===================================================
+100
+===================================================
+1
+===================================================
+0
+===================================================
+200
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+    
+1. range, = out of range: no partition     
+
+===================================================
+count(*)    sum(v)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*), sum([dba.t_range].v) from [dba.t_range] [dba.t_range] where [dba.t_range].k= ?:?  using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+2. range, index scan, = out of range: no partition     
+
+===================================================
+id    k    v    
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_range.i_range_k) (key range: [dba.t_range].k= ?:? )
+
+  rewritten query: select [dba.t_range].id, [dba.t_range].k, [dba.t_range].v from [dba.t_range] [dba.t_range] where [dba.t_range].k= ?:?  using index [dba.t_range].i_range_k
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_range.i_range_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+3. range, IN with every value out of range: no partition     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*) from [dba.t_range] [dba.t_range] where (([dba.t_range].k= ?:? ) or ([dba.t_range].k= ?:? )) using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+4. range, IN with one value in range: its partition     
+
+===================================================
+count(*)    sum(v)    
+10     1400     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*), sum([dba.t_range].v) from [dba.t_range] [dba.t_range] where (([dba.t_range].k= ?:? ) or ([dba.t_range].k= ?:? )) using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(v)    
+10     1400     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*), sum([dba.t_range].v) from [dba.t_range] [dba.t_range] where (([dba.t_range].k= ?:? ) or ([dba.t_range].k= ?:? )) using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+5. range, OR of an out of range value: the other partition     
+
+===================================================
+count(*)    sum(v)    
+10     1500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*), sum([dba.t_range].v) from [dba.t_range] [dba.t_range] where (([dba.t_range].k= ?:? ) or ([dba.t_range].k= ?:? )) using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+6. range, OR with a term on another column: every partition     
+
+===================================================
+count(*)    sum(v)    
+1     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*), sum([dba.t_range].v) from [dba.t_range] [dba.t_range] where (([dba.t_range].k= ?:? ) or ([dba.t_range].v= ?:? )) using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+7. range, <=> NULL: the partition of NULL     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_range)
+
+  rewritten query: select count(*) from [dba.t_range] [dba.t_range] where [dba.t_range].k<=>null using index [dba.t_range].i_range_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_range), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_range__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+8. list, = out of the lists: no partition     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_list)
+
+  rewritten query: select count(*) from [dba.t_list] [dba.t_list] where [dba.t_list].k= ?:?  using index [dba.t_list].i_list_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+9. list, IN out of the lists: no partition     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_list)
+
+  rewritten query: select count(*) from [dba.t_list] [dba.t_list] where (([dba.t_list].k= ?:? ) or ([dba.t_list].k= ?:? )) using index [dba.t_list].i_list_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+10. list, <=> NULL: the partition holding NULL     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_list)
+
+  rewritten query: select count(*) from [dba.t_list] [dba.t_list] where [dba.t_list].k<=>null using index [dba.t_list].i_list_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_list), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_list__p__q?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_list__p__q?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_list__p__q?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+11. function, = out of range: no partition     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_func)
+
+  rewritten query: select count(*) from [dba.t_func] [dba.t_func] where [dba.t_func].d= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_func), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+12. function, IN with one value in range: its partition     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_func)
+
+  rewritten query: select count(*) from [dba.t_func] [dba.t_func] where (([dba.t_func].d= ?:? ) or ([dba.t_func].d= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_func), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_func__p__f?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+13. aggregates over no partition     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+min(k)    max(k)    
+null     null     
+
+===================================================
+min(k)    max(k)    
+5     5     
+
+===================================================
+    
+14. DML of an out of range value     
+
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+count(*)    sum(v)    
+301     45161     
+
+===================================================
+Error:-891
+===================================================
+Error:-891
+===================================================
+id    k    v    
+1     1     1     
+
+===================================================
+0
+===================================================
+2
+===================================================
+Error:-891
+===================================================
+2
+===================================================
+Error:-891
+===================================================
+1
+===================================================
+k    v    
+1     101     
+11     7     
+
+===================================================
+0
+===================================================
+2
+===================================================
+Error:-922
+===================================================
+1
+===================================================
+0
+===================================================
+Error:-922
+===================================================
+1
+===================================================
+id    fk    
+2     1     
+4     11     
+
+===================================================
+    
+15. cached plan after no partition: the next value prunes again     
+
+===================================================
+0
+===================================================
+2
+===================================================
+k    v    
+
+===================================================
+k    v    
+1     10     
+
+===================================================
+k    v    
+15     150     
+
+===================================================
+0
+===================================================
+1
+===================================================
+k    v    
+15     150     
+
+===================================================
+0
+===================================================
+2
+===================================================
+k    
+
+===================================================
+k    
+1     
+3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

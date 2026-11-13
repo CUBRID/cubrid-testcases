@@ -37,7 +37,7 @@ C1: DELETE FROM tb1 WHERE id%5=0;
 MC: wait until C1 ready;
 
 /*C2: SELECT AVG(id)>id-col+8 FROM tb1 GROUP BY col;*/
-C2: SELECT AVG(id)>id-col+8 FROM (select id, col from tb1 ORDER BY id) GROUP BY col;
+C2: SELECT AVG(id)>MIN(id)-col+8 FROM (select id, col from tb1 ORDER BY id) GROUP BY col;
 C2: commit work;
 MC: wait until C2 ready;
 
@@ -45,7 +45,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /*C2: SELECT AVG(id)>id-col+8 FROM tb1 GROUP BY col;*/
-C2: SELECT AVG(id)>id-col+8 FROM (select id, col from tb1 ORDER BY id) GROUP BY col;
+C2: SELECT AVG(id)>MIN(id)-col+8 FROM (select id, col from tb1 ORDER BY id) GROUP BY col;
 C2: commit work;
 MC: wait until C2 ready;
 
