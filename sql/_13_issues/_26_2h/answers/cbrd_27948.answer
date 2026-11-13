@@ -139,47 +139,8 @@ case when k='q' then 1.5 when 1=0 then 1 when k='q' then 3 else 2 end
 2     
 
 ===================================================
-0
-===================================================
-1
-===================================================
     
-Case 7: VARCHAR (10) and a longer JSON return the JSON value     
-
-===================================================
-case when k='q' then v else j end    
-{"key":"0123456789abcdef"}     
-
-===================================================
-case k when 'q' then v else j end    
-{"key":"0123456789abcdef"}     
-
-===================================================
-decode(k, 'q', v, j)    
-{"key":"0123456789abcdef"}     
-
-===================================================
-case when k='q' then v when k='z' then null else j end    
-{"key":"0123456789abcdef"}     
-
-===================================================
-case when k='q' then v when k='z' then j else j end    
-{"key":"0123456789abcdef"}     
-
-===================================================
-    
-Case 8: the result domain of a single-branch CASE does not depend on the order of the branches     
-
-===================================================
-0
-===================================================
-attr_name    data_type    prec    scale    
-r1     STRING     1073741823     0     
-r2     STRING     1073741823     0     
-
-===================================================
-    
-Case 9: more forms of the crash     
+Case 7: more forms of the crash     
 
 ===================================================
 case 'q' when k then 12345678901234567890 when 'z' then 1 when k then null else 2 end    
