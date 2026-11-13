@@ -1,0 +1,272 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+2
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+    
+Case 1: IN subquery, the inner attribute substituted into the factor: no error, 0 rows, the conjuncts are terms of the ON condition     
+
+===================================================
+c    
+
+Query plan:
+nl-join (semi join)
+    outer: iscan
+               class: o node[?]
+               index: pk_o_c term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: u_i_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select o.c from o o semi join i i on i.c= ?:?  and (o.c< ?:? ) and o.c<>?
+===================================================
+    
+Case 2: EXISTS subquery with the equality inside: 0 rows     
+
+===================================================
+c    
+
+===================================================
+    
+Case 3: LEFT OUTER JOIN ON condition with the WHERE equality substituted: 1 row, the null padded row kept     
+
+===================================================
+c    c    
+x     null     
+
+Query plan:
+nl-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select a.c, b.c from a a left outer join b b on (a.d<=a.d) and (b.c is null ) where a.c= ?:? 
+===================================================
+    
+Case 4: controls -- an inner attribute in the conjunction, no conjunction, no subquery, no substitution: unchanged     
+
+===================================================
+c    
+
+===================================================
+c    
+
+===================================================
+c    
+
+===================================================
+c    c    
+z     null     
+a     null     
+
+===================================================
+c    c    
+x     null     
+
+===================================================
+    
+Case 5: what the factor folds to -- a smaller disjunction, one predicate, true, a conjunction holding a key range     
+
+===================================================
+c    
+
+===================================================
+c    
+2.0     
+
+===================================================
+c    
+2.0     
+
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+c    
+1.0     
+2.0     
+
+Query plan:
+nl-join (semi join)
+    outer: iscan
+               class: o node[?]
+               index: pk_o_c term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: u_i_c term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select o.c from o o semi join i i on i.c= ?:?  and ((o.c= ?:? ) or (o.c= ?:? ))
+===================================================
+c    
+1.0     
+
+===================================================
+    
+Case 6: the join kinds -- right outer, three branches, a WHERE on the inner side, inner join, anti join, not in     
+
+===================================================
+c    c    
+x     null     
+
+===================================================
+c    c    
+z     null     
+
+===================================================
+c    c    
+x     null     
+x     1     
+
+===================================================
+c    c    
+x     null     
+
+===================================================
+c    c    
+x     null     
+
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+    
+Case 7: the constant comes from a derived table column, a host variable, or reaches an UPDATE or DELETE     
+
+===================================================
+c    
+2.0     
+
+===================================================
+0
+===================================================
+c    
+
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+c    
+1.0     
+2.0     
+
+===================================================
+1
+===================================================
+c    
+1.0     
+12.0     
+
+===================================================
+0
+===================================================
+    
+Case 8: LIKE '%' inside a kept factor is rewritten to IS NOT NULL, as at the top level     
+
+===================================================
+a    
+0     
+0     
+1     
+1     
+2     
+2     
+3     
+4     
+4     
+5     
+5     
+5     
+6     
+6     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where ((t.a<>t.b and  lower(t.s) is not null ) or t.s> ?:? ) order by ?
+===================================================
+a    
+0     
+1     
+2     
+2     
+3     
+4     
+4     
+5     
+5     
+6     
+
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a from t t where ((t.a<>t.b and t.s between  ?:?  ge_lt  ?:? ) or (t.a=t.b and t.s= ?:? )) and (t.s>= ?:?  and t.s<= ?:? ) order by ?
+===================================================
+0
