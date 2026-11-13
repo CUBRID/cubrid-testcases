@@ -4,15 +4,15 @@ a PL/CSQL variable in GROUP BY/HAVING of a derived table or a CTE, or of a query
 
 ===================================================
     
-A: a derived table or a CTE was typed before its deferred names were made host variables, so FIELD, DECODE,     
+A (fixed by CBRD-27633, kept for regression): a deferred name in GROUP BY/HAVING of a derived table or a CTE     
 
 ===================================================
     
-BETWEEN, ... were typed with a name of no type. B: a name in GROUP BY/HAVING of a query on a CTE or a derived     
+is made a host variable before FIELD, DECODE, BETWEEN, ... are typed. B (CBRD-27927): a name in GROUP BY/HAVING     
 
 ===================================================
     
-table was not deferred and was reported as not defined.     
+of a query on a CTE or a derived table, incl. the recursive part of a recursive CTE, is deferred, not reported as not defined.     
 
 ===================================================
 0
@@ -60,7 +60,7 @@ f_a_alias(2)
 
 ===================================================
     
-A: HAVING of a CTE, and of the recursive part of a recursive CTE     
+A: HAVING of a CTE. B: HAVING of the recursive part of a recursive CTE     
 
 ===================================================
 0
@@ -85,12 +85,34 @@ B: GROUP BY/HAVING of a query on a CTE or a derived table
 ===================================================
 0
 ===================================================
+0
+===================================================
 f_b_cte(2)    f_b_derived(2)    f_b_derived(3)    
 2     2     3     
 
 ===================================================
 f_b_group(2)    
 0:2 1:2      
+
+===================================================
+f_b_cte_group(10)    
+11:1 12:2 13:1      
+
+===================================================
+    
+B: INSERT, UPDATE and DELETE with GROUP BY/HAVING of a query on a derived table     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+i    c    
+2     12     
 
 ===================================================
     
@@ -122,14 +144,48 @@ max(k)
 0
 ===================================================
     
-an alias of the select list in HAVING is still resolved before a PL/CSQL variable of the same name     
+an alias of the select list in GROUP BY/HAVING is still resolved before a PL/CSQL variable of the same name,     
 
+===================================================
+    
+also in a query on a derived table or a CTE (2 groups of the alias k > 1, not 1 or 3 by the variable k = 100)     
+
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
 f_alias_first(100)    
 2     
 
+===================================================
+f_alias_first_dt(100)    f_alias_first_cte(100)    
+2     2     
+
+===================================================
+    
+a name that is not a column, an alias or a PL/CSQL variable is still a compile error,     
+
+===================================================
+    
+in a query on a derived table or a CTE as in a query on a table     
+
+===================================================
+Error:-1360
+===================================================
+Error:-1360
+===================================================
+Error:-1360
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
