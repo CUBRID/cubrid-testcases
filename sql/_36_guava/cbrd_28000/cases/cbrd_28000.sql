@@ -1,6 +1,8 @@
 /**
  *  This test case verifies CBRD-28000 : Prune a constant that no range or list partition holds to no partition
  *  An equality or IN term on the partition key whose value no partition holds reads no partition.
+ *  Case 15 runs the same statement shape again without recompile: the cached plan that pruned to no partition
+ *  must prune again for the next value.
  */
 
 drop table if exists t_range;
@@ -8,6 +10,8 @@ drop table if exists t_list;
 drop table if exists t_func;
 drop table if exists t_pk;
 drop table if exists t_fk;
+drop table if exists t_cache;
+drop table if exists t_cache_l;
 
 create table t_range (id int, k int, v int, index i_range_k (k))
     partition by range (k)
@@ -132,6 +136,32 @@ alter table t_fk add constraint fk_t_fk foreign key (fk) references t_pk (k);
 insert into t_fk values (3, 999);
 insert into t_fk values (4, 11);
 select * from t_fk order by 1;
+
+evaluate '15. cached plan after no partition: the next value prunes again';
+create table t_cache (k int, v int)
+    partition by range (k)
+    (
+        partition c0 values less than (10),
+        partition c1 values less than (20)
+    );
+insert into t_cache values (1, 10), (15, 150);
+select k, v from t_cache where k = 999;
+select k, v from t_cache where k = 1;
+select k, v from t_cache where k = 15;
+delete from t_cache where k = 999;
+delete from t_cache where k = 1;
+select k, v from t_cache order by k;
+create table t_cache_l (k int, v int, index i_cache_l_k (k))
+    partition by list (k)
+    (
+        partition d0 values in (1, 2),
+        partition d1 values in (3, 4)
+    );
+insert into t_cache_l values (1, 10), (3, 30);
+select k from t_cache_l where k in (99, 100);
+select k from t_cache_l where k in (1, 3) order by k;
+drop table t_cache_l;
+drop table t_cache;
 
 drop table t_fk;
 drop table t_pk;
