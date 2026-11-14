@@ -1,0 +1,853 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: 3-way NL join, the middle scan keyed by the outer scan only; result = memoize off     
+
+===================================================
+0
+===================================================
+200
+===================================================
+0
+===================================================
+400
+===================================================
+0
+===================================================
+0
+===================================================
+400
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (o)
+      INDEX SCAN (x.i_mid_kc) (key range: (x.c>o.b)key range: x.k=o.a, key filter: (x.k> ?:? ), covered: true)
+    INDEX SCAN (y.i_last_kc) (key range: y.k=x.k+?key range: y.c=x.c)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(y.v) from [dba.t_out] o, [dba.t_mid] x, [dba.t_last] y where x.k=o.a and (x.c>o.b) and (x.k> ?:? ) and y.k=x.k+? and y.c=x.c
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_mid.i_mid_kc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SCAN (index: dba.t_last.i_last_kc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+0
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+0
+===================================================
+    
+Case 2: Case 1 with a hash and a range partitioned middle table; result = memoize off     
+
+===================================================
+0
+===================================================
+400
+===================================================
+0
+===================================================
+0
+===================================================
+400
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+0
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+count(*)    sum(y.v)    
+1381     826674     
+
+===================================================
+0
+===================================================
+    
+Case 3: derived table inner correlated to the outer row, with a join term; result = memoize off     
+
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+g    sum(d.cnt)    count(*)    
+0     4     4     
+1     16     8     
+2     24     8     
+
+===================================================
+0
+===================================================
+g    sum(d.cnt)    count(*)    
+0     4     4     
+1     16     8     
+2     24     8     
+
+===================================================
+0
+===================================================
+    
+Case 4: correlated derived table after an ANTI and a SEMI JOIN inner; result = memoize off     
+
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+pk    g    cnt    
+1     1     2     
+2     2     3     
+4     1     2     
+5     2     3     
+7     1     2     
+8     2     3     
+10     1     2     
+11     2     3     
+
+===================================================
+c1    cnt    
+1     1     
+3     2     
+
+===================================================
+0
+===================================================
+pk    g    cnt    
+1     1     2     
+2     2     3     
+4     1     2     
+5     2     3     
+7     1     2     
+8     2     3     
+10     1     2     
+11     2     3     
+
+===================================================
+c1    cnt    
+1     1     
+3     2     
+
+===================================================
+0
+===================================================
+    
+Case 5: session variable assigned and read by the inner; result = memoize off, no MEMOIZE     
+
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+40
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    max(@v := @v+5)    
+129     2520     645     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    max(@v := @v+5)    
+129     2520     645     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    
+160     3280     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sv_kc) (key range: x.k=o.akey range: (x.c<@v), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sv_out] o, [dba.t_sv_in] x where x.k=o.a and (x.c<@v)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sv_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sv_in.i_sv_kc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+Case 6: session variable in a correlated subquery; result = NO_SUBQUERY_CACHE, no SUBQUERY_CACHE     
+
+===================================================
+0
+===================================================
+8
+===================================================
+0
+===================================================
+40
+===================================================
+0
+===================================================
+0
+===================================================
+sum(n)    max(w)    
+84     40     
+
+===================================================
+0
+===================================================
+sum(n)    max(w)    
+84     40     
+
+===================================================
+0
+===================================================
+0
+===================================================
+sum(n)    
+160     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_sq_in] x where x.k=s.a and (x.c<@v))
+
+  TABLE SCAN (s)
+
+  rewritten query: select sum((select count(*) from [dba.t_sq_in] x where x.k=s.a and (x.c<@v))) from [dba.t_sq_out] s
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 7: stored function in the inner term; NOT DETERMINISTIC is called as often as with memoize off     
+
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (c)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*) from [dba.t_fn_out] t, [dba.t_fn_in] c where c.k=[dba.f_det](t.a)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_fn_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_fn_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dual)
+
+  rewritten query: select serial_next_value([dba.S_CALLS], ?) from dual dual
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_fn_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_fn_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+serial_current_value(s_calls)    
+20     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+0
+===================================================
+serial_current_value(s_calls)    
+20     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+10     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dual)
+
+  rewritten query: select serial_next_value([dba.S_CALLS], ?) from dual dual
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_fn_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_fn_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 8: GROUP BY, analytic, HAVING, CONNECT BY, join and UNION subqueries in the inner term are memoized     
+
+===================================================
+0
+===================================================
+120
+===================================================
+0
+===================================================
+0
+===================================================
+60
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    
+2160     66900     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (z)
+
+  rewritten query: (select count(*) from [dba.t_sq_sub] z where (z.v<o.b*?+?) group by z.k)
+
+  TABLE SCAN (t)
+
+  rewritten query: (select max(t.cnt) from (select count(*) as [cnt] from [dba.t_sq_sub] z where (z.v<o.b*?+?) group by z.k) t (cnt))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select max(t.cnt) from (select count(*) as [cnt] from [dba.t_sq_sub] z where (z.v<o.b*?+?) group by z.k) t (cnt)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(x.c)    
+1140     45600     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (z)
+
+  rewritten query: (select row_number() over (order by ?) from [dba.t_sq_sub] z where z.k=o.b)
+
+  TABLE SCAN (t)
+
+  rewritten query: (select max(t.r) from (select row_number() over (order by ?) as [r] from [dba.t_sq_sub] z where z.k=o.b) t (r))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select max(t.r) from (select row_number() over (order by ?) as [r] from [dba.t_sq_sub] z where z.k=o.b) t (r)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+              ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+              ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(x.c)    
+1140     45600     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (z?)
+
+  rewritten query: (select min(z?.v) from [dba.t_sq_sub] z? where z?.k=o.a)
+
+  SORT (group by)
+    TABLE SCAN (z)
+
+  rewritten query: (select count(*) from [dba.t_sq_sub] z where z.k=x.k group by z.k having count(*)>o.b+(select min(z?.v) from [dba.t_sq_sub] z? where z?.k=o.a))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select count(*) from [dba.t_sq_sub] z where z.k=x.k group by z.k having count(*)>o.b+(select min(z?.v) from [dba.t_sq_sub] z? where z?.k=o.a)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+count(*)    sum(x.c)    
+2700     72880     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (z)
+
+  rewritten query: (select max(level) from [dba.t_sq_sub] z start with z.id= ?:?  connect by z.p= prior (z.id+o.b*?) and level<?+o.b)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select max(level) from [dba.t_sq_sub] z start with z.id= ?:?  connect by z.p= prior (z.id+o.b*?) and level<?+o.b))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(x.c)    
+2220     68280     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (z)
+    TABLE SCAN (z?)
+
+  rewritten query: (select count(*) from [dba.t_sq_sub] z, [dba.t_sq_sub] z? where z.k=z?.k and z.v=o.b and (z?.v< ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select count(*) from [dba.t_sq_sub] z, [dba.t_sq_sub] z? where z.k=z?.k and z.v=o.b and (z?.v< ?:? )))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+          SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+count(*)    sum(x.c)    
+660     29010     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (z)
+
+  rewritten query: select z.v from [dba.t_sq_sub] z where z.k=o.a
+
+  TABLE SCAN (z)
+
+  rewritten query: select z.v from [dba.t_sq_sub] z where z.v=o.b
+
+  TABLE SCAN (t)
+
+  rewritten query: (select max(t.v) from (select z.v from [dba.t_sq_sub] z where z.k=o.a union all select z.v from [dba.t_sq_sub] z where z.v=o.b) t (v))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select max(t.v) from (select z.v from [dba.t_sq_sub] z where z.k=o.a union all select z.v from [dba.t_sq_sub] z where z.v=o.b) t (v)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+     
+
+===================================================
+count(*)>=0    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (z)
+
+  rewritten query: (select count(*) from [dba.t_sq_sub] z where (z.v<o.b*?+?) and  drand()<? group by z.k)
+
+  TABLE SCAN (t)
+
+  rewritten query: (select max(t.cnt) from (select count(*) as [cnt] from [dba.t_sq_sub] z where (z.v<o.b*?+?) and  drand()<? group by z.k) t (cnt))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*)>=? from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and (x.c>(select max(t.cnt) from (select count(*) as [cnt] from [dba.t_sq_sub] z where (z.v<o.b*?+?) and  drand()<? group by z.k) t (cnt)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    
+2160     66900     
+
+===================================================
+count(*)    sum(x.c)    
+1140     45600     
+
+===================================================
+count(*)    sum(x.c)    
+1140     45600     
+
+===================================================
+count(*)    sum(x.c)    
+2700     72880     
+
+===================================================
+count(*)    sum(x.c)    
+2220     68280     
+
+===================================================
+count(*)    sum(x.c)    
+660     29010     
+
+===================================================
+0
+===================================================
+    
+Case 9: inner that reads no outer value, NL inside a correlated subquery, uncorrelated derived inner     
+
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    
+960     45600     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (o)
+    TABLE SCAN (x)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(x.c) from [dba.t_sq_out] o, [dba.t_sq_in] x where (x.c> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+sum(n)    
+7200     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_sq_k) (key range: x.k=o.a)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ count(*) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and x.c=s.v)
+
+  TABLE SCAN (s)
+
+  rewritten query: select sum((select /*+ ORDERED USE_NL */ count(*) from [dba.t_sq_out] o, [dba.t_sq_in] x where x.k=o.a and x.c=s.v)) from [dba.t_sq_sub] s
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_sq_sub), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (index: dba.t_sq_in.i_sq_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+          MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+count(*)    sum(d.c+d.n)    
+3000     73500     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_sq_in)
+
+  rewritten query: (select [dba.t_sq_in].c, [dba.f_nondet](?), [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum(d.c+d.n) from [dba.t_sq_out] o, (select [dba.t_sq_in].c, [dba.f_nondet](?), [dba.t_sq_in].k from [dba.t_sq_in] [dba.t_sq_in]) d (c, n, k) where d.k=o.a
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (table: dba.t_sq_out), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_sq_in), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum(x.c)    
+960     45600     
+
+===================================================
+sum(n)    
+7200     
+
+===================================================
+count(*)    sum(d.c+d.n)    
+3000     73500     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
