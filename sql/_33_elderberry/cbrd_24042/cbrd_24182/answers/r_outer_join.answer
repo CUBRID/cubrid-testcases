@@ -66,8 +66,7 @@ count(*)
 3     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
+nl-join (cross join)
     outer: idx-join (left outer join)
                outer: idx-join (inner join)
                           outer: sscan
@@ -87,6 +86,7 @@ nl-join (inner join)
                class: d node[?]
                sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select count(*) from t a left outer join t c on a.c_b=c.c_b and a.c_a=c.c_a, t d, t b where a.c_a=b.c_a and a.c_a=b.c_b and d.c_c=nvl(c.c_c, ?)
