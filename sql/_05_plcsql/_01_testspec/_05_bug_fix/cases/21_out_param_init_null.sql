@@ -1,5 +1,16 @@
+/**
+ *  This test case verifies CBRD-24947: an OUT parameter of a PL/CSQL procedure starts as NULL
+ *
+ *  The procedure prints whether its OUT parameter is NULL on entry, sets it, and passes
+ *  it to a local procedure with an OUT parameter, which prints the same.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  an OUT parameter is NULL on entry, in the procedure and in its local procedure, though the caller passes 7; result = null, null
+ */
+
 --+ server-message on
--- Verified for CBRD-24947
 
 create or replace procedure test_out_param(i OUT int) as
     procedure print_null_or_not(k int) as
@@ -18,6 +29,7 @@ begin
 end;
 
 
+evaluate 'Case 1: an OUT parameter is NULL on entry, in the procedure and in its local procedure, though the caller passes 7; result = null, null';
 select 7 into :a;
 call test_out_param(:a);
 

@@ -1,0 +1,430 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+2
+
+===================================================
+0
+
+===================================================
+    
+Case 1: SQL in another member of a package with a PARALLEL_ENABLE function -> created     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 2: cursor in a member declared after a PARALLEL_ENABLE function -> created     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 3: initializer when only a private function is PARALLEL_ENABLE -> created     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 4: catalog is_parallel_enabled -> g NO, pf YES     
+
+
+===================================================
+sp_name    is_parallel_enabled    
+g     NO     
+pf     YES     
+
+
+===================================================
+    
+Case 5: PARALLEL_ENABLE function calls a non-PARALLEL_ENABLE function -> s444 at line 2, column 65     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE can call only local routines and PARALLEL_ENABLE functions in the same package
+
+===================================================
+    
+Case 6: PARALLEL_ENABLE function calls a private procedure without parentheses -> s444 at line 2, column 58     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE can call only local routines and PARALLEL_ENABLE functions in the same package
+
+===================================================
+    
+Case 7: PARALLEL_ENABLE function calls a non-PARALLEL_ENABLE member through a local routine -> s444 at line 3, column 45     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE can call only local routines and PARALLEL_ENABLE functions in the same package
+
+===================================================
+    
+Case 8: allowed calls (PARALLEL_ENABLE private, local routine, self recursion, the other direction) -> created     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 9: run: pf(3) = (4 + 3 + 2) * 2 = 18, g(3) = 18 + 101 -> 18119     
+
+
+===================================================
+wg73(3)    
+18119     
+
+
+===================================================
+    
+Case 10: PARALLEL_ENABLE package procedure -> s445 at line 1, column 48     
+
+
+===================================================
+Error:-1399
+Package compile error: PARALLEL_ENABLE can be specified only for functions
+
+===================================================
+    
+Case 11: initializer: direct call -> s446 (calls DB server) at line 3, column 6     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use a feature that calls DB server
+
+===================================================
+    
+Case 12: initializer: non-PARALLEL_ENABLE member -> s446 (s444 text) at line 5, column 6     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions can call only local routines and PARALLEL_ENABLE functions in the same package
+
+===================================================
+    
+Case 13: initializer: built-in function -> s446 (calls DB server) at line 3, column 6     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use a feature that calls DB server
+
+===================================================
+    
+Case 14: initializer: DBMS_OUTPUT -> s446 (DBMS_OUTPUT) at line 4, column 3     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use DBMS_OUTPUT package
+
+===================================================
+    
+Case 15: initializer: SQL -> s446 (calls DB server) at line 4, column 3     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use a feature that calls DB server
+
+===================================================
+    
+Case 16: allowed initializer (constant expression, PARALLEL_ENABLE member call) -> created     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 17: run: the initializer ends without error and pf is called -> 1     
+
+
+===================================================
+wn73()    
+1     
+
+
+===================================================
+    
+Case 18: SQL in the PARALLEL_ENABLE function -> refused at line 2, column 65     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 19: DBMS_OUTPUT in the PARALLEL_ENABLE function -> refused at line 2, column 58     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE cannot use DBMS_OUTPUT package
+
+===================================================
+    
+Case 20: direct call in the PARALLEL_ENABLE function -> refused at line 2, column 65     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 21: direct call in a parameter default -> refused at line 1, column 61     
+
+
+===================================================
+Error:-1399
+Package compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 22: PARALLEL_ENABLE stored function: SQL in a local routine -> refused at line 2, column 43     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 23: PARALLEL_ENABLE stored function: local routine and recursion -> created     
+
+
+===================================================
+0
+
+===================================================
+    
+Case 24: PARALLEL_ENABLE stored function: direct call -> refused at line 1, column 84     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 25: initializer: DBMS_OUTPUT after a variable declaration in DECLARE -> s446 (DBMS_OUTPUT) at line 7, column 5     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use DBMS_OUTPUT package
+
+===================================================
+    
+Case 26: initializer: SQL after a constant declaration in DECLARE -> s446 (calls DB server) at line 7, column 5     
+
+
+===================================================
+0
+
+===================================================
+Error:-1399
+Package compile error: the initialization of a package having PARALLEL_ENABLE functions cannot use a feature that calls DB server
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

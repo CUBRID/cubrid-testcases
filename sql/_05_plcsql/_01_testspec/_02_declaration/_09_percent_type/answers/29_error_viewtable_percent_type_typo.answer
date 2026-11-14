@@ -2,8 +2,11 @@
 0
 
 ===================================================
+0
+
+===================================================
     
-No table name was written.     
+Case 1: a %type that names no view is refused     
 
 
 ===================================================
@@ -12,7 +15,7 @@ Stored procedure compile error: undeclared id T_SHORT
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'DBA.T_INTEGER' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-493
@@ -26,16 +29,16 @@ Syntax: invalid create function
 
 ===================================================
     
-Write a table name that does not exist     
+Case 2: a %type that names a view that does not exist is refused     
 
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'SUPPORT.V_NUMERIC' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'DBA.SUPPORT.V_FLOAT' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-494
@@ -52,7 +55,7 @@ Table column 'dba.support.v_DATE' has not been defined create or replace functio
 
 ===================================================
     
-Create a table name without permission     
+Case 3: a user without SELECT on the view cannot use the %type of its columns     
 
 
 ===================================================
@@ -65,11 +68,11 @@ null
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'TYPE_SUPPORT.T_SHORT' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'DBA.TYPE_SUPPORT.T_INTEGER': SELECT authorization failure.
 
 ===================================================
 Error:-494
@@ -94,7 +97,7 @@ null
 
 ===================================================
     
-Do not write column names.     
+Case 4: a %type that names no column is refused     
 
 
 ===================================================
@@ -103,7 +106,7 @@ Stored procedure compile error: TYPE_SUPPORT is neither an identifier nor a func
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'DBA.TYPE_SUPPORT' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-493
@@ -117,16 +120,16 @@ Syntax: invalid create function
 
 ===================================================
     
-Use a non-existent column name     
+Case 5: a %type that names a column that does not exist is refused     
 
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'TYPE_SUPPORT.X_SHORT' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'DBA.TYPE_SUPPORT.X_INTEGER' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-494
@@ -143,7 +146,7 @@ Table column 'dba.type_support.X_SMALLINT' has not been defined create or replac
 
 ===================================================
     
-written a column type     
+Case 6: a data type written together with a %type is refused     
 
 
 ===================================================
@@ -166,7 +169,7 @@ Syntax: invalid create function
 
 ===================================================
     
-Use $,#,@ symbols instead of % symbols     
+Case 7: other symbols than % before type, such as #, @, &, $ and !, are refused     
 
 
 ===================================================

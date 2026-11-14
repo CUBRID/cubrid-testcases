@@ -1,0 +1,185 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+1
+
+===================================================
+    
+Case 1: GRANT ON PROCEDURE of package routines is refused, _db_auth unchanged (expect 1)     
+
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+GRANT cannot be applied to package routine 'dbms_output.put_line'. grant execute on procedure on [dbms_output.put_line] to u19b
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+Stored procedure/function "public.dbms_output" does not exist. grant execute on procedure on [public.dbms_output] to u19b
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+GRANT cannot be applied to package routine 'pk19.p'. grant execute on procedure on [pk19.p] to u19b
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+Ambiguous: 'u19amb.q' matches both <user>.<name> pattern and <package>.<name> pattern. grant execute on procedure on [u19amb.q] to u19b
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+GRANT cannot be applied to package routine 'pk19.p'. grant execute on procedure on [dba.p19_sp1], [pk19.p] to u19b
+
+===================================================
+Error:-493
+Syntax: In line 1, column 36 before 'p to u19b; '
+Syntax error: unexpected '.', expecting TO or ',' 
+
+===================================================
+Error:-494
+Semantic: before '  to u19b; '
+Stored procedure/function "u19nouser.nop" does not exist. grant execute on procedure on [u19nouser.nop] to u19b
+
+===================================================
+auth_unchanged    
+1     
+
+
+===================================================
+    
+Case 2: REVOKE ON PROCEDURE of package routines is refused, _db_auth unchanged (expect 1)     
+
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+REVOKE cannot be applied to package routine 'dbms_output.put_line'. revoke execute on procedure on [dbms_output.put_line] from u19b
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+Stored procedure/function "public.dbms_output" does not exist. revoke execute on procedure on [public.dbms_output] from u19b
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+REVOKE cannot be applied to package routine 'pk19.p'. revoke execute on procedure on [pk19.p] from u19b
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+Ambiguous: 'u19amb.q' matches both <user>.<name> pattern and <package>.<name> pattern. revoke execute on procedure on [u19amb.q] from u19b
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+REVOKE cannot be applied to package routine 'pk19.p'. revoke execute on procedure on [dba.p19_sp1], [pk19.p] from u19b
+
+===================================================
+Error:-493
+Syntax: In line 1, column 37 before 'p from u19b; '
+Syntax error: unexpected '.', expecting FROM or ',' 
+
+===================================================
+Error:-494
+Semantic: before '  from u19b; '
+Stored procedure/function "u19nouser.nop" does not exist. revoke execute on procedure on [u19nouser.nop] from u19b
+
+===================================================
+auth_unchanged    
+1     
+
+
+===================================================
+    
+Case 3: GRANT / REVOKE of a standalone routine and of a package work as before, expect 2, 1, 1     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+count(*)    
+2     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+0
+
+===================================================
+auth_back    
+1     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

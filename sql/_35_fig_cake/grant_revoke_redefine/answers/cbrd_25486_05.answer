@@ -6,10 +6,6 @@
 0
 ===================================================
     
-connect u1, create u1.t1_r, u1.t1_h, u1.t1_l (partition table)     
-
-===================================================
-    
 null     
 
 ===================================================
@@ -20,7 +16,7 @@ null
 0
 ===================================================
     
-u2 grant to u1.t1_r, u1.t1_h, u1.t1_l     
+Case 1: u1 grants SELECT on t1_r and t1_h and SELECT, ALTER on t1_l to u2     
 
 ===================================================
 0
@@ -49,7 +45,7 @@ U1
 
 ===================================================
     
-connect to u2 & u3 grant to u1.t1_r, u1.t1_h, u1.t1_l     
+Case 2: u2 grants the same privileges to u3     
 
 ===================================================
     
@@ -94,30 +90,22 @@ U2     null
 
 ===================================================
     
-connect u3, drop table u1.t1_r, u1.t1_h, u1.t1_l     
+Case 3: u3, which has no ALTER on t1_h and t1_r, fails to drop them with an error     
 
 ===================================================
     
 null     
 
 ===================================================
-    
-ERROR: ALTER authorization failure     
-
-===================================================
 Error:-158
 ===================================================
 Error:-158
 ===================================================
     
-success: drop u1.t1_l     
+Case 4: u3 drops u1.t1_l, and its grant rows are gone     
 
 ===================================================
 0
-===================================================
-    
-success: drop u1.t1_l     
-
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
 U2     U3     CLASS     t1_h     U1     SELECT     YES     
@@ -133,23 +121,19 @@ U3     null
 
 ===================================================
     
-connect to u2, drop table u1.t1_r, u1.t1_h     
+Case 5: u2, which has no ALTER on t1_h and t1_r, fails to drop them with an error     
 
 ===================================================
     
 null     
 
 ===================================================
-    
-ERROR: ALTER authorization failure     
-
-===================================================
 Error:-158
 ===================================================
 Error:-158
 ===================================================
     
-connect to u1, drop u1.t1_h     
+Case 6: the owner u1 drops u1.t1_h, and its grant rows are gone     
 
 ===================================================
     
@@ -172,7 +156,7 @@ U1
 
 ===================================================
     
-connect to dba, drop u1.t1_r     
+Case 7: dba drops u1.t1_r, and its grant rows are gone     
 
 ===================================================
     
@@ -197,6 +181,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -217,10 +202,6 @@ INFORMATION_SCHEMA     null
 U1          
 U2          
 U3          
-
-===================================================
-    
-Test done     
 
 ===================================================
 0

@@ -6,7 +6,7 @@
 1000
 ===================================================
     
-1. Range condition using AND     
+Case 1: an rn range with AND is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 rn    cola    colb    
@@ -32,7 +32,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num())>= ?:?  and (orderby_num())<= ?:? 
 ===================================================
     
-2. Condition with additional filters (excluding ROWNUM)     
+Case 2: an rn range with AND and a filter on colb is not merged, and the outer query filters rn; result = even rn 2 to 10     
 
 ===================================================
 rn    cola    colb    
@@ -60,7 +60,7 @@ Query stmt:
 select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and Z.colb mod ?=?
 ===================================================
     
-3. BETWEEN expression (constant + arithmetic)     
+Case 3: rn BETWEEN constant expressions is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 rn    cola    colb    
@@ -86,7 +86,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-4. Basic BETWEEN with constant range     
+Case 4: rn BETWEEN constants is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 rn    cola    colb    
@@ -112,7 +112,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-5. Single-row range (BETWEEN same values)     
+Case 5: rn BETWEEN one value is merged into the view as an orderby_num range; result = rn 100     
 
 ===================================================
 rn    cola    colb    
@@ -129,7 +129,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-6. BETWEEN including NULL     
+Case 6: rn BETWEEN NULL AND 10 is merged into the view as an orderby_num range; result = 0 rows     
 
 ===================================================
 rn    cola    colb    
@@ -145,7 +145,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between null and  ?:? 
 ===================================================
     
-7. Combined with additional condition (filter first)     
+Case 7: a filter on colb before rn BETWEEN is not merged, and the outer query filters rn     
 
 ===================================================
 rn    cola    colb    
@@ -173,7 +173,7 @@ Query stmt:
 select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where Z.colb mod ?=? and (Z.rn>= ?:?  and Z.rn<= ?:? )
 ===================================================
     
-8. Combined with additional condition (between first)     
+Case 8: rn BETWEEN before a filter on colb is not merged, and the outer query filters rn     
 
 ===================================================
 rn    cola    colb    
@@ -201,7 +201,7 @@ Query stmt:
 select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and Z.colb mod ?=?
 ===================================================
     
-9. Two BETWEEN predicates (ROWNUM + column)     
+Case 9: rn BETWEEN with a BETWEEN on cola is not merged, and the outer query filters rn     
 
 ===================================================
 rn    cola    colb    
@@ -228,7 +228,7 @@ Query stmt:
 select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta a order by ?) Z (rn, cola, colb) where (Z.rn>= ?:?  and Z.rn<= ?:? ) and (Z.cola>= ?:?  and Z.cola<= ?:? )
 ===================================================
     
-10. BETWEEN in WHERE + HAVING (groupby_num)     
+Case 10: rn BETWEEN with GROUP BY and a HAVING on groupby_num is not merged, and the outer query filters rn     
 
 ===================================================
 cola    
@@ -257,7 +257,7 @@ Query stmt:
 select Z.cola from (select a.cola, (orderby_num()) from ta a order by ?) Z (cola, rn) where (Z.rn>= ?:?  and Z.rn<= ?:? ) group by Z.cola desc  having groupby_num() between ? and ?
 ===================================================
     
-11. Reversed BETWEEN boundaries     
+Case 11: rn BETWEEN with reversed bounds is merged into the view as an orderby_num range; result = 0 rows     
 
 ===================================================
 rn    cola    colb    
@@ -273,7 +273,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-12. BETWEEN with negative and positive range     
+Case 12: rn BETWEEN a negative and a positive bound is merged into the view as an orderby_num range; result = rn 1 to 5     
 
 ===================================================
 rn    cola    colb    
@@ -294,7 +294,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-13. BETWEEN combined with OR condition     
+Case 13: rn BETWEEN OR a BETWEEN on colb is not merged, and the outer query filters rn     
 
 ===================================================
 rn    cola    colb    
@@ -344,7 +344,7 @@ select Z.rn, Z.cola, Z.colb from (select (orderby_num()), a.cola, a.colb from ta
 82
 ===================================================
     
-14. BETWEEN with join     
+Case 14: rn BETWEEN over a join is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 rn    cola    colb    
@@ -376,7 +376,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z, tb tb where Z.cola=tb.k order by ? for (orderby_num()) between  ?:?  and  ?:? 
 ===================================================
     
-15. BETWEEN with expressions instead of constants     
+Case 15: rn BETWEEN subqueries is merged into the view as an orderby_num range     
 
 ===================================================
 rn    cola    colb    
@@ -486,7 +486,7 @@ Query stmt:
 select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) between (select min(tb.k) from tb tb) and (select max(tb.k) from tb tb)
 ===================================================
     
-16. Prepared statement with AND range     
+Case 16: a prepared rn range with AND is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 0
@@ -516,7 +516,7 @@ select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num())>
 0
 ===================================================
     
-17. Prepared statement with BETWEEN expression     
+Case 17: a prepared rn BETWEEN is merged into the view as an orderby_num range; result = rn 1 to 10     
 
 ===================================================
 0
@@ -546,7 +546,7 @@ select (orderby_num()), Z.cola, Z.colb from ta Z order by ? for (orderby_num()) 
 0
 ===================================================
     
-18. Prepared statement with BETWEEN + additional filter     
+Case 18: a prepared rn BETWEEN with a filter on colb is not merged, and the outer query filters rn; result = even rn 52 to 60     
 
 ===================================================
 0

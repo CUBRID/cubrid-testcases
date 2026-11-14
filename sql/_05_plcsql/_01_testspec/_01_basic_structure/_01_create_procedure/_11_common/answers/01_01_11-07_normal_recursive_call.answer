@@ -1,4 +1,9 @@
 ===================================================
+    
+Case 1: a recursive procedure is created and prints i=5 down to i=0     
+
+
+===================================================
 0
 
 ===================================================
@@ -24,7 +29,7 @@ i=1
 i=0
 ===================================================
     
-Error (stack overflow): Simple call     
+Case 2: a procedure without parameters that calls itself fails with a stack overflow; result = Error:-889     
 
 
 ===================================================
@@ -37,7 +42,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Error (stack overflow): Parameters call     
+Case 3: a procedure with parameters that calls itself fails with a stack overflow; result = Error:-889     
 
 
 ===================================================
@@ -50,7 +55,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Error (stack overflow): Default value parameter call     
+Case 4: a procedure with a default parameter value that calls itself fails with a stack overflow; result = Error:-889     
 
 
 ===================================================
@@ -63,7 +68,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Error (Too many nested SP call): Mutual call (indirect recursion)     
+Case 5: two procedures that call each other fail with a stack overflow; result = Error:-889     
 
 
 ===================================================
@@ -78,6 +83,8 @@ Error (Too many nested SP call): Mutual call (indirect recursion)
 ===================================================
 Error:-889
 Stored procedure execute error: 
+  (line ?, column ?) Stored procedure execute error: 
+  ...
   (line 3, column 1) Stored procedure execute error: 
   (line 3, column 1) Stored procedure execute error: 
   (line 3, column 1) Stored procedure execute error: 
@@ -92,7 +99,7 @@ Stored procedure execute error:
   (line 3, column 1) Stored procedure execute error: 
   (line 3, column 1) Stored procedure execute error: 
   (line 3, column 1) Stored procedure execute error: 
-  (line 3, column 1) Stored procedure execute error: Too many nested stored procedure call.
+  (line 3, column 1) stack overflow
 
 ===================================================
 0

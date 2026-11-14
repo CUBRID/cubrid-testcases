@@ -6,14 +6,6 @@
 0
 ===================================================
     
-case 5: changed owner for partition table     
-
-===================================================
-    
-connect to u1 & create u1.t1_r, u1.t1_h, u1.t1_l partition table     
-
-===================================================
-    
 null     
 
 ===================================================
@@ -24,16 +16,12 @@ null
 0
 ===================================================
     
-u1.t1_r, u1.t1_h, u1.t1_l grant to u2     
+Case 1: u1 grants SELECT on the three tables to u2, and a GRANT on the partition t1_l__p__p0 fails with an error     
 
 ===================================================
 0
 ===================================================
 0
-===================================================
-    
-ERROR: Invalid partition requests     
-
 ===================================================
 Error:-494
 ===================================================
@@ -52,7 +40,7 @@ U1     U2     U1     CLASS     t1_r__p__p1     SELECT     YES
 
 ===================================================
     
-connect to u2 & u1.t1_r, u1.t1_h, u1.t1_l grant to u3     
+Case 2: u2 grants SELECT on the three tables to u3     
 
 ===================================================
     
@@ -87,7 +75,7 @@ U2     U3     U1     CLASS     t1_r__p__p1     SELECT     YES
 
 ===================================================
     
-connect to u3 & changed owner, ERROR: can only be performed by the DBA or a DBA group member     
+Case 3: u3 fails to change the owners with an error, only dba or the dba group can     
 
 ===================================================
     
@@ -101,7 +89,7 @@ Error:-140
 Error:-140
 ===================================================
     
-connect to u2 & changed owner, ERROR: can only be performed by the DBA or a DBA group member     
+Case 4: u2 fails to change the owners with an error     
 
 ===================================================
     
@@ -115,7 +103,7 @@ Error:-140
 Error:-140
 ===================================================
     
-connect to dba & changed owner u1.t1_r, u1.t1_h, u1.t1_l -> u3.t1_r, u3.t1_h, u3.t1_l     
+Case 5: after dba changes the owners to u3, u3 is the grantor to u2 for the tables and partitions, and the grants to u3 are gone     
 
 ===================================================
     
@@ -144,6 +132,7 @@ DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_arg     SELECT     NO
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_file     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_sig     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_method     SELECT     NO     
+DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_package     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_partition     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_query_spec     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_serial     SELECT     NO     
@@ -171,10 +160,6 @@ class_name    owner_name
 t1_h     U3     
 t1_l     U3     
 t1_r     U3     
-
-===================================================
-    
-Test init     
 
 ===================================================
     

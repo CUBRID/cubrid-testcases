@@ -17,6 +17,10 @@
 ===================================================
 1
 ===================================================
+    
+Case 1: a recursive CTE lists the org tree under Alice with its levels     
+
+===================================================
 substr('..........', 1, level1*3)||name    
 Alice     
 ...Bob     
@@ -25,6 +29,10 @@ Alice
 ......Emma     
 ......Fred     
 ......Gail     
+
+===================================================
+    
+Case 2: a second recursive CTE that joins the first one with db_class returns the _db classes and the rows of Gail     
 
 ===================================================
 merge_val    merge_name    
@@ -102,7 +110,15 @@ utf8_bin     _db_user
 ===================================================
 0
 ===================================================
+    
+Case 3: a CTE whose select list has two columns named a fails with an error     
+
+===================================================
 Error:-494
+===================================================
+    
+Case 4: the same CTE with the column list (x, y) runs and returns no rows from the empty t     
+
 ===================================================
 x    y    
 

@@ -1,9 +1,29 @@
+/**
+ *  This test case verifies CBRD-24707: Support API for %TYPE
+ *
+ *  A %type reference with a typo or an inaccessible view must be refused when a
+ *  variable, a constant, a parameter or a return type of a stored routine uses it.
+ *  Each case tries the same four routines with a different mistake.
+ *  Case 3 creates test_user1, tries the routines as that user and logs back in as dba.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  a %type that names no view is refused
+ *    Case 2:  a %type that names a view that does not exist is refused
+ *    Case 3:  a user without SELECT on the view cannot use the %type of its columns
+ *    Case 4:  a %type that names no column is refused
+ *    Case 5:  a %type that names a column that does not exist is refused
+ *    Case 6:  a data type written together with a %type is refused
+ *    Case 7:  other symbols than % before type, such as #, @, &, $ and !, are refused
+ */
+
 --+ server-message on
 
--- Verification for CBRD-24707 ( Support API for %TYPE )
--- ERROR : %type error for typo
 
 -- create view
+drop view if exists type_support;
+
 create or replace view type_support AS 
    SELECT 
       1 as ID,
@@ -45,9 +65,7 @@ create or replace view type_support AS
    FROM dual;
 
 
-
--- %type, cursor to variable, 1 record 
-EVALUATE 'No table name was written.';
+evaluate 'Case 1: a %type that names no view is refused';
 create or replace procedure type_support as
    v_SHORT       T_SHORT%type;
 begin 
@@ -71,7 +89,7 @@ end;
 create or replace function type_support_return() return  T_SMALLINT%type   as Begin   return 51 ;   end;    
 
 
-EVALUATE 'Write a table name that does not exist';
+evaluate 'Case 2: a %type that names a view that does not exist is refused';
 create or replace procedure type_support as
    v_NUMERIC       support.v_NUMERIC%type;
 begin 
@@ -95,7 +113,7 @@ end;
 create or replace function type_support_return() return  support.v_DATE%type       as Begin   return DATE'2024-08-08' ;   end;    
 
 
-EVALUATE 'Create a table name without permission';
+evaluate 'Case 3: a user without SELECT on the view cannot use the %type of its columns';
 create user test_user1;
 call login ('test_user1') on class db_user;
 
@@ -125,7 +143,7 @@ call login ('dba') on class db_user;
 drop user test_user1;
 
 
-EVALUATE 'Do not write column names.';
+evaluate 'Case 4: a %type that names no column is refused';
 create or replace procedure type_support as
    v_SHORT       type_support%type;
 begin 
@@ -149,7 +167,7 @@ end;
 create or replace function type_support_return() return  type_support%type   as Begin   return 51 ;   end;    
 
 
-EVALUATE 'Use a non-existent column name';
+evaluate 'Case 5: a %type that names a column that does not exist is refused';
 
 create or replace procedure type_support as
    v_SHORT       type_support.X_SHORT%type;
@@ -174,7 +192,7 @@ end;
 create or replace function type_support_return() return  type_support.X_SMALLINT%type   as Begin   return 51 ;   end;    
 
 
-EVALUATE 'written a column type';
+evaluate 'Case 6: a data type written together with a %type is refused';
 create or replace procedure type_support as
    v_SHORT  SHORT     type_support.T_SHORT%type;
 begin 
@@ -198,7 +216,7 @@ end;
 create or replace function type_support_return() return SMALLINT type_support.T_SMALLINT%type   as Begin   return 51 ;   end;    
 
 
-EVALUATE 'Use $,#,@ symbols instead of % symbols';
+evaluate 'Case 7: other symbols than % before type, such as #, @, &, $ and !, are refused';
 create or replace procedure type_support as
    v_SHORT       type_support.T_SHORT!type;
 begin 

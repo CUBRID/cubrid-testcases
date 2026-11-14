@@ -1,9 +1,36 @@
+/**
+ *  This test case verifies CBRD-24707: Support API for %TYPE
+ *
+ *  A procedure parameter declared with the %type of a view column whose type
+ *  PL/CSQL does not support must be refused when the procedure is created.
+ *  The view type_unsupport selects all columns of the table unsupport.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  a TIMESTAMPLTZ view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 2:  a TIMESTAMPTZ view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 3:  a DATETIMELTZ view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 4:  a DATETIMETZ view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 5:  a BIT view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 6:  a BIT VARYING view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 7:  a JSON view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 8:  an ENUM view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 9:  a BLOB view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 10: a CLOB view column %type as a parameter type is refused as an unsupported argument type
+ *    Case 11: a SET view column %type as a parameter type fails to compile as an unsupported type
+ *    Case 12: a MULTISET view column %type as a parameter type fails to compile as an unsupported type
+ *    Case 13: a SEQUENCE view column %type as a parameter type fails to compile as an unsupported type
+ *    Case 14: a LIST view column %type as a parameter type fails to compile as an unsupported type
+ */
+
 --+ server-message on
 
--- Verification for CBRD-24707 ( Support API for %TYPE )
--- normal: %type unsupport parameter
 
 -- create table & view
+drop view if exists type_unsupport;
+drop table if exists unsupport;
+
 create table unsupport (
    ID INT AUTO_INCREMENT,
    T_TIMESTAMPLTZ TIMESTAMPLTZ,
@@ -26,98 +53,97 @@ create or replace view type_unsupport AS
    SELECT * FROM unsupport ;
 
 
--- %type, unsupported, procedure parameter
-EVALUATE 'TIMESTAMPLTZ';
+evaluate 'Case 1: a TIMESTAMPLTZ view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport(v_TIMESTAMPLTZ       type_unsupport.T_TIMESTAMPLTZ%type) as
 begin 
    dbms_output.put_line('v_TIMESTAMPLTZ ' || v_TIMESTAMPLTZ);
 end;
 
-EVALUATE 'TIMESTAMPTZ';
+evaluate 'Case 2: a TIMESTAMPTZ view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport(v_TIMESTAMPTZ       type_unsupport.T_TIMESTAMPTZ%type) as
 begin 
    dbms_output.put_line('v_TIMESTAMPTZ  ' || v_TIMESTAMPTZ );
 end;
 
 
-EVALUATE 'DATETIMELTZ';
+evaluate 'Case 3: a DATETIMELTZ view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport( v_DATETIMELTZ        type_unsupport.T_DATETIMELTZ%type) as
 begin 
    dbms_output.put_line('v_DATETIMELTZ  ' || v_DATETIMELTZ );
 end;
 
 
-EVALUATE 'DATETIMETZ';
+evaluate 'Case 4: a DATETIMETZ view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport( v_DATETIMETZ         type_unsupport.T_DATETIMETZ%type ) as
 begin 
    dbms_output.put_line('v_DATETIMETZ   ' || v_DATETIMETZ  );
 end;
 
 
-EVALUATE 'BIT';
+evaluate 'Case 5: a BIT view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport(  v_BIT                type_unsupport.T_BIT%type ) as
 begin 
    dbms_output.put_line('v_BIT          ' || v_BIT         );
 end;
 
 
-EVALUATE 'BIT VARYING';
+evaluate 'Case 6: a BIT VARYING view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport(  v_BITVARYING         type_unsupport.T_BITVARYING%type ) as
 begin 
    dbms_output.put_line('v_BITVARYING   ' || v_BITVARYING  );
 end;
 
 
-EVALUATE 'JSON';
+evaluate 'Case 7: a JSON view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport( v_JSON               type_unsupport.T_JSON%type ) as
 begin 
    dbms_output.put_line('v_JSON         ' || v_JSON        );
 end;
 
 
-EVALUATE 'ENUM';
+evaluate 'Case 8: an ENUM view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport( v_ENUM               dba.type_unsupport.T_ENUM%type ) as
 begin 
    dbms_output.put_line('v_ENUM         ' || v_ENUM        );
 end;
 
 
-EVALUATE 'BLOB';
+evaluate 'Case 9: a BLOB view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport(  v_BLOB               dba.type_unsupport.T_BLOB%type ) as
 begin 
    dbms_output.put_line('v_BLOB         ' || v_BLOB        );
 end;
 
 
-EVALUATE 'CLOB';
+evaluate 'Case 10: a CLOB view column %type as a parameter type is refused as an unsupported argument type';
 create or replace procedure type_unsupport( v_CLOB               dba.type_unsupport.T_CLOB%type ) as
 begin 
    dbms_output.put_line('v_CLOB         ' || v_CLOB        );
 end;
 
 
-EVALUATE 'SET';
+evaluate 'Case 11: a SET view column %type as a parameter type fails to compile as an unsupported type';
 create or replace procedure type_unsupport(  v_SET                dba.type_unsupport.T_SET%type ) as
 begin 
    dbms_output.put_line('v_SET          ' || v_SET         );
 end;
 
 
-EVALUATE 'MULTISET';
+evaluate 'Case 12: a MULTISET view column %type as a parameter type fails to compile as an unsupported type';
 create or replace procedure type_unsupport( v_MULTISET           dba.type_unsupport.T_MULTISET%type ) as
 begin 
    dbms_output.put_line('v_MULTISET     ' || v_MULTISET    );
 end;
 
 
-EVALUATE 'SEQUENCE';
+evaluate 'Case 13: a SEQUENCE view column %type as a parameter type fails to compile as an unsupported type';
 create or replace procedure type_unsupport( v_SEQUENCE           dba.type_unsupport.T_SEQUENCE%type ) as
 begin 
    dbms_output.put_line('v_SEQUENCE     ' || v_SEQUENCE    );
 end;
 
 
-EVALUATE 'LIST';
+evaluate 'Case 14: a LIST view column %type as a parameter type fails to compile as an unsupported type';
 create or replace procedure type_unsupport( v_LIST               dba.type_unsupport.T_LIST%type ) as
 begin 
    dbms_output.put_line('v_LIST         ' || v_LIST        );

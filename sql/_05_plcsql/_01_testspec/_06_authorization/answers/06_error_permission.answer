@@ -6,7 +6,7 @@
 
 ===================================================
     
-Comparison to table and sp grant/revoke     
+Case 1: dba grants and revokes EXECUTE on the table u1.tbl1 and on the function u1.test1 to u2, and db_auth shows the grant and then no row     
 
 
 ===================================================
@@ -47,7 +47,7 @@ grantor_name    grantee_name    object_type    object_name    owner_name    auth
 
 ===================================================
     
-in public     
+Case 2: as public, GRANT and REVOKE of EXECUTE on u1.tbl1 and u1.test1 fail with authorization errors     
 
 
 ===================================================
@@ -73,7 +73,7 @@ EXECUTE authorization failure.
 
 ===================================================
     
-in u2     
+Case 3: as u2, a member of dba, a GRANT to the owner u1 fails, a GRANT to u2 itself succeeds with no grant in SHOW GRANTS, and a REVOKE from itself fails     
 
 
 ===================================================
@@ -109,7 +109,7 @@ Cannot revoke privileges from self.
 
 ===================================================
     
-in u1     
+Case 4: as u1, SHOW GRANTS FOR u1 lists no grant     
 
 
 ===================================================
@@ -123,17 +123,12 @@ Grants for U1
 
 ===================================================
     
-in dba     
-
-
-===================================================
-    
 null     
 
 
 ===================================================
     
-do not use "on procedure": error     
+Case 5: GRANT EXECUTE ON FUNCTION fails with a syntax error     
 
 
 ===================================================
@@ -143,7 +138,7 @@ Syntax: missing authorized command list
 
 ===================================================
     
-incorrect test: error     
+Case 6: GRANT without PROCEDURE, GRANT ALL PRIVILEGES ON PROCEDURE and the name test1 without its owner u1 fail     
 
 
 ===================================================
@@ -162,7 +157,7 @@ Stored procedure/function "dba.test1" does not exist. grant execute on procedure
 
 ===================================================
     
-mixed lower case and upper case: succ     
+Case 7: GRANT and REVOKE EXECUTE ON PROCEDURE in mixed letter case succeed     
 
 
 ===================================================
@@ -170,11 +165,6 @@ mixed lower case and upper case: succ
 
 ===================================================
 0
-
-===================================================
-    
-test end     
-
 
 ===================================================
 0

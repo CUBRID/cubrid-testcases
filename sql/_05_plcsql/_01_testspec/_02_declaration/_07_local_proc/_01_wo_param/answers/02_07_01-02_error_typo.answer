@@ -1,4 +1,9 @@
 ===================================================
+    
+Case 1: PROCEDUREE instead of PROCEDURE fails to compile; result = Error:-1360     
+
+
+===================================================
 Error:-1360
 Stored procedure compile error: no viable alternative at input 'ping('
 
@@ -14,12 +19,13 @@ Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
 
 ===================================================
-Error:-1360
-Stored procedure compile error: no viable alternative at input 'TO\nBEGIN'
+    
+Case 2: TO instead of AS fails to compile; result = Error:-1360     
+
 
 ===================================================
 Error:-1360
-Stored procedure compile error: no viable alternative at input 'BEGAN\nIF'
+Stored procedure compile error: no viable alternative at input 'TO\nBEGIN'
 
 ===================================================
 Error:-493
@@ -33,6 +39,33 @@ Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
 
 ===================================================
-Error:-1360
-Stored procedure compile error: mismatched input 'end'
+    
+Case 3: BEGAN instead of BEGIN fails with a syntax error; result = Error:-493     
+
+
+===================================================
+Error:-493
+Syntax: invalid create procedure
+  CREATE [OR REPLACE] PROCEDURE identifier '(' {sp_param_list} ')' {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {procedure_source|procedure_spec} 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '
+ping(cnt); '
+Syntax error: unexpected 'begin', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '; '
+Syntax error: unexpected 'end', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+    
+Case 4: ENDS instead of END fails with a syntax error; result = Error:-493     
+
+
+===================================================
+Error:-493
+Syntax: invalid create procedure
+  CREATE [OR REPLACE] PROCEDURE identifier '(' {sp_param_list} ')' {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {procedure_source|procedure_spec} 
 

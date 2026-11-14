@@ -1,9 +1,44 @@
+/**
+ *  This test case verifies CBRD-24707: Support API for %TYPE
+ *
+ *  A local variable declared with the %type of a view column whose type PL/CSQL
+ *  does not support must make the procedure fail to compile. For some types a first
+ *  case assigns a literal of that type and a second case assigns a string.
+ *  The view type_unsupport selects all columns of the table unsupport.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  a variable of TIMESTAMPLTZ view column %type assigned a typed literal fails to compile
+ *    Case 2:  a variable of TIMESTAMPLTZ view column %type fails to compile as an unsupported type
+ *    Case 3:  a variable of TIMESTAMPTZ view column %type assigned a typed literal fails to compile
+ *    Case 4:  a variable of TIMESTAMPTZ view column %type fails to compile as an unsupported type
+ *    Case 5:  a variable of DATETIMELTZ view column %type assigned a typed literal fails to compile
+ *    Case 6:  a variable of DATETIMELTZ view column %type fails to compile as an unsupported type
+ *    Case 7:  a variable of DATETIMETZ view column %type assigned a typed literal fails to compile
+ *    Case 8:  a variable of DATETIMETZ view column %type fails to compile as an unsupported type
+ *    Case 9:  a variable of BIT view column %type assigned a typed literal fails to compile
+ *    Case 10: a variable of BIT view column %type fails to compile as an unsupported type
+ *    Case 11: a variable of BIT VARYING view column %type assigned a typed literal fails to compile
+ *    Case 12: a variable of BIT VARYING view column %type fails to compile as an unsupported type
+ *    Case 13: a variable of JSON view column %type fails to compile as an unsupported type
+ *    Case 14: a variable of ENUM view column %type fails to compile as an unsupported type
+ *    Case 15: a variable of BLOB view column %type assigned a typed literal fails to compile
+ *    Case 16: a variable of BLOB view column %type fails to compile as an unsupported type
+ *    Case 17: a variable of CLOB view column %type fails to compile as an unsupported type
+ *    Case 18: a variable of SET view column %type fails to compile as an unsupported type
+ *    Case 19: a variable of MULTISET view column %type fails to compile as an unsupported type
+ *    Case 20: a variable of SEQUENCE view column %type fails to compile as an unsupported type
+ *    Case 21: a variable of LIST view column %type fails to compile as an unsupported type
+ */
+
 --+ server-message on
 
--- Verification for CBRD-24707 ( Support API for %TYPE )
--- normal: %type unsupport variable
 
 -- create table & view
+drop view if exists type_unsupport;
+drop table if exists unsupport;
+
 create table unsupport (
    ID INT AUTO_INCREMENT,
    T_TIMESTAMPLTZ TIMESTAMPLTZ,
@@ -26,8 +61,7 @@ create or replace view type_unsupport AS
    SELECT * FROM unsupport ;
 
 
--- %type, unsupported, variable
-EVALUATE 'TIMESTAMPLTZ #1';
+evaluate 'Case 1: a variable of TIMESTAMPLTZ view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_TIMESTAMPLTZ       type_unsupport.T_TIMESTAMPLTZ%type;
 begin 
@@ -35,7 +69,7 @@ begin
    dbms_output.put_line('v_TIMESTAMPLTZ ' || v_TIMESTAMPLTZ);
 end;
 
-EVALUATE 'TIMESTAMPLTZ #2';
+evaluate 'Case 2: a variable of TIMESTAMPLTZ view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_TIMESTAMPLTZ       type_unsupport.T_TIMESTAMPLTZ%type;
 begin 
@@ -43,7 +77,7 @@ begin
    dbms_output.put_line('v_TIMESTAMPLTZ ' || v_TIMESTAMPLTZ);
 end;
 
-EVALUATE 'TIMESTAMPTZ #1';
+evaluate 'Case 3: a variable of TIMESTAMPTZ view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_TIMESTAMPTZ       type_unsupport.T_TIMESTAMPTZ%type;
 begin 
@@ -51,7 +85,7 @@ begin
    dbms_output.put_line('v_TIMESTAMPTZ  ' || v_TIMESTAMPTZ );
 end;
 
-EVALUATE 'TIMESTAMPTZ #2';
+evaluate 'Case 4: a variable of TIMESTAMPTZ view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_TIMESTAMPTZ       type_unsupport.T_TIMESTAMPTZ%type;
 begin 
@@ -59,7 +93,7 @@ begin
    dbms_output.put_line('v_TIMESTAMPTZ  ' || v_TIMESTAMPTZ );
 end;
 
-EVALUATE 'DATETIMELTZ #1';
+evaluate 'Case 5: a variable of DATETIMELTZ view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_DATETIMELTZ        type_unsupport.T_DATETIMELTZ%type;
 begin 
@@ -67,7 +101,7 @@ begin
    dbms_output.put_line('v_DATETIMELTZ  ' || v_DATETIMELTZ );
 end;
 
-EVALUATE 'DATETIMELTZ #2';
+evaluate 'Case 6: a variable of DATETIMELTZ view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_DATETIMELTZ        type_unsupport.T_DATETIMELTZ%type;
 begin 
@@ -75,7 +109,7 @@ begin
    dbms_output.put_line('v_DATETIMELTZ  ' || v_DATETIMELTZ );
 end;
 
-EVALUATE 'DATETIMETZ #1';
+evaluate 'Case 7: a variable of DATETIMETZ view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_DATETIMETZ         type_unsupport.T_DATETIMETZ%type;
 begin 
@@ -83,7 +117,7 @@ begin
    dbms_output.put_line('v_DATETIMETZ   ' || v_DATETIMETZ  );
 end;
 
-EVALUATE 'DATETIMETZ #2';
+evaluate 'Case 8: a variable of DATETIMETZ view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_DATETIMETZ         type_unsupport.T_DATETIMETZ%type;
 begin 
@@ -91,7 +125,7 @@ begin
    dbms_output.put_line('v_DATETIMETZ   ' || v_DATETIMETZ  );
 end;
 
-EVALUATE 'BIT #1';
+evaluate 'Case 9: a variable of BIT view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_BIT                type_unsupport.T_BIT%type;
 begin 
@@ -99,7 +133,7 @@ begin
    dbms_output.put_line('v_BIT          ' || v_BIT         );
 end;
 
-EVALUATE 'BIT #2';
+evaluate 'Case 10: a variable of BIT view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_BIT                type_unsupport.T_BIT%type;
 begin 
@@ -107,7 +141,7 @@ begin
    dbms_output.put_line('v_BIT          ' || v_BIT         );
 end;
 
-EVALUATE 'BIT VARYING #1';
+evaluate 'Case 11: a variable of BIT VARYING view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_BITVARYING         type_unsupport.T_BITVARYING%type;
 begin 
@@ -115,7 +149,7 @@ begin
    dbms_output.put_line('v_BITVARYING   ' || v_BITVARYING  );
 end;
 
-EVALUATE 'BIT VARYING #2';
+evaluate 'Case 12: a variable of BIT VARYING view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_BITVARYING         type_unsupport.T_BITVARYING%type;
 begin 
@@ -123,7 +157,7 @@ begin
    dbms_output.put_line('v_BITVARYING   ' || v_BITVARYING  );
 end;
 
-EVALUATE 'JSON';
+evaluate 'Case 13: a variable of JSON view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_JSON               type_unsupport.T_JSON%type;
 begin 
@@ -131,7 +165,7 @@ begin
    dbms_output.put_line('v_JSON         ' || v_JSON        );
 end;
 
-EVALUATE 'ENUM';
+evaluate 'Case 14: a variable of ENUM view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_ENUM               dba.type_unsupport.T_ENUM%type;
 begin 
@@ -139,7 +173,7 @@ begin
    dbms_output.put_line('v_ENUM         ' || v_ENUM        );
 end;
 
-EVALUATE 'BLOB #1';
+evaluate 'Case 15: a variable of BLOB view column %type assigned a typed literal fails to compile';
 create or replace procedure type_unsupport as
    v_BLOB               dba.type_unsupport.T_BLOB%type;
 begin 
@@ -147,7 +181,7 @@ begin
    dbms_output.put_line('v_BLOB         ' || v_BLOB        );
 end;
 
-EVALUATE 'BLOB #2';
+evaluate 'Case 16: a variable of BLOB view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_BLOB               dba.type_unsupport.T_BLOB%type;
 begin 
@@ -155,7 +189,7 @@ begin
    dbms_output.put_line('v_BLOB         ' || v_BLOB        );
 end;
 
-EVALUATE 'CLOB';
+evaluate 'Case 17: a variable of CLOB view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_CLOB               dba.type_unsupport.T_CLOB%type;
 begin 
@@ -163,7 +197,7 @@ begin
    dbms_output.put_line('v_CLOB         ' || v_CLOB        );
 end;
 
-EVALUATE 'SET';
+evaluate 'Case 18: a variable of SET view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_SET                dba.type_unsupport.T_SET%type;
 begin 
@@ -171,7 +205,7 @@ begin
    dbms_output.put_line('v_SET          ' || v_SET         );
 end;
 
-EVALUATE 'MULTISET';
+evaluate 'Case 19: a variable of MULTISET view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_MULTISET           dba.type_unsupport.T_MULTISET%type;
 begin 
@@ -179,7 +213,7 @@ begin
    dbms_output.put_line('v_MULTISET     ' || v_MULTISET    );
 end;
 
-EVALUATE 'SEQUENCE';
+evaluate 'Case 20: a variable of SEQUENCE view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_SEQUENCE           dba.type_unsupport.T_SEQUENCE%type;
 begin 
@@ -187,7 +221,7 @@ begin
    dbms_output.put_line('v_SEQUENCE     ' || v_SEQUENCE    );
 end;
 
-EVALUATE 'LIST';
+evaluate 'Case 21: a variable of LIST view column %type fails to compile as an unsupported type';
 create or replace procedure type_unsupport as
    v_LIST               dba.type_unsupport.T_LIST%type;
 begin 

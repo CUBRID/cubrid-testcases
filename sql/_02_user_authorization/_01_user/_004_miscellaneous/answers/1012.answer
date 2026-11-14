@@ -7,10 +7,18 @@ null
 _db_user     
 
 ===================================================
+    
+Case 1: change_owner of db_class to test_user fails; result = Error:-1145     
+
+===================================================
 Error:-1145
 ===================================================
     
 null     
+
+===================================================
+    
+Case 2: test_user sees in db_class only the classes it is granted, not the _db_ tables     
 
 ===================================================
 class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
@@ -66,7 +74,15 @@ views     INFORMATION_SCHEMA     VCLASS     YES     NONE     NO     NO     utf8_
 null     
 
 ===================================================
+    
+Case 3: change_owner of db_class back to dba fails too; result = Error:-1145     
+
+===================================================
 Error:-1145
+===================================================
+    
+Case 4: dba sees every class in db_class     
+
 ===================================================
 class_name    owner_name    class_type    is_system_class    tde_algorithm    partitioned    is_reuse_oid_class    collation    comment    
 _db_attribute     DBA     CLASS     YES     NONE     NO     NO     utf8_bin     null     

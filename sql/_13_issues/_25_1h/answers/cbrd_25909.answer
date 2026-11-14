@@ -10,7 +10,7 @@
 0
 ===================================================
     
-1. change to the table owner     
+Case 1: changing the owner of u1.tbl to u3 with ALTER ... OWNER TO updates db_auth, db_authorization and db_class     
 
 ===================================================
 0
@@ -58,6 +58,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -90,7 +91,7 @@ tbl     U3
 0
 ===================================================
     
-2. change to the view owner     
+Case 2: changing the owner of the view u1.v1_tbl to u2 and then to u3 with ALTER ... OWNER TO updates db_auth, db_authorization and show create view     
 
 ===================================================
 0
@@ -131,6 +132,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -180,6 +182,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -229,6 +232,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -272,7 +276,7 @@ null
 0
 ===================================================
     
-3. change to stored procedure owner     
+Case 3: u3 with EXECUTE cannot change the owner or the comment of the function u1.hello or drop it, and dba can change its owner     
 
 ===================================================
 0
@@ -298,13 +302,9 @@ U1
 null     
 
 ===================================================
-    
-check error message     
-
+Error:-907
 ===================================================
-Error:-140
-===================================================
-Error:-140
+Error:-907
 ===================================================
 Error:-907
 ===================================================
@@ -312,10 +312,6 @@ Error:-907
 ===================================================
     
 null     
-
-===================================================
-    
-success     
 
 ===================================================
 0
@@ -346,6 +342,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -382,7 +379,7 @@ null
 0
 ===================================================
     
-4. Change the owner of a table to which you have granted ALTER permission     
+Case 4: users with ALTER on a table, with or without grant option, cannot change its owner with ALTER ... OWNER TO, and dba can     
 
 ===================================================
 0
@@ -423,6 +420,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -454,20 +452,12 @@ U5
 null     
 
 ===================================================
-    
-check error meessage     
-
-===================================================
 Error:-140
 ===================================================
 Error:-140
 ===================================================
     
 null     
-
-===================================================
-    
-check error meessage     
 
 ===================================================
 Error:-140
@@ -498,6 +488,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -538,7 +529,7 @@ null
 0
 ===================================================
     
-5. change to the owner for partition table     
+Case 5: only dba changes the owner of range, hash and list partitioned tables with ALTER ... OWNER TO     
 
 ===================================================
     
@@ -612,10 +603,6 @@ U2     null
 null     
 
 ===================================================
-    
-check error message     
-
-===================================================
 Error:-140
 ===================================================
 Error:-140
@@ -626,10 +613,6 @@ Error:-140
 null     
 
 ===================================================
-    
-check error message     
-
-===================================================
 Error:-140
 ===================================================
 Error:-140
@@ -638,10 +621,6 @@ Error:-140
 ===================================================
     
 null     
-
-===================================================
-    
-success     
 
 ===================================================
 0
@@ -666,6 +645,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -712,7 +692,7 @@ t1_r     U3
 0
 ===================================================
     
-6-1. change to owner(u1->u3) when after grant to permission u1.tbl1     
+Case 6: changing the owner of a table whose SELECT and INSERT grants chain between u2 and u3 updates db_auth and db_authorization     
 
 ===================================================
 0
@@ -742,6 +722,7 @@ null
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -790,6 +771,7 @@ U5
 0
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -834,7 +816,7 @@ U5
 0
 ===================================================
     
-6-2. change to owner(u1->u3) when after grant to permission u1.tbl1     
+Case 7: changing the owner of a table whose grants reach u4 through u2 and u3 updates db_auth and db_authorization     
 
 ===================================================
 0
@@ -879,6 +861,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -926,6 +909,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -955,7 +939,7 @@ U5
 0
 ===================================================
     
-6-3. Check to mask(bit) on db_authorization     
+Case 8: after the owner change, the grant options in db_authorization decide what u2 and u4 can grant, insert and select     
 
 ===================================================
 0
@@ -987,6 +971,7 @@ null
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -1036,6 +1021,7 @@ null
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -1085,10 +1071,6 @@ null
 ===================================================
 0
 ===================================================
-    
-ERROR: SELECT authorization failure     
-
-===================================================
 Error:-157
 ===================================================
 1
@@ -1101,15 +1083,7 @@ col1
 null     
 
 ===================================================
-    
-ERROR: INSERT authorization failure     
-
-===================================================
 Error:-160
-===================================================
-    
-success     
-
 ===================================================
 0
 ===================================================
@@ -1127,7 +1101,7 @@ null
 0
 ===================================================
     
-6-4. Check to mask(bit) on db_authorization     
+Case 9: SELECT grants among u2 to u5 follow a chain of owner changes from u1 to u5, and a GRANT to the owner fails     
 
 ===================================================
 0
@@ -1146,17 +1120,21 @@ null
 ===================================================
     
 null     
-
-===================================================
-    
-ERROR: Cannot issue GRANT/REVOKE to owner of a class     
 
 ===================================================
 Error:-146
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
     
-success     
+null     
 
+===================================================
+Error:-146
 ===================================================
 0
 ===================================================
@@ -1168,15 +1146,7 @@ success
 null     
 
 ===================================================
-    
-ERROR: Cannot issue GRANT/REVOKE to owner of a class     
-
-===================================================
 Error:-146
-===================================================
-    
-success     
-
 ===================================================
 0
 ===================================================
@@ -1188,35 +1158,7 @@ success
 null     
 
 ===================================================
-    
-ERROR: Cannot issue GRANT/REVOKE to owner of a class     
-
-===================================================
 Error:-146
-===================================================
-    
-success     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-    
-null     
-
-===================================================
-    
-ERROR: Cannot issue GRANT/REVOKE to owner of a class     
-
-===================================================
-Error:-146
-===================================================
-    
-success     
-
 ===================================================
 0
 ===================================================
@@ -1244,6 +1186,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -1302,6 +1245,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -1353,6 +1297,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -1399,6 +1344,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -1442,6 +1388,7 @@ DBA     INFORMATION_SCHEMA     CLASS     _db_meth_arg     DBA     SELECT     NO
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_file     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_meth_sig     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_method     DBA     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_partition     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_query_spec     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_serial     DBA     SELECT     NO     
@@ -1457,10 +1404,6 @@ DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO
 
 ===================================================
 0
-===================================================
-    
-Test done     
-
 ===================================================
 0
 ===================================================

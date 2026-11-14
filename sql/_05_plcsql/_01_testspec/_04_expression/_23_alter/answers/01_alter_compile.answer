@@ -2,10 +2,18 @@
 0
 
 ===================================================
+0
+
+===================================================
 1
 
 ===================================================
 0
+
+===================================================
+    
+Case 1: test_tbl selects col1 of tbl into a variable and prints it     
+
 
 ===================================================
     
@@ -15,7 +23,7 @@ null
 col1 :11
 ===================================================
     
-alter table & print the "show create table" result     
+Case 2: ALTER TABLE CHANGE turns col1 into col2 CHAR(2), as show create table shows     
 
 
 ===================================================
@@ -28,7 +36,7 @@ dba.tbl     CREATE TABLE [tbl] ([col2] CHARACTER(2)) REUSE_OID, COLLATE utf8_bin
 
 ===================================================
     
-ERROR: Stored procedure execute error     
+Case 3: test_tbl, compiled before the change, fails to execute because col1 is gone     
 
 
 ===================================================
@@ -38,7 +46,7 @@ Stored procedure execute error:
 
 ===================================================
     
-ERROR: Operation can only be performed by the DBA or a DBA group member     
+Case 4: as public, ALTER PROCEDURE test_tbl COMPILE fails because public.test_tbl does not exist, as dba it recompiles and test_tbl prints the value again     
 
 
 ===================================================
@@ -66,7 +74,7 @@ null
 col1 :11
 ===================================================
     
-drop table & ERROR: Syntax: Unknown class dba.tbl     
+Case 5: after drop table tbl, test_tbl fails with Unknown class     
 
 
 ===================================================
@@ -82,8 +90,11 @@ Stored procedure execute error:
 
 ===================================================
     
-create t1 & check for %type     
+Case 6: test_proc with a parameter of t1.col%type (int) runs     
 
+
+===================================================
+0
 
 ===================================================
 0
@@ -99,7 +110,7 @@ null
 args value: 1
 ===================================================
     
-changed column type on t1.col (int -> char(1))     
+Case 7: t1.col changes from int to char(1)     
 
 
 ===================================================
@@ -107,7 +118,7 @@ changed column type on t1.col (int -> char(1))
 
 ===================================================
     
-before re-compile procedure     
+Case 8: before the recompile, test_proc keeps its int parameter, so a string argument fails     
 
 
 ===================================================
@@ -123,7 +134,7 @@ null
 args value: 1
 ===================================================
     
-after re-compile procedure     
+Case 9: after the recompile, test_proc takes char(1) and accepts both arguments     
 
 
 ===================================================
@@ -143,7 +154,7 @@ null
 args value: 1
 ===================================================
     
-changed column type on t1.col (char(1) -> int)     
+Case 10: after t1.col goes back to int and a recompile, a string argument fails again     
 
 
 ===================================================
@@ -165,7 +176,7 @@ null
 args value: 1
 ===================================================
     
-drop t1     
+Case 11: after drop t1, test_proc still runs with its int parameter     
 
 
 ===================================================
@@ -184,12 +195,12 @@ null
 args value: 1
 ===================================================
     
-after re-compile procedure & Error: Failed to get attribute information     
+Case 12: a recompile after drop t1 fails, and test_proc keeps its int parameter     
 
 
 ===================================================
 Error:-1360
-Stored procedure compile error: Failed to get attribute information
+Stored procedure compile error: 'T1.COL' is neither a table column nor a package variable or constant
 
 ===================================================
 Error:-889

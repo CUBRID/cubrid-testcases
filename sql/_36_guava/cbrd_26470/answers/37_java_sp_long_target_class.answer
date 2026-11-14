@@ -1,0 +1,81 @@
+===================================================
+    
+Case 1: Java SP with a 600-char class name is created, target_class length 600     
+
+
+===================================================
+0
+
+===================================================
+char_length(target_class)    
+600     
+
+
+===================================================
+    
+Case 2: Java SP with a 1024-char class name is created, target_class length 1024     
+
+
+===================================================
+0
+
+===================================================
+char_length(target_class)    
+1024     
+
+
+===================================================
+    
+Case 3: Java SP with a 512-char class name is created, target_class length 512 (regression)     
+
+
+===================================================
+0
+
+===================================================
+char_length(target_class)    
+512     
+
+
+===================================================
+    
+Case 4: Java SP with a 1025-char class name fails with Data overflow     
+
+
+===================================================
+Error:-427
+Data overflow on data type "character varying".
+
+===================================================
+count(*)    
+0     
+
+
+===================================================
+    
+Case 5: PL/CSQL function (regression): 7     
+
+
+===================================================
+0
+
+===================================================
+pf37()    
+7     
+
+
+===================================================
+    
+Case 6: catalog: _db_package_code.name 512, _db_stored_procedure.target_class 1024, _db_stored_procedure_code.name 512     
+
+
+===================================================
+class_name    attr_name    prec    
+_db_package_code     name     512     
+_db_stored_procedure     target_class     1024     
+_db_stored_procedure_code     name     512     
+
+
+===================================================
+0
+

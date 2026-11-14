@@ -1,0 +1,239 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: A -> B -> A -> (6,8) (3,8) (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 2: A -> B -> A -> B -> A -> (6,8) (3,8) (6,8) (3,8) (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 3: pk81a.f -> pk81b.g -> pk81a.h -> (3,8) (4,8) (4,8) (8,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) Stored procedure execute error: 
+  (line 4, column 8) Stored procedure execute error: 
+  (line 8, column 8) division by zero
+
+===================================================
+    
+Case 4: local function in the inner A -> (10,8) (3,8) (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 10, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 5: one level -> (3,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 3, column 8) division by zero
+
+===================================================
+    
+Case 6: self recursion in a unit -> (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 7: deep mutual recursion -> innermost (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line ?, column ?) Stored procedure execute error: 
+  ...
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 8: through the server -> (6,8) (3,8) (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+    
+Case 9: Java exception in the inner A -> (6,8) (3,8) (4,8) type of a value does not match     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) type of a value does not match the one known at compile time (hint: try recompiling this stored procedure)
+
+===================================================
+    
+Case 10: Java exception, two rounds -> (6,8) (3,8) (6,8) (3,8) (4,8) type of a value does not match     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) type of a value does not match the one known at compile time (hint: try recompiling this stored procedure)
+
+===================================================
+    
+Case 11: outermost position unknown -> first (line ?, column ?), last (4,8) division by zero     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line ?, column ?) Stored procedure execute error: 
+  ...
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 6, column 8) Stored procedure execute error: 
+  (line 3, column 8) Stored procedure execute error: 
+  (line 4, column 8) division by zero
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

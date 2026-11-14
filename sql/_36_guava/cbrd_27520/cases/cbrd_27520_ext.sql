@@ -1,6 +1,7 @@
 /**
- *  CBRD-27520: an unqualified <table>.<column>%TYPE in the parameter or return type of a
- *  PL/CSQL SP must refer to the object of the SP owner, not of the session user.
+ *  This test case verifies CBRD-27520: an unqualified <table>.<column>%TYPE in the parameter
+ *  or return type of a PL/CSQL SP must refer to the object of the SP owner, not of the
+ *  session user.
  *
  *  cbrd_27520.sql covers plain tables. This file covers the other kinds of %TYPE target,
  *  the remaining parameter modes and identifier spellings, and a session user that is a
@@ -10,8 +11,23 @@
  *  negative cases are guards: pt_check_create_stored_procedure () rejects a missing SP
  *  owner and a Java SP before any %TYPE name is resolved, and a name that already
  *  carries an owner never reaches the code this issue fixed. They are here so that a
- *  later change cannot silently reorder those checks. Each case is described by its
- *  evaluate label.
+ *  later change cannot silently reorder those checks.
+ *
+ *  Coverage:
+ *    Case 1:  a view column as the %TYPE target
+ *    Case 2:  a synonym as the %TYPE target, to the owner table and to dba.cbrd27520_shared
+ *    Case 3:  OUT and INOUT parameters
+ *    Case 4:  quoted and case-varying identifiers, a fully qualified name and a quoted SP name
+ *    Case 5:  %TYPE in the signature and in the body at once
+ *    Case 6:  guard - a system class never gets an owner, on the return and parameter paths
+ *    Case 7:  a parameter list mixing plain types and %TYPE types
+ *    Case 8:  ytbl of cbrd27520_u2 fails with an error that names cbrd27520_u1.ytbl, not dba.ytbl
+ *    Case 9:  guard - %TYPE fails with an error for a Java SP, in a parameter and in the return type
+ *    Case 10: guard - AUTHID CALLER fails with an error for a PL/CSQL SP
+ *    Case 11: guard - nobody is not a database user, an error raised before any %TYPE name is resolved
+ *    Case 12: guard - an owner-qualified %TYPE fails without SELECT on the table and succeeds after the grant
+ *    Case 13: a DBA group member as the session user, owning its own ztbl, gets the types of cbrd27520_u1.ztbl
+ *    Case 14: the SPs run, and the catalog shows their stored types
  */
 
 --+ server-message on
