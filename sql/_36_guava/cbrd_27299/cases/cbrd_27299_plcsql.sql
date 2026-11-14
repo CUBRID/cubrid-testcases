@@ -26,6 +26,7 @@
  */
 
 drop table if exists t_one;
+drop serial if exists s_pe;
 
 -- static SQL and cursors in the bodies below need an existing table
 create table t_one (a int);

@@ -2,8 +2,11 @@
 0
 
 ===================================================
+0
+
+===================================================
     
-No table name was written.     
+Case 1: a %type that names no view is refused     
 
 
 ===================================================
@@ -26,7 +29,7 @@ Syntax: invalid create function
 
 ===================================================
     
-Write a table name that does not exist     
+Case 2: a %type that names a view that does not exist is refused     
 
 
 ===================================================
@@ -52,7 +55,7 @@ Table column 'dba.support.v_DATE' has not been defined create or replace functio
 
 ===================================================
     
-Create a table name without permission     
+Case 3: a user without SELECT on the view cannot use the %type of its columns     
 
 
 ===================================================
@@ -94,7 +97,7 @@ null
 
 ===================================================
     
-Do not write column names.     
+Case 4: a %type that names no column is refused     
 
 
 ===================================================
@@ -117,7 +120,7 @@ Syntax: invalid create function
 
 ===================================================
     
-Use a non-existent column name     
+Case 5: a %type that names a column that does not exist is refused     
 
 
 ===================================================
@@ -143,7 +146,7 @@ Table column 'dba.type_support.X_SMALLINT' has not been defined create or replac
 
 ===================================================
     
-written a column type     
+Case 6: a data type written together with a %type is refused     
 
 
 ===================================================
@@ -166,7 +169,7 @@ Syntax: invalid create function
 
 ===================================================
     
-Use $,#,@ symbols instead of % symbols     
+Case 7: other symbols than % before type, such as #, @, &, $ and !, are refused     
 
 
 ===================================================

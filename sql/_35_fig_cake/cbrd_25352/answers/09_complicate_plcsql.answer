@@ -1,6 +1,6 @@
 ===================================================
     
-create dba.test_proc     
+Case 1: dba.test_proc is created and runs     
 
 
 ===================================================
@@ -16,7 +16,7 @@ user name=INFORMATION_SCHEMA
 user name=PUBLIC
 ===================================================
     
-create public.test_proc     
+Case 2: public.test_proc is created by dba and runs     
 
 
 ===================================================
@@ -30,7 +30,7 @@ null
 user name=PUBLIC
 ===================================================
     
-create table athlete & insert procedure & delete procedure     
+Case 3: table athlete and the procedures insert_athlete and delete_athlete are created     
 
 
 ===================================================
@@ -44,7 +44,7 @@ create table athlete & insert procedure & delete procedure
 
 ===================================================
     
-call insert_athlete()     
+Case 4: each call of insert_athlete inserts a row     
 
 
 ===================================================
@@ -70,7 +70,7 @@ code    name    gender    nation_code    event
 
 ===================================================
     
-call delete_athlete()     
+Case 5: each call of delete_athlete deletes a row     
 
 
 ===================================================
@@ -96,7 +96,7 @@ code    name    gender    nation_code    event
 
 ===================================================
     
-create function dba.fibonacci     
+Case 6: the recursive function dba.fibonacci is created and runs     
 
 
 ===================================================
@@ -109,7 +109,7 @@ fibonacci(3)
 
 ===================================================
     
-ERROR: Stored procedure execute error     
+Case 7: a string argument fails with a stored procedure execute error     
 
 
 ===================================================
@@ -119,7 +119,7 @@ Stored procedure execute error:
 
 ===================================================
     
-ERROR: Parameter count is invalid     
+Case 8: two arguments fail with an invalid parameter count     
 
 
 ===================================================
@@ -128,7 +128,7 @@ Parameter count is invalid. expected: 1, actual: 2
 
 ===================================================
     
-create user u1 & connect to u1     
+Case 9: u1 creating public.fibonacci is refused: DBA, members of DBA group, and owner can perform CREATE PROCEDURE/FUNCTION     
 
 
 ===================================================
@@ -140,18 +140,13 @@ null
 
 
 ===================================================
-    
-create function public.fibonacci, ERROR: DBA, members of DBA group, and owner can perform CREATE PROCEDURE/FUNCTION     
-
-
-===================================================
 Error:-494
 Semantic: before ' ; '
 DBA, members of DBA group, and owner can perform CREATE PROCEDURE/FUNCTION. create or replace function [public.fibonacci](n  integer) re...
 
 ===================================================
     
-connect to public & create function public.fibonacci2     
+Case 10: public creating public.fibonacci2 that calls dba.fibonacci without EXECUTE fails: EXECUTE authorization failure     
 
 
 ===================================================
@@ -165,7 +160,7 @@ Stored procedure compile error: EXECUTE authorization failure.
 
 ===================================================
     
-connect to dba & create function public.fibonacci     
+Case 11: dba creates public.fibonacci     
 
 
 ===================================================
@@ -178,7 +173,7 @@ null
 
 ===================================================
     
-select public.fibonacci() from dual     
+Case 12: public.fibonacci runs recursively     
 
 
 ===================================================
@@ -188,7 +183,7 @@ public.fibonacci(3)
 
 ===================================================
     
-create function dba.fibonacci2     
+Case 13: dba.fibonacci2 calling public.fibonacci is created     
 
 
 ===================================================
@@ -196,17 +191,12 @@ create function dba.fibonacci2
 
 ===================================================
     
-select fibonacci2() from dual     
+Case 14: dba.fibonacci2 runs     
 
 
 ===================================================
 fibonacci2(3)    
 2     
-
-
-===================================================
-    
-Test done     
 
 
 ===================================================

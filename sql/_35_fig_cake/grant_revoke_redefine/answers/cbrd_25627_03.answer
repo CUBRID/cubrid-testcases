@@ -6,18 +6,10 @@
 0
 ===================================================
     
-case 3: changed owner for javasp     
-
-===================================================
-    
-create u1.hello function     
+Case 1: u1.hello is created, and u1 grants EXECUTE on it to u2 and u3     
 
 ===================================================
 0
-===================================================
-    
-connect to u1 & u1.hello grant to u2, u3     
-
 ===================================================
     
 null     
@@ -33,7 +25,7 @@ U1     U3     U1     FUNCTION     hello     EXECUTE
 
 ===================================================
     
-connect to u3 & changed to owner u1.hello -> u3.hello, ERROR: the owner or a member of DBA group can alter stored procedure     
+Case 2: u3 changing the owner of u1.hello is refused: the owner or a member of DBA group can alter stored procedure     
 
 ===================================================
     
@@ -43,7 +35,7 @@ null
 Error:-907
 ===================================================
     
-connect to dba & changed to owner u1.hello -> u3.hello     
+Case 3: dba changes the owner of u1.hello to u3, the grants of u1 are revoked     
 
 ===================================================
     
@@ -86,10 +78,6 @@ U3     U2     U3     FUNCTION     hello     EXECUTE
 ===================================================
 sp_name    owner    
 hello     U3     
-
-===================================================
-    
-Test init     
 
 ===================================================
 0

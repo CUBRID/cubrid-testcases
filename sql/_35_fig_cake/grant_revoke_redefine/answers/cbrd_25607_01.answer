@@ -9,20 +9,12 @@ create test users
 ===================================================
 0
 ===================================================
-    
-create owner.tbl, owner.hello     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-case 1: compare to "owner" and "dba"     
-
-===================================================
-    
-connect to owner user & owner.tbl, owner.hello grant to temp_user     
+Case 1: the owner grants SELECT on owner.tbl and EXECUTE on owner.hello to temp_user, grantor OWNER     
 
 ===================================================
     
@@ -39,7 +31,7 @@ OWNER     TEMP_USER     hello     EXECUTE     NO
 
 ===================================================
     
-revoke from temp_user     
+Case 2: the owner revokes both, and the rows are gone     
 
 ===================================================
 0
@@ -50,7 +42,7 @@ grantor_name    grantee_name    object_name    auth_type    is_grantable
 
 ===================================================
     
-connect to dba user     
+Case 3: dba grants both to temp_user, and the grantor is OWNER, not DBA     
 
 ===================================================
     
@@ -103,7 +95,7 @@ TEMP_USER     null
 
 ===================================================
     
-Test init     
+Case 4: dba revokes both, and the rows are gone     
 
 ===================================================
 0
@@ -142,11 +134,7 @@ DBA     INFORMATION_SCHEMA     SELECT     NO
 
 ===================================================
     
-case 2: compare to "owner" and "grantable"     
-
-===================================================
-    
-connect to owner & owner.tbl grant to grantable     
+Case 5: the owner grants SELECT WITH GRANT OPTION to grantable, and EXECUTE WITH GRANT OPTION fails with an error     
 
 ===================================================
     
@@ -154,10 +142,6 @@ null
 
 ===================================================
 0
-===================================================
-    
-grantable user grant owner.hello, ERROR: Grant option is not allowed     
-
 ===================================================
 Error:-494
 ===================================================
@@ -166,7 +150,7 @@ OWNER     GRANTABLE     tbl     SELECT     YES
 
 ===================================================
     
-connect to dba     
+Case 6: grantable grants SELECT to temp_user as grantor GRANTABLE, and its GRANT EXECUTE fails with an error     
 
 ===================================================
     
@@ -174,10 +158,6 @@ null
 
 ===================================================
 0
-===================================================
-    
-ERROR: Only DBA and the owner can grant the EXECUTE privilege     
-
 ===================================================
 Error:-1365
 ===================================================
@@ -191,11 +171,7 @@ GRANTABLE     null
 
 ===================================================
     
-Test init     
-
-===================================================
-    
-connect to grantable & revoke from temp_user     
+Case 7: grantable revokes from temp_user, the owner revokes from grantable, and the rows are gone     
 
 ===================================================
     
@@ -203,10 +179,6 @@ null
 
 ===================================================
 0
-===================================================
-    
-connect to owner & revoke from grantable     
-
 ===================================================
     
 null     
@@ -215,10 +187,6 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_name    auth_type    is_grantable    
-
-===================================================
-    
-connect to dba & removed test users & test objects     
 
 ===================================================
     

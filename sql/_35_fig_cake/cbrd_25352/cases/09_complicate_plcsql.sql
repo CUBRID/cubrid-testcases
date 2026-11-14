@@ -1,8 +1,30 @@
---+ server-message on
--- Verified for CBRD-25352
--- check to pl/csql
+/**
+ *  This test case verifies CBRD-25352: PL/CSQL stored procedures and functions of dba and of
+ *  other owners, created, called and dropped.
+ *  Revised for CBRD-26470: a direct call checks EXECUTE when the caller is compiled, so
+ *  public.fibonacci2, which calls dba.fibonacci without EXECUTE, fails to compile.
+ *
+ *  Coverage:
+ *    Case 1:  dba.test_proc with a FOR loop over a query is created and runs
+ *    Case 2:  public.test_proc created by dba is created and runs
+ *    Case 3:  table athlete and the procedures insert_athlete and delete_athlete are created
+ *    Case 4:  each call of insert_athlete inserts a row
+ *    Case 5:  each call of delete_athlete deletes a row and prints the count
+ *    Case 6:  the recursive function dba.fibonacci is created and runs
+ *    Case 7:  dba.fibonacci with a string argument fails with a stored procedure execute error
+ *    Case 8:  dba.fibonacci with two arguments fails with an invalid parameter count
+ *    Case 9:  u1 creating public.fibonacci is refused (DBA, members of DBA group, and owner only)
+ *    Case 10: public creating public.fibonacci2 that calls dba.fibonacci without EXECUTE fails to
+ *             compile with EXECUTE authorization failure
+ *    Case 11: dba creates public.fibonacci
+ *    Case 12: public.fibonacci runs recursively
+ *    Case 13: dba.fibonacci2 calling public.fibonacci is created
+ *    Case 14: dba.fibonacci2 runs
+ */
 
-evaluate 'create dba.test_proc';
+--+ server-message on
+
+evaluate 'Case 1: dba.test_proc is created and runs';
 create or replace procedure test_proc as
 begin
     for r in (select t.name from db_user t order by t.name) loop
@@ -13,7 +35,7 @@ end;
 call test_proc();
 
 
-evaluate 'create public.test_proc';
+evaluate 'Case 2: public.test_proc is created by dba and runs';
 create or replace procedure public.test_proc as
 begin
     for r in (select t.name from db_user t order by t.name) loop
@@ -24,7 +46,7 @@ end;
 call public.test_proc();
 
 
-evaluate 'create table athlete & insert procedure & delete procedure';
+evaluate 'Case 3: table athlete and the procedures insert_athlete and delete_athlete are created';
 create table athlete(
     code integer AUTO_INCREMENT(16693, 1) NOT NULL,
     [name] character varying(40) NOT NULL,
@@ -65,7 +87,7 @@ EXCEPTION
         DBMS_OUTPUT.put_line('exception occurred');
 END;
 
-evaluate 'call insert_athlete()';
+evaluate 'Case 4: each call of insert_athlete inserts a row';
 call insert_athlete('a','a','a','a');
 select * from athlete order by code;
 		
@@ -73,7 +95,7 @@ call insert_athlete('b','b','b','b');
 select * from athlete order by code;
 
 
-evaluate 'call delete_athlete()';
+evaluate 'Case 5: each call of delete_athlete deletes a row';
 call delete_athlete(16693);
 select * from athlete order by code;
 
@@ -81,7 +103,7 @@ call delete_athlete(16694);
 select * from athlete order by code;
 
 
-evaluate 'create function dba.fibonacci';
+evaluate 'Case 6: the recursive function dba.fibonacci is created and runs';
 CREATE OR REPLACE FUNCTION fibonacci(n INTEGER) RETURN INTEGER
 IS
     invalid_input EXCEPTION;
@@ -106,19 +128,17 @@ END;
 
 select fibonacci(3);
 
-evaluate 'ERROR: Stored procedure execute error';
+evaluate 'Case 7: a string argument fails with a stored procedure execute error';
 select fibonacci('a');
 
-evaluate 'ERROR: Parameter count is invalid';
+evaluate 'Case 8: two arguments fail with an invalid parameter count';
 select fibonacci('aaa',2);
 
 
-evaluate 'create user u1 & connect to u1';
+evaluate 'Case 9: u1 creating public.fibonacci is refused: DBA, members of DBA group, and owner can perform CREATE PROCEDURE/FUNCTION';
 create user u1;
 call login('u1','') on class db_user;
 
-
-evaluate 'create function public.fibonacci, ERROR: DBA, members of DBA group, and owner can perform CREATE PROCEDURE/FUNCTION';
 CREATE OR REPLACE FUNCTION public.fibonacci(n INTEGER) RETURN INTEGER
 IS
     invalid_input EXCEPTION;
@@ -142,7 +162,7 @@ EXCEPTION
 END;
 
 
-evaluate 'connect to public & create function public.fibonacci2';
+evaluate 'Case 10: public creating public.fibonacci2 that calls dba.fibonacci without EXECUTE fails: EXECUTE authorization failure';
 call login('public','') on class db_user;
 
 CREATE OR REPLACE FUNCTION public.fibonacci2(n INTEGER) RETURN INTEGER
@@ -168,7 +188,7 @@ EXCEPTION
 END;
 
 
-evaluate 'connect to dba & create function public.fibonacci';
+evaluate 'Case 11: dba creates public.fibonacci';
 call login('dba','') on class db_user;
 
 CREATE OR REPLACE FUNCTION public.fibonacci(n INTEGER) RETURN INTEGER
@@ -193,11 +213,11 @@ EXCEPTION
         RETURN -1;
 END;
 
-evaluate 'select public.fibonacci() from dual';
+evaluate 'Case 12: public.fibonacci runs recursively';
 select public.fibonacci(3) from dual;
 
 
-evaluate 'create function dba.fibonacci2';
+evaluate 'Case 13: dba.fibonacci2 calling public.fibonacci is created';
 CREATE OR REPLACE FUNCTION fibonacci2(n INTEGER) RETURN INTEGER
 IS
     invalid_input EXCEPTION;
@@ -220,11 +240,10 @@ EXCEPTION
         RETURN -1;
 END;
 
-evaluate 'select fibonacci2() from dual';
+evaluate 'Case 14: dba.fibonacci2 runs';
 select fibonacci2(3) from dual;
 
 
-evaluate 'Test done';
 DROP PROCEDURE test_proc;
 DROP PROCEDURE public.test_proc;
 DROP PROCEDURE insert_athlete;

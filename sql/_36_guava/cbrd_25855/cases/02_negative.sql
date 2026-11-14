@@ -1,9 +1,24 @@
--- ============================================
--- CBRD-25855: PL/CSQL OPEN FOR with dynamic SQL and USING clause
--- Negative scenarios (N1-N8)
---   - non-string SQL and unsupported USING types -> compile errors
---   - DML in OPEN FOR, non-existent object, bind-count mismatch -> run-time errors
--- ============================================
+/**
+ *  This test case verifies CBRD-25855: PL/CSQL OPEN FOR with dynamic SQL and a USING clause,
+ *  negative scenarios.
+ *
+ *  A non-string SQL and unsupported USING types are compile errors. DML in OPEN FOR, a
+ *  missing object, a bind count mismatch and an empty or NULL SQL string are run time errors.
+ *  The whole file runs under server-message, so each error prints its message.
+ *
+ *  Coverage:
+ *    Case 1:  a non-string SQL expression in OPEN FOR is a compile error
+ *    Case 2:  a USING value of type SYS_REFCURSOR is a compile error
+ *    Case 3:  a USING value of type BOOLEAN is a compile error
+ *    Case 4:  a USING value of type CURSOR is a compile error
+ *    Case 5:  a USING value of a RECORD type (ROWTYPE) is a compile error
+ *    Case 6:  a DML statement given to OPEN FOR fails at run time, only SELECT is allowed
+ *    Case 7:  a missing table in the dynamic SQL compiles and fails only at CALL
+ *    Case 8:  fewer USING values than placeholders fail at run time
+ *    Case 9:  more USING values than placeholders fail at run time with another error than Case 8
+ *    Case 10: an empty dynamic SQL string in OPEN FOR fails at run time
+ *    Case 11: a NULL dynamic SQL string in OPEN FOR fails at run time
+ */
 
 --+ server-message on
 
@@ -11,8 +26,7 @@ drop table if exists emp;
 create table emp (id int primary key, name varchar(20), dept int);
 insert into emp values (1,'a',10),(2,'b',10),(3,'c',20);
 
--- N1: dynamic SQL expression is not a string type (compile error)
-evaluate 'N1: non-string SQL in OPEN FOR';
+evaluate 'Case 1: a non-string SQL expression in OPEN FOR is a compile error';
 create or replace procedure p_neg1 as
     c sys_refcursor;
     n int := 5;
@@ -20,8 +34,7 @@ begin
     open c for n;
 end;
 
--- N2: USING value of type SYS_REFCURSOR is rejected (compile error)
-evaluate 'N2: USING sys_refcursor';
+evaluate 'Case 2: a USING value of type SYS_REFCURSOR is a compile error';
 create or replace procedure p_neg2 as
     c sys_refcursor;
     c2 sys_refcursor;
@@ -29,8 +42,7 @@ begin
     open c for 'select id from emp where id = ?' using c2;
 end;
 
--- N3: USING value of type BOOLEAN is rejected (compile error)
-evaluate 'N3: USING boolean';
+evaluate 'Case 3: a USING value of type BOOLEAN is a compile error';
 create or replace procedure p_neg3 as
     c sys_refcursor;
     b boolean := true;
@@ -38,8 +50,7 @@ begin
     open c for 'select id from emp where id = ?' using b;
 end;
 
--- N4: USING value of type CURSOR is rejected (compile error)
-evaluate 'N4: USING cursor';
+evaluate 'Case 4: a USING value of type CURSOR is a compile error';
 create or replace procedure p_neg4 as
     cursor cur is select id from emp;
     c sys_refcursor;
@@ -47,9 +58,8 @@ begin
     open c for 'select id from emp where id = ?' using cur;
 end;
 
--- N5: USING a RECORD type (%ROWTYPE) is rejected (compile error) -- completes the
---     AC's unsupported USING type list (record / cursor / boolean / sys_refcursor)
-evaluate 'N5: USING record (%ROWTYPE)';
+-- Cases 2 to 5 cover the unsupported USING types of the issue: sys_refcursor, boolean, cursor and record
+evaluate 'Case 5: a USING value of a RECORD type (%ROWTYPE) is a compile error';
 create or replace procedure p_neg5 as
     c sys_refcursor;
     r emp%rowtype;
@@ -57,8 +67,8 @@ begin
     open c for 'select id from emp where id = ?' using r;
 end;
 
--- N6: a DML query given to OPEN FOR is rejected at run time (only SELECT allowed).
---     INSERT/UPDATE/DELETE all raise the same error, so INSERT is representative.
+-- INSERT, UPDATE and DELETE raise the same error, so INSERT stands for them
+evaluate 'Case 6: a DML statement given to OPEN FOR fails at run time, only SELECT is allowed';
 create or replace procedure p_run(p_sql varchar) as
     c sys_refcursor;
     v_id int;
@@ -67,12 +77,10 @@ begin
     fetch c into v_id;
     close c;
 end;
-evaluate 'N6: DML given to OPEN FOR -> must be a SELECT statement (run time)';
 call p_run('insert into emp(id,dept) values (9,30)');
 
--- N7: OPEN FOR runs the dynamic SQL without compile-time checks -- referencing a
---     non-existent table compiles fine (N7-compile) but fails only at CALL (N7-run)
-evaluate 'N7-compile: non-existent table -> procedure still compiles';
+-- OPEN FOR does not check the dynamic SQL at compile time
+evaluate 'Case 7: a missing table in the dynamic SQL compiles and fails only at CALL (Unknown class)';
 create or replace procedure p_badsql as
     c sys_refcursor;
     v int;
@@ -81,41 +89,34 @@ begin
     fetch c into v;
     close c;
 end;
-evaluate 'N7-run: fails only at CALL time (Unknown class)';
 call p_badsql();
 
--- N8: fewer USING values than '?' placeholders is rejected at run time
+evaluate 'Case 8: fewer USING values than placeholders fail at run time';
 create or replace procedure p_mis(p_a int) as
     c sys_refcursor;
 begin
     open c for 'select id from emp where id >= ? and id <= ?' using p_a;
     close c;
 end;
-evaluate 'N8: fewer USING values than placeholders (run time)';
 call p_mis(1);
 
--- N9: more USING values than '?' placeholders is rejected at run time
---     (a different error than N8's "not all the parameters are binded")
+evaluate 'Case 9: more USING values than placeholders fail at run time with another error than Case 8';
 create or replace procedure p_more(p_a int, p_b int) as
     c sys_refcursor;
 begin
     open c for 'select id from emp where id = ?' using p_a, p_b;
     close c;
 end;
-evaluate 'N9: more USING values than placeholders (run time)';
 call p_more(1, 2);
 
--- N10: an empty dynamic SQL string given to OPEN FOR is rejected at run time
-evaluate 'N10: empty dynamic SQL string in OPEN FOR (run time)';
+evaluate 'Case 10: an empty dynamic SQL string in OPEN FOR fails at run time';
 call p_run('');
 
--- N11: a NULL dynamic SQL string given to OPEN FOR is rejected at run time
-evaluate 'N11: NULL dynamic SQL string in OPEN FOR (run time)';
+evaluate 'Case 11: a NULL dynamic SQL string in OPEN FOR fails at run time';
 call p_run(null);
 
--- defensively drop the N1-N5 procedures: they normally fail to compile (so these
--- report "does not exist"), but if a spec change/bug ever lets one compile, this
--- still removes it so the shared DB is not polluted for the tests that follow.
+-- The procedures of Cases 1 to 5 fail to compile, so their drops fail too. The drops stay
+-- so that a procedure that compiles after a change of the engine does not stay in the database.
 drop procedure p_neg1;
 drop procedure p_neg2;
 drop procedure p_neg3;

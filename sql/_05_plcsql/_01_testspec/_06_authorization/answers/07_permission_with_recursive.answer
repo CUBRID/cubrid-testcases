@@ -1,9 +1,19 @@
 ===================================================
+    
+Case 1: public.fibonacci calling dba.fibonacci without EXECUTE fails to compile     
+
+
+===================================================
 0
 
 ===================================================
 Error:-1360
 Stored procedure compile error: EXECUTE authorization failure.
+
+===================================================
+    
+Case 2: the owner and the source of the created function in the catalog     
+
 
 ===================================================
 unique_name    sp_name    owner.name    
@@ -34,8 +44,18 @@ END     CREATE
 
 
 ===================================================
+    
+Case 3: dba.fibonacci runs recursively; result = 2     
+
+
+===================================================
 dba fibonacci: succ    
 2     
+
+
+===================================================
+    
+Case 4: after the grant, public.fibonacci is created and runs; result = 2     
 
 
 ===================================================
@@ -47,6 +67,11 @@ dba fibonacci: succ
 ===================================================
 public fibonacci: succ    
 2     
+
+
+===================================================
+    
+Case 5: after the revoke, the run-time check fails and WHEN OTHERS runs; result = -1 and unknown exception     
 
 
 ===================================================

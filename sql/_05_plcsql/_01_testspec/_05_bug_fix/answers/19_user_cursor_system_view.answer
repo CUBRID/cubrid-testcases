@@ -6,8 +6,14 @@
 
 ===================================================
     
-case 1: search to db_class, db_vclass, db_attribute from each users on pl/csql     
+Case 1: dba.test_sp1 run by dba counts the rows of db_class, db_vclass and db_attribute per owner in cursors     
 
+
+===================================================
+0
+
+===================================================
+0
 
 ===================================================
 0
@@ -56,7 +62,7 @@ U1 2
 U2 2
 ===================================================
     
-connect u1     
+Case 2: u1.test_sp1 run by u1 counts only the rows that u1 may see, with no authorization error     
 
 
 ===================================================
@@ -81,7 +87,7 @@ INFORMATION_SCHEMA 299
 U1 2
 ===================================================
     
-connect u2     
+Case 3: u2.test_sp1 run by u2, a member of dba, counts the same rows as dba     
 
 
 ===================================================
@@ -109,11 +115,6 @@ U1 2
 U2 2
 ===================================================
     
-connect dba     
-
-
-===================================================
-    
 null     
 
 
@@ -134,7 +135,7 @@ null
 
 ===================================================
     
-case 2: u1 is search to db_class with dba function on cursor     
+Case 4: a cursor of u1.test_sp2 over db_class that calls the Java function dba.hello runs; result = Hello, a     
 
 
 ===================================================
@@ -160,7 +161,7 @@ Hello, a
 
 ===================================================
     
-u1 is call the u2(=dba group) function then u1 is possible to watch the dba.t1 value     
+Case 5: u1 calls u2.test_sp1, owned by a member of dba and granted to u1, and it reads dba.t1; result = z     
 
 
 ===================================================
@@ -177,11 +178,6 @@ u1 is call the u2(=dba group) function then u1 is possible to watch the dba.t1 v
 
 ===================================================
     
-connect u1     
-
-
-===================================================
-    
 null     
 
 
@@ -193,11 +189,6 @@ null
 dba.t1 value: z
 ===================================================
     
-connect dba     
-
-
-===================================================
-    
 null     
 
 
@@ -206,11 +197,6 @@ null
 
 ===================================================
 0
-
-===================================================
-    
-test end     
-
 
 ===================================================
 0

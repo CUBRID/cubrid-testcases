@@ -15,20 +15,12 @@ create test users
 ===================================================
 0
 ===================================================
-    
-create owner.tbl, owner.hello     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-case 6: dba grants privileges to dba groups     
-
-===================================================
-    
-connect to dba & owner.tbl, owner.hello grant to dba_member     
+Case 1: dba grants SELECT on owner.tbl and EXECUTE on owner.hello to dba_member, grantor OWNER     
 
 ===================================================
     
@@ -73,7 +65,7 @@ DBA     INFORMATION_SCHEMA     dual     SELECT     NO
 
 ===================================================
     
-connect to dba_member & owner.tbl, owner.hello grant to dba     
+Case 2: dba_member grants both to dba, grantor OWNER     
 
 ===================================================
     
@@ -120,11 +112,7 @@ DBA     INFORMATION_SCHEMA     dual     SELECT     NO
 
 ===================================================
     
-Test init     
-
-===================================================
-    
-connect to dba_member, revoke from dba     
+Case 3: dba_member revokes from dba, dba revokes from dba_member, and the rows are gone     
 
 ===================================================
     
@@ -136,7 +124,46 @@ null
 0
 ===================================================
     
-connect to dba, revoke from dba_member     
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+grantor_name    grantee_name    object_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     _db_attribute     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_auth     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_authorization     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_charset     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_class     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_collation     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_data_type     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_domain     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_ha_apply_info     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_index     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_index_key     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_meth_arg     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_meth_file     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_meth_sig     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_method     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_package     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_partition     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_query_spec     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_serial     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_server     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_stored_procedure     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_stored_procedure_args     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_stored_procedure_code     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_synonym     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_trigger     SELECT     NO     
+DBA     INFORMATION_SCHEMA     _db_user     SELECT     NO     
+DBA     INFORMATION_SCHEMA     db_root     SELECT     NO     
+DBA     INFORMATION_SCHEMA     dual     SELECT     NO     
+
+===================================================
+    
+Case 4: dba grants both to dba, and no row is added     
 
 ===================================================
     
@@ -179,58 +206,7 @@ DBA     INFORMATION_SCHEMA     dual     SELECT     NO
 
 ===================================================
     
-case 7: dba grants privileges to dba     
-
-===================================================
-    
-connect to dba & owner.tbl, owner.hello grant to dba user     
-
-===================================================
-    
-null     
-
-===================================================
-0
-===================================================
-0
-===================================================
-grantor_name    grantee_name    object_name    auth_type    is_grantable    
-DBA     INFORMATION_SCHEMA     _db_attribute     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_auth     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_authorization     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_charset     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_class     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_collation     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_data_type     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_domain     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_ha_apply_info     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_index     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_index_key     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_meth_arg     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_meth_file     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_meth_sig     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_method     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_package     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_partition     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_query_spec     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_serial     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_server     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_stored_procedure     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_stored_procedure_args     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_stored_procedure_code     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_synonym     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_trigger     SELECT     NO     
-DBA     INFORMATION_SCHEMA     _db_user     SELECT     NO     
-DBA     INFORMATION_SCHEMA     db_root     SELECT     NO     
-DBA     INFORMATION_SCHEMA     dual     SELECT     NO     
-
-===================================================
-    
-case 8: owner grants privileges to owner     
-
-===================================================
-    
-connect to owner & owner.tbl, owner.hello grant to owner user     
+Case 5: the owner grants both to the owner, and no row is added     
 
 ===================================================
     
@@ -245,11 +221,7 @@ grantor_name    grantee_name    object_name    auth_type    is_grantable
 
 ===================================================
     
-case 9: grantable user grants privileges to grantable user     
-
-===================================================
-    
-connect to owner & owner.tbl, owner.hello grant to grantable user     
+Case 6: grantable grants SELECT to itself with no effect, and its GRANT EXECUTE fails with an error     
 
 ===================================================
     
@@ -261,18 +233,10 @@ null
 0
 ===================================================
     
-connect to grantable & owner.tbl grant to grantable user     
-
-===================================================
-    
 null     
 
 ===================================================
 0
-===================================================
-    
-owner.hello grant to grantable user, ERROR: Only DBA and the owner can grant the EXECUTE privilege     
-
 ===================================================
 Error:-1365
 ===================================================
@@ -282,11 +246,7 @@ OWNER     GRANTABLE     tbl     SELECT     YES
 
 ===================================================
     
-Test init     
-
-===================================================
-    
-connect to dba & revoke from grantable     
+Case 7: dba revokes from grantable, and the rows are gone     
 
 ===================================================
     
@@ -329,11 +289,7 @@ DBA     INFORMATION_SCHEMA     dual     SELECT     NO
 
 ===================================================
     
-case 10: dba_member grants privileges to dba_member     
-
-===================================================
-    
-connect to dba_member & owner.tbl, owner.hello grant to dba_member user     
+Case 8: dba_member grants both to dba_member, and no row is added     
 
 ===================================================
     
@@ -376,11 +332,7 @@ DBA     INFORMATION_SCHEMA     dual     SELECT     NO
 
 ===================================================
     
-case 11: owner_member grants privileges to owner_member     
-
-===================================================
-    
-connect to owner_member & owner.tbl, owner.hello grant to owner_member user     
+Case 9: owner_member grants both to owner_member, and no row is added     
 
 ===================================================
     
@@ -392,14 +344,6 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_name    auth_type    is_grantable    
-
-===================================================
-    
-Test init     
-
-===================================================
-    
-connect to dba & removed test users & test objects     
 
 ===================================================
     
