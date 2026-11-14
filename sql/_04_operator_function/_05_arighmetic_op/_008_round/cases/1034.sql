@@ -1,4 +1,4 @@
---[er]test round( integer, x) with x={real}
+--test round( integer, x) with x={real}
 create table test_number(
 test_int int,		
 test_smallint smallint,		

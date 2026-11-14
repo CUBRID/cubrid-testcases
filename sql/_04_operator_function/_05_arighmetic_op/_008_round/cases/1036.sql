@@ -1,4 +1,4 @@
---[er]test round( integer, x) with x={monetary}
+--test round( integer, x) with x={monetary}
 create table test_number(
 test_int int,		
 test_smallint smallint,		
