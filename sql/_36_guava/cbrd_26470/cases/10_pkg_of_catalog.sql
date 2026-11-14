@@ -8,9 +8,9 @@
  *  declarations are rejected, only the schema of these catalogs is checked.
  *
  *  Coverage (for each of the four catalogs, ordered by class name):
- *    Case 1: pkg_of exists with type OBJECT (expect 1)
- *    Case 2: pkg_unique_name is gone (expect 0)
- *    Case 3: a two-column primary key (expect 1) and no other index (expect 0)
+ *    Case 1: pkg_of exists with type OBJECT
+ *    Case 2: pkg_unique_name is gone
+ *    Case 3: a two-column primary key and no other index
  */
 
 --+ server-message on

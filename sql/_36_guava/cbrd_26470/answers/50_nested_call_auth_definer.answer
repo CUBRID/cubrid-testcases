@@ -267,12 +267,17 @@ u50a.a1p(2)
 
 ===================================================
     
-Case 9-11: direct -> SQL -> direct: a1m () = 10321, u50a.t50a not readable, a1m () = 10321, current_user U50LOW     
+Case 9: direct -> SQL -> direct, every level reads its own table -> 10321     
 
 
 ===================================================
 u50a.a1m()    
 10321     
+
+
+===================================================
+    
+Case 10: u50low itself cannot read u50a.t50a -> SELECT is not authorized     
 
 
 ===================================================
@@ -280,8 +285,18 @@ Error:-494
 Semantic: SELECT is not authorized on u50a.t50a. select [u50a.t50a].c from [u50a.t50a] [u50a.t50a]
 
 ===================================================
+    
+Case 11: the same call again after the refused read -> 10321     
+
+
+===================================================
 u50a.a1m()    
 10321     
+
+
+===================================================
+    
+Case 12: current_user after the calls -> U50LOW     
 
 
 ===================================================

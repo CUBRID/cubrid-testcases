@@ -11,11 +11,11 @@
  *  differ between CTP and csql otherwise.
  *
  *  Coverage:
- *    Case 1: call statement without arguments q();         -> (line 4, column 1)
- *    Case 2: call statement with an argument q2(1); in IF   -> (line 9, column 1)
- *    Case 3: call statement qualified by its own package pn86.q(); -> (line 14, column 1)
+ *    Case 1: call statement without arguments q()          -> the position of the call statement
+ *    Case 2: call statement with an argument q2(1) in IF    -> the position of the call statement
+ *    Case 3: call statement qualified by its own package pn86.q()  -> the position of the call statement
  *    Case 4: call of a function without an implementation (correct before the fix too)
- *            -> (line 18, column 8)
+ *            -> the position of the call
  */
 
 --+ server-message on

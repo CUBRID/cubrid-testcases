@@ -3,7 +3,7 @@
  *  A -> B -> A (review round 6, E7; round 4, D4).
  *
  *  When A -> B -> A was made of direct calls, the error position of the inner A was given as the
- *  call position of the outer A. In a direct call the callee's exception object goes up to the
+ *  call position of the outer A. In a direct call the exception object of the callee goes up to the
  *  caller as it is (SpLib.invokeMethod, nestInCaller), so one stack trace, from the first error
  *  point to the bottom, was shared by the catch of every activation. getPlcLineColumn() scanned
  *  that trace from the bottom and picked the first segment of the same class, so the catch of the
@@ -20,26 +20,28 @@
  *  columns would differ between CTP and csql otherwise.
  *
  *  Coverage:
- *    Case 1:  A -> B -> A, division by zero in the inner A
- *             -> (6,8) (3,8) (4,8)  (before the fix the last position was that of the outer A)
- *    Case 2:  A -> B -> A -> B -> A   -> (6,8) (3,8) (6,8) (3,8) (4,8)
- *    Case 3:  across packages pk81a.f -> pk81b.g -> pk81a.h -> (3,8) (4,8) (4,8) (8,8)
- *    Case 4:  error in a local function of the inner A -> (10,8) (3,8) (4,8)
- *    Case 5:  one level without recursion (regression) -> (3,8)
- *    Case 6:  self recursion inside one unit (an internal call, one position) -> (4,8)
+ *    Case 1:  A -> B -> A, division by zero in the inner A -> the last position is that of the
+ *             inner A (before the fix it was that of the outer A)
+ *    Case 2:  A -> B -> A -> B -> A   -> one position for each activation
+ *    Case 3:  across packages pk81a.f -> pk81b.g -> pk81a.h -> one position for each activation
+ *    Case 4:  error in a local function of the inner A -> the position in the local function
+ *             comes first, then those of the activations
+ *    Case 5:  one level without recursion (regression) -> one position
+ *    Case 6:  self recursion inside one unit (an internal call, one position)
  *    Case 7:  deep mutual recursion (A and B 200 times each), then an error: the innermost
- *             position is (4,8) and the message is division by zero (the middle is cut to "...")
- *    Case 8:  A -> B -> A through the server, because of default values (regression)
- *             -> (6,8) (3,8) (4,8)
+ *             position is that of the inner A and the message is division by zero (the middle
+ *             is cut short)
+ *    Case 8:  A -> B -> A through the server, because of default values (regression) -> the
+ *             same positions as Case 1
  *    Case 9:  a Java exception that is not a PlcsqlRuntimeError (ClassCastException) in the
  *             inner A: the return type of the callee cc81 is changed without recompiling its
- *             callers. The last position is that of 'cc81(0) + 1' (4,8) of the inner ta81
- *             (before the fix (6,8) of the outer ta81)
+ *             callers. The last position is that of the call of cc81 in the inner ta81 (before
+ *             the fix that of the outer ta81)
  *    Case 10: the same, two rounds
  *    Case 11: deep mutual recursion (A and B 150 times each), then an error: the frames of the
  *             outer activations are not in the stack trace (only the top 1024 are kept), so the
- *             outermost position is unknown: the first position is (line ?, column ?) and the
- *             last is (4,8) of the inner A
+ *             outermost position is unknown and printed without numbers, and the last is that of
+ *             the inner A
  */
 
 --+ server-message on

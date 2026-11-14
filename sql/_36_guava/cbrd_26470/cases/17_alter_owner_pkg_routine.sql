@@ -2,7 +2,7 @@
  *  This test case verifies CBRD-26470 (PR #7936 review C4): owner change and ALTER of a
  *  package routine are refused.
  *
- *  CALL change_sp_owner ('dba.pkg.p', ...) used to hit an assertion in a debug build and leave a
+ *  CALL change_sp_owner (dba.pkg.p, ...) used to hit an assertion in a debug build and leave a
  *  partial change in a release build. Now the first argument of change_sp_owner is read by the
  *  same rule as ALTER: a package routine gives ER_SP_PKG_ROUTINE_NOT_ALLOWED, and <a>.<b> that
  *  matches both <user>.<routine> and <package>.<routine> (of the current user) gives
@@ -13,13 +13,13 @@
  *  Coverage:
  *    Case 1: change_sp_owner of a package routine (full name and <pkg>.<routine>) is refused,
  *            the routine row and _db_auth are unchanged
- *    Case 2: change_sp_owner of an ambiguous <a>.<b> is refused, nothing changed (expect 1)
+ *    Case 2: change_sp_owner of an ambiguous <a>.<b> is refused, nothing changed
  *    Case 3: change_sp_owner of a built-in package routine is refused
- *    Case 4: change_sp_owner of a standalone routine works (expect u17b.p17_sp2/U17B)
+ *    Case 4: change_sp_owner of a standalone routine works, the new owner shows in the catalog
  *    Case 5: ALTER PROCEDURE <pkg>.<routine> OWNER TO / COMMENT and dbms_output.<routine> are refused
  *    Case 6: ALTER PROCEDURE of an ambiguous <a>.<b> is refused
  *    Case 7: ALTER PROCEDURE <user>.<pkg>.<routine> is a syntax error, a missing <a>.<b> does not exist
- *    Case 8: ALTER PROCEDURE of a standalone routine works (expect u17b.p17_sp1/U17B/c1),
+ *    Case 8: ALTER PROCEDURE of a standalone routine works, the new owner and comment show,
  *            the package routine is unchanged and still runs
  */
 

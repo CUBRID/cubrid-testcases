@@ -5,38 +5,38 @@
  *
  *  Background:
  *    - When the owner differs, a direct call is made as pushExecRight (owner); try { invokeMethod }
- *      finally { popExecRight (); }. invokeMethod rethrows the callee's exception as it is, so the
- *      caller's WHEN NO_DATA_FOUND / ZERO_DIVIDE / OTHERS gets the original exception, and with the
- *      POP in finally the handler runs with the rights of the caller's owner. An exception that is
- *      not handled is reported at the caller's call site.
+ *      finally { popExecRight (); }. invokeMethod rethrows the exception of the callee as it is, so
+ *      WHEN NO_DATA_FOUND / ZERO_DIVIDE / OTHERS of the caller gets the original exception, and with
+ *      the POP in finally the handler runs with the rights of the owner of the caller. An exception
+ *      that is not handled is reported at the call site in the caller.
  *    - The rights are checked by reading tables: only each owner can read its own table
  *      (u49a.t49a, u49b.t49b, u49c.t49c).
  *    - Call chains: u49low -> u49a.a1/a1h/a1nh -> u49b.b2/b2h (function direct call) -> u49c.c3
  *      (n=0 NO_DATA_FOUND, n=1 ZERO_DIVIDE)
  *      u49b -> u49b.cx/cy -> u49c.pe.chk (package procedure direct call, x<0 user-defined
  *      exception, x=0 ZERO_DIVIDE).
- *  (current_user in the routines is cut at '@' so that the host name does not show.
+ *  (current_user in the routines is cut at the at sign so that the host name does not show.
  *   While package exceptions cannot be declared, e_bad of pe is a local exception of chk.)
+ *  The DBMS_OUTPUT of the callee u49c.pe.chk in Cases 9 to 13 shows that the output of the
+ *  callee reaches the caller in order, also for the statements that fail.
  *
  *  Coverage:
- *    Case 1:  u49a.a1 (0) -> 'ndf:1' (NO_DATA_FOUND two levels down caught by a1, which reads u49a.t49a)
- *    Case 2:  u49a.a1 (1) -> 'zd:1' (ZERO_DIVIDE)
- *    Case 3:  u49a.a1 (2) -> 'b2:3:1' (no exception)
- *    Case 4:  u49a.a1h (0) -> 'b2h-caught:2|1' (b2h catches and reads u49b.t49b, a1h reads u49a.t49a)
- *    Case 5:  u49a.a1nh (0) -> error with the positions in a1nh, b2 and c3 ... no data found
- *    Case 6:  current_user after that -> 'U49LOW'
+ *    Case 1:  u49a.a1 (0) -> NO_DATA_FOUND two levels down caught by a1, which reads u49a.t49a
+ *    Case 2:  u49a.a1 (1) -> ZERO_DIVIDE two levels down caught by a1
+ *    Case 3:  u49a.a1 (2) -> no exception, every level reads its own table
+ *    Case 4:  u49a.a1h (0) -> b2h catches and reads u49b.t49b, a1h reads u49a.t49a
+ *    Case 5:  u49a.a1nh (0) -> error with the positions in a1nh, b2 and c3, no data found
+ *    Case 6:  current_user after that is U49LOW again
  *    Case 7:  u49low reads u49a.t49a -> SELECT is not authorized
- *    Case 8:  u49a.a1 (0) again in the same session -> 'ndf:1' (no rights depth leaked)
- *    Case 9:  u49b.cx (1) -> 'ok U49B 2'
- *    Case 10: u49b.cx (-1) -> 'caught others 1000 Stored procedure execute error: (line 6, column 19)
- *             user defined exception U49B 2' (WHEN OTHERS, SQLCODE 1000, position in pe.chk)
- *    Case 11: u49b.cx (0) -> 'caught zd U49B 2' (WHEN ZERO_DIVIDE)
- *    Case 12: u49b.cy (-1) -> error at cy's call site and in chk: user defined exception
- *    Case 13: u49b.cy (0) -> error at cy's call site and in chk: division by zero
- *    Case 14: current_user after that -> 'U49B'
+ *    Case 8:  u49a.a1 (0) again in the same session gives the result of Case 1 (no rights depth leaked)
+ *    Case 9:  u49b.cx (1) -> no exception, cx reads u49b.t49b
+ *    Case 10: u49b.cx (-1) -> WHEN OTHERS with SQLCODE 1000 and the position in pe.chk, cx reads
+ *             u49b.t49b
+ *    Case 11: u49b.cx (0) -> WHEN ZERO_DIVIDE, cx reads u49b.t49b
+ *    Case 12: u49b.cy (-1) -> error at the call site in cy and in chk: user defined exception
+ *    Case 13: u49b.cy (0) -> error at the call site in cy and in chk: division by zero
+ *    Case 14: current_user after that is U49B again
  *    Case 15: u49b reads u49c.t49c -> SELECT is not authorized
- *    Case 16: DBMS_OUTPUT of the callee u49c.pe.chk reaches the caller in order, also for the
- *             statements that failed: chk 1, chk -1, chk 0, chk -1, chk 0 (server messages of cases 9-13)
  */
 
 --+ server-message on
@@ -174,7 +174,7 @@ select u49a.a1 (0) || '#again';
 
 call login('u49b', '') on class db_user;
 
--- Case 16 is checked by the server messages of cases 9-13: chk 1, chk -1, chk 0, chk -1, chk 0
+-- the DBMS_OUTPUT of chk in Cases 9 to 13 shows the order of the calls of the callee
 evaluate 'Case 9: u49b.cx (1) -> ok U49B 2';
 select cx (1);
 

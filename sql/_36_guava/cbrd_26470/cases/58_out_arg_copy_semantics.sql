@@ -3,29 +3,41 @@
  *  local routine calls are copied the same way as in a call through the server.
  *
  *  Background:
- *    - Before the fix, when no type conversion was needed, the caller's variable holder was passed
- *      to the callee as it was:
- *        . values the callee wrote to OUT/IN OUT parameters stayed in the caller's variables even
- *          when the callee ended with an exception,
- *        . the write-back conversion was skipped, so 'abcdef' went into a varchar(3) variable and
- *          3.1555 into a numeric(10,1) variable. A call through the server gives VALUE_ERROR
- *          ("string does not fit ...") and rounds to 3.2.
+ *    - Before the fix, when no type conversion was needed, the variable holder of the caller was
+ *      passed to the callee as it was:
+ *        . values the callee wrote to OUT/IN OUT parameters stayed in the variables of the caller
+ *          even when the callee ended with an exception,
+ *        . the write-back conversion was skipped, so the 6-character string abcdef went into a
+ *          varchar(3) variable and 3.1555 into a numeric(10,1) variable unrounded. A call through
+ *          the server gives VALUE_ERROR (string does not fit) and rounds the number.
  *    - After the fix, OUT/IN OUT arguments always go through a temporary holder and are written
  *      back (with the conversion) only on normal return. This applies to direct calls of stored
  *      routines, direct calls of package members and calls of local routines.
- *  Each case is checked with four call forms: dir (direct call of a stored routine), pkg (direct
+ *  Each check runs with four call forms: dir (direct call of a stored routine), pkg (direct
  *  call of a package member), loc (local routine) and srv (a call omitting a default argument,
  *  which goes through the server; control).
  *  (In SA mode an error of a call through the server fails the statement even when the caller
- *   catches it with WHEN OTHERS, so srv of Case 9-12 gives an error there. It is a separate issue.
- *   CTP runs in CS mode, where it is '7,7'.)
+ *   catches it with WHEN OTHERS, so srv of Case 12 gives an error there. It is a separate issue.
+ *   CTP runs in CS mode, where the caller catches it.)
  *
  *  Coverage:
- *    Case 1-4:   OUT varchar 'abcdef' into a varchar(3) variable -> VALUE_ERROR ('VE')
- *    Case 5-8:   IN OUT numeric 3.1555 into a numeric(10,1) variable -> 3.2
- *    Case 9-12:  callee sets a := 77, b := 88 and raises NO_DATA_FOUND, caught by the caller
- *                -> the variables keep '7,7'
- *    Case 13-16: normal return: a := a + 1, b := 5 -> '8,5'
+ *    Case 1:  dir, OUT varchar abcdef into a varchar(3) variable -> VALUE_ERROR caught by the caller
+ *    Case 2:  pkg, the same as Case 1
+ *    Case 3:  loc, the same as Case 1
+ *    Case 4:  srv, the same as Case 1 (control)
+ *    Case 5:  dir, IN OUT numeric 3.1555 into a numeric(10,1) variable -> rounded to one digit
+ *    Case 6:  pkg, the same as Case 5
+ *    Case 7:  loc, the same as Case 5
+ *    Case 8:  srv, the same as Case 5 (control)
+ *    Case 9:  dir, the callee sets a := 77, b := 88 and raises NO_DATA_FOUND, caught by the caller
+ *             -> the variables keep their values from before the call
+ *    Case 10: pkg, the same as Case 9
+ *    Case 11: loc, the same as Case 9
+ *    Case 12: srv, the same as Case 9 (control)
+ *    Case 13: dir, normal return: a := a + 1, b := 5 -> both written back
+ *    Case 14: pkg, the same as Case 13
+ *    Case 15: loc, the same as Case 13
+ *    Case 16: srv, the same as Case 13 (control)
  */
 
 --+ server-message on
@@ -84,28 +96,52 @@ begin lpo (i, j); return i || ',' || j; end;
 create or replace function o_srv58 return varchar as i int := 7; j int := 7; begin po58 (i, j); return i || ',' || j; end;
 
 
-evaluate 'Case 1-4: OUT ''abcdef'' into varchar(3) (dir, pkg, loc, srv): VE, VE, VE, VE';
+evaluate 'Case 1: dir, OUT abcdef into varchar(3); result = VE';
 select s_dir58 () from dual;
+
+evaluate 'Case 2: pkg, OUT abcdef into varchar(3); result = VE';
 select s_pkg58 () from dual;
+
+evaluate 'Case 3: loc, OUT abcdef into varchar(3); result = VE';
 select s_loc58 () from dual;
+
+evaluate 'Case 4: srv, OUT abcdef into varchar(3) (control); result = VE';
 select s_srv58 () from dual;
 
-evaluate 'Case 5-8: IN OUT 3.1555 into numeric(10,1) (dir, pkg, loc, srv): 3.2, 3.2, 3.2, 3.2';
+evaluate 'Case 5: dir, IN OUT 3.1555 into numeric(10,1); result = 3.2';
 select n_dir58 () from dual;
+
+evaluate 'Case 6: pkg, IN OUT 3.1555 into numeric(10,1); result = 3.2';
 select n_pkg58 () from dual;
+
+evaluate 'Case 7: loc, IN OUT 3.1555 into numeric(10,1); result = 3.2';
 select n_loc58 () from dual;
+
+evaluate 'Case 8: srv, IN OUT 3.1555 into numeric(10,1) (control); result = 3.2';
 select n_srv58 () from dual;
 
-evaluate 'Case 9-12: arguments unchanged when the callee ends with an exception (dir, pkg, loc, srv): 7,7, 7,7, 7,7, 7,7';
+evaluate 'Case 9: dir, arguments unchanged when the callee ends with an exception; result = 7,7';
 select e_dir58 () from dual;
+
+evaluate 'Case 10: pkg, arguments unchanged when the callee ends with an exception; result = 7,7';
 select e_pkg58 () from dual;
+
+evaluate 'Case 11: loc, arguments unchanged when the callee ends with an exception; result = 7,7';
 select e_loc58 () from dual;
+
+evaluate 'Case 12: srv, arguments unchanged when the callee ends with an exception (control); result = 7,7';
 select e_srv58 () from dual;
 
-evaluate 'Case 13-16: arguments written back on normal return (dir, pkg, loc, srv): 8,5, 8,5, 8,5, 8,5';
+evaluate 'Case 13: dir, arguments written back on normal return; result = 8,5';
 select o_dir58 () from dual;
+
+evaluate 'Case 14: pkg, arguments written back on normal return; result = 8,5';
 select o_pkg58 () from dual;
+
+evaluate 'Case 15: loc, arguments written back on normal return; result = 8,5';
 select o_loc58 () from dual;
+
+evaluate 'Case 16: srv, arguments written back on normal return (control); result = 8,5';
 select o_srv58 () from dual;
 
 

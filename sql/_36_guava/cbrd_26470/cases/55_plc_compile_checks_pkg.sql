@@ -15,7 +15,7 @@
  *    - <table>.<column>%TYPE in spec parameters/returns is resolved by asking the server while
  *      parsing, and spec and body headers are matched by the %TYPE text itself
  *      (TypeSpec.isSameAs). IN parameters drop the NUMERIC precision (TYPE_VISIT_PARAM_IN).
- *  (While package variables cannot be declared, the original case 5 (pkb.b%TYPE) is left out, and
+ *  (While package variables cannot be declared, case 5 of the original shell test (pkb.b%TYPE) is left out, and
  *   %TYPE of package variables is replaced with %TYPE of table columns.)
  *
  *  Coverage:
@@ -23,17 +23,17 @@
  *    Case 2:  SYS_REFCURSOR parameter of a spec function    -> s243
  *    Case 3:  %ROWTYPE return of a spec function            -> s244
  *    Case 4:  %ROWTYPE parameter of a spec procedure        -> s243
- *    Case 6:  private routines with PL-only types are allowed: wg55 () = 11
- *    Case 7:  SYS_REFCURSOR return of a standalone function is still allowed (regression)
- *    Case 8:  private member called from outside           -> neither ... exists
- *    Case 9:  wrong number of arguments                     -> the number of arguments ... does not match
- *    Case 10: literal to an OUT parameter                   -> must be updatable
- *    Case 11: package function called as a procedure        -> neither ... exists
- *    Case 12: package procedure called as a function        -> neither ... exists
- *    Case 13: correct calls (regression): e55_6 () = 7
- *    Case 14: AUTHID on a local procedure                   -> s084 at the AUTHID clause (column 16 of its line)
- *    Case 15: %TYPE of table columns in spec and body: pu55.h (1.234) = '1.234' (IN precision dropped)
- *    Case 16: body parameter %TYPE differs from the spec    -> header does not match
+ *    Case 5:  private routines with PL-only types are allowed and run
+ *    Case 6:  SYS_REFCURSOR return of a standalone function is still allowed (regression)
+ *    Case 7:  private member called from outside           -> neither ... exists
+ *    Case 8:  wrong number of arguments                     -> the number of arguments ... does not match
+ *    Case 9:  literal to an OUT parameter                   -> must be updatable
+ *    Case 10: package function called as a procedure        -> neither ... exists
+ *    Case 11: package procedure called as a function        -> neither ... exists
+ *    Case 12: correct calls (regression) compile and run
+ *    Case 13: AUTHID on a local procedure                   -> s084 at the AUTHID clause (the column of AUTHID in its line)
+ *    Case 14: %TYPE of table columns in spec and body: the IN parameter drops the NUMERIC precision
+ *    Case 15: body parameter %TYPE differs from the spec    -> header does not match
  */
 
 --+ server-message on
@@ -68,7 +68,7 @@ evaluate 'Case 4: %ROWTYPE parameter of a spec procedure -> type ROWT55%ROWTYPE 
 create or replace package pa55 as procedure p(r rowt55%rowtype); end;
 
 
-evaluate 'Case 6: private routines with PL-only types are allowed -> created, wg55 () = 11';
+evaluate 'Case 5: private routines with PL-only types are allowed -> created, wg55 () = 11';
 create or replace package pv55 as function g return int; end;
 create or replace package body pv55 as
   function nb(x boolean) return boolean as begin return not x; end;
@@ -91,50 +91,50 @@ create or replace function wg55 return int as begin return pv55.g(); end;
 select wg55() from db_root;
 
 
-evaluate 'Case 7: SYS_REFCURSOR return of a standalone function (regression) -> created';
+evaluate 'Case 6: SYS_REFCURSOR return of a standalone function (regression) -> created';
 create or replace function sf_rc55 return sys_refcursor as c sys_refcursor; begin open c for select a from rowt55; return c; end;
 select count(*) from db_stored_procedure where sp_name = 'sf_rc55';
 
 
-evaluate 'Case 8: private member from outside -> Neither stored function pz55.priv nor package function dba.pz55.priv exists';
+evaluate 'Case 7: private member from outside -> Neither stored function pz55.priv nor package function dba.pz55.priv exists';
 create or replace function e55_1 return int as begin return pz55.priv(1); end;
 
 
-evaluate 'Case 9: wrong number of arguments -> the number of arguments to function PZ55.F does not match';
+evaluate 'Case 8: wrong number of arguments -> the number of arguments to function PZ55.F does not match';
 create or replace function e55_2 return int as begin return pz55.f(1, 2); end;
 
 
-evaluate 'Case 10: literal to an OUT parameter -> argument 2 to the call of PZ55.P must be updatable';
+evaluate 'Case 9: literal to an OUT parameter -> argument 2 to the call of PZ55.P must be updatable';
 create or replace procedure e55_3 as begin pz55.p(1, 2); end;
 
 
-evaluate 'Case 11: package function called as a procedure -> Neither stored procedure pz55.f nor package procedure dba.pz55.f exists';
+evaluate 'Case 10: package function called as a procedure -> Neither stored procedure pz55.f nor package procedure dba.pz55.f exists';
 create or replace procedure e55_4 as begin pz55.f(1); end;
 
 
-evaluate 'Case 12: package procedure called as a function -> Neither stored function pz55.p nor package function dba.pz55.p exists';
+evaluate 'Case 11: package procedure called as a function -> Neither stored function pz55.p nor package function dba.pz55.p exists';
 create or replace function e55_5 return int as begin return pz55.p(1, 2); end;
 
 
-evaluate 'Case 13: correct calls (regression) -> e55_6 () = 7';
+evaluate 'Case 12: correct calls (regression) -> e55_6 () = 7';
 create or replace function e55_6 return int as o int; begin dba.pz55.p(2, o); return dba.pz55.f(o); end;
 select e55_6() from db_root;
 
 
-evaluate 'Case 14: AUTHID on a local procedure -> illegal keyword AUTHID at the AUTHID clause';
+evaluate 'Case 13: AUTHID on a local procedure -> illegal keyword AUTHID at the AUTHID clause';
 create or replace procedure la55 as
   procedure lp authid definer as begin null; end;
 begin lp(); end;
 
 
-evaluate 'Case 15: tp55.v%TYPE parameter and tp55.s%TYPE return in spec and body -> created, wu55 () = 1.234';
+evaluate 'Case 14: tp55.v%TYPE parameter and tp55.s%TYPE return in spec and body -> created, wu55 () = 1.234';
 create or replace package pu55 as function h(x tp55.v%type) return tp55.s%type; end;
 create or replace package body pu55 as function h(x tp55.v%type) return tp55.s%type as begin return x; end; end;
 create or replace function wu55 return varchar as begin return pu55.h(1.234); end;
 select wu55() from db_root;
 
 
-evaluate 'Case 16: body parameter %TYPE differs from the spec -> the header of function H does not match';
+evaluate 'Case 15: body parameter %TYPE differs from the spec -> the header of function H does not match';
 create or replace package body pu55 as function h(x tp55.s%type) return tp55.s%type as begin return x; end; end;
 
 

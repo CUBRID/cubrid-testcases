@@ -12,14 +12,14 @@
  *  Each package is initialized when its function is first called through a wrapper function.
  *
  *  Coverage:
- *    Case 1: local procedure without SQL (the E3 example)                 -> 1
- *    Case 2: local procedure with INSERT                                   -> 1
- *    Case 3: INSERT in a FOR loop of a local procedure                     -> 3
- *    Case 4: local procedure with INSERT called in a loop of the initializer -> 3
- *    Case 5: recursive calls (3 levels) of a local procedure with INSERT   -> 3
- *    Case 6: nested local procedure with INSERT called in a loop           -> 3
- *    Case 7: INSERT in a FOR loop of the initializer (no local routine)    -> 3
- *    Case 8: sum of SELECT results in a loop of a local function           -> 6
+ *    Case 1: local procedure without SQL (the E3 example)                 -> runs
+ *    Case 2: local procedure with INSERT                                   -> the row is inserted
+ *    Case 3: INSERT in a FOR loop of a local procedure                     -> a row per iteration
+ *    Case 4: local procedure with INSERT called in a loop of the initializer -> a row per call
+ *    Case 5: recursive calls (3 levels) of a local procedure with INSERT   -> a row per level
+ *    Case 6: nested local procedure with INSERT called in a loop           -> a row per call
+ *    Case 7: INSERT in a FOR loop of the initializer (no local routine)    -> a row per iteration
+ *    Case 8: sum of SELECT results in a loop of a local function           -> the sum
  */
 
 --+ server-message on

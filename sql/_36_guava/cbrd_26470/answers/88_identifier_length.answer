@@ -1,6 +1,6 @@
 ===================================================
     
-Case 0: baseline, an ordinary function works -> 42     
+Case 1: baseline, an ordinary function works -> 42     
 
 
 ===================================================
@@ -13,7 +13,7 @@ ok88_fn()
 
 ===================================================
     
-Case 1: PL/CSQL compile, <pkg>.<routine> of 301 bytes -> error, no crash     
+Case 2: PL/CSQL compile, <pkg>.<routine> of 301 bytes -> error, no crash     
 
 
 ===================================================
@@ -22,7 +22,7 @@ Stored procedure compile error: Qualified name is too long. it must be shorter t
 
 ===================================================
     
-Case 2: PL/CSQL compile, <owner>.<pkg>.<routine> too long -> error, no crash     
+Case 3: PL/CSQL compile, <owner>.<pkg>.<routine> too long -> error, no crash     
 
 
 ===================================================
@@ -31,7 +31,7 @@ Stored procedure compile error: Qualified name is too long. it must be shorter t
 
 ===================================================
     
-Case 3: CREATE with an over-long qualified name -> error, no crash     
+Case 4: CREATE with an over-long qualified name -> error, no crash     
 
 
 ===================================================
@@ -41,7 +41,7 @@ User name [qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 
 ===================================================
     
-Case 4: SQL call with an over-long qualified name -> error, no crash     
+Case 5: SQL call with an over-long qualified name -> error, no crash     
 
 
 ===================================================
@@ -51,7 +51,7 @@ Attribute "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 
 ===================================================
     
-Case 5: qualifier longer than a user name (40 > 31) -> errors, no crash     
+Case 6: qualifier longer than a user name (40 > 31) -> errors, no crash     
 
 
 ===================================================
@@ -66,7 +66,7 @@ User name [uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu] not allowed. It cannot exce
 
 ===================================================
     
-Case 6: dbms_output with a long member name (269 bytes as a three-part name) -> errors, no crash     
+Case 7: dbms_output with a long member name (269 bytes as a three-part name) -> errors, no crash     
 
 
 ===================================================
@@ -80,7 +80,7 @@ Stored procedure/function 'public.dbms_output.rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
 ===================================================
     
-Case 7: dbms_output still works     
+Case 8: dbms_output still works     
 
 
 ===================================================
@@ -96,7 +96,7 @@ null
 dbms output alive
 ===================================================
     
-Case 8: the session survived every case above -> 42     
+Case 9: the session survived every case above -> 42     
 
 
 ===================================================

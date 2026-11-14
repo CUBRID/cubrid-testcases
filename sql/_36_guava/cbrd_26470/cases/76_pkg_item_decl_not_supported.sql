@@ -11,13 +11,18 @@
  *  DECLARE blocks of the initializer and stored procedures are not affected.
  *
  *  Coverage:
- *    Case 1-4: variable, constant, cursor, exception in the specification -> refused, the
- *              position is the name of the declaration
- *    Case 5-8: variable, constant, cursor, exception in the body -> refused
- *    Case 9:   the refused specification is not created
- *    Case 10:  declarations in member routines, their local routines and a DECLARE block of the
- *              initializer are allowed, and they work (1+2+3+7 + 10 + 100 + 1000 = 1123)
- *    Case 11:  top-level declarations of a stored function are allowed (1+2+3 + 10 + 100 = 116)
+ *    Case 1:  variable in the specification -> refused, the position is the name of the declaration
+ *    Case 2:  constant in the specification -> refused, the position is the name of the declaration
+ *    Case 3:  cursor in the specification -> refused, the position is the name of the declaration
+ *    Case 4:  exception in the specification -> refused, the position is the name of the declaration
+ *    Case 5:  variable in the body -> refused
+ *    Case 6:  constant in the body -> refused
+ *    Case 7:  cursor in the body -> refused
+ *    Case 8:  exception in the body -> refused
+ *    Case 9:  the refused specification is not created
+ *    Case 10: declarations in member routines, their local routines and a DECLARE block of the
+ *             initializer are allowed, and they work
+ *    Case 11: top-level declarations of a stored function are allowed and work
  */
 
 --+ server-message on

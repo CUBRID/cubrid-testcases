@@ -9,7 +9,7 @@
  *
  *  Coverage:
  *    Case 1: a body-only package has an owner, and DROP USER of its owner is refused
- *    Case 2: users whose names look like the owner's (prefix, '_') are not blocked
+ *    Case 2: users whose names look like the name of the owner (prefix, underscore) are not blocked
  *    Case 3: mixed case user name
  *    Case 4: spec then body: owner set, DROP USER refused as before
  *    Case 5: body then spec created by DBA for another user: the owner is that user

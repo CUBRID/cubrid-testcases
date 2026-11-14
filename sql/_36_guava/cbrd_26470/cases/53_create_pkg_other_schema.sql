@@ -1,6 +1,6 @@
 /**
- *  This test case verifies CBRD-26470 (PR #7819): CREATE [OR REPLACE] PACKAGE [BODY] in another
- *  user's schema - who may create it, and who becomes its owner and definer.
+ *  This test case verifies CBRD-26470 (PR #7819): CREATE [OR REPLACE] PACKAGE [BODY] in the schema
+ *  of another user - who may create it, and who becomes its owner and definer.
  *
  *  Background:
  *    - pt_check_create_package () in semantic_check.c is new (it was a TODO). For a name qualified
@@ -10,7 +10,7 @@
  *      jsp_create_package () has only a safety check, so this check is the real gate.
  *    - jsp_create_package () / sp_set_pkg_code () store the owner of the name, not the creator,
  *      in _db_package.owner and _db_package_code.owner. The package routines run with the
- *      owner's rights (definer) and the owner can drop the package.
+ *      rights of the owner (definer) and the owner can drop the package.
  *  Users: u53a (target schema), u53b (ordinary user), u53c (member of DBA).
  *  dba creates u53a.ok53 (procedure p) first.
  *
@@ -27,8 +27,8 @@
  *    Case 10: no catalog row for u53a.pk53
  *    Case 11: u53a.ok53 still has only p
  *    Case 12: owner of u53a.pkd53 / u53a.pk53_2 is U53A, of u53b.mine53 U53B, in both catalogs
- *    Case 13: a dba function calling u53a.pk53_2.f () (current_user) -> 'U53A' (definer)
- *    Case 14: a u53c function calling u53a.pkd53.f ()              -> 'U53A'
+ *    Case 13: a dba function calling u53a.pk53_2.f () (current_user) -> runs as the owner (definer)
+ *    Case 14: a u53c function calling u53a.pkd53.f ()              -> runs as the owner
  *    Case 15: u53b drops u53a.pk53_2 -> "The owner or a member of DBA group can drop a package."
  *    Case 16: owner u53a drops pk53_2 created by dba -> dropped, no catalog row left
  */

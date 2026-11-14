@@ -8,25 +8,28 @@
  *      is then the owner of the calling routine (the definer pushed by
  *      METHOD_CALLBACK_CHANGE_EXEC_RIGHTS), not the session user. In
  *      u50low -> u50a.a1 -> u50b.b2 -> u50c.c3 the check of c3 is made as U50B. The grant of c3 to
- *      u50low does not matter: if it is revoked from u50b, the call must fail even when u50low has
+ *      u50low does not matter. When it is revoked from u50b, the call must fail even when u50low has
  *      it (a package member follows the grant on the package).
- *    - When direct calls (rights switched on PL's request, executor::m_exec_rights_depth) and the
+ *    - When direct calls (rights switched on request of PL, executor::m_exec_rights_depth) and the
  *      SQL path (push/pop in execute () of a new executor) are mixed, the user stack of CAS must
  *      be pushed and popped correctly. After an inner call returns, the outer routine reads its
- *      own table with its owner's rights.
+ *      own table with the rights of its owner.
  *
  *  Coverage:
- *    Case 1:  u50low: u50a.a1 (2) (a1 -> u50b.b2 -> u50c.c3, u50low has no grant on b2/c3) -> 31
+ *    Case 1:  u50low: u50a.a1 (2) (a1 -> u50b.b2 -> u50c.c3, u50low has no grant on b2/c3) succeeds
  *    Case 2:  c3 granted to u50low and revoked from u50b: u50a.a1 (2) -> EXECUTE authorization failure
- *    Case 3:  control: u50c.c3 (2) by u50low itself (its own grant works) -> 3
- *    Case 4:  c3 granted back to u50b and revoked from u50low: u50a.a1 (2) -> 31
- *    Case 5-8: cases 1-4 with a package member (u50c.pkg50.pc, GRANT/REVOKE ON PACKAGE)
- *             -> 31 / failure / 3 / 31 (case 7 calls the member from a u50low function, since a
- *             package member cannot be called from SQL)
- *    Case 9:  u50low: u50a.a1m () twice (a1m -direct-> u50b.b2m -SQL-> u50c.c3m -direct-> u50a.d1,
- *             each reads a table that only its owner can read) -> 10321, 10321
- *    Case 10: u50low reads u50a.t50a between the calls -> SELECT is not authorized
- *    Case 11: current_user after the calls -> U50LOW
+ *    Case 3:  control: u50c.c3 (2) by u50low itself (its own grant works) succeeds
+ *    Case 4:  c3 granted back to u50b and revoked from u50low: u50a.a1 (2) succeeds again
+ *    Case 5:  Case 1 with a package member (u50c.pkg50.pc): u50a.a1p (2) succeeds
+ *    Case 6:  Case 2 with GRANT/REVOKE ON PACKAGE: EXECUTE authorization failure
+ *    Case 7:  Case 3 with the package: the member is called from a function of u50low, since a
+ *             package member cannot be called from SQL, and succeeds
+ *    Case 8:  Case 4 with the package: u50a.a1p (2) succeeds again
+ *    Case 9:  u50low: u50a.a1m () (a1m -direct-> u50b.b2m -SQL-> u50c.c3m -direct-> u50a.d1,
+ *             each reads a table that only its owner can read) succeeds
+ *    Case 10: u50low reads u50a.t50a after the call -> SELECT is not authorized
+ *    Case 11: u50a.a1m () again gives the same result as in Case 9
+ *    Case 12: current_user after the calls is U50LOW
  */
 
 --+ server-message on
@@ -137,10 +140,19 @@ call login('u50low', '') on class db_user;
 select u50a.a1p (2) from db_root;
 
 
-evaluate 'Case 9-11: direct -> SQL -> direct: a1m () = 10321, u50a.t50a not readable, a1m () = 10321, current_user U50LOW';
+evaluate 'Case 9: direct -> SQL -> direct, every level reads its own table -> 10321';
 select u50a.a1m () from db_root;
+
+
+evaluate 'Case 10: u50low itself cannot read u50a.t50a -> SELECT is not authorized';
 select c from u50a.t50a;
+
+
+evaluate 'Case 11: the same call again after the refused read -> 10321';
 select u50a.a1m () from db_root;
+
+
+evaluate 'Case 12: current_user after the calls -> U50LOW';
 select current_user from db_root;
 
 

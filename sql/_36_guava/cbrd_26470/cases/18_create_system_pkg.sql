@@ -13,10 +13,10 @@
  *  Coverage:
  *    Case 1: CREATE [OR REPLACE] PACKAGE [BODY] of a quoted public.dbms_output is refused
  *    Case 2: CREATE PACKAGE BODY public.dbms_output (unquoted) fails
- *    Case 3: no code row left (expect 0), the system package row intact (expect 1),
- *            dbms_output still works (expect the message 'still works')
+ *    Case 3: no code row left, the system package row intact,
+ *            dbms_output still works and prints its message
  *    Case 4: DROP PACKAGE [BODY] public.dbms_output is still refused
- *    Case 5: a user package is created, replaced and dropped as before (expect 0 rows left)
+ *    Case 5: a user package is created, replaced and dropped as before, no row left
  */
 
 --+ server-message on

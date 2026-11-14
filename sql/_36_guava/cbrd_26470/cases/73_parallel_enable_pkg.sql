@@ -19,26 +19,43 @@
  *      by the same rules (s446): it runs when the package is first used, which may be inside a
  *      PARALLEL_ENABLE function call where server-side SQL is forbidden.
  *  (While package variables/constants/cursors cannot be declared, the checks on their initial
- *   values are done on the initializer block instead, and the spec cursor of case 2 is a local
+ *   values are done on the initializer block instead, and the spec cursor of Case 2 is a local
  *   cursor of a member declared after the PARALLEL_ENABLE function.)
  *  Error positions in a package body are counted from the first line of the body statement.
  *
  *  Coverage:
- *    Case 1-3:   refused before the fix: SQL in another member, a cursor in a later member,
- *                initializer when only a private function is PARALLEL_ENABLE -> created
- *    Case 4:     catalog is_parallel_enabled
- *    Case 5-7:   PARALLEL_ENABLE function calls a non-PARALLEL_ENABLE member (directly, without
- *                parentheses, through a local routine) -> s444
- *    Case 8-9:   allowed calls and their result
- *    Case 10:    PARALLEL_ENABLE package procedure -> s445
- *    Case 11-15: initializer of a package whose spec has a PARALLEL_ENABLE function -> s446
- *                (direct call, non-PARALLEL_ENABLE member, built-in, DBMS_OUTPUT, SQL)
- *    Case 16-17: allowed initializer and its result
- *    Case 18-21: SQL, DBMS_OUTPUT, direct call, direct call in a parameter default inside the
- *                PARALLEL_ENABLE function itself -> refused as before
- *    Case 22-24: PARALLEL_ENABLE stored functions -> same as before
- *    Case 25-26: violation after a variable/constant declaration in a DECLARE of the initializer
- *                -> s446 message (before the fix, the function message was given)
+ *    Case 1:  refused before the fix: SQL in another member of a package with a PARALLEL_ENABLE
+ *             function -> created
+ *    Case 2:  refused before the fix: a cursor in a member declared after a PARALLEL_ENABLE
+ *             function -> created
+ *    Case 3:  refused before the fix: the initializer when only a private function is
+ *             PARALLEL_ENABLE -> created
+ *    Case 4:  catalog is_parallel_enabled of the members
+ *    Case 5:  PARALLEL_ENABLE function calls a non-PARALLEL_ENABLE member directly -> s444
+ *    Case 6:  PARALLEL_ENABLE function calls a private procedure without parentheses -> s444
+ *    Case 7:  PARALLEL_ENABLE function calls a non-PARALLEL_ENABLE member through a local
+ *             routine -> s444
+ *    Case 8:  allowed calls (PARALLEL_ENABLE private, local routine, self recursion, the other
+ *             direction) -> created
+ *    Case 9:  the allowed calls of Case 8 run
+ *    Case 10: PARALLEL_ENABLE package procedure -> s445
+ *    Case 11: initializer of a package whose spec has a PARALLEL_ENABLE function: direct call -> s446
+ *    Case 12: the same initializer: non-PARALLEL_ENABLE member -> s446
+ *    Case 13: the same initializer: built-in function -> s446
+ *    Case 14: the same initializer: DBMS_OUTPUT -> s446
+ *    Case 15: the same initializer: SQL -> s446
+ *    Case 16: allowed initializer (constant expression, PARALLEL_ENABLE member call) -> created
+ *    Case 17: the allowed initializer of Case 16 runs and pf is called
+ *    Case 18: SQL inside the PARALLEL_ENABLE function itself -> refused as before
+ *    Case 19: DBMS_OUTPUT inside the PARALLEL_ENABLE function itself -> refused as before
+ *    Case 20: direct call inside the PARALLEL_ENABLE function itself -> refused as before
+ *    Case 21: direct call in a parameter default of the PARALLEL_ENABLE function -> refused as before
+ *    Case 22: PARALLEL_ENABLE stored function, SQL in a local routine -> refused as before
+ *    Case 23: PARALLEL_ENABLE stored function, local routine and recursion -> created as before
+ *    Case 24: PARALLEL_ENABLE stored function, direct call -> refused as before
+ *    Case 25: DBMS_OUTPUT after a variable declaration in a DECLARE of the initializer -> s446
+ *             message (before the fix, the function message was given)
+ *    Case 26: SQL after a constant declaration in a DECLARE of the initializer -> s446 message
  */
 
 --+ server-message on

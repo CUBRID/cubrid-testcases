@@ -6,16 +6,16 @@
  *  of going through SQL. Package routines cannot be called from SQL, so their results are seen
  *  through standalone wrapper functions.
  *
- *  The compile_id of a routine lives in its code row and is reached through the 'code' reference
+ *  The compile_id of a routine lives in its code row and is reached through the code reference
  *  of the owning row. It must be set when the routine is created and must change whenever the
  *  code changes: CREATE OR REPLACE of a stored procedure, and of a package spec or body, and
  *  DROP PACKAGE BODY. The values change at every run, so only comparisons are printed.
  *
  *  Coverage:
- *    Case 1: SP -> SP direct call (expect 12)
- *    Case 2: package routine -> standalone SP (expect 51)
- *    Case 3: package routine -> package routine of another package (expect 102)
- *    Case 4: direct call of a procedure with an OUT argument (expect 23)
+ *    Case 1: SP -> SP direct call returns the value of the callee
+ *    Case 2: package routine -> standalone SP returns the value of the callee
+ *    Case 3: package routine -> package routine of another package returns the value of the callee
+ *    Case 4: direct call of a procedure with an OUT argument returns the OUT value
  *    Case 5: compile_id of an SP is set on create and changes on replace
  *    Case 6: compile_id of a package is set on spec create and changes on spec replace,
  *            body create, body replace and body drop

@@ -12,10 +12,10 @@
  *  Each package is first used through a stored function w66_N that calls its function f.
  *
  *  Coverage:
- *    Case 1: RETURN in IF, the INSERT after it does not run -> 1
- *    Case 2: RETURN in a nested DECLARE block, the INSERT after the outer block does not run -> 1
- *    Case 3: RETURN in the exception handler -> 1
- *    Case 4: initialization block without RETURN (regression) -> 2
+ *    Case 1: RETURN in IF, the INSERT after it does not run
+ *    Case 2: RETURN in a nested DECLARE block, the INSERT after the outer block does not run
+ *    Case 3: RETURN in the exception handler ends the initialization
+ *    Case 4: initialization block without RETURN runs every INSERT (regression)
  *    Case 5: RETURN 3 in the initialization block -> s113
  *    Case 6: RETURN 3 in a nested block -> s113
  *    Case 7: RETURN 1 in a body procedure (regression) -> s031

@@ -9,11 +9,11 @@
  *
  *  Coverage:
  *    Case 1: owner u05a calls its own package routine: OK
- *    Case 2: DBA calls u05a's package routine without grant: OK
+ *    Case 2: DBA calls the package routine of u05a without grant: OK
  *    Case 3: u05b without grant calls u05a.pk05.pf / u05a.pk05.pp: authorization failure
- *    Case 4: after GRANT, u05b compiles and runs callers (expect 6)
+ *    Case 4: after GRANT, u05b compiles and runs callers
  *    Case 5: after REVOKE, a new caller of u05b fails: authorization failure
- *    Case 6: a caller compiled with the grant runs (expect 8), and after REVOKE fails at run time
+ *    Case 6: a caller compiled with the grant runs, and after REVOKE fails at run time
  *    Case 7: repeated GRANT / REVOKE: compile OK after grant, authorization failure after revoke
  */
 

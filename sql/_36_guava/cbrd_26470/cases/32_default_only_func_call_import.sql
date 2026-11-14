@@ -13,11 +13,11 @@
  *  g32 () = 5.
  *
  *  Coverage:
- *    Case 1: public package function f (a int := g32 ()), called with all arguments f (3): 3
- *    Case 2: private package function h (a int := g32 ()), called with all arguments: 4
- *    Case 3: local function lf (a int := g32 ()) in a standalone function, all arguments: 6
- *    Case 4: local procedure lp (a int := g32 ()) in a standalone function, all arguments: 7
- *    Case 5: local function with the default omitted, lf (): 5 (regression)
+ *    Case 1: public package function f (a int := g32 ()), called with all arguments f (3), the default is not evaluated
+ *    Case 2: private package function h (a int := g32 ()), called with all arguments, the default is not evaluated
+ *    Case 3: local function lf (a int := g32 ()) in a standalone function, all arguments, the default is not evaluated
+ *    Case 4: local procedure lp (a int := g32 ()) in a standalone function, all arguments, the default is not evaluated
+ *    Case 5: local function with the default omitted, lf () gets the value of g32 () (regression)
  */
 
 --+ server-message on

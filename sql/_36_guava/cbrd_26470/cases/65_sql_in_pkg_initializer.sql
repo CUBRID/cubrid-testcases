@@ -11,13 +11,13 @@
  *  Each package is first used through a stored routine w65_N that calls its function f.
  *
  *  Coverage:
- *    Case 1: INSERT in the initializer -> 1 (before the fix a compile error)
- *    Case 2: INSERT and COMMIT -> 1 (called with CALL)
- *    Case 3: two rows inserted by EXECUTE IMMEDIATE -> 2
- *    Case 4: SQL%ROWCOUNT after UPDATE passed to a body routine -> 3
- *    Case 5: INSERT in the exception handler (ZERO_DIVIDE) -> 6
- *    Case 6: SQL in a package routine called by the initializer -> 7
- *    Case 7: called twice in a session, initialized once -> 1, 1
+ *    Case 1: INSERT in the initializer runs (before the fix a compile error)
+ *    Case 2: INSERT and COMMIT run (called with CALL)
+ *    Case 3: two rows inserted by EXECUTE IMMEDIATE
+ *    Case 4: SQL%ROWCOUNT after UPDATE passed to a body routine
+ *    Case 5: INSERT in the exception handler (ZERO_DIVIDE) runs
+ *    Case 6: SQL in a package routine called by the initializer runs
+ *    Case 7: called twice in a session, initialized once
  *    Case 8: SELECT INTO a local variable of a nested block finds no row
  *            -> "error while initializing the package instance of F: no data found"
  */

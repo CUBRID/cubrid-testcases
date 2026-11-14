@@ -2,14 +2,14 @@
  *  This test case verifies CBRD-26470: run-time EXECUTE checks of a caller that directly calls
  *  routines of two different packages are independent of each other.
  *
- *  Each callee package has its own slot in the caller's authorization flags. Revoking EXECUTE on
+ *  Each callee package has its own slot in the authorization flags of the caller. Revoking EXECUTE on
  *  one package denies the callers of that package only; a caller of the other package still runs.
  *
  *  Coverage:
  *    Case 1: u06b compiles a caller of both u06a.pk06a and u06c.pk06b: OK
- *    Case 2: the caller runs (expect 302 = 101 + 201)
+ *    Case 2: the caller runs and adds the values of both callees
  *    Case 3: after revoking only pk06b, the caller fails at run time: authorization failure
- *    Case 4: a caller of only pk06a still runs (expect 101)
+ *    Case 4: a caller of only pk06a still runs
  */
 
 --+ server-message on

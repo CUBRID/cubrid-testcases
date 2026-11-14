@@ -8,7 +8,7 @@
  *      fills in the initial value only and unhides it.
  *    - The previsit and the visit record name uses separately, and each checks s068 in the order
  *      of the declarations.
- *  (The old case 'spec cursor used in a routine before the cursor definition in the body' is left
+ *  (The old case of a spec cursor used in a routine before the cursor definition in the body is left
  *   out while package cursor declarations are blocked. The package body variables/cursors of the
  *   old cases are replaced with local variables/cursors of a stored function; they go through the
  *   same checks.)
@@ -19,12 +19,12 @@
  *    Case 1:  outer b used, then b declared in the same declaration block (initial value, visit
  *             check) -> s068
  *    Case 2:  bb declared later used in an initial value, no outer bb -> undeclared
- *    Case 3:  y x%TYPE takes the type of the preceding x (NUMERIC(5,2)) -> 2.345 becomes 2.35
+ *    Case 3:  y x%TYPE takes the type of the preceding x (NUMERIC(5,2)) -> the value is rounded to its scale
  *    Case 4:  outer t used in a routine parameter t%TYPE, then t declared in the same declaration
  *             block (previsit check) -> s068
  *    Case 5:  outer x used in a cursor SQL, then x declared in the same declaration block
  *             (previsit check) -> s068
- *    Case 6:  mutual recursion of local routines -> 5
+ *    Case 6:  mutual recursion of local routines compiles and runs
  *    Case 7:  comment on a local variable -> s101 (previsit check)
  *    Case 8:  comment on a local cursor -> s102 (previsit check)
  *    Case 9:  cursor in a PARALLEL_ENABLE function -> refused (setConnectionRequired of the previsit)

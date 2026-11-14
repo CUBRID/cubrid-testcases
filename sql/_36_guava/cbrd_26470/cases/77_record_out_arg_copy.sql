@@ -4,24 +4,24 @@
  *
  *  A record parameter is allowed only for local routines and private package routines, so these
  *  arguments are always passed by a local or direct call.
- *    E2:  same type OUT -> NullPointerException. The caller's OUT copy was new T[] { null } and
+ *    E2:  same type OUT -> NullPointerException. The OUT copy of the caller was new T[] { null } and
  *         the callee called o[0].setNull(null). Fix: the callee makes a new record o[0] = new T().
- *    B:   same type IN OUT -> the copy new T[] { o[0] } was the caller's own record object, so the
- *         fields changed by the callee stayed in the caller even when the callee ended with an
+ *    B:   same type IN OUT -> the copy new T[] { o[0] } was the record object of the caller itself, so
+ *         the fields changed by the callee stayed in the caller even when the callee ended with an
  *         exception. Fix: copy it with copy() of the record class.
  *    C/D: different (compatible) record type OUT / IN OUT -> assert false in
  *         RecordToRecord.javaCode() during compilation (debug build, "internal error").
  *         Fix: the assert is removed (the generated code already copies into a new object).
  *
  *  Coverage:
- *    Case 1: E2 local procedure, same type OUT                        -> 7
- *    Case 2: E2 private package procedure, same type OUT              -> 7
- *    Case 3: OUT does not take the caller's value                     -> NULL
- *    Case 4: B same type IN OUT, field changed to 99, then exception  -> 1
- *    Case 5: same type IN OUT, normal return (o.a := o.a + 7)          -> 8
- *    Case 6: C different type OUT                                     -> 7
- *    Case 7: D different type IN OUT, normal return                   -> 8
- *    Case 8: D different type IN OUT, field changed, then exception   -> 1
+ *    Case 1: E2 local procedure, same type OUT                        -> the callee value is returned
+ *    Case 2: E2 private package procedure, same type OUT              -> the callee value is returned
+ *    Case 3: OUT does not take the value of the caller                -> the field is NULL in the callee
+ *    Case 4: B same type IN OUT, field changed, then exception        -> the caller keeps its value
+ *    Case 5: same type IN OUT, normal return (o.a := o.a + 7)         -> the new value is written back
+ *    Case 6: C different type OUT                                     -> the callee value is returned
+ *    Case 7: D different type IN OUT, normal return                   -> the new value is written back
+ *    Case 8: D different type IN OUT, field changed, then exception   -> the caller keeps its value
  */
 
 --+ server-message on

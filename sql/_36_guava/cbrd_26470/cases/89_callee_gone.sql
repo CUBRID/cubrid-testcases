@@ -5,10 +5,10 @@
  *  Before the fix both were reported as "no authorization to execute <name>".
  *
  *  Coverage:
- *    Case 1: ca89() calling cb89() directly -> 7
+ *    Case 1: ca89() calling cb89() directly runs
  *    Case 2: after DROP FUNCTION cb89, ca89() -> "does not exist" error, not "no authorization"
  *    Case 3: control: cb89() from SQL -> "Function cb89 is undefined" (the SQL path was always right)
- *    Case 4: as u89 holding EXECUTE on dba.peek89, wrap89() calling dba.peek89() -> 42
+ *    Case 4: as u89 holding EXECUTE on dba.peek89, wrap89() calling dba.peek89() reads the table of dba
  *    Case 5: after REVOKE EXECUTE, wrap89() as u89 -> an authorization error, distinct from
  *            "does not exist"
  */

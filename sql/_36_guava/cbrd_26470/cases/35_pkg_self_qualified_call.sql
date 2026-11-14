@@ -11,22 +11,24 @@
  *  unit and makes a local call; if it is not there, it is a compile error. Other qualified calls
  *  (dba.tag () etc.) are global calls.
  *
- *  Standalone function tag35 returns 'standalone', standalone procedure ptag35 (o) sets o to
- *  'standalone'. Each case calls the package through the wrapper function w35.
+ *  Standalone function tag35 returns the text standalone, standalone procedure ptag35 (o) sets o
+ *  to the same text, and the package members return pkg. Each case calls the package through
+ *  the wrapper function w35.
  *
  *  Coverage:
- *    Case 1:  function, tag35 is the last routine of the body:
- *             dba.tag35 / tag35 / pk.tag35 / dba.pk.tag35 = standalone/pkg/pkg/pkg
+ *    Case 1:  function, tag35 is the last routine of the body: dba.tag35 calls the standalone
+ *             function, and tag35 / pk.tag35 / dba.pk.tag35 call the package member
  *    Case 2:  function, tag35 is the first routine of the body: the same
  *    Case 3:  procedure, ptag35 is the last routine of the body: the same
- *    Case 4:  private member: pk.h () / dba.pk.h () = private/private
- *    Case 5:  pk.tag35 () in a routine with a local function tag35 = pkg
- *    Case 6:  another package pk35_o.f () = pk35_o (global call, regression)
+ *    Case 4:  private member: pk.h () and dba.pk.h () call the private member
+ *    Case 5:  pk.tag35 () in a routine with a local function tag35 calls the package member
+ *    Case 6:  another package pk35_o.f () is a global call to that package (regression)
  *    Case 7:  pk.nosuch35 () is an error (no such function) even if standalone nosuch35 exists
  *    Case 8:  pk.nosuchp () is an error (no such procedure)
  *    Case 9:  dba.g35 () in package routine g35 without a standalone g35 is an error
- *    Case 10: X3, replacing the spec when the body has pk.tag35 (), then the call = pkg
- *    Case 11: <owner>.<name> recursion of a standalone function and procedure = 10/10 (regression)
+ *    Case 10: X3, replacing the spec when the body has pk.tag35 () succeeds, and the call still
+ *             calls the package member
+ *    Case 11: <owner>.<name> recursion of a standalone function and procedure (regression)
  */
 
 --+ server-message on

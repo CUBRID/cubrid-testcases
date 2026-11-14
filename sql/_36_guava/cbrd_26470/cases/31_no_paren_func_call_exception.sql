@@ -5,15 +5,15 @@
  *  A call with all arguments given, nd31 (), calls the generated Java method directly, so the
  *  NO_DATA_FOUND raised in the callee is caught by WHEN NO_DATA_FOUND of the caller. Before the
  *  fix a call without parentheses, nd31, went through the identifier path that did not set the
- *  target class, so it was always called through the server (?= call nd31()). The exception
+ *  target class, so it was always called through the server (a CALL statement with an OUT return value). The exception
  *  became a SQL error: CS caught it in WHEN OTHERS, and SA did not catch it at all and the
  *  statement failed. Now a call without parentheses is also a direct call.
  *
  *  Coverage:
- *    Case 1: nd31 () -> NDF
- *    Case 2: nd31    -> NDF
+ *    Case 1: the exception of nd31 () is caught by WHEN NO_DATA_FOUND of the caller
+ *    Case 2: the exception of nd31 is caught by WHEN NO_DATA_FOUND of the caller
  *    Case 3: user defined exception: ue31 () and ue31 give the same (WHEN OTHERS, same SQLCODE)
- *    Case 4: normal value: one31 without parentheses called three times in a loop = 3
+ *    Case 4: normal value: one31 without parentheses called three times in a loop adds up its values
  */
 
 --+ server-message on

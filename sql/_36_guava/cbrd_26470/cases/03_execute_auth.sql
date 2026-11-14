@@ -2,16 +2,16 @@
  *  This test case verifies CBRD-26470: the EXECUTE authorization of a direct call from PL/CSQL
  *  is checked when the caller is compiled.
  *
- *  Calling another user's stored procedure or package routine directly without EXECUTE makes
- *  CREATE (the compile) of the caller fail, and after GRANT EXECUTE it succeeds. A call of the
- *  owner's own routine and a self-recursive call always pass. A Java SP is not checked at
+ *  Calling a stored procedure of another user or package routine directly without EXECUTE makes
+ *  CREATE (the compile) of the caller fail, and after GRANT EXECUTE it succeeds. A call of a
+ *  routine of the same owner and a self-recursive call always pass. A Java SP is not checked at
  *  compile time (it is checked at run time by the server).
  *
  *  Coverage:
  *    Case 1: u03b -> u03a.f03_b without grant: EXECUTE authorization failure
  *    Case 2: owner u03a -> own f03_b: OK
  *    Case 3: self recursion of u03b.f03_rec: OK
- *    Case 4: after GRANT, u03b -> u03a.f03_b compiles and runs (expect 10)
+ *    Case 4: after GRANT, u03b -> u03a.f03_b compiles and runs
  *    Case 5: u03b -> package routine u03a.pk03.pf without grant: EXECUTE authorization failure
  *    Case 6: u03b -> Java SP u03a.f03_j without grant: compile passes
  */

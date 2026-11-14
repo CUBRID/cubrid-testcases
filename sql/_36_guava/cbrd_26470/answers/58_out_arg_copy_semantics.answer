@@ -69,7 +69,7 @@
 
 ===================================================
     
-Case 1-4: OUT 'abcdef' into varchar(3) (dir, pkg, loc, srv): VE, VE, VE, VE     
+Case 1: dir, OUT abcdef into varchar(3); result = VE     
 
 
 ===================================================
@@ -78,13 +78,28 @@ VE
 
 
 ===================================================
+    
+Case 2: pkg, OUT abcdef into varchar(3); result = VE     
+
+
+===================================================
 s_pkg58()    
 VE     
 
 
 ===================================================
+    
+Case 3: loc, OUT abcdef into varchar(3); result = VE     
+
+
+===================================================
 s_loc58()    
 VE     
+
+
+===================================================
+    
+Case 4: srv, OUT abcdef into varchar(3) (control); result = VE     
 
 
 ===================================================
@@ -94,7 +109,7 @@ VE
 
 ===================================================
     
-Case 5-8: IN OUT 3.1555 into numeric(10,1) (dir, pkg, loc, srv): 3.2, 3.2, 3.2, 3.2     
+Case 5: dir, IN OUT 3.1555 into numeric(10,1); result = 3.2     
 
 
 ===================================================
@@ -103,13 +118,28 @@ n_dir58()
 
 
 ===================================================
+    
+Case 6: pkg, IN OUT 3.1555 into numeric(10,1); result = 3.2     
+
+
+===================================================
 n_pkg58()    
 3.2     
 
 
 ===================================================
+    
+Case 7: loc, IN OUT 3.1555 into numeric(10,1); result = 3.2     
+
+
+===================================================
 n_loc58()    
 3.2     
+
+
+===================================================
+    
+Case 8: srv, IN OUT 3.1555 into numeric(10,1) (control); result = 3.2     
 
 
 ===================================================
@@ -119,7 +149,7 @@ n_srv58()
 
 ===================================================
     
-Case 9-12: arguments unchanged when the callee ends with an exception (dir, pkg, loc, srv): 7,7, 7,7, 7,7, 7,7     
+Case 9: dir, arguments unchanged when the callee ends with an exception; result = 7,7     
 
 
 ===================================================
@@ -128,13 +158,28 @@ e_dir58()
 
 
 ===================================================
+    
+Case 10: pkg, arguments unchanged when the callee ends with an exception; result = 7,7     
+
+
+===================================================
 e_pkg58()    
 7,7     
 
 
 ===================================================
+    
+Case 11: loc, arguments unchanged when the callee ends with an exception; result = 7,7     
+
+
+===================================================
 e_loc58()    
 7,7     
+
+
+===================================================
+    
+Case 12: srv, arguments unchanged when the callee ends with an exception (control); result = 7,7     
 
 
 ===================================================
@@ -144,7 +189,7 @@ e_srv58()
 
 ===================================================
     
-Case 13-16: arguments written back on normal return (dir, pkg, loc, srv): 8,5, 8,5, 8,5, 8,5     
+Case 13: dir, arguments written back on normal return; result = 8,5     
 
 
 ===================================================
@@ -153,13 +198,28 @@ o_dir58()
 
 
 ===================================================
+    
+Case 14: pkg, arguments written back on normal return; result = 8,5     
+
+
+===================================================
 o_pkg58()    
 8,5     
 
 
 ===================================================
+    
+Case 15: loc, arguments written back on normal return; result = 8,5     
+
+
+===================================================
 o_loc58()    
 8,5     
+
+
+===================================================
+    
+Case 16: srv, arguments written back on normal return (control); result = 8,5     
 
 
 ===================================================

@@ -11,12 +11,12 @@
  *  Fix: parameter COMMENTs are left out of the header comparison.
  *
  *  Coverage:
- *    Case 1: parameter COMMENT only in the specification -> created, catalog comment 'first arg'
+ *    Case 1: parameter COMMENT only in the specification -> created, catalog has the spec one
  *    Case 2: different parameter COMMENTs                -> created, catalog has the spec one
- *    Case 3: parameter COMMENT only in the body          -> created, catalog comment NULL
- *    Case 4: OUT parameter of a function, COMMENT only in the specification -> created, call = 9
+ *    Case 3: parameter COMMENT only in the body          -> created, no catalog comment
+ *    Case 4: OUT parameter of a function, COMMENT only in the specification -> created and runs
  *    Case 5: different parameter types                   -> s114
- *    Case 6: different default strings ('a' / 'b')       -> s114
+ *    Case 6: different default strings (a and b)         -> s114
  *    Case 7: only the routine COMMENTs differ            -> created
  */
 

@@ -14,7 +14,7 @@
  *  Coverage:
  *    Case 1: package SYS_REFCURSOR function called from another SP: "a function that returns a
  *            query result set cannot be called from PL/CSQL"
- *    Case 2: table.column%TYPE (regression): 5
+ *    Case 2: table.column%TYPE (regression) compiles and runs
  *    Case 3: BOOLEAN return type of a package function (regression): "cannot be used as a return
  *            type of stored functions"
  *    Case 4: nonexistent package variable pkb36.nosuch%TYPE: "is neither a table column nor a

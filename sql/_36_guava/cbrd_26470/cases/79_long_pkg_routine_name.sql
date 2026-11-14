@@ -12,12 +12,12 @@
  *      it could not be called. Fix: creation refuses 255 bytes or longer (-1397, new message).
  *
  *  Coverage:
- *    Case 1: E4 <P>.<R>() (100 + 122 chars, unique name 227 bytes)     -> 1
- *    Case 2: the same routine called as dba.<P>.<R>()                  -> 1
- *    Case 3: unique name of 254 bytes (125 + 124 chars)                -> 254
+ *    Case 1: E4 <P>.<R>() (100 + 122 chars, unique name 227 bytes)     -> runs
+ *    Case 2: the same routine called as dba.<P>.<R>()                  -> runs
+ *    Case 3: unique name of 254 bytes (125 + 124 chars)                -> created, whole name stored
  *    Case 4: package specification whose unique name is 255 bytes (125 + 125 chars)
  *            -> refused: unique name must be shorter than 255 bytes
- *    Case 5: short names pk79.f(), dba.pk79.f()                        -> 5, 5
+ *    Case 5: short names pk79.f(), dba.pk79.f()                        -> run
  */
 
 --+ server-message on

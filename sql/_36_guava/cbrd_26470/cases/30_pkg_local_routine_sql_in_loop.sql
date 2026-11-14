@@ -8,24 +8,25 @@
  *  (visitDeclRoutine / tmplDeclRoutine) did not. Before the fix CREATE PACKAGE BODY failed with
  *  "Package compile error: Unable to compile the source" (javac: cannot find symbol pstmtRef_N).
  *
- *  The local function lf (i) is "select count(*) from t30 where a <= i" and t30 = {1, 2, 3}, so
- *  lf (1) + lf (2) + lf (3) = 6. Package routines are called through wrapper functions.
+ *  The local function lf (i) is "select count(*) from t30 where a <= i" and t30 = {1, 2, 3}, and
+ *  most cases add lf (1), lf (2) and lf (3). Package routines are called through wrapper functions.
  *
  *  Coverage:
- *    Case 1:  local routine called in a FOR loop: 6
- *    Case 2:  in a WHILE loop: 6
- *    Case 3:  in a basic LOOP: 6
- *    Case 4:  in a cursor FOR loop: 6
- *    Case 5:  self recursion: 6
- *    Case 6:  mutual recursion: 6
- *    Case 7:  two members, each with one of the above: 12
- *    Case 8:  private member only in the body: 6
- *    Case 9:  local procedure doing INSERT in a loop: 3
- *    Case 10: mutual recursion between members, f calls a local routine in a loop: 12
- *    Case 11: a local routine calls member g that calls f back: 24
+ *    Case 1:  local routine called in a FOR loop
+ *    Case 2:  in a WHILE loop
+ *    Case 3:  in a basic LOOP
+ *    Case 4:  in a cursor FOR loop
+ *    Case 5:  self recursion
+ *    Case 6:  mutual recursion
+ *    Case 7:  two members, each with one of the above
+ *    Case 8:  private member only in the body
+ *    Case 9:  local procedure doing INSERT in a loop
+ *    Case 10: mutual recursion between members, f calls a local routine in a loop
+ *    Case 11: a local routine calls member g that calls f back
  *    Case 12: member f with a builtin call in its default argument, called without argument in a
- *             loop of another member g: 14
- *    Case 13: the same code in a standalone function (regression): 6
+ *             loop of another member g
+ *    Case 13: the same code in a standalone function (regression)
+ *  Each case compiles and returns the sum that its label states.
  */
 
 --+ server-message on
@@ -77,7 +78,6 @@ create or replace function w30_cur return int as begin return pk30_cur.f (); end
 select w30_cur () from dual;
 
 
--- rec (3) = lf (3) + rec (2) = 3 + 2 + 1 = 6
 evaluate 'Case 5: self recursion: 6';
 create or replace package pk30_rec as function f return int; end;
 create or replace package body pk30_rec as function f return int as function rec (i int) return int as n int; begin if i = 0 then return 0; end if; select count(*) into n from t30 where a <= i; return n + rec (i - 1); end; begin return rec (3); end; end;
@@ -92,7 +92,7 @@ create or replace function w30_mut return int as begin return pk30_mut.f (); end
 select w30_mut () from dual;
 
 
--- f: FOR loop (6), g: self recursion (6)
+-- f: FOR loop, g: self recursion
 evaluate 'Case 7: two members, each with one: 12';
 create or replace package pk30_two as function f return int; function g return int; end;
 create or replace package body pk30_two as function f return int as s int := 0; function lf (i int) return int as n int; begin select count(*) into n from t30 where a <= i; return n; end; begin for i in 1 .. 3 loop s := s + lf (i); end loop; return s; end; function g return int as function rec (i int) return int as n int; begin if i = 0 then return 0; end if; select count(*) into n from t30 where a <= i; return n + rec (i - 1); end; begin return rec (3); end; end;
@@ -115,8 +115,7 @@ create or replace function w30_ins return int as begin return pk30_ins.f (); end
 select w30_ins () from dual;
 
 
--- f (n) = 6 + g (n - 1), g (n) = f (n - 1), f (0) = g (0) = 0
--- f (3) = 6 + g (2) = 6 + f (1) = 6 + 6 + g (0) = 12
+-- f (n) adds lf (1) to lf (3) to g (n - 1), g (n) = f (n - 1), f (0) = g (0) = 0
 evaluate 'Case 10: mutual recursion between members: 12';
 create or replace package pk30_mr as function f (n int) return int; function g (n int) return int; end;
 create or replace package body pk30_mr as function f (n int) return int as s int := 0; function lf (i int) return int as n int; begin select count(*) into n from t30 where a <= i; return n; end; begin if n = 0 then return 0; end if; for i in 1 .. 3 loop s := s + lf (i); end loop; return s + g (n - 1); end; function g (n int) return int as begin if n = 0 then return 0; end if; return f (n - 1); end; end;
@@ -125,7 +124,6 @@ select w30_mr () from dual;
 
 
 -- lf2 (i, n) = count(a <= i) + (n > 0 ? g (n - 1) : 0), g (m) = f (m)
--- f (0) = 1 + 2 + 3 = 6, f (1) = 6 + 3 * f (0) = 24
 evaluate 'Case 11: local routine calls a member that calls back: 24';
 create or replace package pk30_cb as function f (n int) return int; function g (n int) return int; end;
 create or replace package body pk30_cb as function f (n int) return int as s int := 0; function lf2 (i int, n int) return int as c int; begin select count(*) into c from t30 where a <= i; if n > 0 then c := c + g (n - 1); end if; return c; end; begin for i in 1 .. 3 loop s := s + lf2 (i, n); end loop; return s; end; function g (n int) return int as begin return f (n); end; end;
@@ -133,7 +131,7 @@ create or replace function w30_cb return int as begin return pk30_cb.f (1); end;
 select w30_cb () from dual;
 
 
--- g = f () + f () = 7 + 7 = 14
+-- g calls f () twice, each time with the default argument
 evaluate 'Case 12: default argument with a builtin call, used in another member loop: 14';
 create or replace package pk30_da as function f (a int := to_number('7')) return int; function g return int; end;
 create or replace package body pk30_da as function f (a int := to_number('7')) return int as begin return a; end; function g return int as s int := 0; begin for i in 1 .. 2 loop s := s + f (); end loop; return s; end; end;

@@ -11,8 +11,8 @@
  *  The user name must be a system class name, so this test uses the user db_root.
  *
  *  Coverage:
- *    Case 1: db_root.sf85() called in PL/CSQL -> 11
- *    Case 2: ALTER FUNCTION db_root.sf85 COMMENT -> succeeds, catalog comment 'c85'
+ *    Case 1: db_root.sf85() called in PL/CSQL -> calls the function of the user db_root
+ *    Case 2: ALTER FUNCTION db_root.sf85 COMMENT -> succeeds, the comment shows in the catalog
  *    Case 3: GRANT EXECUTE ON PROCEDURE db_root.sf85 -> succeeds, one grant to PUBLIC
  *    Case 4: missing db_root.nf85() called in PL/CSQL -> "does not exist" error (not Ambiguous)
  */

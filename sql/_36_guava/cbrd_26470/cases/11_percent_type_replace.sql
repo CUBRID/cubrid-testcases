@@ -14,9 +14,9 @@
  *    Case 3: view column %TYPE, replaced with an owner qualifier
  *    Case 4: a procedure with the same name as the table, replaced
  *    Case 5: %TYPE of a missing package variable is still a compile error
- *    Case 6: no duplicate catalog rows (expect 7)
+ *    Case 6: no duplicate catalog rows
  *    Case 7: a table and a package with the same name: the column %TYPE compiles and is
- *            replaced, no duplicate rows (expect 1)
+ *            replaced, no duplicate rows
  *    Case 8: DROP and create again
  */
 

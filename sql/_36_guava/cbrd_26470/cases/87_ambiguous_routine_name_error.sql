@@ -2,15 +2,15 @@
  *  This test case verifies CBRD-26470 (PR #7819): the error for a name that matches both
  *  <user>.<name> and <package>.<name> while compiling PL/CSQL (review round 7, Q1).
  *
- *  Before the fix it was ER_FAILED with a hand-written message (without the final '.').
+ *  Before the fix it was ER_FAILED with a hand-written message (without the final period).
  *  After the fix it is ER_SP_AMBIGUOUS_NAME (-1401), the message used by ALTER and GRANT.
  *  The user amb87 owns a function q and a procedure p, and dba owns a package amb87 with the
  *  members q and p.
  *
  *  Coverage:
- *    Case 1: function call amb87.q()   -> Ambiguous: 'AMB87.Q' matches both <user>.<name> pattern
- *            and <package>.<name> pattern.
- *    Case 2: procedure call amb87.p(); -> Ambiguous: 'AMB87.P' ...
+ *    Case 1: function call amb87.q()   -> ER_SP_AMBIGUOUS_NAME: the name matches both the
+ *            <user>.<name> pattern and the <package>.<name> pattern
+ *    Case 2: procedure call amb87.p()  -> ER_SP_AMBIGUOUS_NAME
  */
 
 --+ server-message on

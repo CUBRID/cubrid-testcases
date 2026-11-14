@@ -33,7 +33,7 @@
 
 ===================================================
     
-initial state: pb68:Y pk68_1:N pk68_2:N pk68_3:Y pk68_4:N ps68:N     
+Case 1: initial state; result = pb68:Y pk68_1:N pk68_2:N pk68_3:Y pk68_4:N ps68:N     
 
 
 ===================================================
@@ -48,7 +48,7 @@ ps68:N
 
 ===================================================
     
-Case 1: drop package if exists nopkg68 -> success, no change     
+Case 2: drop package if exists nopkg68 -> success, no change     
 
 
 ===================================================
@@ -66,7 +66,7 @@ ps68:N
 
 ===================================================
     
-Case 2: drop package body if exists nopkg68 -> success, no change     
+Case 3: drop package body if exists nopkg68 -> success, no change     
 
 
 ===================================================
@@ -84,7 +84,7 @@ ps68:N
 
 ===================================================
     
-Case 3: drop package body if exists ps68 (no body) -> success, no change     
+Case 4: drop package body if exists ps68 (no body) -> success, no change     
 
 
 ===================================================
@@ -102,7 +102,7 @@ ps68:N
 
 ===================================================
     
-Case 4: drop package body if exists pb68 -> pb68:N     
+Case 5: drop package body if exists pb68 -> pb68:N     
 
 
 ===================================================
@@ -120,7 +120,7 @@ ps68:N
 
 ===================================================
     
-Case 5: drop package if exists pk68_1, nopkg68, pk68_2 -> pb68:N pk68_3:Y pk68_4:N ps68:N     
+Case 6: drop package if exists pk68_1, nopkg68, pk68_2 -> pb68:N pk68_3:Y pk68_4:N ps68:N     
 
 
 ===================================================
@@ -136,23 +136,7 @@ ps68:N
 
 ===================================================
     
-Case 6: drop package body if exists pk68_3, nopkg68 -> pb68:N pk68_3:N pk68_4:N ps68:N     
-
-
-===================================================
-0
-
-===================================================
-s    
-pb68:N     
-pk68_3:N     
-pk68_4:N     
-ps68:N     
-
-
-===================================================
-    
-Case 7: drop package if exists db_user -> success, no change     
+Case 7: drop package body if exists pk68_3, nopkg68 -> pb68:N pk68_3:N pk68_4:N ps68:N     
 
 
 ===================================================
@@ -168,7 +152,23 @@ ps68:N
 
 ===================================================
     
-Case 8: drop package nopkg68 -> Package "dba.nopkg68" does not exist.     
+Case 8: drop package if exists db_user -> success, no change     
+
+
+===================================================
+0
+
+===================================================
+s    
+pb68:N     
+pk68_3:N     
+pk68_4:N     
+ps68:N     
+
+
+===================================================
+    
+Case 9: drop package nopkg68 -> Package "dba.nopkg68" does not exist.     
 
 
 ===================================================
@@ -185,7 +185,7 @@ ps68:N
 
 ===================================================
     
-Case 9: drop package body nopkg68 -> Package Body "dba.nopkg68" does not exist.     
+Case 10: drop package body nopkg68 -> Package Body "dba.nopkg68" does not exist.     
 
 
 ===================================================
@@ -202,7 +202,7 @@ ps68:N
 
 ===================================================
     
-Case 10: drop package if exists pk68_4, pk68_4 -> duplicate name error, no change     
+Case 11: drop package if exists pk68_4, pk68_4 -> duplicate name error, no change     
 
 
 ===================================================

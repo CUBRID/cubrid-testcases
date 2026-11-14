@@ -9,13 +9,15 @@
  *  routine gives ER_SP_PKG_ROUTINE_NOT_ALLOWED, and <a>.<b> that matches both <user>.<routine>
  *  and <package>.<routine> gives ER_SP_AMBIGUOUS_NAME. A refused statement leaves _db_auth as it was.
  *
- *  Coverage (Case 1 for GRANT, Case 2 for REVOKE):
- *    dbms_output.<routine> is refused, public.dbms_output does not exist, <pkg>.<routine> is
- *    refused, ambiguous <a>.<b> is refused, a list with a package routine is refused,
- *    <user>.<pkg>.<routine> is a syntax error, a missing routine does not exist,
- *    and _db_auth is unchanged (expect 1)
- *    Case 3: GRANT / REVOKE of a standalone routine and of a package work as before
- *            (expect 2 and 1 grants recorded, then _db_auth back to the start: 1)
+ *  Coverage:
+ *    Case 1: GRANT EXECUTE ON PROCEDURE: dbms_output.<routine> is refused, public.dbms_output
+ *            does not exist, <pkg>.<routine> is refused, ambiguous <a>.<b> is refused, a list
+ *            with a package routine is refused, <user>.<pkg>.<routine> is a syntax error, a
+ *            missing routine does not exist, and _db_auth is unchanged
+ *    Case 2: REVOKE EXECUTE ON PROCEDURE: the same statements as Case 1 are refused in the same
+ *            way, and _db_auth is unchanged
+ *    Case 3: GRANT / REVOKE of a standalone routine and of a package work as before, the grants
+ *            show in _db_auth, and _db_auth is back to the start after the revokes
  */
 
 --+ server-message on

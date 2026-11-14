@@ -6,7 +6,7 @@
  *    - A direct call is bound by name when it is called. When the generated code first reaches
  *      the call site, it goes through checkExecuteAuthorization () (a missing member gives
  *      "does not exist"), findTargetClass () (a missing Func_/Proc_/Pckg_ class gives "cannot find
- *      executable binary of ... (was it dropped?)") and reflectMethod () (getMethod with the
+ *      executable binary of ... (was it dropped)") and reflectMethod () (getMethod with the
  *      parameter classes known when the caller was compiled gives "cannot find method X in the
  *      executable binary (hint: try recompiling this stored procedure)"), and the return value is
  *      cast to the type known when the caller was compiled (ClassCastException gives "type of a
@@ -18,25 +18,25 @@
  *  (The original shell test ran each step in a new csql session.)
  *
  *  Coverage:
- *    Case 1:  w47 () calls cal47 () RETURN INT                      -> 1
- *    Case 2:  cal47 replaced with RETURN VARCHAR                    -> type of a value does not match ...
- *    Case 3:  cal47 replaced with cal47 (a INT)                     -> cannot find method CAL47 ...
- *    Case 4:  cal47 restored to RETURN INT 5, w47 not recompiled    -> 5
- *    Case 5:  wct47 () calls ct47 (a INT)                           -> 'int:5'
- *    Case 6:  ct47 replaced with ct47 (a VARCHAR)                   -> 'caught: cannot find method CT47 ...'
- *    Case 7:  ALTER FUNCTION wct47 COMPILE                          -> 'vc:5'
- *    Case 8:  ct47 dropped and created again as a procedure         -> 'caught: cannot find executable binary of dba.ct47 (was it dropped?)'
- *    Case 9:  spec-only package pq47, function                      -> 'caught: ... no implementation in the package body'
- *    Case 10: spec-only package pq47, procedure                     -> error ... no implementation in the package body
- *    Case 11: after CREATE PACKAGE BODY, function                   -> 'r=101'
+ *    Case 1:  w47 () calls cal47 () RETURN INT                      -> the value of cal47
+ *    Case 2:  cal47 replaced with RETURN VARCHAR                    -> type of a value does not match error
+ *    Case 3:  cal47 replaced with cal47 (a INT)                     -> cannot find method error
+ *    Case 4:  cal47 restored to RETURN INT, w47 not recompiled      -> the new value of cal47
+ *    Case 5:  wct47 () calls ct47 (a INT)                           -> the value of ct47
+ *    Case 6:  ct47 replaced with ct47 (a VARCHAR)                   -> cannot find method, caught by the caller
+ *    Case 7:  ALTER FUNCTION wct47 COMPILE                          -> the value of the new ct47
+ *    Case 8:  ct47 dropped and created again as a procedure         -> cannot find executable binary, caught by the caller
+ *    Case 9:  spec-only package pq47, function                      -> no implementation in the package body, caught
+ *    Case 10: spec-only package pq47, procedure                     -> error, no implementation in the package body
+ *    Case 11: after CREATE PACKAGE BODY, function                   -> the value of the new body
  *    Case 12: after CREATE PACKAGE BODY, procedure                  -> success
  *    Case 13: after DROP PACKAGE BODY, function                     -> same as case 9
  *    Case 14: after DROP PACKAGE BODY, procedure                    -> same as case 10
- *    Case 15: body created again with a + 200                       -> 'r=201'
- *    Case 16: f removed from the package, function                  -> 'caught: Stored procedure/function 'dba.pq47.f' does not exist.'
+ *    Case 15: body created again with a + 200                       -> the value of the new body
+ *    Case 16: f removed from the package, function                  -> does not exist, caught by the caller
  *             (In SA mode this fails since develop: the error context is left, so the call caught
  *              by WHEN OTHERS becomes a statement error. This SQL test runs in CS mode only.)
- *    Case 17: p removed from the package, procedure                 -> Stored procedure/function 'dba.pq47.p' does not exist.
+ *    Case 17: p removed from the package, procedure                 -> error, does not exist
  */
 
 --+ server-message on

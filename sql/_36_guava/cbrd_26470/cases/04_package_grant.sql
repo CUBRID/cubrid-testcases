@@ -8,7 +8,7 @@
  *  Coverage:
  *    Case 1: u04b -> u04a.pk04.pf before grant: EXECUTE authorization failure
  *    Case 2: GRANT EXECUTE ON PACKAGE pk04 TO u04b: OK
- *    Case 3: after the grant, u04b -> u04a.pk04.pf compiles and runs (expect 6),
+ *    Case 3: after the grant, u04b -> u04a.pk04.pf compiles and runs,
  *            another routine u04a.pk04.pp is also callable
  *    Case 4: REVOKE EXECUTE ON PACKAGE pk04 FROM u04b: OK
  *    Case 5: after the revoke, a new caller fails with EXECUTE authorization failure

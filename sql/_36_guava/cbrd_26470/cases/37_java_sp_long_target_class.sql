@@ -10,13 +10,13 @@
  *  only the creation and the catalog are checked.
  *
  *  Coverage:
- *    Case 1: Java SP with a 600-char class name is created, target_class length 600
- *    Case 2: Java SP with a 1024-char class name is created, target_class length 1024
- *    Case 3: Java SP with a 512-char class name is created, target_class length 512 (regression)
+ *    Case 1: Java SP with a 600-char class name is created, the whole class name is stored
+ *    Case 2: Java SP with a 1024-char class name is created, the whole class name is stored
+ *    Case 3: Java SP with a 512-char class name is created, the whole class name is stored (regression)
  *    Case 4: Java SP with a 1025-char class name fails with "Data overflow"
- *    Case 5: PL/CSQL function is created and returns 7 (regression)
- *    Case 6: catalog: _db_stored_procedure.target_class 1024, _db_package_code.name 512,
- *            _db_stored_procedure_code.name 512
+ *    Case 5: PL/CSQL function is created and runs (regression)
+ *    Case 6: catalog: the declared lengths of _db_stored_procedure.target_class,
+ *            _db_package_code.name and _db_stored_procedure_code.name
  */
 
 --+ server-message on

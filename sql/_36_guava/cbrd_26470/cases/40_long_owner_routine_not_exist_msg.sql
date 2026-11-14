@@ -6,15 +6,15 @@
  *    - jsp_find_stored_procedure () normalizes the name with jsp_check_stored_procedure_name ().
  *      When the owner part is SM_MAX_USER_LENGTH (32) or longer, the name cannot be normalized
  *      and becomes an empty string, and ER_SP_NOT_EXIST was raised with that empty name:
- *      "Stored procedure/function '' does not exist."
+ *      the message named an empty routine.
  *  Fix:
  *    - The original name is put in the message.
  *
  *  Coverage:
- *    Case 1: PL/CSQL function call <u x 40>.pk40.g ()   -> '<u x 40>.pk40.g' (was '')
- *    Case 2: PL/CSQL procedure call <u x 40>.pk40.p ()  -> '<u x 40>.pk40.p' (was '')
- *    Case 3: SQL CALL <u x 40>.p40 ()                   -> '<u x 40>.p40' (was '')
- *    Case 4: missing package function dba.pk40.nosuch () -> 'dba.pk40.nosuch' (regression)
+ *    Case 1: PL/CSQL function call <u x 40>.pk40.g ()   -> the message names the routine (was empty)
+ *    Case 2: PL/CSQL procedure call <u x 40>.pk40.p ()  -> the message names the routine (was empty)
+ *    Case 3: SQL CALL <u x 40>.p40 ()                   -> the message names the routine (was empty)
+ *    Case 4: missing package function dba.pk40.nosuch () -> the message names the routine (regression)
  *    Case 5: one-dot name with a long first part <u x 40>.g40 ()
  *            -> "Neither stored function ... nor package function ... exists." (regression)
  */

@@ -8,13 +8,13 @@
  *  compile_id changes at every run, so only the comparison is printed.
  *
  *  Coverage:
- *    Case 1: COMMENT by the owner is stored (expect hello)
- *    Case 2: COMMENT by a non-owner is denied and the comment is unchanged (expect hello)
- *    Case 3: COMPILE by the owner renews compile_id (expect 1) and the function still runs (expect 6)
+ *    Case 1: COMMENT by the owner is stored
+ *    Case 2: COMMENT by a non-owner is denied and the comment is unchanged
+ *    Case 3: COMPILE by the owner renews compile_id and the function still runs
  *    Case 4: COMPILE with the wrong routine type (ALTER PROCEDURE of a function) is denied
- *    Case 5: OWNER TO by a non-DBA is denied and the owner is unchanged (expect U09A)
+ *    Case 5: OWNER TO by a non-DBA is denied and the owner is unchanged
  *    Case 6: OWNER TO by DBA: unique_name, generated class name and the code row follow the new
- *            owner, and the new owner can run it (expect u09b.f09_a, Func_4_U09B_F09_A, u09b.f09_a, 8)
+ *            owner, and the new owner can run it
  *    Case 7: ALTER of a missing routine is denied
  */
 

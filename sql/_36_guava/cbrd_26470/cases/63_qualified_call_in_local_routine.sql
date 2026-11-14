@@ -13,16 +13,16 @@
  *      previsit table, not in the package scope (level 2).
  *      Fix: DEFAULT expressions are converted in the visit. The previsit only records whether
  *      there is a default.
- *  Each value is returned by a stored function t63w that calls the case's routine.
+ *  Each value is returned by a stored function t63w that calls the routine of the case.
  *
  *  Coverage:
- *    Case 1: pk63.f() in a local function                      -> 'pkg' (before the fix 'local')
- *    Case 2: pk63.p in a local procedure                       -> 'pkg' (before the fix 'local')
- *    Case 3: dba.fr63(0) in a local function of the SP         -> 'top' (before the fix 'local')
- *    Case 4: DEFAULT pk63.g() in the spec and the body, call omitting it -> 14
- *    Case 5: DEFAULT pk63.pv() calling a private body member   -> 15
- *    Case 6: DEFAULT pk63.later() calling a member declared later -> 16
- *    Case 7: package initializer calls package routines (before the fix a Java compile error) -> 17
+ *    Case 1: pk63.f() in a local function                      -> calls the package member, not the local one
+ *    Case 2: pk63.p in a local procedure                       -> calls the package member, not the local one
+ *    Case 3: dba.fr63(0) in a local function of the SP         -> calls the SP, not the local one
+ *    Case 4: DEFAULT pk63.g() in the spec and the body, call omitting it -> the default is used
+ *    Case 5: DEFAULT pk63.pv() calling a private body member   -> the default is used
+ *    Case 6: DEFAULT pk63.later() calling a member declared later -> the default is used
+ *    Case 7: package initializer calls package routines (before the fix a Java compile error) -> runs
  *    Case 8: a local routine parameter without a default after one with a default -> s095
  */
 

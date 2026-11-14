@@ -10,14 +10,14 @@
  *  ClassCastException message for a changed return type).
  *
  *  Coverage:
- *    Case 1: a82() before the change -> 1
- *    Case 2: a82() after adding x VARCHAR DEFAULT 'xy' to b82
- *            -> "(line 1, column 59) cannot find method B82 in the executable binary
- *               (hint: try recompiling this stored procedure)"  (59 is 'b82(1)' in a82)
- *    Case 3: a82() after ALTER FUNCTION a82 COMPILE -> 3 (= 1 + LENGTH('xy'))
- *    Case 4: c82() calling the package routine pk82.h, before the change -> 10
+ *    Case 1: a82() before the change runs
+ *    Case 2: a82() after adding x VARCHAR DEFAULT xy to b82 -> cannot find method B82 in the
+ *            executable binary, with the hint to recompile, at the position of the call of b82
+ *            in a82
+ *    Case 3: a82() after ALTER FUNCTION a82 COMPILE runs with the default of the new parameter
+ *    Case 4: c82() calling the package routine pk82.h, before the change runs
  *    Case 5: c82() after adding a DEFAULT parameter to pk82.h -> the same error with the hint,
- *            at 'pk82.h(1)' (line 1, column 59)
+ *            at the position of the call of pk82.h in c82
  *            (the body is dropped first: with a body, replacing the specification recompiles the
  *            old body and gives a header mismatch error)
  *            c82() is not recompiled and checked: pk82.h(1) would be compiled as a call with

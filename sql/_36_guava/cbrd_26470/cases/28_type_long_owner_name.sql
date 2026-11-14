@@ -19,7 +19,7 @@
  *    Case 5: 32-byte owner: compile error
  *    Case 6: 223-byte table name: compile error
  *    Case 7: 222-byte table name (exists): compiles
- *    Case 8: a function with a variable of that column type runs and returns abc
+ *    Case 8: a function with a variable of that column type runs and returns the column value
  */
 
 --+ server-message on

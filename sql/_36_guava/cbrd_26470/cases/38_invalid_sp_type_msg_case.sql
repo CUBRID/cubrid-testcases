@@ -3,17 +3,19 @@
  *  message is written in upper case on every path.
  *
  *  Background:
- *    - The same error gave 'procedure'/'function' (lower case) when it was raised while compiling
- *      a PL/CSQL routine (method_callback.cpp), and 'PROCEDURE'/'FUNCTION' (upper case) when it
+ *    - The same error gave procedure/function (lower case) when it was raised while compiling
+ *      a PL/CSQL routine (method_callback.cpp), and PROCEDURE/FUNCTION (upper case) when it
  *      was raised by DROP/ALTER (jsp_cl.cpp).
  *  Fix:
  *    - The compile-time error is also written in upper case.
  *
  *  Coverage:
- *    Case 1: a procedure called as a function in a PL/CSQL body -> 'PROCEDURE' (was 'procedure')
- *    Case 2: a function called as a procedure in a PL/CSQL body -> 'FUNCTION' (was 'function')
- *    Case 3: DROP FUNCTION on a procedure -> 'PROCEDURE' (regression)
- *    Case 4: DROP PROCEDURE on a function -> 'FUNCTION' (regression)
+ *    Case 1: a procedure called as a function in a PL/CSQL body -> the message names the
+ *            routine kind in upper case (was lower case)
+ *    Case 2: a function called as a procedure in a PL/CSQL body -> the message names the
+ *            routine kind in upper case (was lower case)
+ *    Case 3: DROP FUNCTION on a procedure -> the kind in upper case (regression)
+ *    Case 4: DROP PROCEDURE on a function -> the kind in upper case (regression)
  */
 
 --+ server-message on

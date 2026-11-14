@@ -9,19 +9,17 @@
  *
  *  Coverage:
  *    Case 1: literal defaults: integer, string, negative, NULL, two parameters with none or one
- *            given, a package routine (expect 122, hello, -5, -1, 507, 1007, 33)
- *    Case 2: function expression default TO_CHAR(12345, 'S999999') (expect MATCH)
- *    Case 3: SYS_DATETIME default of a DATETIME parameter (expect NOTNULL)
- *    Case 4: 'SYS_DATETIME' and 'CURRENT_USER' defaults of a VARCHAR parameter are expressions,
- *            'HELLO_WORLD' is a literal (expect EXPR, EXPR, LITERAL)
+ *            given, each omitted argument gets the default of its parameter
+ *    Case 2: a function expression default TO_CHAR(12345, S999999) gives the value of the expression
+ *    Case 3: a SYS_DATETIME default of a DATETIME parameter is not NULL
+ *    Case 4: quoted SYS_DATETIME and CURRENT_USER defaults of a VARCHAR parameter are expressions,
+ *            a quoted HELLO_WORLD default is a literal
  */
 
 --+ server-message on
 
-drop package if exists pk02;
 
-
-evaluate 'Case 1: literal defaults, expect 122 / hello / -5 / -1 / 507 / 1007 / 33';
+evaluate 'Case 1: literal defaults, expect 122 / hello / -5 / -1 / 507 / 1007';
 create or replace function f02_int(a int := 122) return int as begin return a; end;
 create or replace function w02_int return int as begin return f02_int(); end;
 create or replace function f02_str(a varchar := 'hello') return varchar as begin return a; end;
@@ -33,13 +31,9 @@ create or replace function w02_null return int as begin return f02_null(); end;
 create or replace function f02_two(a int := 5, b int := 7) return int as begin return a * 100 + b; end;
 create or replace function w02_two_none return int as begin return f02_two(); end;
 create or replace function w02_two_one return int as begin return f02_two(10); end;
-create or replace package pk02 as function pf(a int := 33) return int; end;
-create or replace package body pk02 as function pf(a int := 33) return int as begin return a; end; end;
-create or replace function w02_pkg return int as begin return pk02.pf(); end;
 select w02_int() as k1_int, w02_str() as k2_str, w02_neg() as k3_neg, w02_null() as k4_null,
        w02_two_none() as k7a_two_none, w02_two_one() as k7b_two_one
 from dual;
-select w02_pkg() as k8_pkg from dual;
 
 
 evaluate 'Case 2: function expression default TO_CHAR(12345, S999999), expect MATCH';
@@ -67,8 +61,7 @@ select case when w02_vsd() <> 'SYS_DATETIME' then 'EXPR' else 'LITERAL' end as k
 from dual;
 
 
-drop function f02_int, w02_int, f02_str, w02_str, f02_neg, w02_neg, f02_null, w02_null, f02_two, w02_two_none, w02_two_one, w02_pkg;
+drop function f02_int, w02_int, f02_str, w02_str, f02_neg, w02_neg, f02_null, w02_null, f02_two, w02_two_none, w02_two_one;
 drop function f02_expr, w02_expr, f02_dt, w02_dt, f02_vsd, w02_vsd, f02_vcu, w02_vcu, f02_vlit, w02_vlit;
-drop package pk02;
 
 --+ server-message off

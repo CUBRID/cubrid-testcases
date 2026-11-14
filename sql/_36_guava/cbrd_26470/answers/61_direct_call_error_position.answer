@@ -60,7 +60,7 @@
 
 ===================================================
     
-Case 1-2: function call. srv, dir: (line 3, column 24) wraps (line 3, column 8); pkg: (line 3, column 24) wraps (line 4, column 8)     
+Case 1: srv, function call (control); result = (line 3, column 24) wraps (line 3, column 8)     
 
 
 ===================================================
@@ -70,10 +70,20 @@ Stored procedure execute error:
   (line 3, column 8) numeric value does not fit in the target type's precision and scale
 
 ===================================================
+    
+Case 2: dir, function call, the same as Case 1; result = (line 3, column 24) wraps (line 3, column 8)     
+
+
+===================================================
 Error:-889
 Stored procedure execute error: 
   (line 3, column 24) Stored procedure execute error: 
   (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 3: pkg, function call; result = (line 3, column 24) wraps (line 4, column 8)     
+
 
 ===================================================
 Error:-889
@@ -83,7 +93,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 3-4: procedure call. srv, dir: (line 3, column 1) wraps (line 4, column 6); pkg: (line 3, column 1) wraps (line 9, column 6)     
+Case 4: srv, procedure call (control); result = (line 3, column 1) wraps (line 4, column 6)     
 
 
 ===================================================
@@ -93,10 +103,20 @@ Stored procedure execute error:
   (line 4, column 6) numeric value does not fit in the target type's precision and scale
 
 ===================================================
+    
+Case 5: dir, procedure call, the same as Case 4; result = (line 3, column 1) wraps (line 4, column 6)     
+
+
+===================================================
 Error:-889
 Stored procedure execute error: 
   (line 3, column 1) Stored procedure execute error: 
   (line 4, column 6) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 6: pkg, procedure call; result = (line 3, column 1) wraps (line 9, column 6)     
+
 
 ===================================================
 Error:-889
@@ -106,7 +126,7 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 5-6: three levels. srv, dir: (line 3, column 16) wraps (line 3, column 16) wraps (line 3, column 8); pkg: (line 3, column 16) wraps (line 13, column 16) wraps (line 3, column 8)     
+Case 7: srv, three levels (control); result = (line 3, column 16) wraps (line 3, column 16) wraps (line 3, column 8)     
 
 
 ===================================================
@@ -117,11 +137,21 @@ Stored procedure execute error:
   (line 3, column 8) numeric value does not fit in the target type's precision and scale
 
 ===================================================
+    
+Case 8: dir, three levels, the same as Case 7; result = (line 3, column 16) wraps (line 3, column 16) wraps (line 3, column 8)     
+
+
+===================================================
 Error:-889
 Stored procedure execute error: 
   (line 3, column 16) Stored procedure execute error: 
   (line 3, column 16) Stored procedure execute error: 
   (line 3, column 8) numeric value does not fit in the target type's precision and scale
+
+===================================================
+    
+Case 9: pkg, three levels; result = (line 3, column 16) wraps (line 13, column 16) wraps (line 3, column 8)     
+
 
 ===================================================
 Error:-889
@@ -132,12 +162,17 @@ Stored procedure execute error:
 
 ===================================================
     
-Case 7-8: NO_DATA_FOUND caught in the caller. dir: NDF with (line 4, column 1); pkg: NDF with (line 18, column 1)     
+Case 10: dir, NO_DATA_FOUND caught in the caller; result = NDF with (line 4, column 1)     
 
 
 ===================================================
 n_dir61()    
 NDF:Stored procedure execute error: |  (line 4, column 1) no data found     
+
+
+===================================================
+    
+Case 11: pkg, NO_DATA_FOUND caught in the caller; result = NDF with (line 18, column 1)     
 
 
 ===================================================

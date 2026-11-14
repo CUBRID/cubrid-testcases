@@ -2,16 +2,16 @@
  *  This test case verifies CBRD-26470: the EXECUTE authorization check on the SQL CALL path.
  *
  *  The purpose argument of jsp_find_stored_procedure was removed and the check moved to its only
- *  user, jsp_make_pl_signature. The check must still work: CALL of another user's routine needs
+ *  user, jsp_make_pl_signature. The check must still work: CALL of a routine of another user needs
  *  EXECUTE, the owner can always call it, a package routine follows the grant of its package,
  *  and a Java SP (not checked at compile time) relies on this check only.
  *
  *  Coverage:
  *    Case 1: CALL u08a.f08_b by u08b without grant: authorization failure
- *    Case 2: CALL f08_b by the owner (expect 30)
- *    Case 3: after GRANT, CALL u08a.f08_b by u08b (expect 30)
+ *    Case 2: CALL f08_b by the owner succeeds
+ *    Case 3: after GRANT, CALL u08a.f08_b by u08b succeeds
  *    Case 4: after REVOKE, CALL u08a.f08_b by u08b: authorization failure
- *    Case 5: after GRANT ON PACKAGE, u08b calls u08a.pk08.pf through a wrapper (expect 2)
+ *    Case 5: after GRANT ON PACKAGE, u08b calls u08a.pk08.pf through a wrapper
  *    Case 6: CALL Java SP u08a.f08_j by u08b without grant: authorization failure
  */
 

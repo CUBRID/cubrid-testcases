@@ -18,9 +18,10 @@
  *    Case 5:    function direct call without parentheses k_zero62
  *    Case 6:    package member function direct call      pq62.k_pkg(n)
  *    Case 7:    call omitting a default (through the server, regression)  k_def62(n)
- *    Case 8-9:  regression: a local function call in a PARALLEL_ENABLE function is allowed, and
- *               direct calls in a function that is not PARALLEL_ENABLE are allowed
- *    Case 10:   only e_proc62, e_local62 and e_nopar62 exist among e_%62
+ *    Case 8:    regression: a local function call in a PARALLEL_ENABLE function is allowed
+ *    Case 9:    regression: direct calls in a function that is not PARALLEL_ENABLE are allowed
+ *    Case 10:   only the functions created in Cases 8 and 9 and e_proc62 exist among e_%62,
+ *               the refused ones were not created
  */
 
 --+ server-message on
