@@ -5,9 +5,10 @@
  *  In _db_package_var, _db_package_exception, _db_package_cursor and _db_package_record_type the
  *  string column pkg_unique_name was replaced with pkg_of, a reference to the _db_package row,
  *  and the key became PK (pkg_of, name). While package variable / exception / cursor
- *  declarations are rejected, only the schema of these catalogs is checked.
+ *  declarations are rejected, only the schema of these catalogs is checked. Each case checks the
+ *  four catalogs, ordered by class name.
  *
- *  Coverage (for each of the four catalogs, ordered by class name):
+ *  Coverage:
  *    Case 1: pkg_of exists with type OBJECT
  *    Case 2: pkg_unique_name is gone
  *    Case 3: a two-column primary key and no other index
