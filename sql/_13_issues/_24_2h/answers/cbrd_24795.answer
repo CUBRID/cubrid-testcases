@@ -192,7 +192,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.b= abs(tb.b)key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.b= abs(tb.b)key range: ta.a=tb.a, key filter: ta.c= abs(tb.b))
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ta.b= abs(tb.b) and ta.c= abs(tb.b) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
@@ -215,7 +215,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.a, key filter: (ta.b<= abs(tb.b)), key filter: (ta.c> abs(tb.b)))
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where (ta.b<= abs(tb.b)) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
@@ -238,7 +238,7 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     TABLE SCAN (ta)
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b)key range: ta.a=tb.a)
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ( abs(tb.b)>=ta.b)key range: ta.a=tb.a, key filter: (ta.c> abs(tb.b)))
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(tb.b)>=ta.b) and (ta.c> abs(tb.b)) and ta.a=tb.a and (inst_num()<= ?:? ) using index tb.idx_tbla_a_abs_b
 
@@ -526,14 +526,14 @@ trace
 Query Plan:
   NESTED LOOPS (inner join)
     INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ))
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ))
+    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ), covered: true)
 
   rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ) and ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ) and ta.a=tb.a using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
@@ -575,7 +575,7 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>=--? and  abs(ta.b)<=--?))
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>=--? and  abs(ta.b)<=--?), key filter: ( abs(ta.b)>= ?:? ))
 
   rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>=--? and  abs(ta.b)<=--?) and ( abs(ta.b)>= ?:? ) using index ta.idx_tbla_abs_b_a
 
@@ -618,7 +618,7 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_length_b) (key range:  char_length( cast(ta.b as varchar))<=?)
+  INDEX SCAN (ta.idx_tbla_length_b) (key range:  char_length( cast(ta.b as varchar))<=?, key filter:  char_length( cast(ta.b as varchar))>?)
 
   rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where  char_length( cast(ta.b as varchar))>? and  char_length( cast(ta.b as varchar))<=? using index ta.idx_tbla_length_b(+)
 

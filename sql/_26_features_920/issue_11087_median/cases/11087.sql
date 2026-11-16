@@ -1,3 +1,8 @@
+-- CBRD-27583: the statements that give MEDIAN a date or time string constant (median('2013-5-7')) were written to check
+-- that such a string is computed as a date or time value. Since CBRD-27583 a string constant, host variable or
+-- session variable argument of MEDIAN and PERCENTILE is DOUBLE, and a string that does not convert to a number
+-- is error -1118, so those statements no longer check that. The other statements keep their meaning.
+
 drop table if exists median_t;
 
 create table median_t (a int, c1 short, c2 int, c3 bigint, c4 float, c5 double, c6 monetary, c7 numeric(38,18), c8 date, c9 datetime, c10 timestamp, c11 varchar(255), c12 varchar(255), c13 varchar(255), c14 time);

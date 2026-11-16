@@ -613,27 +613,9 @@ select 'test?' from tbl tbl
 cola    colb    colb    
 
 Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: tbl node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct tbl.cola from tbl tbl where (tbl.colb< ?:? ))
-Query plan:
-temp(distinct)
-    subplan: sscan
-                 class: tbl node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct tbl.colb from tbl tbl where (tbl.colb> ?:? ))
-Query plan:
-nl-join (inner join)
+nl-join (semi join)
     edge:  term[?]
-    outer: nl-join (inner join)
+    outer: nl-join (semi join)
                edge:  term[?]
                outer: nl-join (inner join)
                           edge:  term[?]
@@ -653,17 +635,17 @@ nl-join (inner join)
                                      cost:  ? card ?
                           cost:  ? card ?
                inner: sscan
-                          class: av? node[?]
-                          sargs: term[?]
+                          class: tbl_? node[?]
+                          sargs: term[?] AND term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
-               class: av?_? node[?]
-               sargs: term[?]
+               class: tbl node[?]
+               sargs: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(c, b, a) */ a.cola, b.colb, c.colb from tbl a, tbl b, tbl c, (select distinct tbl.cola from tbl tbl where (tbl.colb< ?:? )) av? (av_?), (select distinct tbl.colb from tbl tbl where (tbl.colb> ?:? )) av?_? (av_?) where (a.cola=av?.av_?) and (b.colb=av?_?.av_?) and a.cola=b.cola and b.colb=c.colb
+select /*+ LEADING(c, b, a) */ a.cola, b.colb, c.colb from tbl a inner join tbl b on a.cola=b.cola inner join tbl c on b.colb=c.colb semi join tbl tbl_? on (tbl_?.colb< ?:? ) and a.cola=tbl_?.cola semi join tbl tbl on (tbl.colb> ?:? ) and b.colb=tbl.colb
 ===================================================
 'test20'    
 

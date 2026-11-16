@@ -29,6 +29,10 @@
 -- test data
 --
 
+-- CBRD-27361: the hash join's runtime filter stays off, so that the cases keep testing the plain and the
+-- parallel hash join paths they were written for
+set system parameters 'hash_join_runtime_filter=no';
+
 drop table if exists t_ovp, t_ovda, t_ovdb;
 
 -- left-side probe keys 1..12000 ; the overflow tables only cover 1..10000
@@ -185,3 +189,6 @@ drop table t_ovp, t_ovda, t_ovdb;
 
 -- restore default so it does not leak into later cases
 set system parameters 'max_hash_list_scan_size=default';
+
+-- restore default so it does not leak into later cases
+set system parameters 'hash_join_runtime_filter=default';

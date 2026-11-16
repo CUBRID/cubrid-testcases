@@ -1,0 +1,135 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+20000
+===================================================
+100
+===================================================
+0
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+19800     
+
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+    
+[1] control without subquery: flag = 1 AND txt = .. -> sscan sq_big     
+
+===================================================
+id    
+12345     
+
+Query plan:
+sscan
+    class: b node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select b.id from sq_big b where b.txt= ?:?  and b.flag= ?:? 
+===================================================
+    
+[2] with correlated subquery: still sscan sq_big (regression = iscan on i_sq_big_flag)     
+
+===================================================
+id    
+12345     
+
+Query plan:
+iscan
+    class: c node[?]
+    index: i_sq_child_big term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from sq_child c where c.big_id=b.id)
+Query plan:
+sscan
+    class: b node[?]
+    sargs: term[?] AND term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select b.id from sq_big b where (select count(*) from sq_child c where c.big_id=b.id)>? and b.txt= ?:?  and b.flag= ?:? 
+===================================================
+    
+[3] selective index + subquery: iscan on i_sq_big_cat     
+
+===================================================
+id    
+12345     
+
+Query plan:
+iscan
+    class: c node[?]
+    index: i_sq_child_big term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from sq_child c where c.big_id=b.id)
+Query plan:
+iscan
+    class: b node[?]
+    index: i_sq_big_cat term[?]
+    sargs: term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select b.id from sq_big b where (select count(*) from sq_child c where c.big_id=b.id)>? and b.txt= ?:?  and b.cat= ?:? 
+===================================================
+    
+[4] subquery-only sarg on sq_big joined with sq_small: idx-join, outer sscan sq_small, inner iscan sq_big     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+iscan
+    class: c node[?]
+    index: i_sq_child_big term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from sq_child c where c.big_id=b.id)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: s node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_sq_big_id term[?] (covers)
+               sargs: term[?]
+               subqs: ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from sq_big b, sq_small s where s.a_id=b.id and (select count(*) from sq_child c where c.big_id=b.id)>?
+===================================================
+0

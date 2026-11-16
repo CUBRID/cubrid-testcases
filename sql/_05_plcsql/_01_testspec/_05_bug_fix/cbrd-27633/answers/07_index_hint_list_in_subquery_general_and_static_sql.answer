@@ -1,0 +1,194 @@
+===================================================
+    
+index hints listing several indexes in subqueries under HAVING / ORDER BY of general SQLs and static SQLs (each index name must keep its own hint kind)     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+4
+
+===================================================
+0
+
+===================================================
+    
+general SQL: HAVING with a subquery of USING INDEX ia(-), ib, ic(+): 2:2, 3:1     
+
+
+===================================================
+k    cnt    
+2     2     
+3     1     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: ib term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+(select min(t?.c) from t? t? where (t?.c> ?:? ) and (t?.d> ?:? ) using index t?.ia(-), t?.ic(+), t?.ib)
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t? node[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.c, count(*) from t? t? group by t?.c having (t?.c>(select min(t?.c) from t? t? where (t?.c> ?:? ) and (t?.d> ?:? ) using index t?.ia(-), t?.ic(+), t?.ib)) order by ?
+
+===================================================
+    
+general SQL: HAVING with a subquery of USING INDEX ALL EXCEPT ia, ib: 2:2, 3:1 (the subquery scans ic)     
+
+
+===================================================
+k    cnt    
+2     2     
+3     1     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: ic term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select min(t?.c) from t? t? where (t?.c> ?:? ) and (t?.d> ?:? ) using index all except t?.ia, t?.ib)
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: t? node[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.c, count(*) from t? t? group by t?.c having (t?.c>(select min(t?.c) from t? t? where (t?.c> ?:? ) and (t?.d> ?:? ) using index all except t?.ia, t?.ib)) order by ?
+
+===================================================
+    
+general SQL: HAVING of a derived table with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib: 3, 3     
+
+
+===================================================
+sum(m)    
+3     
+
+
+===================================================
+sum(m)    
+3     
+
+
+===================================================
+    
+general SQL: HAVING of a CTE with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib: 3, 3     
+
+
+===================================================
+sum(m)    
+3     
+
+
+===================================================
+sum(m)    
+3     
+
+
+===================================================
+    
+general SQL: ORDER BY of a derived table with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib: 4, 4     
+
+
+===================================================
+sum(m)    
+4     
+
+
+===================================================
+sum(m)    
+4     
+
+
+===================================================
+    
+general SQL: ORDER BY with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib: 3 rows each     
+
+
+===================================================
+k    count(*)    
+1     1     
+2     2     
+3     1     
+
+
+===================================================
+k    count(*)    
+1     1     
+2     2     
+3     1     
+
+
+===================================================
+    
+static SQL: HAVING with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib and a PL/CSQL variable: 2:2, 3:1 / 2:2, 3:1     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+2:2
+3:1
+2:2
+3:1
+===================================================
+    
+static SQL: HAVING of a derived table and of a CTE, ORDER BY of a derived table with a subquery of USING INDEX ia(-), ib, ic(+) / ALL EXCEPT ia, ib and a PL/CSQL variable: 3, 3, 3, 3, 4, 4     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+3
+3
+3
+3
+4
+4
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+

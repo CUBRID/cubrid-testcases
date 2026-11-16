@@ -32,6 +32,10 @@
 -- test data
 --
 
+-- CBRD-27361: the hash join's runtime filter stays off, so that the cases keep testing the plain and the
+-- parallel hash join paths they were written for
+set system parameters 'hash_join_runtime_filter=no';
+
 drop table if exists t_nma, t_nmb, t_sk_skew, t_sk_uniq;
 
 -- N:M - 10 duplicates per key on each side
@@ -131,3 +135,6 @@ drop table t_nma, t_nmb, t_sk_skew, t_sk_uniq;
 
 -- restore default so it does not leak into later cases
 set system parameters 'max_hash_list_scan_size=default';
+
+-- restore default so it does not leak into later cases
+set system parameters 'hash_join_runtime_filter=default';
