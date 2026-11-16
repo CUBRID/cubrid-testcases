@@ -4,6 +4,8 @@
 -- estimated to return one row cannot divide the work of the joins above it among them.
 -- t_28121_3.b = 'X' reads no key of pk_t_28121_3_b_c: it must be an index scan, not a parallel full scan.
 -- A driving scan returning many rows keeps the parallel nested loop.
+-- Q1/Q2 fix the join method to nested loops so that no heap scan of the other tables runs (or not) in parallel
+-- with the server's free workers: only the access to t_28121_3 decides the plan shown.
 
 drop table if exists t_28121_1;
 drop table if exists t_28121_2;
@@ -29,12 +31,12 @@ update statistics on t_28121_1, t_28121_2, t_28121_3 with fullscan;
 set trace on;
 
 evaluate 'Q1. key condition in the ON clause: index scan of t_28121_3';
-select /*+ recompile */ count (*)
+select /*+ recompile USE_NL */ count (*)
 from t_28121_1 t1 inner join t_28121_2 t2 on t1.a = t2.a inner join t_28121_3 t3 on t2.b = t3.b and t3.b = 'X';
 show trace;
 
 evaluate 'Q2. key condition derived from the WHERE clause: index scan of t_28121_3';
-select /*+ recompile */ count (*)
+select /*+ recompile USE_NL */ count (*)
 from t_28121_1 t1 inner join t_28121_2 t2 on t1.a = t2.a inner join t_28121_3 t3 on t2.b = t3.b
 where t2.b = 'X';
 show trace;
