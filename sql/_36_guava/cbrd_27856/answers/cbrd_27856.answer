@@ -1,0 +1,209 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+100
+===================================================
+1000
+===================================================
+0
+===================================================
+count(*)    
+20000     
+
+===================================================
+count(*)    
+100     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+    
+[1] left join, a WHERE condition true for every row: hash join     
+
+===================================================
+count(*)    
+20000     
+
+Query plan:
+sscan
+    class: t_s node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(t_s.b) from t_s t_s)
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    after: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where (select max(t_s.b) from t_s t_s)>=?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where (select max(t_s.b) from t_s t_s)>=?) d (b), t_o t_o where t_o.k=d.b
+===================================================
+    
+[2] right join, the same condition: hash join     
+
+===================================================
+count(*)    
+20000     
+
+Query plan:
+sscan
+    class: t_s node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(t_s.b) from t_s t_s)
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    after: term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_a.b from t_s t_s right outer join t_a t_a on t_s.a=t_a.a where (select max(t_s.b) from t_s t_s)>=?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_a.b from t_s t_s right outer join t_a t_a on t_s.a=t_a.a where (select max(t_s.b) from t_s t_s)>=?) d (b), t_o t_o where t_o.k=d.b
+===================================================
+    
+[3] left join, ifnull (t_s.b, t_a.b) >= 0: hash join     
+
+===================================================
+count(*)    
+20000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where  ifnull(t_s.b, t_a.b)>=?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where  ifnull(t_s.b, t_a.b)>=?) d (b), t_o t_o where t_o.k=d.b
+===================================================
+    
+[4] control, no WHERE: hash join     
+
+===================================================
+count(*)    
+20000     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a) d (b), t_o t_o where t_o.k=d.b
+===================================================
+    
+[5] control, t_s.b is null: nested loop join     
+
+===================================================
+count(*)    
+19900     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: t_a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_s node[?]
+               cost:  ? card ?
+    after: term[?]
+    cost:  ? card ?
+Query stmt:
+(select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where t_s.b is null )
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: d node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: t_o node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_a.b from t_a t_a left outer join t_s t_s on t_s.a=t_a.a where t_s.b is null ) d (b), t_o t_o where t_o.k=d.b
+===================================================
+0
