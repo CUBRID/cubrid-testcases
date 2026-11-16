@@ -108,3 +108,4 @@ drop table t;
 drop table t_tr;
 drop table t_call;
 drop user u_r1;
+drop variable @v_r1;

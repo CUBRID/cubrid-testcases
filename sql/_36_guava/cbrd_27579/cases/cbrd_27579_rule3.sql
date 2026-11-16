@@ -78,6 +78,7 @@ update t set b = f_ins_t ();
 evaluate 'Case 5: a view, a class hierarchy, a partitioned table and an FK CASCADE child';
 update v_t set b = f_exec ('insert into t values (400, 0)');
 update all sup set b = f_exec ('insert into sub values (3, 0)');
+-- without ALL, an UPDATE of sub does not touch its superclass sup, so writing sup is allowed
 update sub set b = f_exec ('insert into sup values (5, 0)');
 update pt set b = f_exec ('insert into pt values (12, 0)') where a = 1;
 delete from p_fk where id = f_exec ('insert into c_fk values (2, 2)') + 1;
