@@ -309,3 +309,5 @@ DROP PROCEDURE p_callmod;
 DROP VIEW v_tbl1;
 DROP VIEW v_set;
 DROP TABLE IF EXISTS tbl1;
+
+--+ server-message off

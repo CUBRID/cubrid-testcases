@@ -928,5 +928,5 @@ call p_local();
 
 drop procedure p_local;
 
---+ server-message on
+--+ server-message off
 
