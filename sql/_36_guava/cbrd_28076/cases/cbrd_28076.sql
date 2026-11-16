@@ -96,4 +96,25 @@ select /*+ recompile */ count(*) from x9 x where exists (select 1 from y9 y wher
 select /*+ recompile */ count(*), count(y.d) from x9 x left outer join y9 y on x.b = y.b and y.b = 1 and ((y.d > 4 and x.b <= 0) or (x.c = 'v1' and y.b = 3)) where x.a = 1;
 drop table x9, y9;
 
+evaluate 'Case 10: a hierarchical query over a comma join still joins the tables by the join predicates of a factor that also holds filtering predicates: 4 rows, as the distributed form';
+drop table if exists hq, hu;
+create table hq (id int, pid int, k int);
+insert into hq values (1, null, 10), (2, 1, 20), (3, 2, 30), (4, 1, 0);
+create table hu (k1 int, k2 int, f int);
+insert into hu values (10, 0, 1), (0, 20, 2), (30, 5, 1), (7, 30, 2);
+select t.id, u.f, level from hq t, hu u where (t.k = u.k1 and u.f = 1) or (t.k = u.k2 and u.f = 2) start with t.pid is null connect by prior t.id = t.pid order by 1, 2, 3;
+select t.id, u.f, level from hq t, hu u where (t.k = u.k1 or t.k = u.k2) and (t.k = u.k1 or u.f = 2) and (u.f = 1 or t.k = u.k2) and (u.f = 1 or u.f = 2) start with t.pid is null connect by prior t.id = t.pid order by 1, 2, 3;
+select t.id, u.f, level from hq t, hu u where ((t.k = u.k1 and u.f = 1) or (t.k = u.k2 and (u.f = 2 or u.k1 = 7))) and t.id > 0 start with t.pid is null connect by prior t.id = t.pid order by 1, 2, 3;
+drop table hq, hu;
+
+evaluate 'Case 11: -attr BETWEEN inside a factor over a derived table keeps both bounds: 50 rows each';
+drop table if exists d11;
+create table d11 (id int, a int, b int, c varchar, d int);
+insert into d11 select rownum, mod (rownum, 10), 9, 'v' || mod (rownum, 3), mod (rownum, 5) + 10 from db_class c1, db_class c2 where rownum <= 100;
+select count(*) from (select /*+ NO_MERGE */ x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 9) dt where (-dt.a between -5 and -1 and dt.k = 9) or (dt.c = 'v1' and dt.d = 3);
+select count(*) from (select x.id, x.a, x.c, x.d, 'q' k from d11 x where x.b = 9 group by x.id, x.a, x.c, x.d) dt where (-dt.a between -5 and -1 and dt.k = 'q') or (dt.c = 'v1' and dt.d = 3);
+select count(*) from (select x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 9 union all select x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 8) dt where (-dt.a between -5 and -1 and dt.k = 9) or (dt.c = 'v1' and dt.d = 3);
+select count(*) from (select /*+ NO_MERGE */ x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 9) dt where (case when (-dt.a between -5 and -1 and dt.k = 9) or (dt.c = 'v1' and dt.d = 3) then 1 end) = 1;
+drop table d11;
+
 drop table o, i, a, b, t;
