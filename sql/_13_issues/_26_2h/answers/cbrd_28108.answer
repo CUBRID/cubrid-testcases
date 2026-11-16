@@ -6,6 +6,10 @@
 3
 ===================================================
     
+Section 1: results that the fix changes     
+
+===================================================
+    
 Case 1: the || operator returns the cast value padded to n     
 
 ===================================================
@@ -80,7 +84,27 @@ id    char_length( cast(c_double as char(10)))    octet_length( cast(c_double as
 
 ===================================================
     
-Case 6: a number as long as n gets no pad spaces     
+Case 6: a cast to CHAR with the euckr charset pads with its two-byte space     
+
+===================================================
+id    char_length( cast(c_double as char(10) collate euckr_bin))    octet_length( cast(c_double as char(10) collate euckr_bin))    char_length( cast(c_double as char(10) collate euckr_bin)||'|')    octet_length( cast(c_double as char(10) collate euckr_bin)||'|')    
+1     10     17     11     18     
+2     10     16     11     17     
+3     null     null     null     null     
+
+===================================================
+id    char_length( cast(c_numeric as char(10) collate euckr_bin))    octet_length( cast(c_numeric as char(10) collate euckr_bin))    char_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    octet_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    
+1     10     17     11     18     
+2     10     16     11     17     
+3     null     null     null     null     
+
+===================================================
+    
+Section 2: results that the fix keeps, the same on a build without the fix     
+
+===================================================
+    
+Case 7: a number as long as n gets no pad spaces     
 
 ===================================================
 cast(c_double as char(3))||'|'    cast(c_float as char(3))||'|'    cast(c_numeric as char(3))||'|'    
@@ -88,7 +112,7 @@ cast(c_double as char(3))||'|'    cast(c_float as char(3))||'|'    cast(c_numeri
 
 ===================================================
     
-Case 7: a number longer than n fails with an overflow error; result = error     
+Case 8: a number longer than n fails with an overflow error; result = error     
 
 ===================================================
 Error:-427
@@ -98,7 +122,7 @@ Error:-427
 Error:-427
 ===================================================
     
-Case 8: a cast to VARCHAR gets no pad spaces     
+Case 9: a cast to VARCHAR gets no pad spaces     
 
 ===================================================
 id    cast(c_double as varchar(10))||'|'    cast(c_float as varchar(10))||'|'    cast(c_numeric as varchar(10))||'|'    
@@ -108,7 +132,7 @@ id    cast(c_double as varchar(10))||'|'    cast(c_float as varchar(10))||'|'   
 
 ===================================================
     
-Case 9: the cast value stored in a CHAR column keeps its pad spaces     
+Case 10: the cast value stored in a CHAR column keeps its pad spaces     
 
 ===================================================
 0
@@ -122,19 +146,7 @@ id    c_from_double||'|'    octet_length(c_from_double)    c_from_numeric||'|'  
 
 ===================================================
     
-Case 10: a cast to CHAR with the euckr charset pads with its two-byte space     
-
-===================================================
-id    char_length( cast(c_double as char(10) collate euckr_bin))    octet_length( cast(c_double as char(10) collate euckr_bin))    char_length( cast(c_double as char(10) collate euckr_bin)||'|')    octet_length( cast(c_double as char(10) collate euckr_bin)||'|')    
-1     10     17     11     18     
-2     10     16     11     17     
-3     null     null     null     null     
-
-===================================================
-id    char_length( cast(c_numeric as char(10) collate euckr_bin))    octet_length( cast(c_numeric as char(10) collate euckr_bin))    char_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    octet_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    
-1     10     17     11     18     
-2     10     16     11     17     
-3     null     null     null     null     
+Section 3: the case that crashes the server on a build without the fix     
 
 ===================================================
     
