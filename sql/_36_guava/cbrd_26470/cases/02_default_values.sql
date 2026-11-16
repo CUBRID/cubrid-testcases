@@ -2,8 +2,8 @@
  *  This test case verifies CBRD-26470: when a PL/CSQL routine directly calls a stored procedure
  *  and omits arguments, the omitted arguments get their real default values.
  *
- *  Each callee returns its argument as is, and a wrapper calls it without the defaulted
- *  arguments. Defaults that are built-in expressions (SYS_DATETIME, CURRENT_USER), even when
+ *  Each callee returns its argument as is, except that f02_null returns NVL(a, -1) and f02_two
+ *  returns a * 100 + b, and a wrapper calls it without the defaulted arguments. Defaults that are built-in expressions (SYS_DATETIME, CURRENT_USER), even when
  *  written as quoted strings for a VARCHAR parameter, are evaluated as expressions; a plain
  *  string literal stays a string.
  *
