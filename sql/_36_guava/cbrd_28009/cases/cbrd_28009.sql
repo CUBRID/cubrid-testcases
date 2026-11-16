@@ -8,7 +8,8 @@
  *  NULL padding never happened and the unmatched x rows were dropped, and an ON term reading only x was ignored.
  *
  *  Fix: the terms that do not read the fetched object and have no subquery go to the scan under the fetch,
- *  the rest stay on the fetch.
+ *  the rest stay on the fetch. When the scan under the fetch walks a class hierarchy class by class, the fetch
+ *  goes into a temp list first, so the NULL row is decided once per x row and not once per class.
  *
  *  Each check compares count(*) and a checksum weighing x.a, y.a and y.r.a (so a dropped, wrongly matched or
  *  wrongly padded row changes it) with values computed by hand from the data below. One row per check:
@@ -24,8 +25,9 @@
  *    M*, X1, N1, J2: two-level path, path on both sides, empty NULL-padded table, chain of right outer joins
  *    L*, I1: guards - LEFT JOIN forms, inner join on the path value
  *    K*: an index on the join column
+ *    H*: a class hierarchy (ALL sup) and a partitioned table as the NULL-padded side
  */
-drop table if exists t, e;
+drop table if exists sub, sup, pp, px, t, e;
 create table t (a int, b int, r t) dont_reuse_oid;
 insert into t (a, b) values (1, 1), (2, 1), (3, 9);
 update t set r = (select s from t s where s.a = 3) where a = 1;
@@ -151,4 +153,33 @@ select /*+ recompile use_hash(y) */ 'K1' id, case when count (*) = 4 and nvl (su
 select /*+ recompile use_merge(y) */ 'K2' id, case when count (*) = 4 and nvl (sum (x.a * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 733 then 'PASS' else 'FAIL' end res
   from t y right outer join t x on x.a = y.b;
 
-drop table if exists t, e;
+create table sup (a int, b int, r t);
+create table sub under sup (c int);
+insert into sup (a, b, r) select a, b, r from t;
+insert into sub (a, b, r, c) select 4, null, r, 0 from t where a = 3;
+create table pp (a int, b int, r t) partition by range (a) (partition p0 values less than (2), partition p1 values less than maxvalue);
+insert into pp (a, b, r) select a, b, r from t;
+create table px (a int);
+insert into px values (1), (2), (3), (9), (null), (100);
+
+-- H1: class hierarchy on the NULL-padded side, every x row matches (defect)
+select /*+ recompile use_hash(y) */ 'H1' id, case when count (*) = 3 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 1164 then 'PASS' else 'FAIL' end res
+  from all sup y right outer join px x on x.a = y.b where x.a in (1, 9);
+
+-- H2: class hierarchy on the NULL-padded side, one NULL row per unmatched x row (defect)
+select /*+ recompile use_hash(y) */ 'H2' id, case when count (*) = 7 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 11664 then 'PASS' else 'FAIL' end res
+  from all sup y right outer join px x on x.a = y.b;
+
+-- H3: LEFT JOIN form of H2 (guard)
+select /*+ recompile */ 'H3' id, case when count (*) = 7 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 11664 then 'PASS' else 'FAIL' end res
+  from px x left outer join all sup y on x.a = y.b;
+
+-- H4: partitioned table on the NULL-padded side (defect)
+select /*+ recompile use_hash(y) */ 'H4' id, case when count (*) = 7 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 11664 then 'PASS' else 'FAIL' end res
+  from pp y right outer join px x on x.a = y.b;
+
+-- H5: LEFT JOIN form of H4 (guard)
+select /*+ recompile */ 'H5' id, case when count (*) = 7 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 11664 then 'PASS' else 'FAIL' end res
+  from px x left outer join pp y on x.a = y.b;
+
+drop table if exists sub, sup, pp, px, t, e;
