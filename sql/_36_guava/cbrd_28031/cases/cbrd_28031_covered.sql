@@ -61,7 +61,8 @@ select /*+ ordered no_parallel_scan */ count(*), sum(cast(b.k as bigint)) from c
 
 
 -- 40 outer rows hold 20 values of k twice each, so the inner scan keeps its results (the MEMOIZE
--- line of the trace) and reads its rows through the list as before
+-- line of the trace): the rows of a value not kept yet are taken at the leaf and stored, a kept
+-- value is answered without a scan
 evaluate 'Case 5: covered inner scan of a join that memoizes on a repeating outer key; result = hash join on the heap';
 select /*+ recompile ordered use_nl no_parallel_scan */ a.id, count(*), sum(cast(b.k as bigint)) from cv_t a, cv_t b where (a.id between 1 and 20 or a.id between 25014 and 25033) and b.k = a.k group by a.id using index i_cv_k(+) order by a.id;
 show trace;
