@@ -1,0 +1,511 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the nation pair joins fact before the other alias -- the pair is 4900 rows, not 87     
+
+===================================================
+count(*)    
+4900     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: sn node[?]
+                          index: i_nat_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: fact node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: cn node[?]
+               index: i_nat_name term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:?  and cn.n_name= ?:? ) or (sn.n_name= ?:?  and cn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? ))
+===================================================
+    
+Case 2: the same rows written as independent conditions keep their plan     
+
+===================================================
+count(*)    
+4900     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: sn node[?]
+                          index: i_nat_name term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: fact node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: cn node[?]
+               index: i_nat_name term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? )) and sn.n_name<>cn.n_name
+===================================================
+    
+Case 3: one table keeps its covering index scan: 100 rows     
+
+===================================================
+count(*)    
+100     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((pair.a= ?:?  and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 4: three branches on one table: 150 rows     
+
+===================================================
+count(*)    
+150     
+
+===================================================
+    
+Case 5: clauses written apart over the same columns: 1000 rows     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+    
+Case 6: an outer join ON condition keeps the null padded rows: 5801 rows     
+
+===================================================
+count(*)    
+5801     
+
+===================================================
+    
+Case 7: a subquery in one branch is planned once, not once per distributed clause     
+
+===================================================
+count(*)    
+300     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: pair node[?]
+                 index: pk_pair_id term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct pair.b from pair pair where (pair.id< ?:? ))
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((pair.a= ?:?  and pair.b in (select distinct pair.b from pair pair where (pair.id< ?:? ))) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ))
+===================================================
+    
+Case 8: eight branches give a key range on a: 400 rows     
+
+===================================================
+count(*)    
+400     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where ((((((((pair.a= ?:?  and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 9: a disjunction over a inside a branch still gives the key range: 150 rows     
+
+===================================================
+count(*)    
+150     
+
+Query plan:
+iscan
+    class: pair node[?]
+    index: i_pair_ab term[?] (covers)
+    filtr: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from pair pair where (((pair.a= ?:?  or pair.a= ?:? ) and pair.b= ?:? ) or (pair.a= ?:?  and pair.b= ?:? )) and ((pair.a= ?:? ) or (pair.a= ?:? ) or (pair.a= ?:? )) and ((pair.b= ?:? ) or (pair.b= ?:? ))
+===================================================
+    
+Case 10: restrictions derived from an ON condition, on the inner side and on the preserved side     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+1000     
+
+===================================================
+count(*)    
+68     
+
+===================================================
+    
+Case 11: an ON condition of an UPDATE/DELETE subquery keeps its user range when literals stay literals     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+id    v    
+1     null     
+2     2     
+
+===================================================
+1
+===================================================
+id    
+1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 12: an INNER JOIN ON condition after an outer join does not filter the null-supplying side: 0 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+id    x    y    
+
+===================================================
+0
+===================================================
+    
+Case 13: a (+) predicate inside an OR factor still joins as an outer join: 2 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+1
+===================================================
+id    y    
+1     10     
+2     null     
+
+===================================================
+id    y    
+1     10     
+2     null     
+
+===================================================
+0
+===================================================
+    
+Case 14: a hierarchical query with an OR factor ahead of other WHERE terms: 3 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+id    
+1     
+2     
+3     
+
+===================================================
+id    
+1     
+2     
+3     
+
+===================================================
+0
+===================================================
+    
+Case 15: a long chain of disjuncts after a conjunction is distributed as before: 2 and 2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+count(*)    
+2     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+0
+===================================================
+    
+Case 16: each branch bounding the same column on both sides gives a key range on it: 2 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+count(*)    
+2     
+
+Query plan:
+iscan
+    class: rd node[?]
+    index: i_rd_d term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from rd rd where ((rd.d>= ?:?  and rd.d< ?:?  and rd.k= ?:? ) or (rd.d>= ?:?  and rd.d< ?:?  and rd.k= ?:? )) and ((rd.d>= ?:?  and rd.d< ?:? ) or (rd.d>= ?:?  and rd.d< ?:? )) and ((rd.k= ?:? ) or (rd.k= ?:? ))
+===================================================
+0
+===================================================
+    
+Case 17: a subquery ahead of another table's conjunct does not hide it: the same plan in either order     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+10000
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+90     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: ss node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct ss.x from ss ss)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: si node[?]
+               index: i_si_b term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: so node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from so so, si si where ((so.a in (select distinct ss.x from ss ss) and si.b= ?:? ) or (so.a= ?:?  and si.b= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? ))
+===================================================
+count(*)    
+90     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: ss node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct ss.x from ss ss)
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: si node[?]
+               index: i_si_b term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: so node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from so so, si si where ((si.b= ?:?  and so.a in (select distinct ss.x from ss ss)) or (si.b= ?:?  and so.a= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? ))
+===================================================
+0
+===================================================
+    
+Case 18: HAVING is distributed as before, so the group column filters the scan: 2 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+g    sum(x)    
+1     190020     
+2     190040     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: hg node[?]
+                 index: i_hg_g term[?]
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select hg.g, sum(hg.x) from hg hg where ((hg.g= ?:? ) or (hg.g= ?:? )) group by hg.g having (sum(hg.x)>? or sum(hg.x)>?) and (sum(hg.x)>? or (hg.g= ?:? )) and ((hg.g= ?:? ) or sum(hg.x)>?) order by ?
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+    
+Case 19: a restriction derived from the OR is pushed into a derived table and keeps its key range: 2 rows     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+a    s    
+1     61     
+2     60     
+
+Query plan:
+iscan
+    class: dg node[?]
+    index: i_dg_ab term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select dg.a, sum(dg.b) from dg dg where ((dg.a= ?:? ) or (dg.a= ?:? )) group by dg.a having sum(dg.b) is not null  and (sum(dg.b)>? or sum(dg.b)<?) and (sum(dg.b)>? or dg.a= ?:? ) and (dg.a= ?:?  or sum(dg.b)<?) and (dg.a= ?:?  or dg.a= ?:? ))
+/* ---> skip GROUP BY */
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.s from (select dg.a, sum(dg.b) as [s] from dg dg where ((dg.a= ?:? ) or (dg.a= ?:? )) group by dg.a having sum(dg.b) is not null  and (sum(dg.b)>? or sum(dg.b)<?) and (sum(dg.b)>? or dg.a= ?:? ) and (dg.a= ?:?  or sum(dg.b)<?) and (dg.a= ?:?  or dg.a= ?:? )) t (a, s) order by ?
+===================================================
+0
+===================================================
+0
