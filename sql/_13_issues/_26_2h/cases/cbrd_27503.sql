@@ -13,8 +13,9 @@
  *    Case 3:  next to ROW_NUMBER, the ORDER BY DESC is kept and LAG sees the running count
  *    Case 4:  the argument is evaluated in the input order, before the window sort, in both forms
  *    Case 5:  an assignment beside an analytic function moves out alone and runs after the ORDER BY
- *    Case 6:  an assignment argument of LEAD and of FIRST_VALUE
- *    Case 7:  an assignment in the WITHIN GROUP ORDER BY key of PERCENTILE_CONT
+ *    Case 6:  LEAD and FIRST_VALUE with an assignment argument return the same rows in both forms
+ *    Case 7:  PERCENTILE_CONT with an assignment in the WITHIN GROUP ORDER BY key returns the same rows in both forms
+ *    Case 8:  with an assignment inside and one beside an analytic function in one expression, only the one beside moves out
  */
 
 drop table if exists tm;
@@ -70,7 +71,7 @@ set @u = 0;
 select i, sum(i) over () + (@u := i) m from tm order by i desc;
 select @u;
 
-evaluate 'Case 6: an assignment argument of LEAD and of FIRST_VALUE';
+evaluate 'Case 6: LEAD and FIRST_VALUE with an assignment argument return the same rows in both forms';
 set @u = 0;
 select * from (select i, lead(@u := @u + 1) over (order by i) l from tm) d order by i desc;
 select @u;
@@ -84,7 +85,7 @@ set @w = 'x';
 select i, first_value(@w := s) over (partition by p order by i) f, first_value(@w := s) over (partition by p order by i desc) l from tm order by i desc;
 select @w;
 
-evaluate 'Case 7: an assignment in the WITHIN GROUP ORDER BY key of PERCENTILE_CONT';
+evaluate 'Case 7: PERCENTILE_CONT with an assignment in the WITHIN GROUP ORDER BY key returns the same rows in both forms';
 set @u = 0;
 select * from (select i, percentile_cont(0.5) within group (order by (@u := i)) over (partition by p) pc from tm) d order by i desc;
 select @u;
@@ -92,5 +93,16 @@ set @u = 0;
 select i, percentile_cont(0.5) within group (order by (@u := i)) over (partition by p) pc from tm order by i desc;
 select @u;
 
-drop variable @u, @w;
+evaluate 'Case 8: with an assignment inside and one beside an analytic function in one expression, only the one beside moves out';
+-- As in Case 5, the final @v differs between the forms, but @u is assigned in the derived table in both
+set @u = 0;
+set @v = 0;
+select * from (select i, sum(@u := i) over () + (@v := i) m from tm) d order by i desc;
+select @u, @v;
+set @u = 0;
+set @v = 0;
+select i, sum(@u := i) over () + (@v := i) m from tm order by i desc;
+select @u, @v;
+
+drop variable @u, @v, @w;
 drop table tm, c4e;
