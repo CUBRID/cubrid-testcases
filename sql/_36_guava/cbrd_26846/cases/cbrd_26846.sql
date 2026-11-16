@@ -1,4 +1,4 @@
-/*
+/**
  * This test case verifies CBRD-26846 : the buildvalue optimization of the
  * parallel heap scan (GROUP BY-less aggregate, "gather: buildvalue") now
  * supports 11 more aggregate functions.
@@ -19,26 +19,28 @@
  * VARIANCE) are covered by cbrd_26711 and are only used here next to the new
  * ones.
  *
- * Self-checking: every check runs the aggregate twice in one statement, a
- * PARALLEL(8) sub-query and a NO_PARALLEL_SCAN sub-query, and compares them
- * with the null-safe <=>, emitting PASS/FAIL. Each check runs under trace so
- * the answer also pins "gather: buildvalue" on the parallel side and no
- * parallel workers on the serial side. A run that silently fell back to a
+ * Self-checking: Cases 2 to 12 and 16 to 19 and 22 to 27 run the aggregate twice
+ * in one statement, a PARALLEL(8) sub-query and a NO_PARALLEL_SCAN sub-query, and
+ * compare them with the null-safe <=>, emitting PASS/FAIL. Cases 13 to 15 and 20
+ * and 21 instead run the PARALLEL(8) query and its NO_PARALLEL_SCAN twin as two
+ * statements. Cases 13 to 15 print the error of each side. Cases 20 and 21 print
+ * the values, because for most of the new aggregates no other test case prints the
+ * serial values over no row or one row, so a comparison alone would have nothing
+ * to stand on there. Each check runs under trace so the answer
+ * also pins "gather: buildvalue" on the parallel side and no parallel workers on
+ * the serial side. A run that silently fell back to a
  * serial scan would otherwise PASS while testing nothing. Worker counts and
- * row counts in the trace are masked to ? by CTP.
+ * row counts in the trace are masked by CTP.
  *
  * Order-sensitive results (JSON element/key order, GROUP_CONCAT without
  * ORDER BY) depend on the worker finish order, so those checks compare
  * order-insensitive properties (json_length, json_type, length) instead of
- * the value itself.
+ * the value itself. Case 18 is the exception, as its comment explains.
  *
- * Table sizing: 10000 rows with three md5 strings each (incompressible) give
- * about 110 heap pages, well above the parallel scan threshold that the CTP
- * test_mode=yes sets (32 pages), and large enough to spread over several
- * workers. Table and column names have no digits so CTP does not mask them.
+ * Table and column names have no digits so CTP does not mask them.
  * cola = id % 100 (100 values x 100), colb = lpad(id % 20, 10, 0)
  * (20 values, used as duplicate JSON keys), nval/nstr are always NULL,
- * pnull = id % 50 but NULL when id % 7 = 0.
+ * pnull = id % 50 but NULL when id % 7 = 0, dt advances one millisecond per row.
  *
  * BIT_AND/BIT_OR over cola give the same partial value (0/127) in every
  * worker, so Case 1 and 2 add expressions where only the row id = 5000
@@ -65,14 +67,57 @@
  *            main thread, same error as serial
  *   Case 16: CUME_DIST with two sort keys, PERCENT_RANK DESC NULLS FIRST
  *   Case 17: MEDIAN / PERCENTILE_CONT / PERCENTILE_DISC skip NULLs
+ *   Case 18: GROUP_CONCAT DISTINCT without ORDER BY, and the default separator
+ *   Case 19: GROUP_CONCAT ORDER BY DESC with a multi-character separator
+ *   Case 20: predicate matching no row, values printed beside the serial twin
+ *   Case 21: predicate matching exactly one row, values printed beside the serial twin
+ *   Case 22: interpolation over DATETIME and VARCHAR
+ *   Case 23: JSON_ARRAYAGG keeps NULLs as elements, MEDIAN skips them
+ *   Case 24: JSON_OBJECTAGG with a NULL value keeps the key
+ *   Case 25: JSON_OBJECTAGG duplicate key keeps a value that really occurs
+ *   Case 26: STDDEV and VARIANCE families next to the new aggregates
+ *   Case 27: explicit PARALLEL(2) hint
+ *
+ * Disabled until fixed, commented out at the end of this file:
+ *   Case 28: BIT_AND / BIT_OR / BIT_XOR with DISTINCT
+ *   Case 29: MEDIAN with DISTINCT, and a plain MEDIAN after it on the same table
+ *
+ * Cases 20, 21, 22 and 27 are the edge shapes cbrd_26711 already applies to the
+ * aggregates that were supported before this issue; they are repeated here for
+ * the eleven the issue adds.
+ *
+ * Two DISTINCT shapes are commented out as Case 28 and Case 29. On 11.5.0.2920
+ * debug they abort the server and on release they return a wrong value, so they
+ * stay disabled until fixed. Both are reported on CBRD-26846.
+ *   - BIT_AND / BIT_OR / BIT_XOR with DISTINCT fail on the serial side as well,
+ *     so the fault is in the serial finalize of a distinct list, not in anything
+ *     this issue changed, and the parallel-versus-serial comparison cannot see
+ *     it. Case 28 therefore also prints the values directly.
+ *   - MEDIAN with DISTINCT fails only in parallel: a worker writes the operand
+ *     into its list without casting it to the result domain. When it is the
+ *     first parallel MEDIAN plan built for a table, a later plain MEDIAN on that
+ *     table, with no DISTINCT in it, also returns a wrong value until it is
+ *     recompiled. Inside the two derived tables of the comparison the plain
+ *     MEDIAN comes back correct, so Case 29 also runs the two statements at the
+ *     top level, on a table of their own and without a recompile hint.
+ * The DISTINCT shapes that do work are covered: GROUP_CONCAT in Cases 4 and 18,
+ * alone and beside a non-DISTINCT GROUP_CONCAT. PERCENTILE_CONT /
+ * PERCENTILE_DISC / CUME_DIST / PERCENT_RANK have no DISTINCT form, and
+ * JSON_ARRAYAGG / JSON_OBJECTAGG reject DISTINCT at parse time.
  */
 
 drop table if exists bvx;
-create table bvx (id int, cola int, colb varchar(10), nval int, nstr varchar(10), pad varchar(100), pnull int);
+-- 10000 rows with three md5 strings each (incompressible): 117 heap pages
+-- (SHOW HEAP CAPACITY), well above the parallel heap scan threshold of 32 pages
+-- that CTP sets with test_mode=yes, so every scan of bvx without NO_PARALLEL_SCAN
+-- runs in parallel and spreads over several workers
+create table bvx (id int, cola int, colb varchar(10), nval int, nstr varchar(10), pad varchar(100),
+                  pnull int, dt datetime);
 insert into bvx
 select rownum, rownum % 100, lpad(to_char(rownum % 20), 10, '0'), null, null,
        concat(md5(rownum), md5(rownum + 7919), md5(rownum * 31 + 7)),
-       case when rownum % 7 = 0 then null else rownum % 50 end
+       case when rownum % 7 = 0 then null else rownum % 50 end,
+       to_datetime('2026-09-29 00:00:00.000', 'YYYY-MM-DD HH24:MI:SS.FF') + rownum
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
 
 set trace on;
@@ -215,6 +260,214 @@ from (select /*+ PARALLEL(8) */ median(pnull) md, percentile_cont(0.3) within gr
      (select /*+ NO_PARALLEL_SCAN */ median(pnull) md, percentile_cont(0.3) within group (order by pnull) c,
              percentile_disc(0.7) within group (order by pnull desc) d from bvx) s;
 show trace;
+
+evaluate 'Case 18: GROUP_CONCAT DISTINCT without ORDER BY, and the default separator';
+-- the fourth of the four GROUP_CONCAT shapes the issue names. Cases 4, 5 and 6
+-- cover DISTINCT+ORDER BY, ORDER BY alone and neither; DISTINCT alone is the one
+-- left, and it reaches the distinct-list path without a sort key. The third
+-- column is the same aggregate without DISTINCT, so a distinct list and a plain
+-- list are built and chained over one scan. Unlike Cases 6 and 9, the first column
+-- is compared as a whole string although it has no ORDER BY: the finalize step
+-- removes the duplicates of a DISTINCT list by sorting it, and without a sort key
+-- it sorts by the value itself, so both sides join the values in the same order.
+-- If DISTINCT stops sorting, this case fails without a defect in the merge.
+select /*+ recompile */ case when p.g<=>s.g and p.d<=>s.d and p.a<=>s.a then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ group_concat(distinct cola separator ',') g,
+             group_concat(distinct cola order by 1) d,
+             group_concat(cola order by 1) a from bvx where id <= 80) p,
+     (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct cola separator ',') g,
+             group_concat(distinct cola order by 1) d,
+             group_concat(cola order by 1) a from bvx where id <= 80) s;
+show trace;
+
+evaluate 'Case 19: GROUP_CONCAT ORDER BY DESC with a multi-character separator';
+-- the separator lives in accumulator.value2 as metadata and is deliberately left
+-- out of the worker re-home, so a separator longer than one character is the case
+-- that shows a partial string being merged with the wrong separator. 80 rows keep
+-- the result shorter than group_concat_max_len, so the whole string is compared
+-- rather than a truncated prefix.
+select /*+ recompile */ case when p.g<=>s.g then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ group_concat(colb order by 1 desc separator '<>') g from bvx where id <= 80) p,
+     (select /*+ NO_PARALLEL_SCAN */ group_concat(colb order by 1 desc separator '<>') g from bvx where id <= 80) s;
+show trace;
+
+evaluate 'Case 20: predicate matching no row, values printed beside the serial twin';
+-- every worker ends with an untouched accumulator and an empty list, and the merge has
+-- to drop them all. The serial twin prints the same columns, so the answer file holds
+-- the values of both and a defect shared by both still shows in the values.
+select /*+ recompile PARALLEL(8) */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
+       cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
+       json_arrayagg(colb), json_objectagg(colb, cola),
+       cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       percentile_disc(0.5) within group (order by cola),
+       cast(cast(cume_dist(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20))
+from bvx where cola < 0;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
+       cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
+       json_arrayagg(colb), json_objectagg(colb, cola),
+       cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       percentile_disc(0.5) within group (order by cola),
+       cast(cast(cume_dist(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20))
+from bvx where cola < 0;
+show trace;
+
+evaluate 'Case 21: predicate matching exactly one row, values printed beside the serial twin';
+-- one worker holds the only row and the other seven merge empty partials, which is
+-- the shape that catches a merge treating an untouched partial as a value. The row
+-- id = 5037 has a cola other than 0, so a value lost in the merge does not pass for
+-- the right one, and a single row fixes the JSON order, so whole values print.
+select /*+ recompile PARALLEL(8) */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
+       cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
+       json_arrayagg(colb), json_objectagg(colb, cola),
+       cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       percentile_disc(0.5) within group (order by cola),
+       cast(cast(cume_dist(30) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       cast(cast(percent_rank(30) within group (order by cola) as numeric(12,4)) as varchar(20))
+from bvx where id = 5037;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
+       cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
+       json_arrayagg(colb), json_objectagg(colb, cola),
+       cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       percentile_disc(0.5) within group (order by cola),
+       cast(cast(cume_dist(30) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       cast(cast(percent_rank(30) within group (order by cola) as numeric(12,4)) as varchar(20))
+from bvx where id = 5037;
+show trace;
+
+evaluate 'Case 22: interpolation over DATETIME and VARCHAR';
+-- a worker casts the value it collects into the aggregate domain on a private copy
+-- before pushing it to its list. Cases 1 to 17 only interpolate over INT, so a cast
+-- that is wrong for a temporal or a string domain is not reached there. dt advances
+-- one millisecond per row, so all 10000 values differ.
+select /*+ recompile */ case when p.md<=>s.md and p.pc<=>s.pc and p.pd<=>s.pd and p.ps<=>s.ps
+            then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ median(dt) md, percentile_cont(0.3) within group (order by dt) pc,
+             percentile_disc(0.7) within group (order by dt) pd,
+             percentile_disc(0.5) within group (order by colb) ps from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ median(dt) md, percentile_cont(0.3) within group (order by dt) pc,
+             percentile_disc(0.7) within group (order by dt) pd,
+             percentile_disc(0.5) within group (order by colb) ps from bvx) s;
+show trace;
+
+evaluate 'Case 23: JSON_ARRAYAGG keeps NULLs as elements while MEDIAN skips them';
+-- a NULL is wrapped into a JSON null and still becomes an element, so the array
+-- length equals the row count, while MEDIAN over the same column ignores the NULLs.
+-- nn < c proves pnull really does hold NULLs, so jl = c is not a vacuous identity.
+select /*+ recompile */ case when p.jl<=>s.jl and p.md<=>s.md and p.c<=>s.c and p.nn<=>s.nn
+            and p.jl<=>p.c and p.nn<p.c then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ json_length(json_arrayagg(pnull)) jl, median(pnull) md,
+             count(*) c, count(pnull) nn from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ json_length(json_arrayagg(pnull)) jl, median(pnull) md,
+             count(*) c, count(pnull) nn from bvx) s;
+show trace;
+
+evaluate 'Case 24: JSON_OBJECTAGG with a NULL value keeps the key';
+-- the counterpart of Case 15: a NULL key is an error, a NULL value is wrapped into
+-- a JSON null and the key survives. nval is NULL in every row and pnull in some, so
+-- both the all-NULL and the mixed shape give one key per row.
+select /*+ recompile */ case when p.ka<=>s.ka and p.kb<=>s.kb and p.c<=>s.c
+            and p.ka<=>p.c and p.kb<=>p.c then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ json_length(json_objectagg(to_char(id), nval)) ka,
+             json_length(json_objectagg(to_char(id), pnull)) kb, count(*) c from bvx where id <= 2000) p,
+     (select /*+ NO_PARALLEL_SCAN */ json_length(json_objectagg(to_char(id), nval)) ka,
+             json_length(json_objectagg(to_char(id), pnull)) kb, count(*) c from bvx where id <= 2000) s;
+show trace;
+
+evaluate 'Case 25: JSON_OBJECTAGG duplicate key keeps a value that really occurs';
+-- Case 12 shows the duplicate key stays single-valued; which value wins is up to the
+-- workers, so this checks that the survivor is one of the values that column really
+-- holds for that key. A merge that combined two partial values arithmetically would
+-- leave a number that occurs nowhere and still look single-valued.
+select /*+ recompile */ case when p.kc<=>s.kc and p.ok<=>1 and s.ok<=>1 then 'PASS' else 'FAIL' end as result
+from (select json_length(o) kc,
+             case when exists (select 1 from bvx where colb = '0000000000'
+                               and cola = cast(json_extract(o, '$."0000000000"') as int)) then 1 else 0 end ok
+      from (select /*+ PARALLEL(8) */ json_objectagg(colb, cola) o from bvx) x) p,
+     (select json_length(o) kc,
+             case when exists (select 1 from bvx where colb = '0000000000'
+                               and cola = cast(json_extract(o, '$."0000000000"') as int)) then 1 else 0 end ok
+      from (select /*+ NO_PARALLEL_SCAN */ json_objectagg(colb, cola) o from bvx) x) s;
+show trace;
+
+evaluate 'Case 26: STDDEV and VARIANCE families next to the new aggregates';
+-- the issue asks for mixed queries. Case 2 mixes COUNT/MIN/MAX/SUM/AVG with the new
+-- functions; STDDEV and VARIANCE are the aggregates it leaves out, and they are the
+-- ones that also carry a second accumulator (the sum of squares) through the merge
+-- while the new list-based aggregates chain their lists over the same scan.
+select /*+ recompile */ case when p.sd<=>s.sd and p.vp<=>s.vp and p.vs<=>s.vs and p.md<=>s.md and p.gc<=>s.gc
+            and p.jl<=>s.jl and p.cd<=>s.cd then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ stddev_samp(cola) sd, var_pop(cola) vp, var_samp(cola) vs, median(cola) md,
+             group_concat(distinct cola order by 1 separator ',') gc, json_length(json_arrayagg(colb)) jl,
+             cume_dist(50) within group (order by cola) cd from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ stddev_samp(cola) sd, var_pop(cola) vp, var_samp(cola) vs, median(cola) md,
+             group_concat(distinct cola order by 1 separator ',') gc, json_length(json_arrayagg(colb)) jl,
+             cume_dist(50) within group (order by cola) cd from bvx) s;
+show trace;
+
+evaluate 'Case 27: explicit PARALLEL(2) hint';
+-- two workers split the rows differently from eight, so the single differing row of
+-- the BIT_AND / BIT_OR expressions lands in a different partition and the lists are
+-- chained in two pieces instead of eight. CTP masks the worker count and the number
+-- inside the hint, so the answer cannot tell 2 from 8; the degree is set by this
+-- statement and the answer pins the gather mode and the comparison, as everywhere else.
+select /*+ recompile */ case when p.ba<=>s.ba and p.bo<=>s.bo and p.md<=>s.md and p.gc<=>s.gc and p.cd<=>s.cd
+            then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(2) */ bit_and(case when id = 5000 then 254 else 255 end) ba,
+             bit_or(case when id = 5000 then 1 else 0 end) bo, median(cola) md,
+             group_concat(distinct cola order by 1 separator ',') gc,
+             cume_dist(50) within group (order by cola) cd from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ bit_and(case when id = 5000 then 254 else 255 end) ba,
+             bit_or(case when id = 5000 then 1 else 0 end) bo, median(cola) md,
+             group_concat(distinct cola order by 1 separator ',') gc,
+             cume_dist(50) within group (order by cola) cd from bvx) s;
+show trace;
+
+-- Disabled until fixed: Case 28 and Case 29, described in the header block. On a
+-- debug build each of them aborts the server, so they stay as comments to keep this
+-- file runnable. To enable them, remove the leading "-- " of each statement line
+-- and make the answer file again.
+--
+-- Case 28 first runs the comparison that the other cases use. The serial side has
+-- the same defect as the parallel side, so the comparison cannot tell them apart,
+-- and the two statements after it print the values themselves.
+-- evaluate 'Case 28: BIT_AND / BIT_OR / BIT_XOR with DISTINCT';
+-- select /*+ recompile */ case when p.ba<=>s.ba and p.bo<=>s.bo and p.bx<=>s.bx then 'PASS' else 'FAIL' end as result
+-- from (select /*+ PARALLEL(8) */ bit_and(distinct cola) ba, bit_or(distinct cola) bo,
+--              bit_xor(distinct cola) bx from bvx) p,
+--      (select /*+ NO_PARALLEL_SCAN */ bit_and(distinct cola) ba, bit_or(distinct cola) bo,
+--              bit_xor(distinct cola) bx from bvx) s;
+-- show trace;
+-- select /*+ recompile PARALLEL(8) */ bit_and(distinct cola), bit_or(distinct cola), bit_xor(distinct cola) from bvx;
+-- show trace;
+-- select /*+ recompile NO_PARALLEL_SCAN */ bit_and(distinct cola), bit_or(distinct cola), bit_xor(distinct cola) from bvx;
+-- show trace;
+--
+-- Case 29 first runs the comparison with MEDIAN(DISTINCT) next to a plain MEDIAN,
+-- the query that found the defect, and the comparison catches MEDIAN(DISTINCT). It
+-- does not catch the plain MEDIAN that the defect breaks after it: inside a derived
+-- table that MEDIAN comes back correct. So the case then builds a table of its own,
+-- runs MEDIAN(DISTINCT) on it at the top level, and runs a plain MEDIAN after it.
+-- bvm is a fresh copy of bvx because the earlier cases have already built a plain
+-- parallel MEDIAN plan for bvx, and the defect shows only when MEDIAN(DISTINCT) is
+-- the first. The two statements have no recompile hint: the defect stays in the
+-- plan that the first statement leaves, and a recompile hint removes it.
+-- evaluate 'Case 29: MEDIAN with DISTINCT, and a plain MEDIAN after it on the same table';
+-- select /*+ recompile */ case when p.dm<=>s.dm and p.md<=>s.md then 'PASS' else 'FAIL' end as result
+-- from (select /*+ PARALLEL(8) */ median(distinct cola) dm, median(cola) md from bvx) p,
+--      (select /*+ NO_PARALLEL_SCAN */ median(distinct cola) dm, median(cola) md from bvx) s;
+-- show trace;
+-- drop table if exists bvm;
+-- create table bvm like bvx;
+-- insert into bvm select * from bvx;
+-- select /*+ PARALLEL(8) */ cast(median(distinct cola) as numeric(12,4)) from bvm;
+-- show trace;
+-- select /*+ PARALLEL(8) */ cast(median(cola) as numeric(12,4)) from bvm;
+-- show trace;
+-- drop table bvm;
 
 set trace off;
 
