@@ -1,0 +1,89 @@
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the reported GROUP BY on an empty table returns no rows     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+
+===================================================
+9
+===================================================
+    
+Case 2: the GROUP BY on rows returns the groups of the query filtered by c1 > 0     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+1     2     1.0     
+2     2     2.0     
+3     1     3.0     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+1     2     1.0     
+2     2     2.0     
+3     1     3.0     
+
+===================================================
+    
+Case 3: the aggregates without GROUP BY return the values of the query filtered by c1 > 0     
+
+===================================================
+count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+5     1.0     
+
+===================================================
+count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+5     1.0     
+
+===================================================
+    
+Case 4: the projection without aggregates returns the rows of the query filtered by c1 > 0     
+
+===================================================
+least( cast(c1 as double), case c1 when c2 then c0 else c0 end)    cast(c1 as double)    
+null     1.0     
+1.0     1.0     
+1.0     1.0     
+2.0     2.0     
+2.0     2.0     
+3.0     3.0     
+
+===================================================
+least( cast(c1 as double), case c1 when c2 then c0 else c0 end)    cast(c1 as double)    
+null     1.0     
+1.0     1.0     
+1.0     1.0     
+2.0     2.0     
+2.0     2.0     
+3.0     3.0     
+
+===================================================
+    
+Case 5: the forms that never aborted - a constant WHEN, one aggregate, IS NOT NULL - keep their results     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when 1 then c0 else c0 end))    min( cast(c1 as double))    
+1     2     1.0     
+2     2     2.0     
+3     1     3.0     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    
+1     2     
+2     2     
+3     1     
+
+===================================================
+c1    count(least( cast(c1 as double), case c1 when c2 then c0 else c0 end))    min( cast(c1 as double))    
+-1     1     -1.0     
+0     1     0.0     
+1     2     1.0     
+2     2     2.0     
+3     1     3.0     
+
+===================================================
+0
