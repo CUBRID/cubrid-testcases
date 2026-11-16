@@ -269,4 +269,82 @@ temp(order by)
 Query stmt:
 select t.a from t t where ((t.a<>t.b and t.s between  ?:?  ge_lt  ?:? ) or (t.a=t.b and t.s= ?:? )) and (t.s>= ?:?  and t.s<= ?:? ) order by ?
 ===================================================
+    
+Case 9: a factor that folds to false in an ON condition is kept, so the other terms of the ON condition still drive the index scans     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5000
+===================================================
+2000
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+Query plan:
+nl-join (semi join)
+    outer: iscan
+               class: x node[?]
+               index: x?_a term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: y?_b term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from x? x semi join y? y on y.b= ?:?  and x.a= ?:?  and (?>? or ?=?)
+===================================================
+count(*)    
+0     
+
+Query plan:
+nl-join (semi join)
+    outer: iscan
+               class: x node[?]
+               index: x?_a term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: y?_b term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from x? x semi join y? y on y.b= ?:?  and x.a= ?:?  and (?>? or ?=?)
+===================================================
+count(*)    count(y.d)    
+100     0     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: x node[?]
+               index: x?_a term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: y?_b term[?]
+               filtr: term[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), count(y.d) from x? x left outer join y? y on x.b=y.b and y.b= ?:?  and x.b= ?:?  and (?<=? or ?=?) where x.a= ?:? 
+===================================================
+0
+===================================================
 0

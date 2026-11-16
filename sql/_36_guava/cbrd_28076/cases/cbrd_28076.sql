@@ -79,4 +79,21 @@ select /*+ recompile */ a from t where (a <> b and lower (s) like '%') or s > 'z
 --@queryplan
 select /*+ recompile */ a from t where (a <> b and s like 's1%') or (a = b and s like 's2') order by 1;
 
+evaluate 'Case 9: a factor that folds to false in an ON condition is kept, so the other terms of the ON condition still drive the index scans';
+drop table if exists x9, y9;
+create table x9 (a int, b int, c varchar);
+create index x9_a on x9 (a);
+create table y9 (b int, d int);
+create index y9_b on y9 (b);
+insert into x9 select mod (rownum, 50), mod (rownum, 7) - 3, 'v' || mod (rownum, 9) from db_class c1, db_class c2, db_class c3 where rownum <= 5000;
+insert into y9 select mod (rownum, 40), rownum from db_class c1, db_class c2 where rownum <= 2000;
+update statistics on x9, y9 with fullscan;
+--@queryplan
+select /*+ recompile */ count(*) from x9 x where 10 in (select y.b from y9 y where ((x.a > 4 and x.b <= 0) or (x.c = 'v1' and y.b = 3)) and x.a = 1);
+--@queryplan
+select /*+ recompile */ count(*) from x9 x where exists (select 1 from y9 y where y.b = 10 and ((x.a > 4 and x.b <= 0) or (x.c = 'v1' and y.b = 3)) and x.a = 1);
+--@queryplan
+select /*+ recompile */ count(*), count(y.d) from x9 x left outer join y9 y on x.b = y.b and y.b = 1 and ((y.d > 4 and x.b <= 0) or (x.c = 'v1' and y.b = 3)) where x.a = 1;
+drop table x9, y9;
+
 drop table o, i, a, b, t;
