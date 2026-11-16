@@ -1,0 +1,559 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the issue query; result = no_parallel_subquery     
+
+===================================================
+col_n    col_k    col_v    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (x)
+
+  rewritten query: (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v))
+
+  SORT (distinct)
+    TABLE SCAN (y)
+
+  rewritten query: (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, p.col_v from [dba.t_small] s, [dba.t_pair] p where p.col_v not in (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v)) and ? in (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+  SORT (distinct)
+    TABLE SCAN (x)
+
+  rewritten query: (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v))
+
+  SORT (distinct)
+    TABLE SCAN (y)
+
+  rewritten query: (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, p.col_v from [dba.t_small] s, [dba.t_pair] p where p.col_v not in (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v)) and ? in (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    col_v    
+
+===================================================
+    
+Case 2: rows in the result; result = no_parallel_subquery     
+
+===================================================
+col_n    col_k    col_v    
+1     null     1.0     
+1     1     5.0     
+1     2     null     
+2     null     1.0     
+2     1     5.0     
+2     2     null     
+3     null     1.0     
+3     1     5.0     
+3     2     null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    TABLE SCAN (x)
+
+  rewritten query: (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v))
+
+  SORT (distinct)
+    TABLE SCAN (y)
+
+  rewritten query: (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, p.col_v from [dba.t_small] s, [dba.t_pair] p where p.col_v not in (select distinct x.col_n from [dba.t_small] x where (p.col_k<=p.col_v)) and ? in (select distinct y.col_n from [dba.t_small] y where p.col_v<=>p.col_v)
+
+  SORT (distinct)
+    TABLE SCAN (x)
+
+  rewritten query: (select distinct x.col_n+? from [dba.t_small] x where (p.col_k<p.col_v+ cast(? as double)))
+
+  SORT (distinct)
+    TABLE SCAN (y)
+
+  rewritten query: (select distinct y.col_n-? from [dba.t_small] y where p.col_k<=>p.col_k)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, p.col_v from [dba.t_small] s, [dba.t_pair] p where p.col_v not in (select distinct x.col_n+? from [dba.t_small] x where (p.col_k<p.col_v+ cast(? as double))) and ? in (select distinct y.col_n-? from [dba.t_small] y where p.col_k<=>p.col_k)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    col_v    
+1     null     1.0     
+1     1     5.0     
+1     2     null     
+2     null     1.0     
+2     1     5.0     
+2     2     null     
+3     null     1.0     
+3     1     5.0     
+3     2     null     
+
+===================================================
+    
+Case 3: two subqueries in the select list; result = no_parallel_subquery     
+
+===================================================
+col_n    col_k    m    c    
+1     null     null     0     
+1     null     null     0     
+1     1     1     2     
+1     1     1     2     
+1     2     2     1     
+1     2     2     1     
+2     null     null     0     
+2     null     null     0     
+2     1     1     2     
+2     1     1     2     
+2     2     2     1     
+2     2     2     1     
+3     null     null     0     
+3     null     null     0     
+3     1     1     2     
+3     1     1     2     
+3     2     2     1     
+3     2     2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)) from [dba.t_small] s, [dba.t_pair] p
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)) from [dba.t_small] s, [dba.t_pair] p
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    m    c    
+1     null     null     0     
+1     null     null     0     
+1     1     1     2     
+1     1     1     2     
+1     2     2     1     
+1     2     2     1     
+2     null     null     0     
+2     null     null     0     
+2     1     1     2     
+2     1     1     2     
+2     2     2     1     
+2     2     2     1     
+3     null     null     0     
+3     null     null     0     
+3     1     1     2     
+3     1     1     2     
+3     2     2     1     
+3     2     2     1     
+
+===================================================
+    
+Case 4: three subqueries in the select list; result = no_parallel_subquery     
+
+===================================================
+col_n    col_k    m    c    e    
+1     null     null     0     0     
+1     null     null     0     0     
+1     1     1     2     1     
+1     1     1     2     1     
+1     2     2     1     1     
+1     2     2     1     1     
+2     null     null     0     0     
+2     null     null     0     0     
+2     1     1     2     1     
+2     1     1     2     1     
+2     2     2     1     1     
+2     2     2     1     1     
+3     null     null     0     0     
+3     null     null     0     0     
+3     1     1     2     1     
+3     1     1     2     1     
+3     2     2     1     1     
+3     2     2     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where x.col_n=p.col_k)
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)), (select count(*) from [dba.t_small] x where x.col_n=p.col_k) from [dba.t_small] s, [dba.t_pair] p
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where x.col_n=p.col_k)
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)), (select count(*) from [dba.t_small] x where x.col_n=p.col_k) from [dba.t_small] s, [dba.t_pair] p
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    m    c    e    
+1     null     null     0     0     
+1     null     null     0     0     
+1     1     1     2     1     
+1     1     1     2     1     
+1     2     2     1     1     
+1     2     2     1     1     
+2     null     null     0     0     
+2     null     null     0     0     
+2     1     1     2     1     
+2     1     1     2     1     
+2     2     2     1     1     
+2     2     2     1     1     
+3     null     null     0     0     
+3     null     null     0     0     
+3     1     1     2     1     
+3     1     1     2     1     
+3     2     2     1     1     
+3     2     2     1     1     
+
+===================================================
+    
+Case 5: intersection and difference arms; result = no_parallel_subquery     
+
+===================================================
+col_n    col_k    m    c    
+1     null     null     0     
+1     1     1     2     
+1     2     2     1     
+2     null     null     0     
+2     1     1     2     
+2     2     2     1     
+3     null     null     0     
+3     1     1     2     
+3     2     2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)) from [dba.t_small] s, [dba.t_pair] p
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)) from [dba.t_small] s, [dba.t_pair] p
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+               (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    m    c    
+1     null     null     0     
+1     1     1     2     
+1     2     2     1     
+2     null     null     0     
+2     1     1     2     
+2     2     2     1     
+3     null     null     0     
+3     1     1     2     
+3     2     2     1     
+
+===================================================
+col_n    col_k    m    c    
+1     1     1     2     
+1     2     2     1     
+2     1     1     2     
+2     2     2     1     
+3     1     1     2     
+3     2     2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k)) from [dba.t_small] s, [dba.t_pair] p
+
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.t_small] x where (x.col_n>p.col_k+ cast(? as bigint)))
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (s)
+    TABLE SCAN (p)
+
+  rewritten query: select s.col_n, p.col_k, (select max(x.col_n) from [dba.t_small] x where (x.col_n<=p.col_k)), (select count(*) from [dba.t_small] x where (x.col_n>p.col_k+ cast(? as bigint))) from [dba.t_small] s, [dba.t_pair] p
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_pair), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+col_n    col_k    m    c    
+1     1     1     2     
+1     2     2     1     
+2     1     1     2     
+2     2     2     1     
+3     1     1     2     
+3     2     2     1     
+
+===================================================
+0
+===================================================
+    
+Case 6: an arm that fails returns the error; result = no_parallel_subquery     
+
+===================================================
+Error:-539
+===================================================
+Error:-539
+===================================================
+0
