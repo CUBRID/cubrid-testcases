@@ -25,6 +25,8 @@ create user cbrd27642_u1;
 create user cbrd27642_u2;
 create user cbrd27642_u3;
 
+-- dont_reuse_oid: the UPDATE of the view by cbrd27642_u2 in Case 2 and Case 5 fails with -494 on a table with reusable
+-- OIDs, which create_table_reuseoid=yes makes by default
 create table t27642 (a int, b varchar(10)) dont_reuse_oid;
 insert into t27642 values (1, 'one'), (2, 'two'), (3, 'three');
 
@@ -79,6 +81,7 @@ select count(*) from _db_class c, t27642_snap s where c.unique_name = 'dba.v2764
 drop table t27642_snap;
 
 evaluate 'Case 5: only the check option of the new definition applies';
+-- cbrd27642_u2 updates the view with the UPDATE privilege granted in Case 2 and kept by every replace since
 -- in _db_class.flags, 2 is WITH CHECK OPTION and 4 is WITH LOCAL CHECK OPTION
 create or replace view v27642 as select a from t27642 where a > 1 with check option;
 select class_name, flags from _db_class where unique_name = 'dba.v27642';
@@ -154,6 +157,9 @@ call login('dba','') on class db_user;
 evaluate 'Case 11: a view that does not exist is created, a table is refused';
 drop view v27642;
 create or replace view v27642 as select a from t27642;
+select class_name, class_type from db_class where class_name = 'v27642';
+select * from v27642 order by 1;
+-- a new view has no privileges granted on it
 select count(*) from db_auth where object_name = 'v27642';
 -- error: t27642 is a table
 create or replace view t27642 as select 1 as a;
