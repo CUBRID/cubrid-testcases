@@ -62,7 +62,7 @@ select i, lag(@u := @u + 1) over (order by i desc) l from tm order by i;
 select @u;
 
 evaluate 'Case 5: an assignment beside an analytic function moves to the outer SELECT and runs after the ORDER BY';
--- Unlike the other cases, only the final @u differs: only the ORDER BY form moves the assignment out
+-- Unlike the other cases, the final @u differs, because only the ORDER BY form moves the assignment out
 set @u = 0;
 select * from (select i, sum(i) over () + (@u := i) m from tm) d order by i desc;
 select @u;
