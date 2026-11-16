@@ -5,11 +5,14 @@
  *              existing row would no longer fit in a page under FORCE_INLINE, the ALTER fails with
  *              ER_HEAP_OOS_OVERPASS_MAXOBJ_SIZE and the column keeps its previous storage setting.
  *              Otherwise every later UPDATE of that row, and loading its unloaded data, would fail.
- * Coverage: plain table, partitioned table, a row that still fits, and the ALTER after the large row is gone.
+ * Coverage: plain table, partitioned table, subclass, a row that still fits, and the ALTER after the large row is
+ *           gone.
  */
 
 drop table if exists t_article;
 drop table if exists t_part;
+drop table if exists t_sub;
+drop table if exists t_super;
 
 -- a 20000-byte value is demoted to OOS; a 5000-byte value would fit inline
 create table t_article (id int, view_count int, content bit varying);
@@ -42,5 +45,19 @@ alter table t_part modify c bit varying storage force_inline;
 show create table t_part;
 select id, bit_length (c) / 8 as bytes from t_part order by id;
 
+-- subclass: it inherits the policy, so its rows are checked too
+create table t_super (id int, v int, content bit varying);
+create table t_sub under t_super;
+insert into t_sub values (1, 0, cast(repeat('AA', 20000) as bit varying));
+alter table t_super modify content bit varying storage force_inline;
+show create table t_super;
+update t_sub set v = v + 1 where id = 1;
+select id, v, bit_length (content) / 8 as bytes from t_sub order by id;
+delete from t_sub where id = 1;
+alter table t_super modify content bit varying storage force_inline;
+show create table t_super;
+
 drop table t_article;
 drop table t_part;
+drop table t_sub;
+drop table t_super;
