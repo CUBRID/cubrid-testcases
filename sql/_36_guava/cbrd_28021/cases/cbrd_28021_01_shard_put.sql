@@ -5,8 +5,9 @@
 -- worker puts the leaves of one key range (fewer cores: the build sorts serially, and reads the same). Each index is
 -- built with index_build_parallel_leaf on (the shard put) and off (the merge of the main thread), and both builds
 -- must read back the same rows in the same order: the count and a position-weighted sum of the ids, by tag, give
--- one sum. k is in utf8_en_ci and gives every two rows one key in two cases: the shards split the keys by the
--- collation, so the unique index on k fails with the violation either way, while the one on id builds.
+-- one sum. k is in utf8_en_ci and gives every two rows one key in two cases, so the unique index on k fails with
+-- the violation either way, while the one on id builds. A shard put that split the two cases of a key would still
+-- read the same, so the shell testcase cbrd_28021_shard_put checks that the shards keep them together.
 
 drop table if exists s;
 drop table if exists sig;
