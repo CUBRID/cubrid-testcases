@@ -13,7 +13,8 @@
  *
  * Judged by the answer file:
  *   - total 80000, matched 49999 (10000 < a.id < 60000), identical in Cases 1, 2 and 3
- *   - a worker sub-line below PROBE in Cases 1 and 2, and no SPLIT
+ *   - a worker sub-line below PROBE in Case 1, and no SPLIT; Case 2 reads a session variable, so
+ *     its probe stays serial
  *
  * Prerequisite: CTP runs SQL tests with test_mode=yes, so prm_tune_parameters() lowers
  *   parallel_hash_join_page_threshold from its default 256 pages to 0 (floored to 2 by
@@ -54,7 +55,7 @@ execute q using 10000, 60000;
 show trace;
 deallocate prepare q;
 
-evaluate 'Case 2: user variable inside during_join_pred - parallel probe';
+evaluate 'Case 2: user variable inside during_join_pred - serial probe';
 
 set @lo = 10000;
 set @hi = 60000;
