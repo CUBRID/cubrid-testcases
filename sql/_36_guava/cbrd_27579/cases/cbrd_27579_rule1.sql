@@ -11,7 +11,8 @@
  *    Case 2: SET statements in a function invoked by SELECT
  *    Case 3: DDL and method calls with a target in a function invoked by SELECT
  *    Case 4: TCL and DDL in a function invoked by DML
- *    Case 5: TCL and DDL in a procedure called by a trigger action
+ *    Case 5: TCL and DDL in a procedure called by a trigger action, and in a function in a trigger condition or
+ *            a trigger action statement
  *    Case 6: TCL and DDL in a top-level CALL
  *    Case 7: nothing was changed by the refused cases
  */
@@ -69,12 +70,18 @@ update t set a = f_exec ('commit');
 update t set a = f_exec ('create table t_new (a int)');
 
 
-evaluate 'Case 5: TCL and DDL in a procedure called by a trigger action';
+evaluate 'Case 5: TCL and DDL in a procedure called by a trigger action, and in a function in a trigger condition or a trigger action statement';
 create trigger tr_r1 after insert on t_tr execute call p_exec ('commit');
 insert into t_tr values (1);
 drop trigger tr_r1;
 create trigger tr_r1 after insert on t_tr execute call p_exec ('create table t_new (a int)');
 insert into t_tr values (2);
+drop trigger tr_r1;
+create trigger tr_r1 after insert on t_tr if f_commit () = 1 execute print 'tr_r1';
+insert into t_tr values (3);
+drop trigger tr_r1;
+create trigger tr_r1 after insert on t_tr execute update t set a = f_exec ('create table t_new (a int)');
+insert into t_tr values (4);
 drop trigger tr_r1;
 
 
