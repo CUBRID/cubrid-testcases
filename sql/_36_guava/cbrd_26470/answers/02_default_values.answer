@@ -43,7 +43,7 @@ k1_int    k2_str    k3_neg    k4_null    k7a_two_none    k7b_two_one
 
 ===================================================
     
-Case 2: function expression default TO_CHAR(12345, S999999), expect MATCH     
+Case 2: function expression default TO_CHAR(12345, S999999); result = +12345     
 
 
 ===================================================
@@ -53,8 +53,8 @@ Case 2: function expression default TO_CHAR(12345, S999999), expect MATCH
 0
 
 ===================================================
-k6_check    
-MATCH     
+k6_expr    
+ +12345     
 
 
 ===================================================
@@ -75,7 +75,7 @@ NOTNULL
 
 ===================================================
     
-Case 4: quoted SYS_DATETIME / CURRENT_USER defaults are expressions, HELLO_WORLD is a literal, expect EXPR / EXPR / LITERAL     
+Case 4: quoted SYS_DATETIME / CURRENT_USER defaults are expressions, HELLO_WORLD is a literal; result = EXPR / DBA / HELLO_WORLD     
 
 
 ===================================================
@@ -97,8 +97,8 @@ Case 4: quoted SYS_DATETIME / CURRENT_USER defaults are expressions, HELLO_WORLD
 0
 
 ===================================================
-k9a_sysdatetime_as_expr    k9b_currentuser_as_expr    k9c_plain_literal    
-EXPR     EXPR     LITERAL     
+k9a_sysdatetime_as_expr    k9b_currentuser    k9c_plain_literal    
+EXPR     DBA     HELLO_WORLD     
 
 
 ===================================================

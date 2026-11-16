@@ -1,6 +1,6 @@
 /**
  *  This test case verifies CBRD-26470: when a PL/CSQL routine directly calls a stored procedure
- *  or a package routine and omits arguments, the omitted arguments get their real default values.
+ *  and omits arguments, the omitted arguments get their real default values.
  *
  *  Each callee returns its argument as is, and a wrapper calls it without the defaulted
  *  arguments. Defaults that are built-in expressions (SYS_DATETIME, CURRENT_USER), even when
@@ -36,10 +36,10 @@ select w02_int() as k1_int, w02_str() as k2_str, w02_neg() as k3_neg, w02_null()
 from dual;
 
 
-evaluate 'Case 2: function expression default TO_CHAR(12345, S999999), expect MATCH';
+evaluate 'Case 2: function expression default TO_CHAR(12345, S999999); result = +12345';
 create or replace function f02_expr(a varchar := to_char(12345, 'S999999')) return varchar as begin return a; end;
 create or replace function w02_expr return varchar as begin return f02_expr(); end;
-select case when w02_expr() = to_char(12345, 'S999999') then 'MATCH' else 'MISMATCH' end as k6_check from dual;
+select w02_expr() as k6_expr from dual;
 
 
 evaluate 'Case 3: SYS_DATETIME default of a DATETIME parameter, expect NOTNULL';
@@ -48,7 +48,7 @@ create or replace function w02_dt return datetime as begin return f02_dt(); end;
 select case when w02_dt() is not null then 'NOTNULL' else 'NULL' end as k5_sysdatetime from dual;
 
 
-evaluate 'Case 4: quoted SYS_DATETIME / CURRENT_USER defaults are expressions, HELLO_WORLD is a literal, expect EXPR / EXPR / LITERAL';
+evaluate 'Case 4: quoted SYS_DATETIME / CURRENT_USER defaults are expressions, HELLO_WORLD is a literal; result = EXPR / DBA / HELLO_WORLD';
 create or replace function f02_vsd(a varchar := 'SYS_DATETIME') return varchar as begin return a; end;
 create or replace function w02_vsd return varchar as begin return f02_vsd(); end;
 create or replace function f02_vcu(a varchar := 'CURRENT_USER') return varchar as begin return a; end;
@@ -56,8 +56,7 @@ create or replace function w02_vcu return varchar as begin return f02_vcu(); end
 create or replace function f02_vlit(a varchar := 'HELLO_WORLD') return varchar as begin return a; end;
 create or replace function w02_vlit return varchar as begin return f02_vlit(); end;
 select case when w02_vsd() <> 'SYS_DATETIME' then 'EXPR' else 'LITERAL' end as k9a_sysdatetime_as_expr,
-       case when w02_vcu() <> 'CURRENT_USER' then 'EXPR' else 'LITERAL' end as k9b_currentuser_as_expr,
-       case when w02_vlit() = 'HELLO_WORLD' then 'LITERAL' else 'OTHER' end as k9c_plain_literal
+       w02_vcu() as k9b_currentuser, w02_vlit() as k9c_plain_literal
 from dual;
 
 

@@ -10,8 +10,8 @@
  *  local routine is only called locally with known parameter types, so the conversion at the call
  *  site checks it.
  *
- *  The parameter is t33.a%TYPE = NUMERIC(5,1) and the caller variable is NUMERIC(10,3):
- *  12345.678 gives an error (ERR) and 12.345 gives 12.3 (rounded).
+ *  The parameter is t33.a%TYPE = NUMERIC(5,1) and the caller variable is NUMERIC(10,3). Each case
+ *  passes a value that does not fit NUMERIC(5,1) and a value that fits after rounding.
  *
  *  Coverage:
  *    Case 1: public package procedure called from another SP
