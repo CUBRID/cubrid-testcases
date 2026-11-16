@@ -16,8 +16,6 @@
  *    Case 6:  an assignment argument of LEAD and of FIRST_VALUE
  *    Case 7:  an assignment in the WITHIN GROUP ORDER BY key of PERCENTILE_CONT
  */
--- The session variables must keep their values between statements, so the file keeps one CAS
---+ holdcas on;
 
 drop table if exists tm;
 create table tm (i int, p int, s varchar(30));
@@ -96,4 +94,3 @@ select @u;
 
 drop variable @u, @w;
 drop table tm, c4e;
---+ holdcas off;
