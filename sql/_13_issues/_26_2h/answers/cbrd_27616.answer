@@ -1,0 +1,178 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 1: a path condition OR an inner-table condition returns the union of the two; result = 2, none, 2     
+
+===================================================
+a    
+2     
+
+===================================================
+a    
+
+===================================================
+a    
+2     
+
+Query plan:
+temp(order by)
+    subplan: follow
+                 edge:  x node[?] r -> t_ref node[?]
+                 head:  nl-join (left outer join)
+                           edge:  term[?]
+                           outer: sscan
+                                      class: x node[?]
+                                      cost:  ? card ?
+                           inner: sscan
+                                      class: y node[?]
+                                      sargs: term[?]
+                                      cost:  ? card ?
+                           cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.a from t_ref x left outer join t_ref y on x.a=y.a where ((x.r.a= ?:? ) or (y.a= ?:? )) order by ?
+===================================================
+    
+Case 2: an IS NULL on an inner-table path returns the rows whose path value is NULL; result = 1, 3     
+
+===================================================
+a    
+1     
+3     
+
+Query plan:
+temp(order by)
+    subplan: follow
+                 edge:  y node[?] r -> t_ref node[?]
+                 head:  nl-join (left outer join)
+                           edge:  term[?]
+                           outer: sscan
+                                      class: x node[?]
+                                      cost:  ? card ?
+                           inner: sscan
+                                      class: y node[?]
+                                      sargs: term[?]
+                                      cost:  ? card ?
+                           cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.a from t_ref x left outer join t_ref y on x.a=y.a where (y.r.a is null  or y.r is null ) order by ?
+===================================================
+    
+Case 3: (x.r.a = 3 OR y.a = 99) ANDed with an inner-table condition returns the row whose path value is 3; result = 2     
+
+===================================================
+a    
+2     
+
+Query plan:
+temp(order by)
+    subplan: follow
+                 edge:  x node[?] r -> t_ref node[?]
+                 head:  nl-join (left outer join)
+                           edge:  term[?]
+                           outer: sscan
+                                      class: x node[?]
+                                      cost:  ? card ?
+                           inner: sscan
+                                      class: y node[?]
+                                      sargs: term[?] AND term[?]
+                                      cost:  ? card ?
+                           after: term[?]
+                           cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.a from t_ref x left outer join t_ref y on x.a=y.a where ((x.r.a= ?:? ) or (y.a= ?:? )) and coalesce(y.a, ?)>=? order by ?
+===================================================
+    
+Case 4: an UPDATE with x.r.a = 3 OR y.a = 99 changes only row 2; result = 1, 3, 12     
+
+===================================================
+1
+===================================================
+a    
+1     
+3     
+12     
+
+===================================================
+    
+Case 5: a DELETE with x.r.a = 3 OR y.a = 99 deletes only row 12; result = 1, 3     
+
+===================================================
+1
+===================================================
+a    
+1     
+3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+    
+Case 6: (x.r.a = 3 OR y.a IS NULL) ANDed with an inner-table condition keeps the row that the join pads with NULL and the row whose path value is 3; result = 1, 2     
+
+===================================================
+a    
+1     
+2     
+
+===================================================
+    
+Case 7: (y.r.r.a = 6 OR y.a IS NULL) ANDed with an inner-table condition is evaluated after both fetches of the path; result = 1, 5     
+
+===================================================
+a    
+1     
+5     
+
+Query plan:
+temp(order by)
+    subplan: follow
+                 edge:  t_chain node[?] r -> t_chain node[?]
+                 head:  follow
+                           edge:  y node[?] r -> t_chain node[?]
+                           head:  nl-join (left outer join)
+                                     edge:  term[?]
+                                     outer: sscan
+                                                class: x node[?]
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: y node[?]
+                                                sargs: term[?] AND term[?]
+                                                cost:  ? card ?
+                                     after: term[?]
+                                     cost:  ? card ?
+                           cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select x.a from t_chain x left outer join t_chain y on y.a=x.a-? where ((y.r.r.a= ?:? ) or y.a is null ) and coalesce(y.a, ?)>=? order by ?
+===================================================
+0
