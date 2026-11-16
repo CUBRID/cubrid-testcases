@@ -33,8 +33,8 @@
  *    Case 11:  is_cached is NO for CACHE 1 and YES for CACHE 2
  *    Case 12:  table_rows of a partitioned table equals that of the same rows
  *              without partitions, and each partition shows its own row count
- *    Case 13:  action_statement shows REJECT, INVALIDATE TRANSACTION and the
- *              PRINT statement
+ *    Case 13:  action_statement shows REJECT, INVALIDATE TRANSACTION, the
+ *              PRINT statement and a PL/CSQL block
  *    Case 14:  current_schema() in a PL/CSQL function returns what schema()
  *              returns
  *    Case 15:  auto_increment is a NUMERIC(38,0) that shows the next id after
@@ -133,8 +133,9 @@ create table t_trig (a int);
 create trigger tr27914_reject before delete on t_trig execute reject;
 create trigger tr27914_invalidate before update on t_trig execute invalidate transaction;
 create trigger tr27914_print after insert on t_trig execute print 'p';
+create trigger tr27914_block after update on t_trig execute begin null; end;
 
-evaluate 'Case 13: action_statement shows REJECT, INVALIDATE TRANSACTION and the PRINT statement';
+evaluate 'Case 13: action_statement shows REJECT, INVALIDATE TRANSACTION, the PRINT statement and a PL/CSQL block';
 select trigger_name, action_statement from information_schema.triggers where event_object_table = 't_trig' order by trigger_name;
 
 create or replace function f27914_current_schema return string as begin return current_schema(); end;
