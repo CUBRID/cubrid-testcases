@@ -412,4 +412,103 @@ count(*)
 ===================================================
 0
 ===================================================
+    
+Case 12: a factor whose disjuncts join one column by different expressions gives that column a join key: an index join on k12t.a     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+60
+===================================================
+30000
+===================================================
+0
+===================================================
+count(*)    sum(t.id)    
+60     605000     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: u node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t node[?]
+               index: k?t_a term[?]
+               filtr: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(t.id) from k?u u, k?t t where ((t.a=u.a*? and u.d< ?:? ) or (t.a=u.b*? and u.d>= ?:? )) and u.d is not null  and ((t.a=u.a*?) or (t.a=u.b*?))
+===================================================
+count(*)    sum(t.id)    
+60     605000     
+
+===================================================
+0
+===================================================
+    
+Case 13: the restriction a factor implies on one table is kept as its scan filter when the factor is evaluated at a join, costly conjuncts included     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+800
+===================================================
+0
+===================================================
+count(*)    sum(x.id)    
+18     26256     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: x node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: y node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(x.id) from k?x x semi join k?y y on x.a= ?:?  and x.d in multiset{?, ?, ?} or nvl(x.id, -?)=? and ((x.a= ?:?  and x.d in multiset{?, ?, ?} and (x.id<y.b or y.c is not null )) or (nvl(x.id, -?)=? and (y.id>x.b or x.c is not null ) and y.a between  ?:?  and  ?:? ))
+===================================================
+count(*)    sum(x.id)    count(y.id)    
+3188     4784628     192     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: x node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: y node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(x.id), count(y.id) from k?x x left outer join k?y y on y.b+?=? and y.c is not null  or nvl(y.b, -?)=? and y.c like  ?:?  and (((x.id= ?:?  or y.a=x.d) and y.b+?=? and y.c is not null ) or (x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:? )) and x.b=y.b
+===================================================
+count(*)    sum(x.id)    
+18     26256     
+
+===================================================
+0
+===================================================
 0
