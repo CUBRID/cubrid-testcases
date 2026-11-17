@@ -8,8 +8,10 @@
  *  NULL padding never happened and the unmatched x rows were dropped, and an ON term reading only x was ignored.
  *
  *  Fix: the terms that do not read the fetched object and have no subquery go to the scan under the fetch,
- *  the rest stay on the fetch. When the scan under the fetch walks a class hierarchy class by class, the fetch
- *  goes into a temp list first, so the NULL row is decided once per x row and not once per class.
+ *  the rest stay on the fetch. When the scan under the fetch walks a class hierarchy class by class, that scan
+ *  goes into a temp list first, so the NULL row is decided once per x row and not once per class. A join under
+ *  the fetch likewise goes into a temp list below the fetch. The WHERE terms on the fetch still run after the
+ *  NULL padding.
  *
  *  Each check compares count(*) and a checksum weighing x.a, y.a and y.r.a (so a dropped, wrongly matched or
  *  wrongly padded row changes it) with values computed by hand from the data below. One row per check:
@@ -25,7 +27,8 @@
  *    M*, X1, N1, J2: two-level path, path on both sides, empty NULL-padded table, chain of right outer joins
  *    L*, I1: guards - LEFT JOIN forms, inner join on the path value
  *    K*: an index on the join column
- *    H*: a class hierarchy (ALL sup) and a partitioned table as the NULL-padded side
+ *    H*: a class hierarchy (ALL sup) and a partitioned table as the NULL-padded side, WHERE terms on the path,
+ *        a join under the Object fetch
  */
 drop table if exists sub, sup, pp, px, t, e;
 create table t (a int, b int, r t) dont_reuse_oid;
@@ -181,5 +184,27 @@ select /*+ recompile use_hash(y) */ 'H4' id, case when count (*) = 7 and nvl (su
 -- H5: LEFT JOIN form of H4 (guard)
 select /*+ recompile */ 'H5' id, case when count (*) = 7 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 11664 then 'PASS' else 'FAIL' end res
   from px x left outer join pp y on x.a = y.b;
+
+-- H6: class hierarchy, WHERE on the path rejects the only match of x9 (x9 is not padded)
+select /*+ recompile use_hash(y) */ 'H6' id, case when count (*) = 2 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 233 then 'PASS' else 'FAIL' end res
+  from all sup y right outer join px x on x.a = y.b where x.a in (1, 9) and nvl (y.r.a, 0) <> 1;
+
+-- H7: class hierarchy, WHERE on the path with unmatched x rows
+select /*+ recompile use_hash(y) */ 'H7' id, case when count (*) = 6 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 10733 then 'PASS' else 'FAIL' end res
+  from all sup y right outer join px x on x.a = y.b where nvl (y.r.a, 0) <> 1;
+
+-- H8: class hierarchy, WHERE on the two-level path rejects the only match of x9
+select /*+ recompile use_hash(y) */ 'H8' id, case when count (*) = 6 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.r.a, 0)), 0) = 10731 then 'PASS' else 'FAIL' end res
+  from all sup y right outer join px x on x.a = y.b where nvl (y.r.r.a, 0) <> 3;
+
+update statistics on t, sup, sub, px with fullscan;
+
+-- H9: a join under the Object fetch inner, WHERE on the path rejects the only match of x9 (needs statistics)
+select /*+ recompile use_hash(y) */ 'H9' id, case when count (*) = 6 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 10733 then 'PASS' else 'FAIL' end res
+  from t y inner join t z on y.a = z.a right outer join px x on x.a = y.b where nvl (y.r.a, 0) <> 1;
+
+-- H10: same with a class hierarchy joined under the Object fetch inner
+select /*+ recompile use_hash(y) */ 'H10' id, case when count (*) = 6 and nvl (sum (nvl (x.a, 0) * 100 + nvl (y.a, 0) * 10 + nvl (y.r.a, 0)), 0) = 10733 then 'PASS' else 'FAIL' end res
+  from all sup y inner join t z on y.a = z.a right outer join px x on x.a = y.b where nvl (y.r.a, 0) <> 1;
 
 drop table if exists sub, sup, pp, px, t, e;
