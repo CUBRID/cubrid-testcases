@@ -32,7 +32,7 @@ count(*)
 
 Query plan:
 nl-join (inner join)
-    edge:  term[?]
+    edge:  term[?] AND term[?] AND term[?]
     outer: hash-join (inner join)
                edge:  term[?]
                outer: iscan
@@ -46,11 +46,11 @@ nl-join (inner join)
     inner: iscan
                class: cn node[?]
                index: i_nat_name term[?] (covers)
-               filtr: term[?]
+               filtr: term[?] AND term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:?  and cn.n_name= ?:? ) or (sn.n_name= ?:?  and cn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? ))
+select count(*) from nat sn, nat cn, fact fact where sn.id=fact.id and ((sn.n_name= ?:?  and cn.n_name= ?:? ) or (sn.n_name= ?:?  and cn.n_name= ?:? )) and ((sn.n_name= ?:? ) or (sn.n_name= ?:? )) and ((cn.n_name= ?:? ) or (cn.n_name= ?:? )) and sn.n_name= ?:?  and cn.n_name= ?:?  or sn.n_name= ?:?  and cn.n_name= ?:?  and sn.n_name= ?:?  and cn.n_name= ?:?  or sn.n_name= ?:?  and cn.n_name= ?:? 
 ===================================================
     
 Case 2: the same rows written as independent conditions keep their plan     
@@ -394,19 +394,28 @@ temp(distinct)
 Query stmt:
 (select distinct ss.x from ss ss)
 Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: ss node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct ss.x from ss ss)
+Query plan:
 nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: si node[?]
-               index: i_si_b term[?] (covers)
-               cost:  ? card ?
-    inner: sscan
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
                class: so node[?]
                sargs: term[?]
                cost:  ? card ?
+    inner: iscan
+               class: si node[?]
+               index: i_si_b term[?] (covers)
+               filtr: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from so so, si si where ((so.a in (select distinct ss.x from ss ss) and si.b= ?:? ) or (so.a= ?:?  and si.b= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? ))
+select count(*) from so so, si si where ((so.a in (select distinct ss.x from ss ss) and si.b= ?:? ) or (so.a= ?:?  and si.b= ?:? )) and (so.a in (select distinct ss.x from ss ss) or (so.a= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? )) and si.b= ?:?  or so.a= ?:?  and si.b= ?:?  and si.b= ?:?  or so.a= ?:?  and si.b= ?:? 
 ===================================================
 count(*)    
 90     
@@ -420,19 +429,28 @@ temp(distinct)
 Query stmt:
 (select distinct ss.x from ss ss)
 Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: ss node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct ss.x from ss ss)
+Query plan:
 nl-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: si node[?]
-               index: i_si_b term[?] (covers)
-               cost:  ? card ?
-    inner: sscan
+    edge:  term[?] AND term[?] AND term[?]
+    outer: sscan
                class: so node[?]
                sargs: term[?]
                cost:  ? card ?
+    inner: iscan
+               class: si node[?]
+               index: i_si_b term[?] (covers)
+               filtr: term[?] AND term[?] AND term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from so so, si si where ((si.b= ?:?  and so.a in (select distinct ss.x from ss ss)) or (si.b= ?:?  and so.a= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? ))
+select count(*) from so so, si si where ((si.b= ?:?  and so.a in (select distinct ss.x from ss ss)) or (si.b= ?:?  and so.a= ?:? )) and (so.a in (select distinct ss.x from ss ss) or (so.a= ?:? )) and ((si.b= ?:? ) or (si.b= ?:? )) and si.b= ?:?  or si.b= ?:?  and so.a= ?:?  and si.b= ?:?  or si.b= ?:?  and so.a= ?:? 
 ===================================================
 0
 ===================================================

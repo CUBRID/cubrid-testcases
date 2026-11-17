@@ -340,10 +340,10 @@ idx-join (left outer join)
                filtr: term[?]
                sargs: term[?] AND term[?]
                cost:  ? card ?
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select count(*), count(y.d) from x? x left outer join y? y on x.b=y.b and y.b= ?:?  and x.b= ?:?  and (?<=? or ?=?) where x.a= ?:? 
+select count(*), count(y.d) from x? x left outer join y? y on ((y.d> ?:? ) or (x.c= ?:? )) and x.b=y.b and y.b= ?:?  and x.b= ?:?  and (?<=? or ?=?) where x.a= ?:? 
 ===================================================
 0
 ===================================================
@@ -441,11 +441,11 @@ idx-join (inner join)
     inner: iscan
                class: t node[?]
                index: k?t_a term[?]
-               filtr: term[?]
+               filtr: term[?] AND term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*), sum(t.id) from k?u u, k?t t where ((t.a=u.a*? and u.d< ?:? ) or (t.a=u.b*? and u.d>= ?:? )) and u.d is not null  and ((t.a=u.a*?) or (t.a=u.b*?))
+select count(*), sum(t.id) from k?u u, k?t t where ((t.a=u.a*? and u.d< ?:? ) or (t.a=u.b*? and u.d>= ?:? )) and u.d is not null  and ((t.a=u.a*?) or (t.a=u.b*?)) and t.a=u.a*? and u.d< ?:?  or t.a=u.b*? and u.d>= ?:? 
 ===================================================
 count(*)    sum(t.id)    
 60     605000     
@@ -474,7 +474,7 @@ count(*)    sum(x.id)
 
 Query plan:
 nl-join (semi join)
-    edge:  term[?]
+    edge:  term[?] AND term[?] AND term[?] AND term[?]
     outer: sscan
                class: x node[?]
                sargs: term[?]
@@ -485,7 +485,7 @@ nl-join (semi join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*), sum(x.id) from k?x x semi join k?y y on x.a= ?:?  and x.d in multiset{?, ?, ?} or nvl(x.id, -?)=? and ((x.a= ?:?  and x.d in multiset{?, ?, ?} and (x.id<y.b or y.c is not null )) or (nvl(x.id, -?)=? and (y.id>x.b or x.c is not null ) and y.a between  ?:?  and  ?:? ))
+select count(*), sum(x.id) from k?x x semi join k?y y on (x.id<y.b or y.c is not null ) or nvl(x.id, -?)=? and y.a between  ?:?  and  ?:?  and (((x.d= ?:? ) or (x.d= ?:? ) or (x.d= ?:? )) or (y.a>= ?:?  and y.a<= ?:? )) and ((x.a= ?:? ) or (y.a>= ?:?  and y.a<= ?:? )) and x.a= ?:?  and x.d in multiset{?, ?, ?} or nvl(x.id, -?)=? and ((x.a= ?:?  and x.d in multiset{?, ?, ?} and (x.id<y.b or y.c is not null )) or (nvl(x.id, -?)=? and (y.id>x.b or x.c is not null ) and y.a between  ?:?  and  ?:? ))
 ===================================================
 count(*)    sum(x.id)    count(y.id)    
 3188     4784628     192     
@@ -500,13 +500,197 @@ hash-join (left outer join)
                class: y node[?]
                sargs: term[?]
                cost:  ? card ?
-    during:term[?]
+    during:term[?] AND term[?] AND term[?] AND term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select count(*), sum(x.id), count(y.id) from k?x x left outer join k?y y on y.b+?=? and y.c is not null  or nvl(y.b, -?)=? and y.c like  ?:?  and (((x.id= ?:?  or y.a=x.d) and y.b+?=? and y.c is not null ) or (x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:? )) and x.b=y.b
+select count(*), sum(x.id), count(y.id) from k?x x left outer join k?y y on y.c is not null  or x.d= ?:?  and y.c like  ?:?  and y.b+?=? or x.d= ?:?  and nvl(y.b, -?)=? and (x.id= ?:?  or y.a=x.d) or x.d= ?:?  and y.b+?=? and y.c is not null  or x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:?  and y.b+?=? and y.c is not null  or nvl(y.b, -?)=? and y.c like  ?:?  and (((x.id= ?:?  or y.a=x.d) and y.b+?=? and y.c is not null ) or (x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:? )) and x.b=y.b
 ===================================================
 count(*)    sum(x.id)    
 18     26256     
+
+===================================================
+0
+===================================================
+    
+Case 14-17 tables     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+800
+===================================================
+60
+===================================================
+0
+===================================================
+    
+Case 14: a NOT EXISTS whose factor implies a condition on the outer table alone stays a nested subquery, and the index on y.a checks the outer values with its keys     
+
+===================================================
+count(*)    sum(x.id)    
+2499     3753619     
+
+Query plan:
+iscan
+    class: y node[?]
+    index: k?y_a term[?]
+    filtr: term[?]
+    sargs: term[?] AND term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from k?y y where ((x.c in set{'V?', 'V?'} and y.a= ?:? ) or (x.d between  ?:?  and  ?:?  and y.c like  ?:?  and y.a> ?:? )) and y.a= ?:?  or y.c like  ?:?  and y.a> ?:?  and (((x.c= ?:? ) or (x.c= ?:? )) or (x.d>= ?:?  and x.d<= ?:? )) and x.c in set{'V?', 'V?'} and y.a= ?:?  or x.d between  ?:?  and  ?:?  and y.a> ?:?  and ((y.a= ?:?  or y.a> ?:? )) and inst_num()<= ?:? )
+Query plan:
+sscan
+    class: x node[?]
+    sargs: term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(x.id) from k?x x where  not  exists (select ? from k?y y where ((x.c in set{'V?', 'V?'} and y.a= ?:? ) or (x.d between  ?:?  and  ?:?  and y.c like  ?:?  and y.a> ?:? )) and y.a= ?:?  or y.c like  ?:?  and y.a> ?:?  and (((x.c= ?:? ) or (x.c= ?:? )) or (x.d>= ?:?  and x.d<= ?:? )) and x.c in set{'V?', 'V?'} and y.a= ?:?  or x.d between  ?:?  and  ?:?  and y.a> ?:?  and ((y.a= ?:?  or y.a> ?:? )) and inst_num()<= ?:? ) and (x.d> ?:? )
+===================================================
+count(*)    sum(x.id)    
+2499     3753619     
+
+===================================================
+    
+Case 15: the inner of a semi join checks with its index keys the part of the factor over the indexed column and the outer table     
+
+===================================================
+count(*)    sum(x.id)    
+586     880978     
+
+Query plan:
+idx-join (semi join)
+    outer: sscan
+               class: x node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: k?y_a term[?]
+               filtr: term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(x.id) from k?x x semi join k?y y on x.c like  ?:?  and (x.d not in multiset{?, ?, ?} or (x.id in multiset{?, ?} or y.a<>?)) or nvl(y.a, -?)=? and x.d+?=? or y.a= ?:?  and x.c like  ?:?  and (x.c is null  or y.id<>?) or nvl(y.a, -?)=? or y.a= ?:?  and y.a=y.b and (((x.c like  ?:?  and (x.d not in multiset{?, ?, ?} or (x.id in multiset{?, ?} or y.a<>?)) and (x.c is null  or y.id<>?)) or (nvl(y.a, -?)=? and x.d+?=?)) or (y.a= ?:?  and y.a=y.b)) and x.a=y.a
+===================================================
+count(*)    sum(x.id)    
+586     880978     
+
+===================================================
+    
+Case 16: a conjunct with a subquery over one table joins the restriction the factor implies on that table     
+
+===================================================
+count(*)    sum(x.id)    sum(y.id)    
+324     466080     128304     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: z node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct z.a from k?z z where (z.d< ?:? ))
+Query plan:
+iscan
+    class: z node[?]
+    index: k?z_ab term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select max(z.b) from k?z z where z.a=y.a)
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: z node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct z.a from k?z z where (z.d< ?:? ))
+Query plan:
+iscan
+    class: z node[?]
+    index: k?z_ab term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select max(z.b) from k?z z where z.a=y.a)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: x node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: y node[?]
+               sargs: term[?]
+               subqs: ?
+               cost:  ? card ?
+    sargs: term[?] AND term[?] AND term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(x.id), sum(y.id) from k?x x, k?y y where x.a=y.b and ((y.a in (select distinct z.a from k?z z where (z.d< ?:? )) and x.d<>y.a and (select max(z.b) from k?z z where z.a=y.a)<?) or (y.c between  ?:?  ge_lt  ?:?  and x.d in multiset{?, ?, ?})) and y.a in (select distinct z.a from k?z z where (z.d< ?:? )) and (select max(z.b) from k?z z where z.a=y.a)<? or y.c between  ?:?  ge_lt  ?:?  and x.d<>y.a or y.c between  ?:?  ge_lt  ?:?  and x.d in multiset{?, ?, ?} and (x.d<>y.a or ((x.d= ?:? ) or (x.d= ?:? ) or (x.d= ?:? )))
+===================================================
+count(*)    sum(x.id)    sum(y.id)    
+324     466080     128304     
+
+===================================================
+    
+Case 17: a factor with an OR inside a disjunct is evaluated in disjunctive normal form, with NULLs as written     
+
+===================================================
+count(*)    sum(x.id)    
+173     260005     
+
+===================================================
+count(*)    sum(x.id)    
+173     260005     
+
+===================================================
+count(*)    sum(x.id)    
+2680     4020592     
+
+===================================================
+count(*)    sum(x.id)    
+147     220903     
+
+===================================================
+    
+Case 18: the key filter derived over an indexed column and an outer table keeps every alternative of the factor: NOT IN and IN agree with the CASE form     
+
+===================================================
+count(*)    sum(x.id)    
+1676     2518262     
+
+===================================================
+count(*)    sum(x.id)    
+1676     2518262     
+
+===================================================
+count(*)    sum(x.id)    
+1324     1983238     
+
+===================================================
+count(*)    sum(x.id)    
+1324     1983238     
 
 ===================================================
 0
