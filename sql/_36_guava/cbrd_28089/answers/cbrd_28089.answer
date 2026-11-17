@@ -11,6 +11,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 50
 ===================================================
 50
@@ -26,6 +30,10 @@
 100
 ===================================================
 10
+===================================================
+100
+===================================================
+10000
 ===================================================
 0
 ===================================================
@@ -322,5 +330,66 @@ nl-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(a, b, d) USE_IDX(b) */ count(*) from table_a a, table_b b, table_d d where a.comp_cd=b.comp_cd and a.empno=b.empno and a.empno=d.empno
+===================================================
+count(*)    
+100     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: h node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, h) USE_IDX(h) */ count(*) from table_a a, table_h h where a.empno=h.empno
+===================================================
+count(*)    
+40     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: f node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, f) USE_IDX(f) USE_HASH(a) */ count(*) from table_a a, table_b b, table_f f where a.comp_cd=b.comp_cd and a.empno=b.empno and a.empno=f.empno
+===================================================
+count(*)    
+20     
+
+Query plan:
+idx-join (inner join)
+    outer: hash-join (inner join)
+               edge:  term[?] AND term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: f node[?]
+               index: pk_table_f term[?] AND term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b, a, f) USE_IDX(f) USE_HASH(a) */ count(*) from table_a a, table_b b, table_f f where a.comp_cd=b.comp_cd and a.empno=b.empno and a.comp_cd=f.comp_cd and a.empno=f.empno
 ===================================================
 0

@@ -28,16 +28,27 @@
  *   Case 6: USE_IDX(d) on table_d that has no index, and USE_IDX(e) on
  *           table_e whose only index is on a column no term of the query
  *           reads: no idx-join is possible, the hint is ignored and the
- *           LEADING order is kept with a nl-join; USE_IDX(b) on a table with
+ *           LEADING order is kept with a nl-join. USE_IDX(b) on a table with
  *           an index is applied as before
+ *   Case 7: USE_IDX(h) on table_h that has no index while the join has an
+ *           equi-join term: the hint is ignored for that join and every join
+ *           method is left to the cost, which picks a hash join as without
+ *           the hint (the nl-join alone was kept before the review fix)
+ *   Case 8: USE_IDX(f) on table_f whose primary key starts with a column the
+ *           join does not give (comp_cd, empno joined on empno only): no
+ *           idx-join can be built, the hint is ignored and LEADING and
+ *           USE_HASH(a) are kept. With comp_cd given too, USE_IDX(f) makes an
+ *           idx-join as before
  */
-drop table if exists table_a, table_b, table_c, table_d, table_e;
+drop table if exists table_a, table_b, table_c, table_d, table_e, table_f, table_h;
 
 create table table_a (comp_cd varchar(10) not null, empno varchar(30) not null, constraint pk_table_a primary key (comp_cd, empno));
 create table table_b (comp_cd varchar(10) not null, empno varchar(50) not null, constraint pk_table_b primary key (comp_cd, empno));
 create table table_c (comp_cd varchar(10) not null, wrk_dt datetime not null, constraint pk_table_c primary key (comp_cd, wrk_dt));
 create table table_d (comp_cd varchar(10) not null, empno varchar(30) not null);
 create table table_e (comp_cd varchar(10) not null, wrk_dt datetime not null, index idx_table_e_wrk_dt (wrk_dt));
+create table table_f (comp_cd varchar(10) not null, empno varchar(30) not null, constraint pk_table_f primary key (comp_cd, empno));
+create table table_h (empno varchar(30) not null, pad varchar(100));
 
 insert into table_a select 'SEJO', 'E' || rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b limit 50;
 insert into table_a select 'OTHR', 'E' || rownum from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b limit 50;
@@ -47,8 +58,10 @@ insert into table_c select 'SEJO', datetime'2026-01-01 00:00:00' + rownum from t
 insert into table_c select 'OTHR', datetime'2026-01-01 00:00:00' + rownum from table({0,1,2,3,4,5,6,7,8,9}) a limit 5;
 insert into table_d select * from table_a;
 insert into table_e select * from table_c;
+insert into table_f select * from table_a;
+insert into table_h select 'E' || rownum, 'pad' from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c, table({0,1,2,3,4,5,6,7,8,9}) d limit 10000;
 
-update statistics on table_a, table_b, table_c, table_d, table_e with fullscan;
+update statistics on table_a, table_b, table_c, table_d, table_e, table_f, table_h with fullscan;
 
 -- Case 1: the reported query
 select /*+ recompile leading(b,a,c) use_hash(c) */ count(*) from table_a a, table_b b, table_c c where a.comp_cd = 'SEJO' and a.comp_cd = b.comp_cd and a.empno = b.empno and a.comp_cd = c.comp_cd;
@@ -82,4 +95,12 @@ select /*+ recompile leading(a,b,e) use_idx(e) */ count(*) from table_a a, table
 
 select /*+ recompile leading(a,b,d) use_idx(b) */ count(*) from table_a a, table_b b, table_d d where a.comp_cd = b.comp_cd and a.empno = b.empno and a.empno = d.empno;
 
-drop table table_a, table_b, table_c, table_d, table_e;
+-- Case 7: USE_IDX on an inner without an index, the join has an equi-join term
+select /*+ recompile leading(a,h) use_idx(h) */ count(*) from table_a a, table_h h where a.empno = h.empno;
+
+-- Case 8: USE_IDX on an inner whose index starts with a column the join does not give
+select /*+ recompile leading(b,a,f) use_idx(f) use_hash(a) */ count(*) from table_a a, table_b b, table_f f where a.comp_cd = b.comp_cd and a.empno = b.empno and a.empno = f.empno;
+
+select /*+ recompile leading(b,a,f) use_idx(f) use_hash(a) */ count(*) from table_a a, table_b b, table_f f where a.comp_cd = b.comp_cd and a.empno = b.empno and a.comp_cd = f.comp_cd and a.empno = f.empno;
+
+drop table table_a, table_b, table_c, table_d, table_e, table_f, table_h;
