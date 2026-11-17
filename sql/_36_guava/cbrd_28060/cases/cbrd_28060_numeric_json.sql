@@ -4,8 +4,10 @@
  *  A hash join hashes a NUMERIC key by its value. The change makes NUMERIC values of different
  *  declared scales that compare equal, such as 1.5 in NUMERIC(38,1) and in NUMERIC(38,20), get one
  *  hash. Each hash join is followed by its nested loop join twin, and the two results must match
- *  row by row. SHOW TRACE shows HASHJOIN. The last cases check that JSON keys, which the change
- *  does not touch, still join and group as the twins do.
+ *  row by row. SHOW TRACE shows HASHJOIN. A NUMERIC without a precision keeps the scale of each
+ *  value, up to 252 decimal places, and the same value written with more decimal places than 40
+ *  must get one hash too. The last cases check that JSON keys, which the change does not touch,
+ *  still join and group as the twins do.
  *
  *  Coverage:
  *    Case 1:  NUMERIC - hash join of tn_zero and tn_one returns the pairs of the nested loop join
@@ -63,8 +65,10 @@
  *    Case 53:  NUMERIC - hash join of tn_twenty and tn_thirtyseven returns the pairs of the nested loop join
  *    Case 54:  NUMERIC - hash join of tn_twenty and tn_thirtyeight returns the pairs of the nested loop join
  *    Case 55:  NUMERIC - hash join of tn_thirtyseven and tn_thirtyeight returns the pairs of the nested loop join
- *    Case 56:  JSON - hash join returns the pairs of the nested loop join
- *    Case 57:  JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY
+ *    Case 56:  float NUMERIC - hash join of tf_x and tf_y returns the pairs of the nested loop join
+ *    Case 57:  float NUMERIC - hash GROUP BY on tf_xy returns the groups of the sort GROUP BY
+ *    Case 58:  JSON - hash join returns the pairs of the nested loop join
+ *    Case 59:  JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY
  */
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace
@@ -437,6 +441,52 @@ show trace;
 set trace off;
 select /*+ no_use_hash use_nl */ x.ca, y.ca from tn_thirtyseven x, tn_thirtyeight y where x.cb = y.cb order by 1, 2;
 
+-- tf_x and tf_y hold NUMERIC values without a precision, which keep the decimal places of each value.
+-- tf_y holds the values of tf_x with more decimal places. The hash removes the trailing zeros
+-- of a value 40 digits at most, and the decimal places it leaves must not depend on that limit
+DROP TABLE IF EXISTS tf_x;
+CREATE TABLE tf_x (ca INT, cb NUMERIC);
+INSERT INTO tf_x VALUES
+-- 1, 1E-40 with 40 decimal places
+(1, 0.0000000000000000000000000000000000000001),
+-- 2, 1E-41 with 41 decimal places
+(2, 0.00000000000000000000000000000000000000001),
+-- 3, 1E-60 with 60 decimal places
+(3, 0.000000000000000000000000000000000000000000000000000000000001),
+-- 4, 0.5 with 1 decimal place
+(4, 0.5);
+DROP TABLE IF EXISTS tf_y;
+CREATE TABLE tf_y (ca INT, cb NUMERIC);
+INSERT INTO tf_y VALUES
+-- 11, 1E-40 with 41 decimal places
+(11, 0.00000000000000000000000000000000000000010),
+-- 12, 1E-40 with 79 decimal places, 39 zeros after the 1
+(12, 0.0000000000000000000000000000000000000001000000000000000000000000000000000000000),
+-- 21, 1E-41 with 42 decimal places
+(21, 0.000000000000000000000000000000000000000010),
+-- 31, 1E-60 with 61 decimal places
+(31, 0.0000000000000000000000000000000000000000000000000000000000010),
+-- 32, 1E-60 with 99 decimal places, 39 zeros after the 1
+(32, 0.000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000),
+-- 41, 0.5 with 2 decimal places
+(41, 0.50);
+DROP TABLE IF EXISTS tf_xy;
+CREATE TABLE tf_xy AS SELECT * FROM tf_x UNION ALL SELECT * FROM tf_y;
+UPDATE STATISTICS ON tf_x, tf_y, tf_xy WITH FULLSCAN;
+
+evaluate 'Case 56: float NUMERIC - hash join of tf_x and tf_y returns the pairs of the nested loop join';
+set trace on;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from tf_x x, tf_y y where x.cb = y.cb order by 1, 2;
+show trace;
+set trace off;
+select /*+ no_use_hash use_nl */ x.ca, y.ca from tf_x x, tf_y y where x.cb = y.cb order by 1, 2;
+evaluate 'Case 57: float NUMERIC - hash GROUP BY on tf_xy returns the groups of the sort GROUP BY';
+set trace on;
+select min(ca), count(*) from tf_xy group by cb order by 1, 2;
+show trace;
+set trace off;
+select /*+ no_hash_aggregate */ min(ca), count(*) from tf_xy group by cb order by 1, 2;
+
 -- JSON keys, whose hash the change leaves as it was
 DROP TABLE IF EXISTS tc, tb, ta;
 CREATE TABLE ta (ca INT, cb JSON);
@@ -444,13 +494,13 @@ INSERT INTO ta VALUES (1, '{"a":1}'), (2, '{"a":1}'), (3, '[1,2]'), (4, '"x"'), 
 CREATE TABLE tb AS SELECT * FROM ta;
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
-evaluate 'Case 56: JSON - hash join returns the pairs of the nested loop join';
+evaluate 'Case 58: JSON - hash join returns the pairs of the nested loop join';
 set trace on;
 SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ ta.ca, tb.ca FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
 show trace;
 set trace off;
 SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
-evaluate 'Case 57: JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY';
+evaluate 'Case 59: JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY';
 set trace on;
 select min(ca), count(*) from ta group by cb order by 1, 2;
 show trace;
@@ -459,4 +509,4 @@ select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1
 
 -- cleanup
 set trace off;
-drop table if exists ta, tb, tc, tn_one, tn_ten, tn_two, tn_nine, tn_zero, tn_three, tn_twenty, tn_eighteen, tn_nineteen, tn_thirtyeight, tn_thirtyseven;
+drop table if exists ta, tb, tc, tf_x, tf_y, tf_xy, tn_one, tn_ten, tn_two, tn_nine, tn_zero, tn_three, tn_twenty, tn_eighteen, tn_nineteen, tn_thirtyeight, tn_thirtyseven;
