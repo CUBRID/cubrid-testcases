@@ -1,20 +1,23 @@
 /*
 Test Case: escalation_demotion/escalation_withdrawn_by_self_fk
 Priority: 1
-Reference case: CBRD-27238 (CUBRID/cubrid#8277)
+Reference case: CBRD-27238 (CUBRID/cubrid#8277), CBRD-27463 (CUBRID/cubrid#8198)
 Author: hgryoo
 
 Test Point:
-On a self-referencing table, an UPDATE that sets the foreign key column checks the parent row for every updated row
-and keeps an S lock on it to commit. These checks reach the class after it escalated, so the lowering is withdrawn and
-the class lock stays X to commit: another transaction's INSERT waits until the first transaction ends.
+On a self-referencing table, an UPDATE that sets the foreign key column checks the parent row for every updated row,
+and these checks reach the class after it escalated. Since CBRD-27463 the checks take no lock on the committed parent
+row, so they do not withdraw the lowering: the class lock is lowered back to IX at statement end, and another
+transaction's INSERT does not wait.
+CBRD-27238 wrote this case when each check kept an S lock on the parent row to commit: those locks withdrew the
+lowering, and the INSERT waited until the first transaction ended. The name keeps "withdrawn_by_self_fk", and no case
+in this directory now withdraws the lowering through a foreign key check.
 
 NUM_CLIENTS = 2
 C1: SET SYSTEM PARAMETERS 'lock_escalation=20';
 C1: UPDATE t27238_t SET v = v + 1, pid = 300 WHERE id <= 200;
-C2: INSERT INTO t27238_t VALUES (999999, 0, 300); -- blocks
+C2: INSERT INTO t27238_t VALUES (999999, 0, 300); -- does not wait
 C1: ROLLBACK;
-C2: (released)
 C2: COMMIT;
 */
 
@@ -42,8 +45,9 @@ C1: SET SYSTEM PARAMETERS 'lock_escalation=20';
 MC: wait until C1 ready;
 C1: UPDATE t27238_t SET v = v + 1, pid = 300 WHERE id <= 200;
 MC: wait until C1 ready;
+/* CBRD-27463: the foreign key checks of C1 took no lock on parent row 300, so the lowering went through and C2 does not wait */
 C2: INSERT INTO t27238_t VALUES (999999, 0, 300);
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C1: ROLLBACK;
 MC: wait until C1 ready;
 MC: wait until C2 ready;
