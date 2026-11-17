@@ -12,16 +12,17 @@
  *
  *  Coverage:
  *    Case 1:  ROUND past the range of SMALLINT, INTEGER and BIGINT columns and constants is an error
- *    Case 2:  ROUND that stays in the range is exact: places -9 and -18, a BIGINT past 2^53, place -19
- *    Case 3:  a place far below the digits gives 0 and one far above keeps the value
+ *    Case 2:  ROUND that stays in the range is exact: places -9 and -18, a BIGINT past 2^53, place -19, common values
+ *    Case 3:  a place far below the digits gives 0 and one far above keeps the value, an infinite place as well
  *    Case 4:  results that the fix does not change
  *    Case 5:  WIDTH_BUCKET with a NaN operand, bound or bucket count, and with other values
  *    Case 6:  return_null_on_function_errors=yes gives NULL for the errors of Case 1 and Case 5
  *    Case 7:  a NaN cast, inserted or updated into a NUMERIC column raises Data overflow
  *    Case 8:  a NaN in a predicate, ORDER BY, GROUP BY, a join, an index build and scan, a unique index, against a
- *             NUMERIC column, and in a scan that filters 2000 rows a page at a time
+ *             NUMERIC column, in a scan that filters 2000 rows a page at a time (a bound NaN constant too), and in
+ *             the cycle check of a hierarchical query
  */
-drop table if exists t_r, t_w, t_n, t_q, t_u, t_qn, t_qb;
+drop table if exists t_r, t_w, t_n, t_q, t_u, t_qn, t_qb, t_qh, t_qhf, t_qhm;
 create table t_r (k varchar(8), s smallint, i int, b bigint);
 insert into t_r values ('max', 32767, 2147483647, 9223372036854775807);
 insert into t_r values ('min', -32768, -2147483648, -9223372036854775808);
@@ -42,21 +43,29 @@ select round (i, cast (-1 as double)) from t_r where k = 'max';
 select round (b, -1) from t_r where k = 'max';
 select round (b, -1) from t_r where k = 'min';
 select round (b, -19) from t_r where k = 'max';
+-- a fractional place keeps the double rounding, whose result is checked against the range as well
+select round (b, 0.5e0) from t_r where k = 'max';
+select round (i, -9.5e0) from t_r where k = 'max';
 select round (cast (32767 as smallint), -1);
 select round (9223372036854775807, -1);
 
-evaluate 'Case 2: ROUND inside the range is exact; result = 2000000000, -2000000000, 9000000000000000000, -9000000000000000000, the values unchanged, 4999999999999999999, 5000000000000000000, 0';
+evaluate 'Case 2: ROUND inside the range is exact; result = 2000000000, -2000000000, 9000000000000000000, -9000000000000000000, the values unchanged, 4999999999999999999, 5000000000000000000, 0, then 100000, 200000, 900000';
 select k, round (i, -9) from t_r where k in ('max', 'min') order by k;
 select k, round (b, -18) from t_r where k in ('max', 'min') order by k;
 select round (b), round (b, 2) from t_r where k = 'max';
 select round (b), round (b, 0), round (b, 2), round (b, -1) from t_r where k = 'p53';
 select round (b), round (b, -18), round (b, -19) from t_r where k = 'half';
 select round (2147483647, -9);
+-- common values, which a place whose power of ten is not exact in binary moved by one
+select round (cast (50000 as int), -5), round (cast (150000 as int), -5), round (cast (949999 as int), -5);
 
-evaluate 'Case 3: a place far below the digits gives 0 and one far above keeps the value; result = 0, 0, 0, then 1234 three times, then 1234, 0';
+evaluate 'Case 3: a place far below the digits gives 0 and one far above keeps the value; result = 0, 0, 0, then 1234 three times, then 1234, 0, then for the infinite places 0, 0, 0, then 1234 three times';
 select round (s, -400), round (i, -400), round (b, -400) from t_r where k = 'max';
 select round (s, 400), round (i, 400), round (b, 400) from t_r where k = 'mid';
 select round (i, 9223372036854775807), round (i, -9223372036854775807) from t_r where k = 'mid';
+-- an infinite place answers as the farthest finite place
+select round (s, cast ('-inf' as double)), round (i, cast ('-inf' as double)), round (b, cast ('-inf' as double)) from t_r where k = 'max';
+select round (s, cast ('inf' as double)), round (i, cast ('inf' as double)), round (b, cast ('inf' as double)) from t_r where k = 'mid';
 
 evaluate 'Case 4: results that the fix does not change';
 -- half away from zero, and a place that keeps the value
@@ -79,6 +88,7 @@ select width_bucket (5, 0, 10, d) from t_w where k = 'nan';
 select width_bucket (cast (5 as bigint), d, 10, 5) from t_w where k = 'nan';
 select width_bucket (cast (5.5 as numeric (4, 1)), 0, d, 5) from t_w where k = 'nan';
 select width_bucket (cast ('nan' as double), 0, 10, 5);
+select width_bucket (cast ('nan' as float), 0, 10, 5);
 select width_bucket (d, 0, 10, 5), width_bucket (cast ('inf' as double), 0, 10, 5), width_bucket (cast ('-inf' as double), 0, 10, 5), width_bucket (cast (5 as bigint), 0, 10, 5) from t_w where k = 'five';
 
 evaluate 'Case 6: with return_null_on_function_errors=yes the errors of Case 1 and Case 5 give NULL';
@@ -116,6 +126,7 @@ select k from t_q where d > 1.0e0 order by 1;
 select k from t_q where d < cast ('nan' as double) order by 1;
 select k from t_q where d = d order by 1;
 select k from t_q where d between 2 and cast ('nan' as double) order by 1;
+select k from t_q where d <=> cast ('nan' as double) order by 1;
 select k, if (d = 1, 'T', 'F'), if (d > 1, 'T', 'F'), if (d = cast ('nan' as double), 'T', 'F') from t_q order by 1;
 -- the NaNs sort last ascending and first descending, and group and count as one value
 select k from t_q order by d, k;
@@ -157,5 +168,34 @@ select count (*) from t_qb where d > 100.0e0;
 select count (*) from t_qb where d = cast ('nan' as double);
 select count (*) from t_qb where d = e;
 select count (*) from t_qb where d < e;
+-- a bound constant reaches the page batch too, a NaN one as well; result = 400, 1600, 400, 0, 1920
+set @k_nan = cast ('nan' as double);
+set @k_100 = 100.0e0;
+prepare s_qb_eq from 'select count (*) from t_qb where d = ?';
+prepare s_qb_lt from 'select count (*) from t_qb where d < ?';
+prepare s_qb_ge from 'select count (*) from t_qb where d >= ?';
+prepare s_qb_gt from 'select count (*) from t_qb where d > ?';
+execute s_qb_eq using @k_nan;
+execute s_qb_lt using @k_nan;
+execute s_qb_ge using @k_nan;
+execute s_qb_gt using @k_nan;
+execute s_qb_gt using @k_100;
+deallocate prepare s_qb_eq;
+deallocate prepare s_qb_lt;
+deallocate prepare s_qb_ge;
+deallocate prepare s_qb_gt;
+-- a hierarchical query finds a child equal to a node of its path a cycle, a NaN of either sign as -0 and +0; result = 2, 2, 2, 2
+create table t_qh (d double);
+create table t_qhf (f float);
+create table t_qhm (m monetary);
+insert into t_qh values (cast ('nan' as double)), (-cast ('nan' as double));
+insert into t_qhf values (cast ('nan' as double)), (-cast ('nan' as double));
+insert into t_qhm values (cast (cast ('nan' as double) as monetary)), (-cast (cast ('nan' as double) as monetary));
+select count (*) from t_qh start with d = cast ('nan' as double) connect by nocycle prior d = d;
+select count (*) from t_qhf start with f = cast ('nan' as double) connect by nocycle prior f = f;
+select count (*) from t_qhm start with m = cast ('nan' as double) connect by nocycle prior m = m;
+delete from t_qh;
+insert into t_qh values (0.0e0), (-0.0e0);
+select count (*) from t_qh start with d = 0 connect by nocycle prior d = d;
 
-drop table t_r, t_w, t_n, t_q, t_u, t_qn, t_qb;
+drop table t_r, t_w, t_n, t_q, t_u, t_qn, t_qb, t_qh, t_qhf, t_qhm;
