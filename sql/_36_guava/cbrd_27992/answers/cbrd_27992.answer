@@ -1,0 +1,408 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+20000
+===================================================
+100
+===================================================
+100
+===================================================
+0
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(a, b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_USE_HASH(a, b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(c) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: a node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL(b) */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    count(b.id)    count(c.id)    
+20000     396     20000     
+
+Query plan:
+temp
+    order: UNORDERED
+    subplan: m-join (right outer join)
+                 edge:  term[?]
+                 outer: temp
+                            order: k[?]
+                            subplan: m-join (inner join)
+                                         edge:  term[?]
+                                         outer: temp
+                                                    order: id[?]
+                                                    subplan: sscan
+                                                                 class: a node[?]
+                                                                 sargs: term[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: temp
+                                                    order: id[?]
+                                                    subplan: sscan
+                                                                 class: b node[?]
+                                                                 cost:  ? card ?
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: k[?]
+                            subplan: sscan
+                                         class: c node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ count(*), count(b.id), count(c.id) from t_big? a inner join t_big? b on (a.id< ?:? ) and a.id=b.id right outer join t_big? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b, c) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: sscan
+                          class: a node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: b node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: c node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(a, b) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+400     19300     19300     400     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH(c) */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    count(d.id)    
+1620     77200     77200     1600     1620     
+
+Query plan:
+hash-join (right outer join)
+    edge:  term[?]
+    outer: hash-join (right outer join)
+               edge:  term[?]
+               outer: hash-join (inner join)
+                          edge:  term[?]
+                          outer: sscan
+                                     class: a node[?]
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: b node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: c node[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: d node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id), count(c.id), count(d.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on c.k=b.k right outer join t_small? d on d.k=c.k
+===================================================
+count(*)    sum(a.id)    sum(b.id)    count(c.id)    
+3805     174800     174800     3805     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: c node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: hash-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small? a inner join t_small? b on a.id=b.id right outer join t_small? c on (c.k>b.k)
+===================================================
+0

@@ -13,6 +13,7 @@ select id,mgrid,name from tree
 ) t
 where id <>1
 start with id =1
-connect by prior id=mgrid;
+connect by prior id=mgrid
+order by id;
 
 drop table tree;

@@ -162,7 +162,8 @@ update statistics on posts;
 
 set system parameters 'multi_range_optimization_limit=0';
 
-select /*+ recompile */ posts.title, posts.category, posts.entry_date from	posts, users where	users.name='Ben' and posts.uid=users.id and	posts.category in ('friends','books','games','pets') order by entry_date desc limit 5;
+-- ORDERED pins the covering users(name,id) driver: the case checks the covering-index + MRO shape, not the join order the cost model happens to pick (PR#7622)
+select /*+ recompile ordered */ posts.title, posts.category, posts.entry_date from	users, posts where	users.name='Ben' and posts.uid=users.id and	posts.category in ('friends','books','games','pets') order by entry_date desc limit 5;
 
 set system parameters 'multi_range_optimization_limit=100';
 

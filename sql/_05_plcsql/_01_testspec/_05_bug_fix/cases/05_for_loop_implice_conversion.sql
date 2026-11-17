@@ -73,6 +73,7 @@ BEGIN
 END;
 */
 
+; -- TODO: Remove this once CTP properly handles multi-line comments (currently causes parse error without this workaround).
 
 call poo();
 call loop_with_varchar();

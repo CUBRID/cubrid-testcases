@@ -1,0 +1,234 @@
+===================================================
+    
+[TEST 1] SYS_GUID defaults for parameters, locals, constants; UUID_FORMAT(UUID(7)) in cursor and SELECT INTO     
+
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+(n=2) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=2) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=1) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+===================================================
+    
+null     
+
+
+(n=1) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+ - (m=1) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+ - (m=0) sa_hex=1 sc_hex=1 sd_v=7 scur_v=7
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=0
+===================================================
+    
+null     
+
+
+(n=0) a_len=32 b_len=32 c_len=32 e_hex=1 d_fmt=1 cur_v=7 a_eq_b=1
+===================================================
+    
+[TEST 2] catalog exposes SYS_GUID() default expression of parameters     
+
+
+===================================================
+sp_of.sp_name    arg_name    mode    default_value    
+uuid_sp     n     1     null     
+uuid_sp     a     1     SYS_GUID()     
+uuid_sp     b     1     SYS_GUID()     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 3] stored function returning a formatted UUID     
+
+
+===================================================
+0
+
+===================================================
+sf_fmt    
+1     
+
+
+===================================================
+sf_same    
+0     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 4] DML with UUID defaults inside a procedure     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+null     
+
+
+===================================================
+total    id_uniq    g_uniq    id_is_v7    g_is_hex    
+3     3     3     3     3     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+[TEST 5] unsupported usages -> error     
+
+
+===================================================
+Error:-494
+Semantic: before ' ) as begin return; end; '
+Cannot coerce  uuid(7)  to type varchar. create or replace procedure [dba.uuid_sp_e1](a  varchar defa...
+
+===================================================
+Error:-494
+Semantic: before ' )) as begin return; end; '
+Invalid DEFAULT clause. 'uuid ' cannot be used in a nested expression. create or replace procedure [dba.uuid_sp_e2](a  varchar defa...
+
+===================================================
+Error:-1360
+Stored procedure compile error: unsupported return type (code 23) of the built-in function UUID
+
+===================================================
+wrongly_created    
+0     
+
+
+===================================================
+    
+[TEST 6] pass UUID as a stringified / UUID_FORMAT-wrapped procedure argument     
+
+
+===================================================
+0
+
+===================================================
+    
+[TEST 6.1] UUID_FORMAT-wrapped arguments (36-char canonical)     
+
+
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=7 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=36 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+[TEST 6.2] stringified arguments (CAST AS STRING -> 32 hex)     
+
+
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=7 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+null     
+
+
+in_len=32 reformat_ver=4 fmt_ok=1 ver_match=1
+===================================================
+    
+[TEST 6.3] raw BIT UUID argument -> error (PL/CSQL does not accept BIT arguments)     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: Unsupported argument type of stored procedure: bit
+
+===================================================
+Error:-889
+Stored procedure execute error: Unsupported argument type of stored procedure: bit
+
+===================================================
+0
+
+===================================================
+    
+[TEST 7] stored function takes a stringified/formatted UUID argument and re-formats it     
+
+
+===================================================
+0
+
+===================================================
+v7_from_stringified    v4_from_formatted    v4_from_sysguid    
+1     1     1     
+
+
+===================================================
+    
+[TEST 7.1] UUID_FORMAT is idempotent through the function round-trip     
+
+
+===================================================
+from_hex    from_formatted    
+01234567-89AB-CDEF-0123-456789ABCDEF     01234567-89AB-CDEF-0123-456789ABCDEF     
+
+
+===================================================
+0
+

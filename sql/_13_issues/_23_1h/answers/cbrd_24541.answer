@@ -23,7 +23,7 @@ iscan
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select tb.b from tb tb where (tb.a=ta.a) and inst_num()<= ?:? )
+(select /*+ NO_UNNEST */ tb.b from tb tb where (tb.a=ta.a) and inst_num()<= ?:? )
 Query plan:
 sscan
     class: ta node[?]
@@ -31,7 +31,7 @@ sscan
     subqs: ?
     cost:  ? card ?
 Query stmt:
-select ta.a, ta.b from ta ta where  exists (select tb.b from tb tb where (tb.a=ta.a) and inst_num()<= ?:? )
+select ta.a, ta.b from ta ta where  exists (select /*+ NO_UNNEST */ tb.b from tb tb where (tb.a=ta.a) and inst_num()<= ?:? )
 ===================================================
 0
 ===================================================

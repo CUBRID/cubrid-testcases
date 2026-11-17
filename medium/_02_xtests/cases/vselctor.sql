@@ -13,7 +13,7 @@ insert into x values (11) to x0;
 insert into y values (22) to y0;
 insert into z values ('x', x0);
 insert into z values ('y', y0);
-select z.x{x}.a from z,x;	
+select z.x{x}.a from z,x order by 1;
 select z.x{y}.a from z,y order by 1;
 
 -- Following sql statement is commented temporarily due to CUBRIDSUS4098 issues

@@ -76,27 +76,51 @@ insert into foo values ('thIS iS a TEst');
 insert into bar values ('1');
 insert into bar values ('abc');
 insert into baz values (6);
-select a, position('abc' in a) from foo;
-select a, b, position(b in a) from foo, bar where b = 'abc';
-select a, c, substring(a from c) from foo, baz;
-select a, c, substring(a from c for c/2) from foo, baz;
-select a, octet_length(a) from foo;
-select a, bit_length(a) from foo;
-select a, char_length(a) from foo;
-select a, lower(a) from foo;
-select a, upper(a) from foo;
-select a, trim (a) from foo;
-select a, trim (leading from a) from foo;
-select a, trim (trailing from a) from foo;
-select a, trim (both from a) from foo;
-select a, trim (leading '1' from a) from foo;
-select a, trim (trailing '1' from a) from foo;
-select a, trim (both '1' from a) from foo;
-select a, trim (' ' from a) from foo;
-select a, b, trim(leading b from a) from foo, bar where b = '1';
-select a, b, trim(trailing b from a) from foo, bar where b = '1';
-select a, b, trim(both b from a) from foo, bar where b = '1';
-select a, b, a + b from foo, bar;
+select a, position('abc' in a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, b, position(b in a) from foo, bar where b = 'abc'
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, c, substring(a from c) from foo, baz
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, c, substring(a from c for c/2) from foo, baz
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, octet_length(a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, bit_length(a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, char_length(a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, lower(a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, upper(a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (leading from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (trailing from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (both from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (leading '1' from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (trailing '1' from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (both '1' from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, trim (' ' from a) from foo
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, b, trim(leading b from a) from foo, bar where b = '1'
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, b, trim(trailing b from a) from foo, bar where b = '1'
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, b, trim(both b from a) from foo, bar where b = '1'
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst');
+select a, b, a + b from foo, bar
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst'),
+         field(b, '1', 'abc');
 select a, b, substring(a from position(b in a) for char_length(b) + 2) 
-from foo, bar;
+from foo, bar
+order by field(a, '1111234324311111', '123abc134', '   this is a test   ', 'THIS IS A TEST', 'thIS iS a TEst'),
+         field(b, '1', 'abc');
 rollback;

@@ -168,16 +168,16 @@ id    name    address    telephone    id    course_id    score    course_id    c
 7010005     xuebaocai     ancient mansion of jia     10000000006     7010005     5     30.0     5     chemistry     
 
 Query plan:
-idx-join (inner join)
-    outer: nl-join (cross join)
+nl-join (cross join)
+    outer: idx-join (inner join)
                outer: iscan
                           class: t? node[?]
                           index: t?_idx term[?]
+                          sargs: term[?]
                           cost:  ? card ?
                inner: iscan
                           class: t? node[?]
                           index: t?_idx term[?]
-                          sargs: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: iscan
@@ -284,21 +284,22 @@ id    name    address    telephone    id    course_id    score    course_id    c
 Query plan:
 temp(order by)
     subplan: temp
-                 order: course_id[?]
+                 order: id[?]
                  subplan: m-join (inner join)
                               edge:  term[?]
                               outer: temp
-                                         order: course_id[?]
+                                         order: id[?]
                                          subplan: m-join (inner join)
                                                       edge:  term[?]
                                                       outer: temp
-                                                                 order: id[?]
+                                                                 order: course_id[?]
                                                                  subplan: sscan
                                                                               class: t? node[?]
+                                                                              sargs: term[?]
                                                                               cost:  ? card ?
                                                                  cost:  ? card ?
                                                       inner: temp
-                                                                 order: id[?]
+                                                                 order: course_id[?]
                                                                  subplan: sscan
                                                                               class: t? node[?]
                                                                               sargs: term[?]
@@ -307,10 +308,9 @@ temp(order by)
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               inner: temp
-                                         order: course_id[?]
+                                         order: id[?]
                                          subplan: sscan
                                                       class: t? node[?]
-                                                      sargs: term[?]
                                                       cost:  ? card ?
                                          cost:  ? card ?
                               cost:  ? card ?

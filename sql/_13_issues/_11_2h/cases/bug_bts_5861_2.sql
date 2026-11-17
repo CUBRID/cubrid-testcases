@@ -43,11 +43,11 @@ select /*+ recompile */ * from u force index (_u_id) where id < 100 and right(te
 select /*+ recompile */ * from t inner join u on t.fk = u.id where t.id < 2 using index _u_id(-);
 select /*+ recompile */ * from t inner join u ignore index (_u_id) on t.fk = u.id where t.id < 2;
 
-select /*+ recompile */ * from t inner join u on t.fk = u.id where right(text, 2) < 'zz' using index _u_id(+);
-select /*+ recompile */ * from t inner join u force index (_u_id) on t.fk = u.id where right(text, 2) < 'zz';
+select /*+ recompile */ * from t inner join u on t.fk = u.id where right(text, 2) < 'zz' using index _u_id(+) order by 1, 2, 3, 4, 5;
+select /*+ recompile */ * from t inner join u force index (_u_id) on t.fk = u.id where right(text, 2) < 'zz' order by 1, 2, 3, 4, 5;
 
-select /*+ recompile */ * from t inner join u on t.fk = u.id where right(text, 2) < 'zz' and u.id < 100 using index _t_val(+), _u_id;
-select /*+ recompile */ * from t force index (_t_val) inner join u use index (_u_id) on t.fk = u.id where right(text, 2) < 'zz' and u.id < 100;
+select /*+ recompile */ * from t inner join u on t.fk = u.id where right(text, 2) < 'zz' and u.id < 100 using index _t_val(+), _u_id order by 1, 2, 3, 4, 5;
+select /*+ recompile */ * from t force index (_t_val) inner join u use index (_u_id) on t.fk = u.id where right(text, 2) < 'zz' and u.id < 100 order by 1, 2, 3, 4, 5;
 
 --------------------------------
 -- SUBSELECT tests
@@ -60,7 +60,8 @@ from
 where 
 	t.id < 100 
 using index 
-	_t_val(+);
+	_t_val(+)
+order by 1, 2, 3, 4, 5;
 	
 select /*+ recompile */ * 
 from 
@@ -68,7 +69,8 @@ from
 	(select /*+ NO_MERGE */ * from u force index (_u_id) where right(text, 2) < 'zz') x 
 		on t.fk = x.id 
 where 
-	t.id < 100;
+	t.id < 100
+order by 1, 2, 3, 4, 5;
 
 drop table t;
 drop table u;

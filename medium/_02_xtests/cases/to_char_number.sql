@@ -65,111 +65,111 @@ insert into test_to_char_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
 insert into test_to_char_f (c1,c2,c3,c4,c5,c6,c7,c8,c9,c10) 
 	values ('99999','99999.','9.99999','.99999','00000','00000.','0.00000','.00000','9,9,9,9,9,','0,0,0,0,0,');
 			select cast(n1 as varchar)+'  '+c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+'  '+'
-		'+to_char(n1,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  '+c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+'
-		'+to_char(n1,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+'
-		'+to_char(n1,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+'
-		'+to_char(n1,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+'
-		'+to_char(n1,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+'
-		'+to_char(n1,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+'
-		'+to_char(n1,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'	'+c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+'
-		'+to_char(n1,c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+' ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
+		'+to_char(n1,c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	9-4,10-8,9-8,10-4
 			select cast(n1 as varchar)+'  '+c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee  '+'
-		'+to_char(n1,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  '+c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee  
-		'+to_char(n1,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'
-		'+to_char(n1,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee
-		'+to_char(n1,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee
-		'+to_char(n1,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n1,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n1 as varchar)+'  c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee
-		'+to_char(n1,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'  sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee
-		'+to_char(n1,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char; -- Current BUG	
+		'+to_char(n1,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; -- Current BUG
 			select cast(n1 as varchar)+'  sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee
-		'+to_char(n1,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n1,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n1 as varchar)+'	'+c9+'eeee '+c10+'eeee
-		'+to_char(n1,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char; -- Current BUG 
+		'+to_char(n1,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; -- Current BUG
 			select cast(n1 as varchar)+'	'+c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee
-		'+to_char(n1,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
+		'+to_char(n1,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	9-4,10-8,9-8,10-4
 			select cast(n2 as varchar)+'  '+c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+'  '+'
-		'+to_char(n2,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  '+c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+'
-		'+to_char(n2,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+'
-		'+to_char(n2,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+'
-		'+to_char(n2,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+'
-		'+to_char(n2,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+'
-		'+to_char(n2,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+'
-		'+to_char(n2,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  '+c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee  '+'
-		'+to_char(n2,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  '+c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee  
-		'+to_char(n2,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'
-		'+to_char(n2,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee
-		'+to_char(n2,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee
-		'+to_char(n2,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n2,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n2 as varchar)+'  c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee
-		'+to_char(n2,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'  sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee
-		'+to_char(n2,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char; 
+		'+to_char(n2,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n2 as varchar)+'  sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee
-		'+to_char(n2,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n2,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n2 as varchar)+'	'+c9+'eeee '+c10+'eeee
-		'+to_char(n2,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char; 
+		'+to_char(n2,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n2 as varchar)+'	'+c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee
-		'+to_char(n2,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
+		'+to_char(n2,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	9-4,10-8,9-8,10-4
 			select cast(n3 as varchar)+'  '+c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+'  '+'
-		'+to_char(n3,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,c1+' '+c2+' '+c3+' '+c4+' '+c5+' '+c6+' '+c7+' '+c8+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  '+c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+'
-		'+to_char(n3,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,c1+c4+' '+c5+c8+' '+c1+c8+' '+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+'
-		'+to_char(n3,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,'s'+c1+' s'+c2+' s'+c3+' s'+c4+' s'+c5+' s'+c6+' s'+c7+' s'+c8+' s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+'
-		'+to_char(n3,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'s'+c1+c4+' s'+c5+c8+' s'+c1+c8+' s'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+'
-		'+to_char(n3,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,'c'+c1+' c'+c2+' c'+c3+' c'+c4+' c'+c5+' c'+c6+' c'+c7+' c'+c8+' c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+'
-		'+to_char(n3,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'c'+c1+c4+' c'+c5+c8+' c'+c1+c8+' c'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+'
-		'+to_char(n3,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'sc'+c1+c4+' sc'+c5+c8+' sc'+c1+c8+' sc'+c5+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'	'+c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+'
-		'+to_char(n3,c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+' ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
+		'+to_char(n3,c9+c4+' '+c10+c8+' '+c9+c8+' '+c10+c4+' ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	9-4,10-8,9-8,10-4
 			select cast(n3 as varchar)+'  '+c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee  '+'
-		'+to_char(n3,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,c1+'eeee '+c2+'eeee '+c3+'eeee '+c4+'eeee '+c5+'eeee '+c6+'eeee '+c7+'eeee '+c8+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  '+c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee  
-		'+to_char(n3,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,c1+c4+'eeee '+c5+c8+'eeee '+c1+c8+'eeee '+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'
-		'+to_char(n3,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,'s'+c1+'eeee s'+c2+'eeee s'+c3+'eeee s'+c4+'eeee s'+c5+'eeee s'+c6+'eeee s'+c7+'eeee s'+c8+'eeee s') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee
-		'+to_char(n3,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'s'+c1+c4+'eeee s'+c5+c8+'eeee s'+c1+c8+'eeee s'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee
-		'+to_char(n3,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char; --	1,2,3,4,5,6,7,8
+		'+to_char(n3,'c'+c1+'eeee c'+c2+'eeee c'+c3+'eeee c'+c4+'eeee c'+c5+'eeee c'+c6+'eeee c'+c7+'eeee c'+c8+'eeee c') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1,2,3,4,5,6,7,8
 			select cast(n3 as varchar)+'  c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee
-		'+to_char(n3,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'c'+c1+c4+'eeee c'+c5+c8+'eeee c'+c1+c8+'eeee c'+c5+c4+'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'  sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee
-		'+to_char(n3,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char; 
+		'+to_char(n3,'sc'+c1+'eeee sc'+c2+'eeee sc'+c3+'eeee sc'+c4+'eeee sc'+c5+'eeee sc'+c6+'eeee sc'+c7+'eeee sc'+c8+'eeee sc') from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n3 as varchar)+'  sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee
-		'+to_char(n3,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char; --	1-4,5-8,1-8,5-4
+		'+to_char(n3,'sc'+c1+c4+'eeee sc'+c5+c8+'eeee sc'+c1+c8+'eeee sc'+c5+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	1-4,5-8,1-8,5-4
 			select cast(n3 as varchar)+'	'+c9+'eeee '+c10+'eeee
-		'+to_char(n3,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char; 
+		'+to_char(n3,c9+'eeee '+c10 +'eeee') from test_to_char_f,test_to_char order by char_length(c1), n1 desc;
 			select cast(n3 as varchar)+'	'+c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee
-		'+to_char(n3,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char; --	9-4,10-8,9-8,10-4
+		'+to_char(n3,c9+c4+'eeee '+c10+c8+'eeee '+c9+c8+'eeee '+c10+c4+'eeee ') from test_to_char_f,test_to_char order by char_length(c1), n1 desc; --	9-4,10-8,9-8,10-4
 			select to_char(1.234,' ') from tb;
 			select to_char(-1.234,' ') from tb;
 			select to_char(1.234,'.') from tb;

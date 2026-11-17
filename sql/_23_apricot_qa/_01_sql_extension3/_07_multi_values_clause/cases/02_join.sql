@@ -32,19 +32,19 @@ select t.id from (select (1) union select (2) union select (3.5)) as t(id) order
 
 select t1.id, t2.name from (values(1),(2),(3)) as t1(id),(values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) where t1.id=t2.id order by 1;
 select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id),(values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) where t1.id=t2.id order by 1;
-select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id),(values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) where t1.id=t2.id order by 1;
+select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id),(values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) where t1.id=t2.id order by 1, 2;
 
 select t1.id, t2.name from (values(1),(2),(3)) as t1(id) inner join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1; 
 select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) inner join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1; 
-select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) inner join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1; 
+select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) inner join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1, 2;
 
 select t1.id, t2.name from (values(1),(2),(3)) as t1(id) left outer join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1;
 select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) left outer join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1;
-select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) left outer join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1;
+select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) left outer join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1, 2;
 
 select t1.id, t2.name from (values(1),(2),(3)) as t1(id) right outer join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1;
 select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) right outer join (values(1,'name1'),(2,'name2'),(4,'name4')) as t2(id,name) on t1.id=t2.id order by 1;
-select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) right outer join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1;
+select t1.id, t2.name from (values(1),(2),(3),(1)) as t1(id) right outer join (values(1,'name1'),(2,'name2'),(4,'name4'),(1,'name5')) as t2(id,name) on t1.id=t2.id order by 1, 2;
 
 
 select t2.id,t1.name from [test] as t1,(values(1),(2),(3),(4)) as t2(id) where t1.id=t2.id order by 1;
