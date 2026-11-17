@@ -1,0 +1,377 @@
+===================================================
+0
+===================================================
+0
+===================================================
+40
+===================================================
+0
+===================================================
+20000
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+20001
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+20000
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+5000
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: SEMI JOIN over the long key, row 1 matches past the buffer end and row 2 in the leaf record; result = ignore index     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_inner_k) (key range: i.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id from [dba.t_outer] o semi join [dba.t_inner] i on i.v=case o.id when ? then ? else ? end and i.k=o.k order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      TABLE SCAN (i)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id from [dba.t_outer] o semi join [dba.t_inner] i on i.v=case o.id when ? then ? else ? end and i.k=o.k using index i.i_inner_k(-) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_inner), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 2: ANTI JOIN of Case 1; result = ignore index     
+
+===================================================
+id    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (anti join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_inner_k) (key range: i.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id from [dba.t_outer] o anti join [dba.t_inner] i on i.v=case o.id when ? then ? else ? end and i.k=o.k order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    
+
+===================================================
+    
+Case 3: SEMI JOIN, both outer rows match in the leaf record of the long key; result = ignore index     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 4: SEMI JOIN, row 2 searches key 20, which has no overflow pages; result = ignore index     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 5: ANTI JOIN of Case 4; result = ignore index     
+
+===================================================
+id    
+
+===================================================
+id    
+
+===================================================
+    
+Case 6: SEMI JOIN of Case 1 over a descending index; result = ignore index     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_inner_desc_k) (key range: i.k=o.k)
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id from [dba.t_outer] o semi join [dba.t_inner_desc] i on i.v=case o.id when ? then ? else ? end and i.k=o.k order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner_desc.i_inner_desc_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 7: SEMI JOIN of Case 1 with an IN list as the key range; result = ignore index     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    NESTED LOOPS (semi join)
+      TABLE SCAN (o)
+      INDEX SCAN (i.i_inner_k) (key range: ((i.k=o.k) or (i.k= ?:? )))
+
+  rewritten query: select /*+ ORDERED USE_NL */ o.id from [dba.t_outer] o semi join [dba.t_inner] i on i.v=case o.id when ? then ? else ? end and ((i.k=o.k) or (i.k= ?:? )) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.t_inner.i_inner_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    
+1     
+2     
+
+===================================================
+    
+Case 8: index MIN/MAX scan with a predicate on v; result = ignore index     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mm.i_mm_k) (key range: ([dba.t_mm].k> ?:? ))
+
+  rewritten query: select min([dba.t_mm].k), max([dba.t_mm].k) from [dba.t_mm] [dba.t_mm] where ([dba.t_mm].k> ?:? ) and ([dba.t_mm].v> ?:? ) using index [dba.t_mm].i_mm_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mm.i_mm_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_mm)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ min([dba.t_mm].k), max([dba.t_mm].k) from [dba.t_mm] [dba.t_mm] where ([dba.t_mm].k> ?:? ) and ([dba.t_mm].v> ?:? ) using index [dba.t_mm].i_mm_k(-)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_mm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+max(k)    
+2     
+
+===================================================
+max(k)    
+2     
+
+===================================================
+    
+Case 9: index MIN/MAX scan over a descending index, the long key is the largest; result = ignore index     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mm_desc.i_mm_desc_k) (key range: ([dba.t_mm_desc].k> ?:? ))
+
+  rewritten query: select min([dba.t_mm_desc].k), max([dba.t_mm_desc].k) from [dba.t_mm_desc] [dba.t_mm_desc] where ([dba.t_mm_desc].k> ?:? ) and ([dba.t_mm_desc].v> ?:? ) using index [dba.t_mm_desc].i_mm_desc_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mm_desc.i_mm_desc_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+    
+Case 10: index MIN/MAX scan, the largest key has overflow pages with older OIDs; result = ignore index     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mm_chain.i_mm_chain_k) (key range: ([dba.t_mm_chain].k> ?:? ))
+
+  rewritten query: select min([dba.t_mm_chain].k), max([dba.t_mm_chain].k) from [dba.t_mm_chain] [dba.t_mm_chain] where ([dba.t_mm_chain].k> ?:? ) and ([dba.t_mm_chain].v> ?:? ) using index [dba.t_mm_chain].i_mm_chain_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mm_chain.i_mm_chain_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+    
+Case 11: index MIN/MAX scan without the predicate on v, no_covering_idx and covering; result = ignore index     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mm.i_mm_k) (key range: ([dba.t_mm].k> ?:? ))
+
+  rewritten query: select /*+ NO_COVERING_IDX */ min([dba.t_mm].k), max([dba.t_mm].k) from [dba.t_mm] [dba.t_mm] where ([dba.t_mm].k> ?:? ) using index [dba.t_mm].i_mm_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mm.i_mm_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_mm.i_mm_k) (key range: ([dba.t_mm].k> ?:? ), covered: true)
+
+  rewritten query: select min([dba.t_mm].k), max([dba.t_mm].k) from [dba.t_mm] [dba.t_mm] where ([dba.t_mm].k> ?:? ) using index [dba.t_mm].i_mm_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_mm.i_mm_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+0
+===================================================
+min(k)    max(k)    
+1     2     
+
+===================================================
+0
