@@ -97,8 +97,8 @@ select 'c4_float', count (*), sum (v) from (select id + 0 id, pid, v from tree27
 evaluate 'Case 5: the hash join and GROUP BY over the same keys';
 select /*+ USE_HASH */ 'c5_hj', count (*), sum (a.id) from v27798 a, v27798 b where a.f2 = b.f6;
 select /*+ USE_NL */ 'c5_nl', count (*), sum (a.id) from v27798 a, v27798 b where a.f2 = b.f6;
--- the key stays a floating NUMERIC for the GROUP BY; it is printed as a fixed NUMERIC so that every driver prints the same digits
-select 'c5_gby', cast (k as numeric(38,2)) k, count (*) from (select f2 k from v27798 union all select f6 + 0 from v27798 union all select f6 from v27798) x group by k order by k;
+-- the key stays a floating NUMERIC for the GROUP BY; it is printed as the string of a fixed NUMERIC, since the CCI run prints a NUMERIC value as a DOUBLE
+select 'c5_gby', cast (cast (k as numeric(38,2)) as varchar) k_str, count (*) from (select f2 k from v27798 union all select f6 + 0 from v27798 union all select f6 from v27798) x group by k order by k;
 
 evaluate 'Case 6: a fixed NUMERIC of a negative scale and floating values cast from it';
 create table n27798 (id int, a numeric(38,-5));
