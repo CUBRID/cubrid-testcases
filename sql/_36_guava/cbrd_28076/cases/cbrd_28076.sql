@@ -144,4 +144,44 @@ select /*+ recompile */ count(*), sum(x.id), count(y.id) from k13x x left outer 
 select count(*), sum(x.id) from k13x x where (case when exists (select 1 from k13y y where (case when ((x.a = 5 and x.d in (44, 3, 58) and (x.id < y.b or y.c is not null)) or (nvl(x.id, -1) = 8 and (y.id > x.b or x.c like '%') and y.a between 0 and 1)) then 1 end) = 1) then 1 end) = 1;
 drop table k13x, k13y;
 
+evaluate 'Case 14-17 tables';
+drop table if exists k14x, k14y, k14z;
+create table k14x (id int primary key, a int, b int, c varchar(10), d int);
+create table k14y (id int primary key, a int, b int, c varchar(10), d int);
+create table k14z (id int primary key, a int, b int, d int);
+create index k14y_a on k14y (a);
+create index k14y_b on k14y (b, a);
+create index k14z_ab on k14z (a, b);
+insert into k14x select rownum, case when mod (rownum, 17) = 0 then null else mod (rownum, 10) end, mod (rownum * 7, 20), case when mod (rownum, 16) = 0 then null else decode (mod (rownum, 4), 0, 'V', 1, 'v', 2, 'w', 'ab') || mod (rownum, 6) end, case when mod (rownum, 19) = 0 then null else mod (rownum * 3, 100) end from db_class c1, db_class c2, db_class c3 where rownum <= 3000;
+insert into k14y select rownum, case when mod (rownum, 13) = 0 then null else mod (rownum, 8) end, mod (rownum * 5, 12), case when mod (rownum, 11) = 0 then null else decode (mod (rownum, 3), 0, 'V', 1, 'w', 'ab') || mod (rownum, 5) end, mod (rownum, 60) from db_class c1, db_class c2 where rownum <= 800;
+insert into k14z select rownum, mod (rownum, 6), mod (rownum, 8), mod (rownum * 7, 30) from db_class where rownum <= 60;
+update statistics on k14x, k14y, k14z with fullscan;
+
+evaluate 'Case 14: a NOT EXISTS whose factor implies a condition on the outer table alone stays a nested subquery, and the index on y.a checks the outer values with its keys';
+--@queryplan
+select /*+ recompile */ count(*), sum(x.id) from k14x x where not exists (select 1 from k14y y where ((x.c in ('V5', 'V1') and y.a = 3) or (x.d between 59 and 59 and y.c like '%3' and y.a > 4))) and x.d > 10;
+select count(*), sum(x.id) from k14x x where (case when not exists (select 1 from k14y y where (case when (x.c in ('V5', 'V1') and y.a = 3) or (x.d between 59 and 59 and y.c like '%3' and y.a > 4) then 1 end) = 1) then 1 end) = 1 and (case when x.d > 10 then 1 end) = 1;
+
+evaluate 'Case 15: the inner of a semi join checks with its index keys the part of the factor over the indexed column and the outer table';
+--@queryplan
+select /*+ recompile */ count(*), sum(x.id) from k14x x where x.a in (select y.a from k14y y where ((x.c like '%1' and not (((x.d in (8, 18, 5) and x.id not in (5, 2) and y.a = 1) or (x.c is not null and y.id = 0)))) or (nvl (y.a, -1) = 0 and x.d + 1 = 11) or (y.a = 7 and y.a = y.b)));
+select count(*), sum(x.id) from k14x x where (case when x.a in (select y.a from k14y y where (case when (x.c like '%1' and not (((x.d in (8, 18, 5) and x.id not in (5, 2) and y.a = 1) or (x.c is not null and y.id = 0)))) or (nvl (y.a, -1) = 0 and x.d + 1 = 11) or (y.a = 7 and y.a = y.b) then 1 end) = 1) then 1 end) = 1;
+
+evaluate 'Case 16: a conjunct with a subquery over one table joins the restriction the factor implies on that table';
+--@queryplan
+select /*+ recompile */ count(*), sum(x.id), sum(y.id) from k14x x, k14y y where x.a = y.b and ((y.a in (select z.a from k14z z where z.d < 2) and x.d <> y.a and (select max (z.b) from k14z z where z.a = y.a) < 5) or (y.c like 'V1%' and x.d in (60, 56, 3)));
+select count(*), sum(x.id), sum(y.id) from k14x x, k14y y where (case when x.a = y.b then 1 end) = 1 and (case when (y.a in (select z.a from k14z z where z.d < 2) and x.d <> y.a and (select max (z.b) from k14z z where z.a = y.a) < 5) or (y.c like 'V1%' and x.d in (60, 56, 3)) then 1 end) = 1;
+
+evaluate 'Case 17: a factor with an OR inside a disjunct is evaluated in disjunctive normal form, with NULLs as written';
+select count(*), sum(x.id) from k14x x where (x.b <> 13 and x.d = 25) or (x.b = 7 and (x.a <> 3 or x.d < 30));
+select count(*), sum(x.id) from k14x x where (case when (x.b <> 13 and x.d = 25) or (x.b = 7 and (x.a <> 3 or x.d < 30)) then 1 end) = 1;
+select count(*), sum(x.id) from k14x x where not ((x.b <> 13 and x.d = 25) or (x.b = 7 and (x.a <> 3 or x.d < 30)));
+select count(*), sum(x.id) from k14x x where ((x.b <> 13 and x.d = 25) or (x.b = 7 and (x.a <> 3 or x.d < 30))) is null;
+evaluate 'Case 18: the key filter derived over an indexed column and an outer table keeps every alternative of the factor: NOT IN and IN agree with the CASE form';
+select count(*), sum(x.id) from k14x x where x.b not in (select y.b from k14y y where (((y.a = 7 or y.a = 6) and y.id is not null) or ((x.id = 8 or x.a <> -1) and y.a = 5)));
+select count(*), sum(x.id) from k14x x where x.b not in (select y.b from k14y y where (case when ((y.a = 7 or y.a = 6) and y.id is not null) or ((x.id = 8 or x.a <> -1) and y.a = 5) then 1 end) = 1);
+select count(*), sum(x.id) from k14x x where x.b in (select y.b from k14y y where (((y.a = 7 or y.a = 6) and y.id > 0) or ((x.id = 8 or x.a <> -1) and y.a = 5)));
+select count(*), sum(x.id) from k14x x where x.b in (select y.b from k14y y where (case when ((y.a = 7 or y.a = 6) and y.id > 0) or ((x.id = 8 or x.a <> -1) and y.a = 5) then 1 end) = 1);
+drop table k14x, k14y, k14z;
+
 drop table o, i, a, b, t;
