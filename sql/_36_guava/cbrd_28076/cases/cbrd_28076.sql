@@ -117,4 +117,31 @@ select count(*) from (select x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 9 u
 select count(*) from (select /*+ NO_MERGE */ x.id, x.a, x.c, x.d, 9 k from d11 x where x.b = 9) dt where (case when (-dt.a between -5 and -1 and dt.k = 9) or (dt.c = 'v1' and dt.d = 3) then 1 end) = 1;
 drop table d11;
 
+evaluate 'Case 12: a factor whose disjuncts join one column by different expressions gives that column a join key: an index join on k12t.a';
+drop table if exists k12u, k12t;
+create table k12u (id int, a int, b int, d int);
+create table k12t (id int, a int);
+create index k12t_a on k12t (a);
+insert into k12u select rownum, mod (rownum, 25), mod (rownum, 33), mod (rownum, 30) from db_class where rownum <= 60;
+insert into k12t select rownum, rownum from db_class c1, db_class c2, db_class c3 where rownum <= 30000;
+update statistics on k12u, k12t with fullscan;
+--@queryplan
+select /*+ recompile */ count(*), sum(t.id) from k12u u, k12t t where (t.a = u.a * 800 and u.d < 15) or (t.a = u.b * 600 and u.d >= 15);
+select count(*), sum(t.id) from k12u u, k12t t where (case when (t.a = u.a * 800 and u.d < 15) or (t.a = u.b * 600 and u.d >= 15) then 1 end) = 1;
+drop table k12u, k12t;
+
+evaluate 'Case 13: the restriction a factor implies on one table is kept as its scan filter when the factor is evaluated at a join, costly conjuncts included';
+drop table if exists k13x, k13y;
+create table k13x (id int, a int, b int, c varchar(10), d int);
+create table k13y (id int, a int, b int, c varchar(10), d int);
+insert into k13x select rownum, mod (rownum, 9), mod (rownum, 11), 'v' || mod (rownum, 7), mod (rownum, 60) from db_class c1, db_class c2 where rownum <= 3000;
+insert into k13y select rownum, mod (rownum, 9), mod (rownum, 13), case when mod (rownum, 5) = 0 then null else 'w' || mod (rownum, 4) end, mod (rownum, 60) from db_class c1, db_class c2 where rownum <= 800;
+update statistics on k13x, k13y with fullscan;
+--@queryplan
+select /*+ recompile */ count(*), sum(x.id) from k13x x where exists (select 1 from k13y y where ((x.a = 5 and x.d in (44, 3, 58) and (x.id < y.b or y.c is not null)) or (nvl(x.id, -1) = 8 and (y.id > x.b or x.c like '%') and y.a between 0 and 1)));
+--@queryplan
+select /*+ recompile */ count(*), sum(x.id), count(y.id) from k13x x left outer join k13y y on x.b = y.b and (((x.id = 4 or y.a = x.d) and y.b + 1 = 0 and y.c like '%') or (x.d in (36) and nvl(y.b, -1) = 10 and y.c like 'w_'));
+select count(*), sum(x.id) from k13x x where (case when exists (select 1 from k13y y where (case when ((x.a = 5 and x.d in (44, 3, 58) and (x.id < y.b or y.c is not null)) or (nvl(x.id, -1) = 8 and (y.id > x.b or x.c like '%') and y.a between 0 and 1)) then 1 end) = 1) then 1 end) = 1;
+drop table k13x, k13y;
+
 drop table o, i, a, b, t;
