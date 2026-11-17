@@ -1,0 +1,151 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a NULL lower bound drops a range, then a division by zero fails; result = error     
+
+===================================================
+Error:-539
+===================================================
+    
+Case 2: overlapping ranges are merged, then a division by zero fails; result = error     
+
+===================================================
+Error:-539
+===================================================
+    
+Case 3: an equal key of an IN list is dropped, then a division by zero fails; result = error     
+
+===================================================
+Error:-539
+===================================================
+    
+Case 4: an equal key of a varchar IN list is dropped, then a division by zero fails; result = error     
+
+===================================================
+Error:-539
+===================================================
+    
+Case 5: the shapes of Case 1 to Case 4 return their rows and their plan when no bound fails     
+
+===================================================
+id    price    
+1     70     
+1     80     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: ord node[?]
+                            index: pk_ord_id term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: prd node[?]
+                            index: i_prd_grp_price term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ ord.id, prd.price from ord ord, prd prd where prd.grp=ord.grp and ((prd.price>=ord.amount/ord.qty and prd.price<= ?:? ) or (prd.price>= ?:?  and prd.price<= ?:? )) and ord.id= ?:?  using index prd.i_prd_grp_price(+) order by ?
+===================================================
+id    price    
+3     10     
+3     20     
+3     30     
+3     40     
+3     50     
+3     60     
+3     70     
+3     80     
+4     20     
+4     30     
+4     40     
+4     50     
+4     60     
+4     70     
+4     80     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: ord node[?]
+                            index: pk_ord_id term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: prd node[?]
+                            index: i_prd_grp_price term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ ord.id, prd.price from ord ord, prd prd where (ord.id>= ?:?  and ord.id<= ?:? ) and prd.grp=ord.grp and ((prd.price>=ord.amount/ord.qty and prd.price<= ?:? ) or (prd.price>= ?:?  and prd.price<= ?:? ) or (prd.price>= ?:?  and prd.price<= ?:? )) using index prd.i_prd_grp_price(+) order by ?, ?
+===================================================
+id    price    
+3     10     
+3     30     
+4     30     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: ord node[?]
+                            index: pk_ord_id term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: prd node[?]
+                            index: i_prd_grp_price term[?] AND term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ ord.id, prd.price from ord ord, prd prd where (ord.id>= ?:?  and ord.id<= ?:? ) and prd.grp=ord.grp and ((prd.price=ord.amount/ord.qty) or (prd.price=ord.amount) or (prd.price= ?:? )) using index prd.i_prd_grp_price(+) order by ?, ?
+===================================================
+id    code    
+3     P10     
+3     P30     
+4     P30     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: ord node[?]
+                            index: pk_ord_id term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: prd node[?]
+                            index: i_prd_code term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ ord.id, prd.code from ord ord, prd prd where (ord.id>= ?:?  and ord.id<= ?:? ) and ((prd.code= cast('P' as varchar)|| cast((ord.amount/ord.qty) as varchar)) or (prd.code= cast('P' as varchar)|| cast(ord.amount as varchar)) or (prd.code= ?:? )) using index prd.i_prd_code(+) order by ?, ?
+===================================================
+    
+Case 6: the bound that fails is the last key of the IN list; result = error     
+
+===================================================
+Error:-539
+===================================================
+0

@@ -58,6 +58,7 @@ select cast(cast('11.1 1' as char varying(10)) as numeric(38,10));
 
 -- return NULL
 select cast(NULL as numeric(38,10));
+-- return 0 (NULL with numeric_empty_string_as_null=yes)
 select cast(cast('' as char(10)) as numeric(38,10));
 select cast(cast('' as char varying(10)) as numeric(38,10));
 select cast(cast('     ' as char(10)) as numeric(38,10));

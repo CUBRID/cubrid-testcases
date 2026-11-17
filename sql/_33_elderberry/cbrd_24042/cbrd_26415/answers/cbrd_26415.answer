@@ -395,11 +395,18 @@ count(*)
 7     
 
 Query plan:
-sscan
-    class: a node[?]
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and  cast(a.colb as double)= cast(b.colb as double)+ cast(? as double)
 ===================================================
     
 Case 20 : minus     
@@ -409,11 +416,18 @@ count(*)
 7     
 
 Query plan:
-sscan
-    class: a node[?]
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and  cast(a.colb as double)= cast(b.colb as double)- cast(? as double)
 ===================================================
     
 Case 21 : concat     
@@ -493,11 +507,18 @@ count(*)
 7     
 
 Query plan:
-sscan
-    class: a node[?]
+idx-join (left outer join)
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: idx term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from tbl a
+select count(*) from tbl a left outer join tbl b on a.cola=b.cola and  cast(a.colb as double)=( cast(b.colb as double)+ cast(? as double))- cast(? as double)
 ===================================================
 0
 ===================================================

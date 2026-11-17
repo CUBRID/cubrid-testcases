@@ -7,12 +7,20 @@
 ===================================================
 9
 ===================================================
+    
+Case 1: REGEXP_COUNT with constants, the queries from the report     
+
+===================================================
 regexp_count('abc', 'a|')    regexp_count('abc', 'b*')    regexp_count('abc', '^')    regexp_count('abc', '$')    
 4     4     1     1     
 
 ===================================================
 regexp_count('abc', 'b*', 2)    regexp_count('abc', 'a|', 3)    regexp_count('AbA', 'a*', 1, 'i')    
 3     2     4     
+
+===================================================
+    
+Case 2: REGEXP_COUNT over column values, one empty-match pattern per row     
 
 ===================================================
 id    regexp_count(s, p)    
@@ -25,6 +33,10 @@ id    regexp_count(s, p)
 7     2     
 8     2     
 9     4     
+
+===================================================
+    
+Case 3: REGEXP_INSTR, each occurrence of b* in abc is at 1, 2, 3, 4 and there is no 5th     
 
 ===================================================
 regexp_instr('abc', 'b*', 1, 1)    regexp_instr('abc', 'b*', 1, 2)    regexp_instr('abc', 'b*', 1, 3)    regexp_instr('abc', 'b*', 1, 4)    regexp_instr('abc', 'b*', 1, 5)    regexp_instr('abc', 'b*', 1, 2, 1)    
@@ -43,6 +55,10 @@ id    regexp_instr(s, p, 1, 2)    regexp_instr(s, p, 1, 3)
 9     3     4     
 
 ===================================================
+    
+Case 4: REGEXP_SUBSTR, the same occurrences     
+
+===================================================
 regexp_substr('abc', 'b*', 1, 2)    regexp_substr('abc', 'b*', 1, 3)    regexp_substr('abc', 'b*', 1, 5)    regexp_substr('가나다', '나*', 1, 2)    
 b          null     나     
 
@@ -57,6 +73,10 @@ id    regexp_substr(s, p, 1, 2)
 7          
 8     b     
 9     c     
+
+===================================================
+    
+Case 5: REGEXP_REPLACE, all matches, from a position, and one occurrence     
 
 ===================================================
 regexp_replace('abc', 'b*', 'X')    regexp_replace('abc', 'a|', 'X')    regexp_replace('abc', '^', '>')    regexp_replace('abc', '$', '<')    
@@ -79,8 +99,16 @@ id    regexp_replace(s, p, '-')
 9     -b--b-     
 
 ===================================================
+    
+Case 6: a long subject with an empty match at every position     
+
+===================================================
 regexp_count( repeat('ab', 5000), 'x*')    char_length(regexp_replace( repeat('ab', 5000), 'b*', 'X'))    
 10001     15001     
+
+===================================================
+    
+Case 7: the column queries under cppstd, and under re2 again, which must agree     
 
 ===================================================
 0
@@ -113,6 +141,144 @@ id    regexp_count(s, p)    regexp_instr(s, p, 1, 2)    regexp_instr(s, p, 1, 3)
 7     2     4     0          --     
 8     2     4     0     b     a-c-     
 9     4     3     4     c     -b--b-     
+
+===================================================
+0
+===================================================
+    
+Case 8: the constant queries of Case 1, 3, 4, 5, and a multibyte position, under re2, to pair with Case 12     
+
+===================================================
+regexp_count('abc', 'a|')    regexp_count('abc', 'b*')    regexp_count('abc', '^')    regexp_count('abc', '$')    
+4     4     1     1     
+
+===================================================
+regexp_count('abc', 'b*', 2)    regexp_count('abc', 'a|', 3)    regexp_count('AbA', 'a*', 1, 'i')    
+3     2     4     
+
+===================================================
+regexp_instr('abc', 'b*', 1, 1)    regexp_instr('abc', 'b*', 1, 2)    regexp_instr('abc', 'b*', 1, 3)    regexp_instr('abc', 'b*', 1, 4)    regexp_instr('abc', 'b*', 1, 5)    regexp_instr('abc', 'b*', 1, 2, 1)    
+1     2     3     4     0     3     
+
+===================================================
+regexp_substr('abc', 'b*', 1, 2)    regexp_substr('abc', 'b*', 1, 3)    regexp_substr('abc', 'b*', 1, 5)    regexp_substr('가나다', '나*', 1, 2)    
+b          null     나     
+
+===================================================
+regexp_replace('abc', 'b*', 'X')    regexp_replace('abc', 'a|', 'X')    regexp_replace('abc', '^', '>')    regexp_replace('abc', '$', '<')    
+XaXXcX     XXbXcX     >abc     abc<     
+
+===================================================
+regexp_replace('abc', 'b*', 'X', 2)    regexp_replace('abc', 'b*', 'X', 1, 2)    regexp_replace('AbA', 'a*', 'X', 1, 0, 'i')    
+aXXcX     aXc     XXbXX     
+
+===================================================
+regexp_count('가나다', '나*', 2)    regexp_instr('가나다', '나*', 2, 2)    regexp_substr('가나다', '나*', 2, 2)    regexp_replace('가나다', '나*', 'X', 2)    
+3     3          가XX다X     
+
+===================================================
+    
+Case 9: a zero-width assertion matches inside the subject, unlike ^ and $, under re2     
+
+===================================================
+regexp_count('ab cd', '\b')    regexp_instr('ab cd', '\b', 1, 3)    regexp_substr('ab cd', '\b', 1, 2)    regexp_replace('ab cd', '\b', '|')    
+4     4          |ab| |cd|     
+
+===================================================
+    
+Case 10: nothing to advance over, an empty subject and a position past the end, under re2     
+
+===================================================
+regexp_count('', 'b*')    regexp_instr('', 'b*', 1, 1)    regexp_substr('', 'b*', 1, 1)    regexp_replace('', 'b*', 'X')    
+0     0     null          
+
+===================================================
+regexp_count('abc', 'b*', 10)    regexp_instr('abc', 'b*', 10, 1)    regexp_substr('abc', 'b*', 10, 1)    regexp_replace('abc', 'b*', 'X', 10)    
+0     0     null     abc     
+
+===================================================
+    
+Case 11: a long multibyte subject, the step over an empty match is one character, not one byte, under re2     
+
+===================================================
+regexp_count( repeat('가나', 5000), 'x*')    char_length(regexp_replace( repeat('가나', 5000), '나*', 'X'))    
+10001     15001     
+
+===================================================
+0
+===================================================
+    
+Case 12: Case 8 repeated under cppstd     
+
+===================================================
+regexp_count('abc', 'a|')    regexp_count('abc', 'b*')    regexp_count('abc', '^')    regexp_count('abc', '$')    
+4     4     1     1     
+
+===================================================
+regexp_count('abc', 'b*', 2)    regexp_count('abc', 'a|', 3)    regexp_count('AbA', 'a*', 1, 'i')    
+3     2     4     
+
+===================================================
+regexp_instr('abc', 'b*', 1, 1)    regexp_instr('abc', 'b*', 1, 2)    regexp_instr('abc', 'b*', 1, 3)    regexp_instr('abc', 'b*', 1, 4)    regexp_instr('abc', 'b*', 1, 5)    regexp_instr('abc', 'b*', 1, 2, 1)    
+1     2     3     4     0     3     
+
+===================================================
+regexp_substr('abc', 'b*', 1, 2)    regexp_substr('abc', 'b*', 1, 3)    regexp_substr('abc', 'b*', 1, 5)    regexp_substr('가나다', '나*', 1, 2)    
+b          null     나     
+
+===================================================
+regexp_replace('abc', 'b*', 'X')    regexp_replace('abc', 'a|', 'X')    regexp_replace('abc', '^', '>')    regexp_replace('abc', '$', '<')    
+XaXXcX     XXbXcX     >abc     abc<     
+
+===================================================
+regexp_replace('abc', 'b*', 'X', 2)    regexp_replace('abc', 'b*', 'X', 1, 2)    regexp_replace('AbA', 'a*', 'X', 1, 0, 'i')    
+aXXcX     aXc     XXbXX     
+
+===================================================
+regexp_count('가나다', '나*', 2)    regexp_instr('가나다', '나*', 2, 2)    regexp_substr('가나다', '나*', 2, 2)    regexp_replace('가나다', '나*', 'X', 2)    
+3     3          가XX다X     
+
+===================================================
+    
+Case 13: Case 9 repeated under cppstd     
+
+===================================================
+regexp_count('ab cd', '\b')    regexp_instr('ab cd', '\b', 1, 3)    regexp_substr('ab cd', '\b', 1, 2)    regexp_replace('ab cd', '\b', '|')    
+4     4          |ab| |cd|     
+
+===================================================
+    
+Case 14: Case 10 repeated under cppstd     
+
+===================================================
+regexp_count('', 'b*')    regexp_instr('', 'b*', 1, 1)    regexp_substr('', 'b*', 1, 1)    regexp_replace('', 'b*', 'X')    
+0     0     null          
+
+===================================================
+regexp_count('abc', 'b*', 10)    regexp_instr('abc', 'b*', 10, 1)    regexp_substr('abc', 'b*', 10, 1)    regexp_replace('abc', 'b*', 'X', 10)    
+0     0     null     abc     
+
+===================================================
+    
+Case 15: Case 11 repeated under cppstd     
+
+===================================================
+regexp_count( repeat('가나', 5000), 'x*')    char_length(regexp_replace( repeat('가나', 5000), '나*', 'X'))    
+10001     15001     
+
+===================================================
+0
+===================================================
+    
+Case 16: patterns that prefer an empty match at a position a non-empty one also starts at, under re2     
+
+===================================================
+regexp_count('abc', '|b')    regexp_count('abc', 'b*?')    regexp_replace('abc', '|b', 'X')    regexp_instr('abc', 'b*?', 1, 3)    
+4     4     XaXbXcX     3     
+
+===================================================
+regexp_instr('abc', '|b', 1, 1)    regexp_instr('abc', '|b', 1, 2)    regexp_instr('abc', '|b', 1, 3)    regexp_instr('abc', '|b', 1, 4)    regexp_instr('abc', '|b', 1, 5)    
+1     2     3     4     0     
 
 ===================================================
 0

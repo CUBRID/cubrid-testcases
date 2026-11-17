@@ -296,9 +296,10 @@ select /*+ recompile no_parallel_scan */ count(*) from t_idx where a >= 0 using 
 
 
 evaluate 'Case 15: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan';
-select /*+ recompile parallel(4) */ id from t_idx where a > 10 using index i_a keylimit 5;
+-- i_e has one row a key: KEYLIMIT picks the same rows whatever OIDs the rows got (i_a lists a key's 50 rows in OID order)
+select /*+ recompile parallel(4) */ id from t_idx where e > 10 using index i_e keylimit 5;
 show trace;
-select /*+ recompile no_parallel_scan */ id from t_idx where a > 10 using index i_a keylimit 5;
+select /*+ recompile no_parallel_scan */ id from t_idx where e > 10 using index i_e keylimit 5;
 -- without a range MIN and MAX are read by an aggregate lookup on the index, not by an index scan
 select /*+ recompile parallel(4) */ min(a), max(a) from t_idx where a >= 0 using index i_a;
 show trace;

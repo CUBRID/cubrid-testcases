@@ -2,6 +2,11 @@
  *  This test case verifies CBRD-27510: a constant whose computation or conversion fails is an error before the
  *  first row.
  *
+ *  CBRD-27583: this case no longer checks that. A constant over binds or literals is computed and converted at the
+ *  row that reads it, so its error comes at that row, and none comes when no row reaches it. The statements of Case
+ *  1, 3, 5, 7, 9 and 11 that run over no row, behind a branch no row takes, or behind an operand no row reads answer
+ *  without an error, and those answers are CBRD-27583's. The same statements over rows (Case 2, 4, 6) still fail.
+ *
  *  A constant here is a literal, a constant subtree over binds, or the CAST the compiler puts over a constant
  *  operand. develop computed and converted such a constant at the first row that needed it, so the same statement
  *  answered with no error when no row reached it - no row at all, a CASE branch no row takes, an operand COALESCE

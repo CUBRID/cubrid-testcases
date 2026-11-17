@@ -396,7 +396,7 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
@@ -465,7 +465,7 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
         SUBQUERY (uncorrelated)
@@ -530,6 +530,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
      
 
 Query plan:
@@ -949,7 +950,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -1021,7 +1022,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, topnsort: true)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
@@ -1093,10 +1094,12 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, topnsort: true)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1167,10 +1170,12 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, topnsort: true)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1241,11 +1246,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, topnsort: true)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
         PARALLEL (time: ?, fetch: ?, ioread: ?)
-          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1316,11 +1323,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, topnsort: true)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, topnsort: true, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
         SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
         PARALLEL (time: ?, fetch: ?, ioread: ?)
-          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: file+skip)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1479,6 +1488,22 @@ Q122     218     218     218     218     218     218
 Q122     219     219     219     219     219     219     
 Q122     220     220     220     220     220     220     
 
+Query plan:
+idx-join (inner join)
+    outer: temp(sort limit)
+               subplan: iscan
+                            class: a node[?]
+                            index: idx_cola_colb 
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: pk_tbl_b_cold term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ 'Q?', a.cola, a.colb, a.colc, b.cold, b.cole, b.colf from tbl_a a, tbl_b b where a.cola=b.cold order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? + ?:? 
 ===================================================
 trace    
 
@@ -1853,6 +1878,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbl_a.idx_cola_colb_colc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
       SCAN (index: dba.tbl_b.pk_tbl_b_cold), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
