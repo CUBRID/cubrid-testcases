@@ -195,4 +195,14 @@ select y.id, z.id from k19y y left outer join k19z z on y.b = z.b and z.b = 11 a
 select y.id, z.id from k19y y left outer join k19z z on (case when y.b = z.b and z.b = 11 and ((y.c like 'w0%' and y.a not in (0, 3) and z.c <> 'v3') or (y.b between 4 and 7 and z.id > 0)) then 1 end) = 1 where (case when y.a = 1 then 1 end) = 1 order by 1, 2;
 drop table k19y, k19z;
 
+evaluate 'Case 20: a factor over constants nested in a disjunction with one column keeps the column disjunct: 2 rows each';
+drop table if exists k20;
+create table k20 (c0 double);
+insert into k20 values (1), (2), (-3);
+select count(*) from k20 where ((cast(5 as varchar) <> '6') and (cast(5 as varchar) = '6')) or (cast(7 as varchar) is null) or (c0 > 0);
+select count(*) from k20 where (not (cast(5 as varchar) like '6%') and cast(5 as varchar) like '6%') or (cast(7 as varchar) is null) or (c0 > 0);
+select count(*) from k20 where ((cast('5' as int) <> 6) and (cast('5' as int) = 6)) or (cast('7' as int) is null) or (c0 > 0);
+select count(*) from k20 where (case when ((cast(5 as varchar) <> '6') and (cast(5 as varchar) = '6')) or (cast(7 as varchar) is null) or (c0 > 0) then 1 end) = 1;
+drop table k20;
+
 drop table o, i, a, b, t;
