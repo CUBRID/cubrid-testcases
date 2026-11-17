@@ -161,6 +161,16 @@ select t?.s? from t? t? where  cast('aa' as char(-?) collate iso?_en_cs)>coalesc
 s1    
 null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
 ===================================================
@@ -169,6 +179,16 @@ null
 s1    
 null     
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate utf?_en_ci
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
 ===================================================
@@ -178,6 +198,16 @@ s1
 null     
 Ab       
 
+Query plan:
+temp(order by)
+    subplan: sscan
+                 class: t? node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc collate iso?_en_cs
+    cost:  ? card ?
+Query stmt:
+select t?.s? from t? t? where  ?:? >coalesce(t?.s?,  ?:? ) order by ?
 ===================================================
 0
 ===================================================
