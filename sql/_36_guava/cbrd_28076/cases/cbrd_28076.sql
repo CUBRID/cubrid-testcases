@@ -205,4 +205,16 @@ select count(*) from k20 where ((cast('5' as int) <> 6) and (cast('5' as int) = 
 select count(*) from k20 where (case when ((cast(5 as varchar) <> '6') and (cast(5 as varchar) = '6')) or (cast(7 as varchar) is null) or (c0 > 0) then 1 end) = 1;
 drop table k20;
 
+evaluate 'Case 21: an ON condition factor folded to a conjunction after the rewrites, its constants parameterized, is planned as separate terms: 800 rows each';
+drop table if exists k21y, k21z;
+create table k21y (id int, a int, b int, c varchar(10), d int);
+create table k21z (id int, a int, b int, c varchar(10), d int);
+insert into k21y select rownum, mod (rownum, 8), mod (rownum * 5, 12), 'ab' || mod (rownum, 5), mod (rownum, 60) from db_class c1, db_class c2 where rownum <= 800;
+insert into k21z select rownum, mod (rownum, 9), mod (rownum * 7, 10), 'ab' || mod (rownum, 4), mod (rownum * 3, 40) from db_class c1, db_class c2 where rownum <= 1200;
+create index k21y_nb on k21y (nvl (b, -1));
+update statistics on k21y, k21z with fullscan;
+select count(*), count(z.id), sum(y.id) from k21y y left outer join k21z z on y.b = z.b and z.b = 2 and ((z.d >= 36 and nvl(z.b, -1) = 0) or (z.c = 'ab2' and nvl(y.b, -1) = 6));
+select count(*), count(z.id), sum(y.id) from k21y y left outer join k21z z on (case when y.b = z.b and z.b = 2 and ((z.d >= 36 and nvl(z.b, -1) = 0) or (z.c = 'ab2' and nvl(y.b, -1) = 6)) then 1 end) = 1;
+drop table k21y, k21z;
+
 drop table o, i, a, b, t;
