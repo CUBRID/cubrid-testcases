@@ -1707,12 +1707,114 @@ Trace Statistics:
      
 
 ===================================================
+    
+TC 3-3: SEMI JOIN, smaller outer input below the split threshold, inner input above it     
+
+===================================================
+    
+TC 3-3-1: INNER JOIN of the same tables builds ta and does not split, result = 30000     
+
+===================================================
+count(*)    
+30000     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta], [dba.td] [dba.td] where [dba.td].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC 3-3-2: SEMI JOIN builds td and splits, result = 7500     
+
+===================================================
+count(*)    
+7500     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (semi join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] semi join [dba.td] [dba.td] on [dba.td].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC 3-4: ANTI JOIN, smaller outer input below the split threshold, inner input above it     
+
+===================================================
+    
+TC 3-4-1: ANTI JOIN builds td and splits, result = 22501     
+
+===================================================
+count(*)    
+22501     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (anti join)
+    TABLE SCAN (dba.ta)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*) from [dba.ta] [dba.ta] anti join [dba.td] [dba.td] on [dba.td].ca=[dba.ta].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0
 ===================================================
     
-TC 3-3: SEMI JOIN, larger outer input     
+TC 3-5: SEMI JOIN, larger outer input     
 
 ===================================================
 0
@@ -1728,7 +1830,7 @@ TC 3-3: SEMI JOIN, larger outer input
 0
 ===================================================
     
-TC 3-3-1: hash join, result and trace     
+TC 3-5-1: hash join, result and trace     
 
 ===================================================
 count(*)    
@@ -1761,7 +1863,7 @@ Trace Statistics:
 0
 ===================================================
     
-TC 3-4: ANTI JOIN, larger outer input     
+TC 3-6: ANTI JOIN, larger outer input     
 
 ===================================================
 0
@@ -1777,7 +1879,7 @@ TC 3-4: ANTI JOIN, larger outer input
 0
 ===================================================
     
-TC 3-4-1: hash join, result and trace     
+TC 3-6-1: hash join, result and trace     
 
 ===================================================
 count(*)    
@@ -1809,7 +1911,7 @@ Trace Statistics:
 0
 ===================================================
     
-TC 3-5: SEMI JOIN, smaller outer input     
+TC 3-7: SEMI JOIN, smaller outer input     
 
 ===================================================
 0
@@ -1825,7 +1927,7 @@ TC 3-5: SEMI JOIN, smaller outer input
 0
 ===================================================
     
-TC 3-5-1: INNER JOIN of the same tables builds ta, result = 60     
+TC 3-7-1: INNER JOIN of the same tables builds ta, result = 60     
 
 ===================================================
 count(*)    
@@ -1856,7 +1958,7 @@ Trace Statistics:
 
 ===================================================
     
-TC 3-5-2: SEMI JOIN builds tb, result = 3     
+TC 3-7-2: SEMI JOIN builds tb, result = 3     
 
 ===================================================
 count(*)    
@@ -1889,7 +1991,7 @@ Trace Statistics:
 0
 ===================================================
     
-TC 3-6: ANTI JOIN, smaller outer input     
+TC 3-8: ANTI JOIN, smaller outer input     
 
 ===================================================
 0
@@ -1905,7 +2007,7 @@ TC 3-6: ANTI JOIN, smaller outer input
 0
 ===================================================
     
-TC 3-6-1: ANTI JOIN builds tb, result = 2     
+TC 3-8-1: ANTI JOIN builds tb, result = 2     
 
 ===================================================
 count(*)    

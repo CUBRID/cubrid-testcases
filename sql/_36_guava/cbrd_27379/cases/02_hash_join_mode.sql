@@ -7,7 +7,7 @@
  *    PARTITION       tc, td with NO_PARALLEL_HASH_JOIN: SPLIT line, no parallel workers on HASHJOIN or PROBE
  *    PARALLEL_PROBE  ta, tb with PARALLEL(4): no SPLIT line, parallel workers under PROBE
  *    PARALLEL        tc, td with PARALLEL(4): SPLIT line, parallel workers on HASHJOIN
- *  The file lowers max_hash_list_scan_size to 2M for TC 1 to TC 3-2 to keep the tables small. ta, tb (30001
+ *  The file lowers max_hash_list_scan_size to 2M for TC 1 to TC 3-4 to keep the tables small. ta, tb (30001
  *  rows each) stay below its split threshold even as the build input, and tc, td (80001 rows each) exceed it.
  *  The join key is CHAR(200) so that the input lists of ta, tb fill more than 4 sectors of 64 pages with few rows, and
  *  each of the 4 workers of PARALLEL(4) gets a sector to scan.
@@ -20,7 +20,8 @@
  *          and with an ON clause term that only a middle one of the inner rows with the same key meets
  *    TC 2: LEFT / RIGHT OUTER JOIN in the four modes
  *    TC 3: partitions without inner rows, and an outer input larger or smaller than the inner
- *          (SEMI JOIN / ANTI JOIN build the inner input even when the outer is smaller, an INNER JOIN builds the outer)
+ *          (SEMI JOIN / ANTI JOIN build the inner input even when the outer is smaller, an INNER JOIN builds the outer),
+ *          also when only the inner input exceeds the split threshold, so that the build input splits
  *
  *  Sub-cases:
  *    Sub-case  Query                   Case
@@ -46,10 +47,12 @@
  *    TC 2-4    tc RIGHT OUTER JOIN td  PARTITION, PARALLEL
  *    TC 3-1    tc SEMI JOIN te         PARTITION, PARALLEL, partitions without inner rows
  *    TC 3-2    tc ANTI JOIN te         PARTITION, PARALLEL, partitions without inner rows
- *    TC 3-3    ta SEMI JOIN tb         outer input larger than the inner
- *    TC 3-4    ta ANTI JOIN tb         outer input larger than the inner
- *    TC 3-5    ta SEMI JOIN tb         outer input smaller than the inner, INNER JOIN of the same tables first
- *    TC 3-6    ta ANTI JOIN tb         outer input smaller than the inner
+ *    TC 3-3    ta SEMI JOIN td         outer input below the split threshold, inner above it, INNER JOIN of the same tables first
+ *    TC 3-4    ta ANTI JOIN td         outer input below the split threshold, inner above it
+ *    TC 3-5    ta SEMI JOIN tb         outer input larger than the inner
+ *    TC 3-6    ta ANTI JOIN tb         outer input larger than the inner
+ *    TC 3-7    ta SEMI JOIN tb         outer input smaller than the inner, INNER JOIN of the same tables first
+ *    TC 3-8    ta ANTI JOIN tb         outer input smaller than the inner
  *
  *  TC 1-1 to TC 1-12 compare the two modes on the same tables by EXCEPT ALL in both directions. Both counts
  *  must be 0. TC 1-13 to TC 1-16 check the counts, which a probe that stops at the first row of a key changes.
@@ -60,7 +63,7 @@
  */
 
 -- =====================================================================================================================
--- Setup for TC 1 to TC 3-2 (hash join modes, outer joins, empty partitions)
+-- Setup for TC 1 to TC 3-4 (hash join modes, outer joins, empty partitions, smaller outer input)
 -- =====================================================================================================================
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
 
@@ -884,7 +887,7 @@ FROM tc
 SHOW TRACE;
 
 -- =====================================================================================================================
--- TC 3: partitions without inner rows; outer input larger than inner input
+-- TC 3: partitions without inner rows; outer input larger or smaller than inner input
 -- =====================================================================================================================
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -925,14 +928,46 @@ FROM tc
   ANTI JOIN te ON te.ca = tc.ca;
 SHOW TRACE;
 
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC 3-3: SEMI JOIN, smaller outer input below the split threshold, inner input above it
+--   An INNER JOIN of ta and td builds the smaller input ta and does not split. A SEMI JOIN must build td and split.
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC 3-3: SEMI JOIN, smaller outer input below the split threshold, inner input above it';
+
+-- TC 3-3-1: INNER JOIN of the same tables, which builds ta and does not split
+evaluate 'TC 3-3-1: INNER JOIN of the same tables builds ta and does not split, result = 30000';
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
+FROM ta
+  JOIN td ON td.ca = ta.ca;
+SHOW TRACE;
+
+-- TC 3-3-2: SEMI JOIN, which builds td and splits
+evaluate 'TC 3-3-2: SEMI JOIN builds td and splits, result = 7500';
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
+FROM ta
+  SEMI JOIN td ON td.ca = ta.ca;
+SHOW TRACE;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TC 3-4: ANTI JOIN, smaller outer input below the split threshold, inner input above it
+-- ---------------------------------------------------------------------------------------------------------------------
+evaluate 'TC 3-4: ANTI JOIN, smaller outer input below the split threshold, inner input above it';
+
+-- TC 3-4-1: ANTI JOIN, which builds td and splits
+evaluate 'TC 3-4-1: ANTI JOIN builds td and splits, result = 22501';
+SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
+FROM ta
+  ANTI JOIN td ON td.ca = ta.ca;
+SHOW TRACE;
+
 -- cleanup
 DROP TABLE IF EXISTS te, td, tc, tb, ta;
 SET SYSTEM PARAMETERS 'max_hash_list_scan_size=default';
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 3-3: SEMI JOIN, larger outer input
+-- TC 3-5: SEMI JOIN, larger outer input
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 3-3: SEMI JOIN, larger outer input';
+evaluate 'TC 3-5: SEMI JOIN, larger outer input';
 
 DROP TABLE IF EXISTS tb, ta;
 -- ta: 50 rows, keys 1 to 50 once each
@@ -947,8 +982,8 @@ INSERT INTO tb VALUES (1), (1), (2), (2), (3);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC 3-3-1: hash join, result and trace
-evaluate 'TC 3-3-1: hash join, result and trace';
+-- TC 3-5-1: hash join, result and trace
+evaluate 'TC 3-5-1: hash join, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
@@ -958,9 +993,9 @@ SHOW TRACE;
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 3-4: ANTI JOIN, larger outer input
+-- TC 3-6: ANTI JOIN, larger outer input
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 3-4: ANTI JOIN, larger outer input';
+evaluate 'TC 3-6: ANTI JOIN, larger outer input';
 
 DROP TABLE IF EXISTS tb, ta;
 -- ta: 50 rows, keys 1 to 50 once each
@@ -975,8 +1010,8 @@ INSERT INTO tb VALUES (1), (1), (2), (2), (3);
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC 3-4-1: hash join, result and trace
-evaluate 'TC 3-4-1: hash join, result and trace';
+-- TC 3-6-1: hash join, result and trace
+evaluate 'TC 3-6-1: hash join, result and trace';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
@@ -986,10 +1021,10 @@ SHOW TRACE;
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 3-5: SEMI JOIN, smaller outer input
+-- TC 3-7: SEMI JOIN, smaller outer input
 --   An INNER JOIN of these tables builds the smaller input ta. A SEMI JOIN and an ANTI JOIN must build the inner tb.
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 3-5: SEMI JOIN, smaller outer input';
+evaluate 'TC 3-7: SEMI JOIN, smaller outer input';
 
 DROP TABLE IF EXISTS tb, ta;
 -- ta: 5 rows, keys 1 to 5 once each
@@ -1004,15 +1039,15 @@ INSERT INTO tb SELECT MOD (LEVEL, 3) + 1 FROM db_root CONNECT BY LEVEL <= 60;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC 3-5-1: INNER JOIN of the same tables, which builds ta
-evaluate 'TC 3-5-1: INNER JOIN of the same tables builds ta, result = 60';
+-- TC 3-7-1: INNER JOIN of the same tables, which builds ta
+evaluate 'TC 3-7-1: INNER JOIN of the same tables builds ta, result = 60';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   JOIN tb ON tb.ca = ta.ca;
 SHOW TRACE;
 
--- TC 3-5-2: SEMI JOIN, which builds tb
-evaluate 'TC 3-5-2: SEMI JOIN builds tb, result = 3';
+-- TC 3-7-2: SEMI JOIN, which builds tb
+evaluate 'TC 3-7-2: SEMI JOIN builds tb, result = 3';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   SEMI JOIN tb ON tb.ca = ta.ca;
@@ -1022,9 +1057,9 @@ SHOW TRACE;
 DROP TABLE IF EXISTS tb, ta;
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- TC 3-6: ANTI JOIN, smaller outer input
+-- TC 3-8: ANTI JOIN, smaller outer input
 -- ---------------------------------------------------------------------------------------------------------------------
-evaluate 'TC 3-6: ANTI JOIN, smaller outer input';
+evaluate 'TC 3-8: ANTI JOIN, smaller outer input';
 
 DROP TABLE IF EXISTS tb, ta;
 -- ta: 5 rows, keys 1 to 5 once each
@@ -1039,8 +1074,8 @@ INSERT INTO tb SELECT MOD (LEVEL, 3) + 1 FROM db_root CONNECT BY LEVEL <= 60;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
--- TC 3-6-1: ANTI JOIN, which builds tb
-evaluate 'TC 3-6-1: ANTI JOIN builds tb, result = 2';
+-- TC 3-8-1: ANTI JOIN, which builds tb
+evaluate 'TC 3-8-1: ANTI JOIN builds tb, result = 2';
 SELECT /*+ RECOMPILE USE_HASH NO_PARALLEL_SCAN NO_PARALLEL_SUBQUERY */ COUNT (*)
 FROM ta
   ANTI JOIN tb ON tb.ca = ta.ca;
