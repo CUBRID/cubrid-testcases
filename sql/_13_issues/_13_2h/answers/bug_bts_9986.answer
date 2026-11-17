@@ -123,16 +123,13 @@ a    a
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
+    subplan: idx-join (left outer join)
                  outer: sscan
                             class: t? node[?]
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: sscan
-                                         class: t? node[?]
-                                         cost:  ? card ?
+                 inner: iscan
+                            class: t? node[?]
+                            index: pk_t?_a term[?] (covers)
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc
@@ -161,18 +158,15 @@ a    a
 25     25     
 
 Query plan:
-nl-join (left outer join)
-    edge:  term[?]
+idx-join (left outer join)
     outer: iscan
                class: t? node[?]
                index: pk_t?_a term[?] (covers)
                cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: iscan
-                            class: t? node[?]
-                            index: pk_t?_a term[?] (covers)
-                            cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: pk_t?_a term[?] (covers)
+               filtr: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
