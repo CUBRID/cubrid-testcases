@@ -1,0 +1,185 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+500000
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+25025     
+
+Query plan:
+iscan
+    class: os_o node[?]
+    index: idx_os_o_cid term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+select count(*) from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? )
+===================================================
+count(*)    
+256     
+
+Query plan:
+iscan
+    class: os_o node[?]
+    index: idx_os_o_cid term[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? ) and os_o.q= ?:? 
+===================================================
+id    cid    amount    
+432     1009     432     
+917     1724     917     
+3536     1585     3536     
+6155     1446     1155     
+8774     1307     3774     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: os_o node[?]
+                 index: idx_os_o_cid term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_o.id, os_o.cid, os_o.amount from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? ) and os_o.q= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+id    cid    amount    
+499788     1173     4788     
+497169     1312     2169     
+494550     1451     4550     
+491931     1590     1931     
+489312     1729     4312     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: os_o node[?]
+                 index: idx_os_o_cid term[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select os_o.id, os_o.cid, os_o.amount from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? ) and os_o.q= ?:?  order by ? desc  for orderby_num()<= ?:? 
+===================================================
+id    cid    amount    
+7     15434     7     
+5007     10434     7     
+10007     5434     7     
+15007     434     7     
+20007     15434     7     
+
+Query plan:
+iscan
+    class: os_o node[?]
+    index: pk_os_o_id 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_o.id, os_o.cid, os_o.amount from os_o os_o where os_o.amount= ?:?  order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    cid    amount    
+1     7920     1     
+2     15839     2     
+3     3758     3     
+4     11677     4     
+6     7515     6     
+
+Query plan:
+iscan
+    class: os_o node[?]
+    index: pk_os_o_id 
+    sargs: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_o.id, os_o.cid, os_o.amount from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    name    
+1208     c6153     
+6058     c13303     
+10908     c453     
+15758     c7603     
+20608     c14753     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (inner join)
+                 outer: iscan
+                            class: c node[?]
+                            index: idx_os_c_grp term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: o node[?]
+                            index: idx_os_o_cid term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id, c.[name] from os_o o, os_c c where o.cid=c.cid and c.grp= ?:?  and o.q= ?:?  order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    name    
+7     c15434     
+5007     c10434     
+10007     c5434     
+15007     c434     
+20007     c15434     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_os_o_id 
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: c node[?]
+               index: pk_os_c_cid term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id, c.[name] from os_o o, os_c c where o.cid=c.cid and o.amount= ?:?  order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+id    count(*)    
+432     1     
+917     1     
+3536     1     
+6155     1     
+8774     1     
+
+Query plan:
+iscan
+    class: os_o node[?]
+    index: pk_os_o_id 
+    sargs: term[?] AND term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_o.id, count(*) from os_o os_o where (os_o.cid>= ?:?  and os_o.cid<= ?:? ) and os_o.q= ?:?  group by os_o.id having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+0
