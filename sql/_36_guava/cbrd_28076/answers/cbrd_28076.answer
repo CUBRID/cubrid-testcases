@@ -500,7 +500,7 @@ hash-join (left outer join)
                class: y node[?]
                sargs: term[?]
                cost:  ? card ?
-    during:term[?] AND term[?] AND term[?] AND term[?] AND term[?]
+    during:term[?]
     cost:  ? card ?
 Query stmt:
 select count(*), sum(x.id), count(y.id) from k?x x left outer join k?y y on y.c is not null  or x.d= ?:?  and y.c like  ?:?  and y.b+?=? or x.d= ?:?  and nvl(y.b, -?)=? and (x.id= ?:?  or y.a=x.d) or x.d= ?:?  and y.b+?=? and y.c is not null  or x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:?  and y.b+?=? and y.c is not null  or nvl(y.b, -?)=? and y.c like  ?:?  and (((x.id= ?:?  or y.a=x.d) and y.b+?=? and y.c is not null ) or (x.d= ?:?  and nvl(y.b, -?)=? and y.c like  ?:? )) and x.b=y.b
@@ -643,7 +643,7 @@ hash-join (inner join)
                sargs: term[?]
                subqs: ?
                cost:  ? card ?
-    sargs: term[?] AND term[?] AND term[?]
+    sargs: term[?]
     subqs: ?
     cost:  ? card ?
 Query stmt:
