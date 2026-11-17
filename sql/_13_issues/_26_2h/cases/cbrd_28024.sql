@@ -14,9 +14,10 @@
  *            descending, 2147483646 buckets, a NUMERIC column
  *    Case 2: a width near the smallest NUMERIC that lost digits
  *    Case 3: forms that were right - ascending bounds, between them and outside, BIGINT and NUMERIC (5, 1) beside
- *            DOUBLE; a range near the largest NUMERIC
- *    Case 4: a descending range, the operand below it included, BIGINT and NUMERIC (5, 1) beside DOUBLE; an operand
- *            far below the range, which overflowed
+ *            DOUBLE, a range near the largest NUMERIC - and an operand exactly on a bucket boundary, which got the
+ *            bucket below (1000 for 1001)
+ *    Case 4: a descending range, the operand below it included, BIGINT and NUMERIC (5, 1) beside DOUBLE, and an
+ *            operand far below the range, which overflowed
  */
 
 drop table if exists d_28024, e_28024, n_28024;
@@ -40,13 +41,14 @@ evaluate 'Case 2: a width near the smallest NUMERIC; result = 4, 334';
 select width_bucket (cast (2e-252 as numeric), 0, cast (3e-252 as numeric), 5) as wb5,
        width_bucket (cast (2e-250 as numeric), 0, cast (3e-250 as numeric), 500) as wb500;
 
-evaluate 'Case 3: ascending, and a range near the largest NUMERIC; wb = wb_double, 500001';
+evaluate 'Case 3: ascending, a range near the largest NUMERIC, and an exact bucket boundary; wb = wb_double, 500001, 1001';
 select b, width_bucket (b, 0, 6, 9) as wb, width_bucket (cast (b as double), 0, 6, 9) as wb_double
   from d_28024 order by b;
 select x, width_bucket (x, 0, 6, 9) as wb, width_bucket (cast (x as double), 0, 6, 9) as wb_double
   from e_28024 order by x;
 select width_bucket (cast (1e250 as numeric), 0, cast (2e250 as numeric), 1000000) as wb_asc,
        width_bucket (cast (1e250 as numeric), cast (2e250 as numeric), 0, 1000000) as wb_desc;
+select width_bucket (cast (1 as bigint), 0, 3, 3000) as wb_boundary;
 
 evaluate 'Case 4: descending, below the range = count + 1 (10, then 11); wb = wb_double';
 select b, width_bucket (b, 6, 0, 9) as wb, width_bucket (cast (b as double), 6, 0, 9) as wb_double
