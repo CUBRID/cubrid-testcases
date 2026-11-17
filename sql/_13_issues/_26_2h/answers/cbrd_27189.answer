@@ -436,14 +436,14 @@ result
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tsort)
-
-  rewritten query: (select count(*) from [dba.tsort] [dba.tsort] where src.rn= ?:? )
-
   SORT (order by)
     TABLE SCAN (__t?)
 
   rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (dba.tsort)
+
+  rewritten query: (select count(*) from [dba.tsort] [dba.tsort] where src.rn= ?:? )
 
   TABLE SCAN (src)
 
@@ -495,7 +495,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tpage), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -651,7 +651,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)

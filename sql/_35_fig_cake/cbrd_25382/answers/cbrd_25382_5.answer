@@ -64,9 +64,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -119,7 +120,7 @@ Trace Statistics:
             SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.ta.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.ta.i_c), (noscan time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -236,6 +237,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -243,6 +245,7 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
                 BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -250,6 +253,7 @@ Trace Statistics:
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
                         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -348,14 +352,6 @@ a_cd    b_cd    d_cd
 1003     1003     1003     
 
 Query plan:
-iscan
-    class: d node[?]
-    index: i_c term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-(select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd)
-Query plan:
 sscan
     class: ta node[?]
     sargs: term[?]
@@ -377,6 +373,14 @@ temp(distinct)
     cost:  ? card ?
 Query stmt:
 (select /*+ NO_UNNEST */ distinct c.ca from tc c)
+Query plan:
+iscan
+    class: d node[?]
+    index: i_c term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd)
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -402,10 +406,6 @@ select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_
 trace    
 
 Query Plan:
-  INDEX SCAN (d.i_c) (key range: d.cd=b.cd, key filter: d.cd=b.cd, covered: true)
-
-  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd)
-
   TABLE SCAN (dba.ta)
 
   rewritten query: (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? )
@@ -418,6 +418,10 @@ Query Plan:
     TABLE SCAN (c)
 
   rewritten query: (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c)
+
+  INDEX SCAN (d.i_c) (key range: d.cd=b.cd, key filter: d.cd=b.cd, covered: true)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd)
 
   SORT (order by)
     HASH JOIN (inner join)
@@ -530,6 +534,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
               BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -537,6 +542,7 @@ Trace Statistics:
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -628,6 +634,11 @@ trace
             "fetch": ?,
             "fetch_time": ?,
             "ioread": ?,
+            "RUNTIME FILTER": {
+              "keys": ?,
+              "rows": ?,
+              "dropped": ?
+            },
             "build": {
               "time": ?,
               "fetch": ?,

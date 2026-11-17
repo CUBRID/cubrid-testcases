@@ -1,0 +1,417 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+7
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: JSON_TABLE inner, row by row; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(jt.x)    sum( cast(t.id as bigint)*jt.x)    
+40001     66669     666733335     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (jt)
+
+  rewritten query: select count(*), sum(jt.x), sum( cast(t.id as bigint)* cast(jt.x as bigint)) from [dba.t_outer] t, (json_table (t.j, '$[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(jt.x)    sum( cast(t.id as bigint)*jt.x)    
+40001     66669     666733335     
+
+===================================================
+    
+Case 2: SET and LIST column inner, row by row; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(s.v)    sum( cast(t.id as bigint)*s.v)    
+40001     66669     666733335     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (s)
+
+  rewritten query: select count(*), sum(s.v), sum( cast(t.id as bigint)* cast(s.v as bigint)) from [dba.t_outer] t, table(t.st) s (v)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(s.v)    sum( cast(t.id as bigint)*s.v)    
+40001     66669     666733335     
+
+===================================================
+count(*)    sum(l.v)    sum( cast(t.id as bigint)*l.v)    
+40001     220006     2200196671     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (l)
+
+  rewritten query: select count(*), sum(l.v), sum( cast(t.id as bigint)* cast(l.v as bigint)) from [dba.t_outer] t, table(t.ls) l (v)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(l.v)    sum( cast(t.id as bigint)*l.v)    
+40001     220006     2200196671     
+
+===================================================
+    
+Case 3: other aggregates over the JSON_TABLE and SET inners; result = no_parallel_scan     
+
+===================================================
+min(jt.x)    max(t.id)    round(avg(jt.x), 4)    count(distinct jt.x)    min(t.id*jt.x)    
+1     20000     1.6667     3     1     
+
+===================================================
+min(jt.x)    max(t.id)    round(avg(jt.x), 4)    count(distinct jt.x)    min(t.id*jt.x)    
+1     20000     1.6667     3     1     
+
+===================================================
+max(s.v)    round(avg( cast(t.id as bigint)*s.v), 4)    group_concat(distinct s.v order by s.v)    
+3     16667.9167     1,2,3     
+
+===================================================
+max(s.v)    round(avg( cast(t.id as bigint)*s.v), 4)    group_concat(distinct s.v order by s.v)    
+3     16667.9167     1,2,3     
+
+===================================================
+    
+Case 4: constant SET and constant JSON_TABLE inner; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*s.v)    
+60000     1200060000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (t)
+    TABLE SCAN (s)
+
+  rewritten query: select /*+ ORDERED */ count(*), sum( cast(t.id as bigint)* cast(s.v as bigint)) from [dba.t_outer] t, table({?, ?, ?}) s (v)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*s.v)    
+60000     1200060000     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x)    
+60000     1200060000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (t)
+    TABLE SCAN (jt)
+
+  rewritten query: select /*+ ORDERED */ count(*), sum( cast(t.id as bigint)* cast(jt.x as bigint)) from [dba.t_outer] t, (json_table ('[?, ?, ?]', '$[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x)    
+60000     1200060000     
+
+===================================================
+    
+Case 5: JSON_TABLE inner with no rows; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(jt.x)    
+0     null     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (jt)
+
+  rewritten query: select count(*), sum(jt.x) from [dba.t_outer] t, (json_table (t.j, '$."none"[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum(jt.x)    
+0     null     
+
+===================================================
+    
+Case 6: JSON_TABLE inner first, middle and last among other inners; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x+h.v)    
+40001     668333295     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (h)
+    TABLE SCAN (jt)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum( cast(t.id as bigint)* cast(jt.x as bigint)+ cast(h.v as bigint)) from [dba.t_outer] t, [dba.t_heap] h, (json_table (t.j, '$[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt) where h.k= mod(t.id, ?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (noscan time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x+h.v)    
+40001     668333295     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x+h.v)    
+40001     667800035     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (jt)
+    TABLE SCAN (h)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum( cast(t.id as bigint)* cast(jt.x as bigint)+ cast(h.v as bigint)) from [dba.t_outer] t, (json_table (t.j, '$[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt), [dba.t_heap] h where h.k=jt.x
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x+h.v)    
+40001     667800035     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x*s.v)    
+93337     3067053345     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (t)
+      TABLE SCAN (jt)
+    TABLE SCAN (s)
+
+  rewritten query: select /*+ ORDERED */ count(*), sum( cast(t.id as bigint)* cast(jt.x as bigint)* cast(s.v as bigint)) from [dba.t_outer] t, (json_table (t.j, '$[*]' columns (x integer PATH '$' NULL ON EMPTY NULL ON ERROR )) as jt), table(t.st) s (v)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (noscan time: ?, fetch: ?, ioread: ?)
+        SCAN (set time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*jt.x*s.v)    
+93337     3067053345     
+
+===================================================
+    
+Case 7: class attribute inner, row by row; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*m.ca)    
+20000     1400070000     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (cross join)
+    TABLE SCAN (t)
+    TABLE SCAN (m)
+
+  rewritten query: select /*+ ORDERED */ count(*), sum( cast(t.id as bigint)* cast(m.ca as bigint)) from [dba.t_outer] t,  class [dba.t_meta] m
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+      SCAN (class_attr time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*m.ca)    
+20000     1400070000     
+
+===================================================
+    
+Case 8: heap, index and derived table inner keep buildvalue; result = no_parallel_scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*h.v)    
+20000     8000199990     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (h)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum( cast(t.id as bigint)* cast(h.v as bigint)) from [dba.t_outer] t, [dba.t_heap] h where h.k= mod(t.id, ?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*h.v)    
+20000     8000199990     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*h.v)    
+20000     8000199990     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    INDEX SCAN (h.pk_t_keyed_k) (key range: h.k= mod(t.id, ?))
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum( cast(t.id as bigint)* cast(h.v as bigint)) from [dba.t_outer] t, [dba.t_keyed] h where h.k= mod(t.id, ?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.t_keyed.pk_t_keyed_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*h.v)    
+20000     8000199990     
+
+===================================================
+count(*)    sum( cast(t.id as bigint)*d.v)    
+20000     8000199990     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_heap)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_heap].k, [dba.t_heap].v from [dba.t_heap] [dba.t_heap])
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (t)
+    TABLE SCAN (d)
+
+  rewritten query: select /*+ ORDERED USE_NL */ count(*), sum( cast(t.id as bigint)* cast(d.v as bigint)) from [dba.t_outer] t, (select /*+ NO_MERGE */ [dba.t_heap].k, [dba.t_heap].v from [dba.t_heap] [dba.t_heap]) d (k, v) where d.k= mod(t.id, ?)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(t.id as bigint)*d.v)    
+20000     8000199990     
+
+===================================================
+0

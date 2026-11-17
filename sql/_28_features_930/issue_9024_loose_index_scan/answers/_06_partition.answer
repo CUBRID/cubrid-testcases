@@ -272,16 +272,6 @@ s
 
 Query plan:
 temp(group by)
-    subplan: sscan
-                 class: tt node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
-    sort:  
-    cost:  ? card ?
-Query stmt:
-(select tt.g from t? tt where tt.c=a_? group by tt.f)
-Query plan:
-temp(group by)
     subplan: iscan
                  class: t? node[?]
                  index: i_t?_all (covers) (loose index scan on prefix ?)
@@ -291,6 +281,16 @@ temp(group by)
     cost:  ? card ?
 Query stmt:
 (select /*+ ORDERED INDEX_LS */ t?.c from t? t? where (t?.e>= ?:?  and t?.e<= ?:? ) group by t?.c)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: tt node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  
+    cost:  ? card ?
+Query stmt:
+(select tt.g from t? tt where tt.c=a_? group by tt.f)
 Query plan:
 sscan
     class: t? node[?]

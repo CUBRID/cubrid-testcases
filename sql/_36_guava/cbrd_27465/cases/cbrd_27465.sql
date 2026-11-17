@@ -208,9 +208,12 @@ drop table klim_inner;
 
 
 evaluate 'Case 12: unique inner, each of the 5000 probe keys comes four times: memoize kept (the hit ratio is judged only from 60% of the budget, CBRD-27487), result unchanged';
+-- 5000 keys hold about 1.2MB: a 2M limit puts its 60% within a few KB of that, so the limit is 4M here
+set system parameters 'memoize_memory_limit=4M';
 select /*+ recompile parallel(0) USE_NL */ count(*) from subquery_big a where exists (select 1 from subquery_small where col1=a.col1);
 show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select /*+ NO_UNNEST */ 1 from subquery_small where col1=a.col1);
+set system parameters 'memoize_memory_limit=2M';
 
 
 evaluate 'Case 13: memoize_memory_limit=0: falls back, no MEMOIZE line, result unchanged';
