@@ -7,6 +7,7 @@ Author: hgryoo
 Test Point:
 The foreign key is RESTRICT. In the key of the child index, an entry another transaction is still inserting comes before a committed child. The parent DELETE looks past the entry being inserted and fails on the committed child at once, without waiting for the inserter.
 After the DELETE's transaction rolls back, the inserter adds another child and commits.
+The order of the two entries comes from the child index: an object added to a non-unique key goes to the end of the key's list in the leaf, so the entry of C2, which inserts first, comes before that of C3. The case does not check this order. If the entries came the other way, the DELETE would meet the committed child first and fail without passing the entry being inserted, and the case would still pass.
 
 NUM_CLIENTS = 3
 C2: INSERT INTO t27463_child VALUES (3, 7, 0);

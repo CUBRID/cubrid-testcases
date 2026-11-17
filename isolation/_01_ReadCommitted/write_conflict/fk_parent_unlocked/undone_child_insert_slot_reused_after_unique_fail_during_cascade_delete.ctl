@@ -8,6 +8,7 @@ Test Point:
 C4 inserts child 50 with unique value 90 and stays open. C2 inserts child 9 of parent 7 with the same unique value and waits for C4. The parent DELETE (ON DELETE CASCADE) of C1 finds the insert of C2 in progress and waits for C2.
 C4 commits, the INSERT of C2 fails on the unique key, and its heap slot is freed while C2 stays open. C3 inserts child 10 of parent 8, which takes that slot, and stays open.
 After the commit of C2, the DELETE of C1 sees that the slot holds another row and does not wait for C3. The DELETE removes parent 7 and child 2. The UPDATE of parent 7 by C3 waits for C1, and the two do not deadlock.
+The case does not check that the row of C3 takes the freed slot. It relies on how the heap gives out slots today, under which earlier #8198 builds fail this case.
 
 NUM_CLIENTS = 4
 C4: INSERT INTO t27463_child VALUES (50, 8, 90, 0);

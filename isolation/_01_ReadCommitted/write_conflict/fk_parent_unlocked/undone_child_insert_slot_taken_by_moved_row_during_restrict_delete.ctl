@@ -9,6 +9,7 @@ The heap slot that an undone insert freed can also take the new home of another 
 Children 1 and 2, both of parent 8, fill the first heap page; parent 7 has no committed child. C2 inserts child 9 of parent 7 under a savepoint into a new page and stays open. The parent DELETE (ON DELETE RESTRICT) of C1 finds the insert in progress and waits for C2.
 C2 rolls back to the savepoint, which frees slot 1 of the new page while C2 stays open. C3 makes child 2 larger than the free space of the first page and commits, so the new home of child 2 takes that slot.
 After the commit of C2, the DELETE of C1 finds no child and removes parent 7 without an error.
+The case does not check that the new home of child 2 takes the freed slot. It relies on how the heap places rows today, under which earlier #8198 builds fail this case with -51.
 
 NUM_CLIENTS = 3
 C2: SAVEPOINT sp;

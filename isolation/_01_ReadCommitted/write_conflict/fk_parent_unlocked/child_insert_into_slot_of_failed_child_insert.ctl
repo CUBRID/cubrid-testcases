@@ -6,8 +6,11 @@ Author: hgryoo
 
 Test Point:
 A child INSERT fails its foreign key check; its row is rolled back and its heap slot freed while its transaction stays open.
-Another transaction inserts a child of an existing parent, which may land in that slot. The INSERT does not wait for the first
+Another transaction inserts a child of an existing parent, which takes that slot. The INSERT does not wait for the first
 transaction, and it adds the child to the foreign key and primary key indexes, so the parent cannot be deleted while the child exists.
+The case does not check that the second INSERT takes the freed slot. It relies on how the heap gives out slots today: develop fails
+this case only because the INSERT lands in that slot (CBRD-26942). If the heap stopped reusing the slot, the case would pass without
+testing it.
 
 NUM_CLIENTS = 2
 C1: INSERT INTO t27463_child VALUES (1, 99, 'x');
