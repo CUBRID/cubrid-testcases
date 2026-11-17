@@ -33,10 +33,11 @@
  *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
  *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
  *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
- *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed as DOUBLE, which
- *             rounds a coefficient above 2^53, so this query keeps the single table plan.
- *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
- *    Case 23: trace: Cases 21 and 22 keep the single table plan
+ *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed in its common
+ *             NUMERIC domain by value (CBRD-27798), so a coefficient above 2^53 does not round and the query runs
+ *             as a hash list scan.
+ *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. The negative scale is hashed by value as well.
+ *    Case 23: trace: Cases 21 and 22 run as a hash list scan (SCAN (hash temp(m), ...))
  *    Case 24: prior INT = INT and CAST(BIGINT 3000000000 AS INT) = 1, no START WITH row: no error, 0 rows. A side
  *             with a column paired with a constant is a build key too, so a cast there keeps the single table plan.
  *    Case 25: as Case 24 with the cast conjunct written first and START WITH rows: 2 rows
@@ -230,7 +231,7 @@ from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) b;
 
 
-evaluate 'Case 23: trace of Cases 21 and 22 (single table plan)';
+evaluate 'Case 23: trace of Cases 21 and 22 (hash temp)';
 set trace on;
 select n, level lv from hs_nl start with n = 1 connect by prior id = pid order siblings by n;
 show trace;
