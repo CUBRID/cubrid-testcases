@@ -184,4 +184,15 @@ select count(*), sum(x.id) from k14x x where x.b in (select y.b from k14y y wher
 select count(*), sum(x.id) from k14x x where x.b in (select y.b from k14y y where (case when ((y.a = 7 or y.a = 6) and y.id > 0) or ((x.id = 8 or x.a <> -1) and y.a = 5) then 1 end) = 1);
 drop table k14x, k14y, k14z;
 
+evaluate 'Case 19: an ON condition factor that folds to a conjunction keeps its conjuncts in the ON condition: the preserved row 1 stays';
+drop table if exists k19y, k19z;
+create table k19y (id int, a int, b int, c varchar(10));
+create table k19z (id int, a int, b int, c varchar(10));
+create index k19z_b on k19z (b);
+insert into k19y values (1, 1, 11, 'q1'), (2, 1, 5, 'w01'), (3, 2, 11, 'w02'), (4, 1, 11, 'w03');
+insert into k19z values (1, 0, 11, 'v1'), (2, 0, 5, 'v3'), (3, 6, 11, 'v3');
+select y.id, z.id from k19y y left outer join k19z z on y.b = z.b and z.b = 11 and ((y.c like 'w0%' and y.a not in (0, 3) and z.c <> 'v3') or (y.b between 4 and 7 and z.id > 0)) where y.a = 1 order by 1, 2;
+select y.id, z.id from k19y y left outer join k19z z on (case when y.b = z.b and z.b = 11 and ((y.c like 'w0%' and y.a not in (0, 3) and z.c <> 'v3') or (y.b between 4 and 7 and z.id > 0)) then 1 end) = 1 where (case when y.a = 1 then 1 end) = 1 order by 1, 2;
+drop table k19y, k19z;
+
 drop table o, i, a, b, t;
