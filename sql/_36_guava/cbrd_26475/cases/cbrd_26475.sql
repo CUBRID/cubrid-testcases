@@ -38,9 +38,9 @@
  *           nl-join, while USE_NL(b) / NO_USE_HASH(b) on the preserved table do
  *           not apply and the cost keeps the hash-join
  *   Case 7: the null-supplying side of a right outer join is itself a join
- *           (multi-node), a table hint cannot apply to it, so a bare USE_HASH
- *           is not forced on the outer join and the cost picks nl-join there
- *           (the inner join below it still takes the hint)
+ *           (multi-node), a bare USE_HASH is on all of its tables and forces
+ *           the hash-join on the outer join too (CBRD-27992), without the
+ *           hint the cost picks nl-join there
  */
 drop table if exists t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2;
 
@@ -149,7 +149,7 @@ select /*+ recompile no_use_hash(b) */ count(*), sum(a.id), sum(b.id), count(a.i
 
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(a.id) from t_small1 a right outer join t_small2 b on a.k = b.k;
 
--- Case 7: multi-node null-supplying side of a right outer join - the bare USE_HASH is not forced on the outer join, cost decides (nl-join for small inputs)
+-- Case 7: multi-node null-supplying side of a right outer join - the bare USE_HASH forces the hash-join on the outer join too, without it the cost picks nl-join for small inputs
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
 
 select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
