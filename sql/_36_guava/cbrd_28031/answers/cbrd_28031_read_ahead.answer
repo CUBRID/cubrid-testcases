@@ -1,0 +1,441 @@
+===================================================
+0
+===================================================
+0
+===================================================
+250000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: parallel scan of a unique index; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+186901     23363161354     1     249999     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_u) (key range: ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)), min([dba.ra_t].id), max([dba.ra_t].id) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) using index [dba.ra_t].i_ra_u(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_u), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+186901     23363161354     1     249999     
+
+===================================================
+    
+Case 2: parallel scan, a few rows for each key; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+223764     27947830370     2     249794     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_k) (key range: ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)), min([dba.ra_t].id), max([dba.ra_t].id) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ) using index [dba.ra_t].i_ra_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+223764     27947830370     2     249794     
+
+===================================================
+    
+Case 3: parallel scan of keys with overflow pages; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+100000     12499850000     2     249995     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_grp) (key range: ([dba.ra_t].grp>= ?:?  and [dba.ra_t].grp<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)), min([dba.ra_t].id), max([dba.ra_t].id) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].grp>= ?:?  and [dba.ra_t].grp<= ?:? ) using index [dba.ra_t].i_ra_grp(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+100000     12499850000     2     249995     
+
+===================================================
+    
+Case 4: parallel scan with a key filter on the second column; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+24841     3190595691     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_ks) (key range: ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ), key filter: ([dba.ra_t].s>= ?:?  and [dba.ra_t].s< ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ) and ([dba.ra_t].s>= ?:?  and [dba.ra_t].s< ?:? ) using index [dba.ra_t].i_ra_ks(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_ks), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+24841     3190595691     
+
+===================================================
+    
+Case 5: parallel scan of several key ranges; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+61995     7749070219     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_u) (key range: (([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) or ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? )))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)) from [dba.ra_t] [dba.ra_t] where (([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) or ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? )) using index [dba.ra_t].i_ra_u(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_u), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+61995     7749070219     
+
+===================================================
+    
+Case 6: parallel scan of a descending index; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+138004     17201869138     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_kd) (key range: ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ) using index [dba.ra_t].i_ra_kd(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_kd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+138004     17201869138     
+
+===================================================
+    
+Case 7: serial scan in index order that stops at a LIMIT; result = heap scan and sort     
+
+===================================================
+id    u    
+2652     600     
+237663     601     
+222667     602     
+207671     603     
+192675     604     
+177679     605     
+162683     606     
+147687     607     
+132691     608     
+117695     609     
+102699     610     
+87703     611     
+72707     612     
+57711     613     
+42715     614     
+27719     615     
+12723     616     
+247734     617     
+232738     618     
+217742     619     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_u) (key range: ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ))
+  skip order by: true
+
+  rewritten query: select [dba.ra_t].id, [dba.ra_t].u from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].u>= ?:?  and [dba.ra_t].u<= ?:? ) using index [dba.ra_t].i_ra_u(+) order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_u), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+id    u    
+2652     600     
+237663     601     
+222667     602     
+207671     603     
+192675     604     
+177679     605     
+162683     606     
+147687     607     
+132691     608     
+117695     609     
+102699     610     
+87703     611     
+72707     612     
+57711     613     
+42715     614     
+27719     615     
+12723     616     
+247734     617     
+232738     618     
+217742     619     
+
+===================================================
+    
+Case 8: a key filter fails in a parallel scan and in the heap scan (expected errors), then the same keys return the rows of the heap scan     
+
+===================================================
+Error:-181
+===================================================
+Error:-181
+===================================================
+count(*)    sum( cast(v as bigint))    
+250000     31250125000     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_ks) (key range: ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ), key filter: ([dba.ra_t].s>= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ra_t].v as bigint)) from [dba.ra_t] [dba.ra_t] where ([dba.ra_t].k>= ?:?  and [dba.ra_t].k<= ?:? ) and ([dba.ra_t].s>= ?:? ) using index [dba.ra_t].i_ra_ks(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_ks), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue) (lookup time: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+250000     31250125000     
+
+===================================================
+    
+Case 9: inner index scan of a semi join; result = join with distinct     
+
+===================================================
+count(*)    sum( cast(a.v as bigint))    
+99     12369951     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (semi join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.i_ra_k) (key range: b.k=a.k)
+
+  rewritten query: select count(*), sum( cast(a.v as bigint)) from [dba.ra_t] a semi join [dba.ra_t] b on (b.v>a.v+?) and b.k=a.k where (a.id>= ?:?  and a.id<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ra_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.ra_t.i_ra_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(distinct a.id)    sum(distinct  cast(a.v as bigint))    
+99     12369951     
+
+===================================================
+    
+Case 10: inner index scan of an anti join; result = count subquery     
+
+===================================================
+count(*)    sum( cast(a.v as bigint))    
+202     25270099     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (anti join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.i_ra_k) (key range: b.k=a.k)
+
+  rewritten query: select count(*), sum( cast(a.v as bigint)) from [dba.ra_t] a anti join [dba.ra_t] b on (b.v>a.v+?) and b.k=a.k where (a.id>= ?:?  and a.id<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ra_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (index: dba.ra_t.i_ra_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(a.v as bigint))    
+202     25270099     
+
+===================================================
+    
+Case 11: LIMIT over a data filter that 250 of the 25,000 rows of one key pass; 5 rows that pass the filter, and the heap scan counts 250     
+
+===================================================
+count(*)    min(grp)    max(grp)    min( mod(v, 1000))    max( mod(v, 1000))    
+5     3     3     13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (t.i_ra_grp) (key range: (t.grp= ?:? ))
+
+  rewritten query: select count(*), min(t.grp), max(t.grp), min( mod(t.v, ?)), max( mod(t.v, ?)) from [dba.ra_t] t where  mod(t.v, ?)=? and (inst_num()<= ?:? ) and (t.grp= ?:? ) using index t.i_ra_grp(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+250     
+
+===================================================
+    
+Case 12: EXISTS subquery under OR, run for each outer row; result = join with distinct     
+
+===================================================
+count(*)    sum( cast(a.v as bigint))    
+99     12369951     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (b.i_ra_k) (key range: b.k=a.k)
+
+  rewritten query: (select ? from [dba.ra_t] b where b.k=a.k and (b.v>a.v+?) and inst_num()<= ?:? )
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*), sum( cast(a.v as bigint)) from [dba.ra_t] a where (a.id>= ?:?  and a.id<= ?:? ) and ((a.s= ?:? ) or  exists (select ? from [dba.ra_t] b where b.k=a.k and (b.v>a.v+?) and inst_num()<= ?:? ))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ra_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.ra_t.i_ra_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(distinct a.id)    sum(distinct  cast(a.v as bigint))    
+99     12369951     
+
+===================================================
+    
+Case 13: key list, a few rows for each key; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+20     2665534     2621     246012     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_k) (key range: (([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? )))
+
+  rewritten query: select count(*), sum( cast([dba.ra_t].v as bigint)), min([dba.ra_t].id), max([dba.ra_t].id) from [dba.ra_t] [dba.ra_t] where (([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? ) or ([dba.ra_t].k= ?:? )) using index [dba.ra_t].i_ra_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+20     2665534     2621     246012     
+
+===================================================
+    
+Case 14: key list on a unique index; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+5     326654     2652     175027     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ra_t.i_ra_u) (key range: (([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? )))
+
+  rewritten query: select count(*), sum( cast([dba.ra_t].v as bigint)), min([dba.ra_t].id), max([dba.ra_t].id) from [dba.ra_t] [dba.ra_t] where (([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? ) or ([dba.ra_t].u= ?:? )) using index [dba.ra_t].i_ra_u(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ra_t.i_ra_u), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+5     326654     2652     175027     
+
+===================================================
+0
