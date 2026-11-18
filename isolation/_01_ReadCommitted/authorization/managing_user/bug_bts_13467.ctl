@@ -4,7 +4,7 @@ Test Case: Changing Owner
 
 MC: setup NUM_CLIENTS = 2;
 
-C1: login as 'dba';
+C1: CALL login ('dba', '') ON CLASS db_user;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
 
@@ -21,7 +21,7 @@ C1: GRANT SELECT ON t1, v1 TO aa;
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C2: login as 'aa';
+C2: CALL login ('aa', '') ON CLASS db_user;
 C2: COMMIT;
 MC: wait until C2 ready;
 
