@@ -14,9 +14,12 @@
  *            SELECT list
  *    Case 3: the same OR in HAVING, in the ON of a LEFT OUTER JOIN, in START WITH, and in the WHERE of a DELETE
  *    Case 4: an AND of three conjuncts, and a real common factor outside the atoms, which is still taken out
+ *    Case 5: a guard inside an atom keeps guarding - (a = 1 and 10 / b > 1) or (a = 3 and b = 0) under IS TRUE in
+ *            HAVING and START WITH, which were distributed so that 10 / b ran on b = 0 (division by zero) - and the
+ *            OR of atoms in XOR and in the WHERE of a MERGE
  */
 
-drop table if exists t_28027, u_28027, d_28027;
+drop table if exists t_28027, u_28027, d_28027, m_28027;
 
 create table t_28027 (a int, b int);
 insert into t_28027 values (1, 1), (2, 1), (3, 0);
@@ -24,6 +27,8 @@ create table u_28027 (a int);
 insert into u_28027 values (1), (2);
 create table d_28027 (a int);
 insert into d_28027 values (1), (2), (3);
+create table m_28027 (a int);
+insert into m_28027 values (1), (2);
 
 select 'Case 1: the reported forms; result = 2, 2, 2, 2, 2' as c from db_root;
 select count (*) as is_true from t_28027 where ((a > 0 and a = 1) is true) or ((a > 0 and a = 2) is true);
@@ -56,4 +61,16 @@ select count (*) as three_conjuncts from t_28027
 select count (*) as common_outside from t_28027
   where (((a > 0 and a = 1) is true) and b = 1) or (((a > 0 and a = 2) is true) and b = 1);
 
-drop table t_28027, u_28027, d_28027;
+select 'Case 5: a guard inside an atom, XOR, MERGE; HAVING (1, 1), (3, 0) / START WITH 1, 3 / XOR 2 / MERGE 11, 12' as c from db_root;
+select a, b from t_28027 group by a, b
+  having (((a = 1 and 10 / b > 1) or (a = 3 and b = 0)) is true) order by 1;
+select a from t_28027
+  start with (((a = 1 and 10 / b > 1) or (a = 3 and b = 0)) is true) connect by prior a = a - 10 order by 1;
+select count (*) as xor_atom from t_28027
+  where ((a > 0 and a = 1) xor false) or ((a > 0 and a = 2) xor false);
+merge into m_28027 m using t_28027 t on (m.a = t.a)
+  when matched then update set m.a = m.a + 10
+  where ((t.a > 0 and t.a = 1) is true) or ((t.a > 0 and t.a = 2) is true);
+select a from m_28027 order by 1;
+
+drop table t_28027, u_28027, d_28027, m_28027;
