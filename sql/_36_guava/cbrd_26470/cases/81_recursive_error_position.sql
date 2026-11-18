@@ -24,8 +24,8 @@
  *             inner A (before the fix it was that of the outer A)
  *    Case 2:  A -> B -> A -> B -> A   -> one position for each activation
  *    Case 3:  across packages pk81a.f -> pk81b.g -> pk81a.h -> one position for each activation
- *    Case 4:  error in a local function of the inner A -> the position in the local function
- *             comes first, then those of the activations
+ *    Case 4:  error in a local function of the inner A -> the positions of the activations, then
+ *             the position in the local function, which comes last
  *    Case 5:  one level without recursion (regression) -> one position
  *    Case 6:  self recursion inside one unit (an internal call, one position)
  *    Case 7:  deep mutual recursion (A and B 200 times each), then an error: the innermost

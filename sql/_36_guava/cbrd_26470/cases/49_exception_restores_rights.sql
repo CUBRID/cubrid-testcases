@@ -179,7 +179,7 @@ evaluate 'Case 9: u49b.cx (1) -> ok U49B 2';
 select cx (1);
 
 
-evaluate 'Case 10: u49b.cx (-1) -> caught others 1000 ... (line 6, column 19) user defined exception U49B 2';
+evaluate 'Case 10: u49b.cx (-1) -> caught others 1000 with the position in chk, user defined exception U49B 2';
 select cx (-1);
 
 

@@ -14,7 +14,8 @@
  *    Case 5:  the package has the 2 member routines of the new spec and 1 code row, no rows of the old spec
  *    Case 6:  w91b () and w91c () run the new code, and u91b can call the new member g
  *    Case 7:  a replace of the spec only, which keeps the body, keeps the grants
- *    Case 8:  a failed replace of the spec keeps the old package and the grants
+ *    Case 8:  a replace of the spec that fails to compile (the type of a missing table column, not
+ *             a syntax error) keeps the old package and the grants
  *    Case 9:  a replace after a revoke does not bring the grant back, and a new caller of u91b fails
  *             with EXECUTE authorization failure, while G91 keeps its grant
  *    Case 10: DROP PACKAGE and CREATE PACKAGE leave no grant rows
@@ -98,9 +99,9 @@ call login('u91b', '') on class db_user;
 select w91b () from db_root;
 
 
-evaluate 'Case 8: a replace of the spec with an unknown type fails to compile, the old package and the grants stay; result = G91 1, U91B 1, 2';
+evaluate 'Case 8: a replace of the spec with the type of a missing table column fails to compile, the old package and the grants stay; result = G91 1, U91B 1, 2';
 call login('u91a', '') on class db_user;
-create or replace package pk91 as function f return no_such_type; function g return int; end;
+create or replace package pk91 as function f return no_such_tbl91.c%TYPE; function g return int; end;
 call login('dba', '') on class db_user;
 select grantee.name, count(*) from _db_auth where object_type = 6 and grantee.name in ('U91B', 'G91')
   group by grantee.name order by 1;

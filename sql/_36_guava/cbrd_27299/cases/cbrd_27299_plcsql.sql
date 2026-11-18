@@ -14,7 +14,8 @@
  *    Case 1:  pure body (arithmetic, IF, local function, handler, self call) compiles and runs
  *    Case 2:  server-evaluated builtins, including CAST, EXTRACT, TRIM and SYSDATE
  *    Case 3:  serial, cursor, FOR query loop, static SQL, OPEN FOR, CLOSE
- *    Case 4:  static SQL on a missing table vs a cursor on a missing table
+ *    Case 4:  static SQL and a cursor on a missing table: the PARALLEL_ENABLE check runs before the
+ *             check of the SQL, so both give the PARALLEL_ENABLE message, not an unknown class
  *    Case 5:  COMMIT, ROLLBACK, EXECUTE IMMEDIATE
  *    Case 6:  calls to global functions and procedures, with and without owner
  *    Case 7:  forbidden construct in an initializer, a dead branch, a handler, a local routine
@@ -65,7 +66,7 @@ create function e_close(n int) return int parallel_enable as rc sys_refcursor; b
 --+ server-message off
 
 
-evaluate 'Case 4: static SQL on a missing table vs a cursor on a missing table';
+evaluate 'Case 4: static SQL and a cursor on a missing table -> the PARALLEL_ENABLE message for both, not an unknown class';
 --+ server-message on
 create function e_sqlnt(n int) return int parallel_enable as c int; begin select count(*) into c from no_such_tbl; return c + n; end;
 create function e_curnt(n int) return int parallel_enable as cursor c is select a from no_such_tbl; begin return n; end;

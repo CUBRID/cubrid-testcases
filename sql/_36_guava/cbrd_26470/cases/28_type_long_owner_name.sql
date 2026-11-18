@@ -6,18 +6,21 @@
  *  sm_user_specified_name (), whose assertion failed (core dump in a debug build) when the owner
  *  of <owner>.<name> was 32 bytes or longer or the name was 223 bytes or longer. Now
  *  user_specified_name_fits () also checks the parts, and a name that does not fit gives a
- *  compile error, as a too long total does.
+ *  compile error. The message is a fixed one that names neither the identifier nor the part
+ *  that is too long, unlike the not-found error of a name that fits (Case 4) and the error of a
+ *  too long total (88_identifier_length).
  *
  *  Each case creates a procedure with a variable of the %TYPE and then checks that the
  *  connection is alive.
  *
  *  Coverage:
- *    Case 1: <40-byte owner>.t28.c%TYPE (table column): compile error
- *    Case 2: dba.<230-byte table>.c%TYPE: compile error
- *    Case 3: <40-byte owner>.pk28.x%TYPE (package variable form): compile error
- *    Case 4: 31-byte owner (passes the check, not found): compile error
- *    Case 5: 32-byte owner: compile error
- *    Case 6: 223-byte table name: compile error
+ *    Case 1: <40-byte owner>.t28.c%TYPE (table column): compile error with the fixed message
+ *    Case 2: dba.<230-byte table>.c%TYPE: compile error with the fixed message
+ *    Case 3: <40-byte owner>.pk28.x%TYPE (package variable form): compile error with the fixed
+ *            message
+ *    Case 4: 31-byte owner (passes the check, not found): compile error that names the identifier
+ *    Case 5: 32-byte owner: compile error with the fixed message
+ *    Case 6: 223-byte table name: compile error with the fixed message
  *    Case 7: 222-byte table name (exists): compiles
  *    Case 8: a function with a variable of that column type runs and returns the column value
  */

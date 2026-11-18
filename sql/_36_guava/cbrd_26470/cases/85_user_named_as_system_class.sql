@@ -14,7 +14,9 @@
  *    Case 1: db_root.sf85() called in PL/CSQL -> calls the function of the user db_root
  *    Case 2: ALTER FUNCTION db_root.sf85 COMMENT -> succeeds, the comment shows in the catalog
  *    Case 3: GRANT EXECUTE ON PROCEDURE db_root.sf85 -> succeeds, one grant to PUBLIC
- *    Case 4: missing db_root.nf85() called in PL/CSQL -> "does not exist" error (not Ambiguous)
+ *    Case 4: missing db_root.nf85() called in PL/CSQL -> "does not exist" error (not Ambiguous).
+ *            The message names db_root.nf85 twice, as a stored function and as a package
+ *            function, although the package interpretation is skipped. This is a known behavior.
  */
 
 --+ server-message on
