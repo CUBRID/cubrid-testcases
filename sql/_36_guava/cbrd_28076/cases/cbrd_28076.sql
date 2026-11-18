@@ -279,4 +279,15 @@ select /*+ USE_HASH */ x.id, y.id from k26x x left outer join k26v y on x.a = y.
 drop view k26v;
 drop table k26x, k26y;
 
+evaluate 'Case 27: an UPDATE whose column the equality substitution puts a constant in for inside a function index expression is still planned, with every term: 2 rows updated, as the SELECT counts';
+drop table if exists k27;
+create table k27 (id int, a int, b int, c varchar(10), d int);
+insert into k27 select rownum, mod (rownum, 7), mod (rownum, 13), 'w' || mod (rownum, 20), mod (rownum, 40) from db_class c1, db_class c2 where rownum <= 800;
+create index k27_nb on k27 (nvl (b, -1));
+create index k27_dc on k27 (d, c);
+update statistics on k27 with fullscan;
+update k27 x set x.d = x.d + 1000 where ((x.d <> 36 and x.id = 7) or nvl (x.b, -1) = 12 or (x.d = 36 and lower (x.c) like 'w1%')) and ((x.c is not null and x.d = 42) or (x.b = 3 and not (x.id = -1 or (x.d <> 35 and x.b in (select 99 from db_root))) and x.d >= 36)) and x.d = 36;
+select count(*) from k27 where d >= 1000;
+drop table k27;
+
 drop table o, i, a, b, t;
