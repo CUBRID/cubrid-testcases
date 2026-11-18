@@ -14,8 +14,8 @@
  *                 the body is fixed
  *    Case 5:  K7  assignment to a field of an IN record parameter -> error, like the scalar case.
  *                 A record type cannot be a parameter type of a public routine, so the
- *                 specification is refused. The body given without a specification is kept as a
- *                 body-only package, hence drop package body if exists.
+ *                 specification with it is refused, and the record parameter is checked in a
+ *                 private routine of the body under another specification.
  *    Case 6:  K6  default values through a direct call: an empty string default stays an empty
  *                 string as from SQL, and a TO_CHAR(SYS_DATE, YYYY) default gives the current
  *                 year, not the literal text
@@ -101,11 +101,13 @@ BEGIN
 END;
 SELECT call90_badini();
 
-evaluate 'Case 5: K7 IN record parameter in a package specification -> refused as a parameter type; assignment to an IN scalar parameter -> not updatable';
+evaluate 'Case 5: K7 IN record parameter in a package specification -> refused as a parameter type; assignment to a field of an IN record parameter in a private routine -> not updatable; assignment to an IN scalar parameter -> not updatable';
 CREATE TABLE t90_row(a INT, b VARCHAR(10));
 CREATE OR REPLACE PACKAGE pk90_in AS PROCEDURE q(x IN t90_row%ROWTYPE); END;
+CREATE OR REPLACE PACKAGE pk90_in AS PROCEDURE r; END;
 CREATE OR REPLACE PACKAGE BODY pk90_in AS
   PROCEDURE q(x IN t90_row%ROWTYPE) AS BEGIN x.a := 99; END;
+  PROCEDURE r AS BEGIN NULL; END;
 END;
 CREATE OR REPLACE PACKAGE pk90_sc AS PROCEDURE q(x IN INT); END;
 CREATE OR REPLACE PACKAGE BODY pk90_sc AS

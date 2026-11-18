@@ -13,7 +13,8 @@
  *    Case 3: self recursion of u03b.f03_rec: OK
  *    Case 4: after GRANT, u03b -> u03a.f03_b compiles and runs
  *    Case 5: u03b -> package routine u03a.pk03.pf without grant: EXECUTE authorization failure
- *    Case 6: u03b -> Java SP u03a.f03_j without grant: compile passes
+ *    Case 6: u03b -> Java SP u03a.f03_j without grant: compile passes, and the call fails at
+ *            run time with EXECUTE authorization failure
  */
 
 --+ server-message on
@@ -55,8 +56,9 @@ evaluate 'Case 5: u03b -> package routine u03a.pk03.pf without grant, expect EXE
 create or replace function f03_pkg return int as begin return u03a.pk03.pf(5); end;
 
 
-evaluate 'Case 6: u03b -> Java SP u03a.f03_j without grant, expect OK (checked at run time)';
+evaluate 'Case 6: u03b -> Java SP u03a.f03_j without grant, expect compile OK and EXECUTE authorization failure at run time';
 create or replace function f03_jsp return int as begin return u03a.f03_j(1); end;
+select f03_jsp() from dual;
 
 
 call login('dba', '') on class db_user;

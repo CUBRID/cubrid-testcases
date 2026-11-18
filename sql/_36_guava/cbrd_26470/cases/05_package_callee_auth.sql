@@ -9,7 +9,7 @@
  *
  *  Coverage:
  *    Case 1: owner u05a calls its own package routine: OK
- *    Case 2: DBA calls the package routine of u05a without grant: OK
+ *    Case 2: DBA compiles and runs a caller of the package routine of u05a without grant: OK
  *    Case 3: u05b without grant calls u05a.pk05.pf / u05a.pk05.pp: authorization failure
  *    Case 4: after GRANT, u05b compiles and runs callers
  *    Case 5: after REVOKE, a new caller of u05b fails: authorization failure
@@ -34,9 +34,10 @@ evaluate 'Case 1: owner u05a calls its own package routine, expect OK';
 create or replace function u05a.f05_own return int as begin return u05a.pk05.pf(5); end;
 
 
-evaluate 'Case 2: DBA calls u05a package routine without grant, expect OK';
+evaluate 'Case 2: DBA calls u05a package routine without grant, expect OK and 6';
 call login('dba', '') on class db_user;
 create or replace function dba.f05_dba return int as begin return u05a.pk05.pf(5); end;
+select f05_dba() from dual;
 
 
 evaluate 'Case 3: u05b without grant calls u05a.pk05.pf / u05a.pk05.pp, expect authorization failure twice';
