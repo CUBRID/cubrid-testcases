@@ -1,0 +1,291 @@
+===================================================
+0
+===================================================
+    
+Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE fails     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+TABLE    CREATE TABLE    
+dba.t_tochar     CREATE TABLE [t_tochar] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    char_length(a)    a- year( SYS_DATE )    
+1     4     0.0     
+
+===================================================
+    
+Case 2: MODIFY of a UNIX_TIMESTAMP DEFAULT column to SMALLINT fails     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_unix     CREATE TABLE [t_unix] ([id] INTEGER, [a] BIGINT DEFAULT UNIX_TIMESTAMP()) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    char_length(a)    year( from_unixtime(a))- year( SYS_DATE )    
+1     10     0     
+
+===================================================
+    
+Case 3: MODIFY of a SYS_GUID DEFAULT column to INT fails     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_guid     CREATE TABLE [t_guid] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    char_length(a)    
+1     32     
+
+===================================================
+    
+Case 4: MODIFY of a SYS_DATETIME DEFAULT column to VARCHAR fails     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_dt     CREATE TABLE [t_dt] ([id] INTEGER, [a] DATETIME DEFAULT SYS_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    year(a)- year( SYS_DATE )    
+1     0     
+
+===================================================
+    
+Case 5: MODIFY of an ON UPDATE CURRENT_DATETIME column to VARCHAR fails     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_upd     CREATE TABLE [t_upd] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    x    a    
+1     1     null     
+
+===================================================
+1
+===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     2     0     
+
+===================================================
+    
+Case 6: CHANGE to a new name and a type that does not take the kept DEFAULT fails     
+
+===================================================
+0
+===================================================
+Error:-176
+===================================================
+Error:-495
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_chg     CREATE TABLE [t_chg] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [g] CHARACTER VARYING(100) DEFAULT SYS_GUID(), [u] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+attr_name    data_type    prec    default_value    
+id     INTEGER     10     null     
+a     STRING     100     TO_CHAR(SYS_DATETIME, 'YYYY')     
+g     STRING     100     SYS_GUID()     
+u     DATETIME     23     ON UPDATE CURRENT_DATETIME     
+
+===================================================
+    
+Case 7: MODIFY with a DEFAULT clause still fails on the kept ON UPDATE expression     
+
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_upd     CREATE TABLE [t_upd] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expression     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_both     CREATE TABLE [t_both] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT SYS_DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     1     0     
+
+===================================================
+1
+===================================================
+1
+===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     2     0     
+
+===================================================
+    
+Case 9: MODIFY of a TO_CHAR DEFAULT column to INT keeps the DEFAULT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_year     CREATE TABLE [t_year] ([id] INTEGER, [a] INTEGER DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a- year( SYS_DATE )    
+1     0     
+
+===================================================
+    
+Case 10: MODIFY with a DEFAULT clause keeps the ON UPDATE expression     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_keep     CREATE TABLE [t_keep] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT SYS_TIMESTAMP ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     1     0     
+
+===================================================
+1
+===================================================
+1
+===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     2     0     
+
+===================================================
+    
+Case 11: CHANGE to a new name and a type that takes the kept DEFAULT succeeds     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_ren     CREATE TABLE [t_ren] ([id] INTEGER, [b] TIMESTAMP DEFAULT SYS_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    year(b)- year( SYS_DATE )    
+1     0     
+
+===================================================
+    
+Case 12: CHANGE of the name alone and MODIFY to NOT NULL keep the DEFAULT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_name     CREATE TABLE [t_name] ([id] INTEGER, [b] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [g] CHARACTER VARYING(100) DEFAULT SYS_GUID() NOT NULL, [v] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+1
+===================================================
+id    b- year( SYS_DATE )    char_length(g)    year(v)- year( SYS_DATE )    
+2     0.0     32     0     
+
+===================================================
+    
+Case 13: a literal DEFAULT that the new type does not take fails as before     
+
+===================================================
+0
+===================================================
+Error:-214
+===================================================
+TABLE    CREATE TABLE    
+dba.t_lit     CREATE TABLE [t_lit] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT 'abc', [n] CHARACTER VARYING(100) DEFAULT '12') REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+    
+Case 14: a literal DEFAULT that the new type takes is converted as before     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_lit     CREATE TABLE [t_lit] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT 'abc', [n] INTEGER DEFAULT 12) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a    n    
+1     abc     12     
+
+===================================================
+    
+Case 15: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT     
+
+===================================================
+0
+===================================================
+Error:-788
+===================================================
+TABLE    CREATE TABLE    
+dba.t_onu     CREATE TABLE [t_onu] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    char_length(a)    a- year( SYS_DATE )    
+1     4     0.0     
+
+===================================================
+0
