@@ -1,0 +1,245 @@
+/**
+ *  This test case verifies CBRD-27611: a CAST to a string type shorter than the value
+ *  fails on the client path.
+ *
+ *  The server truncates the value of a CAST that the user wrote, but the client evaluator
+ *  failed with a coercion error, so the same INSERT gave a row or an error depending on
+ *  where it ran. The fix makes the client evaluator truncate as the server does.
+ *
+ *  Each case runs the same expression on the server path (a plain INSERT into t_plain,
+ *  path server) and on the client paths (the INSERT_EXECUTION_MODE(0) hint, path hint,
+ *  an INSERT into t_trig, which has a trigger, path trigger, and SET of a session
+ *  variable), and prints the stored values side by side. BIT values are read back from
+ *  the tables only, not through a session variable.
+ *
+ *  Coverage:
+ *    Case 1:  a CAST of a date string to VARCHAR(4) keeps the first four characters on every path
+ *    Case 2:  a CAST to a shorter CHAR truncates on every path
+ *    Case 3:  a CAST to a shorter NCHAR and NCHAR VARYING truncates on every path
+ *    Case 4:  a CAST of a bit string to a shorter BIT VARYING and BIT truncates on every path
+ *    Case 5:  a CAST of a character string to a shorter BIT truncates on every path
+ *    Case 6:  a nested CAST truncates the inner value and converts the rest on every path
+ *    Case 7:  a CAST inside CONCAT and a CAST of a function result truncate on every path
+ *    Case 8:  a length just below, on, and just above the length of the value, the empty string, and NULL
+ *    Case 9:  UPDATE and REPLACE on the table with a trigger truncate as on the server path
+ *    Case 10: a CAST that truncates nothing gives the same value as before
+ *    Case 11: a CAST of a number or a date to a string that is too short still fails on every path
+ *    Case 12: a numeric overflow in a CAST still fails on every path
+ *    Case 13: a CAST of an invalid date or number string still fails on every path
+ *    Case 14: a string longer than its VARCHAR(4) or CHAR(4) column still fails without a CAST
+ *    Case 15: a CAST that truncates to six characters still fails in a VARCHAR(4) column
+ *    Case 16: a CAST that truncates to four characters fits a VARCHAR(4) column on every path
+ */
+
+drop table if exists t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
+
+create table t_plain (id int, path varchar(10), v varchar(20), nv nchar varying(20), bv bit varying(64), d date, n int);
+create table t_trig (id int, path varchar(10), v varchar(20), nv nchar varying(20), bv bit varying(64), d date, n int);
+create table t_trig_log (id int, v varchar(20));
+create trigger trg_27611 after insert on t_trig execute insert into t_trig_log values (obj.id, obj.v);
+
+create table t_narrow (id int, path varchar(10), v varchar(4), c char(4), bv bit varying(8));
+create table t_narrow_trig (id int, path varchar(10), v varchar(4), c char(4), bv bit varying(8));
+create trigger trg_27611_narrow after insert on t_narrow_trig execute insert into t_trig_log values (obj.id, obj.v);
+
+
+evaluate 'Case 1: a CAST of a date string to VARCHAR(4) keeps the first four characters on every path';
+select cast('2026-10-12' as varchar(4)) from db_root;
+insert into t_plain (id, path, v) values (1, 'server', cast('2026-10-12' as varchar(4)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (1, 'hint', cast('2026-10-12' as varchar(4)));
+insert into t_trig (id, path, v) values (1, 'trigger', cast('2026-10-12' as varchar(4)));
+select id, path, v, char_length(v) from t_plain where id = 1 union all select id, path, v, char_length(v) from t_trig where id = 1 order by 1, 2;
+select id, v from t_trig_log where id = 1 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast('2026-10-12' as varchar(4));
+select @v_27611 from db_root;
+
+
+evaluate 'Case 2: a CAST to a shorter CHAR truncates on every path';
+insert into t_plain (id, path, v) values (2, 'server', cast('abcdef' as char(2)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (2, 'hint', cast('abcdef' as char(2)));
+insert into t_trig (id, path, v) values (2, 'trigger', cast('abcdef' as char(2)));
+select id, path, v, char_length(v) from t_plain where id = 2 union all select id, path, v, char_length(v) from t_trig where id = 2 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast('abcdef' as char(2));
+select @v_27611 from db_root;
+
+
+evaluate 'Case 3: a CAST to a shorter NCHAR and NCHAR VARYING truncates on every path';
+insert into t_plain (id, path, nv) values (3, 'server', cast(N'abcdef' as nchar(2)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, nv) values (3, 'hint', cast(N'abcdef' as nchar(2)));
+insert into t_trig (id, path, nv) values (3, 'trigger', cast(N'abcdef' as nchar(2)));
+insert into t_plain (id, path, nv) values (31, 'server', cast(N'uvwxyz' as nchar varying(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, nv) values (31, 'hint', cast(N'uvwxyz' as nchar varying(3)));
+insert into t_trig (id, path, nv) values (31, 'trigger', cast(N'uvwxyz' as nchar varying(3)));
+select id, path, nv, char_length(nv) from t_plain where id in (3, 31) union all select id, path, nv, char_length(nv) from t_trig where id in (3, 31) order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast(N'uvwxyz' as nchar varying(3));
+select @v_27611 from db_root;
+
+
+evaluate 'Case 4: a CAST of a bit string to a shorter BIT VARYING and BIT truncates on every path';
+insert into t_plain (id, path, bv) values (4, 'server', cast(X'abcd' as bit varying(8)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, bv) values (4, 'hint', cast(X'abcd' as bit varying(8)));
+insert into t_trig (id, path, bv) values (4, 'trigger', cast(X'abcd' as bit varying(8)));
+insert into t_plain (id, path, bv) values (41, 'server', cast(X'cdef' as bit(8)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, bv) values (41, 'hint', cast(X'cdef' as bit(8)));
+insert into t_trig (id, path, bv) values (41, 'trigger', cast(X'cdef' as bit(8)));
+insert into t_plain (id, path, bv) values (42, 'server', cast(B'10100000' as bit(4)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, bv) values (42, 'hint', cast(B'10100000' as bit(4)));
+insert into t_trig (id, path, bv) values (42, 'trigger', cast(B'10100000' as bit(4)));
+select id, path, bv, bit_length(bv) from t_plain where id in (4, 41, 42) union all select id, path, bv, bit_length(bv) from t_trig where id in (4, 41, 42) order by 1, 2;
+
+
+evaluate 'Case 5: a CAST of a character string to a shorter BIT truncates on every path';
+insert into t_plain (id, path, bv) values (5, 'server', cast('abc' as bit(8)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, bv) values (5, 'hint', cast('abc' as bit(8)));
+insert into t_trig (id, path, bv) values (5, 'trigger', cast('abc' as bit(8)));
+select id, path, bv, bit_length(bv) from t_plain where id = 5 union all select id, path, bv, bit_length(bv) from t_trig where id = 5 order by 1, 2;
+
+
+evaluate 'Case 6: a nested CAST truncates the inner value and converts the rest on every path';
+insert into t_plain (id, path, v, d) values (6, 'server', cast(cast('2026-10-12' as varchar(7)) as char(4)), cast(cast('2026-10-12 11:22:33' as varchar(10)) as date));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v, d) values (6, 'hint', cast(cast('2026-10-12' as varchar(7)) as char(4)), cast(cast('2026-10-12 11:22:33' as varchar(10)) as date));
+insert into t_trig (id, path, v, d) values (6, 'trigger', cast(cast('2026-10-12' as varchar(7)) as char(4)), cast(cast('2026-10-12 11:22:33' as varchar(10)) as date));
+select id, path, v, d from t_plain where id = 6 union all select id, path, v, d from t_trig where id = 6 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast(cast('2026-10-12 11:22:33' as varchar(10)) as date);
+select @v_27611 from db_root;
+
+
+evaluate 'Case 7: a CAST inside CONCAT and a CAST of a function result truncate on every path';
+insert into t_plain (id, path, v) values (7, 'server', concat(cast('abcdef' as varchar(2)), 'z'));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (7, 'hint', concat(cast('abcdef' as varchar(2)), 'z'));
+insert into t_trig (id, path, v) values (7, 'trigger', concat(cast('abcdef' as varchar(2)), 'z'));
+insert into t_plain (id, path, v) values (71, 'server', cast(repeat('xy', 3) as varchar(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (71, 'hint', cast(repeat('xy', 3) as varchar(3)));
+insert into t_trig (id, path, v) values (71, 'trigger', cast(repeat('xy', 3) as varchar(3)));
+select id, path, v from t_plain where id in (7, 71) union all select id, path, v from t_trig where id in (7, 71) order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = concat(cast('abcdef' as varchar(2)), 'z');
+select @v_27611 from db_root;
+
+
+evaluate 'Case 8: a length just below, on, and just above the length of the value, the empty string, and NULL';
+insert into t_plain (id, path, v) values (81, 'server', cast('abcd' as varchar(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (81, 'hint', cast('abcd' as varchar(3)));
+insert into t_trig (id, path, v) values (81, 'trigger', cast('abcd' as varchar(3)));
+insert into t_plain (id, path, v) values (82, 'server', cast('abcd' as varchar(4)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (82, 'hint', cast('abcd' as varchar(4)));
+insert into t_trig (id, path, v) values (82, 'trigger', cast('abcd' as varchar(4)));
+insert into t_plain (id, path, v) values (83, 'server', cast('abcd' as varchar(5)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (83, 'hint', cast('abcd' as varchar(5)));
+insert into t_trig (id, path, v) values (83, 'trigger', cast('abcd' as varchar(5)));
+insert into t_plain (id, path, v) values (84, 'server', cast('' as varchar(1)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (84, 'hint', cast('' as varchar(1)));
+insert into t_trig (id, path, v) values (84, 'trigger', cast('' as varchar(1)));
+insert into t_plain (id, path, v) values (85, 'server', cast(null as varchar(1)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (85, 'hint', cast(null as varchar(1)));
+insert into t_trig (id, path, v) values (85, 'trigger', cast(null as varchar(1)));
+select id, path, v, char_length(v) from t_plain where id between 81 and 85 union all select id, path, v, char_length(v) from t_trig where id between 81 and 85 order by 1, 2;
+
+
+-- Case 9 updates the rows that Case 1 inserted
+evaluate 'Case 9: UPDATE and REPLACE on the table with a trigger truncate as on the server path';
+update t_plain set v = cast('updated value' as varchar(6)) where id = 1 and path = 'server';
+update t_trig set v = cast('updated value' as varchar(6)) where id = 1;
+replace into t_plain (id, path, v) values (9, 'server', cast('replaced value' as char(8)));
+replace into t_trig (id, path, v) values (9, 'trigger', cast('replaced value' as char(8)));
+select id, path, v from t_plain where id in (1, 9) union all select id, path, v from t_trig where id in (1, 9) order by 1, 2;
+
+
+evaluate 'Case 10: a CAST that truncates nothing gives the same value as before';
+insert into t_plain (id, path, v, d, n) values (10, 'server', cast(123456 as varchar(10)), cast('2026-10-12' as date), cast('123' as int));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v, d, n) values (10, 'hint', cast(123456 as varchar(10)), cast('2026-10-12' as date), cast('123' as int));
+insert into t_trig (id, path, v, d, n) values (10, 'trigger', cast(123456 as varchar(10)), cast('2026-10-12' as date), cast('123' as int));
+select id, path, v, d, n from t_plain where id = 10 union all select id, path, v, d, n from t_trig where id = 10 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast(123456 as varchar(10));
+select @v_27611 from db_root;
+
+
+evaluate 'Case 11: a CAST of a number or a date to a string that is too short still fails on every path';
+select cast(123456 as varchar(3)) from db_root;
+insert into t_plain (id, path, v) values (11, 'server', cast(123456 as varchar(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (11, 'hint', cast(123456 as varchar(3)));
+insert into t_trig (id, path, v) values (11, 'trigger', cast(123456 as varchar(3)));
+insert into t_plain (id, path, v) values (11, 'server', cast(1234.5678 as char(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (11, 'hint', cast(1234.5678 as char(3)));
+insert into t_trig (id, path, v) values (11, 'trigger', cast(1234.5678 as char(3)));
+insert into t_plain (id, path, v) values (11, 'server', cast(date'2026-10-12' as varchar(4)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (11, 'hint', cast(date'2026-10-12' as varchar(4)));
+insert into t_trig (id, path, v) values (11, 'trigger', cast(date'2026-10-12' as varchar(4)));
+set @v_27611 = 'not set';
+set @v_27611 = cast(123456 as varchar(3));
+select @v_27611 from db_root;
+select (select count(*) from t_plain where id = 11) as plain_rows, (select count(*) from t_trig where id = 11) as trig_rows, (select count(*) from t_trig_log where id = 11) as log_rows from db_root;
+
+
+evaluate 'Case 12: a numeric overflow in a CAST still fails on every path';
+insert into t_plain (id, path, n) values (12, 'server', cast(99999999999 as int));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, n) values (12, 'hint', cast(99999999999 as int));
+insert into t_trig (id, path, n) values (12, 'trigger', cast(99999999999 as int));
+insert into t_plain (id, path, n) values (12, 'server', cast('99999999999' as int));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, n) values (12, 'hint', cast('99999999999' as int));
+insert into t_trig (id, path, n) values (12, 'trigger', cast('99999999999' as int));
+insert into t_plain (id, path, n) values (12, 'server', cast(123456 as smallint));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, n) values (12, 'hint', cast(123456 as smallint));
+insert into t_trig (id, path, n) values (12, 'trigger', cast(123456 as smallint));
+insert into t_plain (id, path, n) values (12, 'server', cast(123456789.5 as numeric(4,2)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, n) values (12, 'hint', cast(123456789.5 as numeric(4,2)));
+insert into t_trig (id, path, n) values (12, 'trigger', cast(123456789.5 as numeric(4,2)));
+set @v_27611 = 'not set';
+set @v_27611 = cast(99999999999 as int);
+select @v_27611 from db_root;
+select (select count(*) from t_plain where id = 12) as plain_rows, (select count(*) from t_trig where id = 12) as trig_rows, (select count(*) from t_trig_log where id = 12) as log_rows from db_root;
+
+
+evaluate 'Case 13: a CAST of an invalid date or number string still fails on every path';
+insert into t_plain (id, path, d) values (13, 'server', cast('2026-13-45' as date));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, d) values (13, 'hint', cast('2026-13-45' as date));
+insert into t_trig (id, path, d) values (13, 'trigger', cast('2026-13-45' as date));
+insert into t_plain (id, path, n) values (13, 'server', cast('12ab' as int));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, n) values (13, 'hint', cast('12ab' as int));
+insert into t_trig (id, path, n) values (13, 'trigger', cast('12ab' as int));
+set @v_27611 = 'not set';
+set @v_27611 = cast('2026-13-45' as date);
+select @v_27611 from db_root;
+select (select count(*) from t_plain where id = 13) as plain_rows, (select count(*) from t_trig where id = 13) as trig_rows, (select count(*) from t_trig_log where id = 13) as log_rows from db_root;
+
+
+evaluate 'Case 14: a string longer than its VARCHAR(4) or CHAR(4) column still fails without a CAST';
+insert into t_narrow (id, path, v) values (14, 'server', 'abcdef');
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v) values (14, 'hint', 'abcdef');
+insert into t_narrow_trig (id, path, v) values (14, 'trigger', 'abcdef');
+insert into t_narrow (id, path, c) values (14, 'server', 'abcdef');
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, c) values (14, 'hint', 'abcdef');
+insert into t_narrow_trig (id, path, c) values (14, 'trigger', 'abcdef');
+insert into t_narrow (id, path, bv) values (14, 'server', X'abcd');
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, bv) values (14, 'hint', X'abcd');
+insert into t_narrow_trig (id, path, bv) values (14, 'trigger', X'abcd');
+insert into t_narrow (id, path, v) values (14, 'server', 123456);
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v) values (14, 'hint', 123456);
+insert into t_narrow_trig (id, path, v) values (14, 'trigger', 123456);
+select (select count(*) from t_narrow where id = 14) as plain_rows, (select count(*) from t_narrow_trig where id = 14) as trig_rows, (select count(*) from t_trig_log where id = 14) as log_rows from db_root;
+
+
+evaluate 'Case 15: a CAST that truncates to six characters still fails in a VARCHAR(4) column';
+insert into t_narrow (id, path, v) values (15, 'server', cast('abcdefgh' as varchar(6)));
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v) values (15, 'hint', cast('abcdefgh' as varchar(6)));
+insert into t_narrow_trig (id, path, v) values (15, 'trigger', cast('abcdefgh' as varchar(6)));
+select (select count(*) from t_narrow where id = 15) as plain_rows, (select count(*) from t_narrow_trig where id = 15) as trig_rows, (select count(*) from t_trig_log where id = 15) as log_rows from db_root;
+
+
+evaluate 'Case 16: a CAST that truncates to four characters fits a VARCHAR(4) column on every path';
+insert into t_narrow (id, path, v, c, bv) values (16, 'server', cast('2026-10-12' as varchar(4)), cast('abcdef' as char(4)), cast(X'abcd' as bit varying(8)));
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v, c, bv) values (16, 'hint', cast('2026-10-12' as varchar(4)), cast('abcdef' as char(4)), cast(X'abcd' as bit varying(8)));
+insert into t_narrow_trig (id, path, v, c, bv) values (16, 'trigger', cast('2026-10-12' as varchar(4)), cast('abcdef' as char(4)), cast(X'abcd' as bit varying(8)));
+select id, path, v, c, bv from t_narrow where id = 16 union all select id, path, v, c, bv from t_narrow_trig where id = 16 order by 1, 2;
+select id, v from t_trig_log where id = 16 order by 1, 2;
+
+
+set @v_27611 = null;
+drop trigger trg_27611;
+drop trigger trg_27611_narrow;
+drop table t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
