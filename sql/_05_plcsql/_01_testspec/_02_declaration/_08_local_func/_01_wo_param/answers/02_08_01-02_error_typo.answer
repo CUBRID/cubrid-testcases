@@ -1,4 +1,9 @@
 ===================================================
+    
+Case 1: creator instead of create fails with a syntax error; result = Error:-493     
+
+
+===================================================
 Error:-493
 Syntax: In line 1, column 1 before '  FUNCTION choose(m INT, n INT) RETURN INT
 AS
@@ -23,7 +28,7 @@ Syntax error: unexpected 'ELSIF', expecting SELECT or VALUE or VALUES or '('
 ===================================================
 Error:-493
 Syntax: In line 1, column 1 before '
-RETURN n * factorial(n - 1);    -- 재귀 호출
+RETURN n * factorial(n - 1);    -- recursive call
 END IF; '
 Syntax error: unexpected 'ELSE', expecting SELECT or VALUE or VALUES or '(' 
 
@@ -54,6 +59,11 @@ Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '('
 Error:-493
 Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+    
+Case 2: functions instead of function fails with a syntax error; result = Error:-493     
+
 
 ===================================================
 Error:-493
@@ -77,7 +87,7 @@ Syntax error: unexpected 'ELSIF', expecting SELECT or VALUE or VALUES or '('
 ===================================================
 Error:-493
 Syntax: In line 1, column 1 before '
-RETURN n * factorial(n - 1);    -- 재귀 호출
+RETURN n * factorial(n - 1);    -- recursive call
 END IF; '
 Syntax error: unexpected 'ELSE', expecting SELECT or VALUE or VALUES or '(' 
 
@@ -110,8 +120,18 @@ Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '(' 
 
 ===================================================
+    
+Case 3: retorn instead of return in a local function header fails to compile; result = Error:-1360     
+
+
+===================================================
 Error:-1360
 Stored procedure compile error: missing RETURN at 'retorn'
+
+===================================================
+    
+Case 4: the unknown return type INTS fails; result = Error:-494     
+
 
 ===================================================
 Error:-494
@@ -122,12 +142,13 @@ FUNCTION factorial(n INT) RET...'
 dba.INTS is not defined. create function [dba.choose](m  integer, n  integer) return ...
 
 ===================================================
-Error:-1360
-Stored procedure compile error: no viable alternative at input 'TO\nBEGIN'
+    
+Case 5: TO instead of AS in a local function fails to compile; result = Error:-1360     
+
 
 ===================================================
 Error:-1360
-Stored procedure compile error: no viable alternative at input 'began\nIF'
+Stored procedure compile error: no viable alternative at input 'TO\nBEGIN'
 
 ===================================================
 Error:-493
@@ -153,14 +174,63 @@ Syntax: In line 1, column 1 before '; '
 Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '(' 
 
 ===================================================
+    
+Case 6: began instead of begin in a local function fails with a syntax error; result = Error:-493     
+
+
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '
+IF n > m OR n < 0 THEN
+RAISE invalid_argument; '
+Syntax error: unexpected 'begin', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '
+RETURN factorial(m) / factorial(n) / factorial(m - n); '
+Syntax error: unexpected 'ELSE', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before ' IF; '
+Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+Error:-493
+Syntax: In line 1, column 1 before '; '
+Syntax error: unexpected 'END', expecting SELECT or VALUE or VALUES or '(' 
+
+===================================================
+    
+Case 7: retorn instead of return in a local function body fails to compile; result = Error:-1360     
+
+
+===================================================
 Error:-1360
 Stored procedure compile error: extraneous input '1'
+
+===================================================
+    
+Case 8: an undeclared identifier AA in a local function fails to compile; result = Error:-1360     
+
 
 ===================================================
 Error:-1360
 Stored procedure compile error: undeclared identifier 'AA'
 
 ===================================================
-Error:-1360
-Stored procedure compile error: mismatched input 'end'
+    
+Case 9: ENDS instead of END in a local function fails with a syntax error; result = Error:-493     
+
+
+===================================================
+Error:-493
+Syntax: invalid create function
+  CREATE [OR REPLACE] FUNCTION identifier '(' {sp_param_list} ')' RETURN {data_type|CURSOR} {IS|AS} {[LANGUAGE PLCSQL|LANGUAGE JAVA]} {function_source|function_spec} 
 

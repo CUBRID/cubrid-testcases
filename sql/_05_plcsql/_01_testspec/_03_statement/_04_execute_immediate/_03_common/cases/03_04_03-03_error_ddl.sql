@@ -1,7 +1,25 @@
+/**
+ *  This test case verifies CBRD-25097: PL/CSQL EXECUTE IMMEDIATE with a wrong DDL
+ *
+ *  Each procedure runs misspelled DDL statements with EXECUTE IMMEDIATE.
+ *  The procedures compile, and each call fails with a syntax error at its first statement,
+ *  so no table, view, serial, server or synonym is created.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  t_1 fails at DROP TABLES IF EXISTS with a syntax error
+ *    Case 2:  t_2 fails at CREATE TABLE LIKES with a syntax error
+ *    Case 3:  t_3 fails at ALTER TABLES with a syntax error
+ *    Case 4:  t_4 fails at ALTER TABLE COMMENTS with a syntax error
+ *    Case 5:  t_5 fails at CREATE OR REPLACE VIEWS with a syntax error
+ *    Case 6:  t_6 fails at DROP TABLES with a syntax error
+ */
+
 --+ server-message on
 
--- Check if an error occurs in the error DDL statement written with the EXECUTE IMMEDIATE statement.
 
+evaluate 'Case 1: t_1 fails at DROP TABLES IF EXISTS with a syntax error';
 CREATE OR REPLACE PROCEDURE t_1()
 AS
 BEGIN
@@ -12,6 +30,7 @@ BEGIN
 END;
 call t_1();
 
+evaluate 'Case 2: t_2 fails at CREATE TABLE LIKES with a syntax error';
 CREATE OR REPLACE PROCEDURE t_2()
 AS
 BEGIN
@@ -23,6 +42,7 @@ END;
 call t_2();
 
 
+evaluate 'Case 3: t_3 fails at ALTER TABLES with a syntax error';
 CREATE OR REPLACE PROCEDURE t_3()
 AS
 BEGIN
@@ -34,6 +54,7 @@ END;
 call t_3();
 
 
+evaluate 'Case 4: t_4 fails at ALTER TABLE COMMENTS with a syntax error';
 CREATE OR REPLACE PROCEDURE t_4()
 AS
 BEGIN
@@ -45,6 +66,7 @@ END;
 call t_4();
 
 
+evaluate 'Case 5: t_5 fails at CREATE OR REPLACE VIEWS with a syntax error';
 CREATE OR REPLACE PROCEDURE t_5()
 AS
 BEGIN
@@ -57,6 +79,7 @@ END;
 call t_5();
 
 
+evaluate 'Case 6: t_6 fails at DROP TABLES with a syntax error';
 CREATE OR REPLACE PROCEDURE t_6()
 AS
 BEGIN

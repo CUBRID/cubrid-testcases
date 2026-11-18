@@ -14,11 +14,12 @@
  *    Case 1:  pure body (arithmetic, IF, local function, handler, self call) compiles and runs
  *    Case 2:  server-evaluated builtins, including CAST, EXTRACT, TRIM and SYSDATE
  *    Case 3:  serial, cursor, FOR query loop, static SQL, OPEN FOR, CLOSE
- *    Case 4:  static SQL on a missing table vs a cursor on a missing table
+ *    Case 4:  static SQL and a cursor on a missing table: the PARALLEL_ENABLE check runs before the
+ *             check of the SQL, so both give the PARALLEL_ENABLE message, not an unknown class
  *    Case 5:  COMMIT, ROLLBACK, EXECUTE IMMEDIATE
  *    Case 6:  calls to global functions and procedures, with and without owner
  *    Case 7:  forbidden construct in an initializer, a dead branch, a handler, a local routine
- *    Case 8:  an undeclared identifier is refused as a possible server call
+ *    Case 8:  an undeclared identifier is reported as such, as without PARALLEL_ENABLE
  *    Case 9:  DBMS_OUTPUT calls give their own message
  *    Case 10: the first forbidden construct in the body decides the message
  *    Case 11: PARALLEL_ENABLE and duplicate options on a local routine
@@ -26,6 +27,7 @@
  */
 
 drop table if exists t_one;
+drop serial if exists s_pe;
 
 -- static SQL and cursors in the bodies below need an existing table
 create table t_one (a int);
@@ -64,7 +66,7 @@ create function e_close(n int) return int parallel_enable as rc sys_refcursor; b
 --+ server-message off
 
 
-evaluate 'Case 4: static SQL on a missing table vs a cursor on a missing table';
+evaluate 'Case 4: static SQL and a cursor on a missing table -> the PARALLEL_ENABLE message for both, not an unknown class';
 --+ server-message on
 create function e_sqlnt(n int) return int parallel_enable as c int; begin select count(*) into c from no_such_tbl; return c + n; end;
 create function e_curnt(n int) return int parallel_enable as cursor c is select a from no_such_tbl; begin return n; end;
@@ -97,7 +99,7 @@ create function e_local(n int) return int parallel_enable as procedure lp is c i
 --+ server-message off
 
 
-evaluate 'Case 8: an undeclared identifier is refused as a possible server call';
+evaluate 'Case 8: an undeclared identifier is reported as such, as without PARALLEL_ENABLE';
 --+ server-message on
 create function e_typo(n int) return int parallel_enable as begin return n + no_such_var; end;
 create function u_typo(n int) return int as begin return n + no_such_var; end;

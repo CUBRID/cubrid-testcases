@@ -1,6 +1,16 @@
---Check definition of the virtual db_class
+/**
+ *  This test case verifies the definition of the db_class view.
+ *
+ *  It runs the query that defines db_class directly on _db_class and then
+ *  selects the same columns from db_class, so that the two lists of classes can be compared.
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  the defining query of db_class run on _db_class lists the classes the user can see
+ *    Case 2:  db_class lists the same classes
+ */
 
-
+evaluate 'Case 1: the defining query of db_class run on _db_class lists the classes the user can see';
 SELECT c.class_name, 
        CAST(c.owner.name AS VARCHAR(255)), 
        CASE c.class_type 
@@ -32,4 +42,5 @@ WHERE CURRENT_USER = 'DBA'
                                                        AND  au.auth_type = 'SELECT')
                                                        order by 1;
                                                        
+evaluate 'Case 2: db_class lists the same classes';
 select class_name, owner_name, class_type, is_system_class, tde_algorithm, partitioned, is_reuse_oid_class, collation, comment from db_class order by 1;

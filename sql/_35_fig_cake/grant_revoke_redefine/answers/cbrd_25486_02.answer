@@ -5,16 +5,12 @@
 ===================================================
 0
 ===================================================
-    
-create table u1.tbl, create view u1.v1_tbl     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-connect to u1, u2 grant to u1.tbl, u3 grant to u1.v1_tbl     
+Case 1: u1 grants SELECT on u1.tbl to u2 and on u1.v1_tbl to u3, u2 grants SELECT on u1.tbl to u3     
 
 ===================================================
     
@@ -26,24 +22,17 @@ null
 0
 ===================================================
     
-connect to u2, u3 grant to u1.tbl     
-
-===================================================
-    
 null     
 
 ===================================================
 0
-===================================================
-    
-connect to dba, check permission     
-
 ===================================================
     
 null     
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -85,7 +74,7 @@ U3     null
 
 ===================================================
     
-connect to u3, select u1.v1_tbl     
+Case 2: u3 can select from u1.v1_tbl     
 
 ===================================================
     
@@ -96,7 +85,7 @@ col1
 
 ===================================================
     
-connect to dba, drop u1.v1_tbl     
+Case 3: after DROP VIEW u1.v1_tbl, its grant rows and its class row are gone and the grants on u1.tbl stay     
 
 ===================================================
     
@@ -105,11 +94,8 @@ null
 ===================================================
 0
 ===================================================
-    
-check to the v1_tbl removed     
-
-===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -153,14 +139,10 @@ class_name    owner_name    class_type    is_system_class    tde_algorithm    pa
 
 ===================================================
     
-ERROR: Unknown class "u1.v1_tbl     
+Case 4: SHOW CREATE VIEW of the dropped view fails with an error     
 
 ===================================================
 Error:-493
-===================================================
-    
-Test done     
-
 ===================================================
 0
 ===================================================
