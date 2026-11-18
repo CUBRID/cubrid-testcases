@@ -12,7 +12,8 @@
 -- Covers:
 --   - Dxx: forms that were rewritten and lost rows (OR in the subquery WHERE, COUNT / NVL / CASE / HAVING in an
 --     aggregate subquery, UNION, EXISTS over an aggregate, EXISTS / IN / IS NOT NULL / IS TRUE / AND / OR used
---     as an operand of =, IS FALSE, XOR, CAST), with LEFT, RIGHT and chained outer joins
+--     as an operand of =, IS FALSE, XOR, CAST, IN / = SOME against a collection column that may be empty), with
+--     LEFT, RIGHT and chained outer joins
 --   - Exx: forms already kept as outer joins (NOT EXISTS, NOT IN, > ALL, NVL, IS NULL, IF, CASE)
 --   - Gxx: null-rejecting correlated subqueries and predicates that are still rewritten to inner joins
 --   - Lxx: null-rejecting forms that now stay outer joins
@@ -20,7 +21,7 @@
 -- D14 runs with the NO_PARALLEL_SUBQUERY hint: in client-server mode its two correlated UNION subqueries hang in
 -- the shared parallel subquery job queue (the same defect as CBRD-27823), which is unrelated to this check.
 
-drop table if exists wa, wb, wc, wd, t, u, s;
+drop table if exists wa, wb, wc, wd, t, u, s, wv;
 create table wa (a int, b int);
 create table wb (a int, b int);
 create table wc (a int);
@@ -35,7 +36,9 @@ insert into wd values (5, 7);
 insert into t values (2, 9), (3, 9), (3, 7);
 insert into u values (7);
 insert into s values (1, 1), (2, 1), (3, 9);
-update statistics on wa, wb, wc, wd, t, u, s with fullscan;
+create table wv (vals set(int), lst sequence(int), ms multiset(int));
+insert into wv values ({}, {}, {}), ({7}, {7}, {7}), ({9}, {9}, {9});
+update statistics on wa, wb, wc, wd, t, u, s, wv with fullscan;
 
 select 'D01 in_or' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a in (select x from t where t.y = wb.b or t.x = wa.b)) q, (select sum(case when wc.a in (select x from t where t.y = wb.b or t.x = wa.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'D02 scalar_max_or' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a = (select max(x) from t where t.y = wb.b or t.x = wa.b)) q, (select sum(case when wc.a = (select max(x) from t where t.y = wb.b or t.x = wa.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
@@ -83,6 +86,11 @@ select 'D44 or_eq1' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select c
 select 'D45 and_is_false' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where ((wb.b = 7) and wc.a = 3) is false) q, (select sum(case when ((wb.b = 7) and wc.a = 3) is false then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'D46 or_is_true' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where ((wb.b = 7) or wc.a = 2) is true) q, (select sum(case when ((wb.b = 7) or wc.a = 2) is true then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'D47 is_not_null_and_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where ((wb.b is not null) and wc.a = 2) = 0) q, (select sum(case when ((wb.b is not null) and wc.a = 2) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
+select 'D48 set_in_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b in wv.vals) = 0) q, (select sum(case when (wb.b in wv.vals) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
+select 'D49 set_eq_some_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b = some wv.vals) = 0) q, (select sum(case when (wb.b = some wv.vals) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
+select 'D50 sequence_in_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b in wv.lst) = 0) q, (select sum(case when (wb.b in wv.lst) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
+select 'D51 multiset_in_is_false' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b in wv.ms) is false) q, (select sum(case when (wb.b in wv.ms) is false then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
+select 'D52 cast_set_in_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b in cast(wv.vals as sequence(int))) = 0) q, (select sum(case when (wb.b in cast(wv.vals as sequence(int))) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
 select 'E01 not_exists' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where not exists (select 1 from t where t.y = wb.b)) q, (select sum(case when not exists (select 1 from t where t.y = wb.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'E02 not_in' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a not in (select x from t where t.y = wb.b)) q, (select sum(case when wc.a not in (select x from t where t.y = wb.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'E03 gt_all' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a > all (select x from t where t.y = wb.b)) q, (select sum(case when wc.a > all (select x from t where t.y = wb.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
@@ -118,6 +126,8 @@ select 'G21 count_star_eq1_jira_tables' as chk, if (q.c = o.c, 'PASS', 'FAIL') a
 select 'G22 in_one_corr' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wa.b in (select x from t where t.y = wb.b)) q, (select sum(case when wa.b in (select x from t where t.y = wb.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'G23 column_is_not_null' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wb.b is not null) q, (select sum(case when wb.b is not null then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'G24 is_true_root' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where (wb.b = 7) is true) q, (select sum(case when (wb.b = 7) is true then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
+select 'G25 literal_list_in_eq0' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where (wb.b in (wa.b, 9)) = 0) q, (select sum(case when (wb.b in (wa.b, 9)) = 0 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
+select 'G26 set_in_root' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wv where wb.b in wv.vals) q, (select sum(case when wb.b in wv.vals then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wv) o;
 select 'L01 wb_only_in_select_list' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a = (select wb.b - 4 from t where t.x = 2)) q, (select sum(case when wc.a = (select wb.b - 4 from t where t.x = 2) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'L02 agg_inside_arith' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a = (select max(x) + 0 from t where t.y = wb.b)) q, (select sum(case when wc.a = (select max(x) + 0 from t where t.y = wb.b) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'L03 correlated_derived_rejecting' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a in (select d.x from (select x from t where t.y = wb.b) d)) q, (select sum(case when wc.a in (select d.x from (select x from t where t.y = wb.b) d) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
@@ -125,4 +135,4 @@ select 'L04 max_of_wb' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (selec
 select 'L05 rejecting_and_nested_or' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where wc.a in (select x from t where t.y = wb.b and exists (select 1 from u where u.k = wb.b or u.k = t.x))) q, (select sum(case when wc.a in (select x from t where t.y = wb.b and exists (select 1 from u where u.k = wb.b or u.k = t.x)) then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 select 'L06 is_true_eq1' as chk, if (q.c = o.c, 'PASS', 'FAIL') as res from (select count(*) c from wa left outer join wb on wb.a = wa.a, wc where ((wb.b = 7) is true) = 1) q, (select sum(case when ((wb.b = 7) is true) = 1 then 1 else 0 end) c from wa left outer join wb on wb.a = wa.a, wc) o;
 
-drop table if exists wa, wb, wc, wd, t, u, s;
+drop table if exists wa, wb, wc, wd, t, u, s, wv;
