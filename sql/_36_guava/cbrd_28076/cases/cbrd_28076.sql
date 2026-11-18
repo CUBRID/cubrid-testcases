@@ -290,4 +290,15 @@ update k27 x set x.d = x.d + 1000 where ((x.d <> 36 and x.id = 7) or nvl (x.b, -
 select count(*) from k27 where d >= 1000;
 drop table k27;
 
+evaluate 'Case 28: an UPDATE whose factor folds to an equality on an index column reduces with it while it is a literal: no row updated, as the SELECT counts';
+drop table if exists k28;
+create table k28 (id int primary key, a int, b int, c varchar(10), d int);
+insert into k28 select rownum, mod (rownum, 7), mod (rownum, 20), 'w' || mod (rownum, 5), mod (rownum, 40) from db_class c1, db_class c2 where rownum <= 600;
+create index k28_bc on k28 (b, c);
+update statistics on k28 with fullscan;
+select count(*) from k28 x where ((x.b = 12 and x.c = 'v1') or (x.c in ('ab6', 'ab3') and x.c = 'w1')) and x.b = 18;
+update k28 x set x.d = x.d + 1000 where ((x.b = 12 and x.c = 'v1') or (x.c in ('ab6', 'ab3') and x.c = 'w1')) and x.b = 18;
+select count(*) from k28 where d >= 1000;
+drop table k28;
+
 drop table o, i, a, b, t;
