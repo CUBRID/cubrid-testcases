@@ -15,6 +15,7 @@
  *    Case 5:  a scale of -18 converts, and a scale of -19 or less fails with an overflow error
  *    Case 6:  zero converts to zero for any negative scale
  *    Case 7:  inserting a NUMERIC of a negative scale into a BIGINT column stores the value
+ *    Case 8:  adding a NUMERIC of a negative scale to a DATETIME adds the value as milliseconds
  */
 
 drop table if exists t_neg_scale;
@@ -38,6 +39,8 @@ evaluate 'Case 4: values past the BIGINT maximum and minimum fail with an overfl
 select cast (cast (9223372036854775900 as numeric(38,-2)) as bigint);
 select cast (cast (-9223372036854775900 as numeric(38,-2)) as bigint);
 select cast (n20 as bigint) from t_neg_scale where id = 1;
+select cast (cast (10000000000000000000000000000000000000 as numeric(38,-18)) as bigint);
+select cast (cast (10000000000000000000000000000000000000 as numeric(38,-1)) as bigint);
 
 evaluate 'Case 5: a scale of -18 converts, and a scale of -19 or less fails with an overflow error';
 select cast (cast (9000000000000000000 as numeric(38,-18)) as bigint);
@@ -50,6 +53,9 @@ evaluate 'Case 7: inserting a NUMERIC of a negative scale into a BIGINT column s
 create table t_big (id int, b bigint);
 insert into t_big select id, n5 from t_neg_scale;
 select id, b from t_big order by id;
+
+evaluate 'Case 8: adding a NUMERIC of a negative scale to a DATETIME adds the value as milliseconds';
+select datetime'2000-01-01 00:00:00' + n5 from t_neg_scale where id = 1;
 
 drop table t_neg_scale;
 drop table t_big;
