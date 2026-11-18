@@ -1,19 +1,19 @@
 /*
-Test Case: cascade_enumeration/parent_locked_child_insert_fails_on_fk_not_deadlock
+Test Case: cascade_enumeration/parent_locked_child_insert_passes_then_cascade_waits
 Priority: 1
-Reference case: CBRD-27464 (CUBRID/cubrid#8026)
+Reference case: CBRD-27464 (CUBRID/cubrid#8026), CBRD-27463 (CUBRID/cubrid#8198)
 Author: hgryoo
 
 Test Point:
-A child INSERT is blocked on its foreign key check by a parent row another transaction locked with SELECT ... FOR UPDATE; that transaction then deletes the parent with CASCADE. The enumeration does not wait for the child still being inserted, so there is no deadlock: the INSERT fails on the foreign key and the child it inserted earlier survives its COMMIT.
+A child INSERT does not wait for a parent row another transaction locked with SELECT ... FOR UPDATE: the foreign key check takes no lock on a committed parent (CBRD-27463). That transaction then deletes the parent with CASCADE, which waits for the child INSERT to end and then deletes that child as well. There is no deadlock, and the child inserted earlier under another parent survives.
 
 NUM_CLIENTS = 2
 C2: INSERT INTO t27464_child VALUES (5, 1);
 C1: SELECT * FROM t27464_father WHERE id=2 FOR UPDATE;
 C2: INSERT INTO t27464_child VALUES (10, 2);
 C1: DELETE FROM t27464_father WHERE id=2;
-C1: COMMIT;
 C2: COMMIT;
+C1: COMMIT;
 */
 
 MC: setup NUM_CLIENTS = 2;
@@ -41,14 +41,14 @@ MC: wait until C2 ready;
 C1: SELECT * FROM t27464_father WHERE id=2 FOR UPDATE;
 MC: wait until C1 ready;
 C2: INSERT INTO t27464_child VALUES (10, 2);
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C1: DELETE FROM t27464_father WHERE id=2;
+MC: wait until C1 blocked;
+C2: COMMIT;
+MC: wait until C2 ready;
 MC: wait until C1 ready;
 C1: COMMIT;
 MC: wait until C1 ready;
-MC: wait until C2 ready;
-C2: COMMIT;
-MC: wait until C2 ready;
 
 /* expected end state */
 /* expect 1 */
