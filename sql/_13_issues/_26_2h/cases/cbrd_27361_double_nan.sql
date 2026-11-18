@@ -1,6 +1,7 @@
 /**
- *  This test case verifies CBRD-27361: the page batch compares two DOUBLE columns of a row as the row path's
- *  fast kernel does, with the operator itself, so a NaN on either side satisfies only <>.
+ *  This test case verifies CBRD-27361: the page batch compares two DOUBLE columns of a row as the row path does.
+ *  Since CBRD-27843 a NaN equals a NaN and orders above every other value, so 1.0 < NaN and NaN = NaN hold on
+ *  both paths.
  *
  *  Coverage:
  *    Case 1: =, <>, <, <=, > and >= between two DOUBLE columns, a NaN on the left, on the right, on both
