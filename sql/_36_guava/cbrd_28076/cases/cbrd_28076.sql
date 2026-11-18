@@ -217,4 +217,51 @@ select count(*), count(z.id), sum(y.id) from k21y y left outer join k21z z on y.
 select count(*), count(z.id), sum(y.id) from k21y y left outer join k21z z on (case when y.b = z.b and z.b = 2 and ((z.d >= 36 and nvl(z.b, -1) = 0) or (z.c = 'ab2' and nvl(y.b, -1) = 6)) then 1 end) = 1;
 drop table k21y, k21z;
 
+evaluate 'Case 22: a disjunct guarding the next one inside a factor still guards it: no division by zero: row (1, 5) qualifies, the others do not';
+drop table if exists k22;
+create table k22 (a int, b int);
+insert into k22 values (2, 0), (null, 0), (1, 5);
+select a, b from k22 where ((b = 0 or 10 / b > 1) and a = 1) or a = 3 order by 1, 2;
+select a, b, case when ((b = 0 or 10 / b > 1) and a = 1) or a = 3 then 'y' else 'n' end from k22 order by 1, 2;
+select a, b, if (((b = 0 or 10 / b > 1) and a = 1) or a = 3, 'y', 'n') from k22 order by 1, 2;
+select a, b from k22 where ((cast (b as varchar) = '0' or 10 / b > 1) and a = 1) or a = 3 order by 1, 2;
+select a, b from k22 where (case when ((b = 0 or 10 / b > 1) and a = 1) or a = 3 then 1 end) = 1 order by 1, 2;
+drop table k22;
+
+evaluate 'Case 23: a subquery in a factor keeps its outer join ON condition that folds to false: 1, then 1 row (1, 1)';
+drop table if exists k23o, k23i;
+create table k23o (a int, b int, y int);
+create table k23i (y int);
+insert into k23o values (1, 0, 1), (1, 0, 2);
+insert into k23i values (1);
+select count(*) from k23o o where (o.a = 1 and exists (select 1 from k23i i left join k23i j on 1 = 0 where i.y = o.y)) or o.b = 2;
+select count(*) from k23o o where (o.a = 1 and exists (select 1 from k23i i left join k23i j on j.y = null where i.y = o.y)) or o.b = 2;
+select count(*) from k23o o where (o.a = 1 and o.y in (select i.y from k23i i left join k23i j on 1 = 0 where i.y = o.y)) or o.b = 2;
+select o.y, (select count(*) from k23i i left join k23i j on 1 = 0 where i.y = o.y) from k23o o where (o.a = 1 and (select count(*) from k23i i left join k23i j on 1 = 0 where i.y = o.y) = 1) or o.b = 2 order by 1;
+drop table k23o, k23i;
+
+evaluate 'Case 24: a factor with a (+) predicate keeps every disjunct of the factors under it: (2, 5), then (1, NULL), (2, 5) twice';
+drop table if exists k24o, k24i;
+create table k24o (id int, a int, b int);
+create table k24i (id int, c int);
+insert into k24o values (1, 1, 2), (2, 1, 9);
+insert into k24i values (2, 5);
+select o.id, i.c from k24o o, k24i i where o.id = i.id(+) and (((cast (5 as varchar) <> '6') and (cast (5 as varchar) = '6')) or (cast (7 as varchar) is null) or (i.c(+) > 0)) order by 1;
+select o.id, i.c from k24o o, k24i i where o.a = 1 and o.id = i.id(+) and ((o.a = 1 and o.b = 2) or (o.a = 3 and o.b = 4) or i.c(+) > 0) order by 1;
+select o.id, i.c from k24o o left join k24i i on o.id = i.id and ((o.a = 1 and o.b = 2) or (o.a = 3 and o.b = 4) or i.c > 0) where o.a = 1 order by 1;
+drop table k24o, k24i;
+
+evaluate 'Case 25: a partitioned scan whose pruning left no partition prunes again on its next execution: 12, 0, 12';
+drop table if exists k25;
+create table k25 (id int, a int, b int) partition by range (a) (partition p0 values less than (3), partition p1 values less than (6), partition p2 values less than maxvalue);
+insert into k25 select rownum, mod (rownum, 9), mod (rownum * 7, 11) from db_class c1, db_class c2 where rownum <= 1200;
+create index k25_ba on k25 (b, a);
+update statistics on k25 with fullscan;
+prepare st from 'select count(*) from k25 x where x.b = 4 and ((x.a = ? and x.a = 2) or (x.a >= ? and x.b = 3))';
+execute st using 2, 0;
+execute st using 5, 3;
+execute st using 2, 0;
+deallocate prepare st;
+drop table k25;
+
 drop table o, i, a, b, t;
