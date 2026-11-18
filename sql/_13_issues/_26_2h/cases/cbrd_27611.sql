@@ -6,11 +6,15 @@
  *  failed with a coercion error, so the same INSERT gave a row or an error depending on
  *  where it ran. The fix makes the client evaluator truncate as the server does.
  *
- *  Each case runs the same expression on the server path (a plain INSERT into t_plain,
+ *  Cases 1 to 16 run the same expression on the server path (a plain INSERT into t_plain,
  *  path server) and on the client paths (the INSERT_EXECUTION_MODE(0) hint, path hint,
  *  an INSERT into t_trig, which has a trigger, path trigger, and SET of a session
- *  variable), and prints the stored values side by side. BIT values are read back from
+ *  variable), and print the stored values side by side. BIT values are read back from
  *  the tables only, not through a session variable.
+ *
+ *  Cases 17 to 20 put the CAST in the DEFAULT clause of CREATE TABLE and ALTER TABLE,
+ *  which the client evaluates when the statement runs, and print the default that
+ *  db_attribute stores and the value that an INSERT fills in.
  *
  *  Coverage:
  *    Case 1:  a CAST of a date string to VARCHAR(4) keeps the first four characters on every path
@@ -29,6 +33,10 @@
  *    Case 14: a string longer than its VARCHAR(4) or CHAR(4) column still fails without a CAST
  *    Case 15: a CAST that truncates to six characters still fails in a VARCHAR(4) column
  *    Case 16: a CAST that truncates to four characters fits a VARCHAR(4) column on every path
+ *    Case 17: a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters at CREATE TABLE
+ *    Case 18: ALTER TABLE MODIFY with a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters
+ *    Case 19: ALTER COLUMN SET DEFAULT and ADD COLUMN with a CAST to a shorter VARCHAR keep the first two characters
+ *    Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails
  */
 
 drop table if exists t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
@@ -239,7 +247,53 @@ select id, path, v, c, bv from t_narrow where id = 16 union all select id, path,
 select id, v from t_trig_log where id = 16 order by 1, 2;
 
 
+evaluate 'Case 17: a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters at CREATE TABLE';
+drop table if exists t_def_create;
+create table t_def_create (id int, c varchar(10) default cast('abcdef' as varchar(3)));
+insert into t_def_create (id) values (17);
+insert /*+ insert_execution_mode(0) */ into t_def_create (id) values (171);
+select id, c, char_length(c) from t_def_create order by 1;
+select attr_name, default_value from db_attribute where class_name = 't_def_create' and attr_name = 'c';
+
+
+-- the row with id 18 is inserted before the ALTER
+evaluate 'Case 18: ALTER TABLE MODIFY with a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters';
+drop table if exists t_def_alter;
+create table t_def_alter (id int, c varchar(10));
+insert into t_def_alter (id) values (18);
+alter table t_def_alter modify c varchar(10) default cast('abcdef' as varchar(3));
+insert into t_def_alter (id) values (181);
+select id, c from t_def_alter order by 1;
+select attr_name, default_value from db_attribute where class_name = 't_def_alter' and attr_name = 'c';
+
+
+-- the row with id 19 is inserted before ADD COLUMN adds c2
+evaluate 'Case 19: ALTER COLUMN SET DEFAULT and ADD COLUMN with a CAST to a shorter VARCHAR keep the first two characters';
+drop table if exists t_def_set;
+create table t_def_set (id int, c varchar(10));
+alter table t_def_set alter column c set default cast('uvwxyz' as varchar(2));
+insert into t_def_set (id) values (19);
+alter table t_def_set add column c2 varchar(10) default cast('uvwxyz' as varchar(2));
+insert into t_def_set (id) values (191);
+select id, c, c2 from t_def_set order by 1;
+select attr_name, default_value from db_attribute where class_name = 't_def_set' and attr_name in ('c', 'c2') order by 1;
+
+
+evaluate 'Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails; result = error';
+drop table if exists t_def_num;
+create table t_def_num (id int, c varchar(10) default cast(123456 as varchar(3)));
+select count(*) from db_class where class_name = 't_def_num';
+create table t_def_num (id int, c varchar(10) default 'kept');
+alter table t_def_num modify c varchar(10) default cast(123456 as varchar(3));
+alter table t_def_num alter column c set default cast(123456 as varchar(3));
+alter table t_def_num alter column c set default 'abcdefghijkl';
+insert into t_def_num (id) values (20);
+select id, c from t_def_num order by 1;
+select attr_name, default_value from db_attribute where class_name = 't_def_num' and attr_name = 'c';
+
+
 set @v_27611 = null;
 drop trigger trg_27611;
 drop trigger trg_27611_narrow;
 drop table t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
+drop table if exists t_def_create, t_def_alter, t_def_set, t_def_num;
