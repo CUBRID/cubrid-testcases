@@ -15,6 +15,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 50
 ===================================================
 50
@@ -32,6 +36,10 @@
 10
 ===================================================
 100
+===================================================
+10000
+===================================================
+100000
 ===================================================
 10000
 ===================================================
@@ -157,18 +165,18 @@ count(*)
 250     
 
 Query plan:
-nl-join (cross join)
-    outer: iscan
-               class: a node[?]
-               index: pk_table_a term[?] (covers)
-               cost:  ? card ?
-    inner: iscan
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
                class: c node[?]
-               index: pk_table_c term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: a node[?]
+               sargs: term[?]
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(a, c) USE_HASH(c) */ count(*) from table_a a, table_c c where (c.comp_cd< ?:? ) and a.comp_cd= ?:?  and (c.comp_cd<a.comp_cd)
+select /*+ LEADING(c, a) USE_HASH(a) */ count(*) from table_a a, table_c c where (c.comp_cd<a.comp_cd)
 ===================================================
 count(*)    
 50     
@@ -391,5 +399,59 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select /*+ LEADING(b, a, f) USE_IDX(f) USE_HASH(a) */ count(*) from table_a a, table_b b, table_f f where a.comp_cd=b.comp_cd and a.empno=b.empno and a.comp_cd=f.comp_cd and a.empno=f.empno
+===================================================
+count(*)    sum(sb.v)    
+5     15     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: sb node[?]
+               index: i_table_sb_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
+===================================================
+count(*)    sum(sb.v)    
+5     15     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: sb node[?]
+               index: i_table_sb_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
+===================================================
+count(*)    sum(sb.v)    
+5     15     
+
+Query plan:
+idx-join (inner join)
+    outer: temp(distinct)
+               subplan: sscan
+                            class: ss node[?]
+                            cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: sb node[?]
+               index: i_table_sb_k term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_IDX(ss) */ count(*), sum(sb.v) from table_sb sb semi join table_ss ss on ss.k=sb.k
 ===================================================
 0
