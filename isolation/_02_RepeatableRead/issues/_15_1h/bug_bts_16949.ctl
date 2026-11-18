@@ -35,7 +35,6 @@ MC: wait until C1 ready;
 /* test case1 */
 C1: login as 'dba';
 C2: login as 'dba';
-/* login as now reads the catalog on the server in this client's transaction (CBRD-27445); commit so the transaction of the test starts at the next statement */
 C2: COMMIT;
 C1: DROP USER user01;
 MC: wait until C1 ready;

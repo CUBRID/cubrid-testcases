@@ -22,7 +22,6 @@ C1: COMMIT;
 MC: wait until C1 ready;
 
 C2: login as 'aa';
-/* login as now reads the catalog on the server in this client's transaction (CBRD-27445); commit so the transaction of the test starts at the next statement */
 C2: COMMIT;
 MC: wait until C2 ready;
 
