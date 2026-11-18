@@ -45,10 +45,10 @@ Trace Statistics:
                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_med), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch: no (no filter term the batch runs as arrays))
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch: no (no filter term the batch runs as arrays))
      
 
 ===================================================
@@ -164,7 +164,8 @@ trace
                       "time": "?..?",
                       "readrows": "?..?",
                       "rows": "?..?",
-                      "gather": "mergeable list"
+                      "gather": "mergeable list",
+                      "batch_why_not": "no filter term the batch runs as arrays"
                     }
                   }
                 }
@@ -189,7 +190,8 @@ trace
                       "time": "?..?",
                       "readrows": "?..?",
                       "rows": "?..?",
-                      "gather": "mergeable list"
+                      "gather": "mergeable list",
+                      "batch_why_not": "no filter term the batch runs as arrays"
                     }
                   }
                 }
