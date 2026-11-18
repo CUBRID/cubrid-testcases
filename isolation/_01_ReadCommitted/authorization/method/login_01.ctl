@@ -23,11 +23,13 @@ C2: CREATE USER - select;
 
 MC: setup NUM_CLIENTS = 3;
 
-C1: login as 'dba';
+/* CALL login, not login as: login as switches the user only on the client, and the server refuses a CALL login from a user it does not know as DBA (CBRD-27445) */
+C1: CALL login ('dba', '') ON CLASS db_user;
 C1: set transaction lock timeout INFINITE;
 C1: set transaction isolation level read committed;
 
-C2: login as 'dba';
+/* CALL login, not login as: login as switches the user only on the client, and the server refuses a CALL login from a user it does not know as DBA (CBRD-27445) */
+C2: CALL login ('dba', '') ON CLASS db_user;
 C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level read committed;
 
