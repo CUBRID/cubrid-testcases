@@ -1,8 +1,9 @@
 /**
  *  This test case verifies CBRD-27505 : a single table CONNECT BY without an index on the child key runs its
  *  connect condition as a hash list scan also when the PRIOR key and the child key differ in type or in NUMERIC
- *  scale, since both keys are hashed in one domain common to the pair, and must return the same rows as the
- *  single table plan (the NO_HASH_LIST_SCAN hint).
+ *  scale, since two exact numbers (SMALLINT, INT, BIGINT, NUMERIC) hash by value and two floating numbers
+ *  (FLOAT, DOUBLE, MONETARY) by the DOUBLE they equal, as they are, and any other pair in one domain common
+ *  to the pair, and must return the same rows as the single table plan (the NO_HASH_LIST_SCAN hint).
  *
  *  Every case counts the rows of the query and a checksum of its levels, compares both with the same query with
  *  NO_HASH_LIST_SCAN, and prints PASS when both equal the expected values.
@@ -33,10 +34,10 @@
  *    Case 19: prior INT = CAST(DOUBLE AS INT) with START WITH rows: 4 rows
  *    Case 20: trace: Cases 1, 6 and 4 run as a hash list scan (SCAN (hash temp(m), ...)), Cases 15 and 17
  *             keep the single table plan (SCAN (table: ...) under CONNECTBY)
- *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. The pair is hashed as DOUBLE, which
- *             rounds a coefficient above 2^53, so this query keeps the single table plan.
- *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows. A negative scale also rounds in DOUBLE.
- *    Case 23: trace: Cases 21 and 22 keep the single table plan
+ *    Case 21: prior NUMERIC(14,0) = NUMERIC(18,4) with 14 digit keys: 4 rows. Two NUMERICs hash by value, so this
+ *             query runs as a hash list scan.
+ *    Case 22: prior NUMERIC(38,0) = NUMERIC(38,-5): 4 rows, as a hash list scan for a negative scale too.
+ *    Case 23: trace: Cases 21 and 22 run as a hash list scan
  *    Case 24: prior INT = INT and CAST(BIGINT 3000000000 AS INT) = 1, no START WITH row: no error, 0 rows. A side
  *             with a column paired with a constant is a build key too, so a cast there keeps the single table plan.
  *    Case 25: as Case 24 with the cast conjunct written first and START WITH rows: 2 rows
@@ -230,7 +231,7 @@ from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hs
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hs_nq start with n = 1 connect by prior id = pid) t) b;
 
 
-evaluate 'Case 23: trace of Cases 21 and 22 (single table plan)';
+evaluate 'Case 23: trace of Cases 21 and 22 (hash temp)';
 set trace on;
 select n, level lv from hs_nl start with n = 1 connect by prior id = pid order siblings by n;
 show trace;
