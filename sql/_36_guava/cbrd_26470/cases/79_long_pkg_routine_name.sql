@@ -9,7 +9,7 @@
  *      Fix: for a dotted name only the whole size is checked and the name is only lowercased.
  *  Boundary: a unique name of exactly 255 bytes was created (the buffer is
  *      SP_ATTR_UNIQUE_NAME_LEN + 1) but the lookup accepted only names shorter than 255 bytes, so
- *      it could not be called. Fix: creation refuses 255 bytes or longer (-1397, new message).
+ *      it could not be called. Fix: creation refuses 255 bytes or longer (ER_PKG_PROC_UNIQ_NAME_TOO_LONG, new message).
  *
  *  Coverage:
  *    Case 1: E4 <P>.<R>() (100 + 122 chars, unique name 227 bytes)     -> runs

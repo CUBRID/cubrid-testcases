@@ -3,7 +3,7 @@
  *  <user>.<name> and <package>.<name> while compiling PL/CSQL (review round 7, Q1).
  *
  *  Before the fix it was ER_FAILED with a hand-written message (without the final period).
- *  After the fix it is ER_SP_AMBIGUOUS_NAME (-1401), the message used by ALTER and GRANT.
+ *  After the fix it is ER_SP_AMBIGUOUS_NAME, the message used by ALTER and GRANT.
  *  The user amb87 owns a function q and a procedure p, and dba owns a package amb87 with the
  *  members q and p.
  *
