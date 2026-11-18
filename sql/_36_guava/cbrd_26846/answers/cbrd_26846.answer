@@ -683,17 +683,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
 
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.g<=>s.g and p.d<=>s.d and p.a<=>s.a then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) p (g, d, a), (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) s (g, d, a)
+  rewritten query: select case when p.g<=>s.g and p.d<=>s.d and p.a<=>s.a then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) p (g, d, a), (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) s (g, d, a)
 
 
 Trace Statistics:
@@ -711,7 +711,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 19: GROUP_CONCAT ORDER BY DESC with a multi-character separator     
+Case 19: GROUP_CONCAT with a multi-character separator, without ORDER BY and with ORDER BY DESC     
 
 ===================================================
 result    
@@ -723,17 +723,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ PARALLEL(?) */ group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ PARALLEL(?) */ ( char_length(group_concat([dba.bvx].colb separator '<>'))), group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
 
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ ( char_length(group_concat([dba.bvx].colb separator '<>'))), group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.g<=>s.g then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) p (g), (select /*+ NO_PARALLEL_SCAN */ group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) s (g)
+  rewritten query: select case when p.l<=>s.l and p.g<=>s.g then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ ( char_length(group_concat([dba.bvx].colb separator '<>'))) as [l], group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) p (l, g), (select /*+ NO_PARALLEL_SCAN */ ( char_length(group_concat([dba.bvx].colb separator '<>'))) as [l], group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) s (l, g)
 
 
 Trace Statistics:
@@ -754,8 +754,8 @@ Trace Statistics:
 Case 20: predicate matching no row, values printed beside the serial twin     
 
 ===================================================
-count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    
-0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     0     null     null     null     
 
 ===================================================
 trace    
@@ -763,7 +763,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
+  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -772,8 +772,8 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    
-0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     0     null     null     null     
 
 ===================================================
 trace    
@@ -781,7 +781,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -793,8 +793,8 @@ Trace Statistics:
 Case 21: predicate matching exactly one row, values printed beside the serial twin     
 
 ===================================================
-count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(30) within group(order by cola) as numeric(12,4)) as varchar(20))    
-1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     0.0000     
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(40) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     1.0000     1     37     37     37     
 
 ===================================================
 trace    
@@ -802,7 +802,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
+  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -811,8 +811,8 @@ Trace Statistics:
      
 
 ===================================================
-count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(30) within group(order by cola) as numeric(12,4)) as varchar(20))    
-1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     0.0000     
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(40) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     1.0000     1     37     37     37     
 
 ===================================================
 trace    
@@ -820,7 +820,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1078,6 +1078,45 @@ Trace Statistics:
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin     
+
+===================================================
+char_length(group_concat(colb separator '<>'))    char_length(group_concat(cola))    
+1024     1024     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ PARALLEL(?) */  char_length(group_concat([dba.bvx].colb separator '<>')),  char_length(group_concat([dba.bvx].cola)) from [dba.bvx] [dba.bvx]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+char_length(group_concat(colb separator '<>'))    char_length(group_concat(cola))    
+1024     1024     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat([dba.bvx].colb separator '<>')),  char_length(group_concat([dba.bvx].cola)) from [dba.bvx] [dba.bvx]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

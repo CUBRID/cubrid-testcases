@@ -21,10 +21,10 @@
  *
  * Self-checking: Cases 2 to 12 and 16 to 19 and 22 to 27 run the aggregate twice
  * in one statement, a PARALLEL(8) sub-query and a NO_PARALLEL_SCAN sub-query, and
- * compare them with the null-safe <=>, emitting PASS/FAIL. Cases 13 to 15 and 20
- * and 21 instead run the PARALLEL(8) query and its NO_PARALLEL_SCAN twin as two
- * statements. Cases 13 to 15 print the error of each side. Cases 20 and 21 print
- * the values, because for most of the new aggregates no other test case prints the
+ * compare them with the null-safe <=>, emitting PASS/FAIL. Cases 13 to 15, 20, 21
+ * and 30 instead run the PARALLEL(8) query and its NO_PARALLEL_SCAN twin as two
+ * statements. Cases 13 to 15 print the error of each side. Cases 20, 21 and 30
+ * print the values, because for most of the new aggregates no other test case prints the
  * serial values over no row or one row, so a comparison alone would have nothing
  * to stand on there. Each check runs under trace so the answer
  * also pins "gather: buildvalue" on the parallel side and no parallel workers on
@@ -68,7 +68,8 @@
  *   Case 16: CUME_DIST with two sort keys, PERCENT_RANK DESC NULLS FIRST
  *   Case 17: MEDIAN / PERCENTILE_CONT / PERCENTILE_DISC skip NULLs
  *   Case 18: GROUP_CONCAT DISTINCT without ORDER BY, and the default separator
- *   Case 19: GROUP_CONCAT ORDER BY DESC with a multi-character separator
+ *   Case 19: GROUP_CONCAT with a multi-character separator, without ORDER BY and
+ *            with ORDER BY DESC
  *   Case 20: predicate matching no row, values printed beside the serial twin
  *   Case 21: predicate matching exactly one row, values printed beside the serial twin
  *   Case 22: interpolation over DATETIME and VARCHAR
@@ -77,6 +78,8 @@
  *   Case 25: JSON_OBJECTAGG duplicate key keeps a value that really occurs
  *   Case 26: STDDEV and VARIANCE families next to the new aggregates
  *   Case 27: explicit PARALLEL(2) hint
+ *   Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values
+ *            printed beside the serial twin
  *
  * Disabled until fixed, commented out at the end of this file:
  *   Case 28: BIT_AND / BIT_OR / BIT_XOR with DISTINCT
@@ -101,7 +104,8 @@
  *     MEDIAN comes back correct, so Case 29 also runs the two statements at the
  *     top level, on a table of their own and without a recompile hint.
  * The DISTINCT shapes that do work are covered: GROUP_CONCAT in Cases 4 and 18,
- * alone and beside a non-DISTINCT GROUP_CONCAT. PERCENTILE_CONT /
+ * alone and beside a non-DISTINCT GROUP_CONCAT, and over no row and one row in
+ * Cases 20 and 21. PERCENTILE_CONT /
  * PERCENTILE_DISC / CUME_DIST / PERCENT_RANK have no DISTINCT form, and
  * JSON_ARRAYAGG / JSON_OBJECTAGG reject DISTINCT at parse time.
  */
@@ -271,37 +275,48 @@ evaluate 'Case 18: GROUP_CONCAT DISTINCT without ORDER BY, and the default separ
 -- removes the duplicates of a DISTINCT list by sorting it, and without a sort key
 -- it sorts by the value itself, so both sides join the values in the same order.
 -- If DISTINCT stops sorting, this case fails without a defect in the merge.
+-- id % 125 = 0 picks 80 rows spread over the whole heap, so more than one worker
+-- holds a part of each list, and cola takes only four values among them, so the
+-- distinct lists of different workers share values that the merge has to remove.
 select /*+ recompile */ case when p.g<=>s.g and p.d<=>s.d and p.a<=>s.a then 'PASS' else 'FAIL' end as result
 from (select /*+ PARALLEL(8) */ group_concat(distinct cola separator ',') g,
              group_concat(distinct cola order by 1) d,
-             group_concat(cola order by 1) a from bvx where id <= 80) p,
+             group_concat(cola order by 1) a from bvx where id % 125 = 0) p,
      (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct cola separator ',') g,
              group_concat(distinct cola order by 1) d,
-             group_concat(cola order by 1) a from bvx where id <= 80) s;
+             group_concat(cola order by 1) a from bvx where id % 125 = 0) s;
 show trace;
 
-evaluate 'Case 19: GROUP_CONCAT ORDER BY DESC with a multi-character separator';
--- the separator lives in accumulator.value2 as metadata and is deliberately left
--- out of the worker re-home, so a separator longer than one character is the case
--- that shows a partial string being merged with the wrong separator. 80 rows keep
--- the result shorter than group_concat_max_len, so the whole string is compared
--- rather than a truncated prefix.
-select /*+ recompile */ case when p.g<=>s.g then 'PASS' else 'FAIL' end as result
-from (select /*+ PARALLEL(8) */ group_concat(colb order by 1 desc separator '<>') g from bvx where id <= 80) p,
-     (select /*+ NO_PARALLEL_SCAN */ group_concat(colb order by 1 desc separator '<>') g from bvx where id <= 80) s;
+evaluate 'Case 19: GROUP_CONCAT with a multi-character separator, without ORDER BY and with ORDER BY DESC';
+-- the separator lives in accumulator.value2 as metadata and is left out of the worker
+-- re-home. It joins two partial strings only without ORDER BY: with ORDER BY the
+-- workers collect values into lists and the main thread joins them as a serial scan
+-- does. Column l has no ORDER BY and compares the length as Case 6 does, since the
+-- element order depends on the workers; column g keeps ORDER BY DESC. id % 125 = 0
+-- spreads 80 rows over the whole heap so more than one worker holds a partial string,
+-- and keeps the result shorter than group_concat_max_len, so the whole string is
+-- compared rather than a truncated prefix.
+select /*+ recompile */ case when p.l<=>s.l and p.g<=>s.g then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ length(group_concat(colb separator '<>')) l,
+             group_concat(colb order by 1 desc separator '<>') g from bvx where id % 125 = 0) p,
+     (select /*+ NO_PARALLEL_SCAN */ length(group_concat(colb separator '<>')) l,
+             group_concat(colb order by 1 desc separator '<>') g from bvx where id % 125 = 0) s;
 show trace;
 
 evaluate 'Case 20: predicate matching no row, values printed beside the serial twin';
 -- every worker ends with an untouched accumulator and an empty list, and the merge has
 -- to drop them all. The serial twin prints the same columns, so the answer file holds
--- the values of both and a defect shared by both still shows in the values.
+-- the values of both and a defect shared by both still shows in the values. The
+-- DISTINCT aggregates at the end merge distinct lists, a branch of their own.
 select /*+ recompile PARALLEL(8) */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
        cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
        json_arrayagg(colb), json_objectagg(colb, cola),
        cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
        percentile_disc(0.5) within group (order by cola),
        cast(cast(cume_dist(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
-       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20))
+       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       count(distinct cola), sum(distinct cola),
+       group_concat(distinct cola separator ','), group_concat(distinct cola order by 1)
 from bvx where cola < 0;
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
@@ -310,7 +325,9 @@ select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), 
        cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
        percentile_disc(0.5) within group (order by cola),
        cast(cast(cume_dist(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
-       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20))
+       cast(cast(percent_rank(50) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       count(distinct cola), sum(distinct cola),
+       group_concat(distinct cola separator ','), group_concat(distinct cola order by 1)
 from bvx where cola < 0;
 show trace;
 
@@ -319,13 +336,19 @@ evaluate 'Case 21: predicate matching exactly one row, values printed beside the
 -- the shape that catches a merge treating an untouched partial as a value. The row
 -- id = 5037 has a cola other than 0, so a value lost in the merge does not pass for
 -- the right one, and a single row fixes the JSON order, so whole values print.
+-- PERCENT_RANK takes a hypothetical value above that cola and CUME_DIST one below
+-- it, so for both the one row changes the result and a lost row shows. The DISTINCT
+-- aggregates at the end bring a distinct list of one value from one worker and empty
+-- ones from the others.
 select /*+ recompile PARALLEL(8) */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
        cast(cast(median(cola) as numeric(12,4)) as varchar(20)), group_concat(cola separator ','),
        json_arrayagg(colb), json_objectagg(colb, cola),
        cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
        percentile_disc(0.5) within group (order by cola),
        cast(cast(cume_dist(30) within group (order by cola) as numeric(12,4)) as varchar(20)),
-       cast(cast(percent_rank(30) within group (order by cola) as numeric(12,4)) as varchar(20))
+       cast(cast(percent_rank(40) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       count(distinct cola), sum(distinct cola),
+       group_concat(distinct cola separator ','), group_concat(distinct cola order by 1)
 from bvx where id = 5037;
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), bit_xor(cola),
@@ -334,7 +357,9 @@ select /*+ recompile NO_PARALLEL_SCAN */ count(*), bit_and(cola), bit_or(cola), 
        cast(cast(percentile_cont(0.5) within group (order by cola) as numeric(12,4)) as varchar(20)),
        percentile_disc(0.5) within group (order by cola),
        cast(cast(cume_dist(30) within group (order by cola) as numeric(12,4)) as varchar(20)),
-       cast(cast(percent_rank(30) within group (order by cola) as numeric(12,4)) as varchar(20))
+       cast(cast(percent_rank(40) within group (order by cola) as numeric(12,4)) as varchar(20)),
+       count(distinct cola), sum(distinct cola),
+       group_concat(distinct cola separator ','), group_concat(distinct cola order by 1)
 from bvx where id = 5037;
 show trace;
 
@@ -468,6 +493,21 @@ show trace;
 -- select /*+ PARALLEL(8) */ cast(median(cola) as numeric(12,4)) from bvm;
 -- show trace;
 -- drop table bvm;
+
+evaluate 'Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin';
+-- every worker cuts its partial string at group_concat_max_len and the main thread
+-- cuts again while it joins the partials, where a serial scan cuts once. The whole
+-- heap gives a result far longer than the default group_concat_max_len, which CTP
+-- does not change. The element order depends on the workers, so the length is
+-- printed, for the multi-character separator of Case 19 and for the default one.
+select /*+ recompile PARALLEL(8) */ length(group_concat(colb separator '<>')),
+       length(group_concat(cola))
+from bvx;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ length(group_concat(colb separator '<>')),
+       length(group_concat(cola))
+from bvx;
+show trace;
 
 set trace off;
 
