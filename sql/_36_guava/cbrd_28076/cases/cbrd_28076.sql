@@ -264,4 +264,19 @@ execute st using 2, 0;
 deallocate prepare st;
 drop table k25;
 
+evaluate 'Case 26: a hash join reads a function index expression over a view in a factor it evaluates: 2 rows, 2 rows, then 3 rows with (3, NULL), no error';
+drop view if exists k26v;
+drop table if exists k26x, k26y;
+create table k26x (id int, a int, d int);
+create table k26y (id int, a int, b int);
+insert into k26x values (1, 1, 31), (2, 2, 7), (3, 3, 7);
+insert into k26y values (1, 4, 1), (2, 0, 2), (3, 9, 3);
+create index k26y_nb on k26y (nvl (b, -1));
+create view k26v as select * from k26y;
+select /*+ USE_HASH */ x.id, y.id from k26x x, k26v y where x.a = y.b and ((nvl (y.b, -1) = 2 and y.id <> x.d) or (x.d = 31 and y.a = 4)) order by 1;
+select /*+ USE_HASH */ x.id, y.id from k26x x, k26v y where x.a = y.b and (case when (nvl (y.b, -1) = 2 and y.id <> x.d) or (x.d = 31 and y.a = 4) then 1 end) = 1 order by 1;
+select /*+ USE_HASH */ x.id, y.id from k26x x left outer join k26v y on x.a = y.b and ((nvl (y.b, -1) = 2 and y.id <> x.d) or (x.d = 31 and y.a = 4)) order by 1;
+drop view k26v;
+drop table k26x, k26y;
+
 drop table o, i, a, b, t;
