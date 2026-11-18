@@ -82,19 +82,22 @@ set trace off;
 
 
 evaluate 'Case 6: CONNECT BY with a float NUMERIC PRIOR key (prior (id / 1) = pid): 5 rows';
-select case when a.c = b.c and a.s = b.s and a.c = 5 and a.s = 165 then 'PASS' else 'FAIL' end res, a.c cnt
+select case when a.c = b.c and a.s = b.s and a.c = 5 and a.s = 165 then 'PASS' else 'FAIL' end res,
+       a.c cnt
 from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hl_cf start with pid is null connect by prior (id / 1) = pid) t) a,
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hl_cf start with pid is null connect by prior (id / 1) = pid) t) b;
 
 
 evaluate 'Case 7: CONNECT BY with prior NUMERIC(20,5) = NUMERIC(30,10) and keys of 15 integer digits: 4 rows';
-select case when a.c = b.c and a.s = b.s and a.c = 4 and a.s = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+select case when a.c = b.c and a.s = b.s and a.c = 4 and a.s = 110 then 'PASS' else 'FAIL' end res,
+       a.c cnt
 from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hl_cl start with pid is null connect by prior id = pid) t) a,
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hl_cl start with pid is null connect by prior id = pid) t) b;
 
 
 evaluate 'Case 8: CONNECT BY with prior BIGINT = NUMERIC(38,20): 4 rows';
-select case when a.c = b.c and a.s = b.s and a.c = 4 and a.s = 110 then 'PASS' else 'FAIL' end res, a.c cnt
+select case when a.c = b.c and a.s = b.s and a.c = 4 and a.s = 110 then 'PASS' else 'FAIL' end res,
+       a.c cnt
 from (select count(*) c, sum(t.n * 10 + t.lv) s from (select n, level lv from hl_cb start with pid is null connect by prior id = pid) t) a,
      (select count(*) c, sum(t.n * 10 + t.lv) s from (select /*+ NO_HASH_LIST_SCAN */ n, level lv from hl_cb start with pid is null connect by prior id = pid) t) b;
 

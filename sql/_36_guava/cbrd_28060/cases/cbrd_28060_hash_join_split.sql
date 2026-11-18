@@ -31,6 +31,7 @@ CREATE TABLE ta (ca INT, cb NUMERIC(10,1), cc DOUBLE, cd VARCHAR(20) COLLATE utf
 CREATE TABLE tb (ca BIGINT, cb NUMERIC(12,3), cc INT, cd VARCHAR(20) COLLATE utf8_en_ci);
 INSERT INTO ta SELECT CASE WHEN MOD (ROWNUM, 97) = 0 THEN NULL ELSE MOD (ROWNUM, 1500) END, CAST (MOD (ROWNUM, 1500) / 10.0 AS NUMERIC(10,1)), MOD (ROWNUM, 1500), CASE WHEN MOD (ROWNUM, 89) = 0 THEN NULL ELSE 'Ab' || TO_CHAR (MOD (ROWNUM, 1500)) END FROM db_class a, db_class b, db_class c LIMIT 3000;
 INSERT INTO tb SELECT CASE WHEN MOD (ROWNUM, 83) = 0 THEN NULL ELSE MOD (ROWNUM * 7, 2000) END, CAST (MOD (ROWNUM * 7, 2000) / 10.0 AS NUMERIC(12,3)), MOD (ROWNUM * 7, 2000), CASE WHEN MOD (ROWNUM, 79) = 0 THEN NULL ELSE 'aB' || TO_CHAR (MOD (ROWNUM * 7, 2000)) END FROM db_class a, db_class b, db_class c LIMIT 2500;
+
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 evaluate 'Case 1: int-bigint - hash join without split, with serial split, and with parallel split matches merge join';
@@ -180,4 +181,5 @@ set trace off;
 -- cleanup
 set trace off;
 set system parameters 'max_hash_list_scan_size=default';
+
 drop table if exists ta, tb;

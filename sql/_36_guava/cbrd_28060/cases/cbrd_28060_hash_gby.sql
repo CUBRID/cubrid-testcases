@@ -29,6 +29,7 @@ CREATE TABLE ta (ca INT);
 INSERT INTO ta SELECT ROWNUM FROM db_class a, db_class b LIMIT 120;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_de_exp_ai_ci);
 INSERT INTO tb SELECT ca, CASE MOD (ca, 6) WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || MOD (FLOOR (ca / 6), 20) FROM ta;
+
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 
 evaluate 'Case 1: utf8_de_exp_ai_ci - hash GROUP BY within the hash table returns the groups of the sort GROUP BY';
@@ -50,6 +51,7 @@ INSERT INTO ta SELECT ROWNUM, MOD (ROWNUM, 3000), MOD (FLOOR (ROWNUM / 3000), 6)
 DROP TABLE IF EXISTS tb;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_de_exp_ai_ci);
 INSERT INTO tb SELECT ca, CASE cc WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || cb FROM ta;
+
 UPDATE STATISTICS ON tb WITH FULLSCAN;
 
 evaluate 'Case 2: utf8_de_exp_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
@@ -64,6 +66,7 @@ select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min
 DROP TABLE IF EXISTS tb;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_de_exp);
 INSERT INTO tb SELECT ca, CASE cc WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || cb FROM ta;
+
 UPDATE STATISTICS ON tb WITH FULLSCAN;
 
 evaluate 'Case 3: utf8_de_exp - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
@@ -78,6 +81,7 @@ select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min
 DROP TABLE IF EXISTS tb;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_fr_exp_ab);
 INSERT INTO tb SELECT ca, CASE cc WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || cb FROM ta;
+
 UPDATE STATISTICS ON tb WITH FULLSCAN;
 
 evaluate 'Case 4: utf8_fr_exp_ab - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
@@ -92,6 +96,7 @@ select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min
 DROP TABLE IF EXISTS tb;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_gen_ai_ci);
 INSERT INTO tb SELECT ca, CASE cc WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || cb FROM ta;
+
 UPDATE STATISTICS ON tb WITH FULLSCAN;
 
 evaluate 'Case 5: utf8_gen_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
@@ -106,6 +111,7 @@ select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min
 DROP TABLE IF EXISTS tb;
 CREATE TABLE tb (ca INT, cb VARCHAR(40) COLLATE utf8_bin);
 INSERT INTO tb SELECT ca, CASE cc WHEN 0 THEN 'cafe' WHEN 1 THEN 'café' WHEN 2 THEN 'CAFÉ' WHEN 3 THEN 'caf' || CHR (49837 USING utf8) || 'e' WHEN 4 THEN 'Strasse' ELSE 'Straße' END || '-' || cb FROM ta;
+
 UPDATE STATISTICS ON tb WITH FULLSCAN;
 
 evaluate 'Case 6: utf8_bin - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
@@ -119,4 +125,5 @@ select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min
 -- cleanup
 set trace off;
 set system parameters 'agg_hash_respect_order=default';
+
 drop table if exists ta, tb;
