@@ -28,10 +28,13 @@
  *    Case 13: the client path of a base table with a trigger gives the DEFAULTs the same way
  *    Case 14: REPLACE replaces the row whose unique column the view DEFAULT fills
  *    Case 15: a column count that differs from the source fails
+ *    Case 16: the action of a trigger that inserts into the view with a query gives the DEFAULTs
+ *    Case 17: a shared attribute of the view that the statement leaves out keeps its value
+ *    Case 18: a DEFAULT that makes another type than its column is converted into the column
  */
 
-drop view if exists v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq;
-drop table if exists t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq;
+drop view if exists v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty;
+drop table if exists t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty;
 
 create table t_src (x int, y int);
 insert into t_src values (1, 10), (1, 10), (2, 20);
@@ -154,6 +157,35 @@ insert into v_all (a, k) select distinct x from t_src;
 select count(*) from t_all;
 
 
-drop trigger trg_28040;
-drop view v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq;
-drop table t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq;
+evaluate 'Case 16: the action of a trigger that inserts into the view with a query gives the DEFAULTs';
+create table t_ev (e int);
+create table t_act (a int, k int default 1, r varchar(40) default sys_guid()) dont_reuse_oid;
+create view v_act as select a, k, r from t_act;
+alter view v_act alter column k set default 7;
+create trigger trg_28040_act after insert on t_ev execute insert into v_act (a) select distinct x from t_src;
+insert into t_ev values (1);
+insert into t_ev values (2);
+select a, k, count(*), count(distinct r) from t_act group by a, k order by a;
+
+
+evaluate 'Case 17: a shared attribute of the view that the statement leaves out keeps its value';
+create table t_sh (a int) dont_reuse_oid;
+create view v_sh (a int, s int shared 5) as select a, null from t_sh;
+insert into v_sh (a) select distinct x from t_src;
+select a, s from v_sh order by a;
+select a from t_sh order by a;
+
+
+evaluate 'Case 18: a DEFAULT that makes another type than its column is converted into the column';
+create table t_ty (a int, dt datetime default sys_timestamp, d date default sys_datetime, ts timestamp default sys_datetime,
+  n bigint default unix_timestamp(), g char(40) default sys_guid()) dont_reuse_oid;
+create view v_ty as select a, dt, d, ts, n, g from t_ty;
+insert into v_ty (a) select distinct x from t_src;
+select a, if (dt is null, 'null', 'set'), if (d is null, 'null', 'set'), if (ts is null, 'null', 'set'),
+  if (n > 0, 'set', 'other'), length (g) from t_ty order by a;
+select count (*), count (distinct g) from t_ty;
+
+
+drop trigger trg_28040, trg_28040_act;
+drop view v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty;
+drop table t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty;
