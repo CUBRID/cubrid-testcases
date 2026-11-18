@@ -8,7 +8,10 @@
  *  forever for jobs the queue had dropped (CBRD-27823). Now that executor runs its
  *  jobs itself and its trace line carries no parallel workers token. A correlated
  *  subquery over a UNION under a joined scan got an executor whose jobs cleared the
- *  outer row values. It now runs without one while the rest stays parallel.
+ *  outer row values. It now runs without one while the rest stays parallel. A CTE ran as
+ *  a job beside its readers, so a reader inside such a subquery read the CTE before it
+ *  was filled. Now the CTEs run first, and a statement whose subqueries read a CTE keeps
+ *  its parallel subquery executor.
  *
  *  Each query is followed by its NO_PARALLEL_SUBQUERY twin, whose result block must
  *  be identical. CTP masks digits, so only trace tokens are checked.
@@ -24,10 +27,12 @@
  *    Case 8:  correlated subquery over a UNION under a joined scan
  *    Case 9:  the same subquery inside an arm of a parallel UNION
  *    Case 10: the same subquery in the WHERE of the joined scan
+ *    Case 11: a CTE read from a correlated subquery of a joined scan, beside a parallel sibling
+ *    Case 12: two derived tables over one CTE run as parallel subqueries
  */
 
 drop view if exists v_both;
-drop table if exists t_lo, t_hi, t_mix;
+drop table if exists t_lo, t_hi, t_mix, t_big;
 
 -- two rows per table: the executor needs no data size, only two or more UNION arms
 create table t_lo (col_a int);
@@ -37,7 +42,10 @@ insert into t_lo values (1), (2);
 insert into t_hi values (3), (4);
 insert into t_mix values (1, 'a'), (3, 'b'), (5, 'c');
 create view v_both as select col_a from t_lo union all select col_a from t_hi;
-update statistics on t_lo, t_hi, t_mix with fullscan;
+-- the CTE of Cases 11 and 12 reads enough rows to still run when its reader starts
+create table t_big (col_a int);
+insert into t_big select rownum from db_class a, db_class b, db_class c limit 100000;
+update statistics on t_lo, t_hi, t_mix, t_big with fullscan;
 
 set trace on;
 
@@ -104,5 +112,20 @@ show trace;
 set trace off;
 select /*+ no_parallel_subquery */ a.col_a, b.col_b from v_both a, t_mix b where a.col_a = b.col_a and b.col_a <= (select count (*) from v_both v where v.col_a >= a.col_a) order by 1;
 
+
+evaluate 'Case 11: a CTE read from a correlated subquery of a joined scan; result = no_parallel_subquery';
+set trace on;
+with c as (select col_a mod 10 k, count (*) n from t_big group by col_a mod 10) select /*+ recompile */ q.col_a, q.m, x.n, o.cnt from (select a.col_a, (select count (*) from c where c.k >= b.col_a) m from t_lo a, t_mix b where a.col_a = b.col_a limit 100) q, c x, (select count (*) cnt from t_hi group by col_a mod 2) o where x.k = q.col_a order by 1, 4;
+show trace;
+with c as (select col_a mod 10 k, count (*) n from t_big group by col_a mod 10) select /*+ no_parallel_subquery */ q.col_a, q.m, x.n, o.cnt from (select a.col_a, (select count (*) from c where c.k >= b.col_a) m from t_lo a, t_mix b where a.col_a = b.col_a limit 100) q, c x, (select count (*) cnt from t_hi group by col_a mod 2) o where x.k = q.col_a order by 1, 4;
+
+
+evaluate 'Case 12: two derived tables over one CTE; result = no_parallel_subquery';
+with c as (select col_a mod 10 k, count (*) n from t_big group by col_a mod 10) select /*+ recompile */ q.k, q.n, o.cnt from (select k, n from c) q, (select count (*) cnt from c) o order by 1;
+show trace;
+-- trace goes off before the last twin: its plan would stay in the session
+set trace off;
+with c as (select col_a mod 10 k, count (*) n from t_big group by col_a mod 10) select /*+ no_parallel_subquery */ q.k, q.n, o.cnt from (select k, n from c) q, (select count (*) cnt from c) o order by 1;
+
 drop view v_both;
-drop table t_lo, t_hi, t_mix;
+drop table t_lo, t_hi, t_mix, t_big;
