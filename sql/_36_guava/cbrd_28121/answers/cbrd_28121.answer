@@ -11,9 +11,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
 100000
 ===================================================
 100000
+===================================================
+120000
 ===================================================
 120000
 ===================================================
@@ -86,57 +92,66 @@ trace
 
 Query Plan:
   SORT (order by)
-    HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       NESTED LOOPS (cross join)
         INDEX SCAN (t?.pk_t_?_?_b_c) (key range: t?.b= ?:? , covered: true)
         TABLE SCAN (t?)
-      INDEX SCAN (t?.pk_t_?_?_a) (covered: true)
+      INDEX SCAN (t?.pk_t_?_?_a) (key range: t?.a=t?.a, covered: true)
+  skip order by: true
 
-  rewritten query: select t?.a, t?.b, t?.c from [dba.t_?_?] t?, [dba.t_?_?] t?, [dba.t_?_?] t? where t?.a=t?.a and t?.b= ?:?  and t?.b= ?:?  and t?.b=t?.b order by ?
+  rewritten query: select /*+ USE_NL */ t?.a, t?.b, t?.c from [dba.t_?_?] t?, [dba.t_?_?] t?, [dba.t_?_?] t? where t?.a=t?.a and t?.b= ?:?  and t?.b= ?:?  and t?.b=t?.b order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_?_?.pk_t_?_?_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-              SCAN (table: dba.t_?_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.t_?_?.pk_t_?_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SCAN (index: dba.t_?_?.pk_t_?_?_b_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      SCAN (table: dba.t_?_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (index: dba.t_?_?.pk_t_?_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
      
 
 ===================================================
+0
+===================================================
     
-Q4. many driving rows: the parallel nested loop stays     
+Q4. driving scan estimated to return 255 rows: serial nested loop over a parallel scan     
 
 ===================================================
 count(*)    
-20000     
+213     
+
+Query plan:
+idx-join (inner join)
+    outer: parallel sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: pk_t_?_?_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from t_?_? t?, t_?_? t? where t?.a=t?.a and t?.g?= ?:? 
+===================================================
+    
+Q5. driving scan estimated to return 261 rows: parallel nested loop     
 
 ===================================================
-trace    
+count(*)    
+218     
 
-Query Plan:
-  NESTED LOOPS (inner join)
-    NESTED LOOPS (inner join)
-      TABLE SCAN (t?)
-      INDEX SCAN (t?.pk_t_?_?_a) (key range: t?.a=t?.c, covered: true)
-    INDEX SCAN (t?.pk_t_?_?_a) (key range: t?.a=t?.a, covered: true)
-
-  rewritten query: select /*+ USE_NL */ count(*) from [dba.t_?_?] t?, [dba.t_?_?] t?, [dba.t_?_?] t? where (t?.c<= ?:? ) and t?.a=t?.c and t?.a=t?.a
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_?_?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-      SCAN (index: dba.t_?_?.pk_t_?_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-        SCAN (index: dba.t_?_?.pk_t_?_?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
-     
-
+Query plan:
+parallel idx-join (inner join)
+    outer: sscan
+               class: t? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t? node[?]
+               index: pk_t_?_?_a term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from t_?_? t?, t_?_? t? where t?.a=t?.a and t?.g?= ?:? 
 ===================================================
 0
 ===================================================
