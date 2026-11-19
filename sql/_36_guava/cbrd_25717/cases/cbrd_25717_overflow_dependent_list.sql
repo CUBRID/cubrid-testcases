@@ -23,6 +23,8 @@
  *       count, not tuple size. The CTE stays at depth 2000 (cross join) to avoid
  *       ER_CTE_MAX_RECURSION_REACHED.
  * Source: own addition (not in the JIRA attachment) - targets the CBRD-26666 overflow x dependent-list path.
+ * Note: the wide columns are bit varying(32000) holding 4000-byte values. They are demoted to OOS,
+ *       so the heap rows stay inside one page; the list-file tuples still carry the full values.
  */
 
 --
@@ -41,12 +43,12 @@ create table t_ovp (ckey int);
 
 create table t_ovda (
     ckey int,
-    da bit(32000), db bit(32000), dc bit(32000), dd bit(32000), de bit(32000)
+    da bit varying(32000), db bit varying(32000), dc bit varying(32000), dd bit varying(32000), de bit varying(32000)
   );
 
 create table t_ovdb (
     ckey int,
-    da bit(32000), db bit(32000), dc bit(32000), dd bit(32000), de bit(32000)
+    da bit varying(32000), db bit varying(32000), dc bit varying(32000), dd bit varying(32000), de bit varying(32000)
   );
 
 insert into t_ovp
@@ -63,7 +65,7 @@ insert into t_ovda
     union all
     select n + 1 from cte where n < 2000
   )
-  select rownum, B'1', B'1', B'1', B'1', B'1' from cte a, cte b limit 5000;
+  select rownum, CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)) from cte a, cte b limit 5000;
 
 insert into t_ovdb
   with recursive cte(n) as (
@@ -71,7 +73,7 @@ insert into t_ovdb
     union all
     select n + 1 from cte where n < 2000
   )
-  select rownum + 5000, B'1', B'1', B'1', B'1', B'1' from cte a, cte b limit 5000;
+  select rownum + 5000, CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)), CAST(B'1' AS BIT(32000)) from cte a, cte b limit 5000;
 
 update statistics on t_ovp, t_ovda, t_ovdb;
 
