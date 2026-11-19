@@ -208,7 +208,7 @@ cnt    sum_rn    matched
 
 ===================================================
     
-Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - serial reference     
+Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - serial reference; result = 40000 rows     
 
 ===================================================
 cnt    sum_rs    max_rs    min_rs    
@@ -240,7 +240,7 @@ cnt    sum_g    min_g    max_g
 
 ===================================================
     
-Case 8: analytic functions (RANK ... VARIANCE) over three window specs - serial reference     
+Case 8: analytic functions (RANK ... VARIANCE) over three window specs - serial reference; result = 40000 rows     
 
 ===================================================
 cnt    s_rank    s_dense_rank    s_ntile    s_lag    s_lead    s_first    s_last    s_count    s_min    s_max    s_sum    s_avg    s_cume_dist    s_percent_rank    s_median    s_stddev    s_variance    
@@ -700,6 +700,101 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12: trace - GROUPBY over overflow tuples has a parallel worker line     
+
+===================================================
+grp_cnt    row_cnt    sum_len    
+50     1500     896000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*), max([dba.px_wide_t].body) from [dba.px_wide_t] [dba.px_wide_t] group by [dba.px_wide_t].grp)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(d.cnt), sum( char_length(d.mb)) from (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ count(*) as [cnt], max([dba.px_wide_t].body) as [mb] from [dba.px_wide_t] [dba.px_wide_t] group by [dba.px_wide_t].grp) d (cnt, mb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ANALYTIC over overflow tuples has a parallel worker line     
+
+===================================================
+cnt    sum_rn    sum_first_len    
+1500     23250     26880000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?), first_value([dba.px_wide_t].body) over (partition by ? order by ?) from [dba.px_wide_t] [dba.px_wide_t])
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(d.rn as bigint)), sum( char_length(d.fb)) from (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by ? order by ?) as [rn], first_value([dba.px_wide_t].body) over (partition by ? order by ?) as [fb] from [dba.px_wide_t] [dba.px_wide_t]) d (rn, fb)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+    
+Case 12: trace - ORDERBY of a plain ORDER BY over overflow tuples has a parallel worker line     
+
+===================================================
+cnt    ord_sum    sum_len    
+1500     842225375     26880000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.px_wide_t)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_wide_t].id, [dba.px_wide_t].grp, [dba.px_wide_t].body from [dba.px_wide_t] [dba.px_wide_t] order by ? desc , ?)
+
+  TABLE SCAN (d)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast((rownum) as bigint)* cast(d.id as bigint)), sum( char_length(d.body)) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.px_wide_t].id, [dba.px_wide_t].grp, [dba.px_wide_t].body from [dba.px_wide_t] [dba.px_wide_t] order by ? desc , ?) d (id, grp, body)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
 ===================================================

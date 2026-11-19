@@ -55,6 +55,10 @@
  *      5 and 6)
  *    - the speed-up per degree and the cleanup after a failed worker start
  *      of the acceptance criteria need timing and fault injection
+ *    - the INDEX_LEAF sort of the acceptance criteria runs in the b+tree
+ *      loader during CREATE INDEX (btree_sort.c, split from the query sort by
+ *      CBRD-27235), not in the query sort path, so it is outside this SQL
+ *      test. The parallel index build is checked by cbrd_26678 (sql and shell)
  *
  *  Data:
  *    px_sort_t  - id = 1 .. 40000, grp = id mod 97 (97 groups of 412 or 413
@@ -104,7 +108,9 @@
  *             ANALYTIC and ORDERBY (NO_PARALLEL_SCAN keeps the scans serial,
  *             so only the sort lines carry a worker line), and no worker
  *             line under the GROUPBY line of a GROUP BY with HASH_AGGREGATE,
- *             whose hash table keeps every group and leaves no page to sort
+ *             whose hash table keeps every group and leaves no page to sort.
+ *             The GROUP BY, analytic and plain ORDER BY sorts of overflow
+ *             tuples of Cases 9, 10 and 14 also print a worker line
  *    Case 13: empty input - the GROUP BY, analytic and ORDER BY ... LIMIT
  *             sorts stay serial and return no rows, and the trace of the
  *             analytic sort has no worker line (Case 12 is its positive
@@ -287,7 +293,7 @@ evaluate 'Case 5: ROW_NUMBER() OVER (ORDER BY k) (SORT_ANALYTIC) - PARALLEL(8), 
 select count(*) cnt, sum(rn) sum_rn, sum(case when rn = k + 1 then 1 else 0 end) matched
   from (select /*+ PARALLEL(8) */ k, row_number() over (order by k) rn from px_sort_t) d;
 
-evaluate 'Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - serial reference';
+evaluate 'Case 6: SUM(v) OVER (PARTITION BY grp ORDER BY id) running sum (SORT_ANALYTIC) - serial reference; result = 40000 rows';
 select count(*) cnt, sum(cast(rs as bigint)) sum_rs, max(rs) max_rs, min(rs) min_rs
   from (select /*+ PARALLEL(1) */ grp, id, sum(v) over (partition by grp order by id) rs from px_sort_t) d;
 
@@ -307,7 +313,7 @@ select count(*) cnt, sum(g) sum_g, min(g) min_g, max(g) max_g
 -- the analytic functions of the acceptance criteria in one query.
 -- The three window specs (grp/v desc, grp/id, grp/v) give three analytic sorts.
 -- Every value is reduced to a bigint sum, and the floating point ones are rounded per row first.
-evaluate 'Case 8: analytic functions (RANK ... VARIANCE) over three window specs - serial reference';
+evaluate 'Case 8: analytic functions (RANK ... VARIANCE) over three window specs - serial reference; result = 40000 rows';
 select count(*) cnt, sum(cast(rk as bigint)) s_rank, sum(cast(dr as bigint)) s_dense_rank, sum(cast(nt as bigint)) s_ntile,
        sum(cast(lg as bigint)) s_lag, sum(cast(ld as bigint)) s_lead, sum(cast(fv as bigint)) s_first, sum(cast(lv as bigint)) s_last,
        sum(cast(c as bigint)) s_count, sum(cast(mn as bigint)) s_min, sum(cast(mx as bigint)) s_max, sum(cast(sm as bigint)) s_sum,
@@ -626,6 +632,26 @@ select /*+ NO_PARALLEL_SCAN */ count(*) grp_cnt, sum(cnt) row_cnt
   from (select /*+ HASH_AGGREGATE NO_PARALLEL_SCAN */ grp g, count(*) cnt from px_sort_t group by grp) d;
 show trace;
 
+-- The three sorts below take px_wide_t, whose 17,920-byte body makes every sort input tuple an overflow tuple.
+-- Cases 9, 10 and 14 compare their checksums, and here the trace shows that each sort really ran in parallel.
+evaluate 'Case 12: trace - GROUPBY over overflow tuples has a parallel worker line';
+select /*+ NO_PARALLEL_SCAN */ count(*) grp_cnt, sum(cnt) row_cnt, sum(length(mb)) sum_len
+  from (select /*+ NO_HASH_AGGREGATE NO_PARALLEL_SCAN */ grp g, count(*) cnt, max(body) mb
+          from px_wide_t group by grp) d;
+show trace;
+
+evaluate 'Case 12: trace - ANALYTIC over overflow tuples has a parallel worker line';
+select /*+ NO_PARALLEL_SCAN */ count(*) cnt, sum(cast(rn as bigint)) sum_rn, sum(length(fb)) sum_first_len
+  from (select /*+ NO_PARALLEL_SCAN */ row_number() over (partition by grp order by id) rn,
+               first_value(body) over (partition by grp order by id) fb
+          from px_wide_t) d;
+show trace;
+
+evaluate 'Case 12: trace - ORDERBY of a plain ORDER BY over overflow tuples has a parallel worker line';
+select /*+ NO_PARALLEL_SCAN */ count(*) cnt, sum(cast(o as bigint) * id) ord_sum, sum(length(body)) sum_len
+  from (select rownum o, id, body from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ id, grp, body from px_wide_t order by grp desc, id) s) d;
+show trace;
+
 set trace off;
 
 -- an empty sort input has fewer pages than the parallel sort threshold (at least 2), so every sort stays serial
@@ -762,6 +788,7 @@ select count(*) cnt, sum(cast(o as bigint) * id) ord_sum
 -- The pair also shows that NO_MERGE took effect: an ORDER BY ... LIMIT sort of 3 rows would stay serial.
 -- 2 rows give 2 pages and a computed degree of 2, and tuple_cnt <= degree keeps the sort serial (sort_check_parallelism).
 -- 3 rows give 3 pages, the same degree, and more tuples than the degree, so that sort runs in parallel.
+-- The 2-row query differs from the 3-row one only in a literal and reuses its cached plan, so its trace prints no Query Plan.
 set trace on;
 
 evaluate 'Case 14: trace - plain ORDER BY of 3 rows has a parallel worker line';
