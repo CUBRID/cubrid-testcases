@@ -36,7 +36,18 @@ select count(*), sum(x.id) from t28157q x where if (cast(0 as varchar) = '3' or 
 select count(*), sum(x.id) from t28157p x where x.b = 4 and (case when (cast(0 as varchar) = '3' or x.d < 30) then 1 end) = 1;
 select count(*), sum(x.id) from t28157q x where x.b = 4 and (case when (cast(0 as varchar) = '3' or x.d < 30) then 1 end) = 1;
 
--- Case 6: GROUP BY derived table on the partitioned table (CBRD-28158)
+-- Case 6: UPDATE and DELETE with a CASE condition
+update t28157p x set x.b = x.b + 100 where (case when (cast(0 as varchar) = '3' or x.d = 27) then 1 end) = 1;
+update t28157q x set x.b = x.b + 100 where (case when (cast(0 as varchar) = '3' or x.d = 27) then 1 end) = 1;
+select count(*), sum(b) from t28157p where b >= 100;
+select count(*), sum(b) from t28157q where b >= 100;
+
+delete from t28157p x where (case when (cast(0 as varchar) = '3' or x.d = 14) then 1 end) = 1;
+delete from t28157q x where (case when (cast(0 as varchar) = '3' or x.d = 14) then 1 end) = 1;
+select count(*), sum(id) from t28157p;
+select count(*), sum(id) from t28157q;
+
+-- Case 7: GROUP BY derived table on the partitioned table (CBRD-28158)
 delete from t28157p;
 insert into t28157p values (597, 8, 1, 'ab2', 14);
 insert into t28157p values (598, 1, 3, NULL, 22);
@@ -48,4 +59,20 @@ select count(*), sum(x.id)
  where (case when (x.c like 'w0%' or (x.a in (select z.a from t28157z z where z.b < 23) and x.b < -1)) then 1 end) = 1
    and (case when x.d = 22 then 1 end) = 1;
 
-drop table t28157p, t28157q, t28157z;
+-- Case 8: a single CASE with a plain column condition
+drop table if exists t28157s;
+create table t28157s (id int, a int, b int) partition by range (a)
+  (partition p0 values less than (10), partition p1 values less than maxvalue);
+insert into t28157s select rownum, mod (rownum, 100), mod (rownum, 7) from db_class x, db_class y where rownum <= 2000;
+select count(*) from t28157s where b = 1;
+select count(*) from t28157s where (case when b = 1 then 1 else 0 end) = 1;
+
+-- Case 9: a comparison on the partition key wrapped in IS NULL
+drop table if exists t28157n;
+create table t28157n (id int, a int, b int) partition by range (a)
+  (partition p0 values less than (3), partition p1 values less than (6), partition p2 values less than maxvalue);
+insert into t28157n select rownum, case when mod (rownum, 12) = 0 then null else mod (rownum * 7, 9) end, mod (rownum, 10) from db_class c1, db_class c2 where rownum <= 1200;
+select sum(x.id) from t28157n x where x.a is null;
+select sum(x.id) from t28157n x where (x.a + 1 = -1) is null;
+
+drop table t28157p, t28157q, t28157z, t28157s, t28157n;
