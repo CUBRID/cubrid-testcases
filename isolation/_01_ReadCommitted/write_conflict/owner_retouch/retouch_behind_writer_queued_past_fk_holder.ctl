@@ -1,22 +1,23 @@
 /*
 Test Case: owner_retouch/retouch_behind_writer_queued_past_fk_holder
 Priority: 1
-Reference case: CBRD-27034 (CUBRID/cubrid#7881)
+Reference case: CBRD-27034 (CUBRID/cubrid#7881), CBRD-27463 (CUBRID/cubrid#8198)
 Author: hgryoo
 
 Test Point:
-A transaction holds S on a parent row through the foreign-key check of its child insert, and another transaction's UPDATE of the parent waits behind that S.
-The transaction that updated the parent in an earlier statement updates it again.
-The owner waits for the S, but ahead of the queued writer: when the S goes, the owner gets the row first, and the writer then waits on the owner's stamp.
-Queued behind the writer instead, the owner would wait for its X while the writer waits on the owner: a deadlock.
+A transaction has an uncommitted child of a parent row, and another transaction's UPDATE of the parent waits on the stamp of the transaction that updated it in an earlier statement.
+That owner updates the parent again. It gets the row at once, ahead of the waiting writer, and the writer goes on waiting on the owner's stamp.
+Queued behind the writer instead, the owner would wait for the writer while the writer waits on the owner: a deadlock.
+CBRD-27034 wrote this case when the foreign key check of a child insert held S on the parent row, so the writer and then the owner queued behind that S, and the owner had to get the row first when the S went.
+Since CBRD-27463 the check takes no lock on a committed parent row, so there is no S to wait for.
+The name keeps "fk_holder". This case no longer reaches the path where the owner waits for S holders on the row, and no other case covers that path.
 
 NUM_CLIENTS = 3
 C1: UPDATE t27034_p SET v=v+1 WHERE id=1;
 C2: INSERT INTO t27034_c VALUES (10,1);
-C3: UPDATE t27034_p SET v=v+100 WHERE id=1; -- blocks: behind C2's S
-C1: UPDATE t27034_p SET v=v+1 WHERE id=1; -- blocks: behind C2's S, ahead of C3
+C3: UPDATE t27034_p SET v=v+100 WHERE id=1; -- blocks: waits on C1's stamp
+C1: UPDATE t27034_p SET v=v+1 WHERE id=1; -- does not block
 C2: COMMIT;
-C1: (released)
 C1: COMMIT;
 C3: (released)
 C3: COMMIT;
@@ -50,9 +51,10 @@ C2: INSERT INTO t27034_c VALUES (10,1);
 MC: wait until C2 ready;
 C3: UPDATE t27034_p SET v=v+100 WHERE id=1;
 MC: wait until C3 blocked;
-/* the owner touches the row again: it waits for C2's S, ahead of C3 */
+/* the owner touches the row again, ahead of C3 */
 C1: UPDATE t27034_p SET v=v+1 WHERE id=1;
-MC: wait until C1 blocked;
+/* CBRD-27463: C2's child INSERT leaves no lock on the parent row, so the owner touches it again at once; C3 still waits on C1's stamp */
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
 MC: wait until C1 ready;
