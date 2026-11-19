@@ -19,6 +19,9 @@
  *  5    RANK, DENSE_RANK, FIRST_VALUE, the other functions the optimization takes
  *  6    LIMIT with an offset: the skipped rows still count, and no returned row is lost
  *  7    ROWNUM in the select list, at any depth of an expression: the optimization is kept and each row keeps its ROWNUM
+ *  8    ROWNUM in the select list while the forced index scan also skips the sort: LIMIT is applied once and each
+ *       row keeps its ROWNUM, the trace shows that the LIMIT optimization applies, and the same query with the
+ *       index switched off prints the same rows
  */
 
 drop table if exists p, q;
@@ -65,6 +68,17 @@ select /*+ recompile */ row_number() over () + 100 as r, x from q limit 1, 3;
 evaluate 'Case 7: ROWNUM in the select list, alone and inside an expression -- the optimization is kept and each row keeps its ROWNUM';
 select /*+ recompile */ rownum as rn, row_number() over () + 100 as r, x from q where rownum <= 3;
 select /*+ recompile */ rownum * 1000 + row_number() over () as v, x from q where rownum <= 3;
+
+
+evaluate 'Case 8: ROWNUM in the select list while the forced index scan also skips the sort -- LIMIT is applied once and each row keeps its ROWNUM';
+-- the index covers the whole OVER order, so the LIMIT optimization also takes the sort-skip path - only there does the pass after the scan reach the LIMIT condition that the scan already applied
+set trace on;
+select /*+ recompile */ rownum as rn, row_number() over (partition by g order by x) + 100 as r, g, x from q where g > 0 using index i_q_gx(+) limit 4;
+show trace;
+-- the same query with the index switched off: the OVER order is not covered, so neither path is taken, the analytic sort puts the rows in (g, x) order, and the rows must match the query above
+select /*+ recompile */ rownum as rn, row_number() over (partition by g order by x) + 100 as r, g, x from q where g > 0 using index none limit 4;
+show trace;
+set trace off;
 
 
 drop table p, q;
