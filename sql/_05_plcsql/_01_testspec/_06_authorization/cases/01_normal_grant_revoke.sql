@@ -71,6 +71,18 @@ CREATE OR REPLACE FUNCTION sp1() return varchar as begin return 'hello'; end;
 CREATE OR REPLACE PROCEDURE sp2() as begin dbms_output.put_line('call sp2'); end;
 -- CBRD-25486 : When the 'CBRD-25486' issue is resolved, records with null in the object_of column will be deleted and not displayed.
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
+
+evaluate '5-1. CBRD-27720: CREATE OR REPLACE keeps the privileges.';
+GRANT EXECUTE ON PROCEDURE sp1 TO u1;
+GRANT EXECUTE ON PROCEDURE sp2 TO u1;
+CREATE OR REPLACE FUNCTION sp1() return varchar as begin return 'hello v2'; end;
+CREATE OR REPLACE PROCEDURE sp2() as begin dbms_output.put_line('call sp2 v2'); end;
+SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
+call login('u1','') on class db_user;
+SELECT dba.sp1();
+call dba.sp2();
+call login('dba','') on class db_user;
+
 DROP FUNCTION sp1;
 DROP PROCEDURE sp2;
 SELECT grantor.name, grantee.name, object_type, object_of, auth_type, is_grantable FROM _db_auth WHERE grantee.name = 'U1';
