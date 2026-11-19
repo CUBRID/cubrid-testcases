@@ -26,16 +26,22 @@
  *       next rank
  *  8    a correlated subquery: each run of the subquery starts the count of the rows it reads again,
  *       so every run counts the row its offset skips
+ *  9    a condition on a column the index does not hold (c3): the offset never became a key limit, so
+ *       the skipped row was read before the fix too, and RANK must compare the first returned row with it
  */
 
 drop table if exists t1;
 drop table if exists t2;
+drop table if exists t3;
 
 create table t1 (c1 int, c2 int);
 insert into t1 values (1, 10), (1, 20), (2, 30), (2, 40);
 create index t1_idx on t1 (c1, c2);
 create table t2 (c1 int primary key);
 insert into t2 values (1), (2);
+create table t3 (c1 int, c2 int, c3 int);
+insert into t3 select c1, c2, 1 from t1;
+create index t3_idx on t3 (c1, c2);
 
 
 evaluate 'Case 1: an empty OVER clause -- ROW_NUMBER counts the row the offset skips';
@@ -71,5 +77,10 @@ evaluate 'Case 8: a correlated subquery -- each run of the subquery starts its c
 select /*+ recompile */ o.c1, o.c2, (select row_number() over (partition by i.c1 order by i.c2) from t1 i where i.c1 = o.c1 using index t1_idx(+) limit 1, 1) as s from t1 o order by o.c1, o.c2;
 
 
+evaluate 'Case 9: a condition on c3, which the index does not hold -- the offset does not become a key limit, and RANK still compares the first returned row with the skipped row';
+select /*+ recompile */ rank() over (order by c1) as r, c1, c2 from t3 where c1 > 0 and c3 > 0 using index t3_idx(+) limit 1, 3;
+
+
 drop table t1;
 drop table t2;
+drop table t3;
