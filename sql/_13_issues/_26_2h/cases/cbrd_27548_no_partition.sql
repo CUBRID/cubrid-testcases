@@ -9,7 +9,8 @@
  *
  *  Every query runs again on non-partitioned copies of the tables, and the two result
  *  blocks must match. CTP masks digits in the trace, which therefore shows only the plan:
- *  the scan of Case 1 lists no partition, the one of Case 12 lists every partition.
+ *  the scans of Case 1 and Case 12 list no partition: since CBRD-28000 a value no range or list
+ *  partition holds prunes to no partition.
  *
  *  Coverage:
  *    Case 1:  list partition, values no partition holds
@@ -23,7 +24,7 @@
  *    Case 9:  derived table, UNION ALL and WITH
  *    Case 10: SELECT ... FOR UPDATE
  *    Case 11: index scan of the pruned table, alone and as an index nested-loop inner
- *    Case 12: pruning that keeps every partition, range partition and k = 99
+ *    Case 12: range partition and k = 99, values no partition holds
  *    Case 13: UPDATE, DELETE and INSERT ... SELECT whose target is pruned to nothing
  */
 
@@ -153,7 +154,7 @@ show trace;
 select /*+ recompile ordered use_nl */ o.k, l.n from t_outer o, x_ilist l where l.k = o.k and l.k = some {98, 99} order by 1;
 
 
-evaluate 'Case 12: pruning that keeps every partition, range partition and k = 99; result = non-partitioned copies';
+evaluate 'Case 12: range partition and k = 99, values no partition holds; result = non-partitioned copies';
 select /*+ recompile */ k, n from t_range where k = some {98, 99} order by n;
 select /*+ recompile */ k, n from x_range where k = some {98, 99} order by n;
 select /*+ recompile */ k, n from t_list where k = 99 order by n;
