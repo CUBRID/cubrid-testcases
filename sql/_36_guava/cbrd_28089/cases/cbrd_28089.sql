@@ -19,7 +19,8 @@
  *           b -> a -> c with c as a nl cross join
  *   Case 2: LEADING(a,b,c) with USE_HASH(c) / USE_MERGE(c) / USE_HASH:
  *           the order a -> b -> c is kept (the cost alone puts b first)
- *   Case 3: USE_HASH(c) USE_IDX(a): USE_IDX(a) is kept with the order
+ *   Case 3: LEADING(h,a,c) USE_HASH(c) USE_IDX(a): USE_IDX(a) and the order
+ *           are kept (h -> a idx-join, a hash join without USE_IDX(a))
  *   Case 4: a non equi-join term (c.comp_cd < a.comp_cd, no constant) cannot
  *           be hashed either: LEADING(c,a) is kept (c -> a, the cost alone
  *           puts a first) and only USE_HASH(a) is ignored
@@ -82,7 +83,7 @@ select /*+ recompile leading(a,b,c) use_merge(c) */ count(*) from table_a a, tab
 select /*+ recompile leading(a,b,c) use_hash */ count(*) from table_a a, table_b b, table_c c where a.comp_cd = 'SEJO' and a.comp_cd = b.comp_cd and a.empno = b.empno and a.comp_cd = c.comp_cd;
 
 -- Case 3: USE_IDX(a) is kept
-select /*+ recompile leading(b,a,c) use_hash(c) use_idx(a) */ count(*) from table_a a, table_b b, table_c c where a.comp_cd = 'SEJO' and a.comp_cd = b.comp_cd and a.empno = b.empno and a.comp_cd = c.comp_cd;
+select /*+ recompile leading(h,a,c) use_hash(c) use_idx(a) */ count(*) from table_a a, table_h h, table_c c where a.comp_cd = 'SEJO' and a.empno = h.empno and a.comp_cd = c.comp_cd;
 
 -- Case 4: a non equi-join term cannot be hashed either
 select /*+ recompile leading(c,a) use_hash(a) */ count(*) from table_a a, table_c c where c.comp_cd < a.comp_cd;

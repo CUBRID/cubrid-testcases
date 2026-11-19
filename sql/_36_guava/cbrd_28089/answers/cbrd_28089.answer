@@ -139,14 +139,13 @@ Query stmt:
 select /*+ LEADING(a, b, c) USE_HASH */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
 ===================================================
 count(*)    
-50     
+250     
 
 Query plan:
 nl-join (cross join)
     outer: idx-join (inner join)
-               outer: iscan
-                          class: b node[?]
-                          index: pk_table_b term[?] (covers)
+               outer: sscan
+                          class: h node[?]
                           cost:  ? card ?
                inner: iscan
                           class: a node[?]
@@ -159,7 +158,7 @@ nl-join (cross join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select /*+ LEADING(b, a, c) USE_IDX(a) USE_HASH(c) */ count(*) from table_a a, table_b b, table_c c where a.empno=b.empno and c.comp_cd= ?:?  and b.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=b.comp_cd and a.comp_cd=c.comp_cd
+select /*+ LEADING(h, a, c) USE_IDX(a) USE_HASH(c) */ count(*) from table_a a, table_h h, table_c c where a.empno=h.empno and c.comp_cd= ?:?  and a.comp_cd= ?:?  and a.comp_cd=c.comp_cd
 ===================================================
 count(*)    
 250     
