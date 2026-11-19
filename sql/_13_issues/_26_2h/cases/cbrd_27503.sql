@@ -5,7 +5,8 @@
  *  The order-dependent rewrite moved the whole analytic function to an outer SELECT and left the derived
  *  table with only its analytic flag. The fix keeps analytic functions out of the rewrite. Each case runs
  *  a query from a derived table sorted outside, where no rewrite runs, and with the query ORDER BY. The two
- *  forms must return the same rows, and a SELECT of the variable shows the last value assigned.
+ *  forms must return the same rows, or the same error in Case 2, and in the other cases a SELECT of the
+ *  variable shows the last value assigned.
  *
  *  Coverage:
  *    Case 1:  the queries of the issue - MEDIAN, SUM DISTINCT, and AVG with an assignment argument
@@ -16,6 +17,8 @@
  *    Case 6:  LEAD and FIRST_VALUE with an assignment argument return the same rows in both forms
  *    Case 7:  PERCENTILE_CONT with an assignment in the WITHIN GROUP ORDER BY key returns the same rows in both forms
  *    Case 8:  with an assignment inside and one beside an analytic function in one expression, only the one beside moves out
+ *    Case 9:  with a variable read inside and an assignment beside an analytic function in one expression, only the assignment moves out
+ *    Case 10: an assignment in an analytic function over a GROUP BY aggregate returns the same rows in both forms
  */
 
 drop table if exists tm;
@@ -103,6 +106,25 @@ set @u = 0;
 set @v = 0;
 select i, sum(@u := i) over () + (@v := i) m from tm order by i desc;
 select @u, @v;
+
+evaluate 'Case 9: with a variable read inside and an assignment beside an analytic function in one expression, only the assignment moves out';
+-- @u is only read inside SUM. As in Case 5, the final @v differs between the forms
+set @u = 1;
+set @v = 0;
+select * from (select i, sum(@u) over () + (@v := i) m from tm) d order by i desc;
+select @v;
+set @u = 1;
+set @v = 0;
+select i, sum(@u) over () + (@v := i) m from tm order by i desc;
+select @v;
+
+evaluate 'Case 10: an assignment in an analytic function over a GROUP BY aggregate returns the same rows in both forms';
+set @u = 0;
+select * from (select p, sum(i) s, sum(@u := p) over () t from tm group by p) d order by p desc;
+select @u;
+set @u = 0;
+select p, sum(i) s, sum(@u := p) over () t from tm group by p order by p desc;
+select @u;
 
 drop variable @u, @v, @w;
 drop table tm, c4e;
