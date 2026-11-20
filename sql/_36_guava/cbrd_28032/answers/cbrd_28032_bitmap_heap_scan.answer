@@ -457,11 +457,39 @@ count(*)
 
 ===================================================
     
-Case 15: correlated subquery that reads its whole range for each outer row; result = heap scan     
+Case 15: correlated subquery, run once an outer row, lookup in key order; result = heap scan     
 
 ===================================================
 count(*)    sum(c)    
 41     229770     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (t.i_bh_k) (key range: (t.k>=j.k and t.k<=j.k+?))
+
+  rewritten query: (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? ))
+
+  INDEX SCAN (j.i_bh_j) (key range: (j.k>= ?:?  and j.k<= ?:? ), covered: true)
+
+  rewritten query: (select /*+ NO_MERGE */ (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? )) from [dba.bh_j] j where (j.k>= ?:?  and j.k<= ?:? ))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(x.c) from (select /*+ NO_MERGE */ (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? )) as [c] from [dba.bh_j] j where (j.k>= ?:?  and j.k<= ?:? )) x (c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.bh_j.i_bh_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
 
 ===================================================
 count(*)    sum(c)    

@@ -26,7 +26,7 @@
  *    Case 12: covering scan and COUNT-only scan read no heap row: no bitmap heap scan
  *    Case 13: FOR UPDATE locks the rows it reads: lookup in key order
  *    Case 14: EXISTS subquery run for each outer row stops at its first row
- *    Case 15: correlated subquery that reads its whole range for each outer row
+ *    Case 15: correlated subquery, run once an outer row: lookup in key order
  *    Case 16: partitioned table, serial scan
  *    Case 17: analytic function that skips its sort on the key order: lookup in key order
  *    Case 18: rownum that stops the scan below an ORDER BY: lookup in key order
@@ -143,8 +143,9 @@ select /*+ recompile no_parallel_scan */ count(*) from bh_j j where j.k between 
 select /*+ recompile */ count(*) from bh_j j where j.k between 1000 and 1200 and exists (select 1 from bh_t t where t.k + 0 between j.k and j.k + 3000 and t.grp = 5);
 
 
-evaluate 'Case 15: correlated subquery that reads its whole range for each outer row; result = heap scan';
+evaluate 'Case 15: correlated subquery, run once an outer row, lookup in key order; result = heap scan';
 select /*+ recompile no_parallel_scan */ count(*), sum(c) from (select /*+ no_merge */ (select count(*) from bh_t t where t.k between j.k and j.k + 2000 and t.grp >= 3) c from bh_j j where j.k between 1000 and 1040) x;
+show trace;
 select /*+ recompile */ count(*), sum(c) from (select /*+ no_merge */ (select count(*) from bh_t t where t.k + 0 between j.k and j.k + 2000 and t.grp >= 3) c from bh_j j where j.k between 1000 and 1040) x;
 
 
