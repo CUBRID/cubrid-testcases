@@ -41,5 +41,6 @@ drop procedure t25140_out2;
 drop procedure t25140_oo;
 drop function t25140_fout;
 drop function t25140_fn;
+drop variable @s25140;
 
 --+ server-message off
