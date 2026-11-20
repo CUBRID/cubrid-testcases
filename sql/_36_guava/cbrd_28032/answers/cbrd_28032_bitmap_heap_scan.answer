@@ -469,6 +469,40 @@ count(*)    sum(c)
 
 ===================================================
     
+Case 17: analytic function that skips its sort on the key order, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    min(r)    max(r)    
+119764     7171588084     21514524762     1     119761     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: (select rank() over (order by ?), [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(x.r as bigint)), sum( cast(x.r as bigint)* cast( mod(x.id, ?) as bigint)), min(x.r), max(x.r) from (select rank() over (order by ?) as [r], [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+)) x (r, id)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    min(r)    max(r)    
+119764     7171588084     21514524762     1     119761     
+
+===================================================
+    
 Case 16: partitioned table, serial scan; result = heap scan     
 
 ===================================================

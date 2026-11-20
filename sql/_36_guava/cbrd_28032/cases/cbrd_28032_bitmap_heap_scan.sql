@@ -28,6 +28,7 @@
  *    Case 14: EXISTS subquery run for each outer row stops at its first row
  *    Case 15: correlated subquery that reads its whole range for each outer row
  *    Case 16: partitioned table, serial scan
+ *    Case 17: analytic function that skips its sort on the key order: lookup in key order
  */
 
 drop table if exists bh_t, bh_j, bh_p;
@@ -144,6 +145,12 @@ select /*+ recompile */ count(*) from bh_j j where j.k between 1000 and 1200 and
 evaluate 'Case 15: correlated subquery that reads its whole range for each outer row; result = heap scan';
 select /*+ recompile no_parallel_scan */ count(*), sum(c) from (select /*+ no_merge */ (select count(*) from bh_t t where t.k between j.k and j.k + 2000 and t.grp >= 3) c from bh_j j where j.k between 1000 and 1040) x;
 select /*+ recompile */ count(*), sum(c) from (select /*+ no_merge */ (select count(*) from bh_t t where t.k + 0 between j.k and j.k + 2000 and t.grp >= 3) c from bh_j j where j.k between 1000 and 1040) x;
+
+
+evaluate 'Case 17: analytic function that skips its sort on the key order, lookup in key order; result = heap scan';
+select /*+ recompile no_parallel_scan */ count(*), sum(cast(r as bigint)), sum(cast(r as bigint) * mod(id, 7)), min(r), max(r) from (select id, rank() over (order by k) r from bh_t where k between 60 and 30000 and grp >= 0 using index i_bh_k(+)) x;
+show trace;
+select /*+ recompile */ count(*), sum(cast(r as bigint)), sum(cast(r as bigint) * mod(id, 7)), min(r), max(r) from (select id, rank() over (order by k) r from bh_t where k between 60 and 30000 and grp >= 0 using index none) x;
 
 
 evaluate 'Case 16: partitioned table, serial scan; result = heap scan';
