@@ -1,17 +1,22 @@
--- CBRD-27381: radix-sorted index builds of the date and time types
---
--- t_r and t_c hold the same rows. Every column of t_r is indexed with index_sort_method=radix and the
--- same column of t_c with compare, both with index_build_buffer_size 64K so a build sorts several
--- runs. Read in index order, each radix-built index must return the rows of its compare-built twin
--- in the same order (0 rows differ) and find as many rows.
---
--- Rows: 6000 values in four shapes of 1500 (scattered, ascending, descending, few distinct values)
--- with a NULL every 101st row, then the extremes of DATE, TIME and DATETIME, and one instant written
--- in three time zones. The zone of a TZ value is not part of its order: the same instant in other
--- zones is an equal key.
---
--- Covers: DATE, TIME, TIMESTAMP, DATETIME, TIMESTAMPTZ, TIMESTAMPLTZ, DATETIMETZ, DATETIMELTZ, and
--- descending indexes of DATETIME and TIMESTAMPTZ
+/**
+ *  This test case verifies CBRD-27381: radix-sorted index builds of the date and time types
+ *
+ *  t_r and t_c hold the same rows. Every column of t_r is indexed with index_sort_method=radix and the
+ *  same column of t_c with compare, both with index_build_buffer_size 64K so a build sorts several
+ *  runs. Read in index order, each radix-built index must return the rows of its compare-built twin
+ *  in the same order and find as many rows.
+ *
+ *  Rows: g is the row generator of 6000 values in four shapes of 1500 (scattered, ascending, descending,
+ *  few distinct values) with a NULL every 101st row. Then come the extremes of DATE, TIME and DATETIME,
+ *  and one instant written in three time zones. The zone of a TZ value is not part of its order - the
+ *  same instant in other zones is an equal key.
+ *
+ *  Coverage:
+ *    Case 1:  DATE, TIME, TIMESTAMP, DATETIME, TIMESTAMPTZ, TIMESTAMPLTZ, DATETIMETZ, DATETIMELTZ, and descending
+ *             indexes of DATETIME and TIMESTAMPTZ read back in the order of the compare-built twin
+ *    Case 2:  each radix-built index finds the rows whose key is not NULL
+ *    Case 3:  one instant written in three time zones is one key of the radix-built TIMESTAMPTZ and DATETIMETZ indexes
+ */
 
 drop table if exists g;
 drop table if exists t_r;
@@ -85,30 +90,31 @@ create index i_c5d on t_c (d5 desc);
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
--- rows read in index order that differ from the compare-built index: 0 each
-select 'd1', count(*) from ((select rownum, d1 from t_r where d1 >= date'0001-01-01' using index i_r1)
-  difference (select rownum, d1 from t_c where d1 >= date'0001-01-01' using index i_c1)) x;
-select 'd2', count(*) from ((select rownum, d2 from t_r where d2 >= time'00:00:00' using index i_r2)
-  difference (select rownum, d2 from t_c where d2 >= time'00:00:00' using index i_c2)) x;
-select 'd3', count(*) from ((select rownum, d3 from t_r where d3 >= timestamp'1970-06-01 00:00:00' using index i_r3)
-  difference (select rownum, d3 from t_c where d3 >= timestamp'1970-06-01 00:00:00' using index i_c3)) x;
-select 'd4', count(*) from ((select rownum, d4 from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4)
-  difference (select rownum, d4 from t_c where d4 >= datetime'0001-01-01 00:00:00.000' using index i_c4)) x;
-select 'd5', count(*) from ((select rownum, d5 from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5)
-  difference (select rownum, d5 from t_c where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_c5)) x;
-select 'd6', count(*) from ((select rownum, d6 from t_r where d6 >= timestampltz'1970-06-01 00:00:00 UTC' using index i_r6)
-  difference (select rownum, d6 from t_c where d6 >= timestampltz'1970-06-01 00:00:00 UTC' using index i_c6)) x;
-select 'd7', count(*) from ((select rownum, d7 from t_r where d7 >= datetimetz'1800-01-01 00:00:00.000 UTC' using index i_r7)
-  difference (select rownum, d7 from t_c where d7 >= datetimetz'1800-01-01 00:00:00.000 UTC' using index i_c7)) x;
-select 'd8', count(*) from ((select rownum, d8 from t_r where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' using index i_r8)
-  difference (select rownum, d8 from t_c where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' using index i_c8)) x;
-select 'd4 desc', count(*) from ((select rownum, d4 from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4d)
-  difference (select rownum, d4 from t_c where d4 >= datetime'0001-01-01 00:00:00.000' using index i_c4d)) x;
-select 'd5 desc', count(*) from ((select rownum, d5 from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5d)
-  difference (select rownum, d5 from t_c where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_c5d)) x;
+evaluate 'Case 1: each radix-built index reads back in the order of its compare-built twin; result = no rows differ';
+-- each query prints the position and the key of the rows that differ from the compare-built twin
+select 'd1' as ix, x.* from ((select rownum, d1 from t_r where d1 >= date'0001-01-01' using index i_r1)
+  difference (select rownum, d1 from t_c where d1 >= date'0001-01-01' using index i_c1)) x order by 2;
+select 'd2' as ix, x.* from ((select rownum, d2 from t_r where d2 >= time'00:00:00' using index i_r2)
+  difference (select rownum, d2 from t_c where d2 >= time'00:00:00' using index i_c2)) x order by 2;
+select 'd3' as ix, x.* from ((select rownum, d3 from t_r where d3 >= timestamp'1970-06-01 00:00:00' using index i_r3)
+  difference (select rownum, d3 from t_c where d3 >= timestamp'1970-06-01 00:00:00' using index i_c3)) x order by 2;
+select 'd4' as ix, x.* from ((select rownum, d4 from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4)
+  difference (select rownum, d4 from t_c where d4 >= datetime'0001-01-01 00:00:00.000' using index i_c4)) x order by 2;
+select 'd5' as ix, x.* from ((select rownum, d5 from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5)
+  difference (select rownum, d5 from t_c where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_c5)) x order by 2;
+select 'd6' as ix, x.* from ((select rownum, d6 from t_r where d6 >= timestampltz'1970-06-01 00:00:00 UTC' using index i_r6)
+  difference (select rownum, d6 from t_c where d6 >= timestampltz'1970-06-01 00:00:00 UTC' using index i_c6)) x order by 2;
+select 'd7' as ix, x.* from ((select rownum, d7 from t_r where d7 >= datetimetz'1800-01-01 00:00:00.000 UTC' using index i_r7)
+  difference (select rownum, d7 from t_c where d7 >= datetimetz'1800-01-01 00:00:00.000 UTC' using index i_c7)) x order by 2;
+select 'd8' as ix, x.* from ((select rownum, d8 from t_r where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' using index i_r8)
+  difference (select rownum, d8 from t_c where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' using index i_c8)) x order by 2;
+select 'd4 desc' as ix, x.* from ((select rownum, d4 from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4d)
+  difference (select rownum, d4 from t_c where d4 >= datetime'0001-01-01 00:00:00.000' using index i_c4d)) x order by 2;
+select 'd5 desc' as ix, x.* from ((select rownum, d5 from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5d)
+  difference (select rownum, d5 from t_c where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_c5d)) x order by 2;
 
--- rows each radix-built index finds: all but the NULL ones. With 0 rows differing above, the same count
--- means the radix-built index holds exactly the rows of its twin
+evaluate 'Case 2: each radix-built index finds the rows whose key is not NULL';
+-- with no rows differing in Case 1, the same count means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where d1 >= date'0001-01-01' using index i_r1;
 select count(*) from t_r where d2 >= time'00:00:00' using index i_r2;
 select count(*) from t_r where d3 >= timestamp'1970-06-01 00:00:00' using index i_r3;
@@ -120,7 +126,7 @@ select count(*) from t_r where d8 >= datetimeltz'1800-01-01 00:00:00.000 UTC' us
 select count(*) from t_r where d4 >= datetime'0001-01-01 00:00:00.000' using index i_r4d;
 select count(*) from t_r where d5 >= timestamptz'1970-06-01 00:00:00 UTC' using index i_r5d;
 
--- the instant written in three zones is one key: three rows each
+evaluate 'Case 3: one instant written in three time zones is one key of the radix-built TIMESTAMPTZ and DATETIMETZ indexes; result = 3 rows each';
 select count(*) from t_r where d5 = timestamptz'2015-03-01 00:00:00 UTC' using index i_r5;
 select count(*) from t_r where d7 = datetimetz'2015-03-01 00:00:00.000 UTC' using index i_r7;
 

@@ -1,26 +1,33 @@
--- CBRD-27381: keys without a radix key keep the compare sort, and function and filtered indexes
---
--- With index_sort_method=radix, a key domain without a radix key falls back to the merge sort: a
--- string that can reach 255 bytes (a VARCHAR(64) under utf8 at 4 bytes a character, a VARCHAR(255)
--- under ISO-8859-1, STRING), and a collation that does not order a string a byte at a time (euckr_bin,
--- utf8_ko_cs, utf8_tr_cs). A function index and a filtered index sort what their expression or filter
--- leaves. t_r and t_c hold the same rows. Every index of t_r is built with index_sort_method=radix
--- and the same index of t_c with compare, both with index_build_buffer_size 64K so a build sorts
--- several runs. Read in index order, each index of t_r must return the rows of its twin in the same
--- order (0 rows differ) and find as many rows.
---
--- Rows: 6000 strings of signed numbers with a suffix, in four shapes of 1500 (scattered, ascending,
--- descending, few distinct values), Latin-1 and Korean letters mixed in, a NULL every 101st row. f9 is
--- upper case in every third row, so LOWER () folds keys that differ in case.
---
--- Covers: VARCHAR(300) and VARCHAR(64) under utf8_bin, VARCHAR(30) under euckr_bin, utf8_ko_cs and
--- utf8_tr_cs, STRING, VARCHAR(255) under iso88591_bin; a function index on ABS () and on LOWER ();
--- a filtered index; prefix-length indexes on a VARCHAR(300), which takes the radix sorter through its
--- prefix, on a CHAR(100) and on a VARCHAR(30)
+/**
+ *  This test case verifies CBRD-27381: keys without a radix key keep the compare sort, and function and filtered indexes
+ *
+ *  With index_sort_method=radix, a key domain without a radix key falls back to the merge sort - a
+ *  string that can reach 255 bytes (a VARCHAR(64) under utf8 at 4 bytes a character, a VARCHAR(255)
+ *  under ISO-8859-1, STRING), and a collation that does not order a string a byte at a time (euckr_bin,
+ *  utf8_ko_cs, utf8_tr_cs). A function index and a filtered index sort what their expression or filter
+ *  leaves. t_r and t_c hold the same rows. Every index of t_r is built with index_sort_method=radix
+ *  and the same index of t_c with compare, both with index_build_buffer_size 64K so a build sorts
+ *  several runs. Read in index order, each index of t_r must return the rows of its twin in the same
+ *  order and find as many rows.
+ *
+ *  Rows: g is the row generator of 6000 strings of signed numbers with a suffix, in four shapes of 1500
+ *  (scattered, ascending, descending, few distinct values), Latin-1 and Korean letters mixed in, a NULL
+ *  every 101st row. f9 is upper case in every third row, so LOWER () folds keys that differ in case.
+ *
+ *  Coverage:
+ *    Case 1:  VARCHAR(300) and VARCHAR(64) under utf8_bin, VARCHAR(30) under euckr_bin, utf8_ko_cs and utf8_tr_cs,
+ *             STRING, VARCHAR(255) under iso88591_bin, a function index on ABS () and on LOWER (), and a filtered
+ *             index read back in the order of the compare-built twin
+ *    Case 2:  each index of t_r finds the rows its key or filter keeps
+ *    Case 3:  prefix-length indexes on a VARCHAR(300), which takes the radix sorter through its prefix, on a
+ *             CHAR(100) and on a VARCHAR(30) read back in the order of the compare-built twin and find as many rows
+ */
 
 drop table if exists g;
 drop table if exists t_r;
 drop table if exists t_c;
+drop table if exists t_pr;
+drop table if exists t_pc;
 
 create table g (n int, v int);
 insert into g
@@ -74,32 +81,33 @@ create index i_c10 on t_c (f8) where f8 > 0;
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
--- rows read in index order that differ from the compare-built index: 0 each
-select 'f1', count(*) from ((select rownum, f1 from t_r where f1 >= '' using index i_r1)
-  difference (select rownum, f1 from t_c where f1 >= '' using index i_c1)) x;
-select 'f2', count(*) from ((select rownum, f2 from t_r where f2 >= '' using index i_r2)
-  difference (select rownum, f2 from t_c where f2 >= '' using index i_c2)) x;
-select 'f3', count(*) from ((select rownum, f3 from t_r where f3 >= '' using index i_r3)
-  difference (select rownum, f3 from t_c where f3 >= '' using index i_c3)) x;
-select 'f4', count(*) from ((select rownum, f4 from t_r where f4 >= '' using index i_r4)
-  difference (select rownum, f4 from t_c where f4 >= '' using index i_c4)) x;
-select 'f5', count(*) from ((select rownum, f5 from t_r where f5 >= '' using index i_r5)
-  difference (select rownum, f5 from t_c where f5 >= '' using index i_c5)) x;
-select 'f6', count(*) from ((select rownum, f6 from t_r where f6 >= '' using index i_r6)
-  difference (select rownum, f6 from t_c where f6 >= '' using index i_c6)) x;
-select 'f7', count(*) from ((select rownum, f7 from t_r where f7 >= '' using index i_r7)
-  difference (select rownum, f7 from t_c where f7 >= '' using index i_c7)) x;
+evaluate 'Case 1: each index of t_r reads back in the order of its compare-built twin; result = no rows differ';
+-- each query prints the position and the key of the rows that differ from the compare-built twin
+select 'f1' as ix, x.* from ((select rownum, f1 from t_r where f1 >= '' using index i_r1)
+  difference (select rownum, f1 from t_c where f1 >= '' using index i_c1)) x order by 2;
+select 'f2' as ix, x.* from ((select rownum, f2 from t_r where f2 >= '' using index i_r2)
+  difference (select rownum, f2 from t_c where f2 >= '' using index i_c2)) x order by 2;
+select 'f3' as ix, x.* from ((select rownum, f3 from t_r where f3 >= '' using index i_r3)
+  difference (select rownum, f3 from t_c where f3 >= '' using index i_c3)) x order by 2;
+select 'f4' as ix, x.* from ((select rownum, f4 from t_r where f4 >= '' using index i_r4)
+  difference (select rownum, f4 from t_c where f4 >= '' using index i_c4)) x order by 2;
+select 'f5' as ix, x.* from ((select rownum, f5 from t_r where f5 >= '' using index i_r5)
+  difference (select rownum, f5 from t_c where f5 >= '' using index i_c5)) x order by 2;
+select 'f6' as ix, x.* from ((select rownum, f6 from t_r where f6 >= '' using index i_r6)
+  difference (select rownum, f6 from t_c where f6 >= '' using index i_c6)) x order by 2;
+select 'f7' as ix, x.* from ((select rownum, f7 from t_r where f7 >= '' using index i_r7)
+  difference (select rownum, f7 from t_c where f7 >= '' using index i_c7)) x order by 2;
 -- the ABS () and LOWER () indexes are read as their keys: a key holds f8 and -f8, or f9 in both cases,
 -- whose rows lie in OID order, which may differ between the two tables
-select 'abs (f8)', count(*) from ((select rownum, abs (f8) from t_r where abs (f8) >= 0 using index i_r8)
-  difference (select rownum, abs (f8) from t_c where abs (f8) >= 0 using index i_c8)) x;
-select 'lower (f9)', count(*) from ((select rownum, lower (f9) from t_r where lower (f9) >= '' using index i_r9)
-  difference (select rownum, lower (f9) from t_c where lower (f9) >= '' using index i_c9)) x;
-select 'f8 > 0', count(*) from ((select rownum, f8 from t_r where f8 > 0 using index i_r10)
-  difference (select rownum, f8 from t_c where f8 > 0 using index i_c10)) x;
+select 'abs (f8)' as ix, x.* from ((select rownum, abs (f8) from t_r where abs (f8) >= 0 using index i_r8)
+  difference (select rownum, abs (f8) from t_c where abs (f8) >= 0 using index i_c8)) x order by 2;
+select 'lower (f9)' as ix, x.* from ((select rownum, lower (f9) from t_r where lower (f9) >= '' using index i_r9)
+  difference (select rownum, lower (f9) from t_c where lower (f9) >= '' using index i_c9)) x order by 2;
+select 'f8 > 0' as ix, x.* from ((select rownum, f8 from t_r where f8 > 0 using index i_r10)
+  difference (select rownum, f8 from t_c where f8 > 0 using index i_c10)) x order by 2;
 
--- rows each index of t_r finds. With 0 rows differing above, the same count means the index holds exactly
--- the rows of its twin
+evaluate 'Case 2: each index of t_r finds the rows its key or filter keeps';
+-- with no rows differing in Case 1, the same count means the index holds exactly the rows of its twin
 select count(*) from t_r where f1 >= '' using index i_r1;
 select count(*) from t_r where f2 >= '' using index i_r2;
 select count(*) from t_r where f3 >= '' using index i_r3;
@@ -111,6 +119,7 @@ select count(*) from t_r where abs (f8) >= 0 using index i_r8;
 select count(*) from t_r where lower (f9) >= '' using index i_r9;
 select count(*) from t_r where f8 > 0 using index i_r10;
 
+evaluate 'Case 3: prefix-length indexes read back in the order of the compare-built twin and find as many rows; result = no rows differ';
 -- prefix-length indexes: the key is the first characters of the column, so a VARCHAR(300) like f1, which
 -- has no radix key, gets one from its prefix, and a CHAR key, padded to its precision, is cut short. The
 -- keys are read as the prefix: rows that share a prefix lie in OID order, which may differ between the two
@@ -132,12 +141,12 @@ create index i_cpw on t_pc (w(5));
 create index i_cps on t_pc (s(3));
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
-select 'l(6)', count(*) from ((select rownum, substr (l, 1, 6) from t_pr where l >= '' using index i_rpl)
-  difference (select rownum, substr (l, 1, 6) from t_pc where l >= '' using index i_cpl)) x;
-select 'w(5)', count(*) from ((select rownum, substr (w, 1, 5) from t_pr where w >= '' using index i_rpw)
-  difference (select rownum, substr (w, 1, 5) from t_pc where w >= '' using index i_cpw)) x;
-select 's(3)', count(*) from ((select rownum, substr (s, 1, 3) from t_pr where s >= '' using index i_rps)
-  difference (select rownum, substr (s, 1, 3) from t_pc where s >= '' using index i_cps)) x;
+select 'l(6)' as ix, x.* from ((select rownum, substr (l, 1, 6) from t_pr where l >= '' using index i_rpl)
+  difference (select rownum, substr (l, 1, 6) from t_pc where l >= '' using index i_cpl)) x order by 2;
+select 'w(5)' as ix, x.* from ((select rownum, substr (w, 1, 5) from t_pr where w >= '' using index i_rpw)
+  difference (select rownum, substr (w, 1, 5) from t_pc where w >= '' using index i_cpw)) x order by 2;
+select 's(3)' as ix, x.* from ((select rownum, substr (s, 1, 3) from t_pr where s >= '' using index i_rps)
+  difference (select rownum, substr (s, 1, 3) from t_pc where s >= '' using index i_cps)) x order by 2;
 select count(*) from t_pr where l >= '' using index i_rpl;
 select count(*) from t_pr where w >= '' using index i_rpw;
 select count(*) from t_pr where s >= '' using index i_rps;

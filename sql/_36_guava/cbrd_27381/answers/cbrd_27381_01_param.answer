@@ -9,6 +9,10 @@
 ===================================================
 0
 ===================================================
+    
+Case 1: the values auto, radix, compare, DEFAULT and a keyword in another case are taken, and a bad value fails     
+
+===================================================
 0
 ===================================================
 0
@@ -63,16 +67,21 @@ Error:-839
 ===================================================
 0
 ===================================================
-'auto'    count(*)    
-auto     0     
+    
+Case 2: indexes built under auto, radix and DEFAULT read back in the order of the compare-built index; result = no rows differ     
 
 ===================================================
-'radix'    count(*)    
-radix     0     
+ix    rownum    k    
 
 ===================================================
-'default'    count(*)    
-default     0     
+ix    rownum    k    
+
+===================================================
+ix    rownum    k    
+
+===================================================
+    
+Case 3: each index finds the rows whose key is not NULL     
 
 ===================================================
 count(*)    
