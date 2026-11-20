@@ -37,8 +37,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (a program step the batch does not reproduce))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a program step the batch does not reproduce))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: unsupported program step)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: unsupported program step)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -57,8 +57,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a program step the batch does not reproduce))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a program step the batch does not reproduce))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: unsupported program step)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: unsupported program step)
      
 
 ===================================================
@@ -80,8 +80,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -100,8 +100,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================
@@ -123,8 +123,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -143,8 +143,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================
@@ -166,8 +166,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -186,8 +186,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================
@@ -209,8 +209,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -229,8 +229,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================
@@ -252,8 +252,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -272,8 +272,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================
@@ -335,8 +335,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -355,8 +355,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
-           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: DISTINCT, ordered or index MIN/MAX aggregate)
      
 
 ===================================================

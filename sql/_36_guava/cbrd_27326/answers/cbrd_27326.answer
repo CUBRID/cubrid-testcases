@@ -36,7 +36,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a program step the batch does not reproduce))
+    SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: unsupported program step)
      
 
 ===================================================
@@ -54,7 +54,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (a program step the batch does not reproduce))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: unsupported program step)
      
 
 ===================================================
@@ -83,7 +83,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.px_thr_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a program step the batch does not reproduce))
+    SCAN (table: dba.px_thr_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: unsupported program step)
      
 
 ===================================================
@@ -203,7 +203,7 @@ Trace Statistics:
         RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
@@ -230,7 +230,7 @@ Trace Statistics:
         RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.px_thr_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -268,7 +268,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -295,7 +295,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+        SCAN (table: dba.px_thr_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      

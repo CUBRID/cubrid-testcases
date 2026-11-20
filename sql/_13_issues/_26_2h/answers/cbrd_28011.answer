@@ -30,7 +30,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted)) (oos time: ?, fetch: ?, ioread: ?)
+    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter) (oos time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -47,7 +47,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted))
+    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -64,7 +64,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_plain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted))
+    SCAN (table: dba.t_plain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -102,8 +102,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
-           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted)) (oos time: ?, fetch: ?, ioread: ?)
-           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted)) (oos time: ?, fetch: ?, ioread: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter) (oos time: ?, fetch: ?, ioread: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter) (oos time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -129,7 +129,7 @@ trace
           "ioread": ?,
           "readrows": ?,
           "rows": ?,
-          "batch_why_not": "the data filter is interpreted"
+          "batch_why_not": "interpreted data filter"
         },
         "oos": {
           "time": ?,
@@ -162,7 +162,7 @@ trace
           "ioread": ?,
           "readrows": ?,
           "rows": ?,
-          "batch_why_not": "the data filter is interpreted"
+          "batch_why_not": "interpreted data filter"
         }
       }
     }

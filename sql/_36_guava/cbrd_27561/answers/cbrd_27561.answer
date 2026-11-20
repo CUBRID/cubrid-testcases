@@ -62,10 +62,10 @@ Trace Statistics:
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a scan the batch does not take (grouped, cached, backward or record info)))
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a scan the batch does not take (grouped, cached, backward or record info)))
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
      
 
 ===================================================
@@ -138,9 +138,9 @@ Trace Statistics:
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a scan the batch does not take (grouped, cached, backward or record info)))
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a scan the batch does not take (grouped, cached, backward or record info)))
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
      
 
 ===================================================
@@ -177,7 +177,7 @@ Trace Statistics:
           FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
           SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (a scan the batch does not take (grouped, cached, backward or record info)))
+          SCAN (table: dba.t_u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
      
 
 ===================================================
@@ -210,9 +210,9 @@ Trace Statistics:
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -244,9 +244,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -274,9 +274,9 @@ Trace Statistics:
           PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_h?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
