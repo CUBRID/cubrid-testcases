@@ -29,7 +29,8 @@
  *    Case 13: a routine that does not exist fails
  *    Case 14: a routine of a package without a body fails when it runs
  *    Case 15: an unqualified name is not read as a routine of a package named after the current user
- *    Case 16: a package name longer than a user name can be, in any letter case
+ *    Case 16: package names of 31, 32, and 41 bytes, around the 32-byte bound of a user name,
+ *             in SELECT and in CALL, in any letter case
  *    Case 17: a view reads its routine names again as the view owner
  *    Case 18: EXECUTE on the package is checked, and a routine that is not granted is still counted
  *    Case 19: static SQL of a PL/CSQL function reads its names as the owner of the function,
@@ -104,7 +105,23 @@ create or replace package body u1_27526.u1_27526 as
   procedure q (r out varchar) as begin r := 'u1_27526.u1_27526.q (package)'; end;
 end;
 
--- a package name of 41 bytes, longer than a user name can be (32 bytes)
+-- package names of 31, 32, and 41 bytes: a user name is shorter than 32 bytes
+create or replace package u1_27526.pkg_31_bytes_for_cbrd_27526_abc as
+  function f return varchar;
+  procedure p (r out varchar);
+end;
+create or replace package body u1_27526.pkg_31_bytes_for_cbrd_27526_abc as
+  function f return varchar as begin return 'u1_27526.pkg_31_bytes_for_cbrd_27526_abc.f (package)'; end;
+  procedure p (r out varchar) as begin r := 'u1_27526.pkg_31_bytes_for_cbrd_27526_abc.p (package)'; end;
+end;
+create or replace package u1_27526.pkg_32_bytes_for_cbrd_27526_abcd as
+  function f return varchar;
+  procedure p (r out varchar);
+end;
+create or replace package body u1_27526.pkg_32_bytes_for_cbrd_27526_abcd as
+  function f return varchar as begin return 'u1_27526.pkg_32_bytes_for_cbrd_27526_abcd.f (package)'; end;
+  procedure p (r out varchar) as begin r := 'u1_27526.pkg_32_bytes_for_cbrd_27526_abcd.p (package)'; end;
+end;
 create or replace package u1_27526.pkg_named_longer_than_any_user_name_27526 as
   function lf return varchar;
   procedure lp (r out varchar);
@@ -213,7 +230,13 @@ call u1_27526.u1_27526.q (:h27526);
 select :h27526 from db_root;
 
 
-evaluate 'Case 16: a package name longer than a user name can be, in any letter case';
+evaluate 'Case 16: package names of 31, 32, and 41 bytes, around the bound of a user name, in any letter case';
+select pkg_31_bytes_for_cbrd_27526_abc.f () from db_root;
+call pkg_31_bytes_for_cbrd_27526_abc.p (:h27526);
+select :h27526 from db_root;
+select pkg_32_bytes_for_cbrd_27526_abcd.f () from db_root;
+call pkg_32_bytes_for_cbrd_27526_abcd.p (:h27526);
+select :h27526 from db_root;
 select pkg_named_longer_than_any_user_name_27526.lf () from db_root;
 select PKG_NAMED_LONGER_THAN_ANY_USER_NAME_27526.LF () from db_root;
 call pkg_named_longer_than_any_user_name_27526.lp (:h27526);
@@ -346,6 +369,8 @@ drop procedure u1_27526.q;
 drop package u1_27526.ux27526;
 drop package u1_27526.nobody27526;
 drop package u1_27526.u1_27526;
+drop package u1_27526.pkg_31_bytes_for_cbrd_27526_abc;
+drop package u1_27526.pkg_32_bytes_for_cbrd_27526_abcd;
 drop package u1_27526.pkg_named_longer_than_any_user_name_27526;
 drop package u1_27526.pc27526;
 drop package u1_27526.uw27526;
