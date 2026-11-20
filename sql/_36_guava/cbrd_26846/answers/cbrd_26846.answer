@@ -670,6 +670,456 @@ Trace Statistics:
      
 
 ===================================================
+    
+Case 18: GROUP_CONCAT DISTINCT without ORDER BY, and the default separator     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?), group_concat([dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.g<=>s.g and p.d<=>s.d and p.a<=>s.a then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) p (g, d, a), (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola separator ',') as [g], group_concat(distinct [dba.bvx].cola order by ?) as [d], group_concat([dba.bvx].cola order by ?) as [a] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) s (g, d, a)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 19: GROUP_CONCAT with a multi-character separator, without ORDER BY and with ORDER BY DESC     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ ( char_length(group_concat([dba.bvx].colb separator '<>'))), group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ ( char_length(group_concat([dba.bvx].colb separator '<>'))), group_concat([dba.bvx].colb order by ? desc  separator '<>') from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?)
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.l<=>s.l and p.g<=>s.g then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ ( char_length(group_concat([dba.bvx].colb separator '<>'))) as [l], group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) p (l, g), (select /*+ NO_PARALLEL_SCAN */ ( char_length(group_concat([dba.bvx].colb separator '<>'))) as [l], group_concat([dba.bvx].colb order by ? desc  separator '<>') as [g] from [dba.bvx] [dba.bvx] where [dba.bvx].id mod ?=?) s (l, g)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 20: predicate matching no row, values printed beside the serial twin     
+
+===================================================
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(50) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(50) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+0     null     null     null     null     null     null     null     null     null     1.0000     0.0000     0     null     null     null     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where ([dba.bvx].cola< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 21: predicate matching exactly one row, values printed beside the serial twin     
+
+===================================================
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(40) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     1.0000     1     37     37     37     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    bit_and(cola)    bit_or(cola)    bit_xor(cola)    cast( cast(median(cola) as numeric(12,4)) as varchar(20))    group_concat(cola separator ',')    json_arrayagg(colb)    json_objectagg(colb, cola)    cast( cast(percentile_cont( cast(0.5 as double)) within group (order by cola) as numeric(12,4)) as varchar(20))    percentile_disc( cast(0.5 as double)) within group (order by cola)    cast( cast(cume_dist(30) within group(order by cola) as numeric(12,4)) as varchar(20))    cast( cast(percent_rank(40) within group(order by cola) as numeric(12,4)) as varchar(20))    count(distinct cola)    sum(distinct cola)    group_concat(distinct cola separator ',')    group_concat(distinct cola order by 1)    
+1     37     37     37     37.0000     37     ["0000000017"]     {"0000000017":37}     37.0000     37     0.5000     1.0000     1     37     37     37     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), bit_and([dba.bvx].cola), bit_or([dba.bvx].cola), bit_xor([dba.bvx].cola),  cast( cast(median([dba.bvx].cola) as numeric(?,?)) as varchar(?)), group_concat([dba.bvx].cola separator ','), json_arrayagg([dba.bvx].colb), json_objectagg([dba.bvx].colb, [dba.bvx].cola),  cast( cast(percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].cola),  cast( cast(cume_dist(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)),  cast( cast(percent_rank(?) within group(order by [dba.bvx].cola) as numeric(?,?)) as varchar(?)), count(distinct [dba.bvx].cola), sum(distinct [dba.bvx].cola), group_concat(distinct [dba.bvx].cola separator ','), group_concat(distinct [dba.bvx].cola order by ?) from [dba.bvx] [dba.bvx] where [dba.bvx].id= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 22: interpolation over DATETIME and VARCHAR     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ median([dba.bvx].dt), percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].dt), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].dt), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].colb) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ median([dba.bvx].dt), percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].dt), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].dt), percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].colb) from [dba.bvx] [dba.bvx])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.md<=>s.md and p.pc<=>s.pc and p.pd<=>s.pd and p.ps<=>s.ps then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ median([dba.bvx].dt) as [md], percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].dt) as [pc], percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].dt) as [pd], percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].colb) as [ps] from [dba.bvx] [dba.bvx]) p (md, pc, pd, ps), (select /*+ NO_PARALLEL_SCAN */ median([dba.bvx].dt) as [md], percentile_cont( cast(?.? as double)) within group (order by [dba.bvx].dt) as [pc], percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].dt) as [pd], percentile_disc( cast(?.? as double)) within group (order by [dba.bvx].colb) as [ps] from [dba.bvx] [dba.bvx]) s (md, pc, pd, ps)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 23: JSON_ARRAYAGG keeps NULLs as elements while MEDIAN skips them     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ json_length(json_arrayagg([dba.bvx].pnull))), median([dba.bvx].pnull), count(*), count([dba.bvx].pnull) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ json_length(json_arrayagg([dba.bvx].pnull))), median([dba.bvx].pnull), count(*), count([dba.bvx].pnull) from [dba.bvx] [dba.bvx])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.jl<=>s.jl and p.md<=>s.md and p.c<=>s.c and p.nn<=>s.nn and p.jl<=>p.c and p.nn<p.c then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_length(json_arrayagg([dba.bvx].pnull))) as [jl], median([dba.bvx].pnull) as [md], count(*) as [c], count([dba.bvx].pnull) as [nn] from [dba.bvx] [dba.bvx]) p (jl, md, c, nn), (select /*+ NO_PARALLEL_SCAN */ json_length(json_arrayagg([dba.bvx].pnull))) as [jl], median([dba.bvx].pnull) as [md], count(*) as [c], count([dba.bvx].pnull) as [nn] from [dba.bvx] [dba.bvx]) s (jl, md, c, nn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 24: JSON_OBJECTAGG with a NULL value keeps the key     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].nval))), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].pnull))), count(*) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].nval))), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].pnull))), count(*) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.ka<=>s.ka and p.kb<=>s.kb and p.c<=>s.c and p.ka<=>p.c and p.kb<=>p.c then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].nval))) as [ka], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].pnull))) as [kb], count(*) as [c] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) p (ka, kb, c), (select /*+ NO_PARALLEL_SCAN */ json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].nval))) as [ka], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].pnull))) as [kb], count(*) as [c] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) s (ka, kb, c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 25: JSON_OBJECTAGG duplicate key keeps a value that really occurs     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select ? from [dba.bvx] [dba.bvx] where [dba.bvx].cola= cast(json_extract(p.o, '$."?"') as integer) and ([dba.bvx].colb= ?:? ) and inst_num()<= ?:? )
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select ? from [dba.bvx] [dba.bvx] where [dba.bvx].cola= cast(json_extract(s.o, '$."?"') as integer) and ([dba.bvx].colb= ?:? ) and inst_num()<= ?:? )
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when json_length(p.o))<=>json_length(s.o)) and (case when  exists (select ? from [dba.bvx] [dba.bvx] where [dba.bvx].cola= cast(json_extract(p.o, '$."?"') as integer) and ([dba.bvx].colb= ?:? ) and inst_num()<= ?:? ) then ? else ? end)<=>? and (case when  exists (select ? from [dba.bvx] [dba.bvx] where [dba.bvx].cola= cast(json_extract(s.o, '$."?"') as integer) and ([dba.bvx].colb= ?:? ) and inst_num()<= ?:? ) then ? else ? end)<=>? then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) p (o), (select /*+ NO_PARALLEL_SCAN */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) s (o)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 26: STDDEV and VARIANCE families next to the new aggregates     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ stddev_samp([dba.bvx].cola), var_pop([dba.bvx].cola), var_samp([dba.bvx].cola), median([dba.bvx].cola), group_concat(distinct [dba.bvx].cola order by ? separator ','), json_length(json_arrayagg([dba.bvx].colb))), cume_dist(?) within group(order by [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ stddev_samp([dba.bvx].cola), var_pop([dba.bvx].cola), var_samp([dba.bvx].cola), median([dba.bvx].cola), group_concat(distinct [dba.bvx].cola order by ? separator ','), json_length(json_arrayagg([dba.bvx].colb))), cume_dist(?) within group(order by [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.sd<=>s.sd and p.vp<=>s.vp and p.vs<=>s.vs and p.md<=>s.md and p.gc<=>s.gc and p.jl<=>s.jl and p.cd<=>s.cd then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ stddev_samp([dba.bvx].cola) as [sd], var_pop([dba.bvx].cola) as [vp], var_samp([dba.bvx].cola) as [vs], median([dba.bvx].cola) as [md], group_concat(distinct [dba.bvx].cola order by ? separator ',') as [gc], json_length(json_arrayagg([dba.bvx].colb))) as [jl], cume_dist(?) within group(order by [dba.bvx].cola) as [cd] from [dba.bvx] [dba.bvx]) p (sd, vp, vs, md, gc, jl, cd), (select /*+ NO_PARALLEL_SCAN */ stddev_samp([dba.bvx].cola) as [sd], var_pop([dba.bvx].cola) as [vp], var_samp([dba.bvx].cola) as [vs], median([dba.bvx].cola) as [md], group_concat(distinct [dba.bvx].cola order by ? separator ',') as [gc], json_length(json_arrayagg([dba.bvx].colb))) as [jl], cume_dist(?) within group(order by [dba.bvx].cola) as [cd] from [dba.bvx] [dba.bvx]) s (sd, vp, vs, md, gc, jl, cd)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 27: explicit PARALLEL(2) hint     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ bit_and(case when [dba.bvx].id=? then ? else ? end), bit_or(case when [dba.bvx].id=? then ? else ? end), median([dba.bvx].cola), group_concat(distinct [dba.bvx].cola order by ? separator ','), cume_dist(?) within group(order by [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ bit_and(case when [dba.bvx].id=? then ? else ? end), bit_or(case when [dba.bvx].id=? then ? else ? end), median([dba.bvx].cola), group_concat(distinct [dba.bvx].cola order by ? separator ','), cume_dist(?) within group(order by [dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.ba<=>s.ba and p.bo<=>s.bo and p.md<=>s.md and p.gc<=>s.gc and p.cd<=>s.cd then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ bit_and(case when [dba.bvx].id=? then ? else ? end) as [ba], bit_or(case when [dba.bvx].id=? then ? else ? end) as [bo], median([dba.bvx].cola) as [md], group_concat(distinct [dba.bvx].cola order by ? separator ',') as [gc], cume_dist(?) within group(order by [dba.bvx].cola) as [cd] from [dba.bvx] [dba.bvx]) p (ba, bo, md, gc, cd), (select /*+ NO_PARALLEL_SCAN */ bit_and(case when [dba.bvx].id=? then ? else ? end) as [ba], bit_or(case when [dba.bvx].id=? then ? else ? end) as [bo], median([dba.bvx].cola) as [md], group_concat(distinct [dba.bvx].cola order by ? separator ',') as [gc], cume_dist(?) within group(order by [dba.bvx].cola) as [cd] from [dba.bvx] [dba.bvx]) s (ba, bo, md, gc, cd)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin     
+
+===================================================
+char_length(group_concat(colb separator '<>'))    char_length(group_concat(cola))    
+1024     1024     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ PARALLEL(?) */  char_length(group_concat([dba.bvx].colb separator '<>')),  char_length(group_concat([dba.bvx].cola)) from [dba.bvx] [dba.bvx]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+char_length(group_concat(colb separator '<>'))    char_length(group_concat(cola))    
+1024     1024     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  char_length(group_concat([dba.bvx].colb separator '<>')),  char_length(group_concat([dba.bvx].cola)) from [dba.bvx] [dba.bvx]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0
