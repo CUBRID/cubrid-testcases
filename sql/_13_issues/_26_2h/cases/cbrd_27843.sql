@@ -199,3 +199,4 @@ insert into t_qh values (0.0e0), (-0.0e0);
 select count (*) from t_qh start with d = 0 connect by nocycle prior d = d;
 
 drop table t_r, t_w, t_n, t_q, t_u, t_qn, t_qb, t_qh, t_qhf, t_qhm;
+drop variable @k_nan, @k_100;
