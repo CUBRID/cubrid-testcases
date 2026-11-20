@@ -24,20 +24,29 @@ c_count    custdist
 
 Query plan:
 temp(group by)
-    subplan: idx-join (left outer join)
+    subplan: sscan
+                 class: t_ord node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, count(t_ord.o_id) from t_ord t_ord where t_ord.o_cmt not like '%special%' group by t_ord.o_cust)
+Query plan:
+temp(group by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
                  outer: sscan
                             class: t_cust node[?]
                             cost:  ? card ?
-                 inner: iscan
-                            class: t_ord node[?]
-                            index: fk_t_ord_o_cust term[?]
-                            sargs: term[?]
+                 inner: sscan
+                            class: gbp_? node[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select count(t_ord.o_id) from t_cust t_cust left outer join t_ord t_ord on t_ord.o_cmt not like '%special%' and t_cust.c_id=t_ord.o_cust group by t_cust.c_id)
+(select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint) from t_cust t_cust left outer join (select t_ord.o_cust, count(t_ord.o_id) from t_ord t_ord where t_ord.o_cmt not like '%special%' group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id)
 Query plan:
 temp(order by)
     subplan: temp(group by)
@@ -49,7 +58,7 @@ temp(order by)
     sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select x.c_count, count(*) from (select count(t_ord.o_id) as [c_count] from t_cust t_cust left outer join t_ord t_ord on t_ord.o_cmt not like '%special%' and t_cust.c_id=t_ord.o_cust group by t_cust.c_id) x (c_count) group by x.c_count order by ? desc , ? desc 
+select x.c_count, count(*) from (select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint) as [c_count] from t_cust t_cust left outer join (select t_ord.o_cust, count(t_ord.o_id) from t_ord t_ord where t_ord.o_cmt not like '%special%' group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id) x (c_count) group by x.c_count order by ? desc , ? desc 
 ===================================================
 c_id    c_count    
 1     37     
