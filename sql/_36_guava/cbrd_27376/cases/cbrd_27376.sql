@@ -6,9 +6,11 @@
  *  the conditions reading the outer query move to the ON, and the derived table selects the inner
  *  columns the ON reads. Before, such a subquery stayed nested and ran once per outer row.
  *
- *  A statement that must be unnested prints its plan (--@queryplan), as its result is the same when the
- *  subquery stays nested. A statement that must stay nested checks its result only: unnesting it would
- *  change the result.
+ *  A statement that must be unnested prints its plan (the @queryplan marker), as its result is the same when the
+ *  subquery stays nested. A statement that must stay nested checks its result, as unnesting it would
+ *  change the result. Case 9 prints its plan too: its result depends on which table the planner reads first,
+ *  so the result alone cannot show that the subquery stays nested.
+ *  Case 12 checks its plan only, as its result is the same either way.
  *
  *  Base data: ta.ca 1, 2, 3 / tb (ca, cb) (1, 200), (2, 300), (3, 400) / tc.ca 200, 200, 400.
  *  ta.ca 1 and 3 have a match through tb and tc, ta.ca 1 twice. ta.ca 2 has a tb row but no tc row.
@@ -22,13 +24,18 @@
  *    Case 4:  NOT IN on a column that may be NULL stays nested: an ANTI JOIN would return every outer row
  *    Case 5:  a correlated IN whose condition on ta reads tc: the condition joins the ON and the derived table
  *             selects tb.ca and tc.ca
- *    Case 6:  the subquery joins with JOIN ... ON: the derived table selects only the column its ON reads
+ *    Case 6:  the subquery joins with JOIN ... ON or LEFT JOIN ... ON. The ON of JOIN is moved to the WHERE as
+ *             for a comma join. The ON of LEFT JOIN and a WHERE condition on tc that does not read the outer
+ *             query stay inside the derived table, and the derived table selects only the column the outer condition reads
  *    Case 7:  ORDERED of the subquery stays inside the derived table and reads tc first
  *    Case 8:  NO_COVERING_IDX and USING INDEX NONE stay inside the derived table and apply there
  *    Case 9:  USING INDEX ... KEYLIMIT keeps the subquery nested. tg holds 1000 rows matching nothing and
  *             th.ca > 0 lets i_th_ca read th, so a derived table would read th first and stop at its first
  *             key 200: no row instead of 3
  *    Case 10: a large indexed outer: the derived table is read first with DISTINCT and probes t_big by index
+ *    Case 11: NOT EXISTS with a condition on the outer table alone stays nested: an ANTI JOIN would drop ta.ca 1
+ *    Case 12: a subquery reading a derived table or a CTE stays nested. The derived table has GROUP BY and the CTE
+ *             has MATERIALIZE, so that neither is merged into the subquery as a base table
  */
 
 drop table if exists ta, tb, tc, te, tf, tg, th, t_big;
@@ -50,7 +57,7 @@ select /*+ recompile */ count(*) from ta where exists (select 1 from tb, tc wher
 select /*+ recompile */ count(*) from ta where not exists (select 1 from tb, tc where tb.ca = ta.ca and tb.cb = tc.ca);
 
 
-evaluate 'Case 2: NOT EXISTS whose table joined to the outer query is not the first in the subquery FROM';
+evaluate 'Case 2: NOT EXISTS whose table joined to the outer query is the second in the subquery FROM';
 --@queryplan
 select /*+ recompile */ count(*) from ta where not exists (select 1 from tc, tb where tb.ca = ta.ca and tb.cb = tc.ca);
 
@@ -73,9 +80,13 @@ evaluate 'Case 5: a correlated IN whose ON reads a column of the second inner ta
 select /*+ recompile */ count(*) from ta where ta.ca in (select tb.ca from tb, tc where tb.cb = tc.ca and tc.ca < ta.ca + 300);
 
 
-evaluate 'Case 6: the subquery joins its tables with JOIN ... ON';
+evaluate 'Case 6: the subquery joins its tables with JOIN ... ON or LEFT JOIN ... ON';
 --@queryplan
 select /*+ recompile */ count(*) from ta where exists (select 1 from tb join tc on tb.cb = tc.ca where tb.ca = ta.ca);
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb left join tc on tb.cb = tc.ca where tb.ca = ta.ca);
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb left join tc on tb.cb = tc.ca where tb.ca = ta.ca and tc.ca is null);
 
 
 evaluate 'Case 7: a hint of the subquery (ORDERED) stays inside the derived table';
@@ -101,6 +112,7 @@ create table th (ca int);
 insert into th values (200), (400);
 create index i_th_ca on th (ca);
 update statistics on tg, th;
+--@queryplan
 select /*+ recompile */ ca from tf where exists (select 1 from tg, th where tg.ca = tf.ca and tg.cb = th.ca and th.ca > 0 using index i_th_ca keylimit 1);
 
 
@@ -111,6 +123,17 @@ create index i_t_big_ca on t_big (ca);
 update statistics on t_big with fullscan;
 --@queryplan
 select /*+ recompile */ count(*) from t_big where exists (select 1 from tb, tc where tb.ca = t_big.ca and tb.cb = tc.ca);
+
+
+evaluate 'Case 11: NOT EXISTS with a condition on the outer table alone stays nested';
+select /*+ recompile */ count(*) from ta where not exists (select 1 from tb, tc where tb.ca = ta.ca and tb.cb = tc.ca and ta.ca > 1);
+
+
+evaluate 'Case 12: a subquery reading a derived table or a CTE stays nested';
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb, (select ca from tc group by ca) d where tb.ca = ta.ca and tb.cb = d.ca);
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (with w as (select /*+ materialize */ ca from tc) select 1 from tb, w where tb.ca = ta.ca and tb.cb = w.ca);
 
 
 drop table ta, tb, tc, te, tf, tg, th, t_big;
