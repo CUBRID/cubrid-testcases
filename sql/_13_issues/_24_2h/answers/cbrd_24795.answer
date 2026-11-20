@@ -199,7 +199,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, nlbatch: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -222,7 +222,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, nlbatch: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -386,7 +386,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, nlbatch: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -411,7 +411,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.tbla.idx_tbla_a_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+      SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, nlbatch: ?) (lookup time: ?, rows: ?)
      
 
 ===================================================
@@ -524,16 +524,19 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  NESTED LOOPS (inner join)
-    INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ))
-    INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ), covered: true)
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ))
+      INDEX SCAN (tb.idx_tbla_a_abs_b) (key range: ta.a=tb.akey range: ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ), covered: true)
 
-  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ) and ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ) and ta.a=tb.a using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b
+  rewritten query: select /*+ ORDERED NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta, [dba.tbla] tb where ( abs(ta.b)>= ?:?  and  abs(ta.b)< ?:? ) and ( abs(tb.b)>= ?:?  and  abs(tb.b)< ?:? ) and ta.a=tb.a using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
       SCAN (index: dba.tbla.idx_tbla_a_abs_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -542,22 +545,25 @@ test case 23
 
 ===================================================
 a    b    c    d    e    
+-1000     -1000     -1000     -1000     -1000     
 -999     -999     -999     -999     -999     
 999     999     999     999     999     
--1000     -1000     -1000     -1000     -1000     
 1000     1000     1000     1000     1000     
 
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ))
+  SORT (order by)
+    INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ))
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ) using index ta.idx_tbla_abs_b_a
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>= ?:?  and  abs(ta.b)<= ?:? ) using index ta.idx_tbla_abs_b_a order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_abs_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -597,13 +603,16 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_b_a) (key range: (ta.b>=--? and ta.b<=--?), key filter: (ta.b>= ?:? ))
+  SORT (order by)
+    INDEX SCAN (ta.idx_tbla_b_a) (key range: (ta.b>=--? and ta.b<=--?), key filter: (ta.b>= ?:? ))
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where (ta.b>=--? and ta.b<=--?) and (ta.b>= ?:? ) using index ta.idx_tbla_b_a
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where (ta.b>=--? and ta.b<=--?) and (ta.b>= ?:? ) using index ta.idx_tbla_b_a order by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbla.idx_tbla_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_b_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
@@ -624,7 +633,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
      
 
 ===================================================
@@ -645,7 +655,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tbla.idx_tbla_length_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tbla), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
      
 
 ===================================================
@@ -666,7 +677,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tblb.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tblb.i_b), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tblb), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
      
 
 ===================================================
@@ -687,7 +699,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.tblb.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    SCAN (index: dba.tblb.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.tblb), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
      
 
 ===================================================
