@@ -1,0 +1,196 @@
+===================================================
+0
+===================================================
+0
+===================================================
+60000
+===================================================
+0
+===================================================
+65536
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+60000
+===================================================
+0
+===================================================
+count(*)    
+30000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_big node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_big.a from t_big t_big where (t_big.e< ?:? ) group by t_big.a, t_big.b, t_big.c, t_big.d)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_big.a from t_big t_big where (t_big.e< ?:? ) group by t_big.a, t_big.b, t_big.c, t_big.d) t (a), t_dim m where t.a=m.id
+===================================================
+count(*)    
+60000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_pow node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_pow.a from t_pow t_pow group by t_pow.a, t_pow.b, t_pow.c, t_pow.d)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_pow.a from t_pow t_pow group by t_pow.a, t_pow.b, t_pow.c, t_pow.d) t (a), t_dim m where t.a=m.id
+===================================================
+count(*)    
+300     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_wide node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_wide.c? from t_wide t_wide group by t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_dim_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_wide.c? from t_wide t_wide group by t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?) t (c?), t_dim m where t.c?=m.id
+===================================================
+count(*)    
+300     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t_wide node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c? from t_wide t_wide)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_dim_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c?, t_wide.c? from t_wide t_wide) t (c?, c?, c?, c?, c?, c?, c?, c?), t_dim m where t.c?=m.id
+===================================================
+count(*)    
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_big node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_big.k from t_big t_big group by t_big.k)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_dim_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_big.k from t_big t_big group by t_big.k) t (k), t_dim m where t.k=m.id
+===================================================
+count(*)    
+1     
+
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: t_big node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct t_big.k from t_big t_big)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_dim_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select distinct t_big.k from t_big t_big) t (k), t_dim m where t.k=m.id
+===================================================
+count(*)    
+60000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_big node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_big.a from t_big t_big group by t_big.a, t_big.b, t_big.c)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_big.a from t_big t_big group by t_big.a, t_big.b, t_big.c) t (a), t_dim m where t.a=m.id
+===================================================
+0
