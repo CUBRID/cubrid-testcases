@@ -60,4 +60,18 @@ select /*+ recompile */ count(*)
 from (select a, b, c, count(*) n from t_big group by a, b, c) t, t_dim m
 where t.a = m.id;
 
+-- T8: a single-valued column next to itself is still one group: index join
+--@queryplan
+select /*+ recompile */ count(*)
+from (select k, k + 1 k1, count(*) n from t_big group by k, k + 1) t, t_dim m
+where t.k = m.id;
+
+-- T9: a single-valued column next to a column without statistics is not one group: hash join, unchanged
+alter table t_big add column w int;
+update t_big set w = a;
+--@queryplan
+select /*+ recompile */ count(*)
+from (select k, w, count(*) n from t_big group by k, w) t, t_dim m
+where t.k = m.id;
+
 drop table if exists t_big, t_pow, t_wide, t_dim;

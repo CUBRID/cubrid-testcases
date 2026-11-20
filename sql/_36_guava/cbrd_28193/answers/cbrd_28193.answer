@@ -193,4 +193,58 @@ hash-join (inner join)
 Query stmt:
 select count(*) from (select t_big.a from t_big t_big group by t_big.a, t_big.b, t_big.c) t (a), t_dim m where t.a=m.id
 ===================================================
+count(*)    
+1     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_big node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_big.k from t_big t_big group by t_big.k, t_big.k+?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: m node[?]
+               index: pk_t_dim_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_big.k from t_big t_big group by t_big.k, t_big.k+?) t (k), t_dim m where t.k=m.id
+===================================================
+0
+===================================================
+60000
+===================================================
+count(*)    
+60000     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_big node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_big.k from t_big t_big group by t_big.k, t_big.w)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: t node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select t_big.k from t_big t_big group by t_big.k, t_big.w) t (k), t_dim m where t.k=m.id
+===================================================
 0
