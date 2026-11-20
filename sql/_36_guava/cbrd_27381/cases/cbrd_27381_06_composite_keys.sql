@@ -1,29 +1,34 @@
--- CBRD-27381: radix-sorted index builds of composite keys (MIDXKEY)
---
--- A composite key takes the radix sorter when its first column has a radix key. The radix columns
--- run up to the first column without one, or until their radix keys pass 64 words; the columns after
--- them and the ties are ordered by the compare function. t_r and t_c hold the same rows. Every index
--- of t_r is built with index_sort_method=radix and the same index of t_c with compare, both with
--- index_build_buffer_size 64K so a build sorts several runs. Read in index order, each radix-built
--- index must return the rows of its compare-built twin in the same order (0 rows differ) and find as
--- many rows.
---
--- Rows: 6000 rows in four shapes of 1500 (scattered, ascending, descending, few distinct values),
--- NULL in the first column every 101st row and in the middle columns every 13th and 17th row.
---
--- A range on the first column skips the keys whose first column is NULL. To read those too, two keys
--- are also indexed behind z, which is 0 in every row: a NULL column orders first, and last in a
--- descending column.
---
--- Covers:
---   - (INT, VARCHAR) with few distinct values in the first column
---   - (INT, VARCHAR utf8_en_ci DESC): a query does not read an index led by a case-insensitive column
---   - (DATE, DOUBLE, CHAR(4)) with NULLs in the middle columns
---   - (INT, VARCHAR(1000)): the radix columns stop at a column without a radix key
---   - (VARCHAR(1000), INT): no radix key in the first column, the compare sort
---   - (CHAR(100) x 5 iso88591_bin, INT): the radix columns stop past 64 words
---   - (BIGINT DESC, TIMESTAMP, ENUM)
---   - (z, DATE, DOUBLE, CHAR(4)) and (z, BIGINT DESC, TIMESTAMP, ENUM): every key, NULL columns included
+/**
+ *  This test case verifies CBRD-27381: radix-sorted index builds of composite keys (MIDXKEY)
+ *
+ *  A composite key takes the radix sorter when its first column has a radix key. The radix columns
+ *  run up to the first column without one, or until their radix keys pass 64 words. The columns after
+ *  them and the ties are ordered by the compare function. t_r and t_c hold the same rows. Every index
+ *  of t_r is built with index_sort_method=radix and the same index of t_c with compare, both with
+ *  index_build_buffer_size 64K so a build sorts several runs. Read in index order, each radix-built
+ *  index must return the rows of its compare-built twin in the same order and find as many rows.
+ *
+ *  Rows: g is the row generator of 6000 rows in four shapes of 1500 (scattered, ascending, descending,
+ *  few distinct values), NULL in the first column every 101st row and in the middle columns every 13th
+ *  and 17th row.
+ *
+ *  A range on the first column skips the keys whose first column is NULL. To read those too, two keys
+ *  are also indexed behind z, which is 0 in every row. A NULL column orders first, and last in a
+ *  descending column.
+ *
+ *  Coverage:
+ *    Case 1:  these keys read back in the order of the compare-built twin
+ *             - (INT, VARCHAR) with few distinct values in the first column
+ *             - (INT, VARCHAR utf8_en_ci DESC) - a query does not read an index led by a case-insensitive column
+ *             - (DATE, DOUBLE, CHAR(4)) with NULLs in the middle columns
+ *             - (INT, VARCHAR(1000)) - the radix columns stop at a column without a radix key
+ *             - (VARCHAR(1000), INT) - no radix key in the first column, the compare sort
+ *             - (CHAR(100) x 5 iso88591_bin, INT) - the radix columns stop past 64 words
+ *             - (BIGINT DESC, TIMESTAMP, ENUM)
+ *             - (z, DATE, DOUBLE, CHAR(4)) and (z, BIGINT DESC, TIMESTAMP, ENUM) - every key, NULL columns included
+ *    Case 2:  each radix-built index finds the rows with a first column, and every row behind z
+ *    Case 3:  behind z, the rows whose first column is NULL come first, and last when that column is descending
+ */
 
 drop table if exists g;
 drop table if exists t_r;
@@ -91,28 +96,29 @@ create index i_czh on t_c (z, h1 desc, h2, h3);
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
 
--- rows read in index order that differ from the compare-built index: 0 each
-select 'a', count(*) from ((select rownum, a1, a2 from t_r where a1 >= -100 using index i_ra)
-  difference (select rownum, a1, a2 from t_c where a1 >= -100 using index i_ca)) x;
-select 'b', count(*) from ((select rownum, b2, upper (b1) from t_r where b2 >= 0 using index i_rb)
-  difference (select rownum, b2, upper (b1) from t_c where b2 >= 0 using index i_cb)) x;
-select 'c', count(*) from ((select rownum, c1, nvl (c2, -1), nvl (c3, '-') from t_r where c1 >= date'0001-01-01' using index i_rc)
-  difference (select rownum, c1, nvl (c2, -1), nvl (c3, '-') from t_c where c1 >= date'0001-01-01' using index i_cc)) x;
-select 'd', count(*) from ((select rownum, d1, d2 from t_r where d1 >= -100 using index i_rd)
-  difference (select rownum, d1, d2 from t_c where d1 >= -100 using index i_cd)) x;
-select 'f', count(*) from ((select rownum, f1, f2 from t_r where f1 >= '' using index i_rf)
-  difference (select rownum, f1, f2 from t_c where f1 >= '' using index i_cf)) x;
-select 'w', count(*) from ((select rownum, w1, w2, w3, w4, w5, w6 from t_r where w1 >= '' using index i_rw)
-  difference (select rownum, w1, w2, w3, w4, w5, w6 from t_c where w1 >= '' using index i_cw)) x;
-select 'h', count(*) from ((select rownum, h1, h2, h3 from t_r where h1 >= -9000000000000000000 using index i_rh)
-  difference (select rownum, h1, h2, h3 from t_c where h1 >= -9000000000000000000 using index i_ch)) x;
-select 'zc', count(*) from ((select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_r where z >= 0 using index i_rzc)
-  difference (select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_c where z >= 0 using index i_czc)) x;
-select 'zh', count(*) from ((select rownum, nvl (h1, -1), h2, h3 from t_r where z >= 0 using index i_rzh)
-  difference (select rownum, nvl (h1, -1), h2, h3 from t_c where z >= 0 using index i_czh)) x;
+evaluate 'Case 1: each radix-built composite index reads back in the order of its compare-built twin; result = no rows differ';
+-- each query prints the position and the key of the rows that differ from the compare-built twin
+select 'a' as ix, x.* from ((select rownum, a1, a2 from t_r where a1 >= -100 using index i_ra)
+  difference (select rownum, a1, a2 from t_c where a1 >= -100 using index i_ca)) x order by 2;
+select 'b' as ix, x.* from ((select rownum, b2, upper (b1) from t_r where b2 >= 0 using index i_rb)
+  difference (select rownum, b2, upper (b1) from t_c where b2 >= 0 using index i_cb)) x order by 2;
+select 'c' as ix, x.* from ((select rownum, c1, nvl (c2, -1), nvl (c3, '-') from t_r where c1 >= date'0001-01-01' using index i_rc)
+  difference (select rownum, c1, nvl (c2, -1), nvl (c3, '-') from t_c where c1 >= date'0001-01-01' using index i_cc)) x order by 2;
+select 'd' as ix, x.* from ((select rownum, d1, d2 from t_r where d1 >= -100 using index i_rd)
+  difference (select rownum, d1, d2 from t_c where d1 >= -100 using index i_cd)) x order by 2;
+select 'f' as ix, x.* from ((select rownum, f1, f2 from t_r where f1 >= '' using index i_rf)
+  difference (select rownum, f1, f2 from t_c where f1 >= '' using index i_cf)) x order by 2;
+select 'w' as ix, x.* from ((select rownum, w1, w2, w3, w4, w5, w6 from t_r where w1 >= '' using index i_rw)
+  difference (select rownum, w1, w2, w3, w4, w5, w6 from t_c where w1 >= '' using index i_cw)) x order by 2;
+select 'h' as ix, x.* from ((select rownum, h1, h2, h3 from t_r where h1 >= -9000000000000000000 using index i_rh)
+  difference (select rownum, h1, h2, h3 from t_c where h1 >= -9000000000000000000 using index i_ch)) x order by 2;
+select 'zc' as ix, x.* from ((select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_r where z >= 0 using index i_rzc)
+  difference (select rownum, nvl (c1, date'0001-01-01'), nvl (c2, -1), nvl (c3, '-') from t_c where z >= 0 using index i_czc)) x order by 2;
+select 'zh' as ix, x.* from ((select rownum, nvl (h1, -1), h2, h3 from t_r where z >= 0 using index i_rzh)
+  difference (select rownum, nvl (h1, -1), h2, h3 from t_c where z >= 0 using index i_czh)) x order by 2;
 
--- rows each radix-built index finds: all with a first column, and every row behind z. With 0 rows differing
--- above, the same count means the radix-built index holds exactly the rows of its twin
+evaluate 'Case 2: each radix-built index finds the rows with a first column, and every row behind z';
+-- with no rows differing in Case 1, the same count means the radix-built index holds exactly the rows of its twin
 select count(*) from t_r where a1 >= -100 using index i_ra;
 select count(*) from t_r where b2 >= 0 using index i_rb;
 select count(*) from t_r where c1 >= date'0001-01-01' using index i_rc;
@@ -123,7 +129,8 @@ select count(*) from t_r where h1 >= -9000000000000000000 using index i_rh;
 select count(*) from t_r where z >= 0 using index i_rzc;
 select count(*) from t_r where z >= 0 using index i_rzh;
 
--- the rows whose first column is NULL come first behind z, and last when that column is descending
+evaluate 'Case 3: behind z, the rows whose first column is NULL come first, and last when that column is descending';
+-- each query counts the rows with a NULL first column among the first or the last 59 positions, 59 being their number
 select count(*) from (select rownum as r, c1 from t_r where z >= 0 using index i_rzc) x where c1 is null and r <= 59;
 select count(*) from (select rownum as r, h1 from t_r where z >= 0 using index i_rzh) x where h1 is null and r > 5941;
 

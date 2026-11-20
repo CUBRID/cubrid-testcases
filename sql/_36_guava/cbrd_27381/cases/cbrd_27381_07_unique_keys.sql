@@ -1,29 +1,43 @@
--- CBRD-27381: a unique index or primary key built from radix-sorted runs finds the same duplicates
---
--- The loader finds a duplicate key as two equal keys next to each other in the sorted stream, so the
--- radix sorter must put keys the compare function calls equal side by side: case variants under en_ci,
--- a CHAR and the same CHAR with trailing spaces, negative and positive zero, one instant in two time
--- zones. Each unique index is built twice on the same rows, with index_sort_method=radix and with
--- compare (index_build_buffer_size 64K, several runs), and both builds must end the same way: the
--- same error where a key repeats, the index where it does not.
---
--- Covers:
---   - INT: the smallest, a middle and the largest key repeated, and no repeat
---   - VARCHAR utf8_en_ci: 'abc' and 'ABC'; VARCHAR utf8_bin: 'abc' and 'ABC' are distinct
---   - CHAR: 'a' and 'a  ' are equal; VARCHAR: 'a' and 'a  ' are distinct
---   - DOUBLE: -0.0 and 0.0
---   - TIMESTAMPTZ: one instant in Asia/Seoul and in UTC
---   - composite (INT, VARCHAR): distinct pairs, a pair with a NULL column repeated, a pair repeated
---   - ALTER TABLE ... ADD PRIMARY KEY over a repeated key, and over distinct keys
---   - keys the compare function calls equal though their bytes differ, each repeated once:
---     - FLOAT -0.0 and 0.0
---     - MONETARY 12.50 in dollars and in won (the amount alone is compared)
---     - NUMERIC without a precision 1.5 and 1.50
---     - DATETIMETZ one instant in Asia/Seoul and in UTC
---     - VARCHAR iso88591_en_ci 'abc' and 'ABC'
---     - CHAR(5) utf8_en_ci 'abc' and 'ABC  '
---     - composite (INT, VARCHAR utf8_en_ci) (42, 'xyz') and (42, 'XYZ')
---   - VARCHAR utf8_en_ci 'abc' and 'ABC ': a VARCHAR keeps its trailing space, so they are distinct
+/**
+ *  This test case verifies CBRD-27381: a unique index or primary key built from radix-sorted runs finds the same duplicates
+ *
+ *  The loader finds a duplicate key as two equal keys next to each other in the sorted stream, so the
+ *  radix sorter must put keys the compare function calls equal side by side - case variants under en_ci,
+ *  a CHAR and the same CHAR with trailing spaces, negative and positive zero, one instant in two time
+ *  zones. Each unique index is built twice on the same rows, with index_sort_method=radix and with
+ *  compare (index_build_buffer_size 64K, several runs), and both builds must end the same way - the
+ *  unique violation where a key repeats, the index where it does not.
+ *
+ *  Where a key of the 6000 rows repeats in a row added at the end (Case 2 to Case 4), the two rows lie in
+ *  different runs and the merge puts them side by side. Where two rows added one after the other repeat a
+ *  key (Case 5 and the cases after it), both lie in the last run, which the radix sorter orders alone.
+ *
+ *  Rows: g is the row generator of 6000 rows.
+ *
+ *  Coverage:
+ *    Case 1:  INT with no repeated key builds under both methods
+ *    Case 2:  INT with the smallest key repeated fails under both methods
+ *    Case 3:  INT with a middle key repeated fails under both methods
+ *    Case 4:  INT with the largest key repeated fails under both methods
+ *    Case 5:  INT with a new key in two rows added one after the other fails under both methods
+ *    Case 6:  VARCHAR utf8_en_ci abc and ABC repeat, VARCHAR utf8_bin abc and ABC do not, CHAR a and a with
+ *             trailing spaces repeat, VARCHAR a and a with trailing spaces do not, alike under both methods
+ *    Case 7:  DOUBLE -0.0 and 0.0 repeat under both methods
+ *    Case 8:  TIMESTAMPTZ one instant in Asia/Seoul and in UTC repeats under both methods
+ *    Case 9:  composite (INT, VARCHAR) builds alike under both methods with distinct pairs, with a pair with a
+ *             NULL column repeated, and with a pair repeated
+ *    Case 10: ALTER TABLE ADD PRIMARY KEY fails over a repeated key and builds over distinct keys under both methods
+ *    Case 11: keys the compare function calls equal though their bytes differ repeat under both methods
+ *             - FLOAT -0.0 and 0.0
+ *             - MONETARY 12.50 in dollars and in won (the amount alone is compared)
+ *             - NUMERIC without a precision 1.5 and 1.50
+ *             - DATETIMETZ one instant in Asia/Seoul and in UTC
+ *             - VARCHAR iso88591_en_ci abc and ABC
+ *             - CHAR(5) utf8_en_ci abc and ABC with trailing spaces
+ *             - composite (INT, VARCHAR utf8_en_ci) (42, xyz) and (42, XYZ)
+ *    Case 12: VARCHAR utf8_en_ci abc and ABC with a trailing space do not repeat, so the index builds under both
+ *             methods - a VARCHAR keeps its trailing space
+ */
 
 drop table if exists g;
 drop table if exists t_int;
@@ -44,7 +58,8 @@ insert into g select rownum from db_class a, db_class b, db_class c limit 6000;
 
 set system parameters 'index_build_buffer_size=64K';
 
--- INT: 6000 distinct keys scattered, then one repeat at a time
+evaluate 'Case 1: INT with no repeated key builds under both methods';
+-- 6000 distinct keys scattered, then one repeat at a time in Case 2 to Case 5
 create table t_int (id int, k int);
 insert into t_int select n, mod (n * 7919, 6007) from g order by n;
 set system parameters 'index_sort_method=radix';
@@ -53,26 +68,43 @@ drop index u_r on t_int;
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_int (k);
 drop index u_c on t_int;
+
+evaluate 'Case 2: INT with the smallest key repeated fails with the unique violation under both methods';
 insert into t_int select 7001, min (k) from t_int;
 set system parameters 'index_sort_method=radix';
 create unique index u_r on t_int (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_int (k);
 delete from t_int where id = 7001;
+
+evaluate 'Case 3: INT with a middle key repeated fails with the unique violation under both methods';
 insert into t_int select 7002, k from t_int where id = 3000;
 set system parameters 'index_sort_method=radix';
 create unique index u_r on t_int (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_int (k);
 delete from t_int where id = 7002;
+
+evaluate 'Case 4: INT with the largest key repeated fails with the unique violation under both methods';
 insert into t_int select 7003, max (k) from t_int;
 set system parameters 'index_sort_method=radix';
 create unique index u_r on t_int (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_int (k);
+delete from t_int where id = 7003;
+
+evaluate 'Case 5: INT with a new key in two rows added one after the other fails with the unique violation under both methods';
+-- the two rows lie in the last run, so the radix sorter alone puts them side by side
+insert into t_int values (7004, 9001), (7005, 9001);
+set system parameters 'index_sort_method=radix';
+create unique index u_r on t_int (k);
+set system parameters 'index_sort_method=compare';
+create unique index u_c on t_int (k);
+-- the unique indexes that Case 2 to Case 5 tried to build
 select count(*) from db_index where class_name = 't_int';
 
--- VARCHAR and CHAR: case variants and trailing spaces
+
+evaluate 'Case 6: under both methods the unique violation fails the utf8_en_ci VARCHAR and the CHAR, and the utf8_bin VARCHAR indexes build';
 create table t_str (id int, ci varchar(20) collate utf8_en_ci, bin varchar(20) collate utf8_bin,
                     ch char(5) collate utf8_bin, vc varchar(5) collate utf8_bin);
 insert into t_str select n, concat ('k', n), concat ('k', n), lpad (n, 5, '0'), lpad (n, 5, '0') from g order by n;
@@ -94,7 +126,8 @@ create unique index u_c_ch on t_str (ch);
 create unique index u_c_vc on t_str (vc);
 select index_name from db_index where class_name = 't_str' order by 1;
 
--- DOUBLE: negative and positive zero
+
+evaluate 'Case 7: DOUBLE -0.0 and 0.0 fail with the unique violation under both methods';
 create table t_dbl (id int, k double);
 insert into t_dbl select n, (n - 3000) / 7.0 from g where n <> 3000 order by n;
 insert into t_dbl values (7001, -0.0e0), (7002, 0.0e0);
@@ -103,7 +136,8 @@ create unique index u_r on t_dbl (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_dbl (k);
 
--- TIMESTAMPTZ: one instant written in two zones
+
+evaluate 'Case 8: TIMESTAMPTZ one instant in two zones fails with the unique violation under both methods';
 create table t_tz (id int, k timestamptz);
 insert into t_tz select n, timestamptz'2010-06-01 12:00:00 UTC' + n * 61 from g order by n;
 insert into t_tz values (7001, timestamptz'2020-01-01 09:00:00 Asia/Seoul'), (7002, timestamptz'2020-01-01 00:00:00 UTC');
@@ -112,7 +146,9 @@ create unique index u_r on t_tz (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_tz (k);
 
--- composite: distinct pairs, then a pair with a NULL column repeated, then a pair repeated
+
+evaluate 'Case 9: composite (INT, VARCHAR) builds alike under both methods with distinct pairs, a repeated pair with a NULL column, and a repeated pair';
+-- distinct pairs, then a pair with a NULL column repeated, then a pair repeated
 create table t_mk (id int, a int, b varchar(10));
 insert into t_mk select n, mod (n, 100), concat ('b', n / 100) from g order by n;
 set system parameters 'index_sort_method=radix';
@@ -133,7 +169,8 @@ create unique index u_r on t_mk (a, b);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_mk (a, b);
 
--- primary key added over the rows
+
+evaluate 'Case 10: ALTER TABLE ADD PRIMARY KEY fails with the unique violation over a repeated key and builds over distinct keys under both methods';
 create table t_pk (id int not null, k bigint not null);
 insert into t_pk select n, cast (mod (n * 7919, 6007) as bigint) * 1000000007 from g order by n;
 insert into t_pk values (7001, 1000000007);
@@ -150,6 +187,8 @@ set system parameters 'index_sort_method=compare';
 alter table t_pk add constraint pk_c primary key (k);
 select count(*) from t_pk where k >= 0 using index pk_c;
 
+
+evaluate 'Case 11: keys the compare function calls equal though their bytes differ fail with the unique violation under both methods';
 -- FLOAT: negative and positive zero
 create table t_flt (id int, k float);
 insert into t_flt select n, (n - 3000) / 7.0 from g where n <> 3000 order by n;
@@ -188,21 +227,16 @@ create unique index u_r on t_dtz (k);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_dtz (k);
 
--- case variants under iso88591_en_ci and a CHAR under utf8_en_ci, and a VARCHAR whose trailing space keeps it apart
+-- case variants under iso88591_en_ci and a CHAR under utf8_en_ci. vcc of the same table is Case 12
 create table t_ci (id int, iso varchar(20) collate iso88591_en_ci, chc char(5) collate utf8_en_ci, vcc varchar(20) collate utf8_en_ci);
 insert into t_ci select n, concat ('k', n), lpad (n, 5, '0'), concat ('k', n) from g order by n;
 insert into t_ci values (7001, 'abc', 'abc', 'abc'), (7002, 'ABC', 'ABC  ', 'ABC ');
 set system parameters 'index_sort_method=radix';
 create unique index u_r_iso on t_ci (iso);
 create unique index u_r_chc on t_ci (chc);
-create unique index u_r_vcc on t_ci (vcc);
-select index_name from db_index where class_name = 't_ci' order by 1;
-drop index u_r_vcc on t_ci;
 set system parameters 'index_sort_method=compare';
 create unique index u_c_iso on t_ci (iso);
 create unique index u_c_chc on t_ci (chc);
-create unique index u_c_vcc on t_ci (vcc);
-select index_name from db_index where class_name = 't_ci' order by 1;
 
 -- composite: case variants in the en_ci column of a pair
 create table t_mkci (id int, a int, b varchar(10) collate utf8_en_ci);
@@ -212,6 +246,17 @@ set system parameters 'index_sort_method=radix';
 create unique index u_r on t_mkci (a, b);
 set system parameters 'index_sort_method=compare';
 create unique index u_c on t_mkci (a, b);
+
+evaluate 'Case 12: VARCHAR utf8_en_ci abc and ABC with a trailing space do not repeat, so the index builds under both methods';
+-- a second unique index on the same column takes the first one over instead of building, so the radix
+-- one is listed and dropped before the compare build
+set system parameters 'index_sort_method=radix';
+create unique index u_r_vcc on t_ci (vcc);
+select index_name from db_index where class_name = 't_ci' order by 1;
+drop index u_r_vcc on t_ci;
+set system parameters 'index_sort_method=compare';
+create unique index u_c_vcc on t_ci (vcc);
+select index_name from db_index where class_name = 't_ci' order by 1;
 
 set system parameters 'index_sort_method=DEFAULT';
 set system parameters 'index_build_buffer_size=DEFAULT';
