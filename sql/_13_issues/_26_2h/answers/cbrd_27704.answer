@@ -132,4 +132,54 @@ v    x
 3003     30     
 
 ===================================================
+    
+Case 8: ROWNUM in the select list while the forced index scan also skips the sort -- LIMIT is applied once and each row keeps its ROWNUM     
+
+===================================================
+0
+===================================================
+rn    r    g    x    
+1     101     1     10     
+2     102     1     20     
+3     101     2     30     
+4     102     2     40     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.q.i_q_gx) (key range: ([dba.q].g> ?:? ), covered: true)
+
+  rewritten query: select rownum, row_number() over (partition by ? order by ?)+?, [dba.q].g, [dba.q].x from [dba.q] [dba.q] where ([dba.q].g> ?:? ) and (inst_num()<= ?:? ) using index [dba.q].i_q_gx(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.q.i_q_gx), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?) (stopkey)
+     
+
+===================================================
+rn    r    g    x    
+1     101     1     10     
+2     102     1     20     
+3     101     2     30     
+4     102     2     40     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.q)
+
+  rewritten query: select rownum, row_number() over (partition by ? order by ?)+?, [dba.q].g, [dba.q].x from [dba.q] [dba.q] where ([dba.q].g> ?:? ) and (inst_num()<= ?:? ) using index none
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.q), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
 0
