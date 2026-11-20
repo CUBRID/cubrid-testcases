@@ -301,4 +301,24 @@ update k28 x set x.d = x.d + 1000 where ((x.b = 12 and x.c = 'v1') or (x.c in ('
 select count(*) from k28 where d >= 1000;
 drop table k28;
 
+evaluate 'Case 29: a function index expression over two columns takes a host variable for one of them and the statement is still planned, with every term: 9, 9 rows updated, 9 rows deleted of 800';
+drop table if exists k29;
+create table k29 (id int, a int, b int, d int);
+insert into k29 select rownum, mod (rownum, 7), mod (rownum, 13), mod (rownum, 40) from db_class c1, db_class c2 where rownum <= 800;
+create index k29_m on k29 (mod (a, b));
+create index k29_d on k29 (d);
+update statistics on k29 with fullscan;
+prepare st from 'select count(*) from k29 x where (mod (x.a, x.b) = 2 or x.id = -5) and x.a = ? and x.d < 40';
+execute st using 5;
+deallocate prepare st;
+prepare st from 'update k29 x set x.d = x.d + 1000 where (mod (x.a, x.b) = 2 or x.id = -5) and x.a = ? and x.d < 40';
+execute st using 5;
+deallocate prepare st;
+select count(*) from k29 where d >= 1000;
+prepare st from 'delete from k29 x where (mod (x.a, x.b) = 2 or x.id = -5) and x.a = ? and x.d >= 1000';
+execute st using 5;
+deallocate prepare st;
+select count(*) from k29;
+drop table k29;
+
 drop table o, i, a, b, t;
