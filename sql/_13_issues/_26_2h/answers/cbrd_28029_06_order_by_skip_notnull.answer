@@ -501,15 +501,17 @@ temp(distinct)
 Query stmt:
 (select distinct  cast('ab' as varchar(?)) from t?v v)
 Query plan:
-iscan
-    class: u node[?]
-    index: u_t?u_c? (covers)
-    filtr: term[?]
-    sort:  ? asc
+nl-join (cross join)
+    outer: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: u node[?]
+               index: u_t?u_c? term[?] (covers)
+               cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select u.c? from t?u u where u.c? in (select distinct  cast('ab' as varchar(?)) from t?v v) order by ?
-/* ---> skip ORDER BY */
+select u.c? from t?u u, (select distinct  cast('ab' as varchar(?)) from t?v v) av? (av_?) where u.c?=( cast( cast('ab' as varchar(?)) as varchar)) and u.c?=av?.av_?
 ===================================================
     
 Case 6-n61     
