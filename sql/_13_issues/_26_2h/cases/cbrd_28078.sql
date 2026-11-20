@@ -33,7 +33,7 @@ evaluate 'Case 2: (- a) <=> (- b) and a double minus return 1, 2 as a <=> b does
 select id from t_ns where a <=> b order by id;
 select id from t_ns where (- a) <=> (- b) order by id;
 select id from t_ns where - (- a) <=> - (- b) order by id;
-$bigint, $1
+$int, $1
 select id from t_ns where (- a) <=> (- ?) order by id;
 select id from t_ns where (- a) <=> (- b) or a = 2 order by id;
 
