@@ -63,8 +63,9 @@ select if (col1 = '2012-12-12 08:08:08.989', 'ok', 'nok') from md_datetime1 wher
 
 --TEST:left outer join, no matched rows 
 update md_datetime2 m2 left outer join md_datetime1 m1 on m1.col1=m2.col2 inner join md_datetime3 m3 on m2.col2=m3.col2 set m1.col1=m1.col1+100, m2.col2=m1.col1-10 where m1.id1 > (select max(id1)/3 from md_datetime1);
---TEST: error, duplicate key error
-update md_datetime2 m2 left outer join md_datetime1 m1 on m1.col1=m2.col2 inner join md_datetime3 m3 on m3.col2=m1.col1 set m1.col1=m3.col2+10, m3.id3=m3.id3+3 where m3.id3 < (select max(id2)/100 from md_datetime2);
+-- TEST: HA should reject multi-row UPDATE that can violate UNIQUE constraint (975)
+-- Non-HA should execute successfully (no partition error)
+update md_datetime2 m2 left outer join md_datetime1 m1 on m1.col1=m2.col2 inner join md_datetime3 m3 on m3.col2=m1.col1 set m1.col1=m3.col2+10, m3.id3=m3.id3+1 where m3.id3 < (select max(id2)/100 from md_datetime2);
 
 
 --TEST: right outer join
