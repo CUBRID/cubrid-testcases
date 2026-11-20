@@ -1,0 +1,179 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+20
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    sum( char_length(big))    
+20     192000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_oos)
+
+  rewritten query: select count(*), sum( char_length([dba.t_oos].big)) from [dba.t_oos] [dba.t_oos] where ([dba.t_oos].s>= ?:?  and [dba.t_oos].s< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( char_length(s))    
+20     131     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_oos)
+
+  rewritten query: select count(*), sum( char_length([dba.t_oos].s)) from [dba.t_oos] [dba.t_oos] where ([dba.t_oos].s>= ?:?  and [dba.t_oos].s< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_oos), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( char_length(v))    
+20     640     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_plain)
+
+  rewritten query: select count(*), sum( char_length([dba.t_plain].v)) from [dba.t_plain] [dba.t_plain] where ([dba.t_plain].s>= ?:?  and [dba.t_plain].s< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_plain), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    char_length(big)    
+3     9600     
+4     9600     
+5     9600     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_oos.pk_t_oos_id) (key range: ([dba.t_oos].id>= ?:?  and [dba.t_oos].id<= ?:? ))
+  skip order by: true
+
+  rewritten query: select [dba.t_oos].id,  char_length([dba.t_oos].big) from [dba.t_oos] [dba.t_oos] where ([dba.t_oos].id>= ?:?  and [dba.t_oos].id<= ?:? ) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_oos.pk_t_oos_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+count(*)    sum( char_length(big))    
+20     192000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_part)
+
+  rewritten query: select count(*), sum( char_length([dba.t_part].big)) from [dba.t_part] [dba.t_part] where ([dba.t_part].s>= ?:?  and [dba.t_part].s< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+           PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( char_length(big))    
+20     192000     
+
+===================================================
+trace    
+{
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "table (dba.t_oos)",
+        "heap": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        },
+        "oos": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?
+        }
+      }
+    }
+  }
+}     
+
+===================================================
+count(*)    sum( char_length(s))    
+20     131     
+
+===================================================
+trace    
+{
+  "Trace Statistics": {
+    "SELECT": {
+      "time": ?,
+      "fetch": ?,
+      "fetch_time": ?,
+      "ioread": ?,
+      "SCAN": {
+        "access": "table (dba.t_oos)",
+        "heap": {
+          "time": ?,
+          "fetch": ?,
+          "ioread": ?,
+          "readrows": ?,
+          "rows": ?
+        }
+      }
+    }
+  }
+}     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
