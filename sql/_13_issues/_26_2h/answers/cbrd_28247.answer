@@ -1,0 +1,71 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+30
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1: the issue query three times on one cached plan; result = no_parallel_subquery     
+
+===================================================
+x0    
+
+===================================================
+x0    
+
+===================================================
+0
+===================================================
+x0    
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+          SUBQUERY (uncorrelated)
+                   (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SCAN (table: dba.t_pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+              GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted))
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no rows left), readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (the data filter is interpreted))
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no rows left), readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+x0    
+
+===================================================
+0
+===================================================
+0

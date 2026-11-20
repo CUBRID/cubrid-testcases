@@ -581,7 +581,7 @@ Trace Statistics:
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+        SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays)) (oos time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -622,12 +622,12 @@ Trace Statistics:
         UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
               (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: a record whose visible version is not on the page (relocated, overflow, or in the log)))
+            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, last: a record with out-of-row values)) (oos time: ?, fetch: ?, ioread: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, at records off the page: ?, last: a record whose visible version is not on the page (relocated, overflow, or in the log)))
+          SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, last: a record with out-of-row values)) (oos time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -671,7 +671,7 @@ Trace Statistics:
             SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                  (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
+            SCAN (table: dba.t_wide), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays)) (oos time: ?, fetch: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_heap), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))

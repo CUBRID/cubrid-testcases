@@ -1,0 +1,284 @@
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+1000
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+500
+===================================================
+0
+===================================================
+3
+===================================================
+    
+Case 1: the issue query; result = 0, 15, 15     
+
+===================================================
+n    o    x    result    
+0     15     15     OK     
+
+===================================================
+    
+Case 2: 0 to 99; result = 0, 127, 0     
+
+===================================================
+n    o    x    result    
+0     127     0     OK     
+
+===================================================
+    
+Case 3: GROUP BY; result = 126, 127     
+
+===================================================
+k    o    
+0     126     
+1     127     
+
+===================================================
+    
+Case 4: one distinct value; result = 7, 7, 7     
+
+===================================================
+bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+7     7     7     
+
+===================================================
+    
+Case 5: empty table and all NULL; result = NULL, then 0, 15, 15 with NULL ignored     
+
+===================================================
+bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+null     null     null     
+
+===================================================
+bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+null     null     null     
+
+===================================================
+n    o    x    result    
+0     15     15     OK     
+
+===================================================
+    
+Case 6: negative values; result = 4, -1, 4     
+
+===================================================
+n    o    x    result    
+4     -1     4     OK     
+
+===================================================
+    
+Case 7: largest and smallest BIGINT; result = 0, -1, -1     
+
+===================================================
+n    o    x    result    
+0     -1     -1     OK     
+
+===================================================
+    
+Case 8: SMALLINT, INT and BIGINT columns; result = 0, -1, -13 for each     
+
+===================================================
+n    o    x    result    
+0     -1     -13     OK     
+
+===================================================
+n    o    x    result    
+0     -1     -13     OK     
+
+===================================================
+n    o    x    result    
+0     -1     -13     OK     
+
+===================================================
+    
+Case 9: expression arguments     
+
+===================================================
+v    v    result    
+7     7     OK     
+
+===================================================
+v    v    result    
+31     31     OK     
+
+===================================================
+    
+Case 10: with and without DISTINCT; result = 1, 1, 7, 7, 6, 5     
+
+===================================================
+bit_and(distinct a)    bit_and(a)    bit_or(distinct a)    bit_or(a)    bit_xor(distinct a)    bit_xor(a)    
+1     1     7     7     6     5     
+
+===================================================
+    
+Case 11: other DISTINCT aggregates and MEDIAN keep their values     
+
+===================================================
+sum(distinct a)    count(distinct a)    avg(distinct a)    group_concat(distinct a order by a)    round(stddev(distinct a), 6)    median(a)    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+17     4     4.25     1,2,5,9     3.112475     3.5     0     15     15     
+
+===================================================
+sum(distinct a)    count(distinct a)    avg(distinct a)    round(variance(distinct a), 6)    median(a)    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+4950     100     49.5     833.25     49.5     0     127     0     
+
+===================================================
+    
+Case 12: sort GROUP BY over ten groups     
+
+===================================================
+k    n    o    x    result    
+0     0     126     106     OK     
+1     1     127     106     OK     
+2     0     126     94     OK     
+3     1     127     94     OK     
+4     0     126     42     OK     
+5     1     127     42     OK     
+6     0     126     6     OK     
+7     1     127     6     OK     
+8     0     126     26     OK     
+9     1     127     26     OK     
+
+===================================================
+    
+Case 13: HAVING; result = 1, 127     
+
+===================================================
+k    o    
+1     127     
+
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 14: parallel buildvalue; result = parallel workers line with gather buildvalue     
+
+===================================================
+n    o    x    bx    result    
+0     1023     1000     14336     OK     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_par)
+
+  rewritten query: (select /*+ PARALLEL(?) */ bit_and(distinct [dba.t_par].a), bit_or(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].b) from [dba.t_par] [dba.t_par])
+
+  TABLE SCAN (dba.t_par)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ bit_and(distinct [dba.t_par].a), bit_or(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].b) from [dba.t_par] [dba.t_par])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select p.n, p.o, p.x, p.bx, case when p.n<=>s.n and p.o<=>s.o and p.x<=>s.x and p.bx<=>s.bx then 'OK' else 'NOK' end from (select /*+ PARALLEL(?) */ bit_and(distinct [dba.t_par].a) as [n], bit_or(distinct [dba.t_par].a) as [o], bit_xor(distinct [dba.t_par].a) as [x], bit_xor(distinct [dba.t_par].b) as [bx] from [dba.t_par] [dba.t_par]) p (n, o, x, bx), (select /*+ NO_PARALLEL_SCAN */ bit_and(distinct [dba.t_par].a) as [n], bit_or(distinct [dba.t_par].a) as [o], bit_xor(distinct [dba.t_par].a) as [x], bit_xor(distinct [dba.t_par].b) as [bx] from [dba.t_par] [dba.t_par]) s (n, o, x, bx)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+     
+
+===================================================
+sum(distinct a)    count(distinct a)    avg(distinct a)    median(a)    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+500500     1001     500.0     500.0     0     1023     1000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_par)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum(distinct [dba.t_par].a), count(distinct [dba.t_par].a), avg(distinct [dba.t_par].a), median([dba.t_par].a), bit_and(distinct [dba.t_par].a), bit_or(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].a) from [dba.t_par] [dba.t_par]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch: no (an aggregate the batch does not take (DISTINCT, ordered, or index min/max)))
+     
+
+===================================================
+sum(distinct a)    count(distinct a)    avg(distinct a)    median(a)    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    
+500500     1001     500.0     500.0     0     1023     1000     
+
+===================================================
+0
+===================================================
+n    o    x    result    
+0     1023     1000     OK     
+
+===================================================
+    
+Case 15: parallel GROUP BY; result = no_parallel_scan     
+
+===================================================
+k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor(distinct b)    
+0     0     1023     601     4601     
+1     0     1023     426     44159     
+2     0     1023     315     19078     
+3     0     1023     428     57053     
+4     0     1023     29     25972     
+5     0     1023     430     63243     
+6     0     1023     319     33698     
+
+===================================================
+k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor(distinct b)    
+0     0     1023     601     4601     
+1     0     1023     426     44159     
+2     0     1023     315     19078     
+3     0     1023     428     57053     
+4     0     1023     29     25972     
+5     0     1023     430     63243     
+6     0     1023     319     33698     
+
+===================================================
+0

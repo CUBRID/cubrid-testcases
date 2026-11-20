@@ -577,7 +577,7 @@ Trace Statistics:
 
 ===================================================
     
-stored procedure excluded case - should work     
+stored procedure excluded case - the CTEs run one by one (CBRD-28126) - should not work     
 
 ===================================================
 count(*)    
@@ -608,7 +608,6 @@ Trace Statistics:
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch: no (no filter term the batch runs as arrays))
@@ -702,7 +701,7 @@ Trace Statistics:
 
 ===================================================
     
-path expression not used - should work     
+path expression not used - the CTEs run one by one (CBRD-28126) - should not work     
 
 ===================================================
 count(*)    
@@ -732,7 +731,6 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (index: _db_class.i__db_class_class_name_owner), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
