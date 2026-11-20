@@ -169,24 +169,33 @@ id    name    address    telephone    id    course_id    score    course_id    c
 
 Query plan:
 nl-join (cross join)
-    outer: idx-join (inner join)
-               outer: iscan
-                          class: t? node[?]
-                          index: t?_idx term[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               inner: iscan
-                          class: t? node[?]
-                          index: t?_idx term[?]
-                          cost:  ? card ?
+    outer: temp
+               order: course_id[?]
+               subplan: m-join (inner join)
+                            edge:  term[?]
+                            outer: temp
+                                       order: course_id[?]
+                                       subplan: iscan
+                                                    class: t? node[?]
+                                                    index: t?_idx term[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: temp
+                                       order: course_id[?]
+                                       subplan: sscan
+                                                    class: t? node[?]
+                                                    cost:  ? card ?
+                                       cost:  ? card ?
+                            cost:  ? card ?
                cost:  ? card ?
     inner: iscan
                class: t? node[?]
                index: t?_idx term[?]
                cost:  ? card ?
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.course_id=t?.course_id and t?.score is not null  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
+Query stmt:
+select /*+ USE_MERGE */ t?.id, t?.[name], t?.address, t?.telephone, t?.id, t?.course_id, t?.score, t?.course_id, t?.course_name from sinfo t?, sscore t?, scourse t? where t?.course_id=t?.course_id and t?.score is not null  and t?.id= ?:?  and t?.id= ?:?  and t?.id=t?.id
 ===================================================
 id    name    course_id    score    course_name    
 7010001     lindaiyu     2     95.0     literature     
