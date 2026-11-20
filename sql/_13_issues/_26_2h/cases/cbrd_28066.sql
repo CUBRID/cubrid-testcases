@@ -26,9 +26,12 @@
  *             its own type (develop read it in the other element's type, or crashed)
  *    Case 12: a SUBSETEQ that applies a collation to a set holding a NUMERIC literal (a debug build aborted)
  *    Case 13: LIST of a subquery with NVL of a bound value as its later, last or first column holds each column's
- *             values in their own types (an earlier commit of the engine PR read 'zz' as an INTEGER)
+ *             values in their own types (an earlier commit of the engine PR read 'zz' as an INTEGER), and the
+ *             values compared with the expected collection in WHERE
+ *    Case 14: {1, NVL (?, 'x')} = {1, 'zz'} returns a logical value (a debug client aborted copying the result
+ *             column's type, which carried the element's collation)
  *  The driver of the test prints a collection whose elements are of more than one type as null, so Cases 10, 11
- *  and 13 print null where the values keep their types; a value read in another element's type prints as a number
+ *  and 13 print null where the values keep their types, and a value read in another element's type prints as a number
  *  (41581056 for 'zz') and an unreadable one fails.
  */
 drop table if exists t_str, t_set;
@@ -152,6 +155,24 @@ deallocate prepare s;
 prepare s from 'select list (select nvl (?, ''x''), id from t2 order by 2) from db_root';
 execute s using 'zz';
 deallocate prepare s;
+-- the values, by a comparison in WHERE (a row when they are the expected ones, none for 'yy'): the select list
+-- above shows the regression (an element read in another's type), this the values the driver does not print
+prepare s from 'select ''eq'' from db_root where list (select id, nvl (?, ''x'') from t2 order by 1) = {1, ''zz'', 2, ''zz''}';
+execute s using 'zz';
+execute s using 'yy';
+deallocate prepare s;
+prepare s from 'select ''eq'' from db_root where list (select id, v, nvl (?, ''x'') from t2 order by 1) = {1, ''a'', ''zz'', 2, ''b'', ''zz''}';
+execute s using 'zz';
+deallocate prepare s;
+prepare s from 'select ''eq'' from db_root where list (select nvl (?, ''x''), id from t2 order by 2) = {''zz'', 1, ''zz'', 2}';
+execute s using 'zz';
+deallocate prepare s;
 drop table t2;
+
+evaluate 'Case 14: a comparison of collections whose element is a bound value has a logical result column';
+prepare s from 'select {1, nvl (?, ''x'')} = {1, ''zz''} as eq from db_root';
+execute s using 'zz';
+execute s using 'yy';
+deallocate prepare s;
 
 drop table t_str, t_set;
