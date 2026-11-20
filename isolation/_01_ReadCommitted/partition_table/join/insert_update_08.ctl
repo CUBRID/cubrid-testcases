@@ -57,8 +57,9 @@ C2: SELECT * FROM t1 order by 1,2;
 C2: DELETE a,b FROM t1 a LEFT JOIN t2 b ON a.id = b.id WHERE a.id > 7;
 C2: SELECT * FROM t3 order by 1,2;
 MC: wait until C2 ready;
+/* CBRD-27866: C1 walks the partitions of the inner t2 per outer row, so it does not reach row 8 that C2 deleted and does not wait */
 C1: DELETE a,b FROM t1 a LEFT JOIN t2 b ON a.id = b.id WHERE a.id < 5;
-MC: wait until C1 blocked;
+MC: wait until C1 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
 C1: insert into t3(valueid, str) SELECT a.id, a.col+'xx' FROM t1 a RIGHT JOIN t2 b ON a.id = b.id WHERE b.id >1 and b.id <7;
