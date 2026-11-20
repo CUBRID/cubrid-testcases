@@ -5,20 +5,12 @@
 ===================================================
 0
 ===================================================
-    
-case 4: changed owner for table (with grant alter privilege)     
-
-===================================================
-    
-create u1.tbl, u1.tbl2 table     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-connect to u1 & u1.tbl, u1.tbl2 grant alter to u2     
+Case 1: u1 grants ALTER on u1.tbl and u1.tbl2 to u2, and u2 grants ALTER on u1.tbl2 to u3     
 
 ===================================================
     
@@ -30,18 +22,10 @@ null
 0
 ===================================================
     
-connect to u2 & u1.tbl2 grant alter to u3     
-
-===================================================
-    
 null     
 
 ===================================================
 0
-===================================================
-    
-connect to dba     
-
 ===================================================
     
 null     
@@ -63,6 +47,7 @@ DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_arg     SELECT     NO
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_file     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_sig     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_method     SELECT     NO     
+DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_package     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_partition     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_query_spec     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_serial     SELECT     NO     
@@ -81,7 +66,7 @@ U2     U3     U1     CLASS     tbl2     ALTER     YES
 
 ===================================================
     
-connect to u3 & changed owner u1.tbl, u1.tbl2 -> u3.tbl, u3.tbl2, ERROR: can only be performed by the DBA or a DBA group member     
+Case 2: u3 fails to change the owners with an error, only dba or the dba group can     
 
 ===================================================
     
@@ -93,7 +78,7 @@ Error:-140
 Error:-140
 ===================================================
     
-connect to u2 & changed owner u1.tbl, u1.tbl2 -> u3.tbl, u3.tbl2, ERROR: can only be performed by the DBA or a DBA group member     
+Case 3: u2 fails to change the owners with an error, although it holds ALTER     
 
 ===================================================
     
@@ -105,7 +90,7 @@ Error:-140
 Error:-140
 ===================================================
     
-connect to dba & changed owner u1.tbl, u1.tbl2 -> u3.tbl, u3.tbl2     
+Case 4: after dba changes both owners to u3, u3 is the grantor to u2 and the grant to u3 is gone     
 
 ===================================================
     
@@ -132,6 +117,7 @@ DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_arg     SELECT     NO
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_file     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_meth_sig     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_method     SELECT     NO     
+DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_package     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_partition     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_query_spec     SELECT     NO     
 DBA     INFORMATION_SCHEMA     DBA     CLASS     _db_serial     SELECT     NO     
@@ -151,10 +137,6 @@ U3     U2     U3     CLASS     tbl2     ALTER     YES
 class_name    owner_name    
 tbl     U3     
 tbl2     U3     
-
-===================================================
-    
-Test init     
 
 ===================================================
 0

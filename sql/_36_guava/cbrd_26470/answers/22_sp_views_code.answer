@@ -1,0 +1,169 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+Case 1: db_stored_procedure, DBA sees the source of sp22     
+
+===================================================
+sp_name    owner    code    
+sp22     U22A     CREATE OR REPLACE PROCEDURE sp22() AUTHID OWNER AS
+begin null; end     
+
+===================================================
+    
+Case 2: db_stored_procedure, the owner sees the source of sp22     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    owner    code    
+sp22     U22A     CREATE OR REPLACE PROCEDURE sp22() AUTHID OWNER AS
+begin null; end     
+
+===================================================
+    
+Case 3: db_stored_procedure, the grantee sees the row of sp22; result = code NULL     
+
+===================================================
+    
+null     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+sp_name    owner    code    
+sp22     U22A     null     
+
+===================================================
+    
+Case 4: db_stored_procedure, a user without a right does not see sp22; result = 0     
+
+===================================================
+    
+null     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 5: db_stored_procedure, p22 has no source and pkg_name pk22, sp22 has no pkg_name     
+
+===================================================
+    
+null     
+
+===================================================
+sp_name    pkg_name    code    
+p22     pk22     null     
+sp22     null     CREATE OR REPLACE PROCEDURE sp22() AUTHID OWNER AS
+begin null; end     
+
+===================================================
+    
+Case 6: db_stored_procedure, the system routine put_line is hidden; result = 0     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 7: information_schema.routines, DBA sees the definition of sp22     
+
+===================================================
+routine_name    routine_definition    
+sp22     CREATE OR REPLACE PROCEDURE sp22() AUTHID OWNER AS
+begin null; end     
+
+===================================================
+    
+Case 8: information_schema.routines, the owner sees the definition of sp22     
+
+===================================================
+    
+null     
+
+===================================================
+routine_name    routine_definition    
+sp22     CREATE OR REPLACE PROCEDURE sp22() AUTHID OWNER AS
+begin null; end     
+
+===================================================
+    
+Case 9: information_schema.routines, the grantee gets no definition of sp22; result = NULL     
+
+===================================================
+    
+null     
+
+===================================================
+routine_name    routine_definition    
+sp22     null     
+
+===================================================
+    
+Case 10: information_schema.routines, the package routine p22 has no definition; result = NULL     
+
+===================================================
+    
+null     
+
+===================================================
+routine_name    routine_definition    
+p22     null     
+
+===================================================
+    
+Case 11: db_stored_procedure_args, the argument of p22 has pkg_name pk22     
+
+===================================================
+sp_name    pkg_name    arg_name    
+p22     pk22     a     
+
+===================================================
+    
+Case 12: pkg_name of db_stored_procedure and db_stored_procedure_args is VARCHAR(255)     
+
+===================================================
+class_name    attr_name    data_type    prec    
+db_stored_procedure     pkg_name     STRING     255     
+db_stored_procedure_args     pkg_name     STRING     255     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

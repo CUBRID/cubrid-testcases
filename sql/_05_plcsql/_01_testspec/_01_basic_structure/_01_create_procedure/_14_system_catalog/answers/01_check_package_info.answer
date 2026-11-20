@@ -1,4 +1,9 @@
 ===================================================
+    
+Case 1: the system generated dbms_output routines and their package     
+
+
+===================================================
 sp_name    pkg_name    is_system_generated    
 disable     dbms_output     1     
 enable     dbms_output     1     
@@ -10,8 +15,9 @@ put_line     dbms_output     1
 
 
 ===================================================
-Error:-1363
-Dropping system generated stored procedure is not allowed.
+    
+Case 2: DROP PROCEDURE of a dbms_output routine is refused; result = an error for each     
+
 
 ===================================================
 Error:-1363
@@ -42,8 +48,9 @@ Error:-1363
 Dropping system generated stored procedure is not allowed.
 
 ===================================================
-Error:-1363
-Dropping system generated stored procedure is not allowed.
+    
+Case 3: DROP FUNCTION of a dbms_output routine is refused; result = an error for each     
+
 
 ===================================================
 Error:-1363
@@ -64,6 +71,19 @@ Dropping system generated stored procedure is not allowed.
 ===================================================
 Error:-1363
 Dropping system generated stored procedure is not allowed.
+
+===================================================
+Error:-1363
+Dropping system generated stored procedure is not allowed.
+
+===================================================
+Error:-1363
+Dropping system generated stored procedure is not allowed.
+
+===================================================
+    
+Case 4: a procedure without parameters; result = one routine row and no argument row     
+
 
 ===================================================
 0
@@ -81,6 +101,11 @@ test_proc1     null     0
 
 ===================================================
 sp_of    index_of    is_system_generated    arg_name    data_type    mode    default_value    is_optional    comment    
+
+
+===================================================
+    
+Case 5: a procedure with one parameter; result = two routine rows and one argument row     
 
 
 ===================================================
@@ -104,6 +129,11 @@ _db_stored_procedure     0     0     a     1     1     null     0     null
 
 
 ===================================================
+    
+Case 6: the comments of a procedure and of its parameter with a default value (CBRD-25472)     
+
+
+===================================================
 0
 
 ===================================================
@@ -123,6 +153,11 @@ test_proc3     null     0     procedure comment
 sp_of    index_of    is_system_generated    arg_name    data_type    mode    default_value    is_optional    comment    
 _db_stored_procedure     0     0     a     1     1     null     0     null     
 _db_stored_procedure     0     0     a     1     1     1     1     param comment     
+
+
+===================================================
+    
+Case 7: after the drops no user routine row and no argument row is left     
 
 
 ===================================================

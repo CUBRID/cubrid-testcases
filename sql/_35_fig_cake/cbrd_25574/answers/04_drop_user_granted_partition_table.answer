@@ -4,10 +4,6 @@
 0
 ===================================================
     
-connect to u1 & create partition table t1_r, t1_h, t1_l     
-
-===================================================
-    
 null     
 
 ===================================================
@@ -18,7 +14,7 @@ null
 0
 ===================================================
     
-u2 grant to t1_r, t1_h, t1_l     
+Case 1: u1 grants SELECT on t1_r and t1_h and SELECT, ALTER on t1_l to u2     
 
 ===================================================
 0
@@ -28,7 +24,7 @@ u2 grant to t1_r, t1_h, t1_l
 0
 ===================================================
     
-ERROR: Invalid partition requests     
+Case 2: a GRANT on the partition t1_l__p__p1 fails with an error, and the catalogs show only the grants of Case 1     
 
 ===================================================
 Error:-494
@@ -53,7 +49,7 @@ U1
 
 ===================================================
     
-connect to dba & drop user u2     
+Case 3: after DROP USER u2, the rows granted to u2 are gone     
 
 ===================================================
     
@@ -63,6 +59,7 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_type    object_name    owner_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_package     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_server     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     _db_synonym     DBA     SELECT     NO     
 DBA     INFORMATION_SCHEMA     CLASS     dual     DBA     SELECT     NO     
@@ -96,10 +93,6 @@ owner    grants
 DBA          
 INFORMATION_SCHEMA     null     
 U1          
-
-===================================================
-    
-Test done     
 
 ===================================================
 0

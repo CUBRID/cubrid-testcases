@@ -1,9 +1,101 @@
+/**
+ *  This test case verifies CBRD-25111: a PL/CSQL reserved word cannot be used as an exception name.
+ *
+ *  Each case creates a procedure that declares an exception named after one reserved word,
+ *  and the create fails.
+ *
+ *  Coverage:
+ *    Case 1:   reserved word AND as an exception name fails to compile
+ *    Case 2:   reserved word AS as an exception name fails to compile
+ *    Case 3:   reserved word BETWEEN as an exception name fails to compile
+ *    Case 4:   reserved word BIGINT as an exception name fails to compile
+ *    Case 5:   reserved word BOOLEAN as an exception name fails to compile
+ *    Case 6:   reserved word BY as an exception name fails to compile
+ *    Case 7:   reserved word CHAR as an exception name fails to compile
+ *    Case 8:   reserved word CLOSE as an exception name fails to compile
+ *    Case 9:   reserved word COMMIT as an exception name fails to compile
+ *    Case 10:  reserved word CONSTANT as an exception name fails to compile
+ *    Case 11:  reserved word CONTINUE as an exception name fails to compile
+ *    Case 12:  reserved word CREATE as an exception name fails to compile
+ *    Case 13:  reserved word CURSOR as an exception name fails to compile
+ *    Case 14:  reserved word DATE as an exception name fails to compile
+ *    Case 15:  reserved word DATETIME as an exception name fails to compile
+ *    Case 16:  reserved word DATETIMELTZ as an exception name fails to compile
+ *    Case 17:  reserved word DATETIMETZ as an exception name fails to compile
+ *    Case 18:  reserved word DEC as an exception name fails to compile
+ *    Case 19:  reserved word DECIMAL as an exception name fails to compile
+ *    Case 20:  reserved word DECLARE as an exception name fails to compile
+ *    Case 21:  reserved word DEFAULT as an exception name fails to compile
+ *    Case 22:  reserved word DIV as an exception name fails to compile
+ *    Case 23:  reserved word DOUBLE as an exception name fails to compile
+ *    Case 24:  reserved word ELSE as an exception name fails to compile
+ *    Case 25:  reserved word ELSIF as an exception name fails to compile
+ *    Case 26:  reserved word END as an exception name fails: END closes the routine early and the rest fails as separate statements
+ *    Case 27:  reserved word ESCAPE as an exception name fails to compile
+ *    Case 28:  reserved word EXCEPTION as an exception name fails to compile
+ *    Case 29:  reserved word EXECUTE as an exception name fails to compile
+ *    Case 30:  reserved word EXIT as an exception name fails to compile
+ *    Case 31:  reserved word FALSE as an exception name fails to compile
+ *    Case 32:  reserved word FETCH as an exception name fails to compile
+ *    Case 33:  reserved word FLOAT as an exception name fails to compile
+ *    Case 34:  reserved word FOR as an exception name fails to compile
+ *    Case 35:  reserved word IMMEDIATE as an exception name fails to compile
+ *    Case 36:  reserved word IN as an exception name fails to compile
+ *    Case 37:  reserved word INT as an exception name fails to compile
+ *    Case 38:  reserved word INTEGER as an exception name fails to compile
+ *    Case 39:  reserved word INTO as an exception name fails to compile
+ *    Case 40:  reserved word IS as an exception name fails to compile
+ *    Case 41:  reserved word LIKE as an exception name fails to compile
+ *    Case 42:  reserved word LIST as an exception name fails to compile
+ *    Case 43:  reserved word MOD as an exception name fails to compile
+ *    Case 44:  reserved word MULTISET as an exception name fails to compile
+ *    Case 45:  reserved word NOT as an exception name fails to compile
+ *    Case 46:  reserved word NULL as an exception name fails to compile
+ *    Case 47:  reserved word NUMERIC as an exception name fails to compile
+ *    Case 48:  reserved word OPEN as an exception name fails to compile
+ *    Case 49:  reserved word OR as an exception name fails to compile
+ *    Case 50:  reserved word OUT as an exception name fails to compile
+ *    Case 51:  reserved word PRAGMA as an exception name fails to compile
+ *    Case 52:  reserved word RAISE as an exception name fails to compile
+ *    Case 53:  reserved word REAL as an exception name fails to compile
+ *    Case 54:  reserved word REPLACE as an exception name fails to compile
+ *    Case 55:  reserved word RETURN as an exception name fails to compile
+ *    Case 56:  reserved word REVERSE as an exception name fails to compile
+ *    Case 57:  reserved word ROLLBACK as an exception name fails to compile
+ *    Case 58:  reserved word SEQUENCE as an exception name fails to compile
+ *    Case 59:  reserved word SET as an exception name fails to compile
+ *    Case 60:  reserved word SETEQ as an exception name fails to compile
+ *    Case 61:  reserved word SETNEQ as an exception name fails to compile
+ *    Case 62:  reserved word SHORT as an exception name fails to compile
+ *    Case 63:  reserved word SMALLINT as an exception name fails to compile
+ *    Case 64:  reserved word SQL as an exception name fails to compile
+ *    Case 65:  reserved word STRING as an exception name fails to compile
+ *    Case 66:  reserved word SUBSET as an exception name fails to compile
+ *    Case 67:  reserved word SUBSETEQ as an exception name fails to compile
+ *    Case 68:  reserved word SUPERSET as an exception name fails to compile
+ *    Case 69:  reserved word SUPERSETEQ as an exception name fails to compile
+ *    Case 70:  reserved word SYS_REFCURSOR as an exception name fails to compile
+ *    Case 71:  reserved word THEN as an exception name fails to compile
+ *    Case 72:  reserved word TIME as an exception name fails to compile
+ *    Case 73:  reserved word TIMESTAMP as an exception name fails to compile
+ *    Case 74:  reserved word TIMESTAMPLTZ as an exception name fails to compile
+ *    Case 75:  reserved word TIMESTAMPTZ as an exception name fails to compile
+ *    Case 76:  reserved word TRUE as an exception name fails to compile
+ *    Case 77:  reserved word USING as an exception name fails to compile
+ *    Case 78:  reserved word VARCHAR as an exception name fails to compile
+ *    Case 79:  reserved word WHEN as an exception name fails to compile
+ *    Case 80:  reserved word WHILE as an exception name fails to compile
+ *    Case 81:  reserved word WORK as an exception name fails to compile
+ *    Case 82:  reserved word XOR as an exception name fails to compile
+ *    Case 83:  reserved word INSERT as an exception name fails to compile
+ *    Case 84:  reserved word TRUNCATE as an exception name fails to compile
+ *    Case 85:  reserved word AUTONOMOUS_TRANSACTION as an exception name fails to compile
+ *    Case 86:  reserved word BEGIN as an exception name fails to compile
+ */
+
 --+ server-message on
 
--- Verification for CBRD-25111 
-
-
-select 'AND' ;
+evaluate 'Case 1: reserved word AND as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 AND EXCEPTION; 
 begin
@@ -14,7 +106,7 @@ EXCEPTION    WHEN AND THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'AS' ;
+evaluate 'Case 2: reserved word AS as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 AS EXCEPTION; 
 begin
@@ -25,7 +117,7 @@ EXCEPTION    WHEN AS THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'BETWEEN' ;
+evaluate 'Case 3: reserved word BETWEEN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 BETWEEN EXCEPTION; 
 begin
@@ -36,7 +128,7 @@ EXCEPTION    WHEN BETWEEN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'BIGINT' ;
+evaluate 'Case 4: reserved word BIGINT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 BIGINT EXCEPTION; 
 begin
@@ -47,7 +139,7 @@ EXCEPTION    WHEN BIGINT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'BOOLEAN' ;
+evaluate 'Case 5: reserved word BOOLEAN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 BOOLEAN EXCEPTION; 
 begin
@@ -58,7 +150,7 @@ EXCEPTION    WHEN BOOLEAN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'BY' ;
+evaluate 'Case 6: reserved word BY as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 BY EXCEPTION; 
 begin
@@ -69,7 +161,7 @@ EXCEPTION    WHEN BY THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CHAR' ;
+evaluate 'Case 7: reserved word CHAR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CHAR EXCEPTION; 
 begin
@@ -80,7 +172,7 @@ EXCEPTION    WHEN CHAR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CLOSE' ;
+evaluate 'Case 8: reserved word CLOSE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CLOSE EXCEPTION; 
 begin
@@ -91,7 +183,7 @@ EXCEPTION    WHEN CLOSE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'COMMIT' ;
+evaluate 'Case 9: reserved word COMMIT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 COMMIT EXCEPTION; 
 begin
@@ -102,7 +194,7 @@ EXCEPTION    WHEN COMMIT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CONSTANT' ;
+evaluate 'Case 10: reserved word CONSTANT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CONSTANT EXCEPTION; 
 begin
@@ -113,7 +205,7 @@ EXCEPTION    WHEN CONSTANT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CONTINUE' ;
+evaluate 'Case 11: reserved word CONTINUE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CONTINUE EXCEPTION; 
 begin
@@ -124,7 +216,7 @@ EXCEPTION    WHEN CONTINUE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CREATE' ;
+evaluate 'Case 12: reserved word CREATE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CREATE EXCEPTION; 
 begin
@@ -135,7 +227,7 @@ EXCEPTION    WHEN CREATE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'CURSOR' ;
+evaluate 'Case 13: reserved word CURSOR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 CURSOR EXCEPTION; 
 begin
@@ -146,7 +238,7 @@ EXCEPTION    WHEN CURSOR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DATE' ;
+evaluate 'Case 14: reserved word DATE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DATE EXCEPTION; 
 begin
@@ -157,7 +249,7 @@ EXCEPTION    WHEN DATE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DATETIME' ;
+evaluate 'Case 15: reserved word DATETIME as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DATETIME EXCEPTION; 
 begin
@@ -168,7 +260,7 @@ EXCEPTION    WHEN DATETIME THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DATETIMELTZ' ;
+evaluate 'Case 16: reserved word DATETIMELTZ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DATETIMELTZ EXCEPTION; 
 begin
@@ -179,7 +271,7 @@ EXCEPTION    WHEN DATETIMELTZ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DATETIMETZ' ;
+evaluate 'Case 17: reserved word DATETIMETZ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DATETIMETZ EXCEPTION; 
 begin
@@ -190,7 +282,7 @@ EXCEPTION    WHEN DATETIMETZ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DEC' ;
+evaluate 'Case 18: reserved word DEC as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DEC EXCEPTION; 
 begin
@@ -201,7 +293,7 @@ EXCEPTION    WHEN DEC THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DECIMAL' ;
+evaluate 'Case 19: reserved word DECIMAL as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DECIMAL EXCEPTION; 
 begin
@@ -212,7 +304,7 @@ EXCEPTION    WHEN DECIMAL THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DECLARE' ;
+evaluate 'Case 20: reserved word DECLARE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DECLARE EXCEPTION; 
 begin
@@ -223,7 +315,7 @@ EXCEPTION    WHEN DECLARE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DEFAULT' ;
+evaluate 'Case 21: reserved word DEFAULT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DEFAULT EXCEPTION; 
 begin
@@ -234,7 +326,7 @@ EXCEPTION    WHEN DEFAULT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DIV' ;
+evaluate 'Case 22: reserved word DIV as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DIV EXCEPTION; 
 begin
@@ -245,7 +337,7 @@ EXCEPTION    WHEN DIV THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'DOUBLE' ;
+evaluate 'Case 23: reserved word DOUBLE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 DOUBLE EXCEPTION; 
 begin
@@ -256,7 +348,7 @@ EXCEPTION    WHEN DOUBLE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'ELSE' ;
+evaluate 'Case 24: reserved word ELSE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 ELSE EXCEPTION; 
 begin
@@ -267,7 +359,7 @@ EXCEPTION    WHEN ELSE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'ELSIF' ;
+evaluate 'Case 25: reserved word ELSIF as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 ELSIF EXCEPTION; 
 begin
@@ -278,7 +370,7 @@ EXCEPTION    WHEN ELSIF THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'END' ;
+evaluate 'Case 26: reserved word END as an exception name fails: END closes the routine early and the rest fails as separate statements; result = Error:-493';
 create or replace procedure p_var(i int) as 
 END EXCEPTION; 
 begin
@@ -289,7 +381,7 @@ EXCEPTION    WHEN END THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'ESCAPE' ;
+evaluate 'Case 27: reserved word ESCAPE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 ESCAPE EXCEPTION; 
 begin
@@ -300,7 +392,7 @@ EXCEPTION    WHEN ESCAPE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'EXCEPTION' ;
+evaluate 'Case 28: reserved word EXCEPTION as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 EXCEPTION EXCEPTION; 
 begin
@@ -311,7 +403,7 @@ EXCEPTION    WHEN EXCEPTION THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'EXECUTE' ;
+evaluate 'Case 29: reserved word EXECUTE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 EXECUTE EXCEPTION; 
 begin
@@ -322,7 +414,7 @@ EXCEPTION    WHEN EXECUTE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'EXIT' ;
+evaluate 'Case 30: reserved word EXIT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 EXIT EXCEPTION; 
 begin
@@ -333,7 +425,7 @@ EXCEPTION    WHEN EXIT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'FALSE' ;
+evaluate 'Case 31: reserved word FALSE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 FALSE EXCEPTION; 
 begin
@@ -344,7 +436,7 @@ EXCEPTION    WHEN FALSE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'FETCH' ;
+evaluate 'Case 32: reserved word FETCH as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 FETCH EXCEPTION; 
 begin
@@ -355,7 +447,7 @@ EXCEPTION    WHEN FETCH THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'FLOAT' ;
+evaluate 'Case 33: reserved word FLOAT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 FLOAT EXCEPTION; 
 begin
@@ -366,7 +458,7 @@ EXCEPTION    WHEN FLOAT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'FOR' ;
+evaluate 'Case 34: reserved word FOR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 FOR EXCEPTION; 
 begin
@@ -377,7 +469,7 @@ EXCEPTION    WHEN FOR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'IMMEDIATE' ;
+evaluate 'Case 35: reserved word IMMEDIATE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 IMMEDIATE EXCEPTION; 
 begin
@@ -388,7 +480,7 @@ EXCEPTION    WHEN IMMEDIATE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'IN' ;
+evaluate 'Case 36: reserved word IN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 IN EXCEPTION; 
 begin
@@ -399,7 +491,7 @@ EXCEPTION    WHEN IN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'INT' ;
+evaluate 'Case 37: reserved word INT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 INT EXCEPTION; 
 begin
@@ -410,7 +502,7 @@ EXCEPTION    WHEN INT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'INTEGER' ;
+evaluate 'Case 38: reserved word INTEGER as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 INTEGER EXCEPTION; 
 begin
@@ -421,7 +513,7 @@ EXCEPTION    WHEN INTEGER THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'INTO' ;
+evaluate 'Case 39: reserved word INTO as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 INTO EXCEPTION; 
 begin
@@ -432,7 +524,7 @@ EXCEPTION    WHEN INTO THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'IS' ;
+evaluate 'Case 40: reserved word IS as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 IS EXCEPTION; 
 begin
@@ -443,7 +535,7 @@ EXCEPTION    WHEN IS THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'LIKE' ;
+evaluate 'Case 41: reserved word LIKE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 LIKE EXCEPTION; 
 begin
@@ -454,7 +546,7 @@ EXCEPTION    WHEN LIKE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'LIST' ;
+evaluate 'Case 42: reserved word LIST as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 LIST EXCEPTION; 
 begin
@@ -465,7 +557,7 @@ EXCEPTION    WHEN LIST THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'MOD' ;
+evaluate 'Case 43: reserved word MOD as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 MOD EXCEPTION; 
 begin
@@ -476,7 +568,7 @@ EXCEPTION    WHEN MOD THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'MULTISET' ;
+evaluate 'Case 44: reserved word MULTISET as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 MULTISET EXCEPTION; 
 begin
@@ -487,7 +579,7 @@ EXCEPTION    WHEN MULTISET THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'NOT' ;
+evaluate 'Case 45: reserved word NOT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 NOT EXCEPTION; 
 begin
@@ -498,7 +590,7 @@ EXCEPTION    WHEN NOT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'NULL' ;
+evaluate 'Case 46: reserved word NULL as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 NULL EXCEPTION; 
 begin
@@ -509,7 +601,7 @@ EXCEPTION    WHEN NULL THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'NUMERIC' ;
+evaluate 'Case 47: reserved word NUMERIC as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 NUMERIC EXCEPTION; 
 begin
@@ -520,7 +612,7 @@ EXCEPTION    WHEN NUMERIC THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'OPEN' ;
+evaluate 'Case 48: reserved word OPEN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 OPEN EXCEPTION; 
 begin
@@ -531,7 +623,7 @@ EXCEPTION    WHEN OPEN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'OR' ;
+evaluate 'Case 49: reserved word OR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 OR EXCEPTION; 
 begin
@@ -542,7 +634,7 @@ EXCEPTION    WHEN OR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'OUT' ;
+evaluate 'Case 50: reserved word OUT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 OUT EXCEPTION; 
 begin
@@ -553,7 +645,7 @@ EXCEPTION    WHEN OUT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'PRAGMA' ;
+evaluate 'Case 51: reserved word PRAGMA as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 PRAGMA EXCEPTION; 
 begin
@@ -564,7 +656,7 @@ EXCEPTION    WHEN PRAGMA THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'RAISE' ;
+evaluate 'Case 52: reserved word RAISE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 RAISE EXCEPTION; 
 begin
@@ -575,7 +667,7 @@ EXCEPTION    WHEN RAISE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'REAL' ;
+evaluate 'Case 53: reserved word REAL as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 REAL EXCEPTION; 
 begin
@@ -586,7 +678,7 @@ EXCEPTION    WHEN REAL THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'REPLACE' ;
+evaluate 'Case 54: reserved word REPLACE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 REPLACE EXCEPTION; 
 begin
@@ -597,7 +689,7 @@ EXCEPTION    WHEN REPLACE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'RETURN' ;
+evaluate 'Case 55: reserved word RETURN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 RETURN EXCEPTION; 
 begin
@@ -608,7 +700,7 @@ EXCEPTION    WHEN RETURN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'REVERSE' ;
+evaluate 'Case 56: reserved word REVERSE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 REVERSE EXCEPTION; 
 begin
@@ -619,7 +711,7 @@ EXCEPTION    WHEN REVERSE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'ROLLBACK' ;
+evaluate 'Case 57: reserved word ROLLBACK as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 ROLLBACK EXCEPTION; 
 begin
@@ -630,7 +722,7 @@ EXCEPTION    WHEN ROLLBACK THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SEQUENCE' ;
+evaluate 'Case 58: reserved word SEQUENCE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SEQUENCE EXCEPTION; 
 begin
@@ -641,7 +733,7 @@ EXCEPTION    WHEN SEQUENCE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SET' ;
+evaluate 'Case 59: reserved word SET as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SET EXCEPTION; 
 begin
@@ -652,7 +744,7 @@ EXCEPTION    WHEN SET THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SETEQ' ;
+evaluate 'Case 60: reserved word SETEQ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SETEQ EXCEPTION; 
 begin
@@ -663,7 +755,7 @@ EXCEPTION    WHEN SETEQ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SETNEQ' ;
+evaluate 'Case 61: reserved word SETNEQ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SETNEQ EXCEPTION; 
 begin
@@ -674,7 +766,7 @@ EXCEPTION    WHEN SETNEQ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SHORT' ;
+evaluate 'Case 62: reserved word SHORT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SHORT EXCEPTION; 
 begin
@@ -685,7 +777,7 @@ EXCEPTION    WHEN SHORT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SMALLINT' ;
+evaluate 'Case 63: reserved word SMALLINT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SMALLINT EXCEPTION; 
 begin
@@ -696,7 +788,7 @@ EXCEPTION    WHEN SMALLINT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SQL' ;
+evaluate 'Case 64: reserved word SQL as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SQL EXCEPTION; 
 begin
@@ -707,7 +799,7 @@ EXCEPTION    WHEN SQL THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'STRING' ;
+evaluate 'Case 65: reserved word STRING as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 STRING EXCEPTION; 
 begin
@@ -718,7 +810,7 @@ EXCEPTION    WHEN STRING THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SUBSET' ;
+evaluate 'Case 66: reserved word SUBSET as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SUBSET EXCEPTION; 
 begin
@@ -729,7 +821,7 @@ EXCEPTION    WHEN SUBSET THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SUBSETEQ' ;
+evaluate 'Case 67: reserved word SUBSETEQ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SUBSETEQ EXCEPTION; 
 begin
@@ -740,7 +832,7 @@ EXCEPTION    WHEN SUBSETEQ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SUPERSET' ;
+evaluate 'Case 68: reserved word SUPERSET as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SUPERSET EXCEPTION; 
 begin
@@ -751,7 +843,7 @@ EXCEPTION    WHEN SUPERSET THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SUPERSETEQ' ;
+evaluate 'Case 69: reserved word SUPERSETEQ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SUPERSETEQ EXCEPTION; 
 begin
@@ -762,7 +854,7 @@ EXCEPTION    WHEN SUPERSETEQ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'SYS_REFCURSOR' ;
+evaluate 'Case 70: reserved word SYS_REFCURSOR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 SYS_REFCURSOR EXCEPTION; 
 begin
@@ -773,7 +865,7 @@ EXCEPTION    WHEN SYS_REFCURSOR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'THEN' ;
+evaluate 'Case 71: reserved word THEN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 THEN EXCEPTION; 
 begin
@@ -784,7 +876,7 @@ EXCEPTION    WHEN THEN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TIME' ;
+evaluate 'Case 72: reserved word TIME as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 TIME EXCEPTION; 
 begin
@@ -795,7 +887,7 @@ EXCEPTION    WHEN TIME THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TIMESTAMP' ;
+evaluate 'Case 73: reserved word TIMESTAMP as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 TIMESTAMP EXCEPTION; 
 begin
@@ -806,7 +898,7 @@ EXCEPTION    WHEN TIMESTAMP THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TIMESTAMPLTZ' ;
+evaluate 'Case 74: reserved word TIMESTAMPLTZ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 TIMESTAMPLTZ EXCEPTION; 
 begin
@@ -817,7 +909,7 @@ EXCEPTION    WHEN TIMESTAMPLTZ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TIMESTAMPTZ' ;
+evaluate 'Case 75: reserved word TIMESTAMPTZ as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 TIMESTAMPTZ EXCEPTION; 
 begin
@@ -828,7 +920,7 @@ EXCEPTION    WHEN TIMESTAMPTZ THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TRUE' ;
+evaluate 'Case 76: reserved word TRUE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 TRUE EXCEPTION; 
 begin
@@ -839,7 +931,7 @@ EXCEPTION    WHEN TRUE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'USING' ;
+evaluate 'Case 77: reserved word USING as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 USING EXCEPTION; 
 begin
@@ -850,7 +942,7 @@ EXCEPTION    WHEN USING THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'VARCHAR' ;
+evaluate 'Case 78: reserved word VARCHAR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 VARCHAR EXCEPTION; 
 begin
@@ -861,7 +953,7 @@ EXCEPTION    WHEN VARCHAR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'WHEN' ;
+evaluate 'Case 79: reserved word WHEN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 WHEN EXCEPTION; 
 begin
@@ -872,7 +964,7 @@ EXCEPTION    WHEN WHEN THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'WHILE' ;
+evaluate 'Case 80: reserved word WHILE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 WHILE EXCEPTION; 
 begin
@@ -883,7 +975,7 @@ EXCEPTION    WHEN WHILE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'WORK' ;
+evaluate 'Case 81: reserved word WORK as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 WORK EXCEPTION; 
 begin
@@ -894,7 +986,7 @@ EXCEPTION    WHEN WORK THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'XOR' ;
+evaluate 'Case 82: reserved word XOR as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as 
 XOR EXCEPTION; 
 begin
@@ -905,7 +997,7 @@ EXCEPTION    WHEN XOR THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'INSERT' ;
+evaluate 'Case 83: reserved word INSERT as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as
 INSERT EXCEPTION;
 begin
@@ -916,7 +1008,7 @@ EXCEPTION    WHEN INSERT THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'TRUNCATE' ;
+evaluate 'Case 84: reserved word TRUNCATE as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as
 TRUNCATE EXCEPTION;
 begin
@@ -927,7 +1019,7 @@ EXCEPTION    WHEN TRUNCATE THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'AUTONOMOUS_TRANSACTION' ;
+evaluate 'Case 85: reserved word AUTONOMOUS_TRANSACTION as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as
 AUTONOMOUS_TRANSACTION EXCEPTION;
 begin
@@ -938,7 +1030,8 @@ EXCEPTION    WHEN AUTONOMOUS_TRANSACTION THEN
               DBMS_OUTPUT.put_line('call exception: ');
 end;
 
-select 'BEGIN' ;
+-- BEGIN opens a block, so the end lines after this create belong to its statement
+evaluate 'Case 86: reserved word BEGIN as an exception name fails to compile; result = Error:-1360';
 create or replace procedure p_var(i int) as
 BEGIN EXCEPTION;
 begin
@@ -954,6 +1047,7 @@ end;
 
 
 
+-- every case fails, so p_var does not exist and this drop fails unless a case created it by mistake
 drop procedure p_var;
 
 

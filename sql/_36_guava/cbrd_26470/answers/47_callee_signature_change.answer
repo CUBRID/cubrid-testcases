@@ -1,0 +1,255 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+    
+Case 1: w47 () calls cal47 () RETURN INT -> 1     
+
+
+===================================================
+w47()    
+1     
+
+
+===================================================
+    
+Case 2: cal47 replaced with RETURN VARCHAR -> type of a value does not match the one known at compile time     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 59) type of a value does not match the one known at compile time (hint: try recompiling this stored procedure)
+
+===================================================
+    
+Case 3: cal47 replaced with cal47 (a INT) -> cannot find method CAL47 in the executable binary     
+
+
+===================================================
+0
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 59) cannot find method CAL47 in the executable binary (hint: try recompiling this stored procedure)
+
+===================================================
+    
+Case 4: cal47 restored to RETURN INT, w47 not recompiled -> 5     
+
+
+===================================================
+0
+
+===================================================
+w47()    
+5     
+
+
+===================================================
+    
+Case 5: wct47 () calls ct47 (a INT) -> int:5     
+
+
+===================================================
+wct47()    
+int:5     
+
+
+===================================================
+    
+Case 6: ct47 replaced with ct47 (a VARCHAR) -> caught: cannot find method CT47 in the executable binary     
+
+
+===================================================
+0
+
+===================================================
+wct47()    
+caught: cannot find method CT47 in the executable binary (hint: try recompiling this stored procedure)     
+
+
+===================================================
+    
+Case 7: ALTER FUNCTION wct47 COMPILE -> vc:5     
+
+
+===================================================
+0
+
+===================================================
+wct47()    
+vc:5     
+
+
+===================================================
+    
+Case 8: ct47 dropped and created again as a procedure -> caught: cannot find executable binary of dba.ct47 (was it dropped?)     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+wct47()    
+caught: cannot find executable binary of dba.ct47 (was it dropped?)     
+
+
+===================================================
+    
+Case 9: spec-only package, function -> caught: Stored procedure execute error: no implementation in the package body     
+
+
+===================================================
+wq47()    
+caught: Stored procedure execute error: 
+  no implementation in the package body     
+
+
+===================================================
+    
+Case 10: spec-only package, procedure -> error: no implementation in the package body     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 44) Stored procedure execute error: 
+  no implementation in the package body
+
+===================================================
+    
+Case 11: after CREATE PACKAGE BODY, function -> r=101     
+
+
+===================================================
+0
+
+===================================================
+wq47()    
+r=101     
+
+
+===================================================
+    
+Case 12: after CREATE PACKAGE BODY, procedure -> success     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+Case 13: after DROP PACKAGE BODY, function -> caught: Stored procedure execute error: no implementation in the package body     
+
+
+===================================================
+0
+
+===================================================
+wq47()    
+caught: Stored procedure execute error: 
+  no implementation in the package body     
+
+
+===================================================
+    
+Case 14: after DROP PACKAGE BODY, procedure -> error: no implementation in the package body     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 44) Stored procedure execute error: 
+  no implementation in the package body
+
+===================================================
+    
+Case 15: body created again with a + 200 -> r=201     
+
+
+===================================================
+0
+
+===================================================
+wq47()    
+r=201     
+
+
+===================================================
+    
+Case 16: f removed from the package, function -> caught: Stored procedure/function dba.pq47.f does not exist     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+wq47()    
+caught: Stored procedure/function 'dba.pq47.f' does not exist.     
+
+
+===================================================
+    
+Case 17: p removed from the package, procedure -> Stored procedure/function dba.pq47.p does not exist     
+
+
+===================================================
+Error:-889
+Stored procedure execute error: 
+  (line 1, column 44) Stored procedure/function 'dba.pq47.p' does not exist.
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
