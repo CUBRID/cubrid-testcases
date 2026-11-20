@@ -503,6 +503,39 @@ count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    mi
 
 ===================================================
     
+Case 18: rownum that stops the scan below an ORDER BY, lookup in key order; the 4 rows of the smallest key     
+
+===================================================
+id    k    
+11297     60     
+61318     60     
+111339     60     
+161360     60     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.bh_t].id, [dba.bh_t].k from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) and (rownum<= ?:? ) using index [dba.bh_t].i_bh_k(+) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    k    
+11297     60     
+61318     60     
+111339     60     
+161360     60     
+
+===================================================
+    
 Case 16: partitioned table, serial scan; result = heap scan     
 
 ===================================================

@@ -29,6 +29,7 @@
  *    Case 15: correlated subquery that reads its whole range for each outer row
  *    Case 16: partitioned table, serial scan
  *    Case 17: analytic function that skips its sort on the key order: lookup in key order
+ *    Case 18: rownum that stops the scan below an ORDER BY: lookup in key order
  */
 
 drop table if exists bh_t, bh_j, bh_p;
@@ -151,6 +152,12 @@ evaluate 'Case 17: analytic function that skips its sort on the key order, looku
 select /*+ recompile no_parallel_scan */ count(*), sum(cast(r as bigint)), sum(cast(r as bigint) * mod(id, 7)), min(r), max(r) from (select id, rank() over (order by k) r from bh_t where k between 60 and 30000 and grp >= 0 using index i_bh_k(+)) x;
 show trace;
 select /*+ recompile */ count(*), sum(cast(r as bigint)), sum(cast(r as bigint) * mod(id, 7)), min(r), max(r) from (select id, rank() over (order by k) r from bh_t where k between 60 and 30000 and grp >= 0 using index none) x;
+
+
+evaluate 'Case 18: rownum that stops the scan below an ORDER BY, lookup in key order; the 4 rows of the smallest key';
+select /*+ recompile no_parallel_scan */ id, k from bh_t where k between 60 and 30000 and grp >= 0 and rownum <= 4 using index i_bh_k(+) order by id;
+show trace;
+select /*+ recompile */ id, k from bh_t where k + 0 = 60 order by id;
 
 
 evaluate 'Case 16: partitioned table, serial scan; result = heap scan';
