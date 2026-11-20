@@ -108,9 +108,9 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)=--?))
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)=-(-?)))
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)=--?) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)=-(-?)) and (inst_num()<= ?:? ) using index ta.idx_tbla_abs_b_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -575,9 +575,9 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>=--? and  abs(ta.b)<=--?), key filter: ( abs(ta.b)>= ?:? ))
+  INDEX SCAN (ta.idx_tbla_abs_b_a) (key range: ( abs(ta.b)>=-(-?) and  abs(ta.b)<=-(-?)), key filter: ( abs(ta.b)>= ?:? ))
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>=--? and  abs(ta.b)<=--?) and ( abs(ta.b)>= ?:? ) using index ta.idx_tbla_abs_b_a
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where ( abs(ta.b)>=-(-?) and  abs(ta.b)<=-(-?)) and ( abs(ta.b)>= ?:? ) using index ta.idx_tbla_abs_b_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -597,9 +597,9 @@ a    b    c    d    e
 trace    
 
 Query Plan:
-  INDEX SCAN (ta.idx_tbla_b_a) (key range: (ta.b>=--? and ta.b<=--?), key filter: (ta.b>= ?:? ))
+  INDEX SCAN (ta.idx_tbla_b_a) (key range: (ta.b>=-(-?) and ta.b<=-(-?)), key filter: (ta.b>= ?:? ))
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where (ta.b>=--? and ta.b<=--?) and (ta.b>= ?:? ) using index ta.idx_tbla_b_a
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ ta.a, ta.b, ta.c, ta.d, ta.e from [dba.tbla] ta where (ta.b>=-(-?) and ta.b<=-(-?)) and (ta.b>= ?:? ) using index ta.idx_tbla_b_a
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
