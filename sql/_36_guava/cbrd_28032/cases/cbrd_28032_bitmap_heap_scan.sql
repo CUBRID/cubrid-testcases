@@ -30,6 +30,7 @@
  *    Case 16: partitioned table, serial scan
  *    Case 17: analytic function that skips its sort on the key order: lookup in key order
  *    Case 18: rownum that stops the scan below an ORDER BY: lookup in key order
+ *    Case 19: stored function called by the block: lookup in key order
  */
 
 drop table if exists bh_t, bh_j, bh_p;
@@ -159,6 +160,20 @@ evaluate 'Case 18: rownum that stops the scan below an ORDER BY, lookup in key o
 select /*+ recompile no_parallel_scan */ id, k from bh_t where k between 60 and 30000 and grp >= 0 and rownum <= 4 using index i_bh_k(+) order by id;
 show trace;
 select /*+ recompile */ id, k from bh_t where k + 0 = 60 order by id;
+
+
+evaluate 'Case 19: stored function called by the block, lookup in key order; result = heap scan';
+create or replace function bh_f (i int) return int as
+begin
+  return i;
+end;
+-- the same scan without the function is a bitmap heap scan
+select /*+ recompile no_parallel_scan */ count(*), sum(cast(id as bigint)) from bh_t where k between 60 and 3000 and grp >= 0 using index i_bh_k(+);
+show trace;
+select /*+ recompile no_parallel_scan */ count(*), sum(cast(bh_f (id) as bigint)) from bh_t where k between 60 and 3000 and grp >= 0 using index i_bh_k(+);
+show trace;
+select /*+ recompile */ count(*), sum(cast(id as bigint)) from bh_t where k + 0 between 60 and 3000 and grp >= 0 using index none;
+drop function bh_f;
 
 
 evaluate 'Case 16: partitioned table, serial scan; result = heap scan';
