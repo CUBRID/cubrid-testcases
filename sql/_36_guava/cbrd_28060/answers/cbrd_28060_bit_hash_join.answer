@@ -1,0 +1,130 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+    
+Case 1: BIT(8) against BIT(16): no pair, as the nested loop join     
+
+===================================================
+res    
+PASS     
+
+===================================================
+    
+Case 2: VARBIT(8) against VARBIT(16): the pair of equal bits, as the nested loop join     
+
+===================================================
+res    
+PASS     
+
+===================================================
+    
+Case 3: an INT key and a BIT(8) against BIT(16) key: no pair, as the nested loop join     
+
+===================================================
+res    
+PASS     
+
+===================================================
+    
+Case 4: trace: Cases 1 to 3 run as a hash join (HASHJOIN)     
+
+===================================================
+0
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_short] x, [dba.hb_long] y where x.cb=y.cb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_vshort] x, [dba.hb_vlong] y where x.cb=y.cb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_vlong), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_vshort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_short] x, [dba.hb_long] y where x.ca=y.ca and x.cb=y.cb
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.hb_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0

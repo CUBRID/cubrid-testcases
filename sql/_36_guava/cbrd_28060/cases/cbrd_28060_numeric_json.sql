@@ -6,8 +6,8 @@
  *  hash. Each hash join is followed by its nested loop join twin, and the two results must match
  *  row by row. SHOW TRACE shows HASHJOIN. A NUMERIC without a precision keeps the scale of each
  *  value, up to 252 decimal places, and the same value written with more decimal places than 40
- *  must get one hash too. The last cases check that JSON keys, which the change does not touch,
- *  still join and group as the twins do.
+ *  must get one hash too. The last cases check that JSON keys, which hash as their body text or the
+ *  SQL value they convert to, join and group as the twins do.
  *
  *  Coverage:
  *    Case 1 to 55:  NUMERIC - hash join of each pair of the tn_<n> tables returns the pairs of the nested loop join.
@@ -509,7 +509,7 @@ show trace;
 set trace off;
 select /*+ no_hash_aggregate */ min(ca), count(*) from tf_xy group by cb order by 1, 2;
 
--- JSON keys, whose hash the change leaves as it was
+-- JSON keys of one table: equal texts, '{"a": 1}' and '{"a":1}' of one body, '{"a":1.0}' of another
 DROP TABLE IF EXISTS tc, tb, ta;
 CREATE TABLE ta (ca INT, cb JSON);
 INSERT INTO ta VALUES (1, '{"a":1}'), (2, '{"a":1}'), (3, '[1,2]'), (4, '"x"'), (5, '"x"'), (6, 'true'), (7, NULL), (8, '{"a": 1}'), (9, '{"a":1.0}');
