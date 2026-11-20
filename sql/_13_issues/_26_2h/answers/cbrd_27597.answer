@@ -232,6 +232,7 @@ Query Plan:
 
 Trace Statistics:
   UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     CTE (non_recursive_part)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -344,8 +345,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_src), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
