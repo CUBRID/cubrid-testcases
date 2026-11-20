@@ -1,0 +1,932 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: GROUP BY + window function in two UNION ALL branches -> correct values and unique hidden column names     
+
+===================================================
+grp    sum(val)    running_total    
+g1     30     30     
+g1     300     300     
+g2     70     100     
+g2     300     600     
+g3     50     150     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp)
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?, a_?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 2: two window functions in the same branch (row_number, rank) -> each must get its own unique hidden column     
+
+===================================================
+grp    s    rn    rk    
+g1     30     1     3     
+g1     300     1     1     
+g2     70     3     1     
+g2     300     2     2     
+g3     50     2     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, row_number() over (order by ?, ?), rank() over (order by ? desc , ?) from (select [dba.ta].grp, sum([dba.ta].val) as [s] from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].grp, sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp)
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select a_?, a_?, row_number() over (order by ?, ?), rank() over (order by ? desc , ?) from (select [dba.tb].grp, sum([dba.tb].val) as [s] from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 3: GROUP BY + window function combined via INTERSECT -> the fix must cover INTERSECT too     
+
+===================================================
+grp    sum(val)    running_total    
+g1     30     30     
+g2     70     100     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 4: GROUP BY + window function combined via EXCEPT -> the fix must cover EXCEPT too     
+
+===================================================
+grp    sum(val)    running_total    
+g3     50     150     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where [dba.ta].grp<>'g?' group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+
+Trace Statistics:
+  DIFFERENCE (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: 3-way UNION ALL, GROUP BY + window function in every branch -> hidden column uniqueness must hold across 3+ branches     
+
+===================================================
+grp    sum(val)    running_total    
+g1     30     30     
+g1     300     300     
+g2     70     70     
+g2     70     100     
+g2     300     600     
+g3     50     120     
+g3     50     150     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp)
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where ([dba.ta].val> ?:? ) group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] where ([dba.ta].val> ?:? ) group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 6: ORDER BY on the whole set-operation result must bind to the correct (renamed) window-function column     
+
+===================================================
+grp    s    running_total    
+g2     300     600     
+g1     300     300     
+g3     50     150     
+g2     70     100     
+g1     30     30     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: (select [dba.ta].grp, sum([dba.ta].val), sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp)
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.ta].grp, sum([dba.ta].val) as [s], sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select [dba.tb].grp, sum([dba.tb].val), sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp)
+
+  TABLE SCAN (dba.tb)
+
+  rewritten query: select a_?, a_?, sum(a_?) over (order by ?) from (select [dba.tb].grp, sum([dba.tb].val) as [s], sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?, a_?)
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.grp, x.s, x.running_total from (select a_?, a_?, sum(a_?) over (order by ?) as [running_total] from (select [dba.ta].grp, sum([dba.ta].val) as [s], sum([dba.ta].val) from [dba.ta] [dba.ta] group by [dba.ta].grp) [dba.ta] (a_?, a_?, a_?) union all select a_?, a_?, sum(a_?) over (order by ?) as [running_total] from (select [dba.tb].grp, sum([dba.tb].val) as [s], sum([dba.tb].val) from [dba.tb] [dba.tb] group by [dba.tb].grp) [dba.tb] (a_?, a_?, a_?)) x (grp, s, running_total) order by ? desc 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 7: original report repro, standalone - branch-level ORDER BY on the grouped column, no set operation yet     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select count([dba.td].ts), [dba.td].id, count([dba.td].id) from [dba.td] [dba.td] group by [dba.td].id)
+
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: Case 7 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select count([dba.td].ts), [dba.td].id, count([dba.td].id) from [dba.td] [dba.td] group by [dba.td].id)
+
+  SORT (order by)
+    TABLE SCAN (dba.td)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_? from (select count([dba.td].ts) as [out_a], [dba.td].id, count([dba.td].id) as [out_c] from [dba.td] [dba.td] group by [dba.td].id) [dba.td] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.te)
+
+  rewritten query: select  cast([dba.te].val as bigint), [dba.te].val,  cast([dba.te].val as bigint) from [dba.te] [dba.te] where ([dba.te].val< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+4
+===================================================
+0
+===================================================
+    
+Case 9: hidden column from an expression ORDER BY key (ca + 1), standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: Case 9 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_?+? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 11: two expression ORDER BY keys (ca + 1, ca * 2) in the same branch, standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 12: Case 11 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_?+?, a_?*? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?, ?) d? (a_?, a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 13: branch-level ORDER BY combined with LIMIT, standalone     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 14: Case 13 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    
+1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, dense_rank() over (order by ?), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_? from (select a_?, dense_rank() over (order by ?) as [out_b], a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_c] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ? for orderby_num()<= ?:? ) d? (a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 15: branch-level ORDER BY plus two window functions in the same branch, standalone     
+
+===================================================
+out_a    out_b    out_c    out_d    
+1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: select a_?, row_number() over (order by ?), dense_rank() over (order by ? desc ), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 16: Case 15 combined via UNION with an always-empty second branch     
+
+===================================================
+out_a    out_b    out_c    out_d    
+1     1     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select count([dba.tf].cb), [dba.tf].ca, count([dba.tf].ca) from [dba.tf] [dba.tf] group by [dba.tf].ca)
+
+  SORT (order by)
+    TABLE SCAN (dba.tf)
+
+  rewritten query: (select a_?, row_number() over (order by ?), dense_rank() over (order by ? desc ), a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?)
+
+  TABLE SCAN (d?)
+
+  rewritten query: select d?.a_?, d?.a_?, d?.a_?, d?.a_? from (select a_?, row_number() over (order by ?) as [out_b], dense_rank() over (order by ? desc ) as [out_c], a_?, a_? from (select count([dba.tf].cb) as [out_a], [dba.tf].ca, count([dba.tf].ca) as [out_d] from [dba.tf] [dba.tf] group by [dba.tf].ca) [dba.tf] (a_?, a_?, a_?) order by ?) d? (a_?, a_?, a_?, a_?, a_?)
+
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select  cast([dba.tg].cd as bigint), [dba.tg].cd, [dba.tg].cd,  cast([dba.tg].cd as bigint) from [dba.tg] [dba.tg] where ([dba.tg].cd< ?:? )
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 17: PARTITION BY window in two UNION ALL branches -- partition-key hidden column stays unique per branch     
+
+===================================================
+cat    grp    sum(val)    rt    
+A     g1     5     5     
+A     g1     30     30     
+A     g2     30     60     
+B     g1     100     100     
+B     g2     7     7     
+B     g2     250     350     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tp)
+
+  rewritten query: (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp)
+
+  TABLE SCAN (dba.tp)
+
+  rewritten query: select a_?, a_?, a_?, sum(a_?) over (partition by ? order by ?) from (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp) [dba.tp] (a_?, a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tq)
+
+  rewritten query: (select [dba.tq].cat, [dba.tq].grp, sum([dba.tq].val), sum([dba.tq].val) from [dba.tq] [dba.tq] group by [dba.tq].cat, [dba.tq].grp)
+
+  TABLE SCAN (dba.tq)
+
+  rewritten query: select a_?, a_?, a_?, sum(a_?) over (partition by ? order by ?) from (select [dba.tq].cat, [dba.tq].grp, sum([dba.tq].val), sum([dba.tq].val) from [dba.tq] [dba.tq] group by [dba.tq].cat, [dba.tq].grp) [dba.tq] (a_?, a_?, a_?, a_?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 18: two PARTITION BY window functions in the same branch (row_number, rank) -- each partition window gets its own unique hidden columns     
+
+===================================================
+cat    grp    s    rn    rk    
+A     g1     5     1     1     
+A     g1     30     1     1     
+A     g2     30     2     2     
+B     g1     100     1     2     
+B     g2     7     1     1     
+B     g2     250     2     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tp)
+
+  rewritten query: (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val) from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp)
+
+  TABLE SCAN (dba.tp)
+
+  rewritten query: select a_?, a_?, a_?, row_number() over (partition by ? order by ?, ?), rank() over (partition by ? order by ? desc , ?) from (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val) as [s] from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp) [dba.tp] (a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tq)
+
+  rewritten query: (select [dba.tq].cat, [dba.tq].grp, sum([dba.tq].val) from [dba.tq] [dba.tq] group by [dba.tq].cat, [dba.tq].grp)
+
+  TABLE SCAN (dba.tq)
+
+  rewritten query: select a_?, a_?, a_?, row_number() over (partition by ? order by ?, ?), rank() over (partition by ? order by ? desc , ?) from (select [dba.tq].cat, [dba.tq].grp, sum([dba.tq].val) as [s] from [dba.tq] [dba.tq] group by [dba.tq].cat, [dba.tq].grp) [dba.tq] (a_?, a_?, a_?)
+
+
+Trace Statistics:
+  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 19: PARTITION BY window combined via INTERSECT -- partition-key hidden columns unique across set-op branches     
+
+===================================================
+cat    grp    sum(val)    rt    
+A     g1     30     30     
+A     g2     30     60     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tp)
+
+  rewritten query: (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp)
+
+  TABLE SCAN (dba.tp)
+
+  rewritten query: select a_?, a_?, a_?, sum(a_?) over (partition by ? order by ?) from (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] group by [dba.tp].cat, [dba.tp].grp) [dba.tp] (a_?, a_?, a_?, a_?)
+
+  SORT (group by)
+    TABLE SCAN (dba.tp)
+
+  rewritten query: (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] where [dba.tp].cat= ?:?  group by [dba.tp].cat, [dba.tp].grp)
+
+  TABLE SCAN (dba.tp)
+
+  rewritten query: select a_?, a_?, a_?, sum(a_?) over (partition by ? order by ?) from (select [dba.tp].cat, [dba.tp].grp, sum([dba.tp].val), sum([dba.tp].val) from [dba.tp] [dba.tp] where [dba.tp].cat= ?:?  group by [dba.tp].cat, [dba.tp].grp) [dba.tp] (a_?, a_?, a_?, a_?)
+
+
+Trace Statistics:
+  INTERSECTION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (uncorrelated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+  ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

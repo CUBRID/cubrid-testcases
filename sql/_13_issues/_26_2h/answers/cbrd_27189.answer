@@ -1,0 +1,700 @@
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+5
+
+===================================================
+0
+
+===================================================
+40
+
+===================================================
+0
+
+===================================================
+    
+case 01 : DECODE () on the numbering column of an inline view -- NOT merged     
+
+
+===================================================
+result    
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode([__t?].rn, ?, [__t?].[name],  cast('WRONG' as varchar)) from (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] ([name], rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 02 : the same shape written with a CTE -- NOT merged     
+
+
+===================================================
+result    
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? 
+
+  TABLE SCAN (dba.src)
+
+  rewritten query: with src([name], rn) as (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )select decode([dba.src].rn, ?, [dba.src].[name],  cast('WRONG' as varchar)) from [dba.src] [dba.src]
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 03 : the same shape through a view -- NOT merged     
+
+
+===================================================
+0
+
+===================================================
+result    
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.vsort)
+
+  rewritten query: (select [dba.vsort].[name], (orderby_num()) from [dba.tsort] [dba.vsort] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (dba.vsort)
+
+  rewritten query: select decode([dba.vsort].rn, ?, [dba.vsort].[name],  cast('WRONG' as varchar)) from (select [dba.vsort].[name], (orderby_num()) from [dba.tsort] [dba.vsort] order by ? for (orderby_num())<= ?:? ) [dba.vsort] ([name], rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 04 : bare reference of the numbering column -- still merged     
+
+
+===================================================
+result    
+1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.vsort)
+
+  rewritten query: select (orderby_num()), [dba.vsort].[name] from [dba.tsort] [dba.vsort] order by ? for (orderby_num())<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+0
+
+===================================================
+    
+case 05a : CASE reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select case when [__t?].rn=? then [__t?].[name] else  cast('WRONG' as varchar) end from (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] ([name], rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 05b : arithmetic reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].rn+ cast(? as bigint) from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 05c : NVL reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select nvl([__t?].rn, ?) from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 05d : concatenation reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+x1     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select  cast('x' as varchar)|| cast([__t?].rn as varchar) from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 06 : more than one row, bare and embedded reference together -- NOT merged     
+
+
+===================================================
+rn    result    
+1     first     
+2     other     
+3     other     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (src)
+
+  rewritten query: select src.rn, decode(src.rn, ?, 'first', 'other') from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) src (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 07 : the numbering column is not exposed -- still merged     
+
+
+===================================================
+result    
+A     
+B     
+C     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (src)
+
+  rewritten query: select  upper(src.[name]), src.[name] from [dba.tsort] src order by ? for (orderby_num())<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 08 : the sort is resolved by an index -- NOT merged     
+
+
+===================================================
+result    
+e     
+
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (__t?.pk_tsort_code) ()
+  skip order by: true
+
+  rewritten query: (select [__t?].[name], (orderby_num()), [__t?].code from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode([__t?].rn, ?, [__t?].[name],  cast('WRONG' as varchar)) from (select [__t?].[name], (orderby_num()), [__t?].code from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] ([name], rn, code)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.tsort.pk_tsort_code), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+
+===================================================
+    
+case 09 : CAST () reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+1     
+2     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (src)
+
+  rewritten query: select  cast(src.rn as varchar) from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) src (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 10 : a subquery of the select list reads the numbering column -- NOT merged     
+
+
+===================================================
+result    
+5     
+0     
+
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tsort)
+
+  rewritten query: (select count(*) from [dba.tsort] [dba.tsort] where src.rn= ?:? )
+
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  TABLE SCAN (src)
+
+  rewritten query: select (select count(*) from [dba.tsort] [dba.tsort] where src.rn= ?:? ) from (select (orderby_num()), [__t?].[name] from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) src (rn, [name])
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+
+===================================================
+    
+case 11 : GROUPBY_NUM () read by an expression -- NOT merged     
+
+
+===================================================
+result    
+FIRST     
+OTHER     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.tpage)
+
+  rewritten query: (select groupby_num(), [dba.tpage].grp from [dba.tpage] [dba.tpage] group by [dba.tpage].grp order by ?)
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode([__t?].gn, ?, 'FIRST', 'OTHER') from (select groupby_num() as [gn], [dba.tpage].grp from [dba.tpage] [dba.tpage] group by [dba.tpage].grp order by ?) [__t?] (gn, grp) where ([__t?].gn<= ?:? )
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tpage), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+
+===================================================
+    
+case 12 : ORDERBY_NUM () written explicitly -- NOT merged     
+
+
+===================================================
+result    
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tsort)
+
+  rewritten query: (select [dba.tsort].[name], (orderby_num()) from [dba.tsort] [dba.tsort] order by ? for orderby_num()<= ?:? )
+
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode([__t?].rn, ?, [__t?].[name],  cast('WRONG' as varchar)) from (select [dba.tsort].[name], (orderby_num()) as [rn] from [dba.tsort] [dba.tsort] order by ? for orderby_num()<= ?:? ) [__t?] ([name], rn)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 13 : ROWNUM of a subquery which has no ORDER BY -- still merged     
+
+
+===================================================
+result    
+ONE     
+OTHER     
+OTHER     
+
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode((rownum), ?, 'ONE', 'OTHER') from [dba.tsort] [__t?] where ((rownum)<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+case 14 : INST_NUM () inside an expression -- still merged     
+
+
+===================================================
+result    
+n001     
+
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (__t?)
+
+  rewritten query: select decode((inst_num()), ?, [__t?].[name],  cast('WRONG' as varchar)) from [dba.tpage] [__t?] where (inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tpage), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+
+===================================================
+    
+case 15 : ORDER BY on the numbering column -- NOT merged     
+
+
+===================================================
+result    
+c     
+b     
+a     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].[name], [__t?].rn from (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] ([name] as [result], rn) order by ? desc 
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 16 : GROUP BY / HAVING on the numbering column -- NOT merged     
+
+
+===================================================
+result    
+b     
+c     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? )
+
+  SORT (group by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select max([__t?].[name]) from (select [__t?].[name], (orderby_num()) from [dba.tsort] [__t?] order by ? for (orderby_num())<= ?:? ) [__t?] ([name], rn) where ([__t?].rn> ?:? ) group by [__t?].rn
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tsort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+    
+case 17 : the numbering column is read only by WHERE -- still merged, folded into TOP-N     
+
+
+===================================================
+result    
+n007     
+n008     
+n009     
+
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (__t?)
+
+  rewritten query: select [__t?].[name] from [dba.tpage] [__t?] order by ? for (orderby_num())>= ?:?  and (orderby_num())< ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tpage), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+0
+
