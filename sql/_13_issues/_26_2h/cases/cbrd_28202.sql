@@ -8,7 +8,8 @@
  *  an UPDATE that points a child at the new parent failed, and a DELETE of a parent that a new
  *  child refers to passed its check and left the child to fail when it was flushed.
  *  The fix flushes the workspace before a trigger condition or action runs, except while a
- *  client UPDATE of more than one row defers its unique check (Case 7 and Case 8).
+ *  client UPDATE of more than one row changes a unique key and so keeps its rows until the
+ *  unique check at its end (Case 7, Case 8, Case 12 and Case 13).
  *
  *  An action that fails is reported as error -528 (error evaluating action), whatever its cause,
  *  so the cases that expect a failure show what the action left with a SELECT after it.
@@ -24,11 +25,14 @@
  *    Case 8:  the same with a trigger with a condition only
  *    Case 9:  a BEFORE INSERT action inserts a child of the row not inserted yet - error -528, nothing changed
  *    Case 10: a BEFORE UPDATE action inserts a child of the row being updated
+ *    Case 11: an UPDATE of two rows that changes no unique key; an action DELETEs the parent that the rows left
+ *    Case 12: the same with the primary key changed too - the rows wait for the end of the statement, error -528, nothing changed
+ *    Case 13: UPDATE k = k + 1 of a subclass whose unique key is defined on its superclass, with a row trigger with an action
  */
 
 autocommit off;
 
-drop table if exists t28202_ch, t28202_p, t28202_t, t28202_log;
+drop table if exists t28202_ch, t28202_p, t28202_t, t28202_log, t28202_sub, t28202_s;
 commit;
 
 
@@ -163,6 +167,55 @@ select cid, pid from t28202_ch order by cid;
 commit;
 drop trigger trg28202_p;
 drop table t28202_ch, t28202_p;
+commit;
+
+
+-- Case 11 and Case 12: the action of child 1 deletes parent 1, which child 1 referred to before the UPDATE
+evaluate 'Case 11: an UPDATE of two rows that changes no unique key; an action DELETE of the parent the rows left; result = parent 1 is deleted';
+create table t28202_p (id int primary key);
+create table t28202_ch (cid int primary key, pid int, foreign key (pid) references t28202_p (id));
+insert into t28202_p values (1), (2), (3);
+insert into t28202_ch values (1, 1), (2, 3);
+create trigger trg28202_ch after update on t28202_ch if obj.cid = 1 execute delete from t28202_p where id = 1;
+commit;
+update t28202_ch set pid = 2 where cid in (1, 2);
+select id from t28202_p order by id;
+select cid, pid from t28202_ch order by cid;
+commit;
+drop trigger trg28202_ch;
+drop table t28202_ch, t28202_p;
+commit;
+
+
+evaluate 'Case 12: the same with the primary key changed too, so the rows wait for the end of the statement; result = error -528 from the action, nothing changed';
+create table t28202_p (id int primary key);
+create table t28202_ch (cid int primary key, pid int, foreign key (pid) references t28202_p (id));
+insert into t28202_p values (1), (2), (3);
+insert into t28202_ch values (1, 1), (2, 3);
+create trigger trg28202_ch after update on t28202_ch if obj.cid = 11 execute delete from t28202_p where id = 1;
+commit;
+update t28202_ch set cid = cid + 10, pid = 2 where cid in (1, 2);
+select id from t28202_p order by id;
+select cid, pid from t28202_ch order by cid;
+commit;
+drop trigger trg28202_ch;
+drop table t28202_ch, t28202_p;
+commit;
+
+
+evaluate 'Case 13: UPDATE k = k + 1 of a subclass whose unique key is defined on its superclass; result = keys 2 and 3, two log rows';
+create table t28202_s (id int primary key, k int unique);
+create table t28202_sub under t28202_s (x int);
+create table t28202_log (id int, k int);
+insert into t28202_sub (id, k, x) values (1, 1, 0), (2, 2, 0);
+create trigger trg28202_sub after update on t28202_sub execute insert into t28202_log values (obj.id, obj.k);
+commit;
+update t28202_sub set k = k + 1;
+select id, k from t28202_sub order by id;
+select id, k from t28202_log order by id;
+commit;
+drop trigger trg28202_sub;
+drop table t28202_sub, t28202_s, t28202_log;
 commit;
 
 autocommit on;
