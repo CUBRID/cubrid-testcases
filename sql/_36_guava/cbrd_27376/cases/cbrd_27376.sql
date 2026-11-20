@@ -10,15 +10,21 @@
  *  subquery stays nested. A statement that must stay nested checks its result only: unnesting it would
  *  change the result.
  *
- *  Base data: ta.ca 1, 2, 3 / tb (ca, cb) (1, 200), (2, 300), (3, 400) / tc.ca 200, 200, 400.
+ *  Since CBRD-27929 (engine PR #8404) the planner weighs the derived table against the subquery run once
+ *  per outer row and keeps the cheaper form. ta holds 1000 rows so that the derived table, built once,
+ *  costs less than 1000 runs of the subquery. How ta then joins the derived table (the derived table read
+ *  first without its duplicates as in CBRD-27397, or a hash join) is chosen by cost as well.
+ *
+ *  Base data: ta.ca 1 to 1000 / tb (ca, cb) (1, 200), (2, 300), (3, 400) / tc.ca 200, 200, 400.
  *  ta.ca 1 and 3 have a match through tb and tc, ta.ca 1 twice. ta.ca 2 has a tb row but no tc row.
+ *  ta.ca 4 to 1000 have no tb row.
  *  ta.ca and tb.ca are NOT NULL for the NOT IN of Case 3, the index on tc.ca is there for Case 8.
  *
  *  Coverage:
  *    Case 1:  EXISTS / NOT EXISTS over two tables -> SEMI / ANTI JOIN with a derived table inner
  *    Case 2:  NOT EXISTS whose table joined to the outer query is the second in the subquery FROM: still unnested
- *    Case 3:  IN / NOT IN over two tables: the IN equality joins the ON, the derived table has no DISTINCT, and
- *             NOT IN on NOT NULL columns becomes an ANTI JOIN
+ *    Case 3:  IN / NOT IN over two tables: the IN equality joins the ON, the derived table keeps the DISTINCT
+ *             of the IN subquery (CBRD-27929), and NOT IN on NOT NULL columns becomes an ANTI JOIN
  *    Case 4:  NOT IN on a column that may be NULL stays nested: an ANTI JOIN would return every outer row
  *    Case 5:  a correlated IN whose condition on ta reads tc: the condition joins the ON and the derived table
  *             selects tb.ca and tc.ca
@@ -35,6 +41,7 @@ drop table if exists ta, tb, tc, te, tf, tg, th, t_big;
 
 create table ta (ca int not null);
 insert into ta values (1), (2), (3);
+insert into ta select level + 3 from db_root connect by level <= 997;
 create table tb (ca int not null, cb int);
 insert into tb values (1, 200), (2, 300), (3, 400);
 create table tc (ca int);

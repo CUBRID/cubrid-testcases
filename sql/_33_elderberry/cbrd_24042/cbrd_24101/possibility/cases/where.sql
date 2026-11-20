@@ -19,7 +19,7 @@ VALUES (1,1),(2,2),(3,3);
 --where subquery
 SELECT /*+ recompile */ aa.col_a
 FROM   t_a aa
-WHERE  aa.col_a IN (SELECT /*+ recompile */ a.col_a
+WHERE  aa.col_a IN (SELECT /*+ recompile no_unnest */ a.col_a
                    FROM   (SELECT *
                            FROM   (SELECT *
                                    FROM   (SELECT *
@@ -35,7 +35,7 @@ WHERE  aa.col_a IN (SELECT /*+ recompile */ a.col_a
                    AND a.col_a = aa.col_a);
 SELECT /*+ recompile */ aa.col_a
 FROM   t_a aa
-WHERE  EXISTS (SELECT /*+ recompile */ a.col_a
+WHERE  EXISTS (SELECT /*+ recompile no_unnest */ a.col_a
                FROM   (SELECT *
                        FROM   (SELECT *
                                FROM   (SELECT *
@@ -51,7 +51,7 @@ WHERE  EXISTS (SELECT /*+ recompile */ a.col_a
                AND a.col_a = aa.col_a);
 SELECT /*+ recompile */ aa.col_a
 FROM   t_a aa
-WHERE  aa.col_a IN (SELECT /*+ recompile */ a.col_a
+WHERE  aa.col_a IN (SELECT /*+ recompile no_unnest */ a.col_a
                     FROM   (SELECT *
                             FROM   (SELECT *
                                     FROM   (SELECT *
