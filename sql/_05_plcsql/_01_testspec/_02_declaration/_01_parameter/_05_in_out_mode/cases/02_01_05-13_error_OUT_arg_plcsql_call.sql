@@ -1,7 +1,7 @@
 --+ server-message on
 -- error: OUT and IN OUT arguments of calls in PL/CSQL (CBRD-25140)
 -- A static call still updates the variable. EXECUTE IMMEDIATE with a constant fails, and an exception
--- handler catches it. EXECUTE IMMEDIATE ... USING is not changed: the variable keeps its value.
+-- handler catches it. EXECUTE IMMEDIATE ... USING fails when the value goes to an OUT parameter (CBRD-28189).
 
 create or replace procedure t25140_out (a OUT int) as begin a := 7; end;
 create or replace procedure t25140_inout (a INOUT int) as begin a := nvl (a, -1) + 100; end;

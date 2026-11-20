@@ -3,6 +3,7 @@
 --This issue occurs due to issue CBRD-25140.
 --Currently it is processed normally.
 --Once the above issue is resolved, any errors that occur will be handled normally.
+--CBRD-28189: now an error.
 
 --The TC had a specification change related to the CBRD-25011 issue.
 --“OUT” cannot be used in the out parameter in the “execute immediate” statement.
