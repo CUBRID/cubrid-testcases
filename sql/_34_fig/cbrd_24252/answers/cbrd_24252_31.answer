@@ -33,20 +33,27 @@ max(c.col_a)    max(c.col_b)
 trace    
 
 Query Plan:
-  SORT (order by)
-    SORT (group by)
-      NESTED LOOPS (inner join)
-        TABLE SCAN (c)
-        INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  INDEX SCAN (c.fk_t_child_parent_col_a) ()
+  group by nosort: true
 
-  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a order by ?
+  rewritten query: (select c.parent_col_a, max(c.col_b), max(c.col_a) from [dba.t_child] c where c.col_b= ?:?  group by c.parent_col_a)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (gbp_?)
+      INDEX SCAN (p.pk_t_parent_col_a) (key range: gbp_?.gbp_a_?=p.col_a, covered: true)
+
+  rewritten query: select gbp_?.gbp_a_?, gbp_?.gbp_a_? from (select c.parent_col_a, max(c.col_b), max(c.col_a) from [dba.t_child] c where c.col_b= ?:?  group by c.parent_col_a) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?), [dba.t_parent] p where gbp_?.gbp_a_?=p.col_a order by ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_parent.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_child.fk_t_child_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -57,20 +64,27 @@ max(c.col_a)    max(c.col_b)
 trace    
 
 Query Plan:
-  SORT (order by)
-    SORT (group by)
-      NESTED LOOPS (inner join)
-        TABLE SCAN (c)
-        INDEX SCAN (p.pk_t_parent_col_a) (key range: c.parent_col_a=p.col_a, covered: true)
+  INDEX SCAN (c.fk_t_child_parent_col_a) ()
+  group by nosort: true
 
-  rewritten query: select max(c.col_a), max(c.col_b) from [dba.t_child] c, [dba.t_parent] p where c.parent_col_a=p.col_a and c.col_b= ?:?  group by p.col_a order by ?
+  rewritten query: (select c.parent_col_a, max(c.col_b), max(c.col_a) from [dba.t_child] c where c.col_b= ?:?  group by c.parent_col_a)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (gbp_?)
+      INDEX SCAN (p.pk_t_parent_col_a) (key range: gbp_?.gbp_a_?=p.col_a, covered: true)
+
+  rewritten query: select gbp_?.gbp_a_?, gbp_?.gbp_a_? from (select c.parent_col_a, max(c.col_b), max(c.col_a) from [dba.t_child] c where c.col_b= ?:?  group by c.parent_col_a) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?), [dba.t_parent] p where gbp_?.gbp_a_?=p.col_a order by ?
+
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (index: dba.t_parent.pk_t_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
-      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_child.fk_t_child_parent_col_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
      
 
 ===================================================
