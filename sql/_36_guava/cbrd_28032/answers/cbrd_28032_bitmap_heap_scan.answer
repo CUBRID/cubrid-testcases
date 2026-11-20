@@ -564,6 +564,54 @@ id    k
 
 ===================================================
     
+Case 19: stored function called by the block, lookup in key order; result = heap scan     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(id as bigint))    
+11764     1167964254     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].id as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(bh_f(id) as bigint))    
+11764     1167964254     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>=? and [dba.bh_t].k<=?))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_f]([dba.bh_t].id) as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>=? and [dba.bh_t].k<=?) and ([dba.bh_t].grp>=?) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+11764     1167964254     
+
+===================================================
+0
+===================================================
+    
 Case 16: partitioned table, serial scan; result = heap scan     
 
 ===================================================
