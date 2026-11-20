@@ -1,0 +1,372 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+120
+===================================================
+0
+===================================================
+120
+===================================================
+0
+===================================================
+    
+Case 1: utf8_de_exp_ai_ci - hash GROUP BY within the hash table returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     4     
+4     2     
+6     4     
+10     2     
+12     4     
+16     2     
+18     4     
+22     2     
+24     4     
+28     2     
+30     4     
+34     2     
+36     4     
+40     2     
+42     4     
+46     2     
+48     4     
+52     2     
+54     4     
+58     2     
+60     4     
+64     2     
+66     4     
+70     2     
+72     4     
+76     2     
+78     4     
+82     2     
+84     4     
+88     2     
+90     4     
+94     2     
+96     4     
+100     2     
+102     4     
+106     2     
+108     4     
+112     2     
+114     4     
+118     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ PARALLEL(?) */ min([dba.tb].ca), count(*) from [dba.tb] [dba.tb] group by [dba.tb].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     4     
+4     2     
+6     4     
+10     2     
+12     4     
+16     2     
+18     4     
+22     2     
+24     4     
+28     2     
+30     4     
+34     2     
+36     4     
+40     2     
+42     4     
+46     2     
+48     4     
+52     2     
+54     4     
+58     2     
+60     4     
+64     2     
+66     4     
+70     2     
+72     4     
+76     2     
+78     4     
+82     2     
+84     4     
+88     2     
+90     4     
+94     2     
+96     4     
+100     2     
+102     4     
+106     2     
+108     4     
+112     2     
+114     4     
+118     2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+    
+Case 2: utf8_de_exp_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+6000     72000     45000000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), min([dba.tb].ca) from [dba.tb] [dba.tb] group by [dba.tb].cb)
+
+  TABLE SCAN (g)
+
+  rewritten query: select count(*), sum(g.cnt), sum(g.ca_min) from (select /*+ PARALLEL(?) */ count(*) as [cnt], min([dba.tb].ca) as [ca_min] from [dba.tb] [dba.tb] group by [dba.tb].cb) g (cnt, ca_min)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, hash merge partitions: ? (levels: ?, sorted parts: ?), groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+6000     72000     45000000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+    
+Case 3: utf8_de_exp - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+15000     72000     130501500     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), min([dba.tb].ca) from [dba.tb] [dba.tb] group by [dba.tb].cb)
+
+  TABLE SCAN (g)
+
+  rewritten query: select count(*), sum(g.cnt), sum(g.ca_min) from (select /*+ PARALLEL(?) */ count(*) as [cnt], min([dba.tb].ca) as [ca_min] from [dba.tb] [dba.tb] group by [dba.tb].cb) g (cnt, ca_min)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, hash merge partitions: ? (levels: ?, sorted parts: ?), groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+15000     72000     130501500     
+
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+    
+Case 4: utf8_fr_exp_ab - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+15000     72000     130501500     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), min([dba.tb].ca) from [dba.tb] [dba.tb] group by [dba.tb].cb)
+
+  TABLE SCAN (g)
+
+  rewritten query: select count(*), sum(g.cnt), sum(g.ca_min) from (select /*+ PARALLEL(?) */ count(*) as [cnt], min([dba.tb].ca) as [ca_min] from [dba.tb] [dba.tb] group by [dba.tb].cb) g (cnt, ca_min)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, hash merge partitions: ? (levels: ?, sorted parts: ?), groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+15000     72000     130501500     
+
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+    
+Case 5: utf8_gen_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+12000     72000     125997000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), min([dba.tb].ca) from [dba.tb] [dba.tb] group by [dba.tb].cb)
+
+  TABLE SCAN (g)
+
+  rewritten query: select count(*), sum(g.cnt), sum(g.ca_min) from (select /*+ PARALLEL(?) */ count(*) as [cnt], min([dba.tb].ca) as [ca_min] from [dba.tb] [dba.tb] group by [dba.tb].cb) g (cnt, ca_min)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, hash merge partitions: ? (levels: ?, sorted parts: ?), groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+12000     72000     125997000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+72000
+===================================================
+0
+===================================================
+    
+Case 6: utf8_bin - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+18000     72000     162009000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.tb)
+
+  rewritten query: (select /*+ PARALLEL(?) */ count(*), min([dba.tb].ca) from [dba.tb] [dba.tb] group by [dba.tb].cb)
+
+  TABLE SCAN (g)
+
+  rewritten query: select count(*), sum(g.cnt), sum(g.ca_min) from (select /*+ PARALLEL(?) */ count(*) as [cnt], min([dba.tb].ca) as [ca_min] from [dba.tb] [dba.tb] group by [dba.tb].cb) g (cnt, ca_min)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: partial, sort: false, hash merge partitions: ? (levels: ?, sorted parts: ?), groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum(cnt)    sum(ca_min)    
+18000     72000     162009000     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0

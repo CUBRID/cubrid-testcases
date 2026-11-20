@@ -1,0 +1,467 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+3
+===================================================
+3
+===================================================
+10
+===================================================
+10
+===================================================
+0
+===================================================
+    
+Case 1: utf8_de_exp_ai_ci - hash join returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     3     
+1     4     
+2     3     
+2     4     
+3     4     
+5     6     
+5     7     
+6     7     
+8     9     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb and ([dba.ta].ca<[dba.tb].ca) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     3     
+1     4     
+2     3     
+2     4     
+3     4     
+5     6     
+5     7     
+6     7     
+8     9     
+
+===================================================
+    
+Case 2: utf8_de_exp_ai_ci - hash GROUP BY on ta returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     4     
+5     3     
+8     2     
+10     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.ta)
+
+  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     4     
+5     3     
+8     2     
+10     1     
+
+===================================================
+    
+Case 3: utf8_de_exp_ai_ci - tc prune per constant reads one partition and matches ta     
+
+===================================================
+0
+===================================================
+ca    cnt_base    cnt_part    
+1     4     4     
+2     4     4     
+3     4     4     
+4     4     4     
+5     3     3     
+6     3     3     
+7     3     3     
+8     2     2     
+9     2     2     
+10     1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  TABLE SCAN (dba.tc)
+
+  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? )
+
+  TABLE SCAN (dba.ta)
+
+  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) from dual dual
+
+  SORT (order by)
+    TABLE SCAN (r)
+
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ r.ca, r.cnt_base, r.cnt_part from (((((((((select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= ?:? ) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= ?:? ) as [cnt_part] from dual dual) r (ca, cnt_base, cnt_part) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                          SUBQUERY (uncorrelated)
+                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                          SUBQUERY (uncorrelated)
+                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                        SUBQUERY (uncorrelated)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      SUBQUERY (uncorrelated)
+                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                    SUBQUERY (uncorrelated)
+                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SUBQUERY (uncorrelated)
+                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SUBQUERY (uncorrelated)
+                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SUBQUERY (uncorrelated)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (uncorrelated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 4: utf8_de_exp - a pair that differs only at level 4 joins as in the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    hex(ta.cb)    hex(tb.cb)    
+1     2     CEA9     E284A6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca,  hex([dba.ta].cb),  hex([dba.tb].cb) from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb and ([dba.ta].ca<[dba.tb].ca) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    hex(ta.cb)    hex(tb.cb)    
+1     2     CEA9     E284A6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 5: utf8_km_exp - a pair that differs only at level 4 joins as in the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    hex(ta.cb)    hex(tb.cb)    
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca,  hex([dba.ta].cb),  hex([dba.tb].cb) from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb and ([dba.ta].ca<[dba.tb].ca) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    hex(ta.cb)    hex(tb.cb)    
+
+===================================================
+0
+===================================================
+0

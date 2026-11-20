@@ -1,0 +1,3573 @@
+===================================================
+0
+===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+0
+===================================================
+11
+===================================================
+0
+===================================================
+0
+===================================================
+14
+===================================================
+0
+===================================================
+0
+===================================================
+15
+===================================================
+0
+===================================================
+0
+===================================================
+16
+===================================================
+0
+===================================================
+0
+===================================================
+16
+===================================================
+0
+===================================================
+0
+===================================================
+16
+===================================================
+0
+===================================================
+0
+===================================================
+17
+===================================================
+0
+===================================================
+0
+===================================================
+18
+===================================================
+0
+===================================================
+0
+===================================================
+14
+===================================================
+0
+===================================================
+0
+===================================================
+11
+===================================================
+0
+===================================================
+    
+Case 1: NUMERIC - hash join of tn_zero and tn_one returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_one] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 2: NUMERIC - hash join of tn_zero and tn_two returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_two] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 3: NUMERIC - hash join of tn_zero and tn_three returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_three] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 4: NUMERIC - hash join of tn_zero and tn_nine returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_nine] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 5: NUMERIC - hash join of tn_zero and tn_ten returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_ten] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 6: NUMERIC - hash join of tn_zero and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 7: NUMERIC - hash join of tn_zero and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 8: NUMERIC - hash join of tn_zero and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+17     17     
+19     19     
+
+===================================================
+    
+Case 9: NUMERIC - hash join of tn_zero and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+17     17     
+
+===================================================
+    
+Case 10: NUMERIC - hash join of tn_zero and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_zero] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_zero), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+
+===================================================
+    
+Case 11: NUMERIC - hash join of tn_one and tn_two returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_two] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 12: NUMERIC - hash join of tn_one and tn_three returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_three] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 13: NUMERIC - hash join of tn_one and tn_nine returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_nine] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 14: NUMERIC - hash join of tn_one and tn_ten returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_ten] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 15: NUMERIC - hash join of tn_one and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 16: NUMERIC - hash join of tn_one and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 17: NUMERIC - hash join of tn_one and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 18: NUMERIC - hash join of tn_one and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+6     6     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 19: NUMERIC - hash join of tn_one and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+6     6     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_one] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_one), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+6     6     
+13     13     
+
+===================================================
+    
+Case 20: NUMERIC - hash join of tn_two and tn_three returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_three] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 21: NUMERIC - hash join of tn_two and tn_nine returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_nine] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 22: NUMERIC - hash join of tn_two and tn_ten returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_ten] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 23: NUMERIC - hash join of tn_two and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 24: NUMERIC - hash join of tn_two and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 25: NUMERIC - hash join of tn_two and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 26: NUMERIC - hash join of tn_two and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 27: NUMERIC - hash join of tn_two and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_two] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_two), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+13     13     
+
+===================================================
+    
+Case 28: NUMERIC - hash join of tn_three and tn_nine returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_nine] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 29: NUMERIC - hash join of tn_three and tn_ten returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_ten] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 30: NUMERIC - hash join of tn_three and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 31: NUMERIC - hash join of tn_three and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 32: NUMERIC - hash join of tn_three and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 33: NUMERIC - hash join of tn_three and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 34: NUMERIC - hash join of tn_three and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_three] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_three), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+13     13     
+
+===================================================
+    
+Case 35: NUMERIC - hash join of tn_nine and tn_ten returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_ten] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 36: NUMERIC - hash join of tn_nine and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 37: NUMERIC - hash join of tn_nine and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 38: NUMERIC - hash join of tn_nine and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 39: NUMERIC - hash join of tn_nine and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 40: NUMERIC - hash join of tn_nine and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nine] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nine), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+    
+Case 41: NUMERIC - hash join of tn_ten and tn_eighteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_ten] x, [dba.tn_eighteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 42: NUMERIC - hash join of tn_ten and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_ten] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 43: NUMERIC - hash join of tn_ten and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_ten] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 44: NUMERIC - hash join of tn_ten and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_ten] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 45: NUMERIC - hash join of tn_ten and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_ten] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_ten), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+    
+Case 46: NUMERIC - hash join of tn_eighteen and tn_nineteen returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_eighteen] x, [dba.tn_nineteen] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 47: NUMERIC - hash join of tn_eighteen and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_eighteen] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 48: NUMERIC - hash join of tn_eighteen and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_eighteen] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+17     17     
+
+===================================================
+    
+Case 49: NUMERIC - hash join of tn_eighteen and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_eighteen] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_eighteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+
+===================================================
+    
+Case 50: NUMERIC - hash join of tn_nineteen and tn_twenty returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+14     14     
+17     17     
+18     18     
+19     19     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nineteen] x, [dba.tn_twenty] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+14     14     
+17     17     
+18     18     
+19     19     
+
+===================================================
+    
+Case 51: NUMERIC - hash join of tn_nineteen and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+14     14     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nineteen] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+14     14     
+17     17     
+
+===================================================
+    
+Case 52: NUMERIC - hash join of tn_nineteen and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_nineteen] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_nineteen), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+
+===================================================
+    
+Case 53: NUMERIC - hash join of tn_twenty and tn_thirtyseven returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+14     14     
+15     15     
+17     17     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_twenty] x, [dba.tn_thirtyseven] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+2     2     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+12     12     
+13     13     
+14     14     
+15     15     
+17     17     
+
+===================================================
+    
+Case 54: NUMERIC - hash join of tn_twenty and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+15     15     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_twenty] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_twenty), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+15     15     
+
+===================================================
+    
+Case 55: NUMERIC - hash join of tn_thirtyseven and tn_thirtyeight returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+15     15     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tn_thirtyseven] x, [dba.tn_thirtyeight] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyeight), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tn_thirtyseven), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     1     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+13     13     
+14     14     
+15     15     
+
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 56: float NUMERIC - hash join of tf_x and tf_y returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     12     
+2     21     
+3     31     
+3     32     
+4     41     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.tf_x] x, [dba.tf_y] y where x.cb=y.cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tf_x), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tf_y), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     12     
+2     21     
+3     31     
+3     32     
+4     41     
+
+===================================================
+    
+Case 57: float NUMERIC - hash GROUP BY on tf_xy returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+2     2     
+3     3     
+4     2     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.tf_xy)
+
+  rewritten query: select min([dba.tf_xy].ca), count(*) from [dba.tf_xy] [dba.tf_xy] group by [dba.tf_xy].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tf_xy), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+2     2     
+3     3     
+4     2     
+
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 58: JSON - hash join returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     8     
+2     8     
+4     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb and ([dba.ta].ca<[dba.tb].ca) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     8     
+2     8     
+4     5     
+
+===================================================
+    
+Case 59: JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+3     1     
+4     2     
+6     1     
+7     1     
+9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.ta)
+
+  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+3     1     
+4     2     
+6     1     
+7     1     
+9     1     
+
+===================================================
+0
+===================================================
+0
