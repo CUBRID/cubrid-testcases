@@ -1,0 +1,116 @@
+===================================================
+    
+1. classes: owner, system class, type     
+
+===================================================
+class_name    owner_name    class_type    is_system_class    partitioned    is_reuse_oid_class    
+_db_authorization     DBA     CLASS     YES     NO     NO     
+_db_password     DBA     CLASS     YES     NO     NO     
+_db_user     DBA     CLASS     YES     NO     NO     
+db_root     DBA     CLASS     YES     NO     NO     
+
+===================================================
+    
+2. columns in definition order     
+
+===================================================
+class_name    attr_name    attr_type    def_order    data_type    prec    scale    domain_class_name    default_value    is_nullable    
+_db_authorization     owner     INSTANCE     0     OBJECT     0     0     _db_user     null     YES     
+_db_authorization     grants     INSTANCE     1     SEQUENCE     0     0     null     null     YES     
+_db_password     password     INSTANCE     0     STRING     1073741823     0     null     null     YES     
+_db_password     created_time     INSTANCE     1     DATETIME     23     3     null     null     YES     
+_db_password     updated_time     INSTANCE     2     DATETIME     23     3     null     null     YES     
+_db_password     expire_time     INSTANCE     3     DATETIME     23     3     null     null     YES     
+_db_user     name     INSTANCE     0     STRING     32     0     null     null     YES     
+_db_user     id     INSTANCE     1     INTEGER     10     0     null     null     YES     
+_db_user     password     INSTANCE     2     OBJECT     0     0     _db_password     null     YES     
+_db_user     direct_groups     INSTANCE     3     SET     0     0     null     null     YES     
+_db_user     groups     INSTANCE     4     SET     0     0     null     null     YES     
+_db_user     authorization     INSTANCE     5     OBJECT     0     0     _db_authorization     null     YES     
+_db_user     is_loginable     INSTANCE     6     INTEGER     10     0     null     null     YES     
+_db_user     is_system_created     INSTANCE     7     INTEGER     10     0     null     null     YES     
+_db_user     comment     INSTANCE     8     STRING     1024     0     null     null     YES     
+_db_user     created_time     INSTANCE     9     DATETIME     23     3     null     null     YES     
+_db_user     updated_time     INSTANCE     10     DATETIME     23     3     null     null     YES     
+db_root     charset     INSTANCE     0     INTEGER     10     0     null     null     YES     
+db_root     lang     INSTANCE     1     STRING     1073741823     0     null     null     YES     
+db_root     timezone_checksum     INSTANCE     2     STRING     1073741823     0     null     null     YES     
+
+===================================================
+    
+3. set domains     
+
+===================================================
+class_name    attr_name    attr_type    data_type    prec    scale    domain_class_name    
+_db_user     direct_groups     INSTANCE     OBJECT     0     0     _db_user     
+_db_user     groups     INSTANCE     OBJECT     0     0     _db_user     
+
+===================================================
+    
+4. methods and their functions     
+
+===================================================
+class_name    meth_name    meth_type    from_class_name    from_meth_name    func_name    
+_db_authorization     check_authorization     CLASS     null     null     au_check_authorization_method     
+_db_user     add_user     CLASS     null     null     au_add_user_method     
+_db_user     drop_user     CLASS     null     null     au_drop_user_method     
+_db_user     find_user     CLASS     null     null     au_find_user_method     
+_db_user     login     CLASS     null     null     au_login_method     
+_db_user     add_member     INSTANCE     null     null     au_add_member_method     
+_db_user     drop_member     INSTANCE     null     null     au_drop_member_method     
+_db_user     print_authorizations     INSTANCE     null     null     au_describe_user_method     
+_db_user     set_password     INSTANCE     null     null     au_set_password_method     
+_db_user     set_password_encoded     INSTANCE     null     null     au_set_password_encoded_method     
+_db_user     set_password_encoded_sha1     INSTANCE     null     null     au_set_password_encoded_sha1_method     
+db_root     add_user     CLASS     null     null     au_add_user_method     
+db_root     change_owner     CLASS     null     null     au_change_owner_method     
+db_root     change_sp_owner     CLASS     null     null     au_change_sp_owner_method     
+db_root     change_trigger_owner     CLASS     null     null     au_change_trigger_owner_method     
+db_root     drop_user     CLASS     null     null     au_drop_user_method     
+db_root     find_user     CLASS     null     null     au_find_user_method     
+db_root     get_owner     CLASS     null     null     au_get_owner_method     
+db_root     info     CLASS     null     null     au_info_method     
+db_root     print_authorizations     CLASS     null     null     au_describe_root_method     
+
+===================================================
+    
+5. method signatures (index 0 = return value)     
+
+===================================================
+class_name    meth_name    meth_type    index_of    data_type    prec    scale    domain_class_name    
+_db_authorization     check_authorization     CLASS     0     INTEGER     10     0     null     
+_db_authorization     check_authorization     CLASS     1     STRING     255     0     null     
+_db_authorization     check_authorization     CLASS     2     INTEGER     10     0     null     
+_db_user     find_user     CLASS     0     STRING     1073741823     0     null     
+db_root     find_user     CLASS     0     STRING     1073741823     0     null     
+
+===================================================
+    
+6. indexes     
+
+===================================================
+class_name    index_name    is_unique    is_reverse    is_primary_key    is_foreign_key    key_count    key_attr_name    key_order    
+_db_user     u__db_user_name     YES     NO     NO     NO     1     name     0     
+
+===================================================
+    
+7. grants     
+
+===================================================
+grantor_name    grantee_name    object_type    object_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     CLASS     _db_authorization     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     _db_user     SELECT     NO     
+DBA     INFORMATION_SCHEMA     CLASS     db_root     SELECT     NO     
+DBA     PUBLIC     CLASS     db_root     EXECUTE     NO     
+DBA     PUBLIC     CLASS     db_root     SELECT     NO     
+
+===================================================
+    
+8. the built-in users are rows of _db_user     
+
+===================================================
+name    
+DBA     
+INFORMATION_SCHEMA     
+PUBLIC     
+
