@@ -1,0 +1,357 @@
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: aggregate over a covered index scan; result = heap scan     
+
+===================================================
+count(k)    sum( cast(k as bigint))    min(k)    max(k)    
+89904     1012543800     25     22500     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cv_t.i_cv_k) (key range: ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count([dba.cv_t].k), sum( cast([dba.cv_t].k as bigint)), min([dba.cv_t].k), max([dba.cv_t].k) from [dba.cv_t] [dba.cv_t] where ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ) using index [dba.cv_t].i_cv_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(k)    sum( cast(k as bigint))    min(k)    max(k)    
+89904     1012543800     25     22500     
+
+===================================================
+    
+Case 2: covered index scan read through an inline view; result = heap scan     
+
+===================================================
+count(*)    sum( cast(x.k as bigint))    min(x.s)    max(x.s)    
+49904     312523800     0     abc     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cv_t.i_cv_ks) (key range: ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ), covered: true)
+
+  rewritten query: (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.cv_t].k, [dba.cv_t].s from [dba.cv_t] [dba.cv_t] where ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ) using index [dba.cv_t].i_cv_ks(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(x.k as bigint)), min(x.s), max(x.s) from (select /*+ NO_MERGE NO_PARALLEL_SCAN */ [dba.cv_t].k, [dba.cv_t].s from [dba.cv_t] [dba.cv_t] where ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ) using index [dba.cv_t].i_cv_ks(+)) x (k, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.cv_t.i_cv_ks), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(x.k as bigint))    min(x.s)    max(x.s)    
+49904     312523800     0     abc     
+
+===================================================
+    
+Case 3: covered inner scan of a join on a unique outer key, 10,000 rows for each key; result = hash join on the heap     
+
+===================================================
+id    count(*)    sum( cast(b.grp as bigint))    
+1     10000     10000     
+2     10000     20000     
+3     10000     30000     
+4     10000     40000     
+5     10000     50000     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.i_cv_grp) (key range: b.grp=a.id, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ a.id, count(*), sum( cast(b.grp as bigint)) from [dba.cv_t] a, [dba.cv_t] b where (a.id>= ?:?  and a.id<= ?:? ) and b.grp=a.id group by a.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cv_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cv_t.i_cv_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum( cast(b.grp as bigint))    
+1     10000     10000     
+2     10000     20000     
+3     10000     30000     
+4     10000     40000     
+5     10000     50000     
+
+===================================================
+    
+Case 4: covered inner scan of a join on a unique outer key, a key range for each outer row; result = join on the heap     
+
+===================================================
+count(*)    sum( cast(b.k as bigint))    
+4200     149100     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    INDEX SCAN (b.i_cv_k) (key range: (b.k>=a.id and b.k<=a.id+?), covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ count(*), sum( cast(b.k as bigint)) from [dba.cv_t] a, [dba.cv_t] b where (a.id>= ?:?  and a.id<= ?:? ) and (b.k>=a.id and b.k<=a.id+?)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cv_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    sum( cast(b.k as bigint))    
+4200     149100     
+
+===================================================
+    
+Case 5: covered inner scan of a join that memoizes on a repeating outer key; result = hash join on the heap     
+
+===================================================
+id    count(*)    sum( cast(b.k as bigint))    
+1     4     124     
+2     4     248     
+3     4     372     
+4     4     496     
+5     4     620     
+6     4     744     
+7     4     868     
+8     4     992     
+9     4     1116     
+10     4     1240     
+11     4     1364     
+12     4     1488     
+13     4     1612     
+14     4     1736     
+15     4     1860     
+16     4     1984     
+17     4     2108     
+18     4     2232     
+19     4     2356     
+20     4     2480     
+25014     4     124     
+25015     4     248     
+25016     4     372     
+25017     4     496     
+25018     4     620     
+25019     4     744     
+25020     4     868     
+25021     4     992     
+25022     4     1116     
+25023     4     1240     
+25024     4     1364     
+25025     4     1488     
+25026     4     1612     
+25027     4     1736     
+25028     4     1860     
+25029     4     1984     
+25030     4     2108     
+25031     4     2232     
+25032     4     2356     
+25033     4     2480     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      INDEX SCAN (b.i_cv_k) (key range: b.k=a.k, covered: true)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ a.id, count(*), sum( cast(b.k as bigint)) from [dba.cv_t] a, [dba.cv_t] b where ((a.id>= ?:?  and a.id<= ?:? ) or (a.id>= ?:?  and a.id<= ?:? )) and b.k=a.k group by a.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.cv_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+id    count(*)    sum( cast(b.k as bigint))    
+1     4     124     
+2     4     248     
+3     4     372     
+4     4     496     
+5     4     620     
+6     4     744     
+7     4     868     
+8     4     992     
+9     4     1116     
+10     4     1240     
+11     4     1364     
+12     4     1488     
+13     4     1612     
+14     4     1736     
+15     4     1860     
+16     4     1984     
+17     4     2108     
+18     4     2232     
+19     4     2356     
+20     4     2480     
+25014     4     124     
+25015     4     248     
+25016     4     372     
+25017     4     496     
+25018     4     620     
+25019     4     744     
+25020     4     868     
+25021     4     992     
+25022     4     1116     
+25023     4     1240     
+25024     4     1364     
+25025     4     1488     
+25026     4     1612     
+25027     4     1736     
+25028     4     1860     
+25029     4     1984     
+25030     4     2108     
+25031     4     2232     
+25032     4     2356     
+25033     4     2480     
+
+===================================================
+    
+Case 6: hash GROUP BY over a covered index scan; result = heap scan     
+
+===================================================
+mod(k, 7)    count(*)    sum( cast(k as bigint))    
+0     12844     144661972     
+1     12844     144674816     
+2     12844     144687660     
+3     12840     144610500     
+4     12844     144623440     
+5     12844     144636284     
+6     12844     144649128     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      INDEX SCAN (dba.cv_t.i_cv_k) (key range: ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  mod([dba.cv_t].k, ?), count(*), sum( cast([dba.cv_t].k as bigint)) from [dba.cv_t] [dba.cv_t] where ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ) group by  mod([dba.cv_t].k, ?) using index [dba.cv_t].i_cv_k(+) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+mod(k, 7)    count(*)    sum( cast(k as bigint))    
+0     12844     144661972     
+1     12844     144674816     
+2     12844     144687660     
+3     12840     144610500     
+4     12844     144623440     
+5     12844     144636284     
+6     12844     144649128     
+
+===================================================
+    
+Case 7: covered index scan in a block that runs a subquery for each row; result = join and group     
+
+===================================================
+count(*)    
+204     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (b.i_cv_k) (key range: b.k=a.k, covered: true)
+
+  rewritten query: (select count(*) from [dba.cv_t] b where b.k=a.k)
+
+  INDEX SCAN (a.i_cv_k) (key range: (a.k>= ?:?  and a.k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.cv_t] a where (a.k>= ?:?  and a.k<= ?:? ) and (select count(*) from [dba.cv_t] b where b.k=a.k)>? using index a.i_cv_k(+)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.cv_t.i_cv_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+        SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
+     
+
+===================================================
+sum(cnt)    
+204     
+
+===================================================
+    
+Case 8: a row fails in the middle of a covered index scan and in the heap scan (expected errors), then the same keys return the rows of the heap scan     
+
+===================================================
+Error:-181
+===================================================
+Error:-181
+===================================================
+count(*)    sum( cast(k as bigint))    min(s)    max(s)    
+100000     1250015755     0     abc     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.cv_t.i_cv_ks) (key range: ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.cv_t].k as bigint)), min([dba.cv_t].s), max([dba.cv_t].s) from [dba.cv_t] [dba.cv_t] where ([dba.cv_t].k>= ?:?  and [dba.cv_t].k<= ?:? ) using index [dba.cv_t].i_cv_ks(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.cv_t.i_cv_ks), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(k as bigint))    min(s)    max(s)    
+100000     1250015755     0     abc     
+
+===================================================
+0
