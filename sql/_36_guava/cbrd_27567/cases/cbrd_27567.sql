@@ -19,8 +19,9 @@
  *  The fix (engine PR #8114) keys a correlated subquery by its correlated
  *  references, the outer columns it reads (the same rule the subquery result
  *  cache uses), including those in aggregate arguments, HAVING, rownum and
- *  orderby_num predicates, never by a value the subquery computes. A subquery
- *  with GROUP BY, analytic functions or CONNECT BY is not memoized. A
+ *  orderby_num predicates, never by a value the subquery computes. Since
+ *  CBRD-27993 the key comes from the parse tree of the subquery, so a
+ *  subquery with GROUP BY, analytic functions or CONNECT BY is memoized too. A
  *  replayed row resets the inner's correlated subqueries as the scan does, so
  *  a select-list subquery runs again for it, while a subquery only the inner
  *  predicate reads does not run on replay.
@@ -39,13 +40,14 @@
  *
  *  CTP runs SQL tests with test_mode=yes, which masks volatile trace values
  *  (time, hit / miss, size) to '?'. The assertions are therefore the MEMOIZE
- *  line under the inner scan (printed only when the memo had a hit, and absent
- *  in Case 14) and the result parity: every memoized query is followed by the
+ *  line under the inner scan (printed only when the memo had a hit) and the
+ *  result parity: every memoized query is followed by the
  *  same query with memoize_memory_limit=0 (no memo), and the two result blocks
  *  must match. Where an outer column of cy is part of the key, the result is
  *  counted per g, because a key without it replays the rows of the first outer
- *  row (g = 1) and can keep the total. Case 15 is not memoized; its rows are
- *  the expected values given in its evaluate line.
+ *  row (g = 1) and can keep the total. Case 15 is memoized on o0.g, the outer
+ *  column its derived table reads (CBRD-27993); its rows are the expected
+ *  values given in its evaluate line.
  *
  *  rownum and orderby_num cannot share an expression with a column, so Cases
  *  12 and 13 put the outer column in the condition of CASE. GROUP BY and
@@ -70,10 +72,10 @@
  *    Case 12: outer column only in the rownum predicate of the subquery, per g
  *    Case 13: outer column only in the orderby_num predicate of the
  *             subquery, per g
- *    Case 14: outer column only in the CONNECT BY clause of the subquery, not
+ *    Case 14: outer column only in the CONNECT BY clause of the subquery,
  *             memoized, per g
  *    Case 15: derived table correlated to the outer row right after an ANTI
- *             JOIN inner, not memoized
+ *             JOIN inner, memoized on o0.g
  *    Case 16: outer column only in the index key range of the predicate
  *             subquery, per g
  */
@@ -235,9 +237,8 @@ select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 wh
 set system parameters 'memoize_memory_limit=2M';
 
 
-evaluate 'Case 14: outer column only in the CONNECT BY clause of the subquery, not memoized; result = memoize off';
--- the key builder does not read CONNECT BY, so the engine does not memoize this inner and the trace has no MEMOIZE
--- line. The hierarchy from cs.pk 1 stops at pk g + 2, so 2, 3 and 4 inner rows match for g = 0, 1 and 2
+evaluate 'Case 14: outer column only in the CONNECT BY clause of the subquery, memoized; result = memoize off';
+-- the key is collected from the parse tree, CONNECT BY included (CBRD-27993), so o0.g is in the key. The hierarchy from cs.pk 1 stops at pk g + 2, so 2, 3 and 4 inner rows match for g = 0, 1 and 2
 select /*+ recompile use_nl ordered */ o0.g, count(*) from cz z, cy o0, cx o1 where z.nu = o0.nu and o0.nu = o1.nu and o1.nn in (select /*+ no_unnest no_subquery_cache */ cs.v from cs start with cs.pk = 1 connect by prior cs.pk = cs.pk - 1 and cs.pk <= o0.g + 2) group by o0.g using index o0.i_cy_nu, o1.i_cx_nu order by 1;
 show trace;
 set trace off;
@@ -251,7 +252,7 @@ set trace on;
 evaluate 'Case 15: derived table correlated to the outer row right after an ANTI JOIN inner; cnt = 2 for g = 1 and 3 for g = 2';
 -- the plan attaches d, which reads o0, to the scan before it, here the anti inner cs a. a matches only g = 0
 -- (a.pk = 4), so the rows with g = 1 and g = 2 survive and each must run d for itself. Before the fix no surviving
--- row ran d and the query returned no row. d is not a scalar subquery, so the anti inner is not memoized
+-- row ran d and the query returned no row. The scan of d is memoized on o0.g, the outer column d reads (CBRD-27993)
 select /*+ recompile use_nl ordered */ o0.pk, o0.g, d.cnt from cy o0 anti join cs a on a.pk = o0.g + 4, (select count(*) cnt from cs x where x.pk <= o0.g + 1) d order by 1;
 show trace;
 
