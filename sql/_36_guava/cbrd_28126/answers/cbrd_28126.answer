@@ -1,0 +1,863 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+100000
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: WHERE subquery after the FROM UNION; result = no_parallel_subquery     
+
+===================================================
+col_a    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_lo] b
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_hi] b
+
+  TABLE SCAN (b)
+
+  rewritten query: (select max(b.col_a) from (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a))
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.col_a from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a) where a.col_a=(select max(b.col_a) from (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    
+4     
+
+===================================================
+    
+Case 2: select list subquery after the FROM UNION; result = no_parallel_subquery     
+
+===================================================
+col_a    (select max(b.col_a) from v_both b)    
+1     4     
+2     4     
+3     4     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_lo] b
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_hi] b
+
+  TABLE SCAN (b)
+
+  rewritten query: (select max(b.col_a) from (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a))
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.col_a, (select max(b.col_a) from (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a)) from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    (select max(b.col_a) from v_both b)    
+1     4     
+2     4     
+3     4     
+4     4     
+
+===================================================
+    
+Case 3: NOT IN subquery over a UNION; result = no_parallel_subquery     
+
+===================================================
+col_a    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_lo] b where (b.col_a>= ?:? )
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_hi] b where (b.col_a>= ?:? )
+
+  SORT (distinct)
+    TABLE SCAN (b)
+
+  rewritten query: (select distinct b.col_a from (select b.col_a from [dba.t_lo] b where (b.col_a>= ?:? ) union all select b.col_a from [dba.t_hi] b where (b.col_a>= ?:? )) b (col_a))
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.col_a from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a) where a.col_a not in (select distinct b.col_a from (select b.col_a from [dba.t_lo] b where (b.col_a>= ?:? ) union all select b.col_a from [dba.t_hi] b where (b.col_a>= ?:? )) b (col_a)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    
+1     
+2     
+
+===================================================
+    
+Case 4: WHERE subquery over an inline UNION; result = no_parallel_subquery     
+
+===================================================
+col_a    
+4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (dba.t_lo)
+
+  rewritten query: select [dba.t_lo].col_a from [dba.t_lo] [dba.t_lo]
+
+  TABLE SCAN (dba.t_hi)
+
+  rewritten query: select [dba.t_hi].col_a from [dba.t_hi] [dba.t_hi]
+
+  TABLE SCAN (x)
+
+  rewritten query: (select max(x.col_a) from (select [dba.t_lo].col_a from [dba.t_lo] [dba.t_lo] union all select [dba.t_hi].col_a from [dba.t_hi] [dba.t_hi]) x (col_a))
+
+  SORT (order by)
+    TABLE SCAN (a)
+
+  rewritten query: select a.col_a from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a) where a.col_a=(select max(x.col_a) from (select [dba.t_lo].col_a from [dba.t_lo] [dba.t_lo] union all select [dba.t_hi].col_a from [dba.t_hi] [dba.t_hi]) x (col_a)) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    
+4     
+
+===================================================
+    
+Case 5: select list subquery with a join of two UNION views; result = no_parallel_subquery     
+
+===================================================
+col_a    (select max(col_a) from v_both)    
+1     4     
+2     4     
+3     4     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_lo] b
+
+  TABLE SCAN (b)
+
+  rewritten query: select b.col_a from [dba.t_hi] b
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: (select max([dba.v_both].col_a) from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select a.col_a, (select max([dba.v_both].col_a) from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)) from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a), (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a) where a.col_a=b.col_a order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    (select max(col_a) from v_both)    
+1     4     
+2     4     
+3     4     
+4     4     
+
+===================================================
+    
+Case 6: nested parallel subqueries; result = no_parallel_subquery     
+
+===================================================
+col_a    col_a    
+1     1     
+1     1     
+1     1     
+1     1     
+2     2     
+3     3     
+3     3     
+3     3     
+3     3     
+4     4     
+5     5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)
+
+  TABLE SCAN (dba.t_mix)
+
+  rewritten query: select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]
+
+  TABLE SCAN (dba.t_mix)
+
+  rewritten query: select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]
+
+  TABLE SCAN (dba.v_both)
+
+  rewritten query: select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select x.col_a, y.col_a from (select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a) union all select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix]) x (col_a), (select [dba.t_mix].col_a from [dba.t_mix] [dba.t_mix] union all select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)) y (col_a) where x.col_a=y.col_a order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    col_a    
+1     1     
+1     1     
+1     1     
+1     1     
+2     2     
+3     3     
+3     3     
+3     3     
+3     3     
+4     4     
+5     5     
+
+===================================================
+    
+Case 7: one arm fails; result = the same error, then rows     
+
+===================================================
+Error:-539
+===================================================
+Error:-539
+===================================================
+col_a    
+1     
+2     
+3     
+4     
+
+===================================================
+    
+Case 8: correlated subquery under a joined scan; result = no_parallel_subquery     
+
+===================================================
+col_a    cnt    
+1     4     
+3     2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (b)
+      TABLE SCAN (a)
+
+  rewritten query: select a.col_a, (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a)) from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a), [dba.t_mix] b where a.col_a=b.col_a order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    cnt    
+1     4     
+3     2     
+
+===================================================
+    
+Case 9: the same subquery inside an arm of a parallel UNION; result = no_parallel_subquery     
+
+===================================================
+col_a    cnt    
+1     0     
+1     4     
+2     0     
+3     0     
+4     0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select a.col_a, (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a)) from [dba.t_lo] a, [dba.t_mix] b where a.col_a=b.col_a
+
+  TABLE SCAN (dba.t_hi)
+
+  rewritten query: select [dba.t_hi].col_a,  cast(? as bigint) from [dba.t_hi] [dba.t_hi]
+
+  TABLE SCAN (dba.t_lo)
+
+  rewritten query: select [dba.t_lo].col_a,  cast(? as bigint) from [dba.t_lo] [dba.t_lo]
+
+  SORT (order by)
+    TABLE SCAN (z)
+
+  rewritten query: select z.col_a, z.cnt from ((select a.col_a, (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a)) as [cnt] from [dba.t_lo] a, [dba.t_mix] b where a.col_a=b.col_a union all select [dba.t_hi].col_a,  cast(? as bigint) from [dba.t_hi] [dba.t_hi]) union all select [dba.t_lo].col_a,  cast(? as bigint) from [dba.t_lo] [dba.t_lo]) z (col_a, cnt) order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SUBQUERY (correlated)
+                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    cnt    
+1     0     
+1     4     
+2     0     
+3     0     
+4     0     
+
+===================================================
+    
+Case 10: the same subquery in the WHERE of the joined scan; result = no_parallel_subquery     
+
+===================================================
+col_a    col_b    
+1     a     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_lo] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.col_a from [dba.t_hi] a
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)
+
+  TABLE SCAN (v)
+
+  rewritten query: (select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (b)
+      TABLE SCAN (a)
+
+  rewritten query: select a.col_a, b.col_b from (select a.col_a from [dba.t_lo] a union all select a.col_a from [dba.t_hi] a) a (col_a), [dba.t_mix] b where a.col_a=b.col_a and (b.col_a<=(select count(*) from (select v.col_a from [dba.t_lo] v where (v.col_a>=a.col_a) union all select v.col_a from [dba.t_hi] v where (v.col_a>=a.col_a)) v (col_a))) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SUBQUERY (correlated)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+col_a    col_b    
+1     a     
+
+===================================================
+    
+Case 11: a CTE read from a correlated subquery of a joined scan; result = no_parallel_subquery     
+
+===================================================
+0
+===================================================
+col_a    m    n    cnt    
+1     9     10000     1     
+1     9     10000     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].col_a mod ?, count(*) from [dba.t_big] [dba.t_big] group by [dba.t_big].col_a mod ?
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select count(*) from [dba.c] [dba.c] where ([dba.c].k>=b.col_a))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: (select a.col_a, (select count(*) from [dba.c] [dba.c] where ([dba.c].k>=b.col_a)) from [dba.t_lo] a, [dba.t_mix] b where (a.col_a=b.col_a) and (inst_num()<= ?:? ))
+
+  SORT (group by)
+    TABLE SCAN (dba.t_hi)
+
+  rewritten query: (select count(*) from [dba.t_hi] [dba.t_hi] group by [dba.t_hi].col_a mod ?)
+
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      NESTED LOOPS (inner join)
+        TABLE SCAN (q)
+        TABLE SCAN (x)
+      TABLE SCAN (o)
+
+  rewritten query: with c(k, n) as (select [dba.t_big].col_a mod ?, count(*) from [dba.t_big] [dba.t_big] group by [dba.t_big].col_a mod ?)select q.col_a, q.m, x.n, o.cnt from (select a.col_a, (select count(*) from [dba.c] [dba.c] where ([dba.c].k>=b.col_a)) as [m] from [dba.t_lo] a, [dba.t_mix] b where (a.col_a=b.col_a) and (inst_num()<= ?:? )) q (col_a, m), [dba.c] x, (select count(*) as [cnt] from [dba.t_hi] [dba.t_hi] group by [dba.t_hi].col_a mod ?) o (cnt) where x.k=q.col_a order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SUBQUERY (correlated)
+            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+col_a    m    n    cnt    
+1     9     10000     1     
+1     9     10000     1     
+
+===================================================
+    
+Case 12: two derived tables over one CTE; result = no_parallel_subquery     
+
+===================================================
+k    n    cnt    
+0     10000     10     
+1     10000     10     
+2     10000     10     
+3     10000     10     
+4     10000     10     
+5     10000     10     
+6     10000     10     
+7     10000     10     
+8     10000     10     
+9     10000     10     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (dba.t_big)
+
+  rewritten query: select [dba.t_big].col_a mod ?, count(*) from [dba.t_big] [dba.t_big] group by [dba.t_big].col_a mod ?
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select [dba.c].k, [dba.c].n from [dba.c] [dba.c])
+
+  TABLE SCAN (dba.c)
+
+  rewritten query: (select count(*) from [dba.c] [dba.c])
+
+  SORT (order by)
+    NESTED LOOPS (cross join)
+      TABLE SCAN (q)
+      TABLE SCAN (o)
+
+  rewritten query: with c(k, n) as (select [dba.t_big].col_a mod ?, count(*) from [dba.t_big] [dba.t_big] group by [dba.t_big].col_a mod ?)select q.k, q.n, o.cnt from (select [dba.c].k, [dba.c].n from [dba.c] [dba.c]) q (k, n), (select count(*) as [cnt] from [dba.c] [dba.c]) o (cnt) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+                  (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+k    n    cnt    
+0     10000     10     
+1     10000     10     
+2     10000     10     
+3     10000     10     
+4     10000     10     
+5     10000     10     
+6     10000     10     
+7     10000     10     
+8     10000     10     
+9     10000     10     
+
+===================================================
+0
+===================================================
+0
