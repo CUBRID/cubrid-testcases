@@ -300,7 +300,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.o?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
         SUBQUERY (correlated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.i?.ix_i?_k?), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -345,7 +345,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.o?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
@@ -386,7 +386,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.o?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.o?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
       SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

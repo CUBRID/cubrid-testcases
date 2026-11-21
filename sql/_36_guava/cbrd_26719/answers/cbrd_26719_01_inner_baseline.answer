@@ -39,11 +39,11 @@ Trace Statistics:
         RUNTIME FILTER (keys: ?, rows: ?, dropped: ?, off after ? rows)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
               (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_p), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -122,7 +122,8 @@ trace
                       "fetch": ?,
                       "ioread": ?,
                       "readrows": ?,
-                      "rows": ?
+                      "rows": ?,
+                      "batch_why_not": "no vectorizable filter term"
                     }
                   }
                 }
@@ -155,7 +156,9 @@ trace
                       "fetch": ?,
                       "ioread": ?,
                       "readrows": ?,
-                      "rows": ?
+                      "rows": ?,
+                      "batch_pages": ?,
+                      "batch_pages_rowpath": ?
                     }
                   }
                 }

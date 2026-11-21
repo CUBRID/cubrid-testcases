@@ -396,7 +396,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: grouped, cached, backward or record-info scan)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -472,7 +472,7 @@ Trace Statistics:
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.v), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.v), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         SUBQUERY_CACHE (hit: ?, miss: ?, size: ?, status: enabled)
      
 
@@ -611,7 +611,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -657,7 +657,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -693,8 +693,8 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    SCAN (table: dba.u), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no rows left), readrows: ?, rows: ?)
      
 
 ===================================================

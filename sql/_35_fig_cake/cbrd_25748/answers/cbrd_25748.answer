@@ -32,7 +32,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
     ORDERBY (time: ?, topnsort: true)
      
 
@@ -57,7 +57,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -85,7 +85,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: filter term with side effect)
     ORDERBY (time: ?, topnsort: true)
      
 
@@ -110,7 +110,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -138,7 +138,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: filter term with side effect)
     ORDERBY (time: ?, topnsort: true)
      
 
@@ -165,8 +165,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: aggregate operand without program)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (the groups fold little), readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -202,7 +202,7 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-          SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -312,7 +312,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -350,7 +350,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
-        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.sales_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
      
 
 ===================================================

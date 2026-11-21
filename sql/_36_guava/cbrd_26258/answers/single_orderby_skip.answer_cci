@@ -71,7 +71,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -137,7 +137,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -391,7 +391,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -517,7 +517,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -924,8 +924,8 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+          SCAN (table: dba.tbl_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
+          GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, hash merge: no (the sort takes workers), readrows: ?, rows: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                   (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)

@@ -62,8 +62,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no rows left), readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
@@ -106,7 +106,9 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "mergeable list"
+          "gather": "mergeable list",
+          "batch_pages": "?..?",
+          "batch_pages_rowpath": "?..?"
         }
       },
       "GROUPBY": {
@@ -115,7 +117,7 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "groups_est": ?,
+        "hash_merge_skipped": "no rows left",
         "rows": ?,
         "readrows": ?
       },
@@ -161,7 +163,9 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "mergeable list"
+          "gather": "mergeable list",
+          "batch_pages": "?..?",
+          "batch_pages_rowpath": "?..?"
         }
       },
       "GROUPBY": {
@@ -170,7 +174,7 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "groups_est": ?,
+        "hash_merge_skipped": "no rows left",
         "rows": ?,
         "readrows": ?
       },
@@ -224,7 +228,9 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "mergeable list"
+          "gather": "mergeable list",
+          "batch_pages": "?..?",
+          "batch_pages_rowpath": "?..?"
         }
       },
       "GROUPBY": {
@@ -233,7 +239,7 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "groups_est": ?,
+        "hash_merge_skipped": "no rows left",
         "rows": ?,
         "readrows": ?
       },
@@ -287,7 +293,9 @@ trace
           "time": "?..?",
           "readrows": "?..?",
           "rows": "?..?",
-          "gather": "mergeable list"
+          "gather": "mergeable list",
+          "batch_pages": "?..?",
+          "batch_pages_rowpath": "?..?"
         }
       },
       "GROUPBY": {
@@ -296,7 +304,7 @@ trace
         "sort": true,
         "page": ?,
         "ioread": ?,
-        "groups_est": ?,
+        "hash_merge_skipped": "no rows left",
         "rows": ?,
         "readrows": ?
       },
@@ -351,7 +359,8 @@ trace
           "readrows": "?..?",
           "rows": "?..?",
           "gather": "mergeable list",
-          "topnsort": true
+          "topnsort": true,
+          "batch_why_not": "no vectorizable filter term"
         }
       },
       "ORDERBY": {

@@ -413,10 +413,10 @@ Trace Statistics:
         RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.subquery_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.subquery_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -503,7 +503,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.klim_outer), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no rows left), readrows: ?, rows: ?)
     SUBQUERY (correlated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (index: dba.klim_inner.i_klim_inner_k_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)

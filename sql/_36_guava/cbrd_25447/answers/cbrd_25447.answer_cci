@@ -25,7 +25,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -46,7 +46,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -106,7 +106,7 @@ Trace Statistics:
       CTE (non_recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: interpreted data filter)
       CTE (recursive_part)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -204,10 +204,10 @@ Trace Statistics:
         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -232,10 +232,10 @@ Trace Statistics:
                (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -260,10 +260,10 @@ Trace Statistics:
              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -289,10 +289,10 @@ Trace Statistics:
         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
     SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+           (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -320,8 +320,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: aggregate operand not a tuple column)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, hash merge: no (the sort takes workers), readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
 
@@ -380,7 +380,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -406,7 +406,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -430,7 +430,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -454,7 +454,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -475,7 +475,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -517,7 +517,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -553,7 +553,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -582,13 +582,13 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.pl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SCAN (table: dba.pl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
            PARTITION (table: dba.pl__p__pa), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.pl__p__pd), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.pl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.pl__p__pe), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -647,7 +647,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.set_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -684,7 +684,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -717,7 +717,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -746,7 +746,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -775,7 +775,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
      
 
 ===================================================
@@ -797,7 +797,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -819,7 +819,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -1003,7 +1003,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
       SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
@@ -1032,7 +1032,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1105,7 +1105,7 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.large_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.large_tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
      
 
 ===================================================
@@ -1129,7 +1129,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch pages: ?..? (row path: ?..?))
      
 
 ===================================================
@@ -1164,7 +1164,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: interpreted data filter)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1201,7 +1201,7 @@ Trace Statistics:
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+                 (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list) (batch skipped: interpreted data filter)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                     (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1227,7 +1227,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: interpreted data filter)
      
 
 ===================================================
@@ -1246,7 +1246,7 @@ trace
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tbl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue) (batch skipped: interpreted data filter)
      
 
 ===================================================
