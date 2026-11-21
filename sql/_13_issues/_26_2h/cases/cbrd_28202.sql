@@ -30,9 +30,8 @@
  *    Case 13: UPDATE k = k + 1 of a subclass whose unique key is defined on its superclass, with a row trigger with an action
  */
 
-autocommit off;
-
 drop table if exists t28202_ch, t28202_p, t28202_t, t28202_log, t28202_sub, t28202_s;
+autocommit off;
 commit;
 
 
