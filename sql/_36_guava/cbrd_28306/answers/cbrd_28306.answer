@@ -1,0 +1,292 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: index skip scan that costs more, composite index first; result = sort plan over i_ta_cb     
+
+===================================================
+ca    cb    cc    
+0     5     5000     
+1     5     5001     
+2     5     5002     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: ta node[?]
+                 index: i_ta_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ ta.ca, ta.cb, ta.cc from ta ta where ta.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+===================================================
+    
+Case 2: index skip scan that costs more, (cb) first; result = sort plan over i_tb_cb     
+
+===================================================
+ca    cb    cc    
+0     5     5000     
+1     5     5001     
+2     5     5002     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ tb.ca, tb.cb, tb.cc from tb tb where tb.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+===================================================
+    
+Case 3: loose index scan that costs more, composite index first; result = sort plan over i_ta_cb     
+
+===================================================
+ca    count(distinct cb)    
+0     1     
+1     1     
+2     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: ta node[?]
+                 index: i_ta_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ ta.ca, count(distinct ta.cb) from ta ta where ta.cb= ?:?  group by ta.ca having groupby_num()<=?
+===================================================
+    
+Case 4: loose index scan that costs more, (cb) first; result = sort plan over i_tb_cb     
+
+===================================================
+ca    count(distinct cb)    
+0     1     
+1     1     
+2     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: tb node[?]
+                 index: i_tb_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ tb.ca, count(distinct tb.cb) from tb tb where tb.cb= ?:?  group by tb.ca having groupby_num()<=?
+===================================================
+    
+Case 5: index skip scan that costs less, composite index first; result = index skip scan of i_tc_ca_cb_cc     
+
+===================================================
+ca    cb    cc    
+0     5     500     
+0     5     1500     
+0     5     2500     
+
+Query plan:
+iscan
+    class: tc node[?]
+    index: i_tc_ca_cb_cc term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ tc.ca, tc.cb, tc.cc from tc tc where tc.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 6: index skip scan that costs less, (cb) first; result = index skip scan of i_td_ca_cb_cc     
+
+===================================================
+ca    cb    cc    
+0     5     500     
+0     5     1500     
+0     5     2500     
+
+Query plan:
+iscan
+    class: td node[?]
+    index: i_td_ca_cb_cc term[?] (covers) (index skip scan)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ td.ca, td.cb, td.cc from td td where td.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 7: loose index scan that costs less, composite index first; result = loose index scan of i_te_ca_cb_cc     
+
+===================================================
+ca    count(distinct cb)    
+0     1     
+1     1     
+2     1     
+
+Query plan:
+iscan
+    class: te node[?]
+    index: i_te_ca_cb_cc (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ te.ca, count(distinct te.cb) from te te where te.cb= ?:?  group by te.ca having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 8: loose index scan that costs less, (cb) first; result = loose index scan of i_tf_ca_cb_cc     
+
+===================================================
+ca    count(distinct cb)    
+0     1     
+1     1     
+2     1     
+
+Query plan:
+iscan
+    class: tf node[?]
+    index: i_tf_ca_cb_cc (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ tf.ca, count(distinct tf.cb) from tf tf where tf.cb= ?:?  group by tf.ca having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 9: index range scan that skips ORDER BY, composite index first; result = index scan of i_ta_ca_cb_cc     
+
+===================================================
+ca    cb    cc    
+0     5     5000     
+1     5     5001     
+2     5     5002     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: i_ta_ca_cb_cc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, ta.cb, ta.cc from ta ta where (ta.ca>= ?:?  and ta.ca<= ?:? ) and ta.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 10: index range scan that skips ORDER BY, (cb) first; result = index scan of i_tb_ca_cb_cc     
+
+===================================================
+ca    cb    cc    
+0     5     5000     
+1     5     5001     
+2     5     5002     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ca_cb_cc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.ca, tb.cb, tb.cc from tb tb where (tb.ca>= ?:?  and tb.ca<= ?:? ) and tb.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 11: index range scan that skips GROUP BY, composite index first; result = index scan of i_ta_ca_cb_cc     
+
+===================================================
+ca    max(cc)    
+0     5000     
+1     5001     
+2     5002     
+
+Query plan:
+iscan
+    class: ta node[?]
+    index: i_ta_ca_cb_cc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, max(ta.cc) from ta ta where (ta.ca>= ?:?  and ta.ca<= ?:? ) and ta.cb= ?:?  group by ta.ca having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+    
+Case 12: index range scan that skips GROUP BY, (cb) first; result = index scan of i_tb_ca_cb_cc     
+
+===================================================
+ca    max(cc)    
+0     5000     
+1     5001     
+2     5002     
+
+Query plan:
+iscan
+    class: tb node[?]
+    index: i_tb_ca_cb_cc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select tb.ca, max(tb.cc) from tb tb where (tb.ca>= ?:?  and tb.ca<= ?:? ) and tb.cb= ?:?  group by tb.ca having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+0
