@@ -28,7 +28,6 @@ ca    ca
 5     15     
 6     16     
 7     18     
-8     20     
 9     21     
 10     12     
 10     22     
@@ -71,7 +70,6 @@ ca    ca
 5     15     
 6     16     
 7     18     
-8     20     
 9     21     
 10     12     
 10     22     
@@ -94,7 +92,6 @@ ca    ca
 5     15     
 6     16     
 7     18     
-8     20     
 9     21     
 10     12     
 10     22     
@@ -137,7 +134,6 @@ ca    ca
 5     15     
 6     16     
 7     18     
-8     20     
 9     21     
 10     12     
 10     22     
@@ -375,7 +371,7 @@ ca    ca
 
 ===================================================
     
-Case 7: MULTISET - hash join of BIGINT and DOUBLE elements returns the pairs of the nested loop join     
+Case 7: MULTISET - BIGINT and DOUBLE elements join by nested loop, with its pairs     
 
 ===================================================
 0
@@ -390,7 +386,7 @@ trace
 
 Query Plan:
   SORT (order by)
-    HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       TABLE SCAN (dba.te)
       TABLE SCAN (dba.tg)
 
@@ -398,15 +394,9 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -419,7 +409,7 @@ ca    ca
 
 ===================================================
     
-Case 8: MULTISET - hash join of NUMERIC(24,4) and DOUBLE elements returns the pairs of the nested loop join     
+Case 8: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with its pairs     
 
 ===================================================
 0
@@ -434,7 +424,7 @@ trace
 
 Query Plan:
   SORT (order by)
-    HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       TABLE SCAN (dba.tf)
       TABLE SCAN (dba.tg)
 
@@ -442,15 +432,9 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -505,7 +489,7 @@ Query Plan:
       TABLE SCAN (dba.tv)
       TABLE SCAN (dba.tw)
 
-  rewritten query: select [dba.tv].ca, [dba.tw].ca from [dba.tv] [dba.tv], [dba.tw] [dba.tw] where [dba.tv].cb=[dba.tw].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tv].ca, [dba.tw].ca from [dba.tv] [dba.tv], [dba.tw] [dba.tw] where [dba.tv].cb=[dba.tw].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -726,7 +710,7 @@ trace
 
 Query Plan:
   SORT (order by)
-    HASH JOIN (inner join)
+    NESTED LOOPS (inner join)
       TABLE SCAN (dba.tl)
       TABLE SCAN (dba.tu)
 
@@ -734,15 +718,9 @@ Query Plan:
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.tl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.tu), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tl), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tu), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -804,7 +782,7 @@ Query Plan:
       TABLE SCAN (dba.tp)
       TABLE SCAN (dba.tq)
 
-  rewritten query: select [dba.tp].ca, [dba.tq].ca from [dba.tp] [dba.tp], [dba.tq] [dba.tq] where [dba.tp].cb=[dba.tq].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tp].ca, [dba.tq].ca from [dba.tp] [dba.tp], [dba.tq] [dba.tq] where [dba.tp].cb=[dba.tq].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -827,7 +805,7 @@ Query Plan:
       TABLE SCAN (dba.tr)
       TABLE SCAN (dba.tt)
 
-  rewritten query: select [dba.tr].ca, [dba.tt].ca from [dba.tr] [dba.tr], [dba.tt] [dba.tt] where [dba.tr].cb=[dba.tt].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tr].ca, [dba.tt].ca from [dba.tr] [dba.tr], [dba.tt] [dba.tt] where [dba.tr].cb=[dba.tt].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -939,7 +917,7 @@ Query Plan:
       TABLE SCAN (dba.tza)
       TABLE SCAN (dba.tzb)
 
-  rewritten query: select [dba.tza].ca, [dba.tzb].ca from [dba.tza] [dba.tza], [dba.tzb] [dba.tzb] where {[dba.tza].cb}={[dba.tzb].cc} order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tza].ca, [dba.tzb].ca from [dba.tza] [dba.tza], [dba.tzb] [dba.tzb] where {[dba.tza].cb}={[dba.tzb].cc} order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -962,7 +940,7 @@ Query Plan:
       TABLE SCAN (dba.tza)
       TABLE SCAN (dba.tzb)
 
-  rewritten query: select [dba.tza].ca, [dba.tzb].ca from [dba.tza] [dba.tza], [dba.tzb] [dba.tzb] where {[dba.tza].cb, [dba.tza].ca+?}={[dba.tzb].cb, [dba.tzb].ca} order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tza].ca, [dba.tzb].ca from [dba.tza] [dba.tza], [dba.tzb] [dba.tzb] where {[dba.tza].cb, [dba.tza].ca+?}={[dba.tzb].cb, [dba.tzb].ca} order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -1574,6 +1552,184 @@ ca    ca
 2     32     
 4     31     
 4     32     
+
+===================================================
+    
+Case 25: JSON - CONNECT BY by a hash list scan returns the rows of the single-table plan     
+
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+ca    level    
+1     1     
+2     2     
+3     2     
+4     2     
+5     3     
+6     3     
+7     3     
+8     2     
+9     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.tzo)
+
+  rewritten query: select [dba.tzo].ca, level from [dba.tzo] [dba.tzo] start with [dba.tzo].ca= ?:?  connect by  prior [dba.tzo].id=[dba.tzo].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tzo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+ca    level    
+1     1     
+2     2     
+3     2     
+4     2     
+5     3     
+6     3     
+7     3     
+8     2     
+9     3     
+
+===================================================
+    
+Case 26: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+2     12     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tzp)
+      TABLE SCAN (dba.tzq)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tzp].ca, [dba.tzq].ca from [dba.tzp] [dba.tzp], [dba.tzq] [dba.tzq] where [dba.tzp].cb=[dba.tzq].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tzq), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tzp), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+2     12     
+
+===================================================
+    
+Case 27: string to DOUBLE - a subnormal value converts to it, not to an overflow error     
+
+===================================================
+string_to_subnormal_double    
+PASS     
+
+===================================================
+    
+Case 28: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63, and hash join returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+ca    cmp    
+1     gt     
+2     eq     
+3     gt     
+4     lt     
+5     lt     
+6     eq     
+7     gt     
+8     lt     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     1     
+2     2     
+2     3     
+6     6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ca, b.ca from [dba.tzr] a, [dba.tzr] b where a.cj=b.cn order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tzr), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tzr), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     1     
+2     2     
+2     3     
+6     6     
 
 ===================================================
 0

@@ -2,7 +2,9 @@
  *  This test case verifies CBRD-28060: Hash strings in multi-byte words consistently with string comparison
  *
  *  A JSON value compares as the SQL value it converts to: 1 equals 1.0, true equals "true", "0x10"
- *  equals 16, and an object compares by its body text. A multiset compares sorted, whatever the
+ *  equals 16, and an object compares by its body text. A JSON integer compares with a DOUBLE or a
+ *  numeric string by their values, so 9007199254740993 (2^53 + 1) no longer equals 9007199254740992.0.
+ *  A multiset compares sorted, whatever the
  *  order of its elements, and its elements compare with coercion (1 equals 1.0). The change hashes
  *  both as they compare, and the hash join compares a JSON or collection key with coercion as the
  *  join term does. Before the change, the hash join missed pairs of equal JSON and collection keys,
@@ -10,6 +12,7 @@
  *  A NUMERIC with 16 or more digits and a scale converted to DOUBLE through two roundings, so
  *  NUMERIC(24,4) 495038888524330534.0000 and BIGINT 495038888524330534 became two DOUBLEs; the
  *  change rounds once. A NUMERIC or a string converted to FLOAT through DOUBLE as well, and now rounds once to FLOAT.
+ *  A string of a subnormal DOUBLE ('1e-310') was an overflow error, and now converts to the DOUBLE.
  *  Collection elements that compare equal only with coercion ('1' and 1) hash apart, so
  *  such a pair of element types is not hashed: the planner leaves its join to the nested loop. A cached result keyed by a JSON value (the subquery cache) must not answer
  *  for another value the comparison finds equal: JSON_TYPE of 1 and of 1.0 differ. The same holds for a collection
@@ -19,9 +22,12 @@
  *  pair (before the change too), and the subquery cache keyed by such a column stopped on an assertion during the
  *  change. A collection element now hashes by the sum of its elements' hashes, whatever its collection type, and
  *  a cached key compares its elements by their own types. A collection declared with several element types hashes
- *  when all of them share one element hash type (numbers but FLOAT, or strings of one collation); one that mixes two
- *  (INT and VARCHAR, INT and FLOAT) is joined by the nested loop. A key built of a collection column ({ta.cb})
- *  keeps the nested domain, which a hash join or a hash list scan hashes when its leaf element types do.
+ *  when all of them share one element hash type (exact numbers, DOUBLE and MONETARY, or strings of one
+ *  collation); one that mixes two (INT and VARCHAR, INT and FLOAT, BIGINT and DOUBLE) is joined by the nested
+ *  loop, as is a join of exact and floating elements across two columns: an element of two such types compares
+ *  through DOUBLE.
+ *  A key built of a collection column ({ta.cb}) keeps the nested domain, which a hash join or a hash list scan
+ *  hashes when its leaf element types do.
  *  A cached result keyed by a NUMERIC or a MONETARY must not answer for one of another scale (1.0 and 1.00) or
  *  currency ($1.00 and \1.00), or by a -0 for a 0 or a -NaN for a NaN (DOUBLE, FLOAT, MONETARY) either: they
  *  compare equal and hash alike but print apart. A memoized inner scan of a nested loop join keyed by -0 and 0
@@ -34,8 +40,8 @@
  *    Case 4:  JSON - a correlated subquery keyed by a JSON value returns the uncached results
  *    Case 5:  MULTISET - hash join of unsorted multisets returns the pairs of the nested loop join
  *    Case 6:  MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join
- *    Case 7:  MULTISET - hash join of BIGINT and DOUBLE elements returns the pairs of the nested loop join
- *    Case 8:  MULTISET - hash join of NUMERIC(24,4) and DOUBLE elements returns the pairs of the nested loop join
+ *    Case 7:  MULTISET - BIGINT and DOUBLE elements join by nested loop, with its pairs
+ *    Case 8:  MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with its pairs
  *    Case 9:  NUMERIC to DOUBLE - one value converts to one DOUBLE whatever its type and scale
  *    Case 10: MULTISET - VARCHAR and INT elements ({'1'} = {1}) join by nested loop, with its pairs
  *    Case 11: SEQUENCE - a correlated subquery keyed by a SEQUENCE of no element domain returns the uncached results
@@ -55,6 +61,11 @@
  *             keyed by the column returns the uncached results
  *    Case 23: NUMERIC and string to FLOAT - a value just off the midpoint of two FLOATs converts to the nearest one
  *    Case 24: SET, MULTISET and SEQUENCE across kinds - hash join returns the pairs of the nested loop join
+ *    Case 25: JSON - CONNECT BY by a hash list scan returns the rows of the single-table plan
+ *    Case 26: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join
+ *    Case 27: string to DOUBLE - a subnormal value converts to it, not to an overflow error
+ *    Case 28: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63, and
+ *             hash join returns the pairs of the nested loop join
  */
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace
@@ -70,7 +81,7 @@
 --   5   | [1, 2]           | 15 ([1,2])
 --   6   | {"a": 1}         | 16 ({"a":1})
 --   7   | 1.5              | 18 ("1.5")
---   8   | 9007199254740993 | 20 (9007199254740992.0)
+--   8   | 9007199254740993 | none: 20 (9007199254740992.0) is 2^53, one less
 --   9   | 16               | 21 ("0x10")
 --  10   | 0                | 12 (0.0), 22 ("")
 --  11   | null             | none
@@ -153,14 +164,14 @@ show trace;
 set trace off;
 SELECT /*+ NO_USE_HASH USE_NL */ te.ca, tf.ca FROM te, tf WHERE te.cb = tf.cb ORDER BY 1, 2;
 
-evaluate 'Case 7: MULTISET - hash join of BIGINT and DOUBLE elements returns the pairs of the nested loop join';
+evaluate 'Case 7: MULTISET - BIGINT and DOUBLE elements join by nested loop, with its pairs';
 set trace on;
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ te.ca, tg.ca FROM te, tg WHERE te.cb = tg.cb ORDER BY 1, 2;
 show trace;
 set trace off;
 SELECT /*+ NO_USE_HASH USE_NL */ te.ca, tg.ca FROM te, tg WHERE te.cb = tg.cb ORDER BY 1, 2;
 
-evaluate 'Case 8: MULTISET - hash join of NUMERIC(24,4) and DOUBLE elements returns the pairs of the nested loop join';
+evaluate 'Case 8: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with its pairs';
 set trace on;
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ tf.ca, tg.ca FROM tf, tg WHERE tf.cb = tg.cb ORDER BY 1, 2;
 show trace;
@@ -445,7 +456,71 @@ show trace;
 set trace off;
 SELECT /*+ NO_USE_HASH USE_NL */ tzk.ca, tzn.ca FROM tzk, tzn WHERE tzk.cb = tzn.cb ORDER BY 1, 2;
 
+evaluate 'Case 25: JSON - CONNECT BY by a hash list scan returns the rows of the single-table plan';
+-- a JSON key of CONNECT BY takes the hash list scan; its children of 1 are 1.0, "1" and 1, and of 2 are 2 and "2.0"
+-- tzo: ca | id  | pid
+--       1 | 1   | NULL
+--       2 | 2   | 1.0
+--       3 | 3   | "1"
+--       4 | 4   | 1
+--       5 | 5   | 2
+--       6 | 6   | "2.0"
+--       7 | 7   | [1]
+--       8 | [1] | 1
+--       9 | 9   | [1]
+DROP TABLE IF EXISTS tzo;
+CREATE TABLE tzo (ca INT, id JSON, pid JSON);
+INSERT INTO tzo VALUES (1, '1', NULL), (2, '2', '1.0'), (3, '3', '"1"'), (4, '4', '1'), (5, '5', '2'), (6, '6', '"2.0"'), (7, '7', '[1]'), (8, '[1]', '1'), (9, '9', '[1]');
+set trace on;
+SELECT ca, LEVEL FROM tzo START WITH ca = 1 CONNECT BY PRIOR id = pid ORDER BY 1, 2;
+show trace;
+set trace off;
+SELECT /*+ NO_HASH_LIST_SCAN */ ca, LEVEL FROM tzo START WITH ca = 1 CONNECT BY PRIOR id = pid ORDER BY 1, 2;
+
+evaluate 'Case 26: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join';
+-- a NUMERIC element of no precision keeps the scale of its value: {1.5} = {1.50} and {2} = {2.000}
+DROP TABLE IF EXISTS tzq, tzp;
+CREATE TABLE tzp (ca INT, cb SET (NUMERIC));
+INSERT INTO tzp VALUES (1, {1.5}), (2, {2});
+CREATE TABLE tzq (ca INT, cb SET (NUMERIC));
+INSERT INTO tzq VALUES (11, {1.50}), (12, {2.000});
+set trace on;
+SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ tzp.ca, tzq.ca FROM tzp, tzq WHERE tzp.cb = tzq.cb ORDER BY 1, 2;
+show trace;
+set trace off;
+SELECT /*+ NO_USE_HASH USE_NL */ tzp.ca, tzq.ca FROM tzp, tzq WHERE tzp.cb = tzq.cb ORDER BY 1, 2;
+
+evaluate 'Case 27: string to DOUBLE - a subnormal value converts to it, not to an overflow error';
+-- 1e-310 is below the smallest normal DOUBLE (2.2250738585072014e-308); before the change it was an overflow error
+SELECT CASE WHEN CAST ('1e-310' AS DOUBLE) > 0 AND CAST ('1e-310' AS DOUBLE) < 2.2250738585072014e-308
+            THEN 'PASS' ELSE 'FAIL' END string_to_subnormal_double;
+
+evaluate 'Case 28: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63, and hash join returns the pairs of the nested loop join';
+-- before the change the integer converted to DOUBLE, which rounds above 2^53
+-- ca | cj                   | cn                       | cj against cn
+-- ---+----------------------+--------------------------+---------------------------------------------
+--  1 | 9007199254740993     | 9007199254740992.0       | gt: 2^53 + 1 and 2^53
+--  2 | 9007199254740992     | 9007199254740992.0       | eq
+--  3 | 9007199254740993     | "9007199254740993"       | gt: the string converts to the DOUBLE 2^53
+--  4 | -9007199254740993    | -9007199254740992.0      | lt
+--  5 | 9223372036854775807  | 9223372036854775807.0    | lt: the DOUBLE is 2^63, above every BIGINT
+--  6 | -9223372036854775808 | -9223372036854775808.0   | eq: the DOUBLE is -2^63, the least BIGINT
+--  7 | 2                    | 1.5                      | gt: the fraction decides
+--  8 | -2                   | -1.5                     | lt
+DROP TABLE IF EXISTS tzr;
+CREATE TABLE tzr (ca INT, cj JSON, cn JSON);
+INSERT INTO tzr VALUES (1, '9007199254740993', '9007199254740992.0'), (2, '9007199254740992', '9007199254740992.0'),
+  (3, '9007199254740993', '"9007199254740993"'), (4, '-9007199254740993', '-9007199254740992.0'),
+  (5, '9223372036854775807', '9223372036854775807.0'), (6, '-9223372036854775808', '-9223372036854775808.0'),
+  (7, '2', '1.5'), (8, '-2', '-1.5');
+SELECT ca, CASE WHEN cj = cn THEN 'eq' WHEN cj < cn THEN 'lt' WHEN cj > cn THEN 'gt' END cmp FROM tzr ORDER BY 1;
+set trace on;
+SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.ca, b.ca FROM tzr a, tzr b WHERE a.cj = b.cn ORDER BY 1, 2;
+show trace;
+set trace off;
+SELECT /*+ NO_USE_HASH USE_NL */ a.ca, b.ca FROM tzr a, tzr b WHERE a.cj = b.cn ORDER BY 1, 2;
+
 -- cleanup
 set trace off;
 
-DROP TABLE IF EXISTS ta, tb, tc, td, te, tf, tg, th, ti, tj, tk, tl, tm, tn, tp, tq, tr, ts, tt, tu, tv, tw, tx, ty, tza, tzb, tzc, tzd, tze, tzf, tzg, tzh, tzi, tzj, tzk, tzl, tzm, tzn;
+DROP TABLE IF EXISTS ta, tb, tc, td, te, tf, tg, th, ti, tj, tk, tl, tm, tn, tp, tq, tr, ts, tt, tu, tv, tw, tx, ty, tza, tzb, tzc, tzd, tze, tzf, tzg, tzh, tzi, tzj, tzk, tzl, tzm, tzn, tzo, tzp, tzq, tzr;
