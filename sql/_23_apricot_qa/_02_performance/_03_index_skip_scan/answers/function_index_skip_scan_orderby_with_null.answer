@@ -2125,7 +2125,7 @@ iscan
     sort:  ? asc, ? desc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc , ? desc , ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' using index t.idx(+) order by ?, ? desc , ? desc , ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -2198,7 +2198,7 @@ iscan
     sort:  ? asc, ? desc, ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' order by ?, ? desc  for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.i, t.j, t.k, t.l from t t where (t.j> ?:? ) and t.i<>? and t.s<>'x' using index t.idx(+) order by ?, ? desc  for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 i    j    k    l    
@@ -2271,7 +2271,7 @@ iscan
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ INDEX_SS */ t.k, t.i from t t where (t.j> ?:? ) and t.s<>'x' order by ? for orderby_num()<= ?:? 
+select /*+ INDEX_SS */ t.k, t.i from t t where (t.j> ?:? ) and t.s<>'x' using index t.idx(+) order by ? for orderby_num()<= ?:? 
 /* ---> skip ORDER BY */
 ===================================================
 k    
