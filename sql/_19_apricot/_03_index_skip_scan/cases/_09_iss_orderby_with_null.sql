@@ -122,7 +122,8 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j=2 and s <> 'x' order by 
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j=2 and s <> 'x' order by i desc, k asc limit 10;
 
 -- skip
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x' order by i asc, j desc, k desc, l asc limit 10;
+-- using index idx(+): INDEX_SS only makes the index skip scan a candidate, and a sort plan costs less here
+select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x' using index idx(+) order by i asc, j desc, k desc, l asc limit 10;
 
 -- skip, because it ignores the sort parameter j (it is pinned to "2" by the condition)
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j=2 and i <> 0 and s <> 'x' order by i asc, j asc, k desc, l asc limit 10;
@@ -131,7 +132,8 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j=2 and i <> 0 and s <> 'x
 select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x' order by i asc, j asc limit 10;
 
 -- skip order by, because directions coincide 
-select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x' order by i asc, j desc limit 10;
+-- using index idx(+): INDEX_SS only makes the index skip scan a candidate, and a sort plan costs less here
+select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x' using index idx(+) order by i asc, j desc limit 10;
 
 
 -- no skip
@@ -142,7 +144,8 @@ select /*+ recompile INDEX_SS */ i,j,k,l from t where j>2 and i <> 0 and s <> 'x
 
 -- "ghost columns" introduced by "order by":
 -- iss, skip ordby
-select /*+ recompile INDEX_SS */ k from t where j>2 and s <> 'x' order by i asc limit 10;
+-- using index idx(+): INDEX_SS only makes the index skip scan a candidate, and a sort plan costs less here
+select /*+ recompile INDEX_SS */ k from t where j>2 and s <> 'x' using index idx(+) order by i asc limit 10;
 -- no iss, just covering
 select /*+ recompile  */ k from t where k>2 and s <> 'x' order by i asc, j desc ,k desc limit 10;
 -- no iss
