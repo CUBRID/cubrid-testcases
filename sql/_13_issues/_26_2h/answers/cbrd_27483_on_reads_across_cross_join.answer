@@ -1,0 +1,582 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+2
+===================================================
+2
+===================================================
+    
+Case 1: i17 case 1 - the ON reads the table before the CROSS JOIN and the inner table, with no join term; result = 4 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  and c.ca= ?:?  order by ?, ?, ?
+===================================================
+    
+Case 2: i17 case 2 - the ON reads only the table before the CROSS JOIN; result = 6 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     1     a     
+1     a     1     
+1     a     a     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  order by ?, ?, ?
+===================================================
+    
+Case 3: i17 case 3 - two CROSS JOINs between the table that the ON reads and the LEFT JOIN; result = 8 rows     
+
+===================================================
+ca    ca    ca    ca    
+1     1     1     1     
+1     1     a     1     
+1     a     1     1     
+1     a     a     1     
+2     1     1     null     
+2     1     a     null     
+2     a     1     null     
+2     a     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: nl-join (cross join)
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: d node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, d.ca, c.ca from ta a cross join tb b cross join tb d left outer join tb c on a.cb= ?:?  and c.ca= ?:?  order by ?, ?, ?, ?
+===================================================
+    
+Case 4: i17 case 4 - a comma before, the ON reads the table right after the comma, a CROSS JOIN in between; result = 8 rows     
+
+===================================================
+ca    ca    ca    
+1     1     a     
+1     1     a     
+1     a     null     
+1     a     null     
+2     1     a     
+2     1     a     
+2     a     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (left outer join)
+                                         outer: nl-join (cross join)
+                                                    outer: sscan
+                                                               class: b node[?]
+                                                               cost:  ? card ?
+                                                    inner: sscan
+                                                               class: d node[?]
+                                                               cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: c node[?]
+                                                    sargs: term[?] AND term[?]
+                                                    cost:  ? card ?
+                                         during:term[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a, tb b cross join tb d left outer join tb c on b.ca= ?:?  and c.ca= ?:?  order by ?, ?, ?
+===================================================
+    
+Case 5: i17 case 5 - no join term, a filter on each table; result = 4 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     null     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?] AND term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.ca= ?:?  and b.ca= ?:?  and c.ca= ?:?  order by ?, ?, ?
+===================================================
+    
+Case 6: i17 case 6 - a join term to each table of the CROSS JOIN; result = 4 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     null     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on b.ca=c.ca and c.ca= cast(a.ca as varchar) order by ?, ?, ?
+===================================================
+    
+Case 7: i17 case 7 - a join term to the first table and a filter on the second; result = 4 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     null     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on b.ca= ?:?  and c.ca= cast(a.ca as varchar) order by ?, ?, ?
+===================================================
+    
+Case 8: i17 case 8 - Case 1 with a WHERE on the second table of the CROSS JOIN; result = 2 rows     
+
+===================================================
+ca    ca    ca    
+1     a     1     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  and c.ca= ?:?  where b.ca= ?:?  order by ?, ?
+===================================================
+    
+Case 9: i17 case 9 - Case 1 with an IS NULL filter on the NULL-padded table in the WHERE; result = 2 rows     
+
+===================================================
+ca    ca    ca    
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  and c.ca= ?:?  where c.ca is null  order by ?, ?, ?
+===================================================
+    
+Case 10: i17 case 10 - a second LEFT JOIN whose ON reads the table before the CROSS JOIN; result = 4 rows     
+
+===================================================
+ca    ca    ca    ca    
+1     1     1     a     
+1     a     a     a     
+2     1     1     null     
+2     a     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: nl-join (cross join)
+                                       outer: sscan
+                                                  class: a node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca, d.ca from ta a cross join tb b left outer join tb c on b.ca=c.ca left outer join tb d on a.cb= ?:?  and d.ca= ?:?  order by ?, ?, ?, ?
+===================================================
+    
+Case 11: i17 case 11 - Case 1 with a derived table in place of ta; result = same rows as Case 1     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  and c.ca= ?:?  order by ?, ?, ?
+===================================================
+    
+Case 12: i17 case 12 - Case 1 with a filtered derived table in place of ta; result = same rows as Case 1     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b left outer join tb c on a.cb= ?:?  and c.ca= ?:?  where (a.ca> ?:? ) order by ?, ?, ?
+===================================================
+    
+Case 13: i17 case 13 - Case 1 with the ORDERED hint; result = same rows as Case 1     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+===================================================
+    
+Case 14: i17 case 14 - Case 1 with a LEADING hint on the second table; result = same rows as Case 1     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+===================================================
+    
+Case 15: i17 case 15 - an INNER JOIN in place of the LEFT JOIN of Case 1; result = 2 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+
+===================================================
+    
+Case 16: i17 case 16 - an INNER JOIN whose ON joins the inner table to the table before the CROSS JOIN; result = 2 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+
+===================================================
+    
+Case 17: i17 case 17 - a LEFT JOIN whose ON reads only the table right before it; result = 4 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     null     
+2     1     1     
+2     a     null     
+
+===================================================
+    
+Case 18: i17 case 18 - Case 1 with INNER JOIN ON 1 = 1 in place of the CROSS JOIN; result = same rows as Case 1     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     a     1     
+2     1     null     
+2     a     null     
+
+===================================================
+    
+Case 19: i17 case 19 - an ON after a comma cannot read the table before the comma, the query fails with an error; result = fails with an error     
+
+===================================================
+Error:-494
+===================================================
+    
+Case 20: i17 case 20 - a RIGHT JOIN whose ON reads the second table of the CROSS JOIN     
+
+===================================================
+ca    ca    ca    
+null     null     zz     
+1     1     1     
+2     1     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (cross join)
+                                         outer: sscan
+                                                    class: a node[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: b node[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.ca, b.ca, c.ca from ta a cross join tb b right outer join tc c on b.ca=c.ca order by ?, ?, ?
+===================================================
+    
+Case 21: i17 case 21 - Case 20 with the ORDERED hint; result = same rows as Case 20     
+
+===================================================
+ca    ca    ca    
+null     null     zz     
+1     1     1     
+2     1     1     
+
+===================================================
+    
+Case 22: i17 case 22 - Case 20 with a LEADING hint on the first table; result = same rows as Case 20     
+
+===================================================
+ca    ca    ca    
+null     null     zz     
+1     1     1     
+2     1     1     
+
+===================================================
+0
+===================================================
+    
+Case 23: i17 case 30 - UPDATE through the join of Case 1, only the row with cb NULL has a NULL-padded row; result = 1 row affected     
+
+===================================================
+1
+===================================================
+    
+Case 24: i17 case 31 - the rows of td after the UPDATE of Case 23; result = 2 rows     
+
+===================================================
+ca    
+1     
+12     
+
+===================================================
+    
+Case 25: i17 case 32 - DELETE through the join of Case 1; result = 1 row affected     
+
+===================================================
+1
+===================================================
+    
+Case 26: i17 case 33 - the rows of td after the DELETE of Case 25; result = 1 row     
+
+===================================================
+ca    
+1     
+
+===================================================
+0
