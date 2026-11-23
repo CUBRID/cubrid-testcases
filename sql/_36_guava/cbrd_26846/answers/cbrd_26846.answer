@@ -7,6 +7,18 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
     
 Case 1: all new functions in one query -> gather: buildvalue     
 
@@ -1082,7 +1094,182 @@ Trace Statistics:
 
 ===================================================
     
-Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin     
+Case 28: MEDIAN with DISTINCT - parallel equals serial, plain MEDIAN before and after it keeps its own value, a view keeps DISTINCT     
+
+===================================================
+result    
+PASS     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ PARALLEL(?) */ median(distinct [dba.bvx].cola), median([dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  TABLE SCAN (dba.bvx)
+
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ median(distinct [dba.bvx].cola), median([dba.bvx].cola) from [dba.bvx] [dba.bvx])
+
+  NESTED LOOPS (cross join)
+    TABLE SCAN (p)
+    TABLE SCAN (s)
+
+  rewritten query: select case when p.dm<=>s.dm and p.md<=>s.md then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ median(distinct [dba.bvx].cola) as [dm], median([dba.bvx].cola) as [md] from [dba.bvx] [dba.bvx]) p (dm, md), (select /*+ NO_PARALLEL_SCAN */ median(distinct [dba.bvx].cola) as [dm], median([dba.bvx].cola) as [md] from [dba.bvx] [dba.bvx]) s (dm, md)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.bvx), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+median(distinct k)    median(distinct n)    median(distinct v)    median(k)    count(distinct k)    sum(distinct k)    
+48.0     12.0     48.0     0.0     25     1200     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvm)
+
+  rewritten query: select /*+ PARALLEL(?) */ median(distinct [dba.bvm].k), median(distinct [dba.bvm].n), median(distinct [dba.bvm].v), median([dba.bvm].k), count(distinct [dba.bvm].k), sum(distinct [dba.bvm].k) from [dba.bvm] [dba.bvm]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+median(distinct k)    median(distinct n)    median(distinct v)    median(k)    count(distinct k)    sum(distinct k)    
+48.0     12.0     48.0     0.0     25     1200     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvm)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ median(distinct [dba.bvm].k), median(distinct [dba.bvm].n), median(distinct [dba.bvm].v), median([dba.bvm].k), count(distinct [dba.bvm].k), sum(distinct [dba.bvm].k) from [dba.bvm] [dba.bvm]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+median(distinct k)    
+48.0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvn)
+
+  rewritten query: select /*+ PARALLEL(?) */ median(distinct [dba.bvn].k) from [dba.bvn] [dba.bvn]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+median(k)    
+0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvn)
+
+  rewritten query: select /*+ PARALLEL(?) */ median([dba.bvn].k) from [dba.bvn] [dba.bvn]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvn), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+median(distinct k)    
+48.0     
+
+===================================================
+median(k)    
+0.0     
+
+===================================================
+median(k)    
+0.0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvm)
+
+  rewritten query: select /*+ PARALLEL(?) */ median([dba.bvm].k) from [dba.bvm] [dba.bvm]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+median(distinct k)    
+48.0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bvm)
+
+  rewritten query: select /*+ PARALLEL(?) */ median(distinct [dba.bvm].k) from [dba.bvm] [dba.bvm]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bvm), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+median(k)    
+0.0     
+
+===================================================
+median(distinct k)    
+48.0     
+
+===================================================
+0
+===================================================
+vclass_def    
+select median(distinct [dba.bvm].[k]) from [dba.bvm] [dba.bvm]     
+
+===================================================
+m    
+48.0     
+
+===================================================
+0
+===================================================
+    
+Case 29: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin     
 
 ===================================================
 char_length(group_concat(colb separator '<>'))    char_length(group_concat(cola))    

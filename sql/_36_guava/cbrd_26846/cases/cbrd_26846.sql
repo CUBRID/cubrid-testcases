@@ -22,15 +22,18 @@
  * Self-checking: Cases 2 to 12 and 16 to 19 and 22 to 27 run the aggregate twice
  * in one statement, a PARALLEL(8) sub-query and a NO_PARALLEL_SCAN sub-query, and
  * compare them with the null-safe <=>, emitting PASS/FAIL. Cases 13 to 15, 20, 21
- * and 30 instead run the PARALLEL(8) query and its NO_PARALLEL_SCAN twin as two
- * statements. Cases 13 to 15 print the error of each side. Cases 20, 21 and 30
+ * and 29 instead run the PARALLEL(8) query and its NO_PARALLEL_SCAN twin as two
+ * statements. Cases 13 to 15 print the error of each side. Cases 20, 21 and 29
  * print the values, because for most of the new aggregates no other test case prints the
  * serial values over no row or one row, so a comparison alone would have nothing
  * to stand on there. Each check runs under trace so the answer
  * also pins "gather: buildvalue" on the parallel side and no parallel workers on
  * the serial side. A run that silently fell back to a
  * serial scan would otherwise PASS while testing nothing. Worker counts and
- * row counts in the trace are masked by CTP.
+ * row counts in the trace are masked by CTP. Case 28 starts with one such
+ * comparison and then prints the value of each statement, because the cache fault
+ * it checks shows only as a value that differs with and without DISTINCT, and its
+ * NO_PARALLEL_SCAN statements after the first two and its view query have no trace.
  *
  * Order-sensitive results (JSON element/key order, GROUP_CONCAT without
  * ORDER BY) depend on the worker finish order, so those checks compare
@@ -78,31 +81,32 @@
  *   Case 25: JSON_OBJECTAGG duplicate key keeps a value that really occurs
  *   Case 26: STDDEV and VARIANCE families next to the new aggregates
  *   Case 27: explicit PARALLEL(2) hint
- *   Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values
+ *   Case 28: MEDIAN with DISTINCT - over INT, NUMERIC and VARCHAR beside
+ *            COUNT and SUM with DISTINCT, a plain MEDIAN after it and before it on
+ *            a table of its own without recompile, and a view keeps DISTINCT
+ *   Case 29: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values
  *            printed beside the serial twin
- *
- * Disabled until fixed, commented out at the end of this file:
- *   Case 28: BIT_AND / BIT_OR / BIT_XOR with DISTINCT
- *   Case 29: MEDIAN with DISTINCT, and a plain MEDIAN after it on the same table
  *
  * Cases 20, 21, 22 and 27 are the edge shapes cbrd_26711 already applies to the
  * aggregates that were supported before this issue; they are repeated here for
  * the eleven the issue adds.
  *
- * Two DISTINCT shapes are commented out as Case 28 and Case 29. On 11.5.0.2920
- * debug they abort the server and on release they return a wrong value, so they
- * stay disabled until fixed. Both are reported on CBRD-26846.
- *   - BIT_AND / BIT_OR / BIT_XOR with DISTINCT fail on the serial side as well,
- *     so the fault is in the serial finalize of a distinct list, not in anything
- *     this issue changed, and the parallel-versus-serial comparison cannot see
- *     it. Case 28 therefore also prints the values directly.
- *   - MEDIAN with DISTINCT fails only in parallel: a worker writes the operand
- *     into its list without casting it to the result domain. When it is the
- *     first parallel MEDIAN plan built for a table, a later plain MEDIAN on that
- *     table, with no DISTINCT in it, also returns a wrong value until it is
- *     recompiled. Inside the two derived tables of the comparison the plain
- *     MEDIAN comes back correct, so Case 29 also runs the two statements at the
- *     top level, on a table of their own and without a recompile hint.
+ * MEDIAN with DISTINCT, Case 28, was reported on CBRD-26846 while this test case
+ * was written and fixed by engine PR #8578. Before the fix it failed in two ways.
+ *   - A worker wrote the operand into its distinct list without casting it to
+ *     the MEDIAN result domain, so a debug server aborted and a release server
+ *     returned a wrong value. The serial scan was right.
+ *   - MEDIAN(DISTINCT k) was printed as median(k), and the printed query is the
+ *     XASL cache key, so MEDIAN(DISTINCT k) and MEDIAN(k) on one table shared the
+ *     plan that was compiled first, serial and parallel alike, and a view lost
+ *     DISTINCT.
+ * bvx cannot show the second fault: its cola is uniform, so MEDIAN(DISTINCT cola)
+ * and MEDIAN(cola) are equal. Case 28 therefore uses two tables of its own whose k
+ * gives different values with and without DISTINCT, runs the two statements in
+ * both orders without a recompile hint, and checks the view text.
+ * BIT_AND / BIT_OR / BIT_XOR with DISTINCT, the other fault reported there, became
+ * CBRD-28153, and its test case sql/_13_issues/_26_2h/cases/cbrd_28153.sql checks
+ * it on the parallel buildvalue path as well, so this file does not repeat it.
  * The DISTINCT shapes that do work are covered: GROUP_CONCAT in Cases 4 and 18,
  * alone and beside a non-DISTINCT GROUP_CONCAT, and over no row and one row in
  * Cases 20 and 21. PERCENTILE_CONT /
@@ -123,6 +127,22 @@ select rownum, rownum % 100, lpad(to_char(rownum % 20), 10, '0'), null, null,
        case when rownum % 7 = 0 then null else rownum % 50 end,
        to_datetime('2026-09-29 00:00:00.000', 'YYYY-MM-DD HH24:MI:SS.FF') + rownum
 from db_class a, db_class b, db_class c, db_class d, db_class e limit 10000;
+
+drop view if exists vmd;
+drop table if exists bvm, bvn;
+-- Case 28 only: 6000 rows with three md5 strings each, past the parallel heap scan
+-- threshold of 32 pages under CTP. k is NULL in 10 percent of the rows, a multiple
+-- of 4 from 0 to 96 in 25 percent and 0 in the rest, so MEDIAN with and without
+-- DISTINCT differ, and n and v hold k as NUMERIC and as VARCHAR. bvn is a copy, so
+-- that each of the two tables gets its first MEDIAN plan in Case 28.
+create table bvm (id int, k int, n numeric(10,2), v varchar(10), pad varchar(100));
+insert into bvm
+select id, k, k / 4.0, cast(k as varchar(10)), pad
+from (select rownum id, case when rownum % 10 = 3 then null when rownum % 4 = 0 then rownum % 100 else 0 end k,
+             concat(md5(rownum), md5(rownum + 7919), md5(rownum * 31 + 7)) pad
+      from db_class a, db_class b, db_class c, db_class d, db_class e limit 6000) x;
+create table bvn like bvm;
+insert into bvn select * from bvm;
 
 set trace on;
 
@@ -451,50 +471,44 @@ from (select /*+ PARALLEL(2) */ bit_and(case when id = 5000 then 254 else 255 en
              cume_dist(50) within group (order by cola) cd from bvx) s;
 show trace;
 
--- Disabled until fixed: Case 28 and Case 29, described in the header block. On a
--- debug build each of them aborts the server, so they stay as comments to keep this
--- file runnable. To enable them, remove the leading "-- " of each statement line
--- and make the answer file again.
---
--- Case 28 first runs the comparison that the other cases use. The serial side has
--- the same defect as the parallel side, so the comparison cannot tell them apart,
--- and the two statements after it print the values themselves.
--- evaluate 'Case 28: BIT_AND / BIT_OR / BIT_XOR with DISTINCT';
--- select /*+ recompile */ case when p.ba<=>s.ba and p.bo<=>s.bo and p.bx<=>s.bx then 'PASS' else 'FAIL' end as result
--- from (select /*+ PARALLEL(8) */ bit_and(distinct cola) ba, bit_or(distinct cola) bo,
---              bit_xor(distinct cola) bx from bvx) p,
---      (select /*+ NO_PARALLEL_SCAN */ bit_and(distinct cola) ba, bit_or(distinct cola) bo,
---              bit_xor(distinct cola) bx from bvx) s;
--- show trace;
--- select /*+ recompile PARALLEL(8) */ bit_and(distinct cola), bit_or(distinct cola), bit_xor(distinct cola) from bvx;
--- show trace;
--- select /*+ recompile NO_PARALLEL_SCAN */ bit_and(distinct cola), bit_or(distinct cola), bit_xor(distinct cola) from bvx;
--- show trace;
---
--- Case 29 first runs the comparison with MEDIAN(DISTINCT) next to a plain MEDIAN,
--- the query that found the defect, and the comparison catches MEDIAN(DISTINCT). It
--- does not catch the plain MEDIAN that the defect breaks after it: inside a derived
--- table that MEDIAN comes back correct. So the case then builds a table of its own,
--- runs MEDIAN(DISTINCT) on it at the top level, and runs a plain MEDIAN after it.
--- bvm is a fresh copy of bvx because the earlier cases have already built a plain
--- parallel MEDIAN plan for bvx, and the defect shows only when MEDIAN(DISTINCT) is
--- the first. The two statements have no recompile hint: the defect stays in the
--- plan that the first statement leaves, and a recompile hint removes it.
--- evaluate 'Case 29: MEDIAN with DISTINCT, and a plain MEDIAN after it on the same table';
--- select /*+ recompile */ case when p.dm<=>s.dm and p.md<=>s.md then 'PASS' else 'FAIL' end as result
--- from (select /*+ PARALLEL(8) */ median(distinct cola) dm, median(cola) md from bvx) p,
---      (select /*+ NO_PARALLEL_SCAN */ median(distinct cola) dm, median(cola) md from bvx) s;
--- show trace;
--- drop table if exists bvm;
--- create table bvm like bvx;
--- insert into bvm select * from bvx;
--- select /*+ PARALLEL(8) */ cast(median(distinct cola) as numeric(12,4)) from bvm;
--- show trace;
--- select /*+ PARALLEL(8) */ cast(median(cola) as numeric(12,4)) from bvm;
--- show trace;
--- drop table bvm;
+evaluate 'Case 28: MEDIAN with DISTINCT - parallel equals serial, plain MEDIAN before and after it keeps its own value, a view keeps DISTINCT';
+-- the comparison that found the fault, MEDIAN(DISTINCT) next to a plain MEDIAN on bvx
+select /*+ recompile */ case when p.dm<=>s.dm and p.md<=>s.md then 'PASS' else 'FAIL' end as result
+from (select /*+ PARALLEL(8) */ median(distinct cola) dm, median(cola) md from bvx) p,
+     (select /*+ NO_PARALLEL_SCAN */ median(distinct cola) dm, median(cola) md from bvx) s;
+show trace;
+-- each MEDIAN is printed as the DOUBLE it is, not cast to NUMERIC, so that a wrong value close
+-- to 0, which the release build returned before the fix, does not print as the right value 0
+-- INT, NUMERIC and VARCHAR operands beside COUNT and SUM with DISTINCT and a plain MEDIAN
+select /*+ recompile PARALLEL(8) */ median(distinct k), median(distinct n),
+       median(distinct v), median(k), count(distinct k), sum(distinct k)
+from bvm;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ median(distinct k), median(distinct n),
+       median(distinct v), median(k), count(distinct k), sum(distinct k)
+from bvm;
+show trace;
+-- the next eight statements have no recompile hint: a plan that one of them leaves in the
+-- cache must not answer the other, so MEDIAN(DISTINCT) first on bvn and plain MEDIAN first on bvm
+select /*+ PARALLEL(8) */ median(distinct k) from bvn;
+show trace;
+select /*+ PARALLEL(8) */ median(k) from bvn;
+show trace;
+select /*+ NO_PARALLEL_SCAN */ median(distinct k) from bvn;
+select /*+ NO_PARALLEL_SCAN */ median(k) from bvn;
+select /*+ PARALLEL(8) */ median(k) from bvm;
+show trace;
+select /*+ PARALLEL(8) */ median(distinct k) from bvm;
+show trace;
+select /*+ NO_PARALLEL_SCAN */ median(k) from bvm;
+select /*+ NO_PARALLEL_SCAN */ median(distinct k) from bvm;
+-- the view text keeps DISTINCT, and the view returns the MEDIAN over distinct values
+create view vmd as select median(distinct k) m from bvm;
+select vclass_def from db_vclass where vclass_name = 'vmd';
+select m from vmd;
+drop view vmd;
 
-evaluate 'Case 30: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin';
+evaluate 'Case 29: GROUP_CONCAT without ORDER BY cut at group_concat_max_len, values printed beside the serial twin';
 -- every worker cuts its partial string at group_concat_max_len and the main thread
 -- cuts again while it joins the partials, where a serial scan cuts once. The whole
 -- heap gives a result far longer than the default group_concat_max_len, which CTP
@@ -511,4 +525,4 @@ show trace;
 
 set trace off;
 
-drop table if exists bvx;
+drop table if exists bvx, bvm, bvn;
