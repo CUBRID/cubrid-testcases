@@ -315,14 +315,12 @@ drop table t1;
 
 create table t1(a1 varchar(100));
 ALTER t1 ALTER column a1 SET DEFAULT USER;
-ALTER t1 change column a1 a1 date;
-ALTER t1 ALTER column a1 SET DEFAULT SYSDATE;
+ALTER t1 change column a1 a1 date DEFAULT SYSDATE;
 drop table t1;
 
 create table t1(a1 varchar(100));
 ALTER t1 ALTER column a1 SET DEFAULT USER;
-ALTER t1 change column a1 a1 date;
-ALTER t1 ALTER column a1 SET DEFAULT SYSDATE;
+ALTER t1 change column a1 a1 date DEFAULT SYSDATE;
 drop table t1;
 
 create table t1(a1 int auto_increment);
