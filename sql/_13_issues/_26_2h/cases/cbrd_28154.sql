@@ -20,8 +20,8 @@
  *    Case 4:  sequence argument, 300-byte string element (the long string form of the packer)
  *    Case 5:  set argument, NUMERIC elements
  *    Case 6:  multiset argument, 60-byte string element
- *    Case 7:  sequence argument, integer, NUMERIC and string elements, compared with the argument
- *    Case 8:  collection columns as arguments
+ *    Case 7:  sequence argument, integer, NUMERIC and string elements, compared with the argument by value
+ *    Case 8:  sequence and set columns as arguments
  *    Case 9:  server-side JDBC reads a SET OF NUMERIC column and a SEQUENCE OF VARCHAR column
  */
 
@@ -48,9 +48,11 @@ evaluate 'Case 6: multiset argument, 60-byte string element';
 select f_28154_mset ({'a', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'});
 evaluate 'Case 7: sequence argument, mixed elements come back equal';
 -- JDBC returns a collection whose elements have different types as NULL, with or without a stored procedure, so Case 7 compares the result with the argument instead of printing it
+-- The collection = compares the elements after converting them to a common type, so Case 7 checks the values only and does not catch an element that comes back with another type
 select f_28154_seq ({1, 1.5, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'}) = {1, 1.5, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'};
 evaluate 'Case 8: collection columns as arguments';
 select f_28154_seq (sn), f_28154_seq (ss) from t_28154 order by id;
+select f_28154_set (st) from t_28154 order by id;
 evaluate 'Case 9: server-side JDBC reads collection columns';
 select f_28154_q ('select st from t_28154 order by id') like 'st|[Ljava.lang.Object;@%|';
 select f_28154_q ('select ss from t_28154 order by id') like 'ss|[Ljava.lang.Object;@%|';
