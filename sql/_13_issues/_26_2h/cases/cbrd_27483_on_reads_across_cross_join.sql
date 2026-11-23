@@ -2,15 +2,19 @@
  *  This test case verifies CBRD-27483: Join graph has no edge to the tables that the ON clause of an outer, semi
  *  or anti join depends on, so the query fails or returns a wrong result
  *
- *  A LEFT, INNER or RIGHT JOIN after a CROSS JOIN whose ON reads a table on the other side of the CROSS JOIN. The
- *  fix adds join edges to the tables that the ON reads. Each case prints the rows of the join, which must be the
- *  rows that the join defines, and the hinted and rewritten forms must print the same rows as the plain form.
- *  The cases come from the Jira attachment i17-outer-join-after-cross-join.sql, SQLancer defect 17 of CBRD-28029.
+ *  The cases run a LEFT, INNER or RIGHT JOIN after a CROSS JOIN, with an ON that reads a table on the other side of
+ *  the CROSS JOIN. An outer join must come after every table that its ON reads. The CROSS JOIN can leave such a
+ *  table with no join edge, and the planner then picks a join order that puts the outer join first or finds no join
+ *  order.
+ *  The fix adds join edges to the tables that the ON reads. Each case prints the rows of its query, which must be
+ *  the rows that the query defines. A case that repeats another case with a hint or a rewritten form must print
+ *  the same rows.
+ *  Cases 1 - 26 come from the Jira attachment i17-outer-join-after-cross-join.sql, SQLancer defect 17 of CBRD-28029.
  *  The SELECT cases that fail without the fix also print their plan, which shows the outer join after every table
- *  that its ON reads, and so do the cases with a join order hint, whose plan shows whether the hint was applied.
- *  Those queries carry RECOMPILE because a plan prints only when the query is compiled.
- *  The order of the two tables of a CROSS JOIN in a plan is decided by cost, not by a dependency, so a change of
- *  the cost model can change those plan lines.
+ *  that its ON reads. The cases with a join order hint also print their plan, which shows whether the planner
+ *  applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
+ *  In a plan, the cost picks the order of the two tables of a CROSS JOIN, so a change of the cost model can
+ *  change those lines.
  *
  *  Coverage:
  *    Case 1:   i17 case 1 - the ON reads the table before the CROSS JOIN and the inner table, with no join term
@@ -90,7 +94,7 @@ evaluate 'Case 10: i17 case 10 - a second LEFT JOIN whose ON reads the table bef
 --@queryplan
 SELECT /*+ RECOMPILE */ a.ca, b.ca, c.ca, d.ca FROM ta a CROSS JOIN tb b LEFT JOIN tb c ON b.ca = c.ca LEFT JOIN tb d ON a.cb = 1 AND d.ca = 'a' ORDER BY 1, 2, 3, 4;
 
--- Cases 11 - 14 are Case 1 through a derived table or with a join order hint
+-- Cases 11 - 14: Case 1 through a derived table or with a join order hint
 evaluate 'Case 11: i17 case 11 - Case 1 with a derived table in place of ta; result = same rows as Case 1';
 --@queryplan
 SELECT /*+ RECOMPILE */ a.ca, b.ca, c.ca FROM (SELECT ca, cb FROM ta) a CROSS JOIN tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
@@ -107,7 +111,7 @@ evaluate 'Case 14: i17 case 14 - Case 1 with a LEADING hint on the second table;
 --@queryplan
 SELECT /*+ RECOMPILE LEADING(b) */ a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
--- Cases 15 - 18 are forms whose result the fix does not change
+-- Cases 15 - 18 are controls: they return the same rows without the fix
 evaluate 'Case 15: i17 case 15 - an INNER JOIN in place of the LEFT JOIN of Case 1; result = 2 rows';
 SELECT a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b INNER JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
@@ -120,11 +124,12 @@ SELECT a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b LEFT JOIN tb c ON b.ca = '1' A
 evaluate 'Case 18: i17 case 18 - Case 1 with INNER JOIN ON 1 = 1 in place of the CROSS JOIN; result = same rows as Case 1';
 SELECT a.ca, b.ca, c.ca FROM ta a INNER JOIN tb b ON 1 = 1 LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
--- -494 is also the code of Outer join query optimization failed, so Case 1, which prints rows, tells the two apart
+-- Case 19 is a control: it fails with the same error without the fix
+-- Outer join query optimization failed also prints -494, so Case 1, which returns rows, tells the two errors apart
 evaluate 'Case 19: i17 case 19 - the parser refuses an ON after a comma that reads the table before the comma; result = fails with an error';
 SELECT a.ca, b.ca, c.ca FROM ta a, tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
--- Cases 20 - 22: a RIGHT JOIN after a CROSS JOIN, with and without join order hints
+-- Cases 20 - 22: a RIGHT JOIN after a CROSS JOIN, with and without a join order hint
 evaluate 'Case 20: i17 case 20 - a RIGHT JOIN whose ON reads the second table of the CROSS JOIN; result = 3 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b RIGHT JOIN tc c ON b.ca = c.ca ORDER BY 1, 2, 3;
@@ -137,10 +142,11 @@ evaluate 'Case 22: i17 case 22 - Case 20 with a LEADING hint on the first table;
 --@queryplan
 SELECT /*+ RECOMPILE LEADING(a) */ a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b RIGHT JOIN tc c ON b.ca = c.ca ORDER BY 1, 2, 3;
 
--- Cases 23 - 26: UPDATE and DELETE with the join of Case 1, each followed by the rows left in td
--- the UPDATE and the DELETE change td, a copy of ta, so that ta keeps the rows that the cases above read
+-- Cases 23 - 26 use td, a copy of ta, so the UPDATE and the DELETE leave ta as the cases above read it
 CREATE TABLE td AS SELECT * FROM ta;
 UPDATE STATISTICS ON td;
+
+-- Cases 23 - 26: UPDATE and DELETE with the join of Case 1, each followed by the rows left in td
 
 evaluate 'Case 23: i17 case 30 - UPDATE through the join of Case 1, only the row with cb NULL has a NULL-padded row; result = 1 row affected';
 UPDATE td a CROSS JOIN tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' SET a.ca = a.ca + 10 WHERE c.ca IS NULL;

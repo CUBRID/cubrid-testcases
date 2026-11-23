@@ -2,16 +2,18 @@
  *  This test case verifies CBRD-27483: Join graph has no edge to the tables that the ON clause of an outer, semi
  *  or anti join depends on, so the query fails or returns a wrong result
  *
- *  An outer join must come after every table that its ON reads. A CROSS JOIN, or a merged view whose FROM is a
- *  comma join, can leave such a table with no join edge to the others, and the planner then keeps a join order
- *  that puts the outer join first or finds no join order at all. The fix adds join edges to the tables that the
- *  ON reads. Each case prints the rows of the join, which must be the rows that the join defines.
- *  Cases 1 - 13 are scenarios 1 - 13 of the Jira attachment cbrd-27483_test_scenarios_20260929_1945.md.
- *  The cases that fail without the fix also print their plan, which shows the outer join after every table that
- *  its ON reads, and so do the cases with a join order hint, whose plan shows whether the hint was applied. Those
- *  queries carry RECOMPILE because a plan prints only when the query is compiled.
- *  The order of the two tables of a CROSS JOIN in a plan is decided by cost, not by a dependency, so a change of
- *  the cost model can change those plan lines.
+ *  The cases run an outer join after a CROSS JOIN or after a merged view whose FROM is a comma join. An outer join
+ *  must come after every table that its ON reads. The CROSS JOIN or the merged view can leave such a table with no
+ *  join edge, and the planner then picks a join order that puts the outer join first or finds no join order.
+ *  The fix adds join edges to the tables that the ON reads. Each case prints the rows of its query, which must be
+ *  the rows that the query defines. A case that repeats another case with a hint or a rewritten form must print
+ *  the same rows.
+ *  Cases 1 - 13 come from the Jira attachment cbrd-27483_test_scenarios_20260929_1945.md, scenarios 1 - 13.
+ *  The SELECT cases that fail without the fix also print their plan, which shows the outer join after every table
+ *  that its ON reads. The cases with a join order hint also print their plan, which shows whether the planner
+ *  applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
+ *  In a plan, the cost picks the order of the two tables of a CROSS JOIN, so a change of the cost model can
+ *  change those lines.
  *
  *  Coverage:
  *    Case 1:   scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN
@@ -52,8 +54,8 @@ CREATE VIEW va AS SELECT a.ca ca, a.cb cb, b.ca cc FROM ta a, tb b;
 CREATE VIEW vb AS SELECT a.ca ca, a.cb cb, b.ca cc FROM ta a JOIN tb b ON b.ca = a.ca;
 UPDATE STATISTICS ON ta, tb, tc, td, te;
 
--- scenarios 1 - 10: a CROSS JOIN or a merged comma-join view leaves a table that the ON reads with no join edge
--- the ca of each table tells its rows apart
+-- Cases 1 - 10: a CROSS JOIN or a merged comma-join view leaves a table that the ON reads with no join edge
+-- the select list holds the ca of each table, which tells its rows apart
 evaluate 'Case 1: scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN; result = 10 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON ta.ca = tb.ca ORDER BY 1, 2, 3;
@@ -78,7 +80,8 @@ evaluate 'Case 6: scenario 6 - a merged comma-join view and a CROSS JOIN before 
 --@queryplan
 SELECT /*+ RECOMPILE */ va.ca, va.cc, tb.ca, tc.ca FROM va CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca AND va.cb = 1 ORDER BY 1, 2, 3, 4;
 
--- unlike scenario 5, the view joins its tables with an ON, so the merged view keeps its join edge
+-- a control: it returns the same rows without the fix
+-- unlike Case 5, the view joins its tables with an ON, so the merged view keeps its join edge
 evaluate 'Case 7: scenario 7 - a LEFT JOIN whose ON reads both tables of a merged view with an inner join; result = 2 rows';
 SELECT vb.ca, vb.cc, tb.ca, tc.ca FROM vb JOIN tb ON tb.ca = vb.ca LEFT JOIN tc ON tc.ca = vb.cc AND vb.cb = 1 ORDER BY 1, 2, 3, 4;
 
@@ -94,8 +97,8 @@ evaluate 'Case 10: scenario 10 - three LEFT JOINs whose ONs read the same two ta
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca, te.ca FROM ta CROSS JOIN tb LEFT OUTER JOIN tc ON tc.ca = ta.ca AND tc.cb = tb.cb LEFT OUTER JOIN td ON td.ca = ta.ca AND td.cb = tb.cb LEFT OUTER JOIN te ON te.ca = ta.ca AND te.cb = tb.cb ORDER BY 1, 2, 3, 4, 5;
 
--- Cases 11 - 13 take new data: ta joins by a comma and no ON reads it, and its one row meets every row of tb in the
--- WHERE, so an outer join dependency taken from a hint would NULL-pad ta and the WHERE would drop the rows
+-- Cases 11 - 13 use new data: a comma joins ta and no ON reads it, and the one row of ta matches every row of tb
+-- in the WHERE, so an outer join dependency taken from a hint would NULL-pad ta and the WHERE would drop the rows
 DROP VIEW IF EXISTS va, vb;
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
 CREATE TABLE ta (ca INT PRIMARY KEY, cb INT);
@@ -106,7 +109,8 @@ INSERT INTO tb VALUES (2, 1), (3, 1);
 INSERT INTO tc VALUES (2, 20), (4, 40);
 UPDATE STATISTICS ON ta, tb, tc;
 
--- scenarios 11 - 13: a join order hint must not add a join edge that the query does not ask for
+-- Cases 11 - 13: a join order hint must not add a join edge that the query does not ask for
+-- Cases 11 - 13 are controls: they return the same rows without the fix
 evaluate 'Case 11: scenario 11 - a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE; result = 2 rows';
 SELECT tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
@@ -118,8 +122,8 @@ evaluate 'Case 13: scenario 13 - Case 11 with a LEADING hint, which the planner 
 --@queryplan
 SELECT /*+ RECOMPILE LEADING(ta,tb,tc) */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
--- Cases 14 - 17 take data with NULL in cb and two rows of tc for ca 1, so that an ON that joins tc to both tables
--- of the CROSS JOIN matches only some pairs and a WHERE on the NULL-padded columns keeps some rows and drops others
+-- Cases 14 - 17 use new data: cb has NULLs and tc has two rows for ca 1, so an ON that joins tc to both tables of
+-- the CROSS JOIN matches only some pairs, and a WHERE on the NULL-padded columns keeps some rows and drops others
 DROP TABLE IF EXISTS ta, tb, tc;
 CREATE TABLE ta (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 1), (2, 2), (3, 3), (4, NULL);
@@ -129,7 +133,7 @@ CREATE TABLE tc (ca INT, cb INT);
 INSERT INTO tc VALUES (1, 1), (1, 2), (2, 3), (5, 1);
 UPDATE STATISTICS ON ta, tb, tc;
 
--- the ON joins both tables of the CROSS JOIN, alone and with a WHERE on the NULL-padded table
+-- Cases 14 - 16: the ON joins tc to both tables of the CROSS JOIN, alone and with a WHERE on the NULL-padded table
 evaluate 'Case 14: a LEFT JOIN whose ON joins the inner table to both tables of the CROSS JOIN; result = 12 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca AND tc.cb = tb.cb ORDER BY 1, 2, 3, 4, 5, 6;
@@ -147,7 +151,7 @@ evaluate 'Case 17: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the f
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb FROM ta CROSS JOIN tb RIGHT JOIN tc ON tb.ca = tc.ca WHERE ta.cb = tc.cb OR ta.cb IS NULL ORDER BY 1, 2, 3, 4, 5, 6;
 
--- Cases 18 - 21 take the data of Cases 1 - 10 again, with td as the table that the RIGHT JOIN keeps
+-- Cases 18 - 21 use the data of Cases 1 - 10 again, with td as the table that the RIGHT JOIN keeps
 DROP TABLE IF EXISTS ta, tb, tc, td;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
@@ -159,8 +163,8 @@ INSERT INTO tc VALUES (1, 1), (2, 2), (5, 5);
 INSERT INTO td VALUES (1, 1), (2, 2), (5, 5);
 UPDATE STATISTICS ON ta, tb, tc, td;
 
--- a RIGHT JOIN keeps td against the whole join before it, so what it depends on reaches back over the LEFT or
--- INNER JOIN and the CROSS JOIN
+-- Cases 18 - 20: a RIGHT JOIN after a CROSS JOIN and a LEFT or INNER JOIN
+-- the RIGHT JOIN keeps td against the whole join before it, so it depends on every table of that join
 evaluate 'Case 18: a RIGHT JOIN whose ON reads the inner table of a LEFT JOIN that follows a CROSS JOIN; result = 5 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca RIGHT JOIN td ON td.ca = tc.ca ORDER BY 1, 2, 3, 4;
@@ -173,8 +177,8 @@ evaluate 'Case 20: a RIGHT JOIN whose ON reads the first table, after a LEFT JOI
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca RIGHT JOIN td ON td.ca = ta.ca ORDER BY 1, 2, 3, 4;
 
--- NVL keeps the NULL-padded rows of tc, so the WHERE term on tc and tb stays after the first LEFT JOIN and is no
--- join edge between the two tables that the second ON reads
+-- NVL keeps the NULL-padded rows, so the rewriter does not turn the first LEFT JOIN into an inner join
+-- the WHERE term on tc and tb is then no join edge between the two tables that the second ON reads
 evaluate 'Case 21: a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN; result = 3 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca LEFT JOIN td ON td.ca = tb.ca AND td.cb = tc.cb WHERE NVL (tc.cb, tb.cb) = tb.cb ORDER BY 1, 2, 3, 4;
