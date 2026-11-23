@@ -37,7 +37,7 @@ C1: commit work;
 MC: wait until C1 ready;
 
 /* test case */
-C1: insert into t(id, col) select id+4,col from t where sleep(1)=0 and id>0;
+C1: insert into t(id, col) select id+4,col from (select id, col from t where id>0 limit 100) x where sleep(1)=0;
 MC: sleep 1;
 C2: insert into t values(20,'b');
 C2: commit;
