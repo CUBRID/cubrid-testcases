@@ -69,3 +69,67 @@ ca    ca
 0
 ===================================================
 0
+===================================================
+7
+===================================================
+    
+Case 3: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE     
+
+===================================================
+ca    cmp    
+1     lt     
+2     lt     
+3     lt     
+4     lt     
+5     gt     
+6     lt     
+7     eq     
+
+===================================================
+    
+Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     7     
+7     7     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ca, b.ca from [dba.tb] a, [dba.tb] b where a.cb=b.cc order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     7     
+7     7     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
