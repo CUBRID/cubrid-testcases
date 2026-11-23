@@ -3,7 +3,7 @@
 -- GROUP BY) is charged for the rows it reads before the LIMIT stops it, and the LIMIT comparisons of
 -- qo_plan_cmp () go by cost like any other, without the 10 times wider band of CBRD-25080.
 
-drop table if exists os_o, os_c;
+drop table if exists os_o, os_c, os_s;
 
 create table os_o (id int primary key, cid int, q int, amount int);
 create index idx_os_o_cid on os_o (cid);
@@ -70,4 +70,23 @@ prepare s from 'select /*+ recompile */ id, cid, amount from os_o where q = 7 an
 execute s using 200;
 deallocate prepare s;
 
-drop table os_o, os_c;
+-- Case 11: an index skip scan searches the index for every value of the leading column whatever the LIMIT, so
+-- it is not charged as if the LIMIT stopped it: the top-N sort over the cb range stays
+create table os_s (ca int, cb int, cc int);
+insert into os_s select mod (level, 1000), mod (level / 1000, 200), level from db_root connect by level <= 200000;
+create index idx_os_s_cb on os_s (cb);
+create index idx_os_s_ca_cb_cc on os_s (ca, cb, cc);
+update statistics on os_s with fullscan;
+--@queryplan
+select /*+ recompile index_ss */ ca, cb, cc from os_s where cb = 5 order by ca, cb, cc limit 3;
+
+-- Case 12: a loose index scan is not charged by the LIMIT either
+--@queryplan
+select /*+ recompile index_ls */ ca, count (distinct cb) from os_s where cb = 5 group by ca order by ca limit 1;
+
+-- Case 13: GROUP BY skip over a key range with a key filter: the groups the LIMIT needs are taken out of the
+-- rows of the range, not out of the rows left after the filter, and the ordered range scan is kept
+--@queryplan
+select /*+ recompile */ ca, max (cc) from os_s where ca between 0 and 699 and cb = 5 group by ca order by ca limit 5;
+
+drop table os_o, os_c, os_s;

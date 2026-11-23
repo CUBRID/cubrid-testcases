@@ -1457,3 +1457,61 @@ select os_o.id, os_o.cid, os_o.amount from os_o os_o where (os_o.cid>= ?:?  and 
 0
 ===================================================
 0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+ca    cb    cc    
+0     5     5000     
+1     5     5001     
+2     5     5002     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: os_s node[?]
+                 index: idx_os_s_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ os_s.ca, os_s.cb, os_s.cc from os_s os_s where os_s.cb= ?:?  order by ?, ? for orderby_num()<= ?:? 
+===================================================
+ca    count(distinct cb)    
+0     1     
+
+Query plan:
+temp(group by)
+    subplan: iscan
+                 class: os_s node[?]
+                 index: idx_os_s_cb term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ os_s.ca, count(distinct os_s.cb) from os_s os_s where os_s.cb= ?:?  group by os_s.ca having groupby_num()<=?
+===================================================
+ca    max(cc)    
+0     5000     
+1     5001     
+2     5002     
+3     5003     
+4     5004     
+
+Query plan:
+iscan
+    class: os_s node[?]
+    index: idx_os_s_ca_cb_cc term[?] (covers)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_s.ca, max(os_s.cc) from os_s os_s where (os_s.ca>= ?:?  and os_s.ca<= ?:? ) and os_s.cb= ?:?  group by os_s.ca having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+0
