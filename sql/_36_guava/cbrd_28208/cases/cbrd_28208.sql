@@ -84,9 +84,17 @@ select a, min(r), max(r), count(*) from (select /*+ use_desc_idx */ id, a, rank(
 -- ascending order over the descending index read backwards, and over the ascending index: not reversed
 select a, min(r), max(r), count(*) from (select /*+ use_desc_idx */ id, a, rank() over (order by a) as r from t_klist where a in (1, 3, 5)) z group by a order by a;
 select a, min(r), max(r), count(*) from (select id, a, rank() over (order by a) as r from t_klist2 force index (i_klist2_a) where a in (5, 1, 3)) z group by a order by a;
--- two key columns
+-- a two-column index, the key list on its first column
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a in (5, 1, 3)) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a in (5, 1, 3)) z group by a, b order by a, b;
+-- the first sort column is fixed by an equality and the key list is on the second, ascending one: not reversed
+select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a = 3 and b in (0, 2, 3)) z group by a, b order by a, b;
+select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a = 3 and b in (0, 2, 3)) z group by a, b order by a, b;
+select a, b, min(r), max(r), count(*) from (select id, a, b, dense_rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a = 3 and b between 0 and 1 or a = 3 and b between 2 and 3) z group by a, b order by a, b;
+select a, b, min(r), max(r), count(*) from (select id, a, b, dense_rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a = 3 and b between 0 and 1 or a = 3 and b between 2 and 3) z group by a, b order by a, b;
+-- the key list is on both columns, one descending and one ascending: no order of the key list fits
+select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
+select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
 -- other functions, a nested loop join, top level with LIMIT
 select a, min(f), max(f), min(c), count(*) from (select a, first_value(a) over (order by a desc) as f, count(*) over (order by a desc) as c from t_klist where a in (1, 3, 5)) z group by a order by a;
 select a, min(r), max(r), count(*) from (select /*+ ordered use_nl */ x.a, rank() over (order by x.a desc) as r from t_klist x, t_outer o where x.a in (1, 3, 5) and o.a = x.a) z group by a order by a;
