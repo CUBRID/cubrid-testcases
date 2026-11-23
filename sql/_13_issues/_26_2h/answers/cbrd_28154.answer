@@ -1,0 +1,98 @@
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: sequence argument, integer elements     
+
+===================================================
+f_28154_seq({1, 2})    
+1,2,     
+
+===================================================
+    
+Case 2: sequence argument, numeric elements     
+
+===================================================
+f_28154_seq({1.5, 2.25})    
+1.5,2.25,     
+
+===================================================
+    
+Case 3: sequence argument, 60-byte string element     
+
+===================================================
+f_28154_seq({'a', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'})    
+a,bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb,     
+
+===================================================
+    
+Case 4: sequence argument, 300-byte string element     
+
+===================================================
+f_28154_seq({'a',  repeat('c', 300)})    
+a,cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc,     
+
+===================================================
+    
+Case 5: set argument, numeric elements     
+
+===================================================
+f_28154_set({1.5, 2.25})    
+1.5,2.25,     
+
+===================================================
+    
+Case 6: multiset argument, 60-byte string element     
+
+===================================================
+f_28154_mset({'a', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'})    
+a,bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb,     
+
+===================================================
+    
+Case 7: sequence argument, mixed elements come back equal     
+
+===================================================
+f_28154_seq({1, 1.5, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'})={1, 1.5, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'}    
+1     
+
+===================================================
+    
+Case 8: collection columns as arguments     
+
+===================================================
+f_28154_seq(sn)    f_28154_seq(ss)    
+1.50,2.25,     a,bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb,cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc,     
+
+===================================================
+f_28154_set(st)    
+1.50,3.75,     
+
+===================================================
+    
+Case 9: server-side JDBC reads collection columns     
+
+===================================================
+f_28154_q('select st from t_28154 order by id') like 'st|[Ljava.lang.Object;@%|'    
+1     
+
+===================================================
+f_28154_q('select ss from t_28154 order by id') like 'ss|[Ljava.lang.Object;@%|'    
+1     
+
+===================================================
+0
+===================================================
+0
