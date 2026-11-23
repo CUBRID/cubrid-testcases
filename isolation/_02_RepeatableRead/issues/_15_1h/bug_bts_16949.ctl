@@ -27,15 +27,14 @@ C2: set transaction lock timeout INFINITE;
 C2: set transaction isolation level repeatable read;
 
 /* preparation */
-C1: CALL login ('dba', '') ON CLASS db_user;
+C1: login as 'dba';
 C1: CREATE USER user01;
 C1: COMMIT WORK;
 MC: wait until C1 ready;
 
 /* test case1 */
-C1: CALL login ('dba', '') ON CLASS db_user;
-C2: CALL login ('dba', '') ON CLASS db_user;
-C2: COMMIT;
+C1: login as 'dba';
+C2: login as 'dba';
 C1: DROP USER user01;
 MC: wait until C1 ready;
 C2: CREATE USER user01;
