@@ -130,6 +130,10 @@ TABLE    CREATE TABLE
 dba.t_upd     CREATE TABLE [t_upd] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
+id    x    year(a)- year( SYS_DATE )    
+1     2     0     
+
+===================================================
     
 Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expression     
 
@@ -271,7 +275,39 @@ id    a    n
 
 ===================================================
     
-Case 15: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT     
+Case 15: MODIFY or CHANGE to AUTO_INCREMENT drops the DEFAULT and succeeds     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_inc     CREATE TABLE [t_inc] ([id] INTEGER, [a] SMALLINT AUTO_INCREMENT (1, 1)) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a    
+1     1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_inc_chg     CREATE TABLE [t_inc_chg] ([id] INTEGER, [h] INTEGER AUTO_INCREMENT (1, 1)) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    h    
+1     1     
+
+===================================================
+    
+Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT     
 
 ===================================================
 0

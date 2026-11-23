@@ -11,7 +11,8 @@
  *  CREATE TABLE checks its DEFAULT and ON UPDATE clauses and refuses the ALTER.
  *
  *  Each case prints SHOW CREATE TABLE after the ALTER: a refused ALTER leaves the column as
- *  it was, and an accepted one keeps the DEFAULT and the ON UPDATE expression. The values
+ *  it was, and an accepted one keeps the DEFAULT and the ON UPDATE expression. A change to
+ *  AUTO_INCREMENT drops the DEFAULT, so it has no kept DEFAULT to check. The values
  *  of the DEFAULTs change from run to run, so the cases print only their length, whether
  *  they are set, or their difference from the current year.
  *
@@ -30,10 +31,11 @@
  *    Case 12: CHANGE of the name alone and MODIFY to NOT NULL keep the DEFAULT
  *    Case 13: a literal DEFAULT that the new type does not take fails as before
  *    Case 14: a literal DEFAULT that the new type takes is converted as before
- *    Case 15: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
+ *    Case 15: MODIFY or CHANGE to AUTO_INCREMENT drops the DEFAULT and succeeds
+ *    Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
  */
 
-drop table if exists t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_onu;
+drop table if exists t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
 
 
 evaluate 'Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE fails';
@@ -91,6 +93,7 @@ select attr_name, data_type, prec, default_value from db_attribute where class_n
 evaluate 'Case 7: MODIFY with a DEFAULT clause still fails on the kept ON UPDATE expression';
 alter table t_upd modify a varchar(100) default 'x';
 show create table t_upd;
+select id, x, year(a) - year(sys_date) from t_upd order by id;
 
 
 evaluate 'Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expression';
@@ -155,7 +158,20 @@ insert into t_lit (id) values (1);
 select id, a, n from t_lit order by id;
 
 
-evaluate 'Case 15: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT';
+evaluate 'Case 15: MODIFY or CHANGE to AUTO_INCREMENT drops the DEFAULT and succeeds';
+create table t_inc (id int, a bigint default unix_timestamp());
+alter table t_inc modify a smallint auto_increment;
+show create table t_inc;
+insert into t_inc (id) values (1);
+select id, a from t_inc order by id;
+create table t_inc_chg (id int, g varchar(100) default sys_guid());
+alter table t_inc_chg change g h int auto_increment;
+show create table t_inc_chg;
+insert into t_inc_chg (id) values (1);
+select id, h from t_inc_chg order by id;
+
+
+evaluate 'Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT';
 create table t_onu (id int, a varchar(100) default to_char(sys_datetime, 'YYYY'));
 alter table t_onu modify a datetime on update current_datetime;
 show create table t_onu;
@@ -163,4 +179,4 @@ insert into t_onu (id) values (1);
 select id, length(a), a - year(sys_date) from t_onu order by id;
 
 
-drop table t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_onu;
+drop table t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
