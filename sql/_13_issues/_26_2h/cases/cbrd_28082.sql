@@ -27,7 +27,8 @@
  *    Case 8:  a statement executed again starts its sequence again
  *    Case 9:  ON DUPLICATE KEY UPDATE gives the same values on the server and client paths
  *    Case 10: a prepared client statement executed twice starts its sequence again
- *    Case 11: INSERT SELECT, UPDATE and ON DUPLICATE KEY UPDATE on a table with a trigger
+ *    Case 11: INSERT SELECT, UPDATE and ON DUPLICATE KEY UPDATE on a table with triggers -
+ *             a trigger action run between the rows leaves the sequence of the statement
  *    Case 12: a trigger action is a statement of its own - each firing takes the first value
  */
 
@@ -106,10 +107,12 @@ select id, x from t_odku order by id;
 deallocate prepare q_odku;
 
 
-evaluate 'Case 11: INSERT SELECT, UPDATE and ON DUPLICATE KEY UPDATE on a table with a trigger';
+evaluate 'Case 11: INSERT SELECT, UPDATE and ON DUPLICATE KEY UPDATE on a table with triggers';
 create table t_trg (id int primary key, y int, x int);
-create table t_trg_log (n int auto_increment primary key, v int);
-create trigger tr_trg_ai after insert on t_trg execute insert into t_trg_log (v) values (rand(5));
+create table t_trg_log (n int auto_increment primary key, e varchar(6), v int);
+create trigger tr_trg_ai after insert on t_trg execute insert into t_trg_log (e, v) values ('insert', rand(5));
+-- the UPDATE and ON DUPLICATE KEY UPDATE below fire this trigger on every row they update
+create trigger tr_trg_au after update on t_trg execute insert into t_trg_log (e, v) values ('update', rand(5));
 insert into t_trg select id, y, rand(y + 0) from t_seed;
 select id, x from t_trg order by id;
 update t_trg set x = rand(5);
@@ -121,10 +124,11 @@ select id, x from t_trg order by id;
 
 
 evaluate 'Case 12: a trigger action is a statement of its own - each firing takes the first value';
--- t_trg_log holds the rows that the trigger of Case 11 inserted, one for each row of the INSERT SELECT
-select n, v from t_trg_log order by n;
+-- t_trg_log holds a row for each firing in Case 11: 4 rows inserted, 3 statements that update 4 rows each
+select e, count(*), min(v), max(v) from t_trg_log group by e order by e;
 
 
 drop trigger tr_trg_ai;
+drop trigger tr_trg_au;
 drop table t_trg, t_trg_log, t_odku, t_seed;
 drop serial s_seed;
