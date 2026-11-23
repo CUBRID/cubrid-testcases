@@ -8,7 +8,10 @@
  *  ON reads. Each case prints the rows of the join, which must be the rows that the join defines.
  *  Cases 1 - 13 are scenarios 1 - 13 of the Jira attachment cbrd-27483_test_scenarios_20260929_1945.md.
  *  The cases that fail without the fix also print their plan, which shows the outer join after every table that
- *  its ON reads. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
+ *  its ON reads, and so do the cases with a join order hint, whose plan shows whether the hint was applied. Those
+ *  queries carry RECOMPILE because a plan prints only when the query is compiled.
+ *  The order of the two tables of a CROSS JOIN in a plan is decided by cost, not by a dependency, so a change of
+ *  the cost model can change those plan lines.
  *
  *  Coverage:
  *    Case 1:   scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN
@@ -22,8 +25,8 @@
  *    Case 9:   scenario 9 - two LEFT JOINs whose ONs read the same two tables of the CROSS JOIN
  *    Case 10:  scenario 10 - three LEFT JOINs whose ONs read the same two tables of the CROSS JOIN
  *    Case 11:  scenario 11 - a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE
- *    Case 12:  scenario 12 - Case 11 with the ORDERED hint
- *    Case 13:  scenario 13 - Case 11 with a LEADING hint
+ *    Case 12:  scenario 12 - Case 11 with the ORDERED hint, which the planner ignores
+ *    Case 13:  scenario 13 - Case 11 with a LEADING hint, which the planner ignores
  *    Case 14:  a LEFT JOIN whose ON joins the inner table to both tables of the CROSS JOIN
  *    Case 15:  Case 14 with an IS NULL filter on the NULL-padded table in the WHERE
  *    Case 16:  Case 14 with a WHERE that reads the NULL-padded table and the second table of the CROSS JOIN
@@ -101,11 +104,13 @@ UPDATE STATISTICS ON ta, tb, tc;
 evaluate 'Case 11: scenario 11 - a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE; result = 2 rows';
 SELECT tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
-evaluate 'Case 12: scenario 12 - Case 11 with the ORDERED hint; result = same rows as Case 11';
-SELECT /*+ ORDERED */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
+evaluate 'Case 12: scenario 12 - Case 11 with the ORDERED hint, which the planner ignores; result = same rows as Case 11';
+--@queryplan
+SELECT /*+ RECOMPILE ORDERED */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
-evaluate 'Case 13: scenario 13 - Case 11 with a LEADING hint; result = same rows as Case 11';
-SELECT /*+ LEADING(ta,tb,tc) */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
+evaluate 'Case 13: scenario 13 - Case 11 with a LEADING hint, which the planner ignores; result = same rows as Case 11';
+--@queryplan
+SELECT /*+ RECOMPILE LEADING(ta,tb,tc) */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
 DROP TABLE IF EXISTS ta, tb, tc;
 CREATE TABLE ta (ca INT, cb INT);

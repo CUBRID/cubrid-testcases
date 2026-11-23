@@ -9,6 +9,8 @@
 ===================================================
 2
 ===================================================
+0
+===================================================
     
 Case 1: i03 case 1 - an IN subquery after a CROSS JOIN, a VARCHAR constant on the left; result = 4 rows     
 
@@ -42,7 +44,7 @@ Query stmt:
 select b.ca from ta a cross join tb b semi join tb i on i.ca= cast(? as varchar) and (( cast(? as varchar))=( cast(? as varchar)) or (a.cb=a.cb)) order by ?
 ===================================================
     
-Case 2: i03 case cb - Case 1 with a string literal on the left; result = same rows as Case 1     
+Case 2: i03 case c1 - Case 1 with a string literal on the left; result = same rows as Case 1     
 
 ===================================================
 ca    
@@ -344,19 +346,19 @@ ca    ca    ca
 Query plan:
 temp(order by)
     subplan: nl-join (semi join)
-                 outer: nl-join (cross join)
-                            outer: nl-join (inner join)
-                                       edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (cross join)
                                        outer: sscan
-                                                  class: a node[?]
+                                                  class: b node[?]
+                                                  sargs: term[?]
                                                   cost:  ? card ?
                                        inner: sscan
                                                   class: c node[?]
-                                                  sargs: term[?]
                                                   cost:  ? card ?
                                        cost:  ? card ?
                             inner: sscan
-                                       class: b node[?]
+                                       class: a node[?]
                                        sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
@@ -380,6 +382,27 @@ ca
 a     
 a     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (semi join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: i node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ b.ca from ta a cross join tb b semi join tb i on i.ca= cast(? as varchar) and (( cast(? as varchar))=( cast(? as varchar)) or (a.cb=a.cb)) order by ?
 ===================================================
     
 Case 22: i03 case 24 - Case 1 with a LEADING hint on the second table; result = same rows as Case 1     
@@ -391,6 +414,27 @@ ca
 a     
 a     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (semi join)
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: i node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(b) */ b.ca from ta a cross join tb b semi join tb i on i.ca= cast(? as varchar) and (( cast(? as varchar))=( cast(? as varchar)) or (a.cb=a.cb)) order by ?
 ===================================================
     
 Case 23: i03 case 25 - Case 10 with NOT EXISTS; result = no rows     

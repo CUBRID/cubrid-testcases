@@ -461,22 +461,70 @@ cb    cb
 
 ===================================================
     
-Case 12: scenario 12 - Case 11 with the ORDERED hint; result = same rows as Case 11     
+Case 12: scenario 12 - Case 11 with the ORDERED hint, which the planner ignores; result = same rows as Case 11     
 
 ===================================================
 cb    cb    
 1     null     
 1     20     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (left outer join)
+                                         outer: sscan
+                                                    class: tb node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: tc node[?]
+                                                    index: pk_tc_ca term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
 ===================================================
     
-Case 13: scenario 13 - Case 11 with a LEADING hint; result = same rows as Case 11     
+Case 13: scenario 13 - Case 11 with a LEADING hint, which the planner ignores; result = same rows as Case 11     
 
 ===================================================
 cb    cb    
 1     null     
 1     20     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (left outer join)
+                                         outer: sscan
+                                                    class: tb node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: tc node[?]
+                                                    index: pk_tc_ca term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
 ===================================================
 0
 ===================================================
