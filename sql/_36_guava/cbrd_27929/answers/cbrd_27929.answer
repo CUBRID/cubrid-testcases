@@ -1,0 +1,474 @@
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+20000
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10000
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+    
+Case 1: EXISTS / NOT EXISTS on a large outer, no index -> SEMI / ANTI JOIN     
+
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tm node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tn node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tm.ca from tm tm, tn tn where tm.cb=tn.ca)
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: tl node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tl tl semi join (select tm.ca from tm tm, tn tn where tm.cb=tn.ca) av? (av_?) on av?.av_?=tl.ca
+===================================================
+count(*)    
+10000     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tm node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tn node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tm.ca from tm tm, tn tn where tm.cb=tn.ca)
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: tl node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tl tl anti join (select tm.ca from tm tm, tn tn where tm.cb=tn.ca) av? (av_?) on av?.av_?=tl.ca
+===================================================
+    
+Case 2: EXISTS / IN on an indexed outer, a derived table of few rows -> INNER JOIN with a DISTINCT derived table     
+
+===================================================
+count(*)    
+9     
+
+Query plan:
+temp(distinct)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: tm node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tm.cb from tm tm, ta ta where tm.ca=ta.cb)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tb tb inner join (select distinct tm.cb from tm tm, ta ta where tm.ca=ta.cb) av? (av_?) on av?.av_?=tb.ca
+===================================================
+count(*)    
+9     
+
+Query plan:
+temp(distinct)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: tm node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct tm.cb from tm tm, ta ta where tm.ca=ta.cb)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tb tb inner join (select distinct tm.cb from tm tm, ta ta where tm.ca=ta.cb) av? (av_?) on tb.ca=av?.av_?
+===================================================
+    
+Case 3: EXISTS and NOT EXISTS in one query on a large outer -> the ANTI JOIN kept, the EXISTS put back     
+
+===================================================
+count(*)    
+1667     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tm node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tn node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tm.ca from tm tm, tn tn where tm.cb=tn.ca)
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca, tc.ca from tb tb, tc tc where tc.ca=tl.cb and tb.ca=tl.ca limit ?)
+Query plan:
+hash-join (anti join)
+    edge:  term[?]
+    outer: sscan
+               class: tl node[?]
+               sargs: term[?]
+               subqs: ?
+               cost:  ? card ?
+    inner: sscan
+               class: av?_? node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tl tl anti join (select tm.ca from tm tm, tn tn where tm.cb=tn.ca) av?_? (av_?) on av?_?.av_?=tl.ca where  exists (select tb.ca, tc.ca from tb tb, tc tc where tc.ca=tl.cb and tb.ca=tl.ca limit ?)
+===================================================
+    
+Case 4: EXISTS / NOT EXISTS on a small outer -> the [NOT] EXISTS subquery     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+3     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  not  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+7     
+
+===================================================
+    
+Case 5: IN / NOT IN on a small outer -> the [NOT] EXISTS subquery     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+3     
+
+===================================================
+count(*)    
+7     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  not  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+7     
+
+===================================================
+    
+Case 6: IN dividing by a column the subquery WHERE keeps non-zero -> the EXISTS subquery     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: tm node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tn node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tm.ca, tm.cc from tm tm, tn tn where tm.cc<>? and tm.cb=tn.ca and tx.ca=tm.ca/tm.cc limit ?)
+Query plan:
+sscan
+    class: tx node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from tx tx where  exists (select tm.ca, tm.cc from tm tm, tn tn where tm.cc<>? and tm.cb=tn.ca and tx.ca=tm.ca/tm.cc limit ?)
+===================================================
+count(*)    
+1     
+
+===================================================
+    
+Case 7: EXISTS / NOT EXISTS whose two tables are joined to ta only -> the subquery     
+
+===================================================
+count(*)    
+2     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca, tc.ca from tb tb, tc tc where tc.ca=ta.cb and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (select tb.ca, tc.ca from tb tb, tc tc where tc.ca=ta.cb and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+2     
+
+===================================================
+count(*)    
+8     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?] (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca, tc.ca from tb tb, tc tc where tc.ca=ta.cb and tb.ca=ta.ca limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?]
+    subqs: ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  not  exists (select tb.ca, tc.ca from tb tb, tc tc where tc.ca=ta.cb and tb.ca=ta.ca limit ?)
+===================================================
+count(*)    
+8     
+
+===================================================
+    
+Case 8: EXISTS and NOT EXISTS in one query on a small outer -> each put back as its subquery     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?)
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: tb node[?]
+               index: i_tb_ca term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.cb limit ?)
+Query plan:
+sscan
+    class: ta node[?]
+    sargs: term[?] AND term[?]
+    subqs: ? ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta where  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.ca limit ?) and  not  exists (select tb.ca from tb tb, tc tc where tb.cb=tc.ca and tb.ca=ta.cb limit ?)
+===================================================
+count(*)    
+1     
+
+===================================================
+0
