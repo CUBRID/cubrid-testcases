@@ -94,7 +94,7 @@ drop trigger tr5;
 -- rule 1 still applies to the deferred action
 create trigger tr5 after update on t5 execute deferred call p_commit ();
 commit;
-update t5 set a = 4 where a = 2;
+update t5 set a = 2 where a = 2;
 commit;
 rollback;
 drop trigger tr5;
