@@ -1,0 +1,258 @@
+===================================================
+0
+===================================================
+0
+===================================================
+10
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+181819
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: GROUP BY a DESC over an ascending index, ORDER BY another column, covered and not covered; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*n))    
+40000     181819     402169842426282     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_sk.i_abc) (key range: ([dba.t_sk].a>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*) from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_abc(+) order by ?, ?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)*( cast(x.a as bigint)+ cast(? as bigint)*x.n)) from (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*) as [n] from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_abc(+) order by ?, ?) x (a, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_sk.i_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*n))    
+40000     181819     402169842426282     
+
+===================================================
+count(*)    sum(n)    sum(s)    sum(r*(a+100000*s))    
+40000     181819     9090787     20414301331030909     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_sk.i_a) (key range: ([dba.t_sk].a>= ?:? ), desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*), sum([dba.t_sk].v) from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_a(+) order by ?, ?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum(x.s), sum((rownum)* cast((x.a+?*x.s) as bigint)) from (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*) as [n], sum([dba.t_sk].v) as [s] from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_a(+) order by ?, ?) x (a, n, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_sk.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    sum(s)    sum(r*(a+100000*s))    
+40000     181819     9090787     20414301331030909     
+
+===================================================
+    
+Case 2: GROUP BY a DESC over an ascending index with DISTINCT; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    
+2     9     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (distinct)
+    INDEX SCAN (dba.t_sk.i_abc) (key range: ([dba.t_sk].a>= ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ distinct count(*) from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_abc(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n) from (select /*+ PARALLEL(?) */ distinct count(*) as [n] from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc  using index [dba.t_sk].i_abc(+)) x (n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_sk.i_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    
+2     9     
+
+===================================================
+    
+Case 3: GROUP BY a ASC over a descending index, ORDER BY another column; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*s))    
+40000     181819     20414301331030909     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_skd.i_ad) (key range: ([dba.t_skd].a>= ?:? ), desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ [dba.t_skd].a, count(*), sum([dba.t_skd].v) from [dba.t_skd] [dba.t_skd] where ([dba.t_skd].a>= ?:? ) group by [dba.t_skd].a using index [dba.t_skd].i_ad(+) order by ?, ?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)* cast((x.a+?*x.s) as bigint)) from (select /*+ PARALLEL(?) */ [dba.t_skd].a, count(*) as [n], sum([dba.t_skd].v) as [s] from [dba.t_skd] [dba.t_skd] where ([dba.t_skd].a>= ?:? ) group by [dba.t_skd].a using index [dba.t_skd].i_ad(+) order by ?, ?) x (a, n, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_skd.i_ad), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*s))    
+40000     181819     20414301331030909     
+
+===================================================
+    
+Case 4: GROUP BY a DESC, b DESC, c DESC WITH ROLLUP over an ascending index, ORDER BY a, b, c; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(s)    sum(r*(nvl(a, -1)*100+nvl(b, -1)*10+nvl(c, -1)))    
+322910     727276     36363148     139025506118038984     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_sk.i_abc) (key range: ([dba.t_sk].a>= ?:? ), desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ [dba.t_sk].a, [dba.t_sk].b, [dba.t_sk].c, count(*), sum([dba.t_sk].v) from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc , [dba.t_sk].b desc , [dba.t_sk].c desc  with rollup using index [dba.t_sk].i_abc(+) order by ?, ?, ?, ?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum(x.s), sum((rownum)* cast((nvl(x.a, -?)*?+nvl(x.b, -?)*?+nvl(x.c, -?)) as bigint)) from (select /*+ PARALLEL(?) */ [dba.t_sk].a, [dba.t_sk].b, [dba.t_sk].c, count(*) as [n], sum([dba.t_sk].v) as [s] from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a desc , [dba.t_sk].b desc , [dba.t_sk].c desc  with rollup using index [dba.t_sk].i_abc(+) order by ?, ?, ?, ?) x (a, b, c, n, s)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_sk.i_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    sum(s)    sum(r*(nvl(a, -1)*100+nvl(b, -1)*10+nvl(c, -1)))    
+322910     727276     36363148     139025506118038984     
+
+===================================================
+    
+Case 5: GROUP BY a ASC over an ascending index, ORDER BY another column, read forwards as before; result = no_parallel_scan     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*n))    
+40000     181819     402169842426282     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_sk.i_abc) (key range: ([dba.t_sk].a>= ?:? ), covered: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*) from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a using index [dba.t_sk].i_abc(+) order by ?, ?)
+
+  TABLE SCAN (x)
+
+  rewritten query: select count(*), sum(x.n), sum((rownum)*( cast(x.a as bigint)+ cast(? as bigint)*x.n)) from (select /*+ PARALLEL(?) */ [dba.t_sk].a, count(*) as [n] from [dba.t_sk] [dba.t_sk] where ([dba.t_sk].a>= ?:? ) group by [dba.t_sk].a using index [dba.t_sk].i_abc(+) order by ?, ?) x (a, n)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_sk.i_abc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+        ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+                (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+count(*)    sum(n)    sum(r*(a+100000*n))    
+40000     181819     402169842426282     
+
+===================================================
+0
+===================================================
+0
