@@ -9,11 +9,12 @@
  *  the rows that the query defines. A case that repeats another case with a hint or a rewritten form must print
  *  the same rows.
  *  Cases 1 - 13 come from the Jira attachment cbrd-27483_test_scenarios_20260929_1945.md, scenarios 1 - 13.
- *  The SELECT cases that fail without the fix also print their plan, which shows the outer join after every table
- *  that its ON reads. The cases with a join order hint also print their plan, which shows whether the planner
- *  applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
- *  In a plan, the cost picks the order of the two tables of a CROSS JOIN, so a change of the cost model can
- *  change those lines.
+ *  The SELECT cases that fail without the fix also print their plan. The plan of a LEFT JOIN puts its inner table
+ *  after every table that its ON reads, and the plan of a RIGHT JOIN puts the whole join before it on the inner
+ *  side. The cases with a join order hint also print their plan, which shows whether the planner applied the hint.
+ *  Those queries carry RECOMPILE because a plan prints only when the query is compiled. In a plan, the cost picks
+ *  the order and the nesting of the tables that no dependency orders, so a change of the cost model or of the
+ *  statistics can change those lines.
  *
  *  Coverage:
  *    Case 1:   scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN
@@ -37,6 +38,7 @@
  *    Case 19:  a RIGHT JOIN whose ON reads the first table, after an INNER JOIN that follows a CROSS JOIN
  *    Case 20:  a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN
  *    Case 21:  a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN
+ *    Case 22:  a LEFT JOIN whose ON reads only its own table, after a CROSS JOIN
  */
 DROP VIEW IF EXISTS va, vb;
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
@@ -109,7 +111,8 @@ INSERT INTO tb VALUES (2, 1), (3, 1);
 INSERT INTO tc VALUES (2, 20), (4, 40);
 UPDATE STATISTICS ON ta, tb, tc;
 
--- Cases 11 - 13: a join order hint must not add a join edge that the query does not ask for
+-- Cases 11 - 13: a RIGHT JOIN after a comma, without and with a join order hint
+-- a join order hint must not add a join edge that the query does not ask for
 -- Cases 11 - 13 are controls: they return the same rows without the fix
 evaluate 'Case 11: scenario 11 - a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE; result = 2 rows';
 SELECT tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
@@ -151,7 +154,7 @@ evaluate 'Case 17: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the f
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb FROM ta CROSS JOIN tb RIGHT JOIN tc ON tb.ca = tc.ca WHERE ta.cb = tc.cb OR ta.cb IS NULL ORDER BY 1, 2, 3, 4, 5, 6;
 
--- Cases 18 - 21 use the data of Cases 1 - 10 again, with td as the table that the RIGHT JOIN keeps
+-- Cases 18 - 22 use the data of Cases 1 - 10 again, with td as a fourth table
 DROP TABLE IF EXISTS ta, tb, tc, td;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
@@ -182,5 +185,10 @@ SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JO
 evaluate 'Case 21: a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN; result = 3 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca LEFT JOIN td ON td.ca = tb.ca AND td.cb = tc.cb WHERE NVL (tc.cb, tb.cb) = tb.cb ORDER BY 1, 2, 3, 4;
+
+-- a control: it returns the same rows without the fix
+-- the ON reads no table other than tc, so the LEFT JOIN depends on no table
+evaluate 'Case 22: a LEFT JOIN whose ON reads only its own table, after a CROSS JOIN; result = 6 rows';
+SELECT ta.ca, tb.ca, tc.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = 1 ORDER BY 1, 2, 3;
 
 DROP TABLE ta, tb, tc, td;

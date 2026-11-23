@@ -11,11 +11,11 @@
  *  the same rows.
  *  Cases 1 - 28 come from the Jira attachment i03-cross-join-const-in-semijoin.sql, SQLancer defect 3 of
  *  CBRD-28029. Its cases 40 - 43 and c40 have no CROSS JOIN and are left out.
- *  The SELECT cases that fail without the fix also print their plan, which shows the SEMI or ANTI JOIN after
- *  every table that its ON reads. The cases with a join order hint also print their plan, which shows whether the
- *  planner applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
- *  In a plan, the cost picks the order of the two tables of a CROSS JOIN, so a change of the cost model can
- *  change those lines.
+ *  The SELECT cases that fail without the fix also print their plan. The plan of a SEMI or ANTI JOIN puts its inner
+ *  table after every table that its ON reads. The cases with a join order hint also print their plan, which shows
+ *  whether the planner applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is
+ *  compiled. In a plan, the cost picks the order and the nesting of the tables that no dependency orders, so a
+ *  change of the cost model or of the statistics can change those lines.
  *
  *  Coverage:
  *    Case 1:   i03 case 1 - an IN subquery after a CROSS JOIN, a VARCHAR constant on the left
@@ -78,7 +78,7 @@ SELECT a.ca FROM ta a WHERE CAST(1 AS VARCHAR) IN (SELECT i.ca FROM tb i WHERE (
 evaluate 'Case 4: i03 case 2 - Case 1 with a comma join in place of the CROSS JOIN; result = 4 rows';
 SELECT a.ca, b.ca FROM ta a, tb b WHERE CAST(1 AS VARCHAR) IN (SELECT i.ca FROM tb i WHERE (i.ca = i.ca) OR (a.cb = a.cb)) ORDER BY 1, 2;
 
--- no row of tb has ca zz, so the subquery returns rows only for the outer rows with cb 1
+-- no row of tb has ca zz, so only a.cb = 1 can make the subquery return a row
 evaluate 'Case 5: i03 case 3 - the subquery result depends on the first table of the CROSS JOIN; result = 2 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ a.ca, b.ca FROM ta a CROSS JOIN tb b WHERE CAST(1 AS VARCHAR) IN (SELECT i.ca FROM tb i WHERE (i.ca = 'zz') OR (a.cb = 1)) ORDER BY 1, 2;
@@ -172,6 +172,7 @@ UPDATE ta a CROSS JOIN tb b SET a.ca = a.ca WHERE CAST(1 AS VARCHAR) IN (SELECT 
 evaluate 'Case 27: i03 case 29 - DELETE through the join of Case 8, no row matches; result = 0 rows affected';
 DELETE a FROM ta a CROSS JOIN tb b WHERE CAST(2 AS VARCHAR) IN (SELECT i.ca FROM tb i WHERE (i.ca = i.ca) OR (a.cb = a.cb));
 
+-- a control: it returns the same rows without the fix
 evaluate 'Case 28: i03 case 30 - the rows of ta after Cases 26 and 27; result = 2 rows';
 SELECT ca, cb FROM ta ORDER BY 1, 2;
 

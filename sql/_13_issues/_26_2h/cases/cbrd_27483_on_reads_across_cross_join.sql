@@ -10,11 +10,12 @@
  *  the rows that the query defines. A case that repeats another case with a hint or a rewritten form must print
  *  the same rows.
  *  Cases 1 - 26 come from the Jira attachment i17-outer-join-after-cross-join.sql, SQLancer defect 17 of CBRD-28029.
- *  The SELECT cases that fail without the fix also print their plan, which shows the outer join after every table
- *  that its ON reads. The cases with a join order hint also print their plan, which shows whether the planner
- *  applied the hint. Those queries carry RECOMPILE because a plan prints only when the query is compiled.
- *  In a plan, the cost picks the order of the two tables of a CROSS JOIN, so a change of the cost model can
- *  change those lines.
+ *  The SELECT cases that fail without the fix also print their plan. The plan of a LEFT JOIN puts its inner table
+ *  after every table that its ON reads, and the plan of a RIGHT JOIN puts the whole join before it on the inner
+ *  side. The cases with a join order hint also print their plan, which shows whether the planner applied the hint.
+ *  Those queries carry RECOMPILE because a plan prints only when the query is compiled. In a plan, the cost picks
+ *  the order and the nesting of the tables that no dependency orders, so a change of the cost model or of the
+ *  statistics can change those lines.
  *
  *  Coverage:
  *    Case 1:   i17 case 1 - the ON reads the table before the CROSS JOIN and the inner table, with no join term
@@ -125,7 +126,8 @@ evaluate 'Case 18: i17 case 18 - Case 1 with INNER JOIN ON 1 = 1 in place of the
 SELECT a.ca, b.ca, c.ca FROM ta a INNER JOIN tb b ON 1 = 1 LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
 -- Case 19 is a control: it fails with the same error without the fix
--- Outer join query optimization failed also prints -494, so Case 1, which returns rows, tells the two errors apart
+-- the parser refuses this ON with -494, and Outer join query optimization failed has the same code, so the
+-- answer shows only that the query fails
 evaluate 'Case 19: i17 case 19 - the parser refuses an ON after a comma that reads the table before the comma; result = fails with an error';
 SELECT a.ca, b.ca, c.ca FROM ta a, tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
