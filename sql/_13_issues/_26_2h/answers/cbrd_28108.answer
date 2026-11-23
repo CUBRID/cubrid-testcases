@@ -1,0 +1,162 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+    
+Section 1: results that the fix changes     
+
+===================================================
+    
+Case 1: the || operator returns the cast value padded to n     
+
+===================================================
+id    cast(c_double as char(10))||'|'    cast(c_float as char(10))||'|'    cast(c_numeric as char(10))||'|'    
+1     1.5       |     1.5       |     1.5       |     
+2     -1.5      |     -1.5      |     -1.5      |     
+3     null     null     null     
+
+===================================================
+    
+Case 2: CONCAT and CONCAT_WS return the cast value padded to n     
+
+===================================================
+id    concat( cast(c_double as char(10)), '|')    concat_ws(',',  cast(c_double as char(10)), '|')    
+1     1.5       |     1.5       ,|     
+2     -1.5      |     -1.5      ,|     
+3     null     |     
+
+===================================================
+id    concat( cast(c_float as char(10)), '|')    concat_ws(',',  cast(c_float as char(10)), '|')    
+1     1.5       |     1.5       ,|     
+2     -1.5      |     -1.5      ,|     
+3     null     |     
+
+===================================================
+id    concat( cast(c_numeric as char(10)), '|')    concat_ws(',',  cast(c_numeric as char(10)), '|')    
+1     1.5       |     1.5       ,|     
+2     -1.5      |     -1.5      ,|     
+3     null     |     
+
+===================================================
+    
+Case 3: RPAD, REPEAT and REVERSE read the pad spaces of the cast value     
+
+===================================================
+id    rpad( cast(c_double as char(10)), 12, '*')    repeat( cast(c_double as char(10)), 2)    reverse( cast(c_double as char(10)))    
+1     1.5       **     1.5       1.5                   5.1     
+2     -1.5      **     -1.5      -1.5                 5.1-     
+3     null     null     null     
+
+===================================================
+id    rpad( cast(c_numeric as char(10)), 12, '*')    repeat( cast(c_numeric as char(10)), 2)    reverse( cast(c_numeric as char(10)))    
+1     1.5       **     1.5       1.5                   5.1     
+2     -1.5      **     -1.5      -1.5                 5.1-     
+3     null     null     null     
+
+===================================================
+    
+Case 4: REPLACE, INSERT and SUBSTR read the pad spaces of the cast value     
+
+===================================================
+id    replace( cast(c_double as char(10)), '5', '7')    insert( cast(c_double as char(10)), 2, 1, 'x')    substr( cast(c_double as char(10)), 1, 5)||'|'    
+1     1.7            1x5            1.5  |     
+2     -1.7           -x.5           -1.5 |     
+3     null     null     null     
+
+===================================================
+id    replace( cast(c_numeric as char(10)), '5', '7')    insert( cast(c_numeric as char(10)), 2, 1, 'x')    substr( cast(c_numeric as char(10)), 1, 5)||'|'    
+1     1.7            1x5            1.5  |     
+2     -1.7           -x.5           -1.5 |     
+3     null     null     null     
+
+===================================================
+    
+Case 5: the cast value has n characters and n bytes     
+
+===================================================
+id    char_length( cast(c_double as char(10)))    octet_length( cast(c_double as char(10)))    char_length( cast(c_float as char(10)))    octet_length( cast(c_float as char(10)))    char_length( cast(c_numeric as char(10)))    octet_length( cast(c_numeric as char(10)))    
+1     10     10     10     10     10     10     
+2     10     10     10     10     10     10     
+3     null     null     null     null     null     null     
+
+===================================================
+    
+Case 6: a cast to CHAR with the euckr charset pads with its two-byte space     
+
+===================================================
+id    char_length( cast(c_double as char(10) collate euckr_bin))    octet_length( cast(c_double as char(10) collate euckr_bin))    char_length( cast(c_double as char(10) collate euckr_bin)||'|')    octet_length( cast(c_double as char(10) collate euckr_bin)||'|')    
+1     10     17     11     18     
+2     10     16     11     17     
+3     null     null     null     null     
+
+===================================================
+id    char_length( cast(c_numeric as char(10) collate euckr_bin))    octet_length( cast(c_numeric as char(10) collate euckr_bin))    char_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    octet_length( cast(c_numeric as char(10) collate euckr_bin)||'|')    
+1     10     17     11     18     
+2     10     16     11     17     
+3     null     null     null     null     
+
+===================================================
+    
+Section 2: results that the fix keeps, the same on a build without the fix     
+
+===================================================
+    
+Case 7: a number as long as n gets no pad spaces     
+
+===================================================
+cast(c_double as char(3))||'|'    cast(c_float as char(3))||'|'    cast(c_numeric as char(3))||'|'    
+1.5|     1.5|     1.5|     
+
+===================================================
+    
+Case 8: a number longer than n fails with an overflow error; result = error     
+
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+Error:-427
+===================================================
+    
+Case 9: a cast to VARCHAR gets no pad spaces     
+
+===================================================
+id    cast(c_double as varchar(10))||'|'    cast(c_float as varchar(10))||'|'    cast(c_numeric as varchar(10))||'|'    
+1     1.5|     1.5|     1.5|     
+2     -1.5|     -1.5|     -1.5|     
+3     null     null     null     
+
+===================================================
+    
+Case 10: the cast value stored in a CHAR column keeps its pad spaces     
+
+===================================================
+0
+===================================================
+3
+===================================================
+id    c_from_double||'|'    octet_length(c_from_double)    c_from_numeric||'|'    octet_length(c_from_numeric)    
+1     1.5       |     10     1.5       |     10     
+2     -1.5      |     10     -1.5      |     10     
+3     null     null     null     null     
+
+===================================================
+    
+Section 3: the case that crashes the server on a build without the fix     
+
+===================================================
+    
+Case 11: the || operator on a cast to CHAR(100) returns 101 characters, with no crash     
+
+===================================================
+id    char_length( cast(c_double as char(100))||'|')    char_length( cast(c_float as char(100))||'|')    char_length( cast(c_numeric as char(100))||'|')    
+1     101     101     101     
+2     101     101     101     
+3     null     null     null     
+
+===================================================
+0
