@@ -8,7 +8,7 @@
  *
  *  Each case runs the query on the index, prints its trace, and runs a twin that reads the
  *  heap with no index. The two result blocks must be equal. A scan run as a bitmap heap scan
- *  has a "SCAN (bitmap heap: ...)" line under its index line; a scan that looks its rows up in
+ *  has a "SCAN (bitmap heap lookup: ...)" line under its index line; a scan that looks its rows up in
  *  key order keeps "(lookup time: ..., rows: ...)" on its index line. CTP masks the digits.
  *
  *  Coverage:
