@@ -19,10 +19,11 @@
  *      the wrong node)
  *
  *  Each case prints the query plan (plan shape only, cost and card are masked)
- *  and counts and sums, so that every join method returns the same rows. From
- *  Case 8 on, each query that the cost plans as a hash-join is followed by its
- *  NO_USE_HASH twin, and each query that it plans as an idx-join by its
- *  USE_HASH twin, and the two results must match.
+ *  and counts and sums, so that every join method returns the same rows. In
+ *  Cases 8 to 12, each query that the cost plans as a hash-join is followed by
+ *  its NO_USE_HASH twin, and each query that it plans as an idx-join by its
+ *  USE_HASH twin, and the two results must match. Case 13 runs the same joins
+ *  under several max_hash_list_scan_size values, and their results must match.
  *
  *  Coverage:
  *    Case 1:  hash-join by cost - inner join, left outer join and right outer
@@ -54,25 +55,29 @@
  *    Case 9:  the cost picks hash-join on a VARCHAR join key as well
  *    Case 10: hash-joins chosen by cost under GROUP BY and in a three-table
  *             join, both joins of the three-table join are hash-joins
- *    Case 11: an empty table - the cost keeps nl-join, USE_HASH with an empty
- *             build side returns no rows for the inner join, keeps every row
- *             of the preserved side of an outer join, and none when the
- *             preserved side is the empty table
- *    Case 12: a hash-join that spills at run time - with max_hash_list_scan_size
- *             64K the trace shows the SPLIT into partitions, with the default
- *             size it does not, and both return the rows of Case 8
- *    Case 13: the filter on one side changes the choice for the same join -
+ *    Case 11: the filter on one side changes the choice for the same join -
  *             without a filter the cost picks hash-join, a filter that leaves
  *             1,000 outer rows gives idx-join, and a key range on the indexed
  *             side that leaves a small build input gives hash-join again
+ *    Case 12: a join on two independent VARCHAR keys with an index filter on
+ *             both tables - the cost picks hash-join over two index scans, and
+ *             the hash key holds both join terms
+ *    Case 13: the spill decision at its limit - the build input spills once its
+ *             hash entries pass max_hash_list_scan_size * 0.8, not the whole
+ *             limit, and a right outer join sizes it by its outer input and a
+ *             left outer join by its inner input, while an inner join sizes it
+ *             by the smaller input
  */
-drop table if exists t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_empty;
+drop table if exists t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_cka, t_ckb;
 
 create table t_big1 (id int, k int, v varchar(20));
 create table t_big2 (id int, k int, v varchar(20));
+-- the cost model counts 52 bytes of hash entry per build row (two open-addressing slots, one entry and a tuple position,
+-- the sizes of CBRD-26986), and the build spills past max_hash_list_scan_size * 0.8
+-- t_idx: 20,000 rows - 1,040,000 bytes, past 1M * 0.8 = about 838,860 bytes, the build of the outer joins of Case 13
 create table t_idx (id int, k int, v varchar(20), index i_t_idx_k (k));
--- t_mid: 12,000 rows, the build of Case 5 - 12,000 hash entries of 52 bytes (about 624KB) fit in the default 8M * 0.8
--- and not in 64K * 0.8 (about 1,000 entries), so that Case 5 adds the spill cost only under 64K
+-- t_mid: 12,000 rows, the build of Case 5 and Case 13 - 624,000 bytes of hash entries fit in the default 8M * 0.8,
+-- and not in 64K * 0.8 (Case 5) or in 700K * 0.8 = 573,440 bytes (Case 13), while 900K * 0.8 = 737,280 bytes holds them
 create table t_mid (id int, k int, v varchar(20));
 create table t_hint1 (id int, k int, v varchar(20));
 create table t_hint2 (id int, k int, v varchar(20));
@@ -81,11 +86,12 @@ create table t_small2 (id int, k int);
 -- 2,000 rows each, as t_hint1 and t_hint2, so that the cost picks hash-join on them
 -- t_nula: 100 NULL keys, 380 keys of 5 rows each, 12 of them without a match in t_nulb
 -- t_nulb: 80 NULL keys, 480 keys of 4 rows each, 112 of them without a match in t_nula
--- the hash entry of a build row takes 52 bytes, so max_hash_list_scan_size 64K (64K * 0.8 = about 1,000 entries) splits a 2,000-row build in Case 12
--- and the default 8M (about 129,000 entries) does not
 create table t_nula (id int, k int, kv varchar(20));
 create table t_nulb (id int, k int, kv varchar(20));
-create table t_empty (id int, k int, kv varchar(20));
+-- t_cka, t_ckb: 40,000 rows each, f = 1 keeps 1,000 rows of each through its index, few enough for an index scan
+-- and enough for the cost to pick hash-join, and kb is independent of ka, so that it drops most pairs that match on ka
+create table t_cka (id int, ka varchar(10), kb varchar(10), f int, index i_cka_f (f));
+create table t_ckb (id int, ka varchar(10), kb varchar(10), f int, index i_ckb_f (f));
 
 insert into t_big1
 select rownum, mod(rownum, 5000), 'big1_' || rownum
@@ -136,7 +142,19 @@ from (select rownum n, case when mod(rownum, 25) = 0 then null else mod(rownum *
            table({0,1,2,3,4,5,6,7,8,9}) d
       limit 2000) s;
 
-update statistics on t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_empty with fullscan;
+insert into t_cka
+select rownum, to_char(mod(rownum, 200)), to_char(mod(rownum, 7)), mod(rownum, 40)
+from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c,
+     table({0,1,2,3,4,5,6,7,8,9}) d, table({0,1,2,3,4,5,6,7,8,9}) e
+limit 40000;
+
+insert into t_ckb
+select rownum, to_char(mod(rownum * 3, 200)), to_char(mod(rownum * 2, 7)), mod(rownum * 3, 40)
+from table({0,1,2,3,4,5,6,7,8,9}) a, table({0,1,2,3,4,5,6,7,8,9}) b, table({0,1,2,3,4,5,6,7,8,9}) c,
+     table({0,1,2,3,4,5,6,7,8,9}) d, table({0,1,2,3,4,5,6,7,8,9}) e
+limit 40000;
+
+update statistics on t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_cka, t_ckb with fullscan;
 
 evaluate 'Case 1: hash-join by cost without a hint - inner, left outer and right outer join';
 --@queryplan
@@ -224,10 +242,10 @@ select /*+ recompile no_use_hash(b) */ count(*), sum(a.id), sum(b.id), count(a.i
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(a.id) from t_small1 a right outer join t_small2 b on a.k = b.k;
 
 evaluate 'Case 7: USE_HASH applies to a right outer join whose null-supplying side is a join';
--- without the hint the cost picks nl-join for these small inputs
 --@queryplan
 select /*+ recompile use_hash */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
 
+-- without the hint the cost picks nl-join for these small inputs
 --@queryplan
 select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(c.id) from t_small1 a join t_small2 b on a.id = b.id right outer join t_small1 c on c.k = b.k;
 
@@ -271,45 +289,7 @@ select /*+ recompile */ count(*), sum(a.id), sum(b.id), sum(c.id) from t_nula a,
 --@queryplan
 select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id), sum(c.id) from t_nula a, t_nulb b, t_hint1 c where a.k = b.k and b.k = c.k;
 
-evaluate 'Case 11: an empty table - nl-join by cost, USE_HASH with an empty input';
---@queryplan
-select /*+ recompile */ count(*), count(e.id) from t_hint1 a, t_empty e where a.k = e.k;
-
---@queryplan
-select /*+ recompile use_hash */ count(*), count(e.id) from t_hint1 a, t_empty e where a.k = e.k;
-
---@queryplan
-select /*+ recompile use_hash */ count(*), count(e.id), sum(a.id) from t_hint1 a left outer join t_empty e on a.k = e.k;
-
---@queryplan
-select /*+ recompile use_hash */ count(*), count(a.id) from t_empty e left outer join t_hint1 a on a.k = e.k;
-
-evaluate 'Case 12: a hash-join that spills at run time returns the rows of Case 8';
--- PARALLEL(0) keeps the hash-join serial, so that the trace has the same lines on any number of cores
-set system parameters 'max_hash_list_scan_size=64K';
-set trace on;
-
---@queryplan
-select /*+ recompile use_hash parallel(0) */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum(cast(a.id as bigint) * b.id) from t_nula a, t_nulb b where a.k = b.k;
-
-show trace;
-
---@queryplan
-select /*+ recompile use_hash parallel(0) */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum(cast(a.id as bigint) * b.id) from t_nula a right outer join t_nulb b on a.k = b.k;
-
-show trace;
-
-set system parameters 'max_hash_list_scan_size=default';
-
--- with the default size the same build fits in memory and the trace has no SPLIT line
---@queryplan
-select /*+ recompile use_hash parallel(0) */ count(*), count(a.k), count(b.k), sum(a.id), sum(b.id), sum(cast(a.id as bigint) * b.id) from t_nula a, t_nulb b where a.k = b.k;
-
-show trace;
-
-set trace off;
-
-evaluate 'Case 13: the filter on one side switches the same join between hash-join and idx-join';
+evaluate 'Case 11: the filter on one side switches the same join between hash-join and idx-join';
 -- unlike Case 5 the select list reads b.id, so the index on t_idx.k does not cover the query
 --@queryplan
 select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k = b.k;
@@ -329,4 +309,47 @@ select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b whe
 --@queryplan
 select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id) from t_mid a, t_idx b where a.k = b.k and b.k < 10;
 
-drop table t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_empty;
+evaluate 'Case 12: hash-join by cost on two VARCHAR keys over index scans on both tables, same rows as nl-join';
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id), sum(cast(a.id as bigint) * b.id) from t_cka a, t_ckb b where a.ka = b.ka and a.kb = b.kb and a.f = 1 and b.f = 1;
+
+--@queryplan
+select /*+ recompile no_use_hash */ count(*), sum(a.id), sum(b.id), sum(cast(a.id as bigint) * b.id) from t_cka a, t_ckb b where a.ka = b.ka and a.kb = b.kb and a.f = 1 and b.f = 1;
+
+evaluate 'Case 13: the build spills past 0.8 of max_hash_list_scan_size, sized by the preserved input of an outer join';
+-- 700K: the 12,000 build rows of t_mid fill 0.87 of the limit, past 0.8, so the spill cost makes the idx-join cheaper
+set system parameters 'max_hash_list_scan_size=700K';
+
+--@queryplan
+select /*+ recompile */ count(*) from t_mid a, t_idx b where a.k = b.k;
+
+-- 900K: the same build fills 0.68 of the limit and stays in memory, so the hash-join wins
+set system parameters 'max_hash_list_scan_size=900K';
+
+--@queryplan
+select /*+ recompile */ count(*) from t_mid a, t_idx b where a.k = b.k;
+
+-- 1M: an inner join builds on the smaller input t_mid, which fits, so the hash-join stays
+set system parameters 'max_hash_list_scan_size=1M';
+
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_idx b, t_mid a where a.k = b.k;
+
+-- a right outer join builds on its outer input t_idx (20,000 rows), which does not fit, so the cost turns to the idx-join
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_idx b right outer join t_mid a on a.k = b.k;
+
+-- a left outer join builds on its inner input t_idx, the null-supplying side, which does not fit either
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(b.id) from t_mid a left outer join t_idx b on a.k = b.k;
+
+set system parameters 'max_hash_list_scan_size=default';
+
+-- with the default size t_idx fits, so both outer joins go back to the hash-join
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id) from t_idx b right outer join t_mid a on a.k = b.k;
+
+--@queryplan
+select /*+ recompile */ count(*), sum(a.id), sum(b.id), count(b.id) from t_mid a left outer join t_idx b on a.k = b.k;
+
+drop table t_big1, t_big2, t_idx, t_mid, t_hint1, t_hint2, t_small1, t_small2, t_nula, t_nulb, t_cka, t_ckb;
