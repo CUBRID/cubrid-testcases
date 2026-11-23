@@ -138,6 +138,7 @@ evaluate 'Case 22: i17 case 22 - Case 20 with a LEADING hint on the first table;
 SELECT /*+ RECOMPILE LEADING(a) */ a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b RIGHT JOIN tc c ON b.ca = c.ca ORDER BY 1, 2, 3;
 
 -- Cases 23 - 26: UPDATE and DELETE with the join of Case 1, each followed by the rows left in td
+-- the UPDATE and the DELETE change td, a copy of ta, so that ta keeps the rows that the cases above read
 CREATE TABLE td AS SELECT * FROM ta;
 UPDATE STATISTICS ON td;
 

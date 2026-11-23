@@ -172,6 +172,9 @@ evaluate 'Case 28: i03 case 30 - the rows of ta after Cases 26 and 27; result = 
 SELECT ca, cb FROM ta ORDER BY 1, 2;
 
 DROP TABLE ta, tb;
+
+-- Cases 29 - 34 take INT tables with NULL in cb and two rows of tc for ca 1, the data of Cases 14 - 17 of
+-- cbrd_27483_outer_join.sql, so that an ON that joins tc to both tables of the CROSS JOIN matches only some pairs
 DROP TABLE IF EXISTS ta, tb, tc;
 CREATE TABLE ta (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 1), (2, 2), (3, 3), (4, NULL);

@@ -94,6 +94,8 @@ evaluate 'Case 10: scenario 10 - three LEFT JOINs whose ONs read the same two ta
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca, te.ca FROM ta CROSS JOIN tb LEFT OUTER JOIN tc ON tc.ca = ta.ca AND tc.cb = tb.cb LEFT OUTER JOIN td ON td.ca = ta.ca AND td.cb = tb.cb LEFT OUTER JOIN te ON te.ca = ta.ca AND te.cb = tb.cb ORDER BY 1, 2, 3, 4, 5;
 
+-- Cases 11 - 13 take new data: ta joins by a comma and no ON reads it, and its one row meets every row of tb in the
+-- WHERE, so an outer join dependency taken from a hint would NULL-pad ta and the WHERE would drop the rows
 DROP VIEW IF EXISTS va, vb;
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
 CREATE TABLE ta (ca INT PRIMARY KEY, cb INT);
@@ -116,6 +118,8 @@ evaluate 'Case 13: scenario 13 - Case 11 with a LEADING hint, which the planner 
 --@queryplan
 SELECT /*+ RECOMPILE LEADING(ta,tb,tc) */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
+-- Cases 14 - 17 take data with NULL in cb and two rows of tc for ca 1, so that an ON that joins tc to both tables
+-- of the CROSS JOIN matches only some pairs and a WHERE on the NULL-padded columns keeps some rows and drops others
 DROP TABLE IF EXISTS ta, tb, tc;
 CREATE TABLE ta (ca INT, cb INT);
 INSERT INTO ta VALUES (1, 1), (2, 2), (3, 3), (4, NULL);
@@ -143,6 +147,7 @@ evaluate 'Case 17: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the f
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb FROM ta CROSS JOIN tb RIGHT JOIN tc ON tb.ca = tc.ca WHERE ta.cb = tc.cb OR ta.cb IS NULL ORDER BY 1, 2, 3, 4, 5, 6;
 
+-- Cases 18 - 21 take the data of Cases 1 - 10 again, with td as the table that the RIGHT JOIN keeps
 DROP TABLE IF EXISTS ta, tb, tc, td;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
