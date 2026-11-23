@@ -1,7 +1,7 @@
 -- CBRD-28181: GROUP BY blocks whose group order cannot reach the result, and a sort GROUP BY's COUNT DISTINCT
 -- Case 1-5: COUNT DISTINCT of integer and date-time columns kept in memory per group, beside the types that keep the list
 -- Case 6-9: the query of IN, NOT IN, =ANY, <>ALL, EXISTS and an ORDER BY that has every GROUP BY key
--- Case 10-12: the blocks whose group order reaches the result (no ORDER BY, part of the keys, LIMIT)
+-- Case 10-13: the blocks whose group order reaches the result (no ORDER BY, part of the keys, LIMIT, a CAST of a key)
 drop table if exists t28181;
 create table t28181 (id int primary key, k int, v int, b bigint, d date, dt datetime, s varchar(10) collate utf8_en_ci, c char(4));
 insert into t28181
@@ -58,5 +58,9 @@ select k, count(*) c from t28181 group by k order by c;
 -- Case 12: LIMIT in the query of IN, and GROUPBY_NUM
 select count(*) from t28181 where k in (select k from t28181 group by k having sum(v) > 1200 limit 10);
 select k, groupby_num () from t28181 group by k having groupby_num () < 5;
+
+-- Case 13: an ORDER BY on a CAST of the key that narrows it: the five dt groups tie on the date and keep the GROUP BY's order
+select cast(dt as date) c, count(*) n, sum(v) sv from t28181 where id < 20000 group by dt order by 1 desc;
+select cast(dt as date) c, count(*) n from t28181 where id < 20000 group by dt order by 1, 2 desc;
 
 drop table t28181;
