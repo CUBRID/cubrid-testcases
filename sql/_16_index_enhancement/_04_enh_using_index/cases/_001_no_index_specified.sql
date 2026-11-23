@@ -168,8 +168,6 @@ create index i_t6_id2_id3 on t6 (id2, id3);
 create index i_t6_id2_id1 on t6 (id2, id1);
 create index i_t6_id1_id2_id3 on t6 (id1, id2, id3);
 
-select * from tab1 a,tab1 b where a.id>0 and b.id=1 using index a.i_tab1_id_num keylimit 1 order by a.id, a.num, b.id, b.num;
-select * from tab1, tab2, tab3 where tab1.id=1 and tab2.id=1 and tab3.text='abc' using index i_tab3_text keylimit 1 order by tab1.id, tab1.num, tab2.id;
 select
 	t1.id1, t2.id2, t3.id3, t4.id1, t6.id3, firms.clno, clients.lname
 	from

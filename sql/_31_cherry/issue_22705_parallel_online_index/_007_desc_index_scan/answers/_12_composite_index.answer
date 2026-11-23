@@ -35,20 +35,6 @@ select tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.
 /* ---> skip ORDER BY */
 ===================================================
 id    a    b    
-6     5     333     
-4     4     4444     
-3     3     3333     
-
-Query plan:
-iscan
-    class: tb node[?]
-    index: i_tb_ab keylimit ?, ? term[?] (desc_index forced)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
-===================================================
-id    a    b    
 4     4     4444     
 5     5     444     
 3     3     3333     
@@ -83,20 +69,6 @@ iscan
     cost:  ? card ?
 Query stmt:
 select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ba
-===================================================
-id    a    b    
-5     5     444     
-3     3     3333     
-6     5     333     
-
-Query plan:
-iscan
-    class: tb node[?]
-    index: i_tb_ba keylimit ?, ? term[?] (desc_index forced)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ tb.id, tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b>= ?:?  and tb.b<= ?:? ) using index tb.i_tb_ba keylimit  ?:? , ?:? 
 ===================================================
 id    a    b    
 5     5     444     

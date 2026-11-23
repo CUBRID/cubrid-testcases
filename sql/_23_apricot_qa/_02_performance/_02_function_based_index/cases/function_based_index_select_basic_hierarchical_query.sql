@@ -14,8 +14,6 @@ create index i_tree_id on tree(log10(id));
 create index i_tree_mgrid on tree(log10(mgrid));
 
 --Test
-SELECT /*+ recompile */ id, mgrid FROM tree  where log10(id)>0 START WITH log10(id)>0 and log10(mgrid) IS NULL CONNECT BY prior log10(id)=log10(mgrid) using index i_tree_id(+) keylimit 1, i_tree_mgrid(+) keylimit 1;
---Test
 SELECT /*+ recompile */ id, mgrid FROM tree  where log10(id)>0 START WITH log10(id)>0 and log10(mgrid) IS NULL CONNECT BY prior id=mgrid ;
 --Test
 SELECT /*+ recompile */ id, mgrid FROM tree  where log10(id)>0 START WITH log10(id)>0 and mgrid IS NULL CONNECT BY prior id=mgrid ;

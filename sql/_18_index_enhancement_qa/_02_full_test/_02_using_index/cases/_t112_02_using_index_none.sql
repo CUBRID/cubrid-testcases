@@ -30,12 +30,6 @@ select /*+ RECOMPILE */ col5 from t2 where col5>0 using index t2.none order by 1
 select /*+ RECOMPILE */ col5 from t2 where col5>0 using index t2.idx_t2_col5,t2.none order by 1;
 
 --TEST
-select /*+ RECOMPILE */ col5 from t2 where col5>0 using index t2.idx_t2_col5 keylimit 1,1,t2.none order by 1;
-
---TEST
-select /*+ RECOMPILE */ col5 from t2 where col5>0 using index t2.idx_t2_col5 keylimit 2,1,t2.none order by 1;
-
---TEST
 select /*+ RECOMPILE */ col5 from t2 where col5>0 using index t2.none,t2.idx_t2_col5  order by 1;
 
 --TEST

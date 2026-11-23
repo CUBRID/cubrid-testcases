@@ -11,17 +11,11 @@ select * from t where year(col3)>2008 order by 1,2,3 limit 0,1;
 
 drop if exists x;
 create table x(col3 timestamp);
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0,1;
 select * from x order by 1;
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0+1,1;
 select * from x order by 1;
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0+1,2-1;
 select * from x order by 1;
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 0*1,1*1;
 select * from x order by 1;
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 2*1,1*1;
 select * from x order by 1;
-insert into x select col3 from t where year(col3)>2008 using index idx1(+) keylimit 2/2-1,1*1+1;
 select * from x order by 1;
 
 insert into x select col3 from t where year(col3)>2008 using index idx1(+) limit 0,1;

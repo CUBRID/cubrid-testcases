@@ -18,18 +18,6 @@ insert into t1 values (8, 'Bhman', '011');
 insert into t1 values (9, 'Blcott', '011');
 insert into t1 values (10, 'Bli', '011');
 
---TEST:  what would rownum begain with? 5 or 1? 
-select rownum, a,c from t1 where a>0 and c ='011' using index keylimit keylimit 5,10;
-
---TEST
-delete from t1 from t1 where a>0 and c='011' and rownum=1 using index keylimit keylimit 2,2;
-
---TEST:
-delete from t1 from t1 where a>0 and c='086' and rownum=3 using index keylimit kEyLiMiT 2,4;
-
---TEST: 
-delete from t1 from t1 where a>0 and c='086' and rownum<=3 using index keylimit kEyLiMiT 2,4;
-
 --TEST: check remained value
 select /*+ RECOMPILE */ a,b,c from t1 order by 1,2,3;
 

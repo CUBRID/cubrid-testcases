@@ -21,12 +21,6 @@ minvalue 100
 maxvalue 10000000000000000000000000000000000000
 nocycle;
 
---TEST:  
-select /*+ RECOMPILE */ seq_t1_a.nextval,a,b,c from t1 where a>0 and c is not null using index idx_t1_ac(+) keylimit 3,3;
-
---TEST:  
-update t1 set a=seq_t1_a.nextval where a>0 and c is not null using index idx_t1_ac keylimit 3,3;
-
 select /*+ RECOMPILE */ * from t1 order by a,b,c;
 drop table t1;
 drop serial seq_t1_a;

@@ -10,7 +10,7 @@
  *  distinct values therefore re-read the whole key range for every outer row.
  *
  *  The fix (engine PR #7991) gives the semi / anti inner index scan a key limit
- *  of 1 (merged with a user KEYLIMIT by LEAST) and a match-only memoize mode
+ *  of 1 and a match-only memoize mode
  *  that remembers, per outer key, whether the inner matched. "show trace" shows
  *  a MEMOIZE line under the inner scan of a semi / anti join.
  *
@@ -18,8 +18,6 @@
  *  (time, readkeys, hit / miss, size) and identifier digits to '?'. The
  *  assertions are therefore the MEMOIZE line, the plan shape (semi join /
  *  anti join, index scan, rewritten query) and the result parity below.
- *  readkeys is masked, so the first-key stop is asserted by a result that
- *  depends on the user KEYLIMIT surviving the merge (Case 11), not by a count.
  *
  *  Correctness: every unnested query is followed by the same query with the
  *  NO_UNNEST hint (nested subquery, no memoize), and the two result blocks must
@@ -42,10 +40,6 @@
  *             a cached no-match after a cached match emits the outer row once
  *    Case 8:  NULL correlation value never matches, anti keeps the row
  *    Case 9:  semi / anti inner followed by another join
- *    Case 10: user KEYLIMIT on the inner: the plan keeps it (rewritten query)
- *    Case 11: user KEYLIMIT with an offset: LEAST(count, 1) keeps the offset,
- *             so EXISTS holds only for keys with more entries than the offset,
- *             a merge that dropped the user limit would match every key
  *    Case 12: unique inner, each of the 5000 probe keys comes four times: memoize
  *             kept (the hit ratio is judged only from 60% of the budget, CBRD-27487),
  *             result unchanged
@@ -173,38 +167,6 @@ show trace;
 select /*+ recompile parallel(0) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and exists (select /*+ NO_UNNEST */ 1 from subquery_small c where c.col2=a.col4);
 select /*+ recompile parallel(0) USE_NL USE_HASH(b) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and not exists (select 1 from subquery_small c where c.col2=a.col4);
 select /*+ recompile parallel(0) */ count(*) from subquery_big a, subquery_small b where a.col1=b.col1 and b.col6=2 and not exists (select /*+ NO_UNNEST */ 1 from subquery_small c where c.col2=a.col4);
-
-
-evaluate 'Case 10: user KEYLIMIT on the inner survives the merge: the rewritten query keeps it';
-select /*+ recompile parallel(0) */ count(*) from subquery_big a where exists (select 1 from subquery_small where col2=a.col4 using index idx_col2_col1_col3 keylimit 5);
-show trace;
-
-
-evaluate 'Case 11: user KEYLIMIT with an offset: EXISTS holds only for keys with more entries than the offset';
--- klim_inner has 1 / 2 / 3 / 5 entries for k = 1 / 2 / 3 / 4 and none for k = 0, 5; the index is
--- (k, a) so each entry is its own key. With 'keylimit 2, 5' the merged upper limit is LEAST(5, 1) = 1
--- and the lower limit 2 is kept: the scan skips two keys, so only k = 3 and k = 4 match. A merge that
--- replaced the user limit with a plain 1 would match k = 1..4; one that dropped the engine limit
--- would give the same rows but read up to five keys per outer row. The nested twin uses the same
--- KEYLIMIT and must agree.
-drop table if exists klim_outer;
-drop table if exists klim_inner;
-create table klim_outer (a int primary key, k int);
-insert into klim_outer select rownum, mod(rownum, 6) from db_class a, db_class b, db_class c limit 300;
-create table klim_inner (a int primary key, k int);
-insert into klim_inner values (1, 1), (2, 2), (3, 2), (4, 3), (5, 3), (6, 3), (7, 4), (8, 4), (9, 4), (10, 4), (11, 4);
-create index i_klim_inner_k_a on klim_inner (k, a);
-update statistics on all classes with fullscan;
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where exists (select 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 2, 5) group by k order by k;
-show trace;
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where exists (select /*+ NO_UNNEST */ 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 2, 5) group by k order by k;
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where not exists (select 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 2, 5) group by k order by k;
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where not exists (select /*+ NO_UNNEST */ 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 2, 5) group by k order by k;
--- without the offset every key with at least one entry matches (k = 1..4)
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where exists (select 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 5) group by k order by k;
-select /*+ recompile parallel(0) */ k, count(*) from klim_outer o where exists (select /*+ NO_UNNEST */ 1 from klim_inner i where i.k = o.k using index i_klim_inner_k_a keylimit 5) group by k order by k;
-drop table klim_outer;
-drop table klim_inner;
 
 
 evaluate 'Case 12: unique inner, each of the 5000 probe keys comes four times: memoize kept (the hit ratio is judged only from 60% of the budget, CBRD-27487), result unchanged';

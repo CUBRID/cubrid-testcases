@@ -26,10 +26,6 @@ insert into t1 values (
 
 create index idx_t1_all on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q);
 
-insert into t1 select a,b,c,d,e,f,g+10 g,h,i,j,k,l,m,n,o,p,q from t1 where a > '' using index idx_t1_all keylimit 1,1;
-insert into t1 select a,b,c,d,e,f,g+100 g,h,i,j,k,l,m,n,o,p,q from t1 where a >'' using index idx_t1_all keylimit 2,2;
-insert into t1 select a,b,c,d,e,f,g+1000 g,h,i,j,k,l,m,n,o,p,q from t1 where a > '' using index idx_t1_all keylimit 3,3;
-
 --TEST: 
 select a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where a > '';
 

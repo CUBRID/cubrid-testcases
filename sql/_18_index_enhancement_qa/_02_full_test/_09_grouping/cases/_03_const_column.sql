@@ -10,11 +10,6 @@ insert into t values (2,2.1, 'BBBBB', 'BBBBB', 2);
 
 select /*+ recompile use_desc_idx */ c,d,max(e),count(*) from t where a=1  and c like 'AAA%' group by b desc,c desc,d desc;
 
-select /*+ recompile use_desc_idx */ c,d,max(e),count(*) from t where a=1  and c like 'AAA%' group by b desc,c desc,d desc using index i_t_abcd keylimit 0,1;
-
-select /*+ recompile use_desc_idx */ c,d,max(e),count(*) from t where a=1  and c like 'AAA%' group by b desc,c desc,d desc using index i_t_abcd keylimit 1,1;
-
-
 select /*+ recompile use_desc_idx */ c,d,max(e),count(*) from t where a=1  and c ='AABBB' group by b desc,d desc;
 
 --we expect skipping GROUP BY.

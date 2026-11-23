@@ -25,7 +25,7 @@
  *    Case 12: deleted and updated rows of the open transaction, NULL values in aggregates
  *    Case 13: a prepared statement executed with two ranges
  *    Case 14: an index scan in a derived table, in a join, in a UNION ALL arm
- *    Case 15: serial: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, hints
+ *    Case 15: serial: MIN/MAX, order skip, ROWNUM, analytic, hints
  *    Case 16: the JSON trace names the parallel index scan parallel index
  */
 
@@ -295,11 +295,7 @@ show trace;
 select /*+ recompile no_parallel_scan */ count(*) from t_idx where a >= 0 using index i_a union all select /*+ recompile no_parallel_scan */ count(*) from t_idx where a = 3 using index i_a;
 
 
-evaluate 'Case 15: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan';
--- i_e has one row a key: KEYLIMIT picks the same rows whatever OIDs the rows got (i_a lists a key's 50 rows in OID order)
-select /*+ recompile parallel(4) */ id from t_idx where e > 10 using index i_e keylimit 5;
-show trace;
-select /*+ recompile no_parallel_scan */ id from t_idx where e > 10 using index i_e keylimit 5;
+evaluate 'Case 15: MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan';
 -- without a range MIN and MAX are read by an aggregate lookup on the index, not by an index scan
 select /*+ recompile parallel(4) */ min(a), max(a) from t_idx where a >= 0 using index i_a;
 show trace;

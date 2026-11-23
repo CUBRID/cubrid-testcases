@@ -21,7 +21,6 @@ insert into t1 values (10, 'Bli', '011');
 
 --TEST: 
 create table t2 like t1;
-insert into t2 select * from t1 where a>0 and c='086' using index idx_t1_ac kEyLiMiT 2,4;
 
 --TEST: 
 select /*+ RECOMPILE */ a,b,c from t2 order by a,b,c;

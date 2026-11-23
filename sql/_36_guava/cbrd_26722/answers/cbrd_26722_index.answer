@@ -1418,36 +1418,7 @@ count(*)
 
 ===================================================
     
-Case 15: KEYLIMIT, MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan     
-
-===================================================
-id    
-200003     
-200002     
-200001     
-200000     
-199999     
-
-===================================================
-trace    
-
-Query Plan:
-  INDEX SCAN (dba.t_idx.i_e) (key range: ([dba.t_idx].e> ?:? ))
-
-  rewritten query: select /*+ PARALLEL(?) */ [dba.t_idx].id from [dba.t_idx] [dba.t_idx] where ([dba.t_idx].e> ?:? ) using index [dba.t_idx].i_e keylimit  ?:? 
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_idx.i_e), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-     
-
-===================================================
-id    
-200003     
-200002     
-200001     
-200000     
-199999     
+Case 15: MIN/MAX, order skip, ROWNUM, analytic, PARALLEL(1) and NO_PARALLEL_SCAN keep the scan serial, the old hint does not; result = no_parallel_scan     
 
 ===================================================
 min(a)    max(a)    

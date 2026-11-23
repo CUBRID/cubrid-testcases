@@ -20,7 +20,6 @@ insert into t1 values (9, 'Blcott', '011');
 insert into t1 values (10, 'Bli', '011');
 
 select /*+ RECOMPILE */ a from t1 where a>0 group by a asc having groupby_num()<100 using index idx_t1_abc;
-select /*+ RECOMPILE */ a from t1 where a>0 group by a asc having groupby_num()<100 using index idx_t1_abc keylimit 5,10;
 
 drop table t1;
 

@@ -11,8 +11,7 @@
  *  rewrite; lets the DISTINCT form come ahead of its dependency only when every outer join
  *  node is already placed; and turns an outer join into an inner join when a SEMI JOIN ON
  *  rejects NULL on its null-supplying side, keeping the SEMI JOIN behind a RIGHT OUTER JOIN
- *  that fills a node it reads otherwise. ORDERED / LEADING leave no DISTINCT form, and a
- *  user KEYLIMIT keeps the subquery as written.
+ *  that fills a node it reads otherwise. ORDERED / LEADING leave no DISTINCT form.
  *
  *  A query with the NO_UNNEST hint that follows an unnested one gives the reference result
  *  and the two must match. Every query is followed by show trace, which shows the plan shape
@@ -26,8 +25,7 @@
  *    Case 4:  SEMI -> INNER JOIN on a PRIMARY KEY and on a NOT NULL UNIQUE key; no rewrite
  *             on half of a composite key or on a key compared through a CAST
  *    Case 5:  uncorrelated IN -> SEMI JOIN, inner without and with an index
- *    Case 6:  ORDERED and LEADING: the outer first, no DISTINCT form; KEYLIMIT: subquery
- *             kept, no INNER rewrite
+ *    Case 6:  ORDERED and LEADING: the outer first, no DISTINCT form
  *    Case 7:  SEMI ON reads the null-supplying side of a LEFT OUTER JOIN through an INNER JOIN
  *             node: the SEMI inner stays behind the outer join; and reads it directly together
  *             with the preserved side (the shape that returned wrong rows in review)
@@ -133,12 +131,10 @@ show trace;
 drop index i_t_i_k on t_i;
 
 
-evaluate 'Case 6: ORDERED and LEADING: the outer first, no DISTINCT form; KEYLIMIT: the subquery is kept, no INNER rewrite';
+evaluate 'Case 6: ORDERED and LEADING: the outer first, no DISTINCT form';
 select /*+ recompile parallel(0) ordered */ count(*) from t_o where exists (select 1 from t_i where t_i.k = t_o.k);
 show trace;
 select /*+ recompile parallel(0) leading(t_o) */ count(*) from t_o where exists (select 1 from t_i where t_i.k = t_o.k);
-show trace;
-select /*+ recompile parallel(0) */ count(*) from t_o where exists (select 1 from t_pk where t_pk.id = t_o.id using index pk_t_pk_id keylimit 1);
 show trace;
 drop table t_o, t_i, t_pk;
 

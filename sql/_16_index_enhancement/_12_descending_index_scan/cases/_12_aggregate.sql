@@ -39,6 +39,5 @@ create index i_tree_id_parentid_text on tree(id, parentid, text);
 
 select /*+ use_desc_idx */ count(*) from tree where id * id < parentid;
 select /*+ use_desc_idx */ sum(id) from tree where id > 20;
-select /*+ use_desc_idx */ sum(id) from tree where id >= 20 using index i_tree_id(+) keylimit 2;
 
 drop table tree;

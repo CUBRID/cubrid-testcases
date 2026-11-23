@@ -16,20 +16,6 @@ insert into xoo values(10);
 insert into xoo select id+10 from xoo;
 create index i_xoo_id on xoo (id);
 
-select  id from xoo
-where
-   (id between 1 and 5)
-   or (id between 7 and 9)
-   or (id > 4 and id < 10)
-using index i_xoo_id(+) keylimit 1+2,4+1 order by 1;
-
-select  id from xoo
-where
-   (id between 1 and 5)
-   or (id > 4 and id < 10)
-   or (id between 7 and 9)
-using index i_xoo_id(+) keylimit 10-4,4-1 order by 1;
-
 drop xoo;
 
 -- Test using indexes in a select query
@@ -44,10 +30,6 @@ insert into foo values(105, 'abcdh', 100005, 'exyza', 'nhn');
 select * from foo 
 where i = 101 and j = 100001;
 
-select * from foo 
-where i = 101 and j = 100001 
-using index int_idx keylimit 1-1;
-
 drop class foo;
 
 --Test using indexes in a select query and force index to be scanned
@@ -61,9 +43,5 @@ insert into foo values(104, 'abcdg', 100004, 'dxyzb', 'nhn');
 insert into foo values(105, 'abcdh', 100005, 'exyza', 'nhn');
 select * from foo 
 where i = 101 and j = 100001;
-
-select * from foo 
-where i = 101 and j = 100001 
-using index int_idx(+) keylimit 3-3;
 
 drop class foo;

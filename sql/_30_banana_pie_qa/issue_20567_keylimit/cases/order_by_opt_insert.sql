@@ -7,11 +7,8 @@ CREATE TABLE x (col1 INT, col2 INT, col3 INT);
 
 insert into x select * FROM t WHERE col1 < 6 limit 1-1-1-1-1-1-1-1-1-1-1+100000000;
 select * from x order by 1,2,3;
-insert into x select * FROM t WHERE col1 < 6 using index i_t_col1_col2_col3  keylimit 1-1-1-1-1-1-1-1-1-1-1+100000000;
 select * from x order by 1,2,3;
-insert into x select * FROM t WHERE col1 < 6 using index i_t_col1_col2_col3  keylimit 0,1-1-1-1-1-1-1-1-1-1-1+100000000;
 select * from x order by 1,2,3;
-insert into x select * FROM t WHERE col1 < 6 using index i_t_col1_col2_col3  keylimit 1,1-1-1-1-1-1-1-1-1-1-1+100000000; 
 select * from x order by 1,2,3;
 
 CREATE INDEX i_t_col1_col2 ON t (col1,col2);

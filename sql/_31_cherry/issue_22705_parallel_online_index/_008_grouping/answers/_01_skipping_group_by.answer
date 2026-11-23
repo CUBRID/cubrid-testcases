@@ -114,8 +114,6 @@ Query stmt:
 select t.a, t.b, t.c, t.d, count(*) from t t where (t.a> ?:? ) group by t.a, t.b
 /* ---> skip GROUP BY */
 ===================================================
-Error:-493
-===================================================
 a    b    count(*)    
 1     1.1     2     
 2     2.1     1     
@@ -142,58 +140,6 @@ iscan
     cost:  ? card ?
 Query stmt:
 select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd
-/* ---> skip GROUP BY */
-===================================================
-a    b    count(*)    
-1     1.1     1     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ? term[?] (covers)
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? 
-/* ---> skip GROUP BY */
-===================================================
-a    b    count(*)    
-1     1.1     1     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ?, ? term[?] (covers)
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? , ?:? 
-/* ---> skip GROUP BY */
-===================================================
-a    b    count(*)    
-1     1.1     1     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ?, ? term[?] (covers)
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? , ?:? 
-/* ---> skip GROUP BY */
-===================================================
-a    b    count(*)    
-1     1.1     2     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ? term[?] (covers)
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select t.a, t.b, count(*) from t t where (t.a> ?:? ) group by t.a, t.b using index t.i_t_abcd keylimit  ?:? 
 /* ---> skip GROUP BY */
 ===================================================
 a    b    count(*)    

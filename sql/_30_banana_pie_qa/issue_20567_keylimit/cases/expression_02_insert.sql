@@ -10,21 +10,12 @@ drop if exists x;
 create table x(i int , name varchar(20),job varchar(20));
 
 
---expr:unsign int
-insert into x select * from t where job='unkown' using index pk_t_i keylimit 0,3 ;
 select * from x order by 1,2,3;
-insert into x select * from t using index pk_t_i keylimit 0,3 ;
 select * from x order by 1,2,3;
-insert into x select * from t where i >5 using index pk_t_i keylimit 0,3 ;
 select * from x order by 1,2,3;
-insert into x select * from t where i >3 using index pk_t_i keylimit 1*3*1*1,3*2 ;  
 select * from x order by 1,2,3;
-insert into x select * from t where i >5 using index pk_t_i keylimit 0,3 ;
 select * from x order by 1,2,3;
-insert into x select * from t where i >3 using index pk_t_i keylimit 1*3*1*1-1,3*2-1 ; 
 select * from x order by 1,2,3;
-insert into x select * from ( select * from t where i >3 using index pk_t_i keylimit 20*1024*1024/(8*1024)/(8*1024/(100*2))) limit 10;
 select  count(*) from x order by 1;
-insert into x select * from t where i >3 using index pk_t_i keylimit (9-1)*3+3 ;
 select * from x order by 1;
 drop if exists t,x;

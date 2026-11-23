@@ -21,19 +21,9 @@ select /*+ recompile */ a,b,c,d,count(*) from t where a=1 and rownum<10 group by
 
 select /*+ recompile */ a,b,c,d,count(*) from t where a=1 group by b;
 
-select /*+ recompile */ a,b,count(*) from t where a=1 using index i_t_abcd keylimit 1  group by 2;
-
 select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd;
 
 select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd;
-
-select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd keylimit 1;
-
-select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd keylimit 0,1;
-
-select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd keylimit 1,1;
-
-select /*+ recompile */ a,b,count(*) from t where a=1  group by b using index i_t_abcd keylimit 2;
 
 select /*+ recompile */ a,b,count(*) from t where a=1 group by b order by a,b limit 1;
 

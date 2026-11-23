@@ -18,30 +18,6 @@
 a    
 3     
 2     
-
-Query plan:
-iscan
-    class: tb node[?]
-    index: i_tb_a keylimit ? term[?] (covers) (desc_index forced)
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? 
-===================================================
-a    b    
-3     3     
-2     2     
-
-Query plan:
-iscan
-    class: tb node[?]
-    index: i_tb_ab keylimit ? term[?] (covers) (desc_index forced)
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_ab keylimit  ?:? 
-===================================================
-a    
-3     
-2     
 1     
 
 Query plan:

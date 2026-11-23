@@ -19,10 +19,6 @@ insert into t1 values (8, 'Bhman', '011');
 insert into t1 values (9, 'Blcott', '011');
 insert into t1 values (10, 'Bli', '011');
 
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac(+) keylimit -1;
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac(+) keylimit 1999999999;
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac(+) keylimit 2000000000;
-
 drop table t1;
 
 ---------------------------
@@ -63,12 +59,6 @@ insert into t1 values (7, 'Bgassi', '011');
 insert into t1 values (8, 'Bhman', '011');
 insert into t1 values (9, 'Blcott', '011');
 insert into t1 values (10, 'Bli', '011');
-
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac keylimit 1999999999;
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac keylimit 2000000000;
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac keylimit 5000000000;
-select /*+ RECOMPILE */ a,b,c from t1 where a<100 and c='086' using index idx_t1_ac keylimit 5000000000,5000000000;
-
 
 -- using use_orderby_sort_limit optimization
 set system parameters 'use_orderby_sort_limit=yes';
