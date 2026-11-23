@@ -1,3 +1,5 @@
+autocommit off;
+
 /**
  *  This test case verifies CBRD-27752: an INSERT in a trigger action runs on the server when its
  *  own target table has no trigger for it, and gives the same results as on the client.
@@ -27,7 +29,6 @@
  */
 
 -- the odd cases rely on insert_execution_mode at its default, under which these INSERT statements run on the server
-autocommit off;
 
 drop table if exists t27752_p, t27752_ch, t27752_a, t27752_b, t27752_s, t27752_t;
 commit;
