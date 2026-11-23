@@ -40,7 +40,7 @@ MC: wait until C1 ready;
 C1: update t1 set col='aaa' where id=1 and col='abc';
 C1: commit;
 MC: wait until C1 ready;
-C3: select *, sleep(5) from t1 order by 1,2;
+C3: select x.*, sleep(5) from (select * from t1 limit 100) x order by 1,2;
 MC: sleep 5;
 C2: update t1 set col='bbb' where id=5 and col='opq';
 C2: commit;

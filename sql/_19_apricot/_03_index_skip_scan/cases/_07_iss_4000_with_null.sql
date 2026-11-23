@@ -19,13 +19,13 @@ select /*+ recompile INDEX_SS */ * from t where j = 100;
 select /*+ recompile INDEX_SS */ * from t where j = 199;
 
 -- select EVERYTHING from ranges 1 and 2
-select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ * from t where j between 101 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ i,j,k from t where j between 101 and 199) tt;
 -- create table answer as select /*+ recompile INDEX_SS */ i,j,k from t where j between 101 and 199;
 -- select count(*) from answer;
 -- drop table answer;
 
 -- select EVERYTHING from ranges 0,3 and 4
-select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ * from t where j between 2 and 100) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ i,j,k from t where j between 2 and 100) tt;
 -- create table answer as select /*+ recompile INDEX_SS */ i,j,k from t where j between 2 and 100;
 -- select count(*) from answer;
 -- drop table answer;
@@ -39,13 +39,13 @@ insert into t values (4,100, 9999, 23);
 
 
 -- select EVERYTHING from ranges 1 and 2
-select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ * from t where j between 101 and 199) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ i,j,k from t where j between 101 and 199) tt;
 -- create table answer as select /*+ recompile INDEX_SS */ i,j,k from t where j between 101 and 199;
 -- select count(*) from answer;
 -- drop table answer;
 
 -- select EVERYTHING from ranges 0,3 and 4
-select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ * from t where j between 2 and 100) tt;
+select /*+ recompile */ count(*) from (select /*+ recompile index_ss NO_MERGE */ i,j,k from t where j between 2 and 100) tt;
 -- create table answer as select /*+ recompile INDEX_SS */ i,j,k from t where j between 2 and 100;
 -- select count(*) from answer;
 -- drop table answer;

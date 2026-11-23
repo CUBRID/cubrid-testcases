@@ -54,7 +54,7 @@ insert into tb
       union all
       select n + 1 from cte where n < 9
     )
-  select a.n, b.n, c.n, rownum from cte a, cte b, cte c;
+  select a.n, b.n, c.n, rownum from cte a, cte b, cte c, (select n from cte where n < 2) d;
 insert into ta_range select * from tb;
 insert into ta_list select * from tb;
 insert into ta_hash select * from tb;
@@ -138,7 +138,7 @@ select /*+ recompile */ count(*)
 from (
     select *
     from ta_range a
-    limit 150, 10
+    limit 300, 10
   );
 show trace;
 
@@ -146,7 +146,7 @@ select /*+ recompile */ count(*)
 from (
     select *
     from ta_range a
-    limit 550, 10
+    limit 1100, 10
   );
 show trace;
 
@@ -160,7 +160,7 @@ from
     select *
     from ta_range a
     where a.ca between 5 and 7
-    limit 250
+    limit 500
   ) a,
   tb b
 where a.ca = b.ca and a.cd = b.cd;
@@ -174,7 +174,7 @@ from (
     select /*+ ordered use_nl */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
     from ta_range a, ta_hash b, tb c, ta_list d
     where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-    limit 250, 10
+    limit 500, 10
   );
 show trace;
 
@@ -186,7 +186,7 @@ from (
     select /*+ ordered use_merge */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
     from ta_range a, ta_hash b, tb c, ta_list d
     where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-    limit 250, 10
+    limit 500, 10
   );
 show trace;
 
@@ -198,7 +198,7 @@ from (
     select /*+ ordered use_hash */ a.cd as a_cd, b.cd as b_cd, c.cd as c_cd, d.cd as d_cd
     from ta_range a, ta_hash b, tb c, ta_list d
     where a.ca = b.ca and a.cd = b.cd and b.ca = c.ca and b.cd = c.cd and c.ca = d.ca and c.cd = d.cd
-    limit 250, 10
+    limit 500, 10
   );
 show trace;
 

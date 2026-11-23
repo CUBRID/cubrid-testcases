@@ -19,7 +19,7 @@ a    b    c
 5     5         0     
 6     8         8     
 7     2         9     
-8     9         2     
+8     9         3     
 9     2         8     
 
 Query plan:
@@ -34,7 +34,7 @@ select xoo.a, xoo.b, xoo.c from xoo xoo group by xoo.a, xoo.b
 ===================================================
 a    b    c    
 9     2         8     
-8     9         2     
+8     9         3     
 7     2         9     
 6     8         8     
 5     5         0     
@@ -56,6 +56,7 @@ select xoo.a, xoo.b, xoo.c from xoo xoo group by xoo.a desc , xoo.b desc
 /* ---> skip GROUP BY */
 ===================================================
 a    b    c    
+1     2         8     
 7     2         9     
 9     2         8     
 2     3         8     
@@ -63,8 +64,7 @@ a    b    c
 3     7         8     
 4     8         8     
 6     8         8     
-1     9         8     
-8     9         2     
+8     9         3     
 
 Query plan:
 temp(order by)
@@ -232,7 +232,7 @@ select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? group by xoo?.a order by ?
 ===================================================
 a    b    c    
 1     2         8     
-1     4         7     
+1     4         1     
 1     9         8     
 2     3         8     
 3     7         8     
@@ -240,7 +240,7 @@ a    b    c
 5     5         0     
 6     8         8     
 7     2         9     
-8     9         3     
+8     9         2     
 9     2         8     
 
 Query plan:
@@ -255,7 +255,7 @@ select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.
 ===================================================
 a    b    c    
 9     2         8     
-8     9         2     
+8     9         3     
 7     2         9     
 6     8         8     
 5     5         0     
@@ -263,7 +263,7 @@ a    b    c
 3     7         8     
 2     3         8     
 1     9         8     
-1     4         1     
+1     4         7     
 1     2         8     
 
 Query plan:
@@ -278,7 +278,7 @@ select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where (xoo?.a> ?:? ) group by xoo?.
 ===================================================
 a    b    c    
 1     2         8     
-1     4         7     
+1     4         1     
 1     9         8     
 2     3         8     
 3     7         8     
@@ -286,7 +286,7 @@ a    b    c
 5     5         0     
 6     8         8     
 7     2         9     
-8     9         3     
+8     9         2     
 9     2         8     
 
 Query plan:
@@ -302,7 +302,7 @@ select xoo?.a, xoo?.b, xoo?.c from xoo? xoo? where xoo?.a is not null  group by 
 ===================================================
 a    b    c    
 9     2         8     
-8     9         2     
+8     9         3     
 7     2         9     
 6     8         8     
 5     5         0     
@@ -310,7 +310,7 @@ a    b    c
 3     7         8     
 2     3         8     
 1     9         8     
-1     4         1     
+1     4         7     
 1     2         8     
 
 Query plan:
@@ -350,7 +350,7 @@ Query stmt:
 select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? group by xoo?.a, xoo?.b, xoo?.c, xoo?.d
 ===================================================
 a    b    c    d    e    
-1     2     3     4     6     
+1     2     3     4     5     
 1     2     3     5     6     
 1     2     4     5     6     
 1     3     4     5     6     
@@ -367,7 +367,7 @@ select xoo?.a, xoo?.b, xoo?.c, xoo?.d, xoo?.e from xoo? xoo? where (xoo?.a> ?:? 
 /* ---> skip GROUP BY */
 ===================================================
 a    b    c    d    e    
-1     2     4     5     6     
+1     2     3     4     5     
 1     3     4     5     6     
 2     3     4     5     6     
 

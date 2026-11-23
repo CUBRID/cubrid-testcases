@@ -19,6 +19,8 @@
 ===================================================
 2000
 ===================================================
+2000
+===================================================
 0
 ===================================================
 0
@@ -62,9 +64,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: skip)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (noscan time: ?, fetch: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -80,16 +83,19 @@ Trace Statistics:
 a_cd    b_cd    
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: i_c (covers)
-               cost:  ? card ?
-    inner: iscan
-               class: b node[?]
-               index: i_a term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: i_c (covers)
+                            cost:  ? card ?
+                 inner: iscan
+                            class: b node[?]
+                            index: i_a term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -98,9 +104,10 @@ select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b w
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
-    INDEX SCAN (a.i_c) (covered: true)
-    INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
+  SORT (order by)
+    HASH JOIN (inner join)
+      INDEX SCAN (a.i_c) (covered: true)
+      INDEX SCAN (b.i_a) (key range: b.ca= ?:? )
 
   rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.ca= ?:?  order by ?
 
@@ -113,7 +120,7 @@ Trace Statistics:
             SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (index: dba.ta.i_c), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+            SCAN (index: dba.ta.i_c), (noscan time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================
@@ -178,31 +185,34 @@ a_cd    b_cd    c_cd    d_cd
 1001     1001     1001     1001     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: hash-join (inner join)
-                          edge:  term[?]
-                          outer: iscan
-                                     class: a node[?]
-                                     index: i_c 
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: b node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: c node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: d node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: iscan
+                                                  class: a node[?]
+                                                  index: i_c 
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: b node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -211,13 +221,14 @@ select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from ta a, tb
 trace    
 
 Query Plan:
-  HASH JOIN (inner join)
+  SORT (order by)
     HASH JOIN (inner join)
       HASH JOIN (inner join)
-        INDEX SCAN (a.i_c) ()
-        TABLE SCAN (b)
-      TABLE SCAN (c)
-    TABLE SCAN (d)
+        HASH JOIN (inner join)
+          INDEX SCAN (a.i_c) ()
+          TABLE SCAN (b)
+        TABLE SCAN (c)
+      TABLE SCAN (d)
 
   rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, c.cd, d.cd from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.cd=b.cd and b.cd=c.cd and c.cd=d.cd and d.cc= ?:?  and c.cc= ?:?  and b.cc= ?:?  and a.cc= ?:?  order by ?
 
@@ -226,6 +237,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -233,6 +245,7 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
               HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
                 BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -240,6 +253,7 @@ Trace Statistics:
                   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
                       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
                         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                             SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -338,14 +352,6 @@ a_cd    b_cd    d_cd
 1003     1003     1003     
 
 Query plan:
-iscan
-    class: d node[?]
-    index: i_c term[?] (covers)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-(select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd)
-Query plan:
 sscan
     class: ta node[?]
     sargs: term[?]
@@ -366,7 +372,15 @@ temp(distinct)
                  cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select distinct c.ca from tc c)
+(select /*+ NO_UNNEST */ distinct c.ca from tc c)
+Query plan:
+iscan
+    class: d node[?]
+    index: i_c term[?] (covers)
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd)
 Query plan:
 temp(order by)
     subplan: hash-join (inner join)
@@ -387,15 +401,11 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from td d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ ta.ca, ta.cb, ta.cc, ta.cd from ta ta where ta.cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ tb.ca, tb.cb, tb.cc, tb.cd from tb tb where tb.cc= ?:? ) b (ca, cb, cc, cd), (select /*+ NO_UNNEST */ distinct c.ca from tc c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 ===================================================
 trace    
 
 Query Plan:
-  INDEX SCAN (d.i_c) (key range: d.cd=b.cd, key filter: d.cd=b.cd, covered: true)
-
-  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd)
-
   TABLE SCAN (dba.ta)
 
   rewritten query: (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? )
@@ -407,7 +417,11 @@ Query Plan:
   SORT (distinct)
     TABLE SCAN (c)
 
-  rewritten query: (select distinct c.ca from [dba.tc] c)
+  rewritten query: (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c)
+
+  INDEX SCAN (d.i_c) (key range: d.cd=b.cd, key filter: d.cd=b.cd, covered: true)
+
+  rewritten query: (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd)
 
   SORT (order by)
     HASH JOIN (inner join)
@@ -416,7 +430,7 @@ Query Plan:
         TABLE SCAN (b)
       TABLE SCAN (av?)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd, (select /*+ NO_SUBQUERY_CACHE */ d.cd from [dba.td] d where d.cd=b.cd and d.cd=b.cd) from (select /*+ NO_MERGE */ [dba.ta].ca, [dba.ta].cb, [dba.ta].cc, [dba.ta].cd from [dba.ta] [dba.ta] where [dba.ta].cc= ?:? ) a (ca, cb, cc, cd), (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb, [dba.tb].cc, [dba.tb].cd from [dba.tb] [dba.tb] where [dba.tb].cc= ?:? ) b (ca, cb, cc, cd), (select /*+ NO_UNNEST */ distinct c.ca from [dba.tc] c) av? (av_?) where a.cd=b.cd and a.ca=av?.av_? order by ?
 
 
 Trace Statistics:
@@ -520,6 +534,7 @@ Trace Statistics:
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
               BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
@@ -527,6 +542,7 @@ Trace Statistics:
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                   SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -549,17 +565,20 @@ a_cd    b_cd
 1005     1005     
 
 Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: a node[?]
-               index: i_c 
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: b node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: a node[?]
+                            index: i_c 
+                            sargs: term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
@@ -568,20 +587,22 @@ select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from ta a, tb b where a.c
 trace    
 {
   "Query Plan": {
-    "HASH JOIN (inner join)": [
-      {
-        "INDEX SCAN": {
-          "table": "a",
-          "index": "i_c",
-          "key range": []
+    "SORT (order by)": {
+      "HASH JOIN (inner join)": [
+        {
+          "INDEX SCAN": {
+            "table": "a",
+            "index": "i_c",
+            "key range": []
+          }
+        },
+        {
+          "TABLE SCAN": {
+            "table": "b"
+          }
         }
-      },
-      {
-        "TABLE SCAN": {
-          "table": "b"
-        }
-      }
-    ],
+      ]
+    },
     "rewritten query": "select /*+ USE_HASH NO_PARALLEL_SUBQUERY */ a.cd, b.cd from [dba.ta] a, [dba.tb] b where a.cd=b.cd and b.cc= ?:?  and a.cc= ?:?  order by ?"
   },
   "Trace Statistics": {
@@ -613,6 +634,11 @@ trace
             "fetch": ?,
             "fetch_time": ?,
             "ioread": ?,
+            "RUNTIME FILTER": {
+              "keys": ?,
+              "rows": ?,
+              "dropped": ?
+            },
             "build": {
               "time": ?,
               "fetch": ?,

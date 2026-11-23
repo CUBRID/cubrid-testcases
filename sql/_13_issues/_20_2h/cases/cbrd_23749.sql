@@ -18,26 +18,26 @@ SELECT t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treei
 show trace;
 
 --with other predicate
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior (t.id+t.id)=t.mgrid;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior (t.id+t.id)=t.mgrid order by 1, 2, 3, 4;
 show trace;
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id + t.id=t.mgrid;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id + t.id=t.mgrid order by 1, 2, 3, 4;
 show trace;
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id =t.mgrid and prior job = 'Partner';
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id =t.mgrid and prior job = 'Partner' order by 1, 2, 3, 4;
 show trace;
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id =t.mgrid and prior 1 = 1;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id =t.mgrid and prior 1 = 1 order by 1, 2, 3, 4;
 show trace;
 
 --predicate with function
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior nvl (t.id,t.id+t.id)=t.mgrid;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior nvl (t.id,t.id+t.id)=t.mgrid order by 1, 2, 3, 4;
 show trace;
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior nvl (t.id,t.id+t.id)=decode(t.mgrid,null,t2.id-1,t.mgrid);
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t INNER JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior nvl (t.id,t.id+t.id)=decode(t.mgrid,null,t2.id-1,t.mgrid) order by 1, 2, 3, 4;
 show trace;
 
 --outer join
 insert into tree values(8,6,'park',1981);
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t left outer JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id = t.mgrid;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t left outer JOIN tree2 t2 ON t.id=t2.treeid START WITH t.mgrid is null CONNECT BY prior t.id = t.mgrid order by 1, 2, 3, 4;
 show trace;
-SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t ,tree2 t2 where t.id=t2.treeid(+) START WITH t.mgrid is null CONNECT BY prior t.id = t.mgrid;
+SELECT /*+ recompile */ t.id,t.name,t2.job,level FROM tree t ,tree2 t2 where t.id=t2.treeid(+) START WITH t.mgrid is null CONNECT BY prior t.id = t.mgrid order by 1, 2, 3, 4;
 show trace;
 
 --different type : varchar 

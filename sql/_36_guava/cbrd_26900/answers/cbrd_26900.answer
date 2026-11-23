@@ -1,0 +1,1550 @@
+===================================================
+    
+Case 1: Comparison predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 2: Comparison predicate (type mismatch)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10.50     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10.50     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 3: Arithmetic expression     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb>a.cb+?) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb>a.cb+?) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 4: Three-table join (one prior-join column)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    c_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, c.cb from ta a, tb b, tc c where a.ca=b.ca and b.ca=c.ca and (a.cb<c.cb) order by ?, ?, ?
+===================================================
+a_ca    a_cb    c_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, c.cb from ta a, tb b, tc c where a.ca=b.ca and b.ca=c.ca and (a.cb<c.cb) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 5: Three-table join (both prior-join columns)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    c_cb    
+1     -10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca=b.ca and b.ca=c.ca and c.cb=a.cb+b.cb order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    c_cb    
+1     -10     10     0     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: b node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb, c.cb from ta a, tb b, tc c where a.ca=b.ca and b.ca=c.ca and c.cb=a.cb+b.cb order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 6: Four-table join (after_join_pred on nested build input)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+4
+===================================================
+4
+===================================================
+2
+===================================================
+a_ca    a_cb    b_cb    da_cb    db_cb    
+10     1     20     A     B     
+11     2     21     B     A     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: hash-join (inner join)
+                            edge:  term[?]
+                            outer: hash-join (inner join)
+                                       edge:  term[?]
+                                       outer: hash-join (inner join)
+                                                  edge:  term[?]
+                                                  outer: sscan
+                                                             class: a node[?]
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: b node[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: da node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: db node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, da, c, db) USE_HASH */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:?  and db.cb= ?:? ) or (da.cb= ?:?  and db.cb= ?:? )) and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    da_cb    db_cb    
+10     1     20     A     B     
+11     2     21     B     A     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: nl-join (inner join)
+                                                  edge:  term[?]
+                                                  outer: sscan
+                                                             class: a node[?]
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: b node[?]
+                                                             sargs: term[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: da node[?]
+                                                  sargs: term[?] AND term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: c node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: db node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ LEADING(a, b, da, c, db) USE_NL */ a.ca, a.cb, b.cb, da.cb, db.cb from ta a, tb b, tc c, td da, td db where a.ca=b.ca and b.cb=c.ca and a.cb=da.ca and c.cb=db.ca and ((da.cb= ?:?  and db.cb= ?:? ) or (da.cb= ?:?  and db.cb= ?:? )) and ((da.cb= ?:? ) or (da.cb= ?:? )) and ((db.cb= ?:? ) or (db.cb= ?:? )) order by ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 7: BETWEEN predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     10     15     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb>=b.cb-? and a.cb<=b.cb+?) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     10     15     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb>=b.cb-? and a.cb<=b.cb+?) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 8: IN predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     10     0     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and ((a.cb=b.cb-?) or (a.cb=b.cb) or (a.cb=b.cb+?)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     10     0     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and ((a.cb=b.cb-?) or (a.cb=b.cb) or (a.cb=b.cb+?)) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 9: LIKE predicate on a string over 254 bytes, which the engine compresses     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     APPLE     APPLE     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca,  replace(a.cb, 'x', ''), b.cb from ta a, tb b where a.ca=b.ca and a.cb like  cast('%' as varchar)||b.cb|| cast('%' as varchar) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     APPLE     APPLE     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca,  replace(a.cb, 'x', ''), b.cb from ta a, tb b where a.ca=b.ca and a.cb like  cast('%' as varchar)||b.cb|| cast('%' as varchar) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 10: NULL predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+5     null     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and nvl(a.cb, b.cb) is null  order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+5     null     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and nvl(a.cb, b.cb) is null  order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 11: CASE expression     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (case when a.cb<b.cb then ? else ? end)=? order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (case when a.cb<b.cb then ? else ? end)=? order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 12: NOT operator     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 13: OR operator (column vs constant)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+3     null     30     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and ((a.cb< ?:? ) or (b.cb>= ?:? )) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+3     null     30     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and ((a.cb< ?:? ) or (b.cb>= ?:? )) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 14: OR operator (column vs column)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+7
+===================================================
+a_ca    a_cb    b_cb    b_cc    
+1     -10     -5     5     
+2     20     -15     15     
+4     40     null     35     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb, b.cc from ta a, tb b where a.ca=b.ca and ((a.cb<b.cb) or (a.cb>=b.cc)) order by ?, ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    b_cc    
+1     -10     -5     5     
+2     20     -15     15     
+4     40     null     35     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb, b.cc from ta a, tb b where a.ca=b.ca and ((a.cb<b.cb) or (a.cb>=b.cc)) order by ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 15: Built-in function     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     apple     APPLE     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb<= upper(a.cb)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     apple     APPLE     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb<= upper(a.cb)) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 16: User-defined function (UDF)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+0
+===================================================
+a_ca    a_cb    b_cb    
+1     apple      apple     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb<=f_rtrim(a.cb)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     apple      apple     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb<=f_rtrim(a.cb)) order by ?, ?, ?
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 17: EXISTS predicate     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+sscan
+    class: c node[?]
+    sargs: term[?] AND term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tc c where c.ca=a.ca and c.cb=b.ca and (c.cc<b.cb) and inst_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and  exists (select ? from tc c where c.ca=a.ca and c.cb=b.ca and (c.cc<b.cb) and inst_num()<= ?:? ) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+sscan
+    class: c node[?]
+    sargs: term[?] AND term[?] AND term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+(select ? from tc c where c.ca=a.ca and c.cb=b.ca and (c.cc<b.cb) and inst_num()<= ?:? )
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 subqs: ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and  exists (select ? from tc c where c.ca=a.ca and c.cb=b.ca and (c.cc<b.cb) and inst_num()<= ?:? ) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 18: Scalar subquery, non-correlated     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     10     10     
+
+Query plan:
+sscan
+    class: c node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(c.cb) from tc c)
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and a.cb+b.cb<(select max(c.cb) from tc c) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     10     10     
+
+Query plan:
+sscan
+    class: c node[?]
+    cost:  ? card ?
+Query stmt:
+(select max(c.cb) from tc c)
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and a.cb+b.cb<(select max(c.cb) from tc c) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 19: LIMIT clause     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+5
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ? for orderby_num()<= ?:? 
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) order by ?, ?, ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+    
+Case 20: Cached plan reuse     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+9
+===================================================
+0
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     18     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb>a.cb+nvl( ?:? , ?)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+0
+===================================================
+0
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     18     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, b.cb from ta a, tb b where a.ca=b.ca and (b.cb>a.cb+nvl( ?:? , ?)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+a_ca    a_cb    b_cb    
+1     -10     10     
+1     -10     12     
+1     -10     14     
+1     -10     16     
+1     -10     18     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 21: During/after predicate shared column     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+7
+===================================================
+a_ca    a_cb    b_cb    
+1     10     10     
+3     null     null     
+4     40     null     
+5     null     null     
+6     60     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ a.ca, a.cb, b.cb from ta a left outer join tb b on (a.cb<=b.cb) and a.ca=b.ca where (b.ca is null  or (a.cb>=b.cb)) order by ?, ?, ?
+===================================================
+a_ca    a_cb    b_cb    
+1     10     10     
+3     null     null     
+4     40     null     
+5     null     null     
+6     60     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_NL */ a.ca, a.cb, b.cb from ta a left outer join tb b on (a.cb<=b.cb) and a.ca=b.ca where (b.ca is null  or (a.cb>=b.cb)) order by ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 22: During/after predicate column order     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
+5
+===================================================
+a_ca    a_cb    a_cc    b_cb    b_cc    
+1     -10     999     10     100     
+1     -10     1000     null     null     
+3     null     null     null     null     
+4     40     3999     null     null     
+5     null     null     null     null     
+6     60     5999     null     null     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ a.ca, a.cb, a.cc, b.cb, b.cc from ta a left outer join tb b on (a.cc<b.cc*?) and a.ca=b.ca where (b.ca is null  or (a.cb<b.cb)) order by ?, ?, ?, ?, ?
+===================================================
+a_ca    a_cb    a_cc    b_cb    b_cc    
+1     -10     999     10     100     
+1     -10     1000     null     null     
+3     null     null     null     null     
+4     40     3999     null     null     
+5     null     null     null     null     
+6     60     5999     null     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: b node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ a.ca, a.cb, a.cc, b.cb, b.cc from ta a left outer join tb b on (a.cc<b.cc*?) and a.ca=b.ca where (b.ca is null  or (a.cb<b.cb)) order by ?, ?, ?, ?, ?
+===================================================
+0
+===================================================
+    
+Case 23: ROWNUM and INST_NUM() conditions, which the node above the hash join evaluates; result = 2 and 3     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+8
+===================================================
+cnt    
+2     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (rownum<= ?:? )
+===================================================
+cnt    
+2     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (rownum<= ?:? )
+===================================================
+cnt    
+3     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               cost:  ? card ?
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (inst_num()<= ?:? )
+===================================================
+cnt    
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ count(*) from ta a, tb b where a.ca=b.ca and (a.cb<b.cb) and (inst_num()<= ?:? )
+===================================================
+0

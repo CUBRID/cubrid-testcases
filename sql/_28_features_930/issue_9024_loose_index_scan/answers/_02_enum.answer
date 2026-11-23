@@ -211,15 +211,15 @@ H     8
 I     9     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers)
+    filtr: term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_LS */ t?.a, t?.b from t? t? where (t?.h> ?:? ) group by t?.a, t?.b
+/* ---> skip GROUP BY */
 ===================================================
 a    b    max(h)    min(h)    count(*)    
 A     1     981     81     11     
@@ -233,15 +233,15 @@ H     8     918     18     11
 I     9     999     9     12     
 
 Query plan:
-temp(group by)
-    subplan: sscan
-                 class: t? node[?]
-                 sargs: term[?] AND term[?]
-                 cost:  ? card ?
+iscan
+    class: t? node[?]
+    index: i_t?_all (covers)
+    filtr: term[?] AND term[?]
     sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
 select /*+ INDEX_LS */ t?.a, t?.b, max(t?.h), min(t?.h), count(*) from t? t? where t?.h mod ?=? and (t?.b> ?:? ) group by t?.a, t?.b
+/* ---> skip GROUP BY */
 ===================================================
 0
 ===================================================

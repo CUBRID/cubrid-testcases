@@ -114,7 +114,7 @@ show trace;
 -- test case 6
 prepare q from '
 select /*+ recompile */
-  a.col_a,
+  if(a.col_a between 1 and 1000, ''TRUE'', ''FALSE'') as valid_col_a,
   (select /*+ no_merge ordered */ b.col_b from tbl_b as b where b.col_c = ? and b.col_c = ? limit 1) as c9
 from
   tbl_a as a
@@ -128,7 +128,7 @@ deallocate prepare q;
 -- test case 7
 prepare q from '
 select /*+ recompile */
-  a.col_a,
+  if(a.col_a between 1 and 1000, ''TRUE'', ''FALSE'') as valid_col_a,
   (select /*+ no_merge ordered */ b.col_c from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?) as c9
 from
   tbl_a as a
@@ -146,7 +146,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  exists (select /*+ no_merge ordered */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
+  exists (select /*+ ordered no_unnest */ 1 from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
 ';
 execute q using 1, 9;
 show trace;
@@ -188,7 +188,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_b in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
+  a.col_b in (select /*+ ordered no_unnest */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
 ';
 execute q using 1, 9;
 show trace;
@@ -216,7 +216,7 @@ select /*+ recompile */
 from
   tbl_a as a
 where
-  a.col_a in (select /*+ no_merge ordered */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
+  a.col_a in (select /*+ ordered no_unnest */ b.col_b from tbl_b as b where a.col_a = b.col_a and b.col_c = ? and b.col_c = ?)
 ';
 execute q using 1, 9;
 show trace;

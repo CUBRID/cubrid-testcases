@@ -3014,14 +3014,22 @@ TEST_DATA14997     14998
 TEST_DATA14999     15000     
 
 Query plan:
-temp(distinct)
+temp(order by)
     subplan: sscan
                  class: t node[?]
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select distinct t.a from t t order by ? for orderby_num()<= ?:? )
+(select t.a from t t order by ? for orderby_num()<= ?:? )
+Query plan:
+temp(distinct)
+    subplan: sscan
+                 class: d? node[?]
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select distinct d?.a_? from (select t.a from t t order by ? for orderby_num()<= ?:? ) d? (a_?))
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
@@ -3036,7 +3044,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a, t.b from t t, (select distinct t.a from t t order by ? for orderby_num()<= ?:? ) av? (av_?) where t.a=av?.av_? order by ? for orderby_num()<= ?:? 
+select t.a, t.b from t t, (select distinct d?.a_? from (select t.a from t t order by ? for orderby_num()<= ?:? ) d? (a_?)) av? (av_?) where t.a=av?.av_? order by ? for orderby_num()<= ?:? 
 ===================================================
 a    b    
 TEST_DATA999     1000     
