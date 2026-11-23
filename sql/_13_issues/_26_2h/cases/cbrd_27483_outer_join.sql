@@ -31,6 +31,10 @@
  *    Case 15:  Case 14 with an IS NULL filter on the NULL-padded table in the WHERE
  *    Case 16:  Case 14 with a WHERE that reads the NULL-padded table and the second table of the CROSS JOIN
  *    Case 17:  a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the first table and the inner table
+ *    Case 18:  a RIGHT JOIN whose ON reads the inner table of a LEFT JOIN that follows a CROSS JOIN
+ *    Case 19:  a RIGHT JOIN whose ON reads the first table, after an INNER JOIN that follows a CROSS JOIN
+ *    Case 20:  a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN
+ *    Case 21:  a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN
  */
 DROP VIEW IF EXISTS va, vb;
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
@@ -139,4 +143,35 @@ evaluate 'Case 17: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the f
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb FROM ta CROSS JOIN tb RIGHT JOIN tc ON tb.ca = tc.ca WHERE ta.cb = tc.cb OR ta.cb IS NULL ORDER BY 1, 2, 3, 4, 5, 6;
 
-DROP TABLE ta, tb, tc;
+DROP TABLE IF EXISTS ta, tb, tc, td;
+CREATE TABLE ta (ca INT, cb INT);
+CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE td (ca INT, cb INT);
+INSERT INTO ta VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO tb VALUES (1, 1), (2, 9);
+INSERT INTO tc VALUES (1, 1), (2, 2), (5, 5);
+INSERT INTO td VALUES (1, 1), (2, 2), (5, 5);
+UPDATE STATISTICS ON ta, tb, tc, td;
+
+-- a RIGHT JOIN keeps td against the whole join before it, so what it depends on reaches back over the LEFT or
+-- INNER JOIN and the CROSS JOIN
+evaluate 'Case 18: a RIGHT JOIN whose ON reads the inner table of a LEFT JOIN that follows a CROSS JOIN; result = 5 rows';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca RIGHT JOIN td ON td.ca = tc.ca ORDER BY 1, 2, 3, 4;
+
+evaluate 'Case 19: a RIGHT JOIN whose ON reads the first table, after an INNER JOIN that follows a CROSS JOIN; result = 5 rows';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb INNER JOIN tc ON tc.ca = tb.ca RIGHT JOIN td ON td.ca = ta.ca ORDER BY 1, 2, 3, 4;
+
+evaluate 'Case 20: a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN; result = 5 rows';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca RIGHT JOIN td ON td.ca = ta.ca ORDER BY 1, 2, 3, 4;
+
+-- NVL keeps the NULL-padded rows of tc, so the WHERE term on tc and tb stays after the first LEFT JOIN and is no
+-- join edge between the two tables that the second ON reads
+evaluate 'Case 21: a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN; result = 3 rows';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca LEFT JOIN td ON td.ca = tb.ca AND td.cb = tc.cb WHERE NVL (tc.cb, tb.cb) = tb.cb ORDER BY 1, 2, 3, 4;
+
+DROP TABLE ta, tb, tc, td;
