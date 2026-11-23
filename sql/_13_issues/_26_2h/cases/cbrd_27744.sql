@@ -21,8 +21,6 @@
  *    Case 6:  INCREMENT BY -1 CYCLE, then a rollback with no value taken: the old increment and value stay
  */
 
-autocommit off;
-
 drop serial if exists s27744_1;
 drop serial if exists s27744_2;
 drop serial if exists s27744_3;
@@ -30,6 +28,8 @@ drop serial if exists s27744_4;
 drop serial if exists s27744_5;
 drop serial if exists s27744_6;
 commit;
+
+autocommit off;
 
 evaluate 'Case 1: START WITH, then a rollback with no value taken; result = 3, started 1, next 4';
 create serial s27744_1 start with 3 nocache;
