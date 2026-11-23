@@ -13,7 +13,7 @@
  *  Coverage:
  *    Case 1:   scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN
  *    Case 2:   scenario 2 - a LEFT JOIN whose ON joins the inner table to the second table and filters the first
- *    Case 3:   scenario 3 - a RIGHT JOIN keeps each row of tc once and pads the unmatched one
+ *    Case 3:   scenario 3 - a RIGHT JOIN pads the unmatched row of tc once, not once per row of the CROSS JOIN
  *    Case 4:   scenario 4 - two CROSS JOINs before a LEFT JOIN whose ON reads the first and the last table
  *    Case 5:   scenario 5 - a LEFT JOIN whose ON reads both tables of a merged comma-join view
  *    Case 6:   scenario 6 - a merged comma-join view and a CROSS JOIN before the LEFT JOIN
@@ -55,7 +55,7 @@ evaluate 'Case 2: scenario 2 - a LEFT JOIN whose ON joins the inner table to the
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = tb.ca AND ta.ca = 1 ORDER BY 1, 2, 3;
 
-evaluate 'Case 3: scenario 3 - a RIGHT JOIN keeps each row of tc once and pads the unmatched one; result = 7 rows';
+evaluate 'Case 3: scenario 3 - a RIGHT JOIN pads the unmatched row of tc once, not once per row of the CROSS JOIN; result = 7 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca FROM ta CROSS JOIN tb RIGHT JOIN tc ON tb.ca = tc.ca ORDER BY 1, 2, 3;
 

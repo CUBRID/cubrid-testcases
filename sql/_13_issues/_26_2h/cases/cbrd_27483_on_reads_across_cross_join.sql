@@ -119,7 +119,7 @@ evaluate 'Case 19: i17 case 19 - an ON after a comma cannot read the table befor
 SELECT a.ca, b.ca, c.ca FROM ta a, tb b LEFT JOIN tb c ON a.cb = 1 AND c.ca = '1' ORDER BY 1, 2, 3;
 
 -- Cases 20 - 22: a RIGHT JOIN after a CROSS JOIN, with and without join order hints
-evaluate 'Case 20: i17 case 20 - a RIGHT JOIN whose ON reads the second table of the CROSS JOIN';
+evaluate 'Case 20: i17 case 20 - a RIGHT JOIN whose ON reads the second table of the CROSS JOIN; result = 3 rows';
 --@queryplan
 SELECT /*+ RECOMPILE */ a.ca, b.ca, c.ca FROM ta a CROSS JOIN tb b RIGHT JOIN tc c ON b.ca = c.ca ORDER BY 1, 2, 3;
 
