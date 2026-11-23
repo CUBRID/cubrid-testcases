@@ -54,9 +54,7 @@ DROP TABLE IF EXISTS tc, td;
 -- 201 | {1, 2}
 -- 202 | {3}
 CREATE TABLE tc (ca INT, cb SET (INT));
-INSERT INTO tc VALUES
-  (201, {1, 2}),
-  (202, {3});
+INSERT INTO tc VALUES (201, {1, 2}), (202, {3});
 
 -- ca  | cb     | cc         | cd
 -- ----+--------+------------+-------
@@ -64,10 +62,7 @@ INSERT INTO tc VALUES
 -- 212 | {3}    | {'3'}      | {3}
 -- 213 | {4}    | {'x'}      | {2, 1}
 CREATE TABLE td (ca INT, cb SET (INT), cc SET (VARCHAR (10)), cd SEQUENCE (INT));
-INSERT INTO td VALUES
-  (211, {2, 1}, {'1', '2'}, {1, 2}),
-  (212, {3}, {'3'}, {3}),
-  (213, {4}, {'x'}, {2, 1});
+INSERT INTO td VALUES (211, {2, 1}, {'1', '2'}, {1, 2}), (212, {3}, {'3'}, {3}), (213, {4}, {'x'}, {2, 1});
 
 UPDATE STATISTICS ON tc, td WITH FULLSCAN;
 

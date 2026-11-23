@@ -20,13 +20,9 @@ DROP TABLE IF EXISTS tb, ta;
 --  1     | {1.5}  |  11    | {1.50}
 --  2     | {2}    |  12    | {2.000}
 CREATE TABLE ta (ca INT, cb SET (NUMERIC));
-INSERT INTO ta VALUES
-  (1, {1.5}),
-  (2, {2});
+INSERT INTO ta VALUES (1, {1.5}), (2, {2});
 CREATE TABLE tb (ca INT, cb SET (NUMERIC));
-INSERT INTO tb VALUES
-  (11, {1.50}),
-  (12, {2.000});
+INSERT INTO tb VALUES (11, {1.50}), (12, {2.000});
 
 evaluate 'Case 1: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join';
 set trace on;

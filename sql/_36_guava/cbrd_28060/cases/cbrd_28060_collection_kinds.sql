@@ -26,12 +26,7 @@ DROP TABLE IF EXISTS ta, tb, tc, td;
 --  4 | {1, 2, 2}
 --  5 | {}
 CREATE TABLE ta (ca INT, cb SET (INT));
-INSERT INTO ta VALUES
-  (1, {1, 2}),
-  (2, {2, 1}),
-  (3, {3}),
-  (4, {1, 2, 2}),
-  (5, {});
+INSERT INTO ta VALUES (1, {1, 2}), (2, {2, 1}), (3, {3}), (4, {1, 2, 2}), (5, {});
 
 -- tb: SEQUENCE (INT)
 -- ca | cb
@@ -43,13 +38,7 @@ INSERT INTO ta VALUES
 -- 15 | {}
 -- 16 | {1, 1, 2}
 CREATE TABLE tb (ca INT, cb SEQUENCE (INT));
-INSERT INTO tb VALUES
-  (11, {1, 2}),
-  (12, {2, 1}),
-  (13, {3}),
-  (14, {1, 2, 2}),
-  (15, {}),
-  (16, {1, 1, 2});
+INSERT INTO tb VALUES (11, {1, 2}), (12, {2, 1}), (13, {3}), (14, {1, 2, 2}), (15, {}), (16, {1, 1, 2});
 
 -- tc: SEQUENCE (NUMERIC (10, 2))
 -- ca | cb
@@ -59,11 +48,7 @@ INSERT INTO tb VALUES
 -- 23 | {3.00}
 -- 24 | {1.50}
 CREATE TABLE tc (ca INT, cb SEQUENCE (NUMERIC (10, 2)));
-INSERT INTO tc VALUES
-  (21, {1.00, 2.00}),
-  (22, {2.00, 1.00}),
-  (23, {3.00}),
-  (24, {1.50});
+INSERT INTO tc VALUES (21, {1.00, 2.00}), (22, {2.00, 1.00}), (23, {3.00}), (24, {1.50});
 
 -- td: MULTISET (INT)
 -- ca | cb
@@ -73,11 +58,7 @@ INSERT INTO tc VALUES
 -- 33 | {1, 2, 2}
 -- 34 | {1, 1, 2}
 CREATE TABLE td (ca INT, cb MULTISET (INT));
-INSERT INTO td VALUES
-  (31, {1, 2}),
-  (32, {2, 1}),
-  (33, {1, 2, 2}),
-  (34, {1, 1, 2});
+INSERT INTO td VALUES (31, {1, 2}), (32, {2, 1}), (33, {1, 2, 2}), (34, {1, 1, 2});
 
 UPDATE STATISTICS ON ta, tb, tc, td WITH FULLSCAN;
 

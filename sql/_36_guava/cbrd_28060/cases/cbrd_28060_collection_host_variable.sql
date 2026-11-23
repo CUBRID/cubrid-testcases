@@ -28,10 +28,7 @@ DROP TABLE IF EXISTS ta, tb;
 -- 62 | {'2'}
 -- 63 | {'1', '2'}
 CREATE TABLE ta (ca INT, cb MULTISET (VARCHAR (10)));
-INSERT INTO ta VALUES
-  (61, {'1'}),
-  (62, {'2'}),
-  (63, {'1', '2'});
+INSERT INTO ta VALUES (61, {'1'}), (62, {'2'}), (63, {'1', '2'});
 
 -- tb: INT elements
 -- ca | cb
@@ -40,10 +37,7 @@ INSERT INTO ta VALUES
 -- 72 | {3}
 -- 73 | {2, 1}
 CREATE TABLE tb (ca INT, cb MULTISET (INT));
-INSERT INTO tb VALUES
-  (71, {1}),
-  (72, {3}),
-  (73, {2, 1});
+INSERT INTO tb VALUES (71, {1}), (72, {3}), (73, {2, 1});
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 

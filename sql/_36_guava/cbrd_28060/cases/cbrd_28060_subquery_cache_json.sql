@@ -25,16 +25,7 @@ evaluate 'Case 1: JSON - a correlated subquery keyed by a JSON value returns the
 --  9 | 1.0
 DROP TABLE IF EXISTS ta;
 CREATE TABLE ta (ca INT, cb JSON);
-INSERT INTO ta VALUES
-  (1, '1'),
-  (2, '1.0'),
-  (3, 'true'),
-  (4, '"true"'),
-  (5, '"1"'),
-  (6, '{"a": 1}'),
-  (7, '{"a":1.0}'),
-  (8, '1'),
-  (9, '1.0');
+INSERT INTO ta VALUES (1, '1'), (2, '1.0'), (3, 'true'), (4, '"true"'), (5, '"1"'), (6, '{"a": 1}'), (7, '{"a":1.0}'), (8, '1'), (9, '1.0');
 SELECT ta.ca, (SELECT JSON_TYPE (ta.cb) FROM db_root) FROM ta ORDER BY 1;
 SELECT ta.ca, JSON_TYPE (ta.cb) FROM ta ORDER BY 1;
 

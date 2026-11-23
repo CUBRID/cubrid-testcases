@@ -39,11 +39,7 @@ INSERT INTO ta VALUES
   (8, '-2', '-1.5');
 
 evaluate 'Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63';
-SELECT
-  ca,
-  CASE WHEN cb = cc THEN 'eq' WHEN cb < cc THEN 'lt' WHEN cb > cc THEN 'gt' END cmp
-FROM ta
-ORDER BY 1;
+SELECT ca, CASE WHEN cb = cc THEN 'eq' WHEN cb < cc THEN 'lt' WHEN cb > cc THEN 'gt' END cmp FROM ta ORDER BY 1;
 
 evaluate 'Case 2: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join';
 set trace on;
@@ -74,11 +70,7 @@ INSERT INTO tb VALUES
   (7, '-9223372036854775808', '"-9223372036854775808"');
 
 evaluate 'Case 3: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE';
-SELECT
-  ca,
-  CASE WHEN cb = cc THEN 'eq' WHEN cb < cc THEN 'lt' WHEN cb > cc THEN 'gt' END cmp
-FROM tb
-ORDER BY 1;
+SELECT ca, CASE WHEN cb = cc THEN 'eq' WHEN cb < cc THEN 'lt' WHEN cb > cc THEN 'gt' END cmp FROM tb ORDER BY 1;
 
 evaluate 'Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join';
 set trace on;

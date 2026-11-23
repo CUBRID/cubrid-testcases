@@ -22,9 +22,7 @@ INSERT INTO ta VALUES (1, {200,199,198,197,196,195,194,193,192,191,190,189,188,1
 -- ---+----------
 --  2 | {1, 1, 2}
 --  3 | {1, 2, 2}
-INSERT INTO ta VALUES
-  (2, {1, 1, 2}),
-  (3, {1, 2, 2});
+INSERT INTO ta VALUES (2, {1, 1, 2}), (3, {1, 2, 2});
 
 CREATE TABLE tb (ca INT, cb MULTISET (INT));
 INSERT INTO tb SELECT ca + 10, cb FROM ta;
@@ -35,10 +33,7 @@ INSERT INTO tb SELECT ca + 10, cb FROM ta;
 -- 14 | {2, 1, 1}
 -- 15 | {2, 2, 1}
 -- 16 | {1, 2}
-INSERT INTO tb VALUES
-  (14, {2, 1, 1}),
-  (15, {2, 2, 1}),
-  (16, {1, 2});
+INSERT INTO tb VALUES (14, {2, 1, 1}), (15, {2, 2, 1}), (16, {1, 2});
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 

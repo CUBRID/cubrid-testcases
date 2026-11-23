@@ -38,11 +38,7 @@ CREATE TABLE tc (ca INT, cb VARCHAR(40) COLLATE utf8_de_exp_ai_ci) PARTITION BY 
 --  2 | 'cafés'         | é (C3 A9)
 --  3 | 'CAFÉS'         | upper case and É (C3 89)
 --  4 | 'caf<U+00AD>es' | soft hyphen U+00AD (C2 AD)
-INSERT INTO ta VALUES
-  (1, 'cafes'),
-  (2, 'cafés'),
-  (3, 'CAFÉS'),
-  (4, 'caf' || CHR (49837 USING utf8) || 'es');
+INSERT INTO ta VALUES (1, 'cafes'), (2, 'cafés'), (3, 'CAFÉS'), (4, 'caf' || CHR (49837 USING utf8) || 'es');
 
 -- 5 to 7: 'ß' expands to 'ss'
 -- ca | cb        | note
@@ -50,10 +46,7 @@ INSERT INTO ta VALUES
 --  5 | 'Strasse' |
 --  6 | 'Straße'  | ß (C3 9F)
 --  7 | 'STRASSE' | upper case
-INSERT INTO ta VALUES
-  (5, 'Strasse'),
-  (6, 'Straße'),
-  (7, 'STRASSE');
+INSERT INTO ta VALUES (5, 'Strasse'), (6, 'Straße'), (7, 'STRASSE');
 
 -- 8 to 10: 'æ' expands to 'ae'; 'ab' differs at level 1
 -- ca | cb   | note
@@ -61,10 +54,7 @@ INSERT INTO ta VALUES
 --  8 | 'ae' |
 --  9 | 'æ'  | æ (C3 A6)
 -- 10 | 'ab' |
-INSERT INTO ta VALUES
-  (8, 'ae'),
-  (9, 'æ'),
-  (10, 'ab');
+INSERT INTO ta VALUES (8, 'ae'), (9, 'æ'), (10, 'ab');
 
 INSERT INTO tb SELECT * FROM ta;
 INSERT INTO tc SELECT * FROM ta;
@@ -79,10 +69,7 @@ WHERE ta.cb = tb.cb AND ta.ca < tb.ca
 ORDER BY 1, 2;
 show trace;
 set trace off;
-SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca
-FROM ta, tb
-WHERE ta.cb = tb.cb AND ta.ca < tb.ca
-ORDER BY 1, 2;
+SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
 
 evaluate 'Case 2: utf8_de_exp_ai_ci - hash GROUP BY on ta returns the groups of the sort GROUP BY';
 set trace on;
@@ -93,18 +80,6 @@ select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1
 
 evaluate 'Case 3: utf8_de_exp_ai_ci - tc prune per constant reads one partition and matches ta';
 set trace on;
--- ca | cb              | note
--- ---+-----------------+--------------------------------
---  1 | 'cafes'         |
---  2 | 'caf<U+00E9>s'  | <U+00E9> (C3 A9)
---  3 | 'CAF<U+00C9>S'  | upper case and <U+00C9> (C3 89)
---  4 | 'caf<U+00AD>es' | soft hyphen U+00AD (C2 AD)
---  5 | 'Strasse'       |
---  6 | 'Stra<U+00DF>e' | <U+00DF> (C3 9F)
---  7 | 'STRASSE'       | upper case
---  8 | 'ae'            |
---  9 | '<U+00E6>'      | <U+00E6> (C3 A6)
--- 10 | 'ab'            |
 select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
 from (
   SELECT 1 AS ca,
@@ -159,9 +134,7 @@ CREATE TABLE tb (ca INT, cb VARCHAR(10) COLLATE utf8_de_exp);
 -- ---+------------+------------------------------
 --  1 | '<U+03A9>' | Greek capital omega (CE A9)
 --  2 | '<U+2126>' | ohm sign (E2 84 A6)
-INSERT INTO ta VALUES
-  (1, CHR (52905 USING utf8)),
-  (2, CHR (14845094 USING utf8));
+INSERT INTO ta VALUES (1, CHR (52905 USING utf8)), (2, CHR (14845094 USING utf8));
 INSERT INTO tb SELECT * FROM ta;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
@@ -174,10 +147,7 @@ WHERE ta.cb = tb.cb AND ta.ca < tb.ca
 ORDER BY 1, 2;
 show trace;
 set trace off;
-SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca, HEX (ta.cb), HEX (tb.cb)
-FROM ta, tb
-WHERE ta.cb = tb.cb AND ta.ca < tb.ca
-ORDER BY 1, 2;
+SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca, HEX (ta.cb), HEX (tb.cb) FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
 
 -- utf8_km_exp has quaternary strength. U+03A9 and U+2126 differ only at level 4
 DROP TABLE IF EXISTS tb, ta;
@@ -187,9 +157,7 @@ CREATE TABLE tb (ca INT, cb VARCHAR(10) COLLATE utf8_km_exp);
 -- ---+------------+------------------------------
 --  1 | '<U+03A9>' | Greek capital omega (CE A9)
 --  2 | '<U+2126>' | ohm sign (E2 84 A6)
-INSERT INTO ta VALUES
-  (1, CHR (52905 USING utf8)),
-  (2, CHR (14845094 USING utf8));
+INSERT INTO ta VALUES (1, CHR (52905 USING utf8)), (2, CHR (14845094 USING utf8));
 INSERT INTO tb SELECT * FROM ta;
 
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
@@ -202,10 +170,7 @@ WHERE ta.cb = tb.cb AND ta.ca < tb.ca
 ORDER BY 1, 2;
 show trace;
 set trace off;
-SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca, HEX (ta.cb), HEX (tb.cb)
-FROM ta, tb
-WHERE ta.cb = tb.cb AND ta.ca < tb.ca
-ORDER BY 1, 2;
+SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca, HEX (ta.cb), HEX (tb.cb) FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
 
 -- cleanup
 set trace off;

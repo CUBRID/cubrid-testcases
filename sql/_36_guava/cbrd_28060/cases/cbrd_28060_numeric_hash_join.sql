@@ -40,12 +40,7 @@
 -- 19 | -123456789.0
 DROP TABLE IF EXISTS tn_zero;
 CREATE TABLE tn_zero (ca INT, cb NUMERIC(38,0));
-INSERT INTO tn_zero VALUES
-  (1, 0),
-  (2, 1),
-  (3, 100),
-  (17, -1.0),
-  (19, -123456789.0);
+INSERT INTO tn_zero VALUES (1, 0), (2, 1), (3, 100), (17, -1.0), (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_one;
 CREATE TABLE tn_one (ca INT, cb NUMERIC(38,1));

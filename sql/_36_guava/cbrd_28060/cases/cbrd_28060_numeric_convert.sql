@@ -35,8 +35,6 @@ SELECT
 evaluate 'Case 3: string to DOUBLE - a subnormal value converts to it, not to an overflow error';
 -- 1e-310 is below the smallest normal DOUBLE (2.2250738585072014e-308); before the change it was an overflow error.
 -- Each column prints 1 when the DOUBLE lies in that range
-SELECT
-  CAST ('1e-310' AS DOUBLE) > 0 above_zero,
-  CAST ('1e-310' AS DOUBLE) < 2.2250738585072014e-308 below_normal;
+SELECT CAST ('1e-310' AS DOUBLE) > 0 above_zero, CAST ('1e-310' AS DOUBLE) < 2.2250738585072014e-308 below_normal;
 
 -- cleanup

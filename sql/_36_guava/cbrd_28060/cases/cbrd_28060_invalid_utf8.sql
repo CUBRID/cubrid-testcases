@@ -95,16 +95,10 @@ UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
 evaluate 'Case 1: utf8_bin - hash join of ta and tb returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
-from ta x, tb y
-where x.cb = y.cb
-order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca
-from ta x, tb y
-where x.cb = y.cb
-order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
 
 evaluate 'Case 2: utf8_bin - hash GROUP BY on ta returns the groups of the sort GROUP BY';
 set trace on;
@@ -115,22 +109,6 @@ select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1
 
 evaluate 'Case 3: utf8_bin - tc prune per VARCHAR(10) constant reads one partition and matches ta';
 set trace on;
--- ca | cb bytes          | note
--- ---+-------------------+-----------------------------------------------
---  1 | 41                | 'A'
---  2 | C1 81             | overlong 'A', invalid UTF-8
---  3 | C3 A9             | '<U+00E9>'
---  4 | C3 29             | lead byte of '<U+00E9>', then ')'
---  5 | 80                |
---  6 | 81                |
---  7 | 61 80 62          | 'a', 80, 'b'
---  8 | 61 81 62          | 'a', 81, 'b'
---  9 | C3 A0             | '<U+00E0>'
--- 10 | C3 20             | lead byte of '<U+00E0>', then a space
--- 11 | C3 A0 20 20 20 20 | '<U+00E0>', then 4 spaces
--- 12 | C3 20 20 20 20 20 | lead byte of '<U+00E0>', then 5 spaces
--- 13 | F0 A0 A0 A0 20 20 | a 4-byte character, then 2 spaces
--- 14 | F0 20 20 20 20 20 | lead byte of a 4-byte character, then 5 spaces
 select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
 from (
   SELECT 1 AS ca,
@@ -259,16 +237,10 @@ UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
 evaluate 'Case 4: utf8_ko_cs - hash join of ta and tb returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
-from ta x, tb y
-where x.cb = y.cb
-order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca
-from ta x, tb y
-where x.cb = y.cb
-order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
 
 evaluate 'Case 5: utf8_ko_cs - hash GROUP BY on ta returns the groups of the sort GROUP BY';
 set trace on;
@@ -279,22 +251,6 @@ select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1
 
 evaluate 'Case 6: utf8_ko_cs - tc prune per VARCHAR(10) constant reads one partition and matches ta';
 set trace on;
--- ca | cb bytes          | note
--- ---+-------------------+-----------------------------------------------
---  1 | 41                | 'A'
---  2 | C1 81             | overlong 'A', invalid UTF-8
---  3 | C3 A9             | '<U+00E9>'
---  4 | C3 29             | lead byte of '<U+00E9>', then ')'
---  5 | 80                |
---  6 | 81                |
---  7 | 61 80 62          | 'a', 80, 'b'
---  8 | 61 81 62          | 'a', 81, 'b'
---  9 | C3 A0             | '<U+00E0>'
--- 10 | C3 20             | lead byte of '<U+00E0>', then a space
--- 11 | C3 A0 20 20 20 20 | '<U+00E0>', then 4 spaces
--- 12 | C3 20 20 20 20 20 | lead byte of '<U+00E0>', then 5 spaces
--- 13 | F0 A0 A0 A0 20 20 | a 4-byte character, then 2 spaces
--- 14 | F0 20 20 20 20 20 | lead byte of a 4-byte character, then 5 spaces
 select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
 from (
   SELECT 1 AS ca,

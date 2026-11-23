@@ -28,13 +28,9 @@ drop table if exists ta, tb, tc, td, te, tf, tg;
 -- each join reads a derived table with NO_MERGE, the build side of the hash list scan, and parallel(0)
 -- keeps the join serial so that the trace lines do not depend on the server
 create table ta (ca int, cb numeric(20,5), cc numeric(10,2), cd numeric(20,0));
-insert into ta
-select rownum, rownum + 0.25, rownum + 0.25, rownum * 1000000000000
-from db_root connect by level <= 3000;
+insert into ta select rownum, rownum + 0.25, rownum + 0.25, rownum * 1000000000000 from db_root connect by level <= 3000;
 create table tb (ca int, cb numeric(20,5), cc numeric(30,10));
-insert into tb
-select rownum, rownum + 0.25, rownum * 1000000000000
-from db_root connect by level <= 3000;
+insert into tb select rownum, rownum + 0.25, rownum * 1000000000000 from db_root connect by level <= 3000;
 
 create table tc (id numeric(20,5), pid numeric(20,5), ca int);
 -- id                    | pid                   | ca | note
@@ -44,12 +40,7 @@ create table tc (id numeric(20,5), pid numeric(20,5), ca int);
 -- 3.75                  | 2.5                   | 3 | child of ca = 2
 -- 123456789012345.12345 | 3.75                  | 4 | child of ca = 3
 -- 5                     | 123456789012345.12345 | 5 | child of ca = 4
-insert into tc values
-  (1.25, null, 1),
-  (2.5, 1.25, 2),
-  (3.75, 2.5, 3),
-  (123456789012345.12345, 3.75, 4),
-  (5, 123456789012345.12345, 5);
+insert into tc values (1.25, null, 1), (2.5, 1.25, 2), (3.75, 2.5, 3), (123456789012345.12345, 3.75, 4), (5, 123456789012345.12345, 5);
 create table td (id numeric(20,5), pid numeric(30,10), ca int);
 -- id                    | pid                   | ca | note
 -- ----------------------+-----------------------+---+---------------
@@ -69,11 +60,7 @@ create table te (id bigint, pid numeric(38,20), ca int);
 -- 2                  | 123456789012345678 | 2 | child of ca = 1
 -- 999999999999999999 | 2                  | 3 | child of ca = 2
 -- 5                  | 999999999999999999 | 4 | child of ca = 3
-insert into te values
-  (123456789012345678, null, 1),
-  (2, 123456789012345678, 2),
-  (999999999999999999, 2, 3),
-  (5, 999999999999999999, 4);
+insert into te values (123456789012345678, null, 1), (2, 123456789012345678, 2), (999999999999999999, 2, 3), (5, 999999999999999999, 4);
 create table tf (ca numeric(38,0));
 insert into tf values (1500000);
 create table tg (ca numeric(38,-5));
@@ -134,21 +121,15 @@ from (
 
 evaluate 'Case 5: trace: Cases 1 to 4 run as a hash list scan (SCAN (hash temp(m), ...))';
 set trace on;
-select /*+ ordered parallel(0) */ count(*)
-from ta x, (select /*+ NO_MERGE */ ca, cb / 1 as cf from tb where ca >= 1) y
-where x.cb = y.cf;
+select /*+ ordered parallel(0) */ count(*) from ta x, (select /*+ NO_MERGE */ ca, cb / 1 as cf from tb where ca >= 1) y where x.cb = y.cf;
 show trace;
 select /*+ ordered parallel(0) */ count(*)
 from ta x, (select /*+ NO_MERGE */ ca, (cb - 0.25) / 1 as cf from tb where ca >= 1) y
 where x.ca = y.cf;
 show trace;
-select /*+ ordered parallel(0) */ count(*)
-from ta x, (select /*+ NO_MERGE */ ca, cb from tb where ca >= 1) y
-where x.cc = y.cb;
+select /*+ ordered parallel(0) */ count(*) from ta x, (select /*+ NO_MERGE */ ca, cb from tb where ca >= 1) y where x.cc = y.cb;
 show trace;
-select /*+ ordered parallel(0) */ count(*)
-from ta x, (select /*+ NO_MERGE */ ca, cc from tb where ca >= 1) y
-where x.cd = y.cc;
+select /*+ ordered parallel(0) */ count(*) from ta x, (select /*+ NO_MERGE */ ca, cc from tb where ca >= 1) y where x.cd = y.cc;
 show trace;
 set trace off;
 

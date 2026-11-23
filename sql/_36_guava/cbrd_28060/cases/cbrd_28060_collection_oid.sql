@@ -15,9 +15,7 @@ evaluate 'Case 1: SET OF a class - hash join returns the pairs of the nested loo
 -- tb and tc hold a set of one ta object each: tb.ca 1 and tc.ca 11 the object of ca 1, 2 and 12 of ca 2
 DROP TABLE IF EXISTS tb, tc, ta;
 CREATE TABLE ta (ca INT) DONT_REUSE_OID;
-INSERT INTO ta VALUES
-  (1),
-  (2);
+INSERT INTO ta VALUES (1), (2);
 CREATE TABLE tb (ca INT, cb SET OF ta);
 CREATE TABLE tc (ca INT, cb SET OF ta);
 INSERT INTO tb SELECT x.ca, {x} FROM ta x;

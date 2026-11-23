@@ -23,11 +23,7 @@ evaluate 'Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE of no ele
 -- 84 | {1}
 DROP TABLE IF EXISTS ta;
 CREATE TABLE ta (ca INT, cb SEQUENCE);
-INSERT INTO ta VALUES
-  (81, {1}),
-  (82, {CAST (1 AS DOUBLE)}),
-  (83, {CAST (1 AS NUMERIC (5, 2))}),
-  (84, {1});
+INSERT INTO ta VALUES (81, {1}), (82, {CAST (1 AS DOUBLE)}), (83, {CAST (1 AS NUMERIC (5, 2))}), (84, {1});
 SELECT ta.ca, (SELECT ta.cb FROM db_root) FROM ta ORDER BY 1;
 SELECT ta.ca, ta.cb FROM ta ORDER BY 1;
 
@@ -65,10 +61,7 @@ evaluate 'Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE of 
 -- 303 | {1}
 DROP TABLE IF EXISTS td, te, tf;
 CREATE TABLE td (ca INT, cb SET (INT, DOUBLE));
-INSERT INTO td VALUES
-  (301, {1}),
-  (302, {CAST (1 AS DOUBLE)}),
-  (303, {1});
+INSERT INTO td VALUES (301, {1}), (302, {CAST (1 AS DOUBLE)}), (303, {1});
 SELECT td.ca, (SELECT td.cb FROM db_root) FROM td ORDER BY 1;
 SELECT td.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ td.cb FROM db_root) FROM td ORDER BY 1;
 -- CREATE TABLE AS SELECT makes the column SEQUENCE OF SET OF INTEGER: {{1}} and {{1, 2}} keys repeat;
@@ -96,12 +89,7 @@ SELECT te.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ te.cb = {SET {1}} FROM db_root) F
 -- 324 | {1}
 -- 325 | {1.0}
 CREATE TABLE tf (ca INT, cb SEQUENCE);
-INSERT INTO tf VALUES
-  (321, {1}),
-  (322, {1.0}),
-  (323, {1.00}),
-  (324, {1}),
-  (325, {1.0});
+INSERT INTO tf VALUES (321, {1}), (322, {1.0}), (323, {1.00}), (324, {1}), (325, {1.0});
 SELECT tf.ca, (SELECT tf.cb FROM db_root) FROM tf ORDER BY 1;
 SELECT tf.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ tf.cb FROM db_root) FROM tf ORDER BY 1;
 

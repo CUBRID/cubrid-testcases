@@ -23,9 +23,7 @@ DROP TABLE IF EXISTS ta, tb;
 CREATE TABLE ta (ca INT, cb DOUBLE);
 CREATE TABLE tb (ca VARCHAR (10), cb INT);
 INSERT INTO ta SELECT ROWNUM, CASE WHEN ROWNUM <= 50 THEN CAST (0 AS DOUBLE) ELSE -CAST (0 AS DOUBLE) END FROM db_class a, db_class b LIMIT 100;
-INSERT INTO tb VALUES
-  ('0', 1),
-  ('-0', 2);
+INSERT INTO tb VALUES ('0', 1), ('-0', 2);
 UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
 -- the first query memoizes the inner scan of tb, the second runs with memoize turned off
 set system parameters 'memoize_memory_limit=64M';

@@ -24,16 +24,9 @@ DROP TABLE IF EXISTS ta, tb, tc, td, te, tf;
 --  103  | {CAST (5 AS BIGINT)}     |  113  | {5}
 --       |                          |  114  | {4}
 CREATE TABLE ta (ca INT, cb SET (INT, BIGINT, NUMERIC (10, 2)));
-INSERT INTO ta VALUES
-  (101, {1, 2}),
-  (102, {3}),
-  (103, {CAST (5 AS BIGINT)});
+INSERT INTO ta VALUES (101, {1, 2}), (102, {3}), (103, {CAST (5 AS BIGINT)});
 CREATE TABLE tb (ca INT, cb SET (INT, BIGINT, NUMERIC (10, 2)));
-INSERT INTO tb VALUES
-  (111, {CAST (1 AS BIGINT), 2.00}),
-  (112, {3.00}),
-  (113, {5}),
-  (114, {4});
+INSERT INTO tb VALUES (111, {CAST (1 AS BIGINT), 2.00}), (112, {3.00}), (113, {5}), (114, {4});
 
 -- tc and td: VARCHAR and CHAR elements of one collation, which hash without the trailing pad
 -- tc.ca | tc.cb      | td.ca | td.cb
@@ -42,14 +35,9 @@ INSERT INTO tb VALUES
 --  122  | {'b', 'c'} |  132  | {'c', CAST ('b' AS CHAR (5))}
 --       |            |  133  | {'d'}
 CREATE TABLE tc (ca INT, cb SET (VARCHAR (10), CHAR (5)));
-INSERT INTO tc VALUES
-  (121, {'a'}),
-  (122, {'b', 'c'});
+INSERT INTO tc VALUES (121, {'a'}), (122, {'b', 'c'});
 CREATE TABLE td (ca INT, cb SET (VARCHAR (10), CHAR (5)));
-INSERT INTO td VALUES
-  (131, {CAST ('a' AS CHAR (5))}),
-  (132, {'c', CAST ('b' AS CHAR (5))}),
-  (133, {'d'});
+INSERT INTO td VALUES (131, {CAST ('a' AS CHAR (5))}), (132, {'c', CAST ('b' AS CHAR (5))}), (133, {'d'});
 
 -- te and tf: INT and DOUBLE elements, which hash as the DOUBLE they equal
 -- te.ca | te.cb       | tf.ca | tf.cb
@@ -58,14 +46,9 @@ INSERT INTO td VALUES
 --  182  | {3}         |  192  | {CAST (3 AS DOUBLE)}
 --       |             |  193  | {4}
 CREATE TABLE te (ca INT, cb SET (INT, DOUBLE));
-INSERT INTO te VALUES
-  (181, {1, 2.5e0}),
-  (182, {3});
+INSERT INTO te VALUES (181, {1, 2.5e0}), (182, {3});
 CREATE TABLE tf (ca INT, cb SET (INT, DOUBLE));
-INSERT INTO tf VALUES
-  (191, {CAST (1 AS DOUBLE), 2.5e0}),
-  (192, {CAST (3 AS DOUBLE)}),
-  (193, {4});
+INSERT INTO tf VALUES (191, {CAST (1 AS DOUBLE), 2.5e0}), (192, {CAST (3 AS DOUBLE)}), (193, {4});
 
 UPDATE STATISTICS ON ta, tb, tc, td, te, tf WITH FULLSCAN;
 
@@ -93,14 +76,9 @@ DROP TABLE IF EXISTS tg, th, ti, tj;
 --  142  | {'x'} |  152  | {1}
 --       |       |  153  | {'x'}
 CREATE TABLE tg (ca INT, cb SET (INT, VARCHAR (10)));
-INSERT INTO tg VALUES
-  (141, {1}),
-  (142, {'x'});
+INSERT INTO tg VALUES (141, {1}), (142, {'x'});
 CREATE TABLE th (ca INT, cb SET (INT, VARCHAR (10)));
-INSERT INTO th VALUES
-  (151, {'1'}),
-  (152, {1}),
-  (153, {'x'});
+INSERT INTO th VALUES (151, {'1'}), (152, {1}), (153, {'x'});
 
 -- ti and tj: INT and FLOAT elements; 16777217 is 2^24 + 1, which FLOAT rounds to 2^24
 -- ti.ca | ti.cb      | tj.ca | tj.cb
@@ -108,12 +86,9 @@ INSERT INTO th VALUES
 --  161  | {16777217} |  171  | {CAST (16777216 AS FLOAT)}
 --       |            |  172  | {16777217}
 CREATE TABLE ti (ca INT, cb SET (INT, FLOAT));
-INSERT INTO ti VALUES
-  (161, {16777217});
+INSERT INTO ti VALUES (161, {16777217});
 CREATE TABLE tj (ca INT, cb SET (INT, FLOAT));
-INSERT INTO tj VALUES
-  (171, {CAST (16777216 AS FLOAT)}),
-  (172, {16777217});
+INSERT INTO tj VALUES (171, {CAST (16777216 AS FLOAT)}), (172, {16777217});
 
 UPDATE STATISTICS ON tg, th, ti, tj WITH FULLSCAN;
 

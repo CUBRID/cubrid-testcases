@@ -80,12 +80,10 @@ UPDATE STATISTICS ON tb WITH FULLSCAN;
 evaluate 'Case 2: utf8_de_exp_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
 -- the groups are too many to print, so each prints its count, the sum of COUNT, and the sum of MIN
 set trace on;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 show trace;
 set trace off;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 
 -- utf8_de_exp
 DROP TABLE IF EXISTS tb;
@@ -107,12 +105,10 @@ UPDATE STATISTICS ON tb WITH FULLSCAN;
 evaluate 'Case 3: utf8_de_exp - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
 -- the groups are too many to print, so each prints its count, the sum of COUNT, and the sum of MIN
 set trace on;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 show trace;
 set trace off;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 
 -- utf8_fr_exp_ab
 DROP TABLE IF EXISTS tb;
@@ -134,12 +130,10 @@ UPDATE STATISTICS ON tb WITH FULLSCAN;
 evaluate 'Case 4: utf8_fr_exp_ab - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
 -- the groups are too many to print, so each prints its count, the sum of COUNT, and the sum of MIN
 set trace on;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 show trace;
 set trace off;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 
 -- utf8_gen_ai_ci
 DROP TABLE IF EXISTS tb;
@@ -161,12 +155,10 @@ UPDATE STATISTICS ON tb WITH FULLSCAN;
 evaluate 'Case 5: utf8_gen_ai_ci - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
 -- the groups are too many to print, so each prints its count, the sum of COUNT, and the sum of MIN
 set trace on;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 show trace;
 set trace off;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 
 -- utf8_bin
 DROP TABLE IF EXISTS tb;
@@ -188,12 +180,10 @@ UPDATE STATISTICS ON tb WITH FULLSCAN;
 evaluate 'Case 6: utf8_bin - hash GROUP BY through the hash merge returns the groups of the sort GROUP BY';
 -- the groups are too many to print, so each prints its count, the sum of COUNT, and the sum of MIN
 set trace on;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ parallel(0) */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 show trace;
 set trace off;
-select count(*), sum(cnt), sum(ca_min)
-from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
+select count(*), sum(cnt), sum(ca_min) from (select /*+ no_hash_aggregate */ min(ca) ca_min, count(*) cnt from tb group by cb) g;
 
 -- cleanup
 set trace off;

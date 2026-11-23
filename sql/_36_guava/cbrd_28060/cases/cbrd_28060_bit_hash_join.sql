@@ -68,17 +68,11 @@ from (
 
 evaluate 'Case 4: trace: Cases 1 to 3 run as a hash join (HASHJOIN)';
 set trace on;
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from ta x, tb y
-where x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from ta x, tb y where x.cb = y.cb;
 show trace;
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from tc x, td y
-where x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from tc x, td y where x.cb = y.cb;
 show trace;
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from ta x, tb y
-where x.ca = y.ca and x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from ta x, tb y where x.ca = y.ca and x.cb = y.cb;
 show trace;
 set trace off;
 
