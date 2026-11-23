@@ -1,11 +1,12 @@
 /*
 Test Case: lock_retained/savepoint_delete_deadlock
 Priority: 1
-Reference case: CBRD-27034 (CUBRID/cubrid#7881)
+Reference case: CBRD-27034 (CUBRID/cubrid#7881), CBRD-27654 (CUBRID/cubrid#8619)
 Author: hgryoo
 
 Test Point:
-A DELETE under a savepoint that is rolled back and done again keeps its row lock to commit; the waiting UPDATE updates nothing and no deadlock occurs.
+A DELETE under a savepoint that is rolled back and done again ends without a deadlock, and the waiting UPDATE updates nothing.
+CBRD-27034 wrote this case when a DELETE under a savepoint kept its row lock to commit. Since CBRD-27654 the row lock ends with the statement: the waiting UPDATE takes the row and waits on the transaction, and the second DELETE gets the row back from it.
 
 NUM_CLIENTS = 2
 C1: SAVEPOINT sp;
