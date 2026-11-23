@@ -37,7 +37,7 @@ commit;
 select id, v, count(*) over () as c from t_spill order by id desc limit 3;
 select id, v, count(*) over () as c from t_spill order by id limit 3;
 select id, v, a, sum(a) over (partition by g) as s from t_spill order by id desc limit 4;
-select id, v, percent_rank() over (order by g) as p from t_spill order by id desc limit 4;
+select id, v, cast(percent_rank() over (order by g) as numeric(10,4)) as p from t_spill order by id desc limit 4;
 select id, v, ntile(3) over (order by id) as n, max(id) over () as m from t_spill order by id desc limit 3;
 select id, v, nth_value(id, 2) over (partition by g order by id) as n, count(*) over (partition by g) as c
   from t_spill order by id desc limit 4;
