@@ -104,8 +104,8 @@ CREATE TRIGGER [tr_u2]
 merge into bonuses using emp on bonuses.emp_id = emp.emp_id when matched then update set bonuses.bonus=bonuses.bonus+emp.salary*0.1 where emp.salary<600;
 
 select * from bonuses order by 1;
-select * from trg;
-select * from trg2;
+select * from trg order by 1;
+select * from trg2 order by 1;
 
 drop emp;
 drop bonuses;
