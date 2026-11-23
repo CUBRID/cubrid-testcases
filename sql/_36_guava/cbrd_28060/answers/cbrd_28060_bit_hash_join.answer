@@ -58,7 +58,7 @@ Query Plan:
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_short] x, [dba.hb_long] y where x.cb=y.cb
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.ta] x, [dba.tb] y where x.cb=y.cb
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -66,10 +66,10 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -84,7 +84,7 @@ Query Plan:
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_vshort] x, [dba.hb_vlong] y where x.cb=y.cb
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.tc] x, [dba.td] y where x.cb=y.cb
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -92,10 +92,10 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_vlong), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_vshort), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -110,7 +110,7 @@ Query Plan:
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.hb_short] x, [dba.hb_long] y where x.ca=y.ca and x.cb=y.cb
+  rewritten query: select /*+ ORDERED USE_HASH PARALLEL(?) */ count(*) from [dba.ta] x, [dba.tb] y where x.ca=y.ca and x.cb=y.cb
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -118,10 +118,10 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_long), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.hb_short), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

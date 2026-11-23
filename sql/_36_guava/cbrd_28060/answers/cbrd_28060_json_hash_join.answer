@@ -1,0 +1,217 @@
+===================================================
+0
+===================================================
+0
+===================================================
+11
+===================================================
+0
+===================================================
+16
+===================================================
+0
+===================================================
+    
+Case 1: JSON - hash join returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     17     
+1     19     
+2     12     
+2     22     
+3     13     
+4     14     
+5     15     
+6     16     
+7     18     
+9     21     
+10     12     
+10     22     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     17     
+1     19     
+2     12     
+2     22     
+3     13     
+4     14     
+5     15     
+6     16     
+7     18     
+9     21     
+10     12     
+10     22     
+
+===================================================
+    
+Case 2: JSON - hash join with the other build side returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     17     
+1     19     
+2     12     
+2     22     
+3     13     
+4     14     
+5     15     
+6     16     
+7     18     
+9     21     
+10     12     
+10     22     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.ta)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.tb] [dba.tb], [dba.ta] [dba.ta] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     11     
+1     17     
+1     19     
+2     12     
+2     22     
+3     13     
+4     14     
+5     15     
+6     16     
+7     18     
+9     21     
+10     12     
+10     22     
+
+===================================================
+    
+Case 3: JSON - hash GROUP BY returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     2     
+2     2     
+4     2     
+5     2     
+6     2     
+7     1     
+8     1     
+9     1     
+10     1     
+11     1     
+11     2     
+18     1     
+19     1     
+20     1     
+21     1     
+22     1     
+23     1     
+24     1     
+26     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.tc)
+
+  rewritten query: select /*+ PARALLEL(?) */ min([dba.tc].ca), count(*) from [dba.tc] [dba.tc] group by [dba.tc].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     2     
+2     2     
+4     2     
+5     2     
+6     2     
+7     1     
+8     1     
+9     1     
+10     1     
+11     1     
+11     2     
+18     1     
+19     1     
+20     1     
+21     1     
+22     1     
+23     1     
+24     1     
+26     1     
+
+===================================================
+0
+===================================================
+0

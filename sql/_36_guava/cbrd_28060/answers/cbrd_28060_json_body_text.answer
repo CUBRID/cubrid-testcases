@@ -1,0 +1,103 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: JSON - hash join returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     8     
+2     8     
+4     5     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.tb)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb and ([dba.ta].ca<[dba.tb].ca) order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+1     2     
+1     8     
+2     8     
+4     5     
+
+===================================================
+    
+Case 2: JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+3     1     
+4     2     
+6     1     
+7     1     
+9     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.ta)
+
+  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+min(ca)    count(*)    
+1     3     
+3     1     
+4     2     
+6     1     
+7     1     
+9     1     
+
+===================================================
+0
+===================================================
+0

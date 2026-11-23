@@ -1,72 +1,239 @@
 /**
  *  This test case verifies CBRD-28060: Hash strings in multi-byte words consistently with string comparison
  *
- *  A hash join hashes a NUMERIC key by its value. The change makes NUMERIC values of different
- *  declared scales that compare equal, such as 1.5 in NUMERIC(38,1) and in NUMERIC(38,20), get one
- *  hash. Each hash join is followed by its nested loop join twin, and the two results must match
- *  row by row. SHOW TRACE shows HASHJOIN. A NUMERIC without a precision keeps the scale of each
- *  value, up to 252 decimal places, and the same value written with more decimal places than 40
- *  must get one hash too. The last cases check that JSON keys, which hash as their body text or the
- *  SQL value they convert to, join and group as the twins do.
+ *  A hash join hashes a NUMERIC key by its value. The change makes NUMERIC values of different declared scales that
+ *  compare equal, such as 1.5 in NUMERIC(38,1) and in NUMERIC(38,20), get one hash. Each hash join is followed by its
+ *  nested loop join twin, and the two results must match row by row. SHOW TRACE shows HASHJOIN. Cases 1 to 55 join each
+ *  pair of the tn_<n> tables in the order of tn_zero, tn_one, tn_two, tn_three, tn_nine, tn_ten, tn_eighteen,
+ *  tn_nineteen, tn_twenty, tn_thirtyseven, tn_thirtyeight: Case 1 joins tn_zero and tn_one, Case 55 tn_thirtyseven and
+ *  tn_thirtyeight.
  *
  *  Coverage:
- *    Case 1 to 55:  NUMERIC - hash join of each pair of the tn_<n> tables returns the pairs of the nested loop join.
- *                   The pairs run in the order of tn_zero, tn_one, tn_two, tn_three, tn_nine, tn_ten, tn_eighteen,
- *                   tn_nineteen, tn_twenty, tn_thirtyseven, tn_thirtyeight: Case 1 joins tn_zero and tn_one,
- *                   Case 55 tn_thirtyseven and tn_thirtyeight
- *    Case 56:  float NUMERIC - hash join of tf_x and tf_y returns the pairs of the nested loop join
- *    Case 57:  float NUMERIC - hash GROUP BY on tf_xy returns the groups of the sort GROUP BY
- *    Case 58:  JSON - hash join returns the pairs of the nested loop join
- *    Case 59:  JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY
+ *    Case 1 to 55:  NUMERIC - hash join of each pair of the tn_<n> tables returns the pairs of the nested loop join
  */
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace
 -- holds no parallel workers lines, whose presence depends on the cores of the server
 
 -- tn_<n> holds NUMERIC(38,<n>) values. The names are in letters because CTP masks digits in a trace
+-- ca stands for one value in every tn_<n> table, and each table holds the values that fit its scale
+-- ca | cb
+-- ---+-----------------------------------------
+--  1 | 0
+--  2 | 1
+--  3 | 100
+--  4 | 0.5
+--  5 | 0.25
+--  6 | 0.1
+--  7 | 0.01
+--  8 | 0.001
+--  9 | 0.000001
+-- 10 | 1.5
+-- 11 | 12.34
+-- 12 | 9.9
+-- 13 | -0.5
+-- 14 | 0.1234567890123456789
+-- 15 | 0.00000000000000000001
+-- 16 | 0.12345678901234567890123456789012345678
+-- 17 | -1.0
+-- 18 | -12.3
+-- 19 | -123456789.0
 DROP TABLE IF EXISTS tn_zero;
 CREATE TABLE tn_zero (ca INT, cb NUMERIC(38,0));
-INSERT INTO tn_zero VALUES (1, 0), (2, 1), (3, 100), (17, -1.0), (19, -123456789.0);
+INSERT INTO tn_zero VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (17, -1.0),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_one;
 CREATE TABLE tn_one (ca INT, cb NUMERIC(38,1));
-INSERT INTO tn_one VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (6, 0.1), (10, 1.5), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_one VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (6, 0.1),
+  (10, 1.5),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_two;
 CREATE TABLE tn_two (ca INT, cb NUMERIC(38,2));
-INSERT INTO tn_two VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_two VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_three;
 CREATE TABLE tn_three (ca INT, cb NUMERIC(38,3));
-INSERT INTO tn_three VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_three VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_nine;
 CREATE TABLE tn_nine (ca INT, cb NUMERIC(38,9));
-INSERT INTO tn_nine VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_nine VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_ten;
 CREATE TABLE tn_ten (ca INT, cb NUMERIC(38,10));
-INSERT INTO tn_ten VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_ten VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_eighteen;
 CREATE TABLE tn_eighteen (ca INT, cb NUMERIC(38,18));
-INSERT INTO tn_eighteen VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_eighteen VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_nineteen;
 CREATE TABLE tn_nineteen (ca INT, cb NUMERIC(38,19));
-INSERT INTO tn_nineteen VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (14, 0.1234567890123456789), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_nineteen VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (14, 0.1234567890123456789),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_twenty;
 CREATE TABLE tn_twenty (ca INT, cb NUMERIC(38,20));
-INSERT INTO tn_twenty VALUES (1, 0), (2, 1), (3, 100), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (11, 12.34), (12, 9.9), (13, -0.5), (14, 0.1234567890123456789), (15, 0.00000000000000000001), (17, -1.0), (18, -12.3), (19, -123456789.0);
+INSERT INTO tn_twenty VALUES
+  (1, 0),
+  (2, 1),
+  (3, 100),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (11, 12.34),
+  (12, 9.9),
+  (13, -0.5),
+  (14, 0.1234567890123456789),
+  (15, 0.00000000000000000001),
+  (17, -1.0),
+  (18, -12.3),
+  (19, -123456789.0);
 
 DROP TABLE IF EXISTS tn_thirtyseven;
 CREATE TABLE tn_thirtyseven (ca INT, cb NUMERIC(38,37));
-INSERT INTO tn_thirtyseven VALUES (1, 0), (2, 1), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (10, 1.5), (12, 9.9), (13, -0.5), (14, 0.1234567890123456789), (15, 0.00000000000000000001), (17, -1.0);
+INSERT INTO tn_thirtyseven VALUES
+  (1, 0),
+  (2, 1),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (10, 1.5),
+  (12, 9.9),
+  (13, -0.5),
+  (14, 0.1234567890123456789),
+  (15, 0.00000000000000000001),
+  (17, -1.0);
 
 DROP TABLE IF EXISTS tn_thirtyeight;
 CREATE TABLE tn_thirtyeight (ca INT, cb NUMERIC(38,38));
-INSERT INTO tn_thirtyeight VALUES (1, 0), (4, 0.5), (5, 0.25), (6, 0.1), (7, 0.01), (8, 0.001), (9, 0.000001), (13, -0.5), (14, 0.1234567890123456789), (15, 0.00000000000000000001), (16, 0.12345678901234567890123456789012345678);
+INSERT INTO tn_thirtyeight VALUES
+  (1, 0),
+  (4, 0.5),
+  (5, 0.25),
+  (6, 0.1),
+  (7, 0.01),
+  (8, 0.001),
+  (9, 0.000001),
+  (13, -0.5),
+  (14, 0.1234567890123456789),
+  (15, 0.00000000000000000001),
+  (16, 0.12345678901234567890123456789012345678);
 
 UPDATE STATISTICS ON tn_zero, tn_one, tn_two, tn_three, tn_nine, tn_ten, tn_eighteen, tn_nineteen, tn_twenty, tn_thirtyseven, tn_thirtyeight WITH FULLSCAN;
 
@@ -455,83 +622,7 @@ show trace;
 set trace off;
 select /*+ no_use_hash use_nl */ x.ca, y.ca from tn_thirtyseven x, tn_thirtyeight y where x.cb = y.cb order by 1, 2;
 
--- tf_x and tf_y hold NUMERIC values without a precision, which keep the decimal places of each value.
--- tf_y holds the values of tf_x with more decimal places. The hash removes the trailing zeros
--- of a value 40 digits at most, and the decimal places it leaves must not depend on that limit
-DROP TABLE IF EXISTS tf_x;
-CREATE TABLE tf_x (ca INT, cb NUMERIC);
--- ca | cb    | decimal places
--- ---+-------+------------------
---  1 | 1E-40 | 40 decimal places
---  2 | 1E-41 | 41 decimal places
---  3 | 1E-60 | 60 decimal places
---  4 | 0.5   | 1 decimal place
-INSERT INTO tf_x VALUES
-(1, 0.0000000000000000000000000000000000000001),
-(2, 0.00000000000000000000000000000000000000001),
-(3, 0.000000000000000000000000000000000000000000000000000000000001),
-(4, 0.5);
-
-DROP TABLE IF EXISTS tf_y;
-CREATE TABLE tf_y (ca INT, cb NUMERIC);
--- ca | cb    | decimal places
--- ---+-------+----------------------------------------
--- 11 | 1E-40 | 41 decimal places
--- 12 | 1E-40 | 79 decimal places, 39 zeros after the 1
--- 21 | 1E-41 | 42 decimal places
--- 31 | 1E-60 | 61 decimal places
--- 32 | 1E-60 | 99 decimal places, 39 zeros after the 1
--- 41 | 0.5   | 2 decimal places
-INSERT INTO tf_y VALUES
-(11, 0.00000000000000000000000000000000000000010),
-(12, 0.0000000000000000000000000000000000000001000000000000000000000000000000000000000),
-(21, 0.000000000000000000000000000000000000000010),
-(31, 0.0000000000000000000000000000000000000000000000000000000000010),
-(32, 0.000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000),
-(41, 0.50);
-
-DROP TABLE IF EXISTS tf_xy;
-CREATE TABLE tf_xy AS SELECT * FROM tf_x UNION ALL SELECT * FROM tf_y;
-
-UPDATE STATISTICS ON tf_x, tf_y, tf_xy WITH FULLSCAN;
-
-evaluate 'Case 56: float NUMERIC - hash join of tf_x and tf_y returns the pairs of the nested loop join';
-set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from tf_x x, tf_y y where x.cb = y.cb order by 1, 2;
-show trace;
-set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from tf_x x, tf_y y where x.cb = y.cb order by 1, 2;
-
-evaluate 'Case 57: float NUMERIC - hash GROUP BY on tf_xy returns the groups of the sort GROUP BY';
-set trace on;
-select min(ca), count(*) from tf_xy group by cb order by 1, 2;
-show trace;
-set trace off;
-select /*+ no_hash_aggregate */ min(ca), count(*) from tf_xy group by cb order by 1, 2;
-
--- JSON keys of one table: equal texts, '{"a": 1}' and '{"a":1}' of one body, '{"a":1.0}' of another
-DROP TABLE IF EXISTS tc, tb, ta;
-CREATE TABLE ta (ca INT, cb JSON);
-INSERT INTO ta VALUES (1, '{"a":1}'), (2, '{"a":1}'), (3, '[1,2]'), (4, '"x"'), (5, '"x"'), (6, 'true'), (7, NULL), (8, '{"a": 1}'), (9, '{"a":1.0}');
-CREATE TABLE tb AS SELECT * FROM ta;
-
-UPDATE STATISTICS ON ta, tb WITH FULLSCAN;
-
-evaluate 'Case 58: JSON - hash join returns the pairs of the nested loop join';
-set trace on;
-SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ ta.ca, tb.ca FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
-show trace;
-set trace off;
-SELECT /*+ NO_USE_HASH USE_NL */ ta.ca, tb.ca FROM ta, tb WHERE ta.cb = tb.cb AND ta.ca < tb.ca ORDER BY 1, 2;
-
-evaluate 'Case 59: JSON - hash GROUP BY on ta returns the groups of the sort GROUP BY';
-set trace on;
-select min(ca), count(*) from ta group by cb order by 1, 2;
-show trace;
-set trace off;
-select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1, 2;
-
 -- cleanup
 set trace off;
 
-drop table if exists ta, tb, tc, tf_x, tf_y, tf_xy, tn_one, tn_ten, tn_two, tn_nine, tn_zero, tn_three, tn_twenty, tn_eighteen, tn_nineteen, tn_thirtyeight, tn_thirtyseven;
+DROP TABLE IF EXISTS tn_zero, tn_one, tn_two, tn_three, tn_nine, tn_ten, tn_eighteen, tn_nineteen, tn_twenty, tn_thirtyseven, tn_thirtyeight;

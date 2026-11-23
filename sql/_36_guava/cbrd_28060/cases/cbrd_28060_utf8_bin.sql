@@ -172,10 +172,16 @@ UPDATE STATISTICS ON ta, tb, tc WITH FULLSCAN;
 
 evaluate 'Case 1: VARCHAR(40) keys - hash join of ta and tb returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from ta x, tb y
+where x.cb = y.cb
+order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca
+from ta x, tb y
+where x.cb = y.cb
+order by 1, 2;
 
 evaluate 'Case 2: VARCHAR(40) keys - hash GROUP BY on ta returns the groups of the sort GROUP BY';
 set trace on;
@@ -186,7 +192,226 @@ select /*+ no_hash_aggregate */ min(ca), count(*) from ta group by cb order by 1
 
 evaluate 'Case 3: VARCHAR(40) keys - tc prune per VARCHAR(40) constant reads one partition and matches ta';
 set trace on;
-select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part from (SELECT 1 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 2 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 3 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 4 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 5 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 6 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 7 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 8 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 9 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 10 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 11 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 12 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 13 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 14 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 15 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 16 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 17 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 18 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 19 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 20 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 21 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 22 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 23 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 24 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 25 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 26 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 27 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 28 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 29 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 30 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 31 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 32 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 33 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 34 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 35 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 36 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 37 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 38 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 39 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 40 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 41 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 42 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 43 AS ca, (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part) r order by ca;
+-- ca | cb                   | note
+-- ---+----------------------+----------------------------------------------------
+--  1 | ''                   | empty string
+--  2 | ' '                  | a space only
+--  3 | '  '                 | two spaces only
+--  4 | 'a'                  |
+--  5 | 'a '                 | trailing space
+--  6 | 'a  '                | two trailing spaces
+--  7 | 'A'                  | upper case of 'a'
+--  8 | 'a b'                | space in the middle
+--  9 | 'a\0b'               | NUL in the middle
+-- 10 | 'a\0'                | trailing NUL
+-- 11 | '\0'                 | a NUL only
+-- 12 | '\0b'                | leading NUL
+-- 13 | ' b'                 | leading space
+-- 14 | 'b'                  |
+-- 15 | 'abcdefgh'           | 8 bytes, one full 8-byte chunk
+-- 16 | 'abcdefgh '          | space as byte 9, past the first chunk
+-- 17 | 'abcdefgh\0'         | NUL as byte 9, past the first chunk
+-- 18 | 'abcdefgh \0'        | space and NUL past the first chunk
+-- 19 | 'abcdefghi'          | 9 bytes
+-- 20 | 'ABCDEFGHI'          | upper case of 'abcdefghi'
+-- 21 | 'abc def gh'         | spaces inside the first chunk
+-- 22 | 'abc\0def\0gh'       | NULs inside the first chunk
+-- 23 | 'abcdefghijklmnop'   | 16 bytes, two full chunks
+-- 24 | 'abcdefghijklmnop  ' | trailing spaces past two chunks
+-- 25 | 'i'                  |
+-- 26 | 'I'                  | upper case of 'i'
+-- 27 | 'ss'                 | expansion of '<U+00DF>'
+-- 28 | 'e'                  |
+-- 29 | 'E'                  | upper case of 'e'
+-- 30 | 'a\tb'               | tab, not a space
+-- 31 | '<U+0131>'           | U+0131 dotless i (utf8_tr_cs case pair of I)
+-- 32 | '<U+0130>'           | U+0130 dotted capital I (utf8_tr_cs case pair of i)
+-- 33 | '<U+00E9>'           | U+00E9, 2 bytes
+-- 34 | '<U+00C9>'           | U+00C9, upper case of '<U+00E9>'
+-- 35 | '<U+00DF>'           | U+00DF, 2 bytes
+-- 36 | 'a<U+00E9>'          | ASCII then a 2-byte character
+-- 37 | 'A<U+00C9>'          | upper case of 'a<U+00E9>'
+-- 38 | '<U+3000>'           | U+3000 ideographic space, 3 bytes
+-- 39 | 'a<U+3000>b'         | U+3000 in the middle
+-- 40 | '<U+AC00>'           | U+AC00, 3 bytes
+-- 41 | '<U+AC00> '          | trailing space after a 3-byte character
+-- 42 | '<U+AC00>\0'         | trailing NUL after a 3-byte character
+-- 43 | '<U+AC00><U+3000>'   | trailing U+3000
+select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
+from (
+  SELECT 1 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 2 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 3 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 4 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 5 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 6 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 7 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 8 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 9 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 10 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 11 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 12 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 13 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 14 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 15 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 16 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 17 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 18 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 19 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 20 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 21 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 22 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 23 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 24 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 25 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 26 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 27 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 28 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 29 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 30 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 31 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 32 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 33 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 34 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 35 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 36 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 37 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 38 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 39 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 40 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 41 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 42 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 43 AS ca,
+    (SELECT COUNT (*) FROM ta WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM tc WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+) r
+order by ca;
 show trace;
 set trace off;
 
@@ -375,41 +600,403 @@ UPDATE STATISTICS ON ta, tb, tc, td WITH FULLSCAN;
 
 evaluate 'Case 4: CHAR(3) keys - hash join of ta and tb returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from ta x, tb y
+where x.cb = y.cb
+order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from ta x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca
+from ta x, tb y
+where x.cb = y.cb
+order by 1, 2;
 
 evaluate 'Case 5: CHAR(3) keys - hash join of ta and tc returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from ta x, tc y where x.cb = y.cb order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from ta x, tc y
+where x.cb = y.cb
+order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from ta x, tc y where x.cb = y.cb order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca
+from ta x, tc y
+where x.cb = y.cb
+order by 1, 2;
 
 evaluate 'Case 6: CHAR(3) keys - hash join of tb and tc returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from tb x, tc y where x.cb = y.cb order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from tb x, tc y
+where x.cb = y.cb
+order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from tb x, tc y where x.cb = y.cb order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca
+from tb x, tc y
+where x.cb = y.cb
+order by 1, 2;
 
 evaluate 'Case 7: CHAR(3) keys - hash join of tb and tb returns the pairs of the nested loop join';
 set trace on;
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca from tb x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from tb x, tb y
+where x.cb = y.cb
+order by 1, 2;
 show trace;
 set trace off;
-select /*+ no_use_hash use_nl */ x.ca, y.ca from tb x, tb y where x.cb = y.cb order by 1, 2;
+select /*+ no_use_hash use_nl */ x.ca, y.ca
+from tb x, tb y
+where x.cb = y.cb
+order by 1, 2;
 
 evaluate 'Case 8: CHAR(3) keys - td prune per CHAR(5) constant reads one partition and matches tb';
 set trace on;
-select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part from (SELECT 1 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST ('' AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST ('' AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 2 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 3 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 4 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 5 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 6 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 7 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 8 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 9 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 10 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 11 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 12 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 13 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 14 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 15 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (105 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (105 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 16 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (73 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (73 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 17 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 18 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (101 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (101 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 19 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (69 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (69 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 20 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 21 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50353 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50353 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 22 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50352 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50352 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 23 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 24 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 25 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50079 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50079 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 26 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 27 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 28 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 29 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 30 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 31 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 32 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 33 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part) r order by ca;
+-- ca | cb                 | note
+-- ---+--------------------+----------------------------------------------------
+--  1 | ''                 | empty string
+--  2 | ' '                | a space only
+--  3 | '  '               | two spaces only
+--  4 | 'a'                |
+--  5 | 'a '               | trailing space
+--  6 | 'a  '              | two trailing spaces
+--  7 | 'A'                | upper case of 'a'
+--  8 | 'a b'              | space in the middle
+--  9 | 'a\0b'             | NUL in the middle
+-- 10 | 'a\0'              | trailing NUL
+-- 11 | '\0'               | a NUL only
+-- 12 | '\0b'              | leading NUL
+-- 13 | ' b'               | leading space
+-- 14 | 'b'                |
+-- 15 | 'i'                |
+-- 16 | 'I'                | upper case of 'i'
+-- 17 | 'ss'               | expansion of '<U+00DF>'
+-- 18 | 'e'                |
+-- 19 | 'E'                | upper case of 'e'
+-- 20 | 'a\tb'             | tab, not a space
+-- 21 | '<U+0131>'         | U+0131 dotless i (utf8_tr_cs case pair of I)
+-- 22 | '<U+0130>'         | U+0130 dotted capital I (utf8_tr_cs case pair of i)
+-- 23 | '<U+00E9>'         | U+00E9, 2 bytes
+-- 24 | '<U+00C9>'         | U+00C9, upper case of '<U+00E9>'
+-- 25 | '<U+00DF>'         | U+00DF, 2 bytes
+-- 26 | 'a<U+00E9>'        | ASCII then a 2-byte character
+-- 27 | 'A<U+00C9>'        | upper case of 'a<U+00E9>'
+-- 28 | '<U+3000>'         | U+3000 ideographic space, 3 bytes
+-- 29 | 'a<U+3000>b'       | U+3000 in the middle
+-- 30 | '<U+AC00>'         | U+AC00, 3 bytes
+-- 31 | '<U+AC00> '        | trailing space after a 3-byte character
+-- 32 | '<U+AC00>\0'       | trailing NUL after a 3-byte character
+-- 33 | '<U+AC00><U+3000>' | trailing U+3000
+select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
+from (
+  SELECT 1 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST ('' AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST ('' AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 2 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 3 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 4 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 5 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 6 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 7 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 8 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 9 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 10 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 11 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 12 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 13 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 14 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 15 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (105 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (105 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 16 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (73 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (73 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 17 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 18 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (101 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (101 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 19 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (69 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (69 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 20 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 21 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50353 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50353 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 22 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50352 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50352 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 23 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 24 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 25 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50079 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50079 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 26 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 27 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 28 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 29 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 30 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 31 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 32 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 33 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS CHAR(5) COLLATE utf8_bin)) AS cnt_part
+) r
+order by ca;
 show trace;
 set trace off;
 
 evaluate 'Case 9: CHAR(3) keys - td prune per VARCHAR(40) constant reads one partition and matches tb';
 set trace on;
-select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part from (SELECT 1 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 2 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 3 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 4 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 5 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 6 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 7 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 8 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 9 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 10 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 11 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 12 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 13 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 14 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 15 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 16 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 17 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 18 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 19 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 20 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 21 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 22 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 23 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 24 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 25 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 26 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 27 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 28 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 29 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 30 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 31 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 32 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part UNION ALL SELECT 33 AS ca, (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base, (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part) r order by ca;
+-- ca | cb                 | note
+-- ---+--------------------+----------------------------------------------------
+--  1 | ''                 | empty string
+--  2 | ' '                | a space only
+--  3 | '  '               | two spaces only
+--  4 | 'a'                |
+--  5 | 'a '               | trailing space
+--  6 | 'a  '              | two trailing spaces
+--  7 | 'A'                | upper case of 'a'
+--  8 | 'a b'              | space in the middle
+--  9 | 'a\0b'             | NUL in the middle
+-- 10 | 'a\0'              | trailing NUL
+-- 11 | '\0'               | a NUL only
+-- 12 | '\0b'              | leading NUL
+-- 13 | ' b'               | leading space
+-- 14 | 'b'                |
+-- 15 | 'i'                |
+-- 16 | 'I'                | upper case of 'i'
+-- 17 | 'ss'               | expansion of '<U+00DF>'
+-- 18 | 'e'                |
+-- 19 | 'E'                | upper case of 'e'
+-- 20 | 'a\tb'             | tab, not a space
+-- 21 | '<U+0131>'         | U+0131 dotless i (utf8_tr_cs case pair of I)
+-- 22 | '<U+0130>'         | U+0130 dotted capital I (utf8_tr_cs case pair of i)
+-- 23 | '<U+00E9>'         | U+00E9, 2 bytes
+-- 24 | '<U+00C9>'         | U+00C9, upper case of '<U+00E9>'
+-- 25 | '<U+00DF>'         | U+00DF, 2 bytes
+-- 26 | 'a<U+00E9>'        | ASCII then a 2-byte character
+-- 27 | 'A<U+00C9>'        | upper case of 'a<U+00E9>'
+-- 28 | '<U+3000>'         | U+3000 ideographic space, 3 bytes
+-- 29 | 'a<U+3000>b'       | U+3000 in the middle
+-- 30 | '<U+AC00>'         | U+AC00, 3 bytes
+-- 31 | '<U+AC00> '        | trailing space after a 3-byte character
+-- 32 | '<U+AC00>\0'       | trailing NUL after a 3-byte character
+-- 33 | '<U+AC00><U+3000>' | trailing U+3000
+select /*+ no_parallel_subquery */ ca, cnt_base, cnt_part
+from (
+  SELECT 1 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 2 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 3 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 4 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 5 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 6 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 7 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 8 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 9 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 10 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 11 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 12 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 13 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 14 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 15 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 16 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 17 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 18 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 19 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 20 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 21 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 22 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 23 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 24 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 25 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 26 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 27 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 28 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 29 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 30 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 31 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 32 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+  UNION ALL
+  SELECT 33 AS ca,
+    (SELECT COUNT (*) FROM tb WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_base,
+    (SELECT COUNT (*) FROM td WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_bin)) AS cnt_part
+) r
+order by ca;
 show trace;
 set trace off;
 

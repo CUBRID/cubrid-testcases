@@ -1,0 +1,71 @@
+===================================================
+0
+===================================================
+0
+===================================================
+8
+===================================================
+    
+Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63     
+
+===================================================
+ca    cmp    
+1     gt     
+2     eq     
+3     gt     
+4     lt     
+5     lt     
+6     eq     
+7     gt     
+8     lt     
+
+===================================================
+    
+Case 2: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     1     
+2     2     
+2     3     
+6     6     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (b)
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ca, b.ca from [dba.ta] a, [dba.ta] b where a.cb=b.cc order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+ca    ca    
+2     1     
+2     2     
+2     3     
+6     6     
+
+===================================================
+0
+===================================================
+0

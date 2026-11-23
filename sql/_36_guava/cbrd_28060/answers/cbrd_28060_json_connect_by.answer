@@ -1,0 +1,59 @@
+===================================================
+0
+===================================================
+0
+===================================================
+9
+===================================================
+    
+Case 1: JSON - CONNECT BY by a hash list scan returns the rows of the single-table plan     
+
+===================================================
+0
+===================================================
+ca    level    
+1     1     
+2     2     
+3     2     
+4     2     
+5     3     
+6     3     
+7     3     
+8     2     
+9     3     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.ta)
+
+  rewritten query: select [dba.ta].ca, level from [dba.ta] [dba.ta] start with [dba.ta].ca= ?:?  connect by  prior [dba.ta].id=[dba.ta].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+ca    level    
+1     1     
+2     2     
+3     2     
+4     2     
+5     3     
+6     3     
+7     3     
+8     2     
+9     3     
+
+===================================================
+0
+===================================================
+0
