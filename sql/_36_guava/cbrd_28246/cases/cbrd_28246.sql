@@ -25,8 +25,19 @@ select t1.id, d.x from ra t1 left join (select trim('') x from rb) d on t1.c1 = 
 select t1.id, d.x from (select trim('') x from rb) d right join ra t1 on t1.c1 = d.x order by 1;
 select t1.id, d.x from ra t1 right join (select trim('') x from rb) d on t1.c1 = d.x order by 1;
 
--- same collation: the constant is still reduced
+-- other forms of the term that reach the same reduction
+select t1.id, t2.x1 from ra t1 left join rv t2 on t1.c1 in (t2.x1) order by 1;
+select t1.id, t2.x1 from ra t1 left join rv t2 on t1.c1 = cast(t2.x1 as varchar(10) collate utf8_en_ci) order by 1;
+select t1.id, t2.x1 from ra t1 left join rv t2 on t1.c2 = t2.x1 and t1.c1 = t2.x1 order by 1;
+
+-- same collation: the constant is still reduced (the plan shows the reduced term)
 select t1.id, t2.x1 from ra t1 left join rv t2 on t1.c2 = t2.x1 order by 1;
+--@queryplan
+select /*+ recompile */ t1.id, t2.x1 from ra t1 left join rv t2 on t1.c2 = t2.x1 order by 1;
+
+-- UPDATE with the join
+update ra t1 left join rv t2 on t1.c1 = t2.x1 set t1.c2 = t2.x1;
+select id, c1, c2 from ra order by 1;
 
 drop view rv;
 drop table ra, rb;
