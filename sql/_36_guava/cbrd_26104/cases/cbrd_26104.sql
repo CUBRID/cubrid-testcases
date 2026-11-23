@@ -96,7 +96,7 @@ cte_b as (select /*+ materialize */ sp(i) from tbl_b)
 select /*+ recompile */ count(*) from cte_a, cte_b;
 show trace;
 
-evaluate 'stored procedure excluded case - should work';
+evaluate 'stored procedure excluded case - the CTEs run one by one (CBRD-28126) - should not work';
 with cte_a as (select /*+ materialize */ * from tbl_a),
 cte_b as (select /*+ materialize */ * from tbl_b)
 select /*+ recompile */ count(*) from cte_a, cte_b;
@@ -114,7 +114,7 @@ cte_b as (select /*+ materialize */ owner.name from _db_class where class_name =
 select /*+ recompile */ count(*) from cte_a, cte_b;
 show trace;
 
-evaluate 'path expression not used - should work';
+evaluate 'path expression not used - the CTEs run one by one (CBRD-28126) - should not work';
 with cte_a as (select /*+ materialize */ owner from _db_class where class_name = 'tbl_a'),
 cte_b as (select /*+ materialize */ owner from _db_class where class_name = 'tbl_b')
 select /*+ recompile */ count(*) from cte_a, cte_b;
