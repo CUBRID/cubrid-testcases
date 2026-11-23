@@ -1,19 +1,21 @@
 /*
 Test Case: repeatable_read_release/rr_savepoint_keeps_lock
 Priority: 1
-Reference case: CBRD-28025 (CUBRID/cubrid#8652)
+Reference case: CBRD-28025 (CUBRID/cubrid#8652), CBRD-27654 (CUBRID/cubrid#8619)
 Author: hgryoo
 
 Test Point:
-Control: under REPEATABLE READ an UPDATE under a user savepoint keeps its row lock, because a rollback to the
-savepoint can take the change back before commit.  Another transaction with a lock timeout of 1 second times out
-on the row lock.
+Under REPEATABLE READ an UPDATE under a user savepoint gives its row lock back at the end of the statement too: a
+rollback to the savepoint sends the writers waiting on the stamp back to read.  Another transaction with a lock
+timeout of 1 second waits on the MVCCID lock of the first transaction and times out naming it.
+CBRD-28025 wrote this case as a control when an UPDATE under a savepoint kept its row lock to commit, so the
+timeout named the row.  Since CBRD-27654 the savepoint does not keep it.  The name keeps "keeps_lock".
 
 NUM_CLIENTS = 2
 C1: SAVEPOINT sp1;
 C1: UPDATE t28025_t SET v=v+1 WHERE id=1;
 C2: set transaction lock timeout 1;
-C2: UPDATE t28025_t SET v=v+100 WHERE id=1; -- C2 times out on the row lock
+C2: UPDATE t28025_t SET v=v+100 WHERE id=1; -- C2 times out on the MVCCID lock of C1
 C2: ROLLBACK;
 C1: COMMIT;
 */
@@ -41,7 +43,7 @@ C1: UPDATE t28025_t SET v=v+1 WHERE id=1;
 MC: wait until C1 ready;
 C2: set transaction lock timeout 1;
 MC: wait until C2 ready;
-/* C2 times out on the row lock */
+/* C2 times out on the MVCCID lock of C1 */
 C2: UPDATE t28025_t SET v=v+100 WHERE id=1;
 MC: wait until C2 ready;
 C2: ROLLBACK;
