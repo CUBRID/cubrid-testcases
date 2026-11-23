@@ -720,6 +720,18 @@ call test_complex_loop();
 drop table t2;
 drop table t1;
 
+drop procedure test_cursor_star, test_cursor_explicit, test_cursor_where_invisible, test_cursor_order_invisible, test_cursor_param;
+drop procedure test_for_loop_star, test_for_loop_star_where, test_for_loop_explicit, test_for_loop_where, test_for_loop_order, test_nested_for_loops;
+drop procedure test_select_into_star, test_select_into_explicit, test_select_agg_invisible, test_select_where_invisible;
+drop procedure test_insert_no_invisible, test_insert_with_invisible, test_update_invisible, test_update_where_invisible, test_delete_invisible;
+drop procedure test_dynamic_select_star, test_dynamic_explicit, test_dynamic_insert, test_dynamic_update, test_dynamic_table;
+drop function get_invisible_c1, count_by_c1, sum_invisible_cols;
+drop procedure get_invisible_values, test_out_params, double_invisible, test_inout_param;
+drop procedure test_exception_not_null, test_exception_cursor;
+drop procedure test_local_procedure, test_local_function;
+drop procedure test_bulk_insert, test_bulk_update;
+drop procedure test_case_invisible, test_case_expr_invisible;
+drop procedure test_open_for, test_nested_calls, test_mixed_sql, test_complex_loop;
 
 --+ server-message off
 
