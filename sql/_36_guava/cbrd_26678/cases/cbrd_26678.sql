@@ -14,8 +14,8 @@
  *      same transaction deleted or changed)
  *   6. Partitioned tables (CREATE INDEX is parallel, ALTER PK/UNIQUE is not)
  *   7. Fallback paths that stay single threaded (inheritance, heap below the threshold)
- *   8. Sort stage edges (every worker producing an empty run, a sort buffer too small for
- *      a parallel build, which then runs single threaded and spills into several runs)
+ *   8. Sort stage edges (every worker producing an empty run, a sort buffer small enough
+ *      that each worker spills into several runs)
  *   9. Whole-index comparison that would expose lost or misplaced index entries
  *
  *  How each case is judged:
@@ -880,17 +880,14 @@ select count(*) from ne where coln > 0 using index none;
 drop table if exists ne;
 
 -- ============================================================
-evaluate 'Case 36: extension - a sort buffer too small for a parallel build, so that the build runs single threaded and spills into several runs - the index comes out of a merge instead of one in memory sort, and both give count 50000, sum 1250025000, min 1, max 50000';
+evaluate 'Case 36: extension - a sort buffer small enough that each worker spills into several runs - the index comes out of a merge instead of one in memory sort, and both give count 50000, sum 1250025000, min 1, max 50000';
 -- ============================================================
--- index_build_buffer_size, 64MB by default, is the sort buffer of the whole build: each
--- worker of a parallel build sorts in a slice of it, of 128 pages (2MB) at least, so a
--- buffer too small for two slices builds single threaded. With the default buffer each
--- of the 4 workers sorts its share of the int keys of tb in memory at once. At 128K the
--- build takes no worker and spills into several runs, which go through the external
--- merge. This is the only parameter of the three that govern an index build that a
--- session can set; the other two are PRM_FOR_SERVER and are exercised by the shell test.
--- A worker spills only when its share outgrows its 2MB slice, which the 50000 int keys
--- of tb never do; the shell tests of CBRD-27236 and CBRD-27784 build tables that do.
+-- Each worker takes a sort buffer of its own, index_build_buffer_size, 2MB by default. A
+-- sort record for the int key of tb is a few tens of bytes, so 50000 of them never fill
+-- that buffer and every worker finishes as a single in memory sort. Lowering the buffer to
+-- 128K forces several runs per worker and puts the build through the external merge. This
+-- is the only parameter of the three that govern an index build that a session can set;
+-- the other two are PRM_FOR_SERVER and are exercised by the shell test.
 set system parameters 'index_build_buffer_size=128K';
 
 create index iyt on tb (ida);
