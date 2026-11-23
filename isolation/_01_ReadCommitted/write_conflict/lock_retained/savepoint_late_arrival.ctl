@@ -1,20 +1,22 @@
 /*
 Test Case: lock_retained/savepoint_late_arrival
 Priority: 1
-Reference case: CBRD-27034 (CUBRID/cubrid#7881)
+Reference case: CBRD-27034 (CUBRID/cubrid#7881), CBRD-27654 (CUBRID/cubrid#8619)
 Author: hgryoo
 
 Test Point:
-A writer that arrives after a partial rollback to a savepoint still waits until the transaction ends, and no deadlock occurs.
+A writer that arrives after a partial rollback to a savepoint does not wait: the rollback undid the change of the row, and the row lock ended with the statement. The end values are the same, and no deadlock occurs.
+CBRD-27034 wrote this case when a transaction that had declared a savepoint kept its row locks to commit, so the writer waited until the transaction ended.
+Since CBRD-27654 a DELETE or UPDATE under a savepoint also ends its row locks at the end of the statement, and a rollback to the savepoint wakes the writers that wait on the transaction.
+The path keeps "lock_retained".
 
 NUM_CLIENTS = 2
 C1: SAVEPOINT sp1;
 C1: UPDATE t27034_t SET v=v+5 WHERE id=1;
 C1: ROLLBACK TO SAVEPOINT sp1;
-C2: UPDATE t27034_t SET v=v+100 WHERE id=1; -- blocks
+C2: UPDATE t27034_t SET v=v+100 WHERE id=1; -- does not block
 C1: UPDATE t27034_t SET v=v+1 WHERE id=2;
 C1: COMMIT;
-C2: (released)
 C2: COMMIT;
 C1: SELECT id, v FROM t27034_t ORDER BY id;
 C1: COMMIT;
@@ -44,12 +46,11 @@ MC: wait until C1 ready;
 C1: ROLLBACK TO SAVEPOINT sp1;
 MC: wait until C1 ready;
 C2: UPDATE t27034_t SET v=v+100 WHERE id=1;
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C1: UPDATE t27034_t SET v=v+1 WHERE id=2;
 MC: wait until C1 ready;
 C1: COMMIT;
 MC: wait until C1 ready;
-MC: wait until C2 ready;
 C2: COMMIT;
 MC: wait until C2 ready;
 C1: SELECT id, v FROM t27034_t ORDER BY id;
