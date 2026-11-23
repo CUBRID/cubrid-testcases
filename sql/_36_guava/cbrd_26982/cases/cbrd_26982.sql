@@ -130,7 +130,7 @@ select /*+ recompile NO_PARALLEL_SCAN */ count(*) from tg having sum(distinct a)
 
 -- the bound values are evaluated once, after the workers merge their partial sums;
 -- the second execute of each query reuses its cached plan, whose trace has no plan text.
--- A trace prints the plan text of every query compiled since the last show trace,
+-- A trace shows the plan and the statistics of the last query run,
 -- so each execute is followed by its own show trace
 evaluate 'Case 12: bound values in the select list and HAVING of a prepared query  (2 aggregates, 1 column)';
 prepare q_par from 'select /*+ PARALLEL(8) */ sum(a) * ? from tg having sum(a) > ?';
