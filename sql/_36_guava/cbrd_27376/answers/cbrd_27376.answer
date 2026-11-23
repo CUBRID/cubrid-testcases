@@ -27,24 +27,24 @@ count(*)
 2     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tc node[?]
-               index: i_tc_ca term[?] (covers)
-               cost:  ? card ?
+temp(distinct)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tc node[?]
+                            index: i_tc_ca term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+(select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: sscan
                class: ta node[?]
@@ -52,7 +52,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+select count(*) from ta ta inner join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
 ===================================================
 count(*)    
 998     
@@ -147,7 +147,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.ca=av?.av_?
+select count(*) from ta ta inner join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on ta.ca=av?.av_?
 ===================================================
 count(*)    
 998     
@@ -234,24 +234,24 @@ count(*)
 2     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tc node[?]
-               index: i_tc_ca term[?] (covers)
-               cost:  ? card ?
+temp(distinct)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tc node[?]
+                            index: i_tc_ca term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+(select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: sscan
                class: ta node[?]
@@ -259,7 +259,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+select count(*) from ta ta inner join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
 ===================================================
     
 Case 7: a hint of the subquery (ORDERED) stays inside the derived table     
@@ -269,25 +269,25 @@ count(*)
 2     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: tc node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tb node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: tc node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tb node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca)
+(select /*+ ORDERED */ distinct tb.ca from tc tc, tb tb where tb.cb=tc.ca)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: sscan
                class: ta node[?]
@@ -295,7 +295,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select /*+ ORDERED */ tb.ca from tc tc, tb tb where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+select count(*) from ta ta inner join (select /*+ ORDERED */ distinct tb.ca from tc tc, tb tb where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
 ===================================================
     
 Case 8: a hint applying to the whole SELECT stays inside the derived table     
@@ -305,24 +305,24 @@ count(*)
 2     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tc node[?]
-               index: i_tc_ca term[?]
-               cost:  ? card ?
+temp(distinct)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tc node[?]
+                            index: i_tc_ca term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select /*+ NO_COVERING_IDX */ tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+(select /*+ NO_COVERING_IDX */ distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: sscan
                class: ta node[?]
@@ -330,31 +330,31 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select /*+ NO_COVERING_IDX */ tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
+select count(*) from ta ta inner join (select /*+ NO_COVERING_IDX */ distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca
 ===================================================
 count(*)    
 2     
 
 Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tc node[?]
-               sargs: term[?]
-               cost:  ? card ?
+temp(distinct)
+    subplan: nl-join (inner join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: tc node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select tb.ca from tb tb, tc tc where tb.cb=tc.ca using index none)
+(select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca using index none)
 Query plan:
 nl-join (inner join)
     edge:  term[?]
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: sscan
                class: ta node[?]
@@ -362,7 +362,7 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca using index none) av? (av_?) on av?.av_?=ta.ca
+select count(*) from ta ta inner join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca using index none) av? (av_?) on av?.av_?=ta.ca
 ===================================================
     
 Case 9: USING INDEX ... KEYLIMIT keeps the subquery nested     
@@ -408,23 +408,23 @@ count(*)
 300     
 
 Query plan:
-idx-join (inner join)
-    outer: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    inner: iscan
-               class: tc node[?]
-               index: i_tc_ca term[?] (covers)
-               cost:  ? card ?
+temp(distinct)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: tb node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: tc node[?]
+                            index: i_tc_ca term[?] (covers)
+                            cost:  ? card ?
+                 cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+(select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca)
 Query plan:
 idx-join (inner join)
-    outer: temp(distinct)
-               subplan: sscan
-                            class: av? node[?]
-                            cost:  ? card ?
+    outer: sscan
+               class: av? node[?]
                cost:  ? card ?
     inner: iscan
                class: t_big node[?]
@@ -432,6 +432,6 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select count(*) from t_big t_big semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.ca
+select count(*) from t_big t_big inner join (select distinct tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=t_big.ca
 ===================================================
 0
