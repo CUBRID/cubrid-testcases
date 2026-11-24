@@ -1,9 +1,10 @@
 /**
- *  This test case verifies CBRD-27929 (engine PR #8404).
+ *  This test case verifies CBRD-27929: Decide by cost whether to unnest a [NOT] EXISTS / [NOT] IN subquery
+ *  over several tables into a SEMI / ANTI JOIN with a derived table
  *
  *  A WHERE [NOT] EXISTS / [NOT] IN subquery whose FROM joins several tables is unnested into a SEMI / ANTI
- *  JOIN with a derived table (CBRD-27376). The query is now planned with each SEMI / ANTI JOIN spec in each
- *  form it can run in, spec by spec in the order of the FROM, and keeps the cheapest form:
+ *  JOIN with a derived table (CBRD-27376). With engine PR #8404 the query is planned with each SEMI / ANTI
+ *  JOIN spec in each form it can run in, spec by spec in the order of the FROM, and keeps the cheapest form:
  *    - the SEMI / ANTI JOIN with the derived table
  *    - for a SEMI JOIN, an INNER JOIN with the derived table read once without its duplicates: DISTINCT is
  *      added to the derived table, or kept from an IN subquery
@@ -19,7 +20,7 @@
  *  ta (ca, cb) 10 rows with cb = ca but (6, 7), no index: ta.ca 3, 6 and 9 have a match in tb joined to tc,
  *  and ta.cb holds 7 twice.
  *
- *  Every statement under test prints its plan (--@queryplan). A statement whose subquery is put back is
+ *  Every statement under test prints its plan. A statement whose subquery is put back is
  *  followed by the same query with NO_UNNEST, the subquery run as written, for the reference result.
  *
  *  Coverage:
@@ -42,20 +43,27 @@
 
 drop table if exists tl, tm, tn, tx, tb, tc, ta;
 
+-- tl, tm and tn hold 20000 rows each and have no index: a subquery over tm and tn run for each row of tl
+-- would read tm in full each time, so building the derived table once costs far less (Cases 1 and 3)
 create table tl (ca int not null, cb int);
 insert into tl select level, level from db_root connect by level <= 20000;
 create table tm (ca int not null, cb int, cc int);
 insert into tm select level, level, mod (level, 4) from db_root connect by level <= 20000;
 create table tn (ca int);
 insert into tn select level * 2 from db_root connect by level <= 20000;
+-- tx holds one row, so the subquery of Case 6, which reads tm in full, runs once when it is put back
 create table tx (ca int);
 insert into tx values (9999);
+-- tb and tc have an index on ca: a subquery over them run for each row of ta reads a few index entries,
+-- far less than building the derived table of tb and tc (Cases 4, 5, 7 and 8). The index on tb.ca also
+-- lets Case 2 read tb by the few distinct rows of its derived table instead of reading tb in full
 create table tb (ca int not null, cb int);
 insert into tb select level, level from db_root connect by level <= 10000;
 create index i_tb_ca on tb (ca);
 create table tc (ca int);
 insert into tc select level * 3 from db_root connect by level <= 10000;
 create index i_tc_ca on tc (ca);
+-- ta holds 10 rows, and ta.cb holds 7 twice, so that the derived table of Case 2 has a duplicate
 create table ta (ca int not null, cb int);
 insert into ta values (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 7), (7, 7), (8, 8), (9, 9), (10, 10);
 update statistics on tl, tm, tn, tx, tb, tc, ta with fullscan;
