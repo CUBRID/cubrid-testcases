@@ -289,13 +289,13 @@ Case 9: PL/CSQL FUNCTION: stored source and ALTER ... COMPILE keep the option
 0
 ===================================================
 sp_name    lang    authid    is_deterministic    is_parallel_enabled    code    
-m_nd     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION m_nd(n IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
+m_nd     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION [m_nd]([n] IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
 begin return n; end     
-m_ord     PLCSQL     DEFINER     YES     YES     CREATE OR REPLACE FUNCTION m_ord(n IN integer) RETURN integer AUTHID OWNER DETERMINISTIC PARALLEL_ENABLE AS
+m_ord     PLCSQL     DEFINER     YES     YES     CREATE OR REPLACE FUNCTION [m_ord]([n] IN integer) RETURN integer AUTHID OWNER DETERMINISTIC PARALLEL_ENABLE AS
 begin return n; end     
-m_plain     PLCSQL     DEFINER     NO     NO     CREATE OR REPLACE FUNCTION m_plain(n IN integer) RETURN integer AUTHID OWNER AS
+m_plain     PLCSQL     DEFINER     NO     NO     CREATE OR REPLACE FUNCTION [m_plain]([n] IN integer) RETURN integer AUTHID OWNER AS
 begin return n; end     
-m_pure     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION m_pure(n IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
+m_pure     PLCSQL     DEFINER     NO     YES     CREATE OR REPLACE FUNCTION [m_pure]([n] IN integer) RETURN integer AUTHID OWNER PARALLEL_ENABLE AS
 begin return n + 1; end     
 
 ===================================================
