@@ -1,9 +1,12 @@
 /**
- *  This test case verifies CBRD-27735: partition aggregates (reverse).
+ *  This test case verifies CBRD-27735: partition aggregates (reverse: small
+ *  partition scanned before the large one, so this partition order never
+ *  crosses a parallel-to-serial transition - kept as a regression guard,
+ *  not as a reproduction of the issue's own transition order).
  *  Partition scan transitions must preserve all qualifying values and finish
  *  without a query error or abnormal server termination.
- *  Every result has an independently calculated oracle and NO_PARALLEL_SCAN
- *  reference. Traces check partition order and BUILDVALUE worker tokens.
+ *  Each result is checked against its NO_PARALLEL_SCAN twin.
+ *  Traces check partition order and BUILDVALUE worker tokens.
  *  DISTINCT GROUP_CONCAT uses a nontruncating limit on both paths.
  *  Coverage:
  *    Case 1: Basic aggregates
@@ -19,9 +22,11 @@
 drop table if exists td;
 set trace on;
 
--- Large partition: 2048 rows doubled three times, with 192-byte hash padding
--- This is well above the test-mode 32-page floor (target at least 96 pages)
--- Small partition: at most 100 rows and short padding, well below the floor
+-- Large partition: 2048 rows doubled three times (16,384 rows), with
+-- 192-byte hash padding, about 261 heap pages - well above the test-mode
+-- 32-page parallel-scan floor.
+-- Small partition: at most 100 rows and short padding, 1 heap page - well
+-- below the floor
 create table td (id int, v int, pad varchar(200)) partition by range(id) (partition p_small values less than (1000000), partition p_big values less than maxvalue);
 insert into td select 1000000+rownum, mod(rownum,1000), concat(sha2(cast(rownum as varchar),512),sha2(cast(rownum as varchar),256)) from db_class aa, db_class bb, db_class cc limit 2048;
 insert into td select id+2048, mod(id+2048-1000000,1000), pad from td;
@@ -75,9 +80,9 @@ show trace;
 
 
 evaluate 'Case 7: Empty input; result = NO_PARALLEL_SCAN';
-select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
+select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where v < 0;
 show trace;
-select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where id < 0;
+select /*+ recompile no_parallel_scan */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where v < 0;
 show trace;
 
 
