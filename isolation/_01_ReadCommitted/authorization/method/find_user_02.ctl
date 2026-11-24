@@ -42,7 +42,7 @@ C1: CREATE USER design GROUPS dba;
 C1: COMMIT;
 MC: wait until C1 ready;
 
-C2: login as 'design';
+C2: CALL login ('design', '') ON CLASS db_user;
 C2: CREATE USER jones;
 C2: ALTER USER jones PASSWORD '1234';
 C2: select name from db_user order by 1;

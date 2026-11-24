@@ -18,7 +18,7 @@ C1 commit, C2 commit
 Metrics: schema = single table, index = multiple indexes (PK + simple), data size = small, where clause = simple
 
 Test Point:
-1) C2 needs to wait until C1 completed(Locking Test)
+1) C2 does not wait: the failed UPDATE of C1 gives back its row lock (CBRD-27654) (Locking Test)
 2) C1 and C2 can only see the its own update/delete but not other transactions changes (Visibility Test) 
 3) C1 instances should be updated, C2 instances should be deleted
 
@@ -51,12 +51,12 @@ MC: wait until C1 ready;
 C1: UPDATE t1 SET id = 2 WHERE id = 3;
 MC: wait until C1 ready;
 C2: DELETE FROM t1 WHERE col = 'ghi';
-/* expect: C2 needs to wait once C1 completed */
-MC: wait until C2 blocked;
+/* expect: C2 does not wait, the failed UPDATE of C1 gave back its row lock (CBRD-27654) */
+MC: wait until C2 ready;
 /* expect: C1 select - no data is updated */
 C1: SELECT * FROM t1 order by 1,2;
 C1: commit;
-/* expect: 1 row (id = 3) deleted message should generated once C2 ready, C2 select - id = 3 is deleted */
+/* expect: C2 select - id = 3 is deleted */
 MC: wait until C2 ready;
 C2: SELECT * FROM t1 order by 1,2;
 C2: commit;
