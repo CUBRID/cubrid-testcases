@@ -12,7 +12,7 @@ Case 1: the spec is saved without the owner name and the comment
 0
 ===================================================
 pkg_unique_name    scode_spec    scode_body    
-u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+u26487.pk1     CREATE OR REPLACE PACKAGE [pk1] AS
 function a return int;
 function b (n int) return varchar;
 end     null     
@@ -31,7 +31,7 @@ Case 2: the body is saved without the owner name
 0
 ===================================================
 pkg_unique_name    scode_body    
-u26487.pk1     CREATE OR REPLACE PACKAGE BODY pk1 AS
+u26487.pk1     CREATE OR REPLACE PACKAGE BODY [pk1] AS
 function a return int is
 begin
 return 1;
@@ -66,9 +66,7 @@ null
 
 ===================================================
 pkg_unique_name    scode_spec    scode_body    
-u26487.pk2     CREATE OR REPLACE PACKAGE pk2 AS
-function c return int; end pk2     CREATE OR REPLACE PACKAGE BODY pk2 AS
-function c return int is begin return pk1.a () + 10; end; end pk2     
+u26487.pk2     CREATE OR REPLACE PACKAGE [pk2] AS function c return int; end pk2     CREATE OR REPLACE PACKAGE BODY [pk2] AS function c return int is begin return pk1.a () + 10; end; end pk2     
 
 ===================================================
 unique_name    owner.name    comment    
@@ -112,10 +110,10 @@ Case 5: a replace of the spec saves the new spec and comment, the body and the g
 0
 ===================================================
 pkg_unique_name    scode_spec    scode_body    
-u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+u26487.pk1     CREATE OR REPLACE PACKAGE [pk1] AS
 FUNCTION a RETURN int;
 FUNCTION b (n int) RETURN varchar;
-end     CREATE OR REPLACE PACKAGE BODY pk1 AS
+end     CREATE OR REPLACE PACKAGE BODY [pk1] AS
 function a return int is
 begin
 return 1;
@@ -154,7 +152,7 @@ Case 6: a drop of the body keeps the spec, the comment and the grant
 0
 ===================================================
 pkg_unique_name    scode_spec    scode_body    
-u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+u26487.pk1     CREATE OR REPLACE PACKAGE [pk1] AS
 FUNCTION a RETURN int;
 FUNCTION b (n int) RETURN varchar;
 end     null     
