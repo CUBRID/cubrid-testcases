@@ -9,8 +9,14 @@
  *  t_numeric_nineteen, t_numeric_twenty, t_numeric_thirtyseven, t_numeric_thirtyeight: Case 1 joins t_numeric_zero and
  *  t_numeric_one, Case 55 t_numeric_thirtyseven and t_numeric_thirtyeight.
  *
+ *  Cases 56 and 57 join FLOAT and MONETARY keys with DOUBLE keys, which compare as DOUBLE: FLOAT 0.1 matches its own
+ *  value as DOUBLE and not DOUBLE 0.1, -0.0 matches 0.0, and NaN matches NaN.
+ *
  *  Coverage:
  *    Case 1 to 55:  NUMERIC - hash join of each pair of t_numeric_<n> returns the pairs of the nested loop join
+ *    Case 56:       FLOAT and DOUBLE - hash join of t_float and t_double returns the pairs of the nested loop join
+ *    Case 57:       MONETARY and DOUBLE - hash join of t_monetary and t_double returns the pairs of the nested
+ *                   loop join
  */
 
 set trace on;
@@ -1171,7 +1177,92 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
+-- Cases 56 and 57 join FLOAT and MONETARY keys with DOUBLE keys, which compare as DOUBLE
+DROP TABLE IF EXISTS t_float, t_double, t_monetary;
+CREATE TABLE t_float (ca INT, cb FLOAT);
+
+-- ca | cb
+-- ---+-----------------------------------
+--  1 | 0.1, the FLOAT nearest to 0.1
+--  2 | -0.0
+--  3 | 0.0
+--  4 | 1.5
+--  5 | 16777216, 2^24
+--  6 | 3.4e38
+--  7 | 1e-40, a subnormal FLOAT
+--  8 | NaN
+INSERT INTO t_float VALUES
+  (1, CAST (0.1 AS FLOAT)), (2, -0e0), (3, 0e0), (4, 1.5), (5, 16777216), (6, 3.4e38), (7, 1e-40),
+  (8, CAST ('nan' AS FLOAT));
+
+CREATE TABLE t_double (ca INT, cb DOUBLE);
+
+-- ca 2, 8 and 9 hold FLOAT values of t_float as DOUBLE; ca 1 holds the DOUBLE nearest to 0.1, which no FLOAT equals
+-- ca | cb
+-- ---+-----------------------------------
+--  1 | 0.1
+--  2 | FLOAT 0.1
+--  3 | -0.0
+--  4 | 0.0
+--  5 | 1.5
+--  6 | 16777217, 2^24 + 1
+--  7 | 16777216
+--  8 | FLOAT 3.4e38
+--  9 | FLOAT 1e-40
+-- 10 | NaN
+INSERT INTO t_double VALUES
+  (1, 0.1), (2, CAST (CAST (0.1 AS FLOAT) AS DOUBLE)), (3, -0e0), (4, 0e0), (5, 1.5), (6, 16777217), (7, 16777216),
+  (8, CAST (CAST (3.4e38 AS FLOAT) AS DOUBLE)), (9, CAST (CAST (1e-40 AS FLOAT) AS DOUBLE)), (10, CAST ('nan' AS DOUBLE));
+
+CREATE TABLE t_monetary (ca INT, cb MONETARY);
+
+-- ca | cb
+-- ---+----------
+--  1 | 0.1
+--  2 | -0.0
+--  3 | 0
+--  4 | 1.5
+--  5 | 16777216
+INSERT INTO t_monetary VALUES (1, 0.1), (2, -0e0), (3, 0), (4, 1.5), (5, 16777216);
+
+UPDATE STATISTICS ON t_float, t_double, t_monetary WITH FULLSCAN;
+
+evaluate 'Case 56: FLOAT and DOUBLE - hash join of t_float and t_double returns the pairs of the nested loop join';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from t_float x, t_double y where x.cb = y.cb order by 1, 2;
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca as x_ca, y.ca as y_ca from t_float x, t_double y where x.cb = y.cb),
+  nl_rows as (select /*+ no_use_hash use_nl */ x.ca as x_ca, y.ca as y_ca from t_float x, t_double y where x.cb = y.cb)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 57: MONETARY and DOUBLE - hash join of t_monetary and t_double returns the pairs of the nested loop join';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
+from t_monetary x, t_double y where x.cb = y.cb order by 1, 2;
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca as x_ca, y.ca as y_ca from t_monetary x, t_double y where x.cb = y.cb),
+  nl_rows as (select /*+ no_use_hash use_nl */ x.ca as x_ca, y.ca as y_ca from t_monetary x, t_double y where x.cb = y.cb)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
 -- cleanup
 DROP TABLE IF EXISTS t_numeric_zero, t_numeric_one, t_numeric_two, t_numeric_three, t_numeric_nine, t_numeric_ten, t_numeric_eighteen, t_numeric_nineteen, t_numeric_twenty, t_numeric_thirtyseven, t_numeric_thirtyeight;
+DROP TABLE IF EXISTS t_float, t_double, t_monetary;
 
 set trace off;

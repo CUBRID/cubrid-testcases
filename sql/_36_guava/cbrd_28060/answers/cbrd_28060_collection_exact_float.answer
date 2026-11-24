@@ -122,3 +122,85 @@ PASS
 0
 ===================================================
 0
+===================================================
+6
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+    
+Case 4: MULTISET - CONNECT BY NOCYCLE of BIGINT and NUMERIC(24,4) elements returns the rows of the CONNECT BY without the hash list scan     
+
+===================================================
+ca    id    level    connect_by_iscycle    
+1     1,2,     1     0     
+2     3,     2     0     
+5     5,     2     0     
+3     495038888524330534,     3     0     
+4     1,2,     4     1     
+6     6,     4     0     
+5     5,     5     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_multiset_tree_numeric)
+
+  rewritten query: select [dba.t_multiset_tree_numeric].ca, [dba.t_multiset_tree_numeric].id, level, connect_by_iscycle from [dba.t_multiset_tree_numeric] [dba.t_multiset_tree_numeric] start with [dba.t_multiset_tree_numeric].ca= ?:?  connect by nocycle  prior [dba.t_multiset_tree_numeric].id=[dba.t_multiset_tree_numeric].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_tree_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 5: MULTISET - CONNECT BY NOCYCLE of BIGINT and DOUBLE elements returns the rows of the CONNECT BY without the hash list scan     
+
+===================================================
+ca    id    level    connect_by_iscycle    
+1     1,2,     1     0     
+2     3,     2     0     
+5     5,     2     0     
+3     9007199254740993,     3     0     
+4     1,2,     4     1     
+6     6,     4     0     
+5     5,     5     0     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    TABLE SCAN (dba.t_multiset_tree_double)
+
+  rewritten query: select [dba.t_multiset_tree_double].ca, [dba.t_multiset_tree_double].id, level, connect_by_iscycle from [dba.t_multiset_tree_double] [dba.t_multiset_tree_double] start with [dba.t_multiset_tree_double].ca= ?:?  connect by nocycle  prior [dba.t_multiset_tree_double].id=[dba.t_multiset_tree_double].pid order by ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_multiset_tree_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+0

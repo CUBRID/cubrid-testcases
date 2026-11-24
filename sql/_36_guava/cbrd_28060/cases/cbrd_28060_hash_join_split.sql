@@ -8,6 +8,10 @@
  *  after each hash join prints PASS when the hash join and the merge join return the same rows as a multiset. SHOW
  *  TRACE shows no SPLIT, SPLIT, and SPLIT with parallel workers in HASHJOIN.
  *
+ *  Cases 12 to 14 run EXISTS, IN and NOT EXISTS subqueries, which the planner rewrites to a semi join or an anti join
+ *  and runs as HASH JOIN (semi join) or HASH JOIN (anti join). Their verification blocks compare the hash join with
+ *  the nested loop join.
+ *
  *  Coverage:
  *    Case 1:  INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the
  *             counts of the merge join
@@ -31,6 +35,12 @@
  *             parallel split returns the counts of the merge join
  *    Case 11: RIGHT OUTER JOIN of two columns - hash join without split, with the serial split, and with the parallel
  *             split returns the counts of the merge join
+ *    Case 12: EXISTS semi join of INT and BIGINT - hash join without split, with the serial split, and with the
+ *             parallel split returns the counts of the nested loop join
+ *    Case 13: IN semi join of NUMERIC of two scales - hash join without split, with the serial split, and with the
+ *             parallel split returns the counts of the nested loop join
+ *    Case 14: NOT EXISTS anti join of utf8_en_ci strings - hash join without split, with the serial split, and with the
+ *             parallel split returns the counts of the nested loop join
  */
 
 set trace on;
@@ -678,6 +688,168 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from hj_rows difference all select * from merge_rows)
     union all
     (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 12: EXISTS semi join of INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the counts of the nested loop join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ no_use_hash use_nl parallel(0) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca);
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE exists (select 1 from t_right y where y.ca = x.ca))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 13: IN semi join of NUMERIC of two scales - hash join without split, with the serial split, and with the parallel split returns the counts of the nested loop join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ no_use_hash use_nl parallel(0) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE x.cb in (select y.cb from t_right y);
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE x.cb in (select y.cb from t_right y);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE x.cb in (select y.cb from t_right y);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE x.cb in (select y.cb from t_right y);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE x.cb in (select y.cb from t_right y))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 14: NOT EXISTS anti join of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the nested loop join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ no_use_hash use_nl parallel(0) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd);
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(x.ca), count(x.cd)
+from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd);
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd)),
+  nl_rows as (select /*+ no_use_hash use_nl parallel(0) */ count(*) as cnt, count(x.ca) as cnt_ca, count(x.cd) as cnt_cd from t_left x WHERE not exists (select 1 from t_right y where y.cd = x.cd))
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
 -- cleanup

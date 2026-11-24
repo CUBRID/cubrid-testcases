@@ -7,12 +7,20 @@
  *  join hint. SHOW TRACE shows which join runs. The verification block after each join prints PASS when the join and
  *  its twin return the same rows as a multiset.
  *
+ *  Cases 4 and 5 run CONNECT BY NOCYCLE PRIOR id = pid, where id holds BIGINT elements and pid holds NUMERIC(24,4) or
+ *  DOUBLE elements of the same values. The CONNECT BY follows these comparisons: it reaches every row and marks the
+ *  cycle. The verification block prints PASS when it returns the rows of its twin without the hash list scan.
+ *
  *  Coverage:
  *    Case 1:  MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join
  *    Case 2:  MULTISET - BIGINT and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the
  *             nested loop join
  *    Case 3:  MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop under a hash join hint, with the pairs
  *             of the nested loop join
+ *    Case 4:  MULTISET - CONNECT BY NOCYCLE of BIGINT and NUMERIC(24,4) elements returns the rows of the CONNECT BY
+ *             without the hash list scan
+ *    Case 5:  MULTISET - CONNECT BY NOCYCLE of BIGINT and DOUBLE elements returns the rows of the CONNECT BY without
+ *             the hash list scan
  */
 
 set trace on;
@@ -105,7 +113,85 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
+-- Cases 4 and 5 run CONNECT BY NOCYCLE PRIOR id = pid on a tree whose id holds BIGINT elements and whose pid holds
+-- NUMERIC(24,4) or DOUBLE elements of the same values. Row 4 holds the id of row 1, so the children of row 4 are those
+-- of row 1, and row 2 under row 4 is a cycle
+DROP TABLE IF EXISTS t_multiset_tree_numeric, t_multiset_tree_double;
+CREATE TABLE t_multiset_tree_numeric (ca INT, id MULTISET (BIGINT), pid MULTISET (NUMERIC (24, 4)));
+
+-- ca | id                   | pid
+-- ---+----------------------+---------------------------
+--  1 | {1, 2}               | NULL
+--  2 | {3}                  | {2.0000, 1.0000}
+--  3 | {495038888524330534} | {3.0000}
+--  4 | {1, 2}               | {495038888524330534.0000}
+--  5 | {5}                  | {1.0000, 2.0000}
+--  6 | {6}                  | {495038888524330534.0000}
+INSERT INTO t_multiset_tree_numeric VALUES
+  (1, {1, 2}, NULL),
+  (2, {3}, {2.0000, 1.0000}),
+  (3, {495038888524330534}, {3.0000}),
+  (4, {1, 2}, {495038888524330534.0000}),
+  (5, {5}, {1.0000, 2.0000}),
+  (6, {6}, {495038888524330534.0000});
+
+CREATE TABLE t_multiset_tree_double (ca INT, id MULTISET (BIGINT), pid MULTISET (DOUBLE));
+
+-- the tree of t_multiset_tree_numeric with 2^53 + 1 in row 3: pid 2^53, the DOUBLE nearest to it, compares equal
+-- ca | id                 | pid
+-- ---+--------------------+-----------------------
+--  1 | {1, 2}             | NULL
+--  2 | {3}                | {2.0, 1.0}
+--  3 | {9007199254740993} | {3.0}
+--  4 | {1, 2}             | {9007199254740992.0}
+--  5 | {5}                | {1.0, 2.0}
+--  6 | {6}                | {9007199254740992.0}
+INSERT INTO t_multiset_tree_double VALUES
+  (1, {1, 2}, NULL),
+  (2, {3}, {2.0, 1.0}),
+  (3, {9007199254740993}, {3.0}),
+  (4, {1, 2}, {9007199254740992.0}),
+  (5, {5}, {1.0, 2.0}),
+  (6, {6}, {9007199254740992.0});
+
+UPDATE STATISTICS ON t_multiset_tree_numeric, t_multiset_tree_double WITH FULLSCAN;
+
+evaluate 'Case 4: MULTISET - CONNECT BY NOCYCLE of BIGINT and NUMERIC(24,4) elements returns the rows of the CONNECT BY without the hash list scan';
+SELECT ca, id, LEVEL, CONNECT_BY_ISCYCLE
+FROM t_multiset_tree_numeric START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid ORDER BY 3, 1;
+show trace;
+
+-- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+with
+  hashscan_rows as (SELECT ca, LEVEL as lvl, CONNECT_BY_ISCYCLE as cyc FROM t_multiset_tree_numeric START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid),
+  listscan_rows as (SELECT /*+ NO_HASH_LIST_SCAN */ ca, LEVEL as lvl, CONNECT_BY_ISCYCLE as cyc FROM t_multiset_tree_numeric START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hashscan_rows difference all select * from listscan_rows)
+    union all
+    (select * from listscan_rows difference all select * from hashscan_rows)
+  ) diff_result;
+
+evaluate 'Case 5: MULTISET - CONNECT BY NOCYCLE of BIGINT and DOUBLE elements returns the rows of the CONNECT BY without the hash list scan';
+SELECT ca, id, LEVEL, CONNECT_BY_ISCYCLE
+FROM t_multiset_tree_double START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid ORDER BY 3, 1;
+show trace;
+
+-- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+with
+  hashscan_rows as (SELECT ca, LEVEL as lvl, CONNECT_BY_ISCYCLE as cyc FROM t_multiset_tree_double START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid),
+  listscan_rows as (SELECT /*+ NO_HASH_LIST_SCAN */ ca, LEVEL as lvl, CONNECT_BY_ISCYCLE as cyc FROM t_multiset_tree_double START WITH ca = 1 CONNECT BY NOCYCLE PRIOR id = pid)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hashscan_rows difference all select * from listscan_rows)
+    union all
+    (select * from listscan_rows difference all select * from hashscan_rows)
+  ) diff_result;
+
 -- cleanup
-DROP TABLE IF EXISTS t_multiset_bigint, t_multiset_numeric, t_multiset_double;
+DROP TABLE IF EXISTS t_multiset_bigint, t_multiset_numeric, t_multiset_double, t_multiset_tree_numeric,
+  t_multiset_tree_double;
 
 set trace off;
