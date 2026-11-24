@@ -33,7 +33,7 @@ select k, count(distinct v) from t28181 where k = -1 group by k;
 select k, count(distinct v) cv from t28181 group by k having count(distinct v) < 13 order by k;
 
 -- Case 6: IN, NOT IN
-select count(*), sum(id) from t28181 where k in (select k from t28181 group by k having sum(v) > 1290);
+select count(*), sum(id) from t28181 where k in (select k from t28181 group by k having sum(v) > 1130);
 select count(*) from t28181 where k not in (select k from t28181 group by k having count(*) > 206);
 
 -- Case 7: =ANY, <>ALL, EXISTS
@@ -56,7 +56,7 @@ select k, count(*) from t28181 where k < 20 group by k;
 select k, count(*) c from t28181 group by k order by c;
 
 -- Case 12: LIMIT in the query of IN, and GROUPBY_NUM
-select count(*) from t28181 where k in (select k from t28181 group by k having sum(v) > 1200 limit 10);
+select count(*), sum(id) from t28181 where k in (select k from t28181 group by k having sum(v) > 1100 limit 10);
 select k, groupby_num () from t28181 group by k having groupby_num () < 5;
 
 -- Case 13: an ORDER BY on a CAST of the key that narrows it: the five dt groups tie on the date and keep the GROUP BY's order
