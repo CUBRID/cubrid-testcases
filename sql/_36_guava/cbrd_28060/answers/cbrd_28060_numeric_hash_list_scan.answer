@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3000
 ===================================================
 0
@@ -65,8 +67,6 @@ PASS
 Case 5: trace: Cases 1 to 4 run as a hash list scan (SCAN (hash temp(m), ...))     
 
 ===================================================
-0
-===================================================
 count(*)    
 3000     
 
@@ -74,24 +74,24 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.t_numeric_b)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb/ cast(? as numeric) from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cb/ cast(? as numeric) from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.ta] x, (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb/ cast(? as numeric) from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? )) y (ca, cf) where x.cb=y.cf
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_a] x, (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cb/ cast(? as numeric) from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? )) y (ca, cf) where x.cb=y.cf
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_numeric_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_numeric_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -102,24 +102,24 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.t_numeric_b)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.tb].ca, ([dba.tb].cb-?.?)/ cast(? as numeric) from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, ([dba.t_numeric_b].cb-?.?)/ cast(? as numeric) from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.ta] x, (select /*+ NO_MERGE */ [dba.tb].ca, ([dba.tb].cb-?.?)/ cast(? as numeric) from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? )) y (ca, cf) where x.ca=y.cf
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_a] x, (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, ([dba.t_numeric_b].cb-?.?)/ cast(? as numeric) from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? )) y (ca, cf) where x.ca=y.cf
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_numeric_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_numeric_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -130,24 +130,24 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.t_numeric_b)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cb from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.ta] x, (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cb from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? )) y (ca, cb) where x.cc=y.cb
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_a] x, (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cb from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? )) y (ca, cb) where x.cc=y.cb
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_numeric_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_numeric_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -158,28 +158,26 @@ count(*)
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tb)
+  TABLE SCAN (dba.t_numeric_b)
 
-  rewritten query: (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cc from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? ))
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cc from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? ))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (x)
     TABLE SCAN (y)
 
-  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.ta] x, (select /*+ NO_MERGE */ [dba.tb].ca, [dba.tb].cc from [dba.tb] [dba.tb] where ([dba.tb].ca>= ?:? )) y (ca, cc) where x.cd=y.cc
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_a] x, (select /*+ NO_MERGE */ [dba.t_numeric_b].ca, [dba.t_numeric_b].cc from [dba.t_numeric_b] [dba.t_numeric_b] where ([dba.t_numeric_b].ca>= ?:? )) y (ca, cc) where x.cd=y.cc
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_numeric_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.t_numeric_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
-===================================================
-0
 ===================================================
     
 Case 6: CONNECT BY with a float NUMERIC PRIOR key (prior (id / 1) = pid): 5 rows     
@@ -209,8 +207,6 @@ PASS     4
 Case 9: trace: Cases 6 to 8 run as a hash list scan     
 
 ===================================================
-0
-===================================================
 ca    lv    
 1     1     
 2     2     
@@ -223,13 +219,13 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.tc)
+    TABLE SCAN (dba.t_tree_same_scale)
 
-  rewritten query: select [dba.tc].ca, level from [dba.tc] [dba.tc] start with [dba.tc].pid is null  connect by [dba.tc].pid= prior ([dba.tc].id/ cast(? as numeric)) order siblings by ?
+  rewritten query: select [dba.t_tree_same_scale].ca, level from [dba.t_tree_same_scale] [dba.t_tree_same_scale] start with [dba.t_tree_same_scale].pid is null  connect by [dba.t_tree_same_scale].pid= prior ([dba.t_tree_same_scale].id/ cast(? as numeric)) order siblings by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_tree_same_scale), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -247,13 +243,13 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.td)
+    TABLE SCAN (dba.t_tree_wider_scale)
 
-  rewritten query: select [dba.td].ca, level from [dba.td] [dba.td] start with [dba.td].pid is null  connect by  prior [dba.td].id=[dba.td].pid order siblings by ?
+  rewritten query: select [dba.t_tree_wider_scale].ca, level from [dba.t_tree_wider_scale] [dba.t_tree_wider_scale] start with [dba.t_tree_wider_scale].pid is null  connect by  prior [dba.t_tree_wider_scale].id=[dba.t_tree_wider_scale].pid order siblings by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_tree_wider_scale), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
@@ -271,20 +267,18 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.te)
+    TABLE SCAN (dba.t_tree_bigint)
 
-  rewritten query: select [dba.te].ca, level from [dba.te] [dba.te] start with [dba.te].pid is null  connect by  prior [dba.te].id=[dba.te].pid order siblings by ?
+  rewritten query: select [dba.t_tree_bigint].ca, level from [dba.t_tree_bigint] [dba.t_tree_bigint] start with [dba.t_tree_bigint].pid is null  connect by  prior [dba.t_tree_bigint].id=[dba.t_tree_bigint].pid order siblings by ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_tree_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     CONNECTBY (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
-===================================================
-0
 ===================================================
     
 Case 10: NUMERIC(38,0) against a float NUMERIC of scale -5 (a NUMERIC(38,-5) cast to NUMERIC): the hash join and the hash list scan find the pair     
@@ -293,5 +287,7 @@ Case 10: NUMERIC(38,0) against a float NUMERIC of scale -5 (a NUMERIC(38,-5) cas
 res    
 PASS     
 
+===================================================
+0
 ===================================================
 0

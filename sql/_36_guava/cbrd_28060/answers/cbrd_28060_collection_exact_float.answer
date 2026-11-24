@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3
 ===================================================
 0
@@ -19,8 +21,6 @@
 Case 1: MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
 ca    ca    
 31     41     
 32     42     
@@ -32,10 +32,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_multiset_bigint)
+      TABLE SCAN (dba.t_multiset_numeric)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_bigint].ca, [dba.t_multiset_numeric].ca from [dba.t_multiset_bigint] [dba.t_multiset_bigint], [dba.t_multiset_numeric] [dba.t_multiset_numeric] where [dba.t_multiset_bigint].cb=[dba.t_multiset_numeric].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -44,26 +44,20 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_multiset_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_multiset_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-31     41     
-32     42     
-33     43     
+result    
+PASS     
 
 ===================================================
     
-Case 2: MULTISET - BIGINT and DOUBLE elements join by nested loop, with its pairs     
+Case 2: MULTISET - BIGINT and DOUBLE elements join by nested loop, with the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 31     51     
@@ -76,32 +70,26 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tc)
+      TABLE SCAN (dba.t_multiset_bigint)
+      TABLE SCAN (dba.t_multiset_double)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tc].ca from [dba.ta] [dba.ta], [dba.tc] [dba.tc] where [dba.ta].cb=[dba.tc].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_bigint].ca, [dba.t_multiset_double].ca from [dba.t_multiset_bigint] [dba.t_multiset_bigint], [dba.t_multiset_double] [dba.t_multiset_double] where [dba.t_multiset_bigint].cb=[dba.t_multiset_double].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_multiset_bigint), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-31     51     
-32     52     
-33     53     
+result    
+PASS     
 
 ===================================================
     
-Case 3: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with its pairs     
+Case 3: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 41     51     
@@ -114,25 +102,21 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.tb)
-      TABLE SCAN (dba.tc)
+      TABLE SCAN (dba.t_multiset_numeric)
+      TABLE SCAN (dba.t_multiset_double)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tb].ca, [dba.tc].ca from [dba.tb] [dba.tb], [dba.tc] [dba.tc] where [dba.tb].cb=[dba.tc].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_numeric].ca, [dba.t_multiset_double].ca from [dba.t_multiset_numeric] [dba.t_multiset_numeric], [dba.t_multiset_double] [dba.t_multiset_double] where [dba.t_multiset_numeric].cb=[dba.t_multiset_double].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_multiset_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-41     51     
-42     52     
-43     53     
+result    
+PASS     
 
 ===================================================
 0

@@ -3,13 +3,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 8
 ===================================================
     
 Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63     
 
 ===================================================
-ca    cmp    
+id    cmp    
 1     gt     
 2     eq     
 3     gt     
@@ -24,9 +26,7 @@ ca    cmp
 Case 2: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
-ca    ca    
+id    id    
 2     1     
 2     2     
 2     3     
@@ -41,7 +41,7 @@ Query Plan:
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ca, b.ca from [dba.ta] a, [dba.ta] b where a.cb=b.cc order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.id, b.id from [dba.t_json_a] a, [dba.t_json_a] b where a.left_body=b.right_body order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -50,20 +50,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-2     1     
-2     2     
-2     3     
-6     6     
+result    
+PASS     
 
 ===================================================
 0
@@ -76,7 +71,7 @@ ca    ca
 Case 3: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE     
 
 ===================================================
-ca    cmp    
+id    cmp    
 1     lt     
 2     lt     
 3     lt     
@@ -90,9 +85,7 @@ ca    cmp
 Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
-ca    ca    
+id    id    
 2     7     
 7     7     
 
@@ -105,7 +98,7 @@ Query Plan:
       TABLE SCAN (a)
       TABLE SCAN (b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.ca, b.ca from [dba.tb] a, [dba.tb] b where a.cb=b.cc order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ a.id, b.id from [dba.t_json_b] a, [dba.t_json_b] b where a.left_body=b.right_body order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -114,21 +107,16 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-2     7     
-7     7     
+result    
+PASS     
 
-===================================================
-0
 ===================================================
 0
 ===================================================

@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 2
 ===================================================
 0
@@ -12,8 +14,6 @@
     
 Case 1: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     11     
@@ -25,10 +25,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_set_numeric_a)
+      TABLE SCAN (dba.t_set_numeric_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_numeric_a].ca, [dba.t_set_numeric_b].ca from [dba.t_set_numeric_a] [dba.t_set_numeric_a], [dba.t_set_numeric_b] [dba.t_set_numeric_b] where [dba.t_set_numeric_a].cb=[dba.t_set_numeric_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -37,18 +37,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_set_numeric_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_set_numeric_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     11     
-2     12     
+result    
+PASS     
 
 ===================================================
 0

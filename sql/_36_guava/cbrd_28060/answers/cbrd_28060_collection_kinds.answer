@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 5
 ===================================================
 0
@@ -23,8 +25,6 @@
 Case 1: SET, MULTISET and SEQUENCE across kinds - hash join returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
 ca    ca    
 1     11     
 2     11     
@@ -38,10 +38,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_sequence_int)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_sequence_int].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_sequence_int] [dba.t_sequence_int] where [dba.t_set_int].cb=[dba.t_sequence_int].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -50,24 +50,16 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_sequence_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     11     
-2     11     
-3     13     
-4     11     
-5     15     
+result    
+PASS     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     21     
@@ -81,10 +73,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tc)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_sequence_numeric)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tc].ca from [dba.ta] [dba.ta], [dba.tc] [dba.tc] where [dba.ta].cb=[dba.tc].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_sequence_numeric].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_sequence_numeric] [dba.t_sequence_numeric] where [dba.t_set_int].cb=[dba.t_sequence_numeric].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -93,23 +85,16 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_sequence_numeric), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     21     
-2     21     
-3     23     
-4     21     
+result    
+PASS     
 
-===================================================
-0
 ===================================================
 ca    ca    
 31     11     
@@ -125,10 +110,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.td)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_multiset_int)
+      TABLE SCAN (dba.t_sequence_int)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.td].ca, [dba.tb].ca from [dba.td] [dba.td], [dba.tb] [dba.tb] where [dba.td].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_int].ca, [dba.t_sequence_int].ca from [dba.t_multiset_int] [dba.t_multiset_int], [dba.t_sequence_int] [dba.t_sequence_int] where [dba.t_multiset_int].cb=[dba.t_sequence_int].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -137,25 +122,16 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_sequence_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-31     11     
-31     12     
-32     11     
-32     12     
-33     14     
-34     16     
+result    
+PASS     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     31     
@@ -171,10 +147,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.td)
+      TABLE SCAN (dba.t_set_int)
+      TABLE SCAN (dba.t_multiset_int)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.td].ca from [dba.ta] [dba.ta], [dba.td] [dba.td] where [dba.ta].cb=[dba.td].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_set_int].ca, [dba.t_multiset_int].ca from [dba.t_set_int] [dba.t_set_int], [dba.t_multiset_int] [dba.t_multiset_int] where [dba.t_set_int].cb=[dba.t_multiset_int].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -183,22 +159,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_set_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     31     
-1     32     
-2     31     
-2     32     
-4     31     
-4     32     
+result    
+PASS     
 
 ===================================================
 0

@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3
 ===================================================
 0
@@ -12,10 +14,8 @@
 0
 ===================================================
     
-Case 1: MULTISET - VARCHAR and INT elements join by nested loop, with its pairs     
+Case 1: MULTISET - VARCHAR and INT elements join by nested loop, with the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 61     71     
@@ -27,24 +27,21 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_multiset_varchar)
+      TABLE SCAN (dba.t_multiset_int)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_multiset_varchar].ca, [dba.t_multiset_int].ca from [dba.t_multiset_varchar] [dba.t_multiset_varchar], [dba.t_multiset_int] [dba.t_multiset_int] where [dba.t_multiset_varchar].cb=[dba.t_multiset_int].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_multiset_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_multiset_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-61     71     
-63     73     
+result    
+PASS     
 
 ===================================================
 0

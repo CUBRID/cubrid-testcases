@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3
 ===================================================
 0
@@ -31,8 +33,6 @@
 Case 1: SET of several element types of one hash type - hash join returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
 ca    ca    
 101     111     
 102     112     
@@ -44,10 +44,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_exact_a)
+      TABLE SCAN (dba.t_exact_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_exact_a].ca, [dba.t_exact_b].ca from [dba.t_exact_a] [dba.t_exact_a], [dba.t_exact_b] [dba.t_exact_b] where [dba.t_exact_a].cb=[dba.t_exact_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -56,11 +56,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_exact_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_exact_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
+
+===================================================
+result    
+PASS     
 
 ===================================================
 ca    ca    
@@ -73,10 +77,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.tc)
-      TABLE SCAN (dba.td)
+      TABLE SCAN (dba.t_string_a)
+      TABLE SCAN (dba.t_string_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tc].ca, [dba.td].ca from [dba.tc] [dba.tc], [dba.td] [dba.td] where [dba.tc].cb=[dba.td].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_string_a].ca, [dba.t_string_b].ca from [dba.t_string_a] [dba.t_string_a], [dba.t_string_b] [dba.t_string_b] where [dba.t_string_a].cb=[dba.t_string_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -85,11 +89,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_string_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_string_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
+
+===================================================
+result    
+PASS     
 
 ===================================================
 ca    ca    
@@ -102,35 +110,21 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.te)
-      TABLE SCAN (dba.tf)
+      TABLE SCAN (dba.t_int_double_a)
+      TABLE SCAN (dba.t_int_double_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.te].ca, [dba.tf].ca from [dba.te] [dba.te], [dba.tf] [dba.tf] where [dba.te].cb=[dba.tf].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_double_a].ca, [dba.t_int_double_b].ca from [dba.t_int_double_a] [dba.t_int_double_a], [dba.t_int_double_b] [dba.t_int_double_b] where [dba.t_int_double_a].cb=[dba.t_int_double_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tf), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_int_double_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_double_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-101     111     
-102     112     
-103     113     
-
-===================================================
-ca    ca    
-121     131     
-122     132     
-
-===================================================
-ca    ca    
-181     191     
-182     192     
+result    
+PASS     
 
 ===================================================
 0
@@ -154,10 +148,8 @@ ca    ca
 0
 ===================================================
     
-Case 2: SET of element types of two hash types - joins by nested loop, with its pairs     
+Case 2: SET of element types of two hash types - joins by nested loop, with the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 141     151     
@@ -170,17 +162,21 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.tg)
-      TABLE SCAN (dba.th)
+      TABLE SCAN (dba.t_int_varchar_a)
+      TABLE SCAN (dba.t_int_varchar_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.tg].ca, [dba.th].ca from [dba.tg] [dba.tg], [dba.th] [dba.th] where [dba.tg].cb=[dba.th].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_varchar_a].ca, [dba.t_int_varchar_b].ca from [dba.t_int_varchar_a] [dba.t_int_varchar_a], [dba.t_int_varchar_b] [dba.t_int_varchar_b] where [dba.t_int_varchar_a].cb=[dba.t_int_varchar_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.th), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_int_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
+
+===================================================
+result    
+PASS     
 
 ===================================================
 ca    ca    
@@ -193,30 +189,21 @@ trace
 Query Plan:
   SORT (order by)
     NESTED LOOPS (inner join)
-      TABLE SCAN (dba.ti)
-      TABLE SCAN (dba.tj)
+      TABLE SCAN (dba.t_int_float_a)
+      TABLE SCAN (dba.t_int_float_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ti].ca, [dba.tj].ca from [dba.ti] [dba.ti], [dba.tj] [dba.tj] where [dba.ti].cb=[dba.tj].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_int_float_a].ca, [dba.t_int_float_b].ca from [dba.t_int_float_a] [dba.t_int_float_a], [dba.t_int_float_b] [dba.t_int_float_b] where [dba.t_int_float_a].cb=[dba.t_int_float_b].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ti), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      SCAN (table: dba.tj), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_int_float_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_int_float_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-141     151     
-141     152     
-142     153     
-
-===================================================
-ca    ca    
-161     171     
-161     172     
+result    
+PASS     
 
 ===================================================
 0

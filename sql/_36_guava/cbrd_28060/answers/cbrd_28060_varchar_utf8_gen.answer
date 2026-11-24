@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 3
 ===================================================
 4
@@ -52,10 +54,8 @@
 0
 ===================================================
     
-Case 1: hash join of ta and tb returns the pairs of the nested loop join     
+Case 1: hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     1     
@@ -218,7 +218,7 @@ Query Plan:
       TABLE SCAN (x)
       TABLE SCAN (y)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.ta] x, [dba.tb] y where x.cb=y.cb order by ?, ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_varchar_a] x, [dba.t_varchar_b] y where x.cb=y.cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -227,173 +227,20 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     1     
-2     2     
-2     11     
-2     56     
-3     3     
-4     4     
-5     5     
-5     10     
-5     55     
-6     6     
-7     7     
-8     8     
-8     9     
-8     52     
-8     54     
-8     57     
-8     58     
-9     8     
-9     9     
-9     52     
-9     54     
-9     57     
-9     58     
-10     5     
-10     10     
-10     55     
-11     2     
-11     11     
-11     56     
-12     12     
-12     13     
-13     12     
-13     13     
-14     14     
-15     15     
-16     16     
-16     17     
-17     16     
-17     17     
-18     18     
-19     19     
-20     20     
-21     21     
-21     22     
-22     21     
-22     22     
-23     23     
-24     24     
-25     25     
-26     26     
-27     27     
-27     47     
-28     28     
-29     29     
-30     30     
-31     31     
-32     32     
-33     33     
-33     44     
-34     34     
-35     35     
-35     46     
-36     36     
-37     37     
-38     38     
-39     39     
-40     40     
-41     41     
-41     42     
-42     41     
-42     42     
-43     43     
-44     33     
-44     44     
-45     45     
-46     35     
-46     46     
-47     27     
-47     47     
-48     48     
-49     49     
-50     50     
-51     51     
-52     8     
-52     9     
-52     52     
-52     54     
-52     57     
-52     58     
-53     53     
-54     8     
-54     9     
-54     52     
-54     54     
-54     57     
-54     58     
-55     5     
-55     10     
-55     55     
-56     2     
-56     11     
-56     56     
-57     8     
-57     9     
-57     52     
-57     54     
-57     57     
-57     58     
-58     8     
-58     9     
-58     52     
-58     54     
-58     57     
-58     58     
-59     59     
-60     60     
-61     61     
-62     62     
-63     63     
-64     64     
-65     65     
-66     66     
-67     67     
-68     68     
-69     69     
-70     70     
-71     71     
-72     72     
-73     73     
-74     74     
-75     75     
-76     76     
-77     77     
-78     78     
-79     79     
-80     80     
-81     81     
-82     82     
-83     83     
-84     84     
-85     85     
-86     86     
-87     87     
-88     88     
-89     89     
-90     90     
-91     91     
-92     92     
-93     93     
-94     94     
+result    
+PASS     
 
 ===================================================
     
-Case 2: hash GROUP BY on ta returns the groups of the sort GROUP BY     
+Case 2: hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY     
 
-===================================================
-0
 ===================================================
 min(ca)    count(*)    
 1     1     
@@ -481,1461 +328,419 @@ trace
 Query Plan:
   SORT (order by)
     SORT (group by)
-      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.t_varchar_a)
 
-  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+  rewritten query: select min([dba.t_varchar_a].ca), count(*) from [dba.t_varchar_a] [dba.t_varchar_a] group by [dba.t_varchar_a].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-min(ca)    count(*)    
-1     1     
-2     3     
-3     1     
-4     1     
-5     3     
-6     1     
-7     1     
-8     6     
-12     2     
-14     1     
-15     1     
-16     2     
-18     1     
-19     1     
-20     1     
-21     2     
-23     1     
-24     1     
-25     1     
-26     1     
-27     2     
-28     1     
-29     1     
-30     1     
-31     1     
-32     1     
-33     2     
-34     1     
-35     2     
-36     1     
-37     1     
-38     1     
-39     1     
-40     1     
-41     2     
-43     1     
-45     1     
-48     1     
-49     1     
-50     1     
-51     1     
-53     1     
-59     1     
-60     1     
-61     1     
-62     1     
-63     1     
-64     1     
-65     1     
-66     1     
-67     1     
-68     1     
-69     1     
-70     1     
-71     1     
-72     1     
-73     1     
-74     1     
-75     1     
-76     1     
-77     1     
-78     1     
-79     1     
-80     1     
-81     1     
-82     1     
-83     1     
-84     1     
-85     1     
-86     1     
-87     1     
-88     1     
-89     1     
-90     1     
-91     1     
-92     1     
-93     1     
-94     1     
+result    
+PASS     
 
 ===================================================
     
-Case 3: tc prune per VARCHAR(40) constant reads one partition and matches ta     
+Case 3: t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a     
 
-===================================================
-0
 ===================================================
 ca    cnt_base    cnt_part    
 1     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 2     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 3     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 4     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 5     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 6     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 7     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 8     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 9     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 10     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 11     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 12     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 13     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 14     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 15     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 16     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 17     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 18     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 19     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 20     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 21     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 22     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 23     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 24     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 25     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 26     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 27     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 28     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 29     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 30     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 31     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 32     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 33     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 34     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 35     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 36     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 37     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 38     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 39     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 40     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 41     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 42     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 43     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 44     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 45     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 46     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 47     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 48     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 49     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 50     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 51     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 52     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 53     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 54     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 55     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 56     3     3     
+
+===================================================
+ca    cnt_base    cnt_part    
 57     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 58     6     6     
+
+===================================================
+ca    cnt_base    cnt_part    
 59     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 60     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 61     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 62     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 63     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 64     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 65     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 66     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 67     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 68     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 69     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 70     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 71     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 72     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 73     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 74     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 75     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 76     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 77     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 78     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 79     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 80     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 81     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 82     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 83     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 84     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 85     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 86     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 87     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 88     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 89     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 90     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 91     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 92     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 93     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 94     1     1     
+
+===================================================
+count(*)    
+1     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tc)
+  TABLE SCAN (dba.t_varchar_part)
 
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast('' as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast('' as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast('' as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast('' as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?)|| chr(? using utf?)|| chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen))
-
+  rewritten query: select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( chr(? using utf?) as varchar(?) collate utf?_gen)
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                SUBQUERY (uncorrelated)
-                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                              SUBQUERY (uncorrelated)
-                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                            SUBQUERY (uncorrelated)
-                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                          SUBQUERY (uncorrelated)
-                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                        SUBQUERY (uncorrelated)
-                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                      SUBQUERY (uncorrelated)
-                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                    SUBQUERY (uncorrelated)
-                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                  SUBQUERY (uncorrelated)
-                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                SUBQUERY (uncorrelated)
-                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                              SUBQUERY (uncorrelated)
-                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                            SUBQUERY (uncorrelated)
-                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                          SUBQUERY (uncorrelated)
-                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                        SUBQUERY (uncorrelated)
-                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                      SUBQUERY (uncorrelated)
-                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                    SUBQUERY (uncorrelated)
-                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                  SUBQUERY (uncorrelated)
-                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                SUBQUERY (uncorrelated)
-                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                              SUBQUERY (uncorrelated)
-                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                            SUBQUERY (uncorrelated)
-                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                          SUBQUERY (uncorrelated)
-                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                        SUBQUERY (uncorrelated)
-                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                      SUBQUERY (uncorrelated)
-                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                    SUBQUERY (uncorrelated)
-                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                  SUBQUERY (uncorrelated)
-                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                SUBQUERY (uncorrelated)
-                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                              SUBQUERY (uncorrelated)
-                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                            SUBQUERY (uncorrelated)
-                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                          SUBQUERY (uncorrelated)
-                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                        SUBQUERY (uncorrelated)
-                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                      SUBQUERY (uncorrelated)
-                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                    SUBQUERY (uncorrelated)
-                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                  SUBQUERY (uncorrelated)
-                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                SUBQUERY (uncorrelated)
-                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                              SUBQUERY (uncorrelated)
-                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                            SUBQUERY (uncorrelated)
-                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                          SUBQUERY (uncorrelated)
-                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                        SUBQUERY (uncorrelated)
-                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                      SUBQUERY (uncorrelated)
-                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SUBQUERY (uncorrelated)
-                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SUBQUERY (uncorrelated)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SUBQUERY (uncorrelated)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SUBQUERY (uncorrelated)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SUBQUERY (uncorrelated)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SUBQUERY (uncorrelated)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SUBQUERY (uncorrelated)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SUBQUERY (uncorrelated)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SUBQUERY (uncorrelated)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SUBQUERY (uncorrelated)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SUBQUERY (uncorrelated)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SUBQUERY (uncorrelated)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SUBQUERY (uncorrelated)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SUBQUERY (uncorrelated)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_varchar_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_varchar_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
-===================================================
-0
 ===================================================
 0
 ===================================================

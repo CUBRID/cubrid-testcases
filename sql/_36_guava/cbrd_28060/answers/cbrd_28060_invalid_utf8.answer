@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 2
 ===================================================
 2
@@ -24,10 +26,8 @@
 0
 ===================================================
     
-Case 1: utf8_bin - hash join of ta and tb returns the pairs of the nested loop join     
+Case 1: utf8_bin - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     1     
@@ -54,7 +54,7 @@ Query Plan:
       TABLE SCAN (x)
       TABLE SCAN (y)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.ta] x, [dba.tb] y where x.cb=y.cb order by ?, ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_varchar_a] x, [dba.t_varchar_b] y where x.cb=y.cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -63,37 +63,20 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     1     
-2     2     
-3     3     
-4     4     
-5     5     
-6     6     
-7     7     
-8     8     
-9     9     
-10     10     
-11     11     
-12     12     
-13     13     
-14     14     
+result    
+PASS     
 
 ===================================================
     
-Case 2: utf8_bin - hash GROUP BY on ta returns the groups of the sort GROUP BY     
+Case 2: utf8_bin - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY     
 
-===================================================
-0
 ===================================================
 min(ca)    count(*)    
 1     1     
@@ -117,370 +100,109 @@ trace
 Query Plan:
   SORT (order by)
     SORT (group by)
-      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.t_varchar_a)
 
-  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+  rewritten query: select min([dba.t_varchar_a].ca), count(*) from [dba.t_varchar_a] [dba.t_varchar_a] group by [dba.t_varchar_a].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-min(ca)    count(*)    
-1     1     
-2     1     
-3     1     
-4     1     
-5     1     
-6     1     
-7     1     
-8     1     
-9     1     
-10     1     
-11     1     
-12     1     
-13     1     
-14     1     
+result    
+PASS     
 
 ===================================================
     
-Case 3: utf8_bin - tc prune per VARCHAR(10) constant reads one partition and matches ta     
+Case 3: utf8_bin - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
 
-===================================================
-0
 ===================================================
 ca    cnt_base    cnt_part    
 1     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 2     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 3     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 4     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 5     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 6     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 7     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 8     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 9     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 10     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 11     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 12     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 13     1     1     
+
+===================================================
+ca    cnt_base    cnt_part    
 14     1     1     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tc)
+  TABLE SCAN (dba.t_varchar_part)
 
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?)))
+  rewritten query: (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?)))
 
-  TABLE SCAN (dba.ta)
+  TABLE SCAN (dba.t_varchar_a)
 
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?)))
+  rewritten query: (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?)))
 
   TABLE SCAN (dual)
 
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?))) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?)))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?)))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?))), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?))) from dual dual
-
-  SORT (order by)
-    TABLE SCAN (r)
-
-  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ r.ca, r.cnt_base, r.cnt_part from (((((((((((((select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?))) as [cnt_part] from dual dual union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?))) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?))) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?))) as [cnt_part] from dual dual) r (ca, cnt_base, cnt_part) order by ?
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ ?, (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?))), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?))) from dual dual
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SUBQUERY (uncorrelated)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SUBQUERY (uncorrelated)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SUBQUERY (uncorrelated)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SUBQUERY (uncorrelated)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SUBQUERY (uncorrelated)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SUBQUERY (uncorrelated)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SUBQUERY (uncorrelated)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SUBQUERY (uncorrelated)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SUBQUERY (uncorrelated)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SUBQUERY (uncorrelated)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SUBQUERY (uncorrelated)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SUBQUERY (uncorrelated)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SUBQUERY (uncorrelated)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SUBQUERY (uncorrelated)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_varchar_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
-===================================================
-0
 ===================================================
 0
 ===================================================
@@ -507,10 +229,8 @@ Trace Statistics:
 0
 ===================================================
     
-Case 4: utf8_ko_cs - hash join of ta and tb returns the pairs of the nested loop join     
+Case 4: utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join     
 
-===================================================
-0
 ===================================================
 ca    ca    
 1     1     
@@ -551,7 +271,7 @@ Query Plan:
       TABLE SCAN (x)
       TABLE SCAN (y)
 
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.ta] x, [dba.tb] y where x.cb=y.cb order by ?, ?
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ x.ca, y.ca from [dba.t_varchar_a] x, [dba.t_varchar_b] y where x.cb=y.cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -560,51 +280,20 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     1     
-1     2     
-2     1     
-2     2     
-3     3     
-3     4     
-4     3     
-4     4     
-5     5     
-5     6     
-6     5     
-6     6     
-7     7     
-7     8     
-8     7     
-8     8     
-9     9     
-9     10     
-10     9     
-10     10     
-11     11     
-11     12     
-12     11     
-12     12     
-13     13     
-13     14     
-14     13     
-14     14     
+result    
+PASS     
 
 ===================================================
     
-Case 5: utf8_ko_cs - hash GROUP BY on ta returns the groups of the sort GROUP BY     
+Case 5: utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY     
 
-===================================================
-0
 ===================================================
 min(ca)    count(*)    
 1     2     
@@ -621,363 +310,109 @@ trace
 Query Plan:
   SORT (order by)
     SORT (group by)
-      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.t_varchar_a)
 
-  rewritten query: select min([dba.ta].ca), count(*) from [dba.ta] [dba.ta] group by [dba.ta].cb order by ?, ?
+  rewritten query: select min([dba.t_varchar_a].ca), count(*) from [dba.t_varchar_a] [dba.t_varchar_a] group by [dba.t_varchar_a].cb order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-min(ca)    count(*)    
-1     2     
-3     2     
-5     2     
-7     2     
-9     2     
-11     2     
-13     2     
+result    
+PASS     
 
 ===================================================
     
-Case 6: utf8_ko_cs - tc prune per VARCHAR(10) constant reads one partition and matches ta     
+Case 6: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
 
-===================================================
-0
 ===================================================
 ca    cnt_base    cnt_part    
 1     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 2     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 3     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 4     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 5     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 6     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 7     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 8     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 9     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 10     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 11     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 12     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 13     2     2     
+
+===================================================
+ca    cnt_base    cnt_part    
 14     2     2     
 
 ===================================================
 trace    
 
 Query Plan:
-  TABLE SCAN (dba.tc)
+  TABLE SCAN (dba.t_varchar_part)
 
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs))
+  rewritten query: (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs))
 
-  TABLE SCAN (dba.ta)
+  TABLE SCAN (dba.t_varchar_a)
 
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs))
+  rewritten query: (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs))
 
   TABLE SCAN (dual)
 
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  TABLE SCAN (dba.tc)
-
-  rewritten query: (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dba.ta)
-
-  rewritten query: (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs))
-
-  TABLE SCAN (dual)
-
-  rewritten query: select ?, (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
-
-  SORT (order by)
-    TABLE SCAN (r)
-
-  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ r.ca, r.cnt_base, r.cnt_part from (((((((((((((select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('QQ==') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wYE=') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?k=') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyk=') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gA==') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('gQ==') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYBi') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('YYFi') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?A=') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyA=') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('w?AgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('wyAgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?KCgoCAg') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) union all select ? as [ca], (select count(*) from [dba.ta] [dba.ta] where [dba.ta].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_base], (select count(*) from [dba.tc] [dba.tc] where [dba.tc].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) as [cnt_part] from dual dual) r (ca, cnt_base, cnt_part) order by ?
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ ?, (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SUBQUERY (uncorrelated)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SUBQUERY (uncorrelated)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SUBQUERY (uncorrelated)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SUBQUERY (uncorrelated)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SUBQUERY (uncorrelated)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SUBQUERY (uncorrelated)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SUBQUERY (uncorrelated)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                   PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SUBQUERY (uncorrelated)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                                 PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                          SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SUBQUERY (uncorrelated)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                               PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                        SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SUBQUERY (uncorrelated)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                             PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                    SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                      SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SUBQUERY (uncorrelated)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                           PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SUBQUERY (uncorrelated)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                         PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SUBQUERY (uncorrelated)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                       PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SUBQUERY (uncorrelated)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-                     PARTITION (table: dba.tc__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dual), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               PARTITION (table: dba.t_varchar_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
-===================================================
-0
 ===================================================
 0
 ===================================================

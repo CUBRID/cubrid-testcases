@@ -3,6 +3,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 11
 ===================================================
 0
@@ -15,9 +17,7 @@
 Case 1: JSON - hash join returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
-ca    ca    
+id    id    
 1     11     
 1     17     
 1     19     
@@ -38,10 +38,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.ta)
-      TABLE SCAN (dba.tb)
+      TABLE SCAN (dba.t_json_a)
+      TABLE SCAN (dba.t_json_b)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.ta] [dba.ta], [dba.tb] [dba.tb] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_json_a].id, [dba.t_json_b].id from [dba.t_json_a] [dba.t_json_a], [dba.t_json_b] [dba.t_json_b] where [dba.t_json_a].body=[dba.t_json_b].body order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -50,38 +50,22 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     11     
-1     17     
-1     19     
-2     12     
-2     22     
-3     13     
-4     14     
-5     15     
-6     16     
-7     18     
-9     21     
-10     12     
-10     22     
+result    
+PASS     
 
 ===================================================
     
 Case 2: JSON - hash join with the other build side returns the pairs of the nested loop join     
 
 ===================================================
-0
-===================================================
-ca    ca    
+id    id    
 1     11     
 1     17     
 1     19     
@@ -102,10 +86,10 @@ trace
 Query Plan:
   SORT (order by)
     HASH JOIN (inner join)
-      TABLE SCAN (dba.tb)
-      TABLE SCAN (dba.ta)
+      TABLE SCAN (dba.t_json_b)
+      TABLE SCAN (dba.t_json_a)
 
-  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.ta].ca, [dba.tb].ca from [dba.tb] [dba.tb], [dba.ta] [dba.ta] where [dba.ta].cb=[dba.tb].cb order by ?, ?
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ [dba.t_json_a].id, [dba.t_json_b].id from [dba.t_json_b] [dba.t_json_b], [dba.t_json_a] [dba.t_json_a] where [dba.t_json_a].body=[dba.t_json_b].body order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -114,29 +98,15 @@ Trace Statistics:
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            SCAN (table: dba.t_json_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
-0
-===================================================
-ca    ca    
-1     11     
-1     17     
-1     19     
-2     12     
-2     22     
-3     13     
-4     14     
-5     15     
-6     16     
-7     18     
-9     21     
-10     12     
-10     22     
+result    
+PASS     
 
 ===================================================
     
@@ -147,9 +117,7 @@ Case 3: JSON - hash GROUP BY returns the groups of the sort GROUP BY
 ===================================================
 0
 ===================================================
-0
-===================================================
-min(ca)    count(*)    
+min(id)    count(*)    
 1     2     
 2     2     
 4     2     
@@ -176,40 +144,20 @@ trace
 Query Plan:
   SORT (order by)
     SORT (group by)
-      TABLE SCAN (dba.tc)
+      TABLE SCAN (dba.t_json_ab)
 
-  rewritten query: select /*+ PARALLEL(?) */ min([dba.tc].ca), count(*) from [dba.tc] [dba.tc] group by [dba.tc].cb order by ?, ?
+  rewritten query: select /*+ PARALLEL(?) */ min([dba.t_json_ab].id), count(*) from [dba.t_json_ab] [dba.t_json_ab] group by [dba.t_json_ab].body order by ?, ?
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SCAN (table: dba.t_json_ab), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
-min(ca)    count(*)    
-1     2     
-2     2     
-4     2     
-5     2     
-6     2     
-7     1     
-8     1     
-9     1     
-10     1     
-11     1     
-11     2     
-18     1     
-19     1     
-20     1     
-21     1     
-22     1     
-23     1     
-24     1     
-26     1     
+result    
+PASS     
 
 ===================================================
 0
