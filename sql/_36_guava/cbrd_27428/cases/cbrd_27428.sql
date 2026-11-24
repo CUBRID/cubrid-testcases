@@ -25,6 +25,8 @@
  *    Case 13: a member of a group with EXECUTE sees pkg_full only in db_package
  *    Case 14: with EXECUTE granted to PUBLIC, a user with no privilege of its own
  *             sees pkg_full only in db_package
+ *    Case 15: a package with only a spec has a db_package row and a db_package_code
+ *             row with body_code NULL
  */
 
 --+ holdcas on;
@@ -46,6 +48,7 @@ create user group_member groups exec_group;
 call login('pkg_owner', '') on class db_user;
 drop package if exists pkg_full;
 drop package body if exists pkg_body_only;
+drop package if exists pkg_spec_only;
 create package pkg_full as
   procedure p (a int);
   function f (a int) return int;
@@ -58,6 +61,9 @@ create package body pkg_full as
 end;
 create package body pkg_body_only as
   procedure q as begin null; end;
+end;
+create package pkg_spec_only as
+  procedure r;
 end;
 grant execute on package pkg_full to exec_grantee;
 
@@ -129,7 +135,13 @@ select pkg_name, owner from db_package where pkg_name = 'pkg_full';
 select count(*) from db_package_code where pkg_name = 'pkg_full';
 
 call login('dba', '') on class db_user;
+
+evaluate 'Case 15: a package with only a spec has a db_package row and a db_package_code row with body_code NULL';
+select pkg_name, owner, procedure_count from db_package where pkg_name = 'pkg_spec_only';
+select pkg_name, owner, spec_code, body_code from db_package_code where pkg_name = 'pkg_spec_only';
+
 drop package pkg_owner.pkg_full;
+drop package pkg_owner.pkg_spec_only;
 -- a package with only a body has no spec for DROP PACKAGE to find
 drop package body pkg_owner.pkg_body_only;
 drop user owner_member;
