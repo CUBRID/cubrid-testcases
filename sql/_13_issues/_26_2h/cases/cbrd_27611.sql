@@ -12,9 +12,22 @@
  *  variable), and print the stored values side by side. BIT values are read back from
  *  the tables only, not through a session variable.
  *
+ *  Case 9 also changes rows of its own in t_upd, which has no trigger, and in t_upd_trig,
+ *  which has an AFTER UPDATE trigger that writes to t_trig_log. An UPDATE of t_upd_trig
+ *  runs on the client but takes the new value from a SELECT that the server runs, so it
+ *  gave the same value before the fix. INSERT ON DUPLICATE KEY UPDATE with the hint or
+ *  into t_upd_trig runs on the client and evaluates the new value on the client.
+ *
  *  Cases 17 to 20 put the CAST in the DEFAULT clause of CREATE TABLE and ALTER TABLE,
  *  which the client evaluates when the statement runs, and print the default that
  *  db_attribute stores and the value that an INSERT fills in.
+ *
+ *  Cases 21 to 23 check CASTs that the compiler adds, for a view column and for DEFAULT(c).
+ *  The server evaluates them as it does a CAST that the user wrote, so they gave the same
+ *  values before the fix.
+ *
+ *  Case 24 sets allow_truncated_string to yes, which is no in all other cases, and sets
+ *  it back to its default at its end.
  *
  *  Coverage:
  *    Case 1:  a CAST of a date string to VARCHAR(4) keeps the first four characters on every path
@@ -25,7 +38,7 @@
  *    Case 6:  a nested CAST truncates the inner value and converts the rest on every path
  *    Case 7:  a CAST inside CONCAT and a CAST of a function result truncate on every path
  *    Case 8:  a length just below, on, and just above the length of the value, the empty string, and NULL
- *    Case 9:  UPDATE and REPLACE on the table with a trigger truncate as on the server path
+ *    Case 9:  UPDATE and INSERT ON DUPLICATE KEY UPDATE on a table with an AFTER UPDATE trigger, and REPLACE into the table with a trigger, truncate as on the server path
  *    Case 10: a CAST that truncates nothing gives the same value as before
  *    Case 11: a CAST of a number or a date to a string that is too short still fails on every path
  *    Case 12: a numeric overflow in a CAST still fails on every path
@@ -36,7 +49,11 @@
  *    Case 17: a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters at CREATE TABLE
  *    Case 18: ALTER TABLE MODIFY with a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters
  *    Case 19: ALTER COLUMN SET DEFAULT and ADD COLUMN with a CAST to a shorter VARCHAR keep the first two characters
- *    Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails
+ *    Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails, and the column keeps its default
+ *    Case 21: a VARCHAR(3) view column over a constant keeps the first three characters on every path
+ *    Case 22: a VARCHAR(3) view column over a VARCHAR(10) column keeps the first three characters on every path
+ *    Case 23: DEFAULT(c) of a VARCHAR(3) column gives its default on the server path and with the hint
+ *    Case 24: with allow_truncated_string=yes every path truncates a string CAST and a string longer than its column alike, a number CAST to a short string still fails, and after the reset a long string fails again
  */
 
 drop table if exists t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
@@ -148,13 +165,28 @@ insert into t_trig (id, path, v) values (85, 'trigger', cast(null as varchar(1))
 select id, path, v, char_length(v) from t_plain where id between 81 and 85 union all select id, path, v, char_length(v) from t_trig where id between 81 and 85 order by 1, 2;
 
 
--- Case 9 updates the rows that Case 1 inserted
-evaluate 'Case 9: UPDATE and REPLACE on the table with a trigger truncate as on the server path';
-update t_plain set v = cast('updated value' as varchar(6)) where id = 1 and path = 'server';
-update t_trig set v = cast('updated value' as varchar(6)) where id = 1;
+-- Case 9 changes rows of its own, which INSERTs without a CAST store first: rows 91 for UPDATE and rows 92 for INSERT ON DUPLICATE KEY UPDATE
+-- t_upd_trig has an AFTER UPDATE trigger, so an UPDATE of it and an INSERT ON DUPLICATE KEY UPDATE into it run on the client
+evaluate 'Case 9: UPDATE and INSERT ON DUPLICATE KEY UPDATE on a table with an AFTER UPDATE trigger, and REPLACE into the table with a trigger, truncate as on the server path';
+drop table if exists t_upd, t_upd_trig;
+create table t_upd (id int, path varchar(10), v varchar(20), primary key (id, path));
+create table t_upd_trig (id int, path varchar(10), v varchar(20), primary key (id, path));
+create trigger trg_27611_upd after update on t_upd_trig execute insert into t_trig_log values (obj.id, obj.v);
+insert into t_upd (id, path, v) values (91, 'server', 'before');
+insert into t_upd_trig (id, path, v) values (91, 'trigger', 'before');
+insert into t_upd (id, path, v) values (92, 'server', 'before');
+insert into t_upd (id, path, v) values (92, 'hint', 'before');
+insert into t_upd_trig (id, path, v) values (92, 'trigger', 'before');
+update t_upd set v = cast('updated value' as varchar(6)) where id = 91;
+update t_upd_trig set v = cast('updated value' as varchar(6)) where id = 91;
+insert into t_upd (id, path, v) values (92, 'server', 'not updated') on duplicate key update v = cast('duplicate key' as varchar(5));
+insert /*+ insert_execution_mode(0) */ into t_upd (id, path, v) values (92, 'hint', 'not updated') on duplicate key update v = cast('duplicate key' as varchar(5));
+insert into t_upd_trig (id, path, v) values (92, 'trigger', 'not updated') on duplicate key update v = cast('duplicate key' as varchar(5));
 replace into t_plain (id, path, v) values (9, 'server', cast('replaced value' as char(8)));
 replace into t_trig (id, path, v) values (9, 'trigger', cast('replaced value' as char(8)));
-select id, path, v from t_plain where id in (1, 9) union all select id, path, v from t_trig where id in (1, 9) order by 1, 2;
+select id, path, v from t_upd union all select id, path, v from t_upd_trig order by 1, 2;
+select id, path, v from t_plain where id = 9 union all select id, path, v from t_trig where id = 9 order by 1, 2;
+select id, v from t_trig_log where id in (9, 91, 92) order by 1, 2;
 
 
 evaluate 'Case 10: a CAST that truncates nothing gives the same value as before';
@@ -279,7 +311,7 @@ select id, c, c2 from t_def_set order by 1;
 select attr_name, default_value from db_attribute where class_name = 't_def_set' and attr_name in ('c', 'c2') order by 1;
 
 
-evaluate 'Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails; result = error';
+evaluate 'Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails, and the column keeps its default';
 drop table if exists t_def_num;
 create table t_def_num (id int, c varchar(10) default cast(123456 as varchar(3)));
 select count(*) from db_class where class_name = 't_def_num';
@@ -292,8 +324,82 @@ select id, c from t_def_num order by 1;
 select attr_name, default_value from db_attribute where class_name = 't_def_num' and attr_name = 'c';
 
 
-set @v_27611 = null;
+evaluate 'Case 21: a VARCHAR(3) view column over a constant keeps the first three characters on every path';
+drop view if exists v_const;
+create view v_const (a varchar(3)) as select 'abcdef' from db_root;
+select a, char_length(a) from v_const;
+insert into t_plain (id, path, v) select 21, 'server', a from v_const;
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) select 21, 'hint', a from v_const;
+insert into t_trig (id, path, v) select 21, 'trigger', a from v_const;
+select id, path, v, char_length(v) from t_plain where id = 21 union all select id, path, v, char_length(v) from t_trig where id = 21 order by 1, 2;
+select id, v from t_trig_log where id = 21 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = (select a from v_const);
+select @v_27611 from db_root;
+
+
+evaluate 'Case 22: a VARCHAR(3) view column over a VARCHAR(10) column keeps the first three characters on every path';
+drop view if exists v_col;
+drop table if exists t_view_src;
+create table t_view_src (id int, c varchar(10));
+insert into t_view_src (id, c) values (22, 'abcdef');
+create view v_col (id int, a varchar(3)) as select id, c from t_view_src;
+select id, a, char_length(a) from v_col order by 1;
+insert into t_plain (id, path, v) select id, 'server', a from v_col;
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) select id, 'hint', a from v_col;
+insert into t_trig (id, path, v) select id, 'trigger', a from v_col;
+select id, path, v, char_length(v) from t_plain where id = 22 union all select id, path, v, char_length(v) from t_trig where id = 22 order by 1, 2;
+select id, v from t_trig_log where id = 22 order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = (select a from v_col where id = 22);
+select @v_27611 from db_root;
+
+
+evaluate 'Case 23: DEFAULT(c) of a VARCHAR(3) column gives its default on the server path and with the hint';
+drop table if exists t_def_col;
+create table t_def_col (id int, path varchar(10), c varchar(3) default 'abc');
+insert into t_def_col (id, path, c) values (23, 'server', default(c));
+insert /*+ insert_execution_mode(0) */ into t_def_col (id, path, c) values (23, 'hint', default(c));
+select id, path, c, char_length(c) from t_def_col order by 1, 2;
+
+
+-- allow_truncated_string is no by default, and the other cases run with no
+-- rows 24 take a string CAST, rows 241 a number CAST, rows 242 a string longer than the column, rows 243 a CAST to six characters into a VARCHAR(4) column
+-- rows 244 are inserted after allow_truncated_string is set back to its default
+evaluate 'Case 24: with allow_truncated_string=yes every path truncates a string CAST and a string longer than its column alike, a number CAST to a short string still fails, and after the reset a long string fails again';
+set system parameters 'allow_truncated_string=yes';
+insert into t_plain (id, path, v) values (24, 'server', cast('2026-10-12' as varchar(4)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (24, 'hint', cast('2026-10-12' as varchar(4)));
+insert into t_trig (id, path, v) values (24, 'trigger', cast('2026-10-12' as varchar(4)));
+insert into t_plain (id, path, v) values (241, 'server', cast(123456 as varchar(3)));
+insert /*+ insert_execution_mode(0) */ into t_plain (id, path, v) values (241, 'hint', cast(123456 as varchar(3)));
+insert into t_trig (id, path, v) values (241, 'trigger', cast(123456 as varchar(3)));
+select id, path, v, char_length(v) from t_plain where id in (24, 241) union all select id, path, v, char_length(v) from t_trig where id in (24, 241) order by 1, 2;
+insert into t_narrow (id, path, v, c) values (242, 'server', 'abcdef', 'uvwxyz');
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v, c) values (242, 'hint', 'abcdef', 'uvwxyz');
+insert into t_narrow_trig (id, path, v, c) values (242, 'trigger', 'abcdef', 'uvwxyz');
+insert into t_narrow (id, path, v) values (243, 'server', cast('abcdefgh' as varchar(6)));
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v) values (243, 'hint', cast('abcdefgh' as varchar(6)));
+insert into t_narrow_trig (id, path, v) values (243, 'trigger', cast('abcdefgh' as varchar(6)));
+select id, path, v, c from t_narrow where id in (242, 243) union all select id, path, v, c from t_narrow_trig where id in (242, 243) order by 1, 2;
+select id, v from t_trig_log where id in (24, 241, 242, 243) order by 1, 2;
+set @v_27611 = 'not set';
+set @v_27611 = cast('2026-10-12' as varchar(4));
+select @v_27611 from db_root;
+set @v_27611 = 'not set';
+set @v_27611 = cast(123456 as varchar(3));
+select @v_27611 from db_root;
+set system parameters 'allow_truncated_string=default';
+insert into t_narrow (id, path, v) values (244, 'server', 'abcdef');
+insert /*+ insert_execution_mode(0) */ into t_narrow (id, path, v) values (244, 'hint', 'abcdef');
+insert into t_narrow_trig (id, path, v) values (244, 'trigger', 'abcdef');
+select (select count(*) from t_narrow where id = 244) as plain_rows, (select count(*) from t_narrow_trig where id = 244) as trig_rows, (select count(*) from t_trig_log where id = 244) as log_rows from db_root;
+
+
+drop variable @v_27611;
 drop trigger trg_27611;
 drop trigger trg_27611_narrow;
+drop trigger trg_27611_upd;
+drop view if exists v_const, v_col;
 drop table t_plain, t_trig, t_trig_log, t_narrow, t_narrow_trig;
-drop table if exists t_def_create, t_def_alter, t_def_set, t_def_num;
+drop table if exists t_def_create, t_def_alter, t_def_set, t_def_num, t_upd, t_upd_trig, t_view_src, t_def_col;
