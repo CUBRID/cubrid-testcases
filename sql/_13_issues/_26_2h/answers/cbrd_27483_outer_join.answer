@@ -898,3 +898,100 @@ ca    ca    ca
 
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+200
+===================================================
+500
+===================================================
+200
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 23: a LEFT JOIN whose ON reads only its own table, joined after a later CROSS JOIN table that another ON reads; result = 1 row     
+
+===================================================
+ca    ca    ca    ca    ca    ca    ca    
+1     null     1     null     1     1     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (left outer join)
+                            outer: nl-join (left outer join)
+                                       edge:  term[?] AND term[?]
+                                       outer: nl-join (cross join)
+                                                  outer: idx-join (inner join)
+                                                             outer: nl-join (inner join)
+                                                                        edge:  term[?]
+                                                                        outer: sscan
+                                                                                   class: te node[?]
+                                                                                   cost:  ? card ?
+                                                                        inner: sscan
+                                                                                   class: ta node[?]
+                                                                                   sargs: term[?]
+                                                                                   cost:  ? card ?
+                                                                        cost:  ? card ?
+                                                             inner: iscan
+                                                                        class: tc node[?]
+                                                                        index: i_tc_ca term[?] (covers)
+                                                                        cost:  ? card ?
+                                                             cost:  ? card ?
+                                                  inner: sscan
+                                                             class: tf node[?]
+                                                             cost:  ? card ?
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tg node[?]
+                                                  sargs: term[?] AND term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tb node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca from ta ta left outer join tb tb on (tb.ca>tb.cb) cross join tc tc left outer join td td on td.cb=tc.ca and td.ca=tb.ca inner join te te on te.cb=tc.ca and te.ca=ta.ca cross join tf tf left outer join tg tg on tg.cb=tf.ca and tg.ca=te.ca order by ?, ?, ?, ?, ?, ?, ?
+===================================================
+    
+Case 24: Case 23 with the ORDERED hint; result = same rows as Case 23     
+
+===================================================
+ca    ca    ca    ca    ca    ca    ca    
+1     null     1     null     1     1     null     
+
+===================================================
+0

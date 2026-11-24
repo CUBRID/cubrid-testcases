@@ -39,6 +39,8 @@
  *    Case 20:  a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN
  *    Case 21:  a second LEFT JOIN whose ON reads the second table and the NULL-padded table of the first LEFT JOIN
  *    Case 22:  a LEFT JOIN whose ON reads only its own table, after a CROSS JOIN
+ *    Case 23:  a LEFT JOIN whose ON reads only its own table, joined after a later CROSS JOIN table that another ON reads
+ *    Case 24:  Case 23 with the ORDERED hint
  */
 DROP VIEW IF EXISTS va, vb;
 DROP TABLE IF EXISTS ta, tb, tc, td, te;
@@ -192,3 +194,34 @@ evaluate 'Case 22: a LEFT JOIN whose ON reads only its own table, after a CROSS 
 SELECT ta.ca, tb.ca, tc.ca FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = 1 ORDER BY 1, 2, 3;
 
 DROP TABLE ta, tb, tc, td;
+
+-- Cases 23 - 24 use new data: no row of tb meets ON tb.ca > tb.cb, and td and tg are empty, so each LEFT JOIN
+-- NULL-pads the rows it keeps. ta, tb and tc are large and te is small, so the planner joins tb after te, ta and tc.
+-- tb then has a dummy join term to ta for its own LEFT JOIN and one to tc for the ON of td.
+DROP TABLE IF EXISTS ta, tb, tc, td, te, tf, tg;
+CREATE TABLE ta (ca INT, cb INT);
+CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE td (ca INT, cb INT);
+CREATE TABLE te (ca INT, cb INT);
+CREATE TABLE tf (ca INT, cb INT);
+CREATE TABLE tg (ca INT, cb INT);
+INSERT INTO ta SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 200;
+INSERT INTO tb SELECT -ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 500;
+INSERT INTO tc SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 200;
+INSERT INTO te VALUES (1, 1);
+INSERT INTO tf VALUES (1, 1);
+CREATE INDEX i_tc_ca ON tc (ca);
+CREATE INDEX i_te_ca ON te (ca);
+UPDATE STATISTICS ON ta, tb, tc, td, te, tf, tg WITH FULLSCAN;
+
+-- the dummy join term to tc must not turn the LEFT JOIN of tb into an inner join
+evaluate 'Case 23: a LEFT JOIN whose ON reads only its own table, joined after a later CROSS JOIN table that another ON reads; result = 1 row';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca FROM ta LEFT JOIN tb ON tb.ca > tb.cb CROSS JOIN tc LEFT JOIN td ON td.ca = tb.ca AND td.cb = tc.ca INNER JOIN te ON te.ca = ta.ca AND te.cb = tc.ca CROSS JOIN tf LEFT JOIN tg ON tg.ca = te.ca AND tg.cb = tf.ca ORDER BY 1, 2, 3, 4, 5, 6, 7;
+
+-- a control: it returns the same rows without the fix
+evaluate 'Case 24: Case 23 with the ORDERED hint; result = same rows as Case 23';
+SELECT /*+ ORDERED */ ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca FROM ta LEFT JOIN tb ON tb.ca > tb.cb CROSS JOIN tc LEFT JOIN td ON td.ca = tb.ca AND td.cb = tc.ca INNER JOIN te ON te.ca = ta.ca AND te.cb = tc.ca CROSS JOIN tf LEFT JOIN tg ON tg.ca = te.ca AND tg.cb = tf.ca ORDER BY 1, 2, 3, 4, 5, 6, 7;
+
+DROP TABLE ta, tb, tc, td, te, tf, tg;
