@@ -3,7 +3,7 @@
 -- GROUP BY) is charged for the rows it reads before the LIMIT stops it, and the LIMIT comparisons of
 -- qo_plan_cmp () go by cost like any other, without the 10 times wider band of CBRD-25080.
 
-drop table if exists os_o, os_c, os_s;
+drop table if exists os_o, os_c, os_s, os_p, os_q, os_w, os_m;
 
 create table os_o (id int primary key, cid int, q int, amount int);
 create index idx_os_o_cid on os_o (cid);
@@ -89,4 +89,35 @@ select /*+ recompile index_ls */ ca, count (distinct cb) from os_s where cb = 5 
 --@queryplan
 select /*+ recompile */ ca, max (cc) from os_s where ca between 0 and 699 and cb = 5 group by ca order by ca limit 5;
 
-drop table os_o, os_c, os_s;
+-- Case 14: a correlated subquery of the ordered scan is evaluated for the rows read before the LIMIT only: the
+-- join driven by the ordered scan is kept
+create table os_p (ca int primary key, cb int not null, cc int, cd char(200));
+insert into os_p select level, level, mod (level, 100), 'x' from db_root connect by level <= 30000;
+create index idx_os_p_cb on os_p (cb);
+create table os_q (ca int, cb int);
+insert into os_q select level, level from db_root connect by level <= 30000;
+create index idx_os_q_ca on os_q (ca);
+update statistics on os_p, os_q with fullscan;
+--@queryplan
+select /*+ recompile */ os_p.ca, os_q.cb from os_p, os_q where os_p.ca = os_q.ca and os_p.cc > (select count(*) from os_q t2 where t2.ca = os_p.ca) order by os_p.cb limit 10;
+
+-- Case 15: the heap pages of the ordered scan are those of the rows it reads before the LIMIT, not the LIMIT share
+-- of the pages of the whole scan: 3 of 199 rows spread evenly are 3000 rows of the cb order, more than the sort
+-- over the cc range reads
+create table os_w (ca int primary key, cb int not null, cc int, cd varchar(200));
+insert into os_w select level, mod (cast (level as bigint) * 7919, 200003), mod (level, 1000), repeat ('x', 200) from db_root connect by level <= 200000;
+create index idx_os_w_cb on os_w (cb);
+create index idx_os_w_cc on os_w (cc);
+update statistics on os_w with fullscan;
+--@queryplan
+select /*+ recompile */ ca, cb, cc from os_w where cc = 5 order by cb limit 3;
+
+-- Case 16: a multi range optimization scan reads the LIMIT rows of each key range and is kept
+create table os_m (ca int, cb int, cc int, cd char(100));
+insert into os_m select mod (level, 4), level, level, 'x' from db_root connect by level <= 40000;
+create index idx_os_m_ca_cb on os_m (ca, cb);
+update statistics on os_m with fullscan;
+--@queryplan
+select /*+ recompile */ ca, cb, cc from os_m where ca in (1, 2, 3) order by cb limit 10;
+
+drop table os_o, os_c, os_s, os_p, os_q, os_w, os_m;

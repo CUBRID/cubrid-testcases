@@ -1515,3 +1515,109 @@ select os_s.ca, max(os_s.cc) from os_s os_s where (os_s.ca>= ?:?  and os_s.ca<= 
 /* ---> skip GROUP BY */
 ===================================================
 0
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+===================================================
+30000
+===================================================
+0
+===================================================
+0
+===================================================
+ca    cb    
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: idx_os_q_ca term[?] (covers)
+    cost:  ? card ?
+Query stmt:
+(select count(*) from os_q t? where t?.ca=os_p.ca)
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: os_p node[?]
+               index: idx_os_p_cb 
+               sargs: term[?]
+               subqs: ?
+               cost:  ? card ?
+    inner: iscan
+               class: os_q node[?]
+               index: idx_os_q_ca term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_p.ca, os_q.cb, os_p.cb from os_p os_p, os_q os_q where os_p.ca=os_q.ca and (os_p.cc>(select count(*) from os_q t? where t?.ca=os_p.ca)) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+ca    cb    cc    
+35005     437     5     
+178005     451     5     
+141005     1846     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: os_w node[?]
+                 index: idx_os_w_cc term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select os_w.ca, os_w.cb, os_w.cc from os_w os_w where os_w.cc= ?:?  order by ? for orderby_num()<= ?:? 
+===================================================
+0
+===================================================
+40000
+===================================================
+0
+===================================================
+0
+===================================================
+ca    cb    cc    
+1     1     1     
+2     2     2     
+3     3     3     
+1     5     5     
+2     6     6     
+3     7     7     
+1     9     9     
+2     10     10     
+3     11     11     
+1     13     13     
+
+Query plan:
+iscan
+    class: os_m node[?]
+    index: idx_os_m_ca_cb term[?] (multi_range_opt)
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select os_m.ca, os_m.cb, os_m.cc from os_m os_m where ((os_m.ca= ?:? ) or (os_m.ca= ?:? ) or (os_m.ca= ?:? )) order by ? for orderby_num()<= ?:? 
+===================================================
+0
