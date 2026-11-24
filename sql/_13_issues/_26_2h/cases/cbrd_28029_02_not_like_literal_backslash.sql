@@ -104,8 +104,9 @@ evaluate 'Case 2-26';
 SELECT /*+ RECOMPILE */ (SELECT s LIKE 'a\_c' FROM t02c WHERE s = 'a\_c') AS l_col, ('a\_c' LIKE 'a\_c') AS l_const FROM db_root;
 SET SYSTEM PARAMETERS 'no_backslash_escapes=yes';
 DROP TABLE t02c;
--- the XASL cache key holds no_backslash_escapes, which the constant fold of LIKE reads: the same text compiled under
--- the other value is not reused, for a SELECT nor for DML (found while analysing)
+-- the XASL cache key holds no_backslash_escapes; with no ESCAPE clause the constant fold of LIKE reads
+-- require_like_escape_character, so the same text gives the same value under either value (develop reused the DML
+-- compiled under the other value)
 -- expected: rows: 1 | 0
 evaluate 'Case 2-30';
 SELECT ('a_c' NOT LIKE 'a\_c') AS nl, ('a_c' LIKE 'a\_c') AS l FROM db_root;

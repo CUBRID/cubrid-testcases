@@ -277,3 +277,25 @@ SELECT COUNT(*) AS cnt FROM t05o o LEFT OUTER JOIN t05i i ON i.a = -1 WHERE (SEL
 evaluate 'Case 5-m1';
 SELECT o.b, i.a, i2.a FROM t05o o LEFT OUTER JOIN t05i i ON i.a = -1 LEFT OUTER JOIN t05i i2 ON i2.a = i.a WHERE 5 NOT BETWEEN i2.a AND 1 ORDER BY 1;
 DROP TABLE t05o, t05i;
+-- #16: a term of a SEMI JOIN ON that reads the table an earlier LEFT OUTER JOIN pads with NULL is checked on the
+-- padded row (it is not pushed below the outer join), as EXISTS with the same condition is
+DROP TABLE IF EXISTS t05a, t05b, t05c;
+CREATE TABLE t05a (ca INT);
+CREATE TABLE t05b (ca INT, cb INT);
+CREATE TABLE t05c (ca INT);
+INSERT INTO t05a VALUES (1), (2), (3);
+INSERT INTO t05b VALUES (3, 1);
+INSERT INTO t05c VALUES (1), (2), (3);
+-- expected: rows: 3
+evaluate 'Case 5-s1';
+SELECT t05a.ca FROM t05a LEFT OUTER JOIN t05b ON t05a.ca = t05b.ca SEMI JOIN t05c ON t05c.ca = t05a.ca AND NVL (t05b.cb, 0) = 1 ORDER BY 1;
+-- expected: rows: 1 / 2
+evaluate 'Case 5-s2';
+SELECT t05a.ca FROM t05a LEFT OUTER JOIN t05b ON t05a.ca = t05b.ca SEMI JOIN t05c ON t05c.ca = t05a.ca AND t05b.cb IS NULL ORDER BY 1;
+-- expected: same: 5-s1
+evaluate 'Case 5-s3';
+SELECT t05a.ca FROM t05a LEFT OUTER JOIN t05b ON t05a.ca = t05b.ca WHERE EXISTS (SELECT 1 FROM t05c WHERE t05c.ca = t05a.ca AND NVL (t05b.cb, 0) = 1) ORDER BY 1;
+-- expected: rows: 3
+evaluate 'Case 5-s4';
+SELECT t05a.ca FROM t05a LEFT OUTER JOIN t05b ON t05a.ca = t05b.ca SEMI JOIN t05c ON t05c.ca = t05a.ca AND t05b.cb = 1 ORDER BY 1;
+DROP TABLE t05a, t05b, t05c;
