@@ -18,7 +18,7 @@
  *  run across midnight of December 31 gives.
  *
  *  Coverage:
- *    Case 1:  MODIFY of a TO_CHAR DEFAULT column fails: to DATE with the format 'YYYY' and
+ *    Case 1:  MODIFY of a TO_CHAR DEFAULT column fails: to DATE with the format YYYY and
  *             to INT without a format, which gives the default format and not NULL
  *    Case 2:  MODIFY of a UNIX_TIMESTAMP DEFAULT column to SMALLINT fails
  *    Case 3:  MODIFY of a SYS_GUID DEFAULT column to INT fails
