@@ -28,11 +28,22 @@
  *             - (z, DATE, DOUBLE, CHAR(4)) and (z, BIGINT DESC, TIMESTAMP, ENUM) - every key, NULL columns included
  *    Case 2:  each radix-built index finds the rows with a first column, and every row behind z
  *    Case 3:  behind z, the rows whose first column is NULL come first, and last when that column is descending
+ *    Case 4:  keys led by a column whose radix key is built by its own branch read back in the order of the
+ *             compare-built twin
+ *             - (NUMERIC(25,3) DESC, INT) - a fixed NUMERIC, negative values included
+ *             - (NUMERIC, INT) - NUMERIC without a precision, each value with a scale of its own
+ *             - (BIT VARYING(100), INT) - bit strings of 4, 8 and 12 bits that differ only in length
+ *             - (DATETIME DESC, INT)
+ *             - (DOUBLE, INT) - negative values, and -0.0 and 0.0, which are the same key
+ *             - (MONETARY, INT) - negative values
+ *    Case 5:  each of the Case 4 radix-built indexes finds the rows with a first column
  */
 
 drop table if exists g;
 drop table if exists t_r;
 drop table if exists t_c;
+drop table if exists t_r2;
+drop table if exists t_c2;
 
 create table g (n int, v int);
 insert into g
@@ -134,6 +145,69 @@ evaluate 'Case 3: behind z, the rows whose first column is NULL come first, and 
 select count(*) from (select rownum as r, c1 from t_r where z >= 0 using index i_rzc) x where c1 is null and r <= 59;
 select count(*) from (select rownum as r, h1 from t_r where z >= 0 using index i_rzh) x where h1 is null and r > 5941;
 
+-- t_r2 and t_c2 hold the same rows, the first column NULL where v is NULL
+create table t_r2 (id int, n1 numeric(25,3), n2 numeric, v1 bit varying(100), d1 datetime, x1 double, m1 monetary, f int);
+insert into t_r2
+  select n,
+         v * 1.125,
+         case mod (n, 3) when 0 then cast (mod (v, 50) as numeric(10,0)) when 1 then cast (v / 7.0 as numeric(12,4))
+                         else cast (v * 1000.5 as numeric(20,1)) end,
+         case when v is null then null
+              else case mod (n, 4) when 0 then X'5' when 1 then X'50' when 2 then X'500'
+                                   else cast (to_char (mod (n, 97)) as bit varying(100)) end end,
+         datetime'2020-01-01 00:00:00.000' + v * 1000,
+         case when v is null then null
+              else case mod (n, 5) when 0 then -0.0e0 when 1 then 0.0e0 else v / 3.0 end end,
+         cast (v / 3.0 as monetary),
+         mod (n * 11, 17)
+  from g
+  order by n;
+create table t_c2 like t_r2;
+insert into t_c2 select * from t_r2 order by id;
+
+set system parameters 'index_build_buffer_size=64K';
+set system parameters 'index_sort_method=radix';
+create index i_rn1 on t_r2 (n1 desc, f);
+create index i_rn2 on t_r2 (n2, f);
+create index i_rv1 on t_r2 (v1, f);
+create index i_rd1 on t_r2 (d1 desc, f);
+create index i_rx1 on t_r2 (x1, f);
+create index i_rm1 on t_r2 (m1, f);
+set system parameters 'index_sort_method=compare';
+create index i_cn1 on t_c2 (n1 desc, f);
+create index i_cn2 on t_c2 (n2, f);
+create index i_cv1 on t_c2 (v1, f);
+create index i_cd1 on t_c2 (d1 desc, f);
+create index i_cx1 on t_c2 (x1, f);
+create index i_cm1 on t_c2 (m1, f);
+set system parameters 'index_sort_method=DEFAULT';
+set system parameters 'index_build_buffer_size=DEFAULT';
+
+evaluate 'Case 4: composite keys led by NUMERIC, VARBIT, DATETIME, DOUBLE and MONETARY read back in the order of the compare-built twin; result = no rows differ';
+-- each query prints the position and the key of the rows that differ from the compare-built twin
+select 'n1' as ix, x.* from ((select rownum, n1, f from t_r2 where n1 >= -99999 using index i_rn1)
+  difference (select rownum, n1, f from t_c2 where n1 >= -99999 using index i_cn1)) x order by 2;
+select 'n2' as ix, x.* from ((select rownum, n2, f from t_r2 where n2 >= -99999999 using index i_rn2)
+  difference (select rownum, n2, f from t_c2 where n2 >= -99999999 using index i_cn2)) x order by 2;
+select 'v1' as ix, x.* from ((select rownum, v1, f from t_r2 where v1 >= X'' using index i_rv1)
+  difference (select rownum, v1, f from t_c2 where v1 >= X'' using index i_cv1)) x order by 2;
+select 'd1' as ix, x.* from ((select rownum, d1, f from t_r2 where d1 >= datetime'1900-01-01 00:00:00.000' using index i_rd1)
+  difference (select rownum, d1, f from t_c2 where d1 >= datetime'1900-01-01 00:00:00.000' using index i_cd1)) x order by 2;
+select 'x1' as ix, x.* from ((select rownum, x1, f from t_r2 where x1 >= -1.0e308 using index i_rx1)
+  difference (select rownum, x1, f from t_c2 where x1 >= -1.0e308 using index i_cx1)) x order by 2;
+select 'm1' as ix, x.* from ((select rownum, m1, f from t_r2 where m1 >= -99999 using index i_rm1)
+  difference (select rownum, m1, f from t_c2 where m1 >= -99999 using index i_cm1)) x order by 2;
+
+evaluate 'Case 5: each of the Case 4 radix-built indexes finds the rows with a first column';
+select count(*) from t_r2 where n1 >= -99999 using index i_rn1;
+select count(*) from t_r2 where n2 >= -99999999 using index i_rn2;
+select count(*) from t_r2 where v1 >= X'' using index i_rv1;
+select count(*) from t_r2 where d1 >= datetime'1900-01-01 00:00:00.000' using index i_rd1;
+select count(*) from t_r2 where x1 >= -1.0e308 using index i_rx1;
+select count(*) from t_r2 where m1 >= -99999 using index i_rm1;
+
 drop table g;
 drop table t_r;
 drop table t_c;
+drop table t_r2;
+drop table t_c2;
