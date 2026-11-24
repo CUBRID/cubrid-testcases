@@ -8,8 +8,8 @@
  *
  *  Coverage:
  *    Case 1:  JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63
- *    Case 2:  JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join
- *    Case 3:  JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE
+ *    Case 2:  JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE
+ *    Case 3:  JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join
  *    Case 4:  JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop
  *             join
  */
@@ -43,31 +43,6 @@ INSERT INTO t_json_a VALUES
   (7, '2', '1.5'),
   (8, '-2', '-1.5');
 
-evaluate 'Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63';
-
-SELECT id,
-  CASE WHEN left_body = right_body THEN 'eq' WHEN left_body < right_body THEN 'lt'
-    WHEN left_body > right_body THEN 'gt' END cmp
-FROM t_json_a ORDER BY 1;
-
-evaluate 'Case 2: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join';
-
-SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.id, b.id
-FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body ORDER BY 1, 2;
-show trace;
-
--- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
-with
-  hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.id as a_id, b.id as b_id FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body),
-  nl_rows as (SELECT /*+ NO_USE_HASH USE_NL */ a.id as a_id, b.id as b_id FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body)
-select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
-  from
-  (
-    (select * from hj_rows difference all select * from nl_rows)
-    union all
-    (select * from nl_rows difference all select * from hj_rows)
-  ) diff_result;
-
 DROP TABLE IF EXISTS t_json_b;
 CREATE TABLE t_json_b (id INT, left_body JSON, right_body JSON);
 
@@ -90,15 +65,36 @@ INSERT INTO t_json_b VALUES
   (6, '9223372036854775807', '"9223372036854775808"'),
   (7, '-9223372036854775808', '"-9223372036854775808"');
 
-evaluate 'Case 3: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE';
+evaluate 'Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63';
+SELECT id,
+  CASE WHEN left_body = right_body THEN 'eq' WHEN left_body < right_body THEN 'lt'
+    WHEN left_body > right_body THEN 'gt' END cmp
+FROM t_json_a ORDER BY 1;
 
+evaluate 'Case 2: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE';
 SELECT id,
   CASE WHEN left_body = right_body THEN 'eq' WHEN left_body < right_body THEN 'lt'
     WHEN left_body > right_body THEN 'gt' END cmp
 FROM t_json_b ORDER BY 1;
 
-evaluate 'Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join';
+evaluate 'Case 3: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join';
+SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.id, b.id
+FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body ORDER BY 1, 2;
+show trace;
 
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.id as a_id, b.id as b_id FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body),
+  nl_rows as (SELECT /*+ NO_USE_HASH USE_NL */ a.id as a_id, b.id as b_id FROM t_json_a a, t_json_a b WHERE a.left_body = b.right_body)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from nl_rows)
+    union all
+    (select * from nl_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 4: JSON - hash join of an integer and the string "nan", "inf" or 2^63 returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ a.id, b.id
 FROM t_json_b a, t_json_b b WHERE a.left_body = b.right_body ORDER BY 1, 2;
 show trace;

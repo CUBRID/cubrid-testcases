@@ -9,11 +9,11 @@
  *  after each join prints PASS when the join and its twin return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  MULTISET - a key of a host variable expression joins by nested loop under a hash join hint, for each of
- *             two bound values
- *    Case 2:  MULTISET - a key of a host variable expression beside a scalar key joins by nested loop, with the pairs
- *             of the nested loop join
- *    Case 3:  a key of a scalar host variable expression still joins by hash, with the pairs of the nested loop join
+ *    Case 1:  INT - hash join of a key of a scalar host variable expression returns the pairs of the nested loop join
+ *    Case 2:  MULTISET - a key of a host variable expression joins by nested loop under a hash join hint, with the
+ *             pairs of the nested loop join, for each of two bound values
+ *    Case 3:  MULTISET - a key of a host variable expression beside a scalar key joins by nested loop under a hash join
+ *             hint, with the pairs of the nested loop join
  */
 
 set trace on;
@@ -44,7 +44,18 @@ INSERT INTO t_multiset_int VALUES (71, {1}), (72, {3}), (73, {2, 1});
 
 UPDATE STATISTICS ON t_multiset_varchar, t_multiset_int WITH FULLSCAN;
 
-evaluate 'Case 1: MULTISET - a key of a host variable expression joins by nested loop under a hash join hint, for each of two bound values';
+evaluate 'Case 1: INT - hash join of a key of a scalar host variable expression returns the pairs of the nested loop join';
+prepare st_hash from 'SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca, t_multiset_int.ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca ORDER BY 1, 2';
+execute st_hash using 10;
+show trace;
+
+-- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
+prepare st_cmp from 'with hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca), nl_rows as (SELECT /*+ NO_USE_HASH USE_NL */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca) select (case when count (*) = 0 then ''PASS'' else ''FAIL'' end) as result from ((select * from hj_rows difference all select * from nl_rows) union all (select * from nl_rows difference all select * from hj_rows)) diff_result';
+execute st_cmp using 10, 10;
+deallocate prepare st_hash;
+deallocate prepare st_cmp;
+
+evaluate 'Case 2: MULTISET - a key of a host variable expression joins by nested loop under a hash join hint, with the pairs of the nested loop join, for each of two bound values';
 -- One prepared statement runs with two bound multisets: t_multiset_varchar.cb - {x} keeps each t_multiset_varchar.cb,
 -- and t_multiset_varchar.cb - {2} takes the element 2 out of each
 prepare st_hash from 'SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca, t_multiset_int.ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.cb - ? = t_multiset_int.cb ORDER BY 1, 2';
@@ -60,7 +71,7 @@ execute st_cmp using {'2'}, {'2'};
 deallocate prepare st_hash;
 deallocate prepare st_cmp;
 
-evaluate 'Case 2: MULTISET - a key of a host variable expression beside a scalar key joins by nested loop, with the pairs of the nested loop join';
+evaluate 'Case 3: MULTISET - a key of a host variable expression beside a scalar key joins by nested loop under a hash join hint, with the pairs of the nested loop join';
 prepare st_hash from 'SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca, t_multiset_int.ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.cb - ? = t_multiset_int.cb AND t_multiset_varchar.ca + 10 = t_multiset_int.ca ORDER BY 1, 2';
 execute st_hash using {'x'};
 show trace;
@@ -68,17 +79,6 @@ show trace;
 -- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
 prepare st_cmp from 'with hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.cb - ? = t_multiset_int.cb AND t_multiset_varchar.ca + 10 = t_multiset_int.ca), nl_rows as (SELECT /*+ NO_USE_HASH USE_NL */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.cb - ? = t_multiset_int.cb AND t_multiset_varchar.ca + 10 = t_multiset_int.ca) select (case when count (*) = 0 then ''PASS'' else ''FAIL'' end) as result from ((select * from hj_rows difference all select * from nl_rows) union all (select * from nl_rows difference all select * from hj_rows)) diff_result';
 execute st_cmp using {'x'}, {'x'};
-deallocate prepare st_hash;
-deallocate prepare st_cmp;
-
-evaluate 'Case 3: a key of a scalar host variable expression still joins by hash, with the pairs of the nested loop join';
-prepare st_hash from 'SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca, t_multiset_int.ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca ORDER BY 1, 2';
-execute st_hash using 10;
-show trace;
-
--- compare with the nested loop join: PASS when the two queries return the same rows as a multiset
-prepare st_cmp from 'with hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca), nl_rows as (SELECT /*+ NO_USE_HASH USE_NL */ t_multiset_varchar.ca as t_multiset_varchar_ca, t_multiset_int.ca as t_multiset_int_ca FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.ca + ? = t_multiset_int.ca) select (case when count (*) = 0 then ''PASS'' else ''FAIL'' end) as result from ((select * from hj_rows difference all select * from nl_rows) union all (select * from nl_rows difference all select * from hj_rows)) diff_result';
-execute st_cmp using 10, 10;
 deallocate prepare st_hash;
 deallocate prepare st_cmp;
 

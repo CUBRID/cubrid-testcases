@@ -7,7 +7,8 @@
  *  after each join prints PASS when the join and its twin return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  SET, MULTISET and SEQUENCE across kinds - hash join returns the pairs of the nested loop join
+ *    Case 1:  SET, MULTISET and SEQUENCE across kinds - hash join of each pair of kinds returns the pairs of the nested
+ *             loop join
  */
 
 set trace on;
@@ -64,7 +65,7 @@ INSERT INTO t_multiset_int VALUES (31, {1, 2}), (32, {2, 1}), (33, {1, 2, 2}), (
 
 UPDATE STATISTICS ON t_set_int, t_sequence_int, t_sequence_numeric, t_multiset_int WITH FULLSCAN;
 
-evaluate 'Case 1: SET, MULTISET and SEQUENCE across kinds - hash join returns the pairs of the nested loop join';
+evaluate 'Case 1: SET, MULTISET and SEQUENCE across kinds - hash join of each pair of kinds returns the pairs of the nested loop join';
 -- SET = SEQUENCE
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_set_int.ca, t_sequence_int.ca
 FROM t_set_int, t_sequence_int WHERE t_set_int.cb = t_sequence_int.cb ORDER BY 1, 2;

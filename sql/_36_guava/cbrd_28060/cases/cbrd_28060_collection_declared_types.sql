@@ -8,8 +8,10 @@
  *  return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  SET of several element types of one hash type - hash join returns the pairs of the nested loop join
- *    Case 2:  SET of element types of two hash types - joins by nested loop, with the pairs of the nested loop join
+ *    Case 1:  SET of several element types of one hash type - hash join of t_exact_a and t_exact_b returns the pairs of
+ *             the nested loop join
+ *    Case 2:  SET of element types of two hash types - t_int_varchar_a and t_int_varchar_b join by nested loop under a
+ *             hash join hint, with the pairs of the nested loop join
  */
 
 set trace on;
@@ -58,8 +60,7 @@ INSERT INTO t_int_double_b VALUES (191, {CAST (1 AS DOUBLE), 2.5e0}), (192, {CAS
 
 UPDATE STATISTICS ON t_exact_a, t_exact_b, t_string_a, t_string_b, t_int_double_a, t_int_double_b WITH FULLSCAN;
 
-evaluate 'Case 1: SET of several element types of one hash type - hash join returns the pairs of the nested loop join';
-
+evaluate 'Case 1: SET of several element types of one hash type - hash join of t_exact_a and t_exact_b returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_exact_a.ca, t_exact_b.ca
 FROM t_exact_a, t_exact_b WHERE t_exact_a.cb = t_exact_b.cb ORDER BY 1, 2;
 show trace;
@@ -137,8 +138,7 @@ INSERT INTO t_int_float_b VALUES (171, {CAST (16777216 AS FLOAT)}), (172, {16777
 
 UPDATE STATISTICS ON t_int_varchar_a, t_int_varchar_b, t_int_float_a, t_int_float_b WITH FULLSCAN;
 
-evaluate 'Case 2: SET of element types of two hash types - joins by nested loop, with the pairs of the nested loop join';
-
+evaluate 'Case 2: SET of element types of two hash types - t_int_varchar_a and t_int_varchar_b join by nested loop under a hash join hint, with the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_int_varchar_a.ca, t_int_varchar_b.ca
 FROM t_int_varchar_a, t_int_varchar_b WHERE t_int_varchar_a.cb = t_int_varchar_b.cb ORDER BY 1, 2;
 show trace;

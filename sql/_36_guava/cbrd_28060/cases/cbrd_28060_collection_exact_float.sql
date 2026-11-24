@@ -9,8 +9,10 @@
  *
  *  Coverage:
  *    Case 1:  MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join
- *    Case 2:  MULTISET - BIGINT and DOUBLE elements join by nested loop, with the pairs of the nested loop join
- *    Case 3:  MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with the pairs of the nested loop join
+ *    Case 2:  MULTISET - BIGINT and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the
+ *             nested loop join
+ *    Case 3:  MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop under a hash join hint, with the pairs
+ *             of the nested loop join
  */
 
 set trace on;
@@ -53,7 +55,6 @@ INSERT INTO t_multiset_double VALUES (51, {1.0}), (52, {495038888524330534.0}), 
 UPDATE STATISTICS ON t_multiset_bigint, t_multiset_numeric, t_multiset_double WITH FULLSCAN;
 
 evaluate 'Case 1: MULTISET - hash join of BIGINT and NUMERIC(24,4) elements returns the pairs of the nested loop join';
-
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_bigint.ca, t_multiset_numeric.ca
 FROM t_multiset_bigint, t_multiset_numeric WHERE t_multiset_bigint.cb = t_multiset_numeric.cb ORDER BY 1, 2;
 show trace;
@@ -70,8 +71,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 2: MULTISET - BIGINT and DOUBLE elements join by nested loop, with the pairs of the nested loop join';
-
+evaluate 'Case 2: MULTISET - BIGINT and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_bigint.ca, t_multiset_double.ca
 FROM t_multiset_bigint, t_multiset_double WHERE t_multiset_bigint.cb = t_multiset_double.cb ORDER BY 1, 2;
 show trace;
@@ -88,8 +88,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 3: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop, with the pairs of the nested loop join';
-
+evaluate 'Case 3: MULTISET - NUMERIC(24,4) and DOUBLE elements join by nested loop under a hash join hint, with the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_numeric.ca, t_multiset_double.ca
 FROM t_multiset_numeric, t_multiset_double WHERE t_multiset_numeric.cb = t_multiset_double.cb ORDER BY 1, 2;
 show trace;

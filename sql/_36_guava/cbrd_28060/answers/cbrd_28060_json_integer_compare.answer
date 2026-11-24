@@ -7,6 +7,12 @@
 ===================================================
 8
 ===================================================
+0
+===================================================
+0
+===================================================
+7
+===================================================
     
 Case 1: JSON - an integer and a DOUBLE or a numeric string compare by their values at 2^53 and 2^63     
 
@@ -23,7 +29,21 @@ id    cmp
 
 ===================================================
     
-Case 2: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join     
+Case 2: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE     
+
+===================================================
+id    cmp    
+1     lt     
+2     lt     
+3     lt     
+4     lt     
+5     gt     
+6     lt     
+7     eq     
+
+===================================================
+    
+Case 3: JSON - hash join of an integer and a DOUBLE or a numeric string returns the pairs of the nested loop join     
 
 ===================================================
 id    id    
@@ -59,26 +79,6 @@ Trace Statistics:
 ===================================================
 result    
 PASS     
-
-===================================================
-0
-===================================================
-0
-===================================================
-7
-===================================================
-    
-Case 3: JSON - an integer and the string "nan", "inf" or 2^63 compare as through DOUBLE     
-
-===================================================
-id    cmp    
-1     lt     
-2     lt     
-3     lt     
-4     lt     
-5     gt     
-6     lt     
-7     eq     
 
 ===================================================
     

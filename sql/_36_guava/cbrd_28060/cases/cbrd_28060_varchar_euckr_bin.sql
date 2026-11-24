@@ -1,25 +1,28 @@
 /**
  *  This test case verifies CBRD-28060: Make hashing follow comparison and remove its inefficiencies
  *
- *  A hash join, a hash GROUP BY, and a hash partition prune hash a string key with the hash
- *  function of its collation. The change hashes byte collations eight bytes at a time and makes
- *  the hash of every collation follow its comparison, so two keys that compare equal get one hash.
+ *  A hash join, a hash GROUP BY, a hash partition prune, and a hash list scan hash a string key with the hash function
+ *  of its collation. The change hashes byte collations eight bytes at a time and makes the hash of every collation
+ *  follow its comparison, so two keys that compare equal get one hash.
  *
- *  Each hash case has a twin that skips the hash path: a nested loop join, a sort GROUP BY, or a table without
- *  partitions. The verification block after each hash join and hash GROUP BY prints PASS when the hash query and its
- *  twin return the same rows as a multiset. A prune case counts the rows of each value in t_varchar_part and in
- *  t_varchar_a, and the two counts must match. SHOW TRACE shows the path that each hash case took. CTP masks the digits
- *  of a trace, so the answer checks only the path: HASHJOIN, hash true in GROUPBY, and one PARTITION line for the one
- *  value that a prune case traces after it counts the rows of every value.
+ *  Each hash case has a twin that skips the hash path: a nested loop join, a sort GROUP BY, a table without partitions,
+ *  or the join without the hash list scan. The verification block after each hash join, hash GROUP BY, and hash list
+ *  scan prints PASS when the hash query and its twin return the same rows as a multiset. A prune case counts the rows
+ *  of each value in t_varchar_part and in t_varchar_a, and the two counts must match. SHOW TRACE shows the path that
+ *  each hash case took. CTP masks the digits of a trace, so the answer checks only the path: HASHJOIN, hash true and
+ *  sort false in GROUPBY, one PARTITION line for the one value that a prune case traces after it counts the rows of
+ *  every value, and SCAN (hash temp(m), ...) for the hash list scan.
  *
  *  For the built-in collation euckr_bin, t_varchar_a, t_varchar_b, and t_varchar_part hold VARCHAR(40) keys: the
  *  strings of cbrd_28060_varchar_utf8_bin that the charset can hold, and the case pairs, accents, and expansions that
  *  the collation compares equal.
  *
  *  Coverage:
- *    Case 1:  hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join
- *    Case 2:  hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY
- *    Case 3:  t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a
+ *    Case 1:  euckr_bin - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join
+ *    Case 2:  euckr_bin - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY
+ *    Case 3:  euckr_bin - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a
+ *    Case 4:  euckr_bin - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash
+ *             list scan
  */
 
 set trace on;
@@ -27,6 +30,10 @@ set trace on;
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace holds no
 -- parallel workers lines, which depend on the number of cores of the server. The keys with trailing spaces compare as
 -- they do because of ignore_trailing_space=no, the default of the CTP database
+
+-- agg_hash_respect_order=no makes a hash GROUP BY return its groups without sorting them, so a group that the hash
+-- splits shows as two groups; with the default yes, the sort merges the two again
+set system parameters 'agg_hash_respect_order=no';
 
 -- euckr_bin
 DROP TABLE IF EXISTS t_varchar_part, t_varchar_b, t_varchar_a;
@@ -134,39 +141,37 @@ INSERT INTO t_varchar_a VALUES
   (34, CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
   (35, CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin));
 
--- 36 to 42: B0 A1 (U+AC00): its second byte A1 is also the first byte of the EUC space
+-- 36 to 41: B0 A1 (U+AC00): its second byte A1 is also the first byte of the EUC space
 -- ca | cb                         | note
--- ---+----------------------------+---------------------------------------
+-- ---+----------------------------+----------------------------
 -- 36 | '<U+AC00>'                 | B0 A1
 -- 37 | '<U+AC00><U+3000>'         | B0 A1, then the EUC space
 -- 38 | '<U+3000><U+3000>'         | two EUC spaces
--- 39 | 'a\0b'                     | NUL in the middle, the same bytes as 9
--- 40 | '<U+AC00> '                | B0 A1, then a space
--- 41 | '<U+AC00><U+3000><U+AC00>' | B0 A1, the EUC space, B0 A1
--- 42 | '<U+AC00><U+AC00>'         | B0 A1 twice
+-- 39 | '<U+AC00> '                | B0 A1, then a space
+-- 40 | '<U+AC00><U+3000><U+AC00>' | B0 A1, the EUC space, B0 A1
+-- 41 | '<U+AC00><U+AC00>'         | B0 A1 twice
 INSERT INTO t_varchar_a VALUES
   (36, CAST (CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
   (37, CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
   (38, CAST (CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (39, CAST (CHR (97 USING euckr) || CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (40, CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (41, CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (42, CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin));
+  (39, CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (40, CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (41, CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin));
 
--- 43 to 47: more characters whose second byte is A1: A4 A1 (U+3131) and C7 A1 (U+D408), and B0 A1 after 'a'
+-- 42 to 46: more characters whose second byte is A1: A4 A1 (U+3131) and C7 A1 (U+D408), and B0 A1 after 'a'
 -- ca | cb                         | note
 -- ---+----------------------------+---------------------------
--- 43 | '<U+3131>'                 | A4 A1
--- 44 | '<U+3131><U+3000>'         | A4 A1, then the EUC space
--- 45 | '<U+3131> '                | A4 A1, then a space
--- 46 | '<U+D408><U+3000><U+3000>' | C7 A1, then two EUC spaces
--- 47 | 'a<U+AC00>'                | 'a', then B0 A1
+-- 42 | '<U+3131>'                 | A4 A1
+-- 43 | '<U+3131><U+3000>'         | A4 A1, then the EUC space
+-- 44 | '<U+3131> '                | A4 A1, then a space
+-- 45 | '<U+D408><U+3000><U+3000>' | C7 A1, then two EUC spaces
+-- 46 | 'a<U+AC00>'                | 'a', then B0 A1
 INSERT INTO t_varchar_a VALUES
-  (43, CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (44, CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (45, CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (46, CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
-  (47, CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin));
+  (42, CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (43, CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (44, CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (45, CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)),
+  (46, CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin));
 
 -- t_varchar_b and t_varchar_part: the values of t_varchar_a
 INSERT INTO t_varchar_b SELECT * FROM t_varchar_a;
@@ -174,7 +179,7 @@ INSERT INTO t_varchar_part SELECT * FROM t_varchar_a;
 
 UPDATE STATISTICS ON t_varchar_a, t_varchar_b, t_varchar_part WITH FULLSCAN;
 
-evaluate 'Case 1: hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join';
+evaluate 'Case 1: euckr_bin - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join';
 select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
 from t_varchar_a x, t_varchar_b y where x.cb = y.cb order by 1, 2;
 show trace;
@@ -191,7 +196,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 2: hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY';
+evaluate 'Case 2: euckr_bin - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY';
 select min(ca), count(*)
 from t_varchar_a group by cb order by 1, 2;
 show trace;
@@ -208,7 +213,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from sort_rows difference all select * from hash_rows)
   ) diff_result;
 
-evaluate 'Case 3: t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
+evaluate 'Case 3: euckr_bin - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
 SELECT 1 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST ('' AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
@@ -355,7 +360,7 @@ SELECT 35 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
--- 36 to 42: B0 A1 (U+AC00): its second byte A1 is also the first byte of the EUC space
+-- 36 to 41: B0 A1 (U+AC00): its second byte A1 is also the first byte of the EUC space
 SELECT 36 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
@@ -369,39 +374,35 @@ SELECT 38 AS ca,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 SELECT 39 AS ca,
-  (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
-  (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
-
-SELECT 40 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 41 AS ca,
+SELECT 40 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 42 AS ca,
+SELECT 41 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
--- 43 to 47: more characters whose second byte is A1: A4 A1 (U+3131) and C7 A1 (U+D408), and B0 A1 after 'a'
-SELECT 43 AS ca,
+-- 42 to 46: more characters whose second byte is A1: A4 A1 (U+3131) and C7 A1 (U+D408), and B0 A1 after 'a'
+SELECT 42 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 44 AS ca,
+SELECT 43 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 45 AS ca,
+SELECT 44 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 46 AS ca,
+SELECT 45 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT 47 AS ca,
+SELECT 46 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
@@ -409,7 +410,26 @@ SELECT COUNT (*)
 FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) AS VARCHAR(40) COLLATE euckr_bin);
 show trace;
 
+evaluate 'Case 4: euckr_bin - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan';
+select /*+ ordered parallel(0) */ x.ca, y.ca
+from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb order by 1, 2;
+show trace;
+
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
+with
+  hashscan_rows as (select /*+ ordered parallel(0) */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb),
+  listscan_rows as (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hashscan_rows difference all select * from listscan_rows)
+    union all
+    (select * from listscan_rows difference all select * from hashscan_rows)
+  ) diff_result;
+
 -- cleanup
+set system parameters 'agg_hash_respect_order=default';
+
 drop table if exists t_varchar_a, t_varchar_b, t_varchar_part;
 
 set trace off;

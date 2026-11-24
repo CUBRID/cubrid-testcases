@@ -10,9 +10,11 @@
  *  multiset.
  *
  *  Coverage:
- *    Case 1:  SEQUENCE OF SET and SEQUENCE OF SEQUENCE - hash join returns the pairs of the nested loop join
+ *    Case 1:  SEQUENCE OF SET and SEQUENCE OF SEQUENCE - hash join of t_sequence_set and t_sequence_sequence returns
+ *             the pairs of the nested loop join
  *    Case 2:  SEQUENCE of a SET column - hash join of nested keys returns the pairs of the nested loop join
- *    Case 3:  SEQUENCE of a SET column - hash list scan of nested keys returns the rows of the nested loop scan
+ *    Case 3:  SEQUENCE of a SET column - hash list scan of nested keys returns the pairs of the join without the hash
+ *             list scan
  */
 
 set trace on;
@@ -44,8 +46,7 @@ INSERT INTO t_sequence_sequence SELECT 94, {SEQUENCE {2, 1}} FROM db_root;
 INSERT INTO t_sequence_sequence SELECT 95, {SEQUENCE {3}} FROM db_root;
 UPDATE STATISTICS ON t_sequence_set, t_sequence_sequence WITH FULLSCAN;
 
-evaluate 'Case 1: SEQUENCE OF SET and SEQUENCE OF SEQUENCE - hash join returns the pairs of the nested loop join';
-
+evaluate 'Case 1: SEQUENCE OF SET and SEQUENCE OF SEQUENCE - hash join of t_sequence_set and t_sequence_sequence returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_sequence_set.ca,
   t_sequence_sequence.ca
 FROM t_sequence_set, t_sequence_sequence WHERE t_sequence_set.cb = t_sequence_sequence.cb ORDER BY 1, 2;
@@ -88,7 +89,6 @@ INSERT INTO t_collections VALUES (211, {2, 1}, {'1', '2'}, {1, 2}), (212, {3}, {
 UPDATE STATISTICS ON t_set_int, t_collections WITH FULLSCAN;
 
 evaluate 'Case 2: SEQUENCE of a SET column - hash join of nested keys returns the pairs of the nested loop join';
-
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_set_int.ca, t_collections.ca
 FROM t_set_int, t_collections WHERE {t_set_int.cb} = {t_collections.cb} ORDER BY 1, 2;
 show trace;
@@ -154,7 +154,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 3: SEQUENCE of a SET column - hash list scan of nested keys returns the rows of the nested loop scan';
+evaluate 'Case 3: SEQUENCE of a SET column - hash list scan of nested keys returns the pairs of the join without the hash list scan';
 -- y reads t_collections with NO_MERGE, the build side of the hash list scan; {t_set_int.cb} against {cb} or {cd}
 -- hashes; against {cc} ({{3}} = {{'3'}}), or with a leaf beside the set ({cb, ca}), the scan reads y by nested loop
 SELECT /*+ ORDERED PARALLEL(0) */ t_set_int.ca, y.ca
@@ -162,7 +162,7 @@ FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb} c FROM t_collections WHERE ca >
 WHERE {t_set_int.cb} = y.c ORDER BY 1, 2;
 show trace;
 
--- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
 with
   hashscan_rows as (SELECT /*+ ORDERED PARALLEL(0) */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c),
   listscan_rows as (SELECT /*+ ORDERED PARALLEL(0) NO_HASH_LIST_SCAN */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c)
@@ -179,7 +179,7 @@ FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cd} c FROM t_collections WHERE ca >
 WHERE {t_set_int.cb} = y.c ORDER BY 1, 2;
 show trace;
 
--- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
 with
   hashscan_rows as (SELECT /*+ ORDERED PARALLEL(0) */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cd} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c),
   listscan_rows as (SELECT /*+ ORDERED PARALLEL(0) NO_HASH_LIST_SCAN */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cd} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c)
@@ -196,7 +196,7 @@ FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cc} c FROM t_collections WHERE ca >
 WHERE {t_set_int.cb} = y.c ORDER BY 1, 2;
 show trace;
 
--- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
 with
   hashscan_rows as (SELECT /*+ ORDERED PARALLEL(0) */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cc} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c),
   listscan_rows as (SELECT /*+ ORDERED PARALLEL(0) NO_HASH_LIST_SCAN */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cc} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb} = y.c)
@@ -213,7 +213,7 @@ FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb, ca} c FROM t_collections WHERE 
 WHERE {t_set_int.cb, t_set_int.ca + 10} = y.c ORDER BY 1, 2;
 show trace;
 
--- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
 with
   hashscan_rows as (SELECT /*+ ORDERED PARALLEL(0) */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb, ca} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb, t_set_int.ca + 10} = y.c),
   listscan_rows as (SELECT /*+ ORDERED PARALLEL(0) NO_HASH_LIST_SCAN */ t_set_int.ca as t_set_int_ca, y.ca as y_ca FROM t_set_int, (SELECT /*+ NO_MERGE */ ca, {cb, ca} c FROM t_collections WHERE ca >= 1) y WHERE {t_set_int.cb, t_set_int.ca + 10} = y.c)

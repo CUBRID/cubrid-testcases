@@ -9,6 +9,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 2
 ===================================================
 2
@@ -107,7 +109,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -204,6 +206,57 @@ Trace Statistics:
      
 
 ===================================================
+    
+Case 4: utf8_bin - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan     
+
+===================================================
+ca    ca    
+1     1     
+2     2     
+3     3     
+4     4     
+5     5     
+6     6     
+7     7     
+8     8     
+9     9     
+10     10     
+11     11     
+12     12     
+13     13     
+14     14     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_varchar_b)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_varchar_b].ca, [dba.t_varchar_b].cb from [dba.t_varchar_b] [dba.t_varchar_b] where ([dba.t_varchar_b].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ x.ca, y.ca from [dba.t_varchar_a] x, (select /*+ NO_MERGE */ [dba.t_varchar_b].ca, [dba.t_varchar_b].cb from [dba.t_varchar_b] [dba.t_varchar_b] where ([dba.t_varchar_b].ca>= ?:? )) y (ca, cb) where x.cb=y.cb order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
 0
 ===================================================
 0
@@ -229,7 +282,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 4: utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join     
+Case 5: utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join     
 
 ===================================================
 ca    ca    
@@ -292,7 +345,7 @@ PASS
 
 ===================================================
     
-Case 5: utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY     
+Case 6: utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY     
 
 ===================================================
 min(ca)    count(*)    
@@ -317,7 +370,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -327,7 +380,7 @@ PASS
 
 ===================================================
     
-Case 6: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
+Case 7: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
 
 ===================================================
 ca    cnt_base    cnt_part    
@@ -413,6 +466,73 @@ Trace Statistics:
         SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
+===================================================
+    
+Case 8: utf8_ko_cs - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan     
+
+===================================================
+ca    ca    
+1     1     
+1     2     
+2     1     
+2     2     
+3     3     
+3     4     
+4     3     
+4     4     
+5     5     
+5     6     
+6     5     
+6     6     
+7     7     
+7     8     
+8     7     
+8     8     
+9     9     
+9     10     
+10     9     
+10     10     
+11     11     
+11     12     
+12     11     
+12     12     
+13     13     
+13     14     
+14     13     
+14     14     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_varchar_b)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_varchar_b].ca, [dba.t_varchar_b].cb from [dba.t_varchar_b] [dba.t_varchar_b] where ([dba.t_varchar_b].ca>= ?:? ))
+
+  SORT (order by)
+    NESTED LOOPS (inner join)
+      TABLE SCAN (x)
+      TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ x.ca, y.ca from [dba.t_varchar_a] x, (select /*+ NO_MERGE */ [dba.t_varchar_b].ca, [dba.t_varchar_b].cb from [dba.t_varchar_b] [dba.t_varchar_b] where ([dba.t_varchar_b].ca>= ?:? )) y (ca, cb) where x.cb=y.cb order by ?, ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_varchar_a), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_varchar_b), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
 ===================================================
 0
 ===================================================

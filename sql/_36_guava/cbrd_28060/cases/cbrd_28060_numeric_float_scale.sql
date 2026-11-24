@@ -16,6 +16,10 @@ set trace on;
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace holds no
 -- parallel workers lines, which depend on the number of cores of the server
 
+-- agg_hash_respect_order=no makes a hash GROUP BY return its groups without sorting them, so a group that the hash
+-- splits shows as two groups; with the default yes, the sort merges the two again
+set system parameters 'agg_hash_respect_order=no';
+
 -- t_numeric_a and t_numeric_b hold NUMERIC values without a precision, which keep the decimal places of each value;
 -- t_numeric_b holds the values of t_numeric_a with more decimal places, and t_numeric_ab the rows of both
 DROP TABLE IF EXISTS t_numeric_a;
@@ -92,6 +96,8 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 -- cleanup
+set system parameters 'agg_hash_respect_order=default';
+
 DROP TABLE IF EXISTS t_numeric_a, t_numeric_b, t_numeric_ab;
 
 set trace off;

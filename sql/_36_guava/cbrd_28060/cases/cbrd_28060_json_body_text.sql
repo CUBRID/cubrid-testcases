@@ -7,7 +7,7 @@
  *  a multiset.
  *
  *  Coverage:
- *    Case 1:  JSON - hash join returns the pairs of the nested loop join
+ *    Case 1:  JSON - hash join of t_json_a and t_json_b returns the pairs of the nested loop join
  *    Case 2:  JSON - hash GROUP BY on t_json_a returns the groups of the sort GROUP BY
  */
 
@@ -15,6 +15,10 @@ set trace on;
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace holds no
 -- parallel workers lines, which depend on the number of cores of the server
+
+-- agg_hash_respect_order=no makes a hash GROUP BY return its groups without sorting them, so a group that the hash
+-- splits shows as two groups; with the default yes, the sort merges the two again
+set system parameters 'agg_hash_respect_order=no';
 
 DROP TABLE IF EXISTS t_json_b, t_json_a;
 CREATE TABLE t_json_a (id INT, body JSON);
@@ -45,8 +49,7 @@ CREATE TABLE t_json_b AS SELECT * FROM t_json_a;
 
 UPDATE STATISTICS ON t_json_a, t_json_b WITH FULLSCAN;
 
-evaluate 'Case 1: JSON - hash join returns the pairs of the nested loop join';
-
+evaluate 'Case 1: JSON - hash join of t_json_a and t_json_b returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_json_a.id, t_json_b.id
 FROM t_json_a, t_json_b WHERE t_json_a.body = t_json_b.body AND t_json_a.id < t_json_b.id ORDER BY 1, 2;
 show trace;
@@ -64,7 +67,6 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 evaluate 'Case 2: JSON - hash GROUP BY on t_json_a returns the groups of the sort GROUP BY';
-
 select min(id), count(*)
 from t_json_a group by body order by 1, 2;
 show trace;
@@ -82,6 +84,8 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 -- cleanup
+set system parameters 'agg_hash_respect_order=default';
+
 DROP TABLE IF EXISTS t_json_a, t_json_b;
 
 set trace off;

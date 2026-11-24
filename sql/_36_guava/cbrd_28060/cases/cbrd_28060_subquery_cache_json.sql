@@ -11,7 +11,6 @@
  *    Case 1:  JSON - a correlated subquery keyed by a JSON value returns the uncached results
  */
 
-evaluate 'Case 1: JSON - a correlated subquery keyed by a JSON value returns the uncached results';
 DROP TABLE IF EXISTS t_json;
 CREATE TABLE t_json (id INT, body JSON);
 
@@ -38,6 +37,7 @@ INSERT INTO t_json VALUES
   (8, '1'),
   (9, '1.0');
 
+evaluate 'Case 1: JSON - a correlated subquery keyed by a JSON value returns the uncached results';
 SELECT t_json.id, (SELECT JSON_TYPE (t_json.body) FROM db_root)
 FROM t_json ORDER BY 1;
 

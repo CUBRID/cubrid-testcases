@@ -5,22 +5,22 @@
 ===================================================
 0
 ===================================================
-3
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
 3
 ===================================================
-0
+3
 ===================================================
 2
 ===================================================
-0
-===================================================
 2
 ===================================================
     
-Case 1: BIT(8) against BIT(16): no pair, as the nested loop join     
+Case 1: BIT(8) and BIT(16) - hash join finds no pair, as the nested loop join     
 
 ===================================================
 res    
@@ -28,7 +28,7 @@ PASS
 
 ===================================================
     
-Case 2: VARBIT(8) against VARBIT(16): the pair of equal bits, as the nested loop join     
+Case 2: BIT VARYING(8) and BIT VARYING(16) - hash join finds the pair of equal bits, as the nested loop join     
 
 ===================================================
 res    
@@ -36,7 +36,7 @@ PASS
 
 ===================================================
     
-Case 3: an INT key and a BIT(8) against BIT(16) key: no pair, as the nested loop join     
+Case 3: INT and BIT(8) with INT and BIT(16) - hash join of two keys finds no pair, as the nested loop join     
 
 ===================================================
 res    
@@ -44,7 +44,7 @@ PASS
 
 ===================================================
     
-Case 4: trace: Cases 1 to 3 run as a hash join (HASHJOIN)     
+Case 4: trace - Cases 1 to 3 run as a hash join (HASHJOIN)     
 
 ===================================================
 count(*)    

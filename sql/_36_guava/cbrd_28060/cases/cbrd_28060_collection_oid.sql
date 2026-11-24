@@ -6,7 +6,7 @@
  *  its twin return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  SET OF a class - hash join returns the pairs of the nested loop join
+ *    Case 1:  SET OF a class - hash join of t_set_object_a and t_set_object_b returns the pairs of the nested loop join
  */
 
 set trace on;
@@ -25,8 +25,7 @@ INSERT INTO t_set_object_a SELECT x.ca, {x} FROM t_object x;
 INSERT INTO t_set_object_b SELECT x.ca + 10, {x} FROM t_object x;
 UPDATE STATISTICS ON t_set_object_a, t_set_object_b WITH FULLSCAN;
 
-evaluate 'Case 1: SET OF a class - hash join returns the pairs of the nested loop join';
-
+evaluate 'Case 1: SET OF a class - hash join of t_set_object_a and t_set_object_b returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_set_object_a.ca, t_set_object_b.ca
 FROM t_set_object_a, t_set_object_b WHERE t_set_object_a.cb = t_set_object_b.cb ORDER BY 1, 2;
 show trace;

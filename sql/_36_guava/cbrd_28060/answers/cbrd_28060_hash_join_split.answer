@@ -556,7 +556,115 @@ PASS
 
 ===================================================
     
-Case 6: LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
+Case 6: LEFT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+3828     3772     3798     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+3828     3772     3798     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] left outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+3828     3772     3798     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] left outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+3828     3772     3798     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (left outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] left outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 7: LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
 
 ===================================================
 0
@@ -641,114 +749,6 @@ Query Plan:
     TABLE SCAN (dba.t_right)
 
   rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] left outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
-        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        PARALLEL (time: ?, fetch: ?, ioread: ?)
-          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
-          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-result    
-PASS     
-
-===================================================
-    
-Case 7: RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
-
-===================================================
-0
-===================================================
-count(*)    count(t_right.ca)    count(t_left.ca)    
-4363     4311     3729     
-
-===================================================
-count(*)    count(t_right.ca)    count(t_left.ca)    
-4363     4311     3729     
-
-===================================================
-trace    
-
-Query Plan:
-  HASH JOIN (right outer join)
-    TABLE SCAN (dba.t_left)
-    TABLE SCAN (dba.t_right)
-
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-result    
-PASS     
-
-===================================================
-0
-===================================================
-count(*)    count(t_right.ca)    count(t_left.ca)    
-4363     4311     3729     
-
-===================================================
-trace    
-
-Query Plan:
-  HASH JOIN (right outer join)
-    TABLE SCAN (dba.t_left)
-    TABLE SCAN (dba.t_right)
-
-  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
-        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
-        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
-        SUBQUERY (uncorrelated)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-result    
-PASS     
-
-===================================================
-count(*)    count(t_right.ca)    count(t_left.ca)    
-4363     4311     3729     
-
-===================================================
-trace    
-
-Query Plan:
-  HASH JOIN (right outer join)
-    TABLE SCAN (dba.t_left)
-    TABLE SCAN (dba.t_right)
-
-  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -857,6 +857,330 @@ Query Plan:
     TABLE SCAN (dba.t_right)
 
   rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] left outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd and [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 9: RIGHT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4367     4337     3772     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4367     4337     3772     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4367     4337     3772     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4367     4337     3772     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 10: RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4363     4311     3729     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4363     4311     3729     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4363     4311     3729     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4363     4311     3729     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?, parallel workers: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        PARALLEL (time: ?, fetch: ?, ioread: ?)
+          BUILD (time: ?..?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+          PROBE (time: ?..?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 11: RIGHT OUTER JOIN of two columns - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4303     4273     3684     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4303     4273     3684     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd and [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+0
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4303     4273     3684     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH NO_PARALLEL_SUBQUERY NO_PARALLEL_HASH_JOIN */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd and [dba.t_left].ca=[dba.t_right].ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SPLIT (time: ?, fetch: ?, ioread: ?, partitions: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: hybrid+skip)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_left), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_right), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+result    
+PASS     
+
+===================================================
+count(*)    count(t_right.ca)    count(t_left.ca)    
+4303     4273     3684     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (right outer join)
+    TABLE SCAN (dba.t_left)
+    TABLE SCAN (dba.t_right)
+
+  rewritten query: select /*+ USE_HASH PARALLEL(?) */ count(*), count([dba.t_right].ca), count([dba.t_left].ca) from [dba.t_left] [dba.t_left] right outer join [dba.t_right] [dba.t_right] on [dba.t_left].cd=[dba.t_right].cd and [dba.t_left].ca=[dba.t_right].ca
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)

@@ -28,7 +28,6 @@ CREATE TABLE t_set_numeric_b (ca INT, cb SET (NUMERIC));
 INSERT INTO t_set_numeric_b VALUES (11, {1.50}), (12, {2.000});
 
 evaluate 'Case 1: SET OF NUMERIC - hash join of elements of their own scale (1.5 and 1.50) returns the pairs of the nested loop join';
-
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_set_numeric_a.ca, t_set_numeric_b.ca
 FROM t_set_numeric_a, t_set_numeric_b WHERE t_set_numeric_a.cb = t_set_numeric_b.cb ORDER BY 1, 2;
 show trace;

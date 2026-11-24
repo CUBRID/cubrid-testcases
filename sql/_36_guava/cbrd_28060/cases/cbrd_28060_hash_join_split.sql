@@ -19,11 +19,17 @@
  *             the counts of the merge join
  *    Case 5:  two columns - hash join without split, with the serial split, and with the parallel split returns the
  *             counts of the merge join
- *    Case 6:  LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the
- *             parallel split returns the counts of the merge join
- *    Case 7:  RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the
+ *    Case 6:  LEFT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the parallel
+ *             split returns the counts of the merge join
+ *    Case 7:  LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the
  *             parallel split returns the counts of the merge join
  *    Case 8:  LEFT OUTER JOIN of two columns - hash join without split, with the serial split, and with the parallel
+ *             split returns the counts of the merge join
+ *    Case 9:  RIGHT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the
+ *             parallel split returns the counts of the merge join
+ *    Case 10: RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the
+ *             parallel split returns the counts of the merge join
+ *    Case 11: RIGHT OUTER JOIN of two columns - hash join without split, with the serial split, and with the parallel
  *             split returns the counts of the merge join
  */
 
@@ -350,7 +356,61 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from merge_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 6: LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
+evaluate 'Case 6: LEFT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 7: LEFT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
 set system parameters 'max_hash_list_scan_size=default';
 select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
 from t_left LEFT OUTER JOIN t_right ON t_left.cd = t_right.cd;
@@ -396,60 +456,6 @@ show trace;
 with
   hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.cd = t_right.cd),
   merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.cd = t_right.cd)
-select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
-  from
-  (
-    (select * from hj_rows difference all select * from merge_rows)
-    union all
-    (select * from merge_rows difference all select * from hj_rows)
-  ) diff_result;
-
-evaluate 'Case 7: RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
-set system parameters 'max_hash_list_scan_size=default';
-select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
-from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
-
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
-from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
-show trace;
-
--- compare with the merge join: PASS when the two queries return the same rows as a multiset
-with
-  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
-  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
-select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
-  from
-  (
-    (select * from hj_rows difference all select * from merge_rows)
-    union all
-    (select * from merge_rows difference all select * from hj_rows)
-  ) diff_result;
-
-set system parameters 'max_hash_list_scan_size=8K';
-select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
-from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
-show trace;
-
--- compare with the merge join: PASS when the two queries return the same rows as a multiset
-with
-  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
-  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
-select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
-  from
-  (
-    (select * from hj_rows difference all select * from merge_rows)
-    union all
-    (select * from merge_rows difference all select * from hj_rows)
-  ) diff_result;
-
-select /*+ use_hash parallel(4) */ count(*), count(t_right.ca), count(t_left.ca)
-from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
-show trace;
-
--- compare with the merge join: PASS when the two queries return the same rows as a multiset
-with
-  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
-  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
 select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   from
   (
@@ -504,6 +510,168 @@ show trace;
 with
   hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd),
   merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left LEFT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 9: RIGHT OUTER JOIN of INT and BIGINT - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 10: RIGHT OUTER JOIN of utf8_en_ci strings - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+evaluate 'Case 11: RIGHT OUTER JOIN of two columns - hash join without split, with the serial split, and with the parallel split returns the counts of the merge join';
+set system parameters 'max_hash_list_scan_size=default';
+select /*+ use_merge parallel(0) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd;
+
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+set system parameters 'max_hash_list_scan_size=8K';
+select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hj_rows difference all select * from merge_rows)
+    union all
+    (select * from merge_rows difference all select * from hj_rows)
+  ) diff_result;
+
+select /*+ use_hash parallel(4) */ count(*), count(t_right.ca), count(t_left.ca)
+from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd;
+show trace;
+
+-- compare with the merge join: PASS when the two queries return the same rows as a multiset
+with
+  hj_rows as (select /*+ use_hash parallel(4) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd),
+  merge_rows as (select /*+ use_merge parallel(0) */ count(*) as cnt, count(t_right.ca) as cnt_right_ca, count(t_left.ca) as cnt_left_ca from t_left RIGHT OUTER JOIN t_right ON t_left.ca = t_right.ca AND t_left.cd = t_right.cd)
 select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   from
   (

@@ -1,16 +1,17 @@
 /**
  *  This test case verifies CBRD-28060: Make hashing follow comparison and remove its inefficiencies
  *
- *  A hash join, a hash GROUP BY, and a hash partition prune hash a string key with the hash
- *  function of its collation. The change hashes byte collations eight bytes at a time and makes
- *  the hash of every collation follow its comparison, so two keys that compare equal get one hash.
+ *  A hash join, a hash GROUP BY, a hash partition prune, and a hash list scan hash a string key with the hash function
+ *  of its collation. The change hashes byte collations eight bytes at a time and makes the hash of every collation
+ *  follow its comparison, so two keys that compare equal get one hash.
  *
- *  Each hash case has a twin that skips the hash path: a nested loop join, a sort GROUP BY, or a table without
- *  partitions. The verification block after each hash join and hash GROUP BY prints PASS when the hash query and its
- *  twin return the same rows as a multiset. A prune case counts the rows of each value in t_varchar_part and in
- *  t_varchar_a, and the two counts must match. SHOW TRACE shows the path that each hash case took. CTP masks the digits
- *  of a trace, so the answer checks only the path: HASHJOIN, hash true in GROUPBY, and one PARTITION line for the one
- *  value that a prune case traces after it counts the rows of every value.
+ *  Each hash case has a twin that skips the hash path: a nested loop join, a sort GROUP BY, a table without partitions,
+ *  or the join without the hash list scan. The verification block after each hash join, hash GROUP BY, and hash list
+ *  scan prints PASS when the hash query and its twin return the same rows as a multiset. A prune case counts the rows
+ *  of each value in t_varchar_part and in t_varchar_a, and the two counts must match. SHOW TRACE shows the path that
+ *  each hash case took. CTP masks the digits of a trace, so the answer checks only the path: HASHJOIN, hash true and
+ *  sort false in GROUPBY, one PARTITION line for the one value that a prune case traces after it counts the rows of
+ *  every value, and SCAN (hash temp(m), ...) for the hash list scan.
  *
  *  The keys are invalid UTF-8 byte strings. The comparison of utf8_ko_cs reads them as code points and reads some
  *  different bytes as one code point (C1 81 as A, 80 and 81 as one, and a lead byte followed by spaces, C3 20, as C3
@@ -21,15 +22,23 @@
  *    Case 1:  utf8_bin - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join
  *    Case 2:  utf8_bin - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY
  *    Case 3:  utf8_bin - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a
- *    Case 4:  utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join
- *    Case 5:  utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY
- *    Case 6:  utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a
+ *    Case 4:  utf8_bin - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash
+ *             list scan
+ *    Case 5:  utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join
+ *    Case 6:  utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY
+ *    Case 7:  utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a
+ *    Case 8:  utf8_ko_cs - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash
+ *             list scan
  */
 
 set trace on;
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace holds no
 -- parallel workers lines, which depend on the number of cores of the server
+
+-- agg_hash_respect_order=no makes a hash GROUP BY return its groups without sorting them, so a group that the hash
+-- splits shows as two groups; with the default yes, the sort merges the two again
+set system parameters 'agg_hash_respect_order=no';
 
 -- utf8_bin
 DROP TABLE IF EXISTS t_varchar_part, t_varchar_b, t_varchar_a;
@@ -194,6 +203,23 @@ SELECT /*+ no_parallel_subquery */ 14 AS ca,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 show trace;
 
+evaluate 'Case 4: utf8_bin - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan';
+select /*+ ordered parallel(0) */ x.ca, y.ca
+from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb order by 1, 2;
+show trace;
+
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
+with
+  hashscan_rows as (select /*+ ordered parallel(0) */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb),
+  listscan_rows as (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hashscan_rows difference all select * from listscan_rows)
+    union all
+    (select * from listscan_rows difference all select * from hashscan_rows)
+  ) diff_result;
+
 -- utf8_ko_cs
 DROP TABLE IF EXISTS t_varchar_part, t_varchar_b, t_varchar_a;
 CREATE TABLE t_varchar_a (ca INT, cb VARCHAR(10) COLLATE utf8_ko_cs);
@@ -259,7 +285,7 @@ INSERT INTO t_varchar_part SELECT * FROM t_varchar_a;
 
 UPDATE STATISTICS ON t_varchar_a, t_varchar_b, t_varchar_part WITH FULLSCAN;
 
-evaluate 'Case 4: utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join';
+evaluate 'Case 5: utf8_ko_cs - hash join of t_varchar_a and t_varchar_b returns the pairs of the nested loop join';
 select /*+ use_hash no_parallel_hash_join no_parallel_subquery */ x.ca, y.ca
 from t_varchar_a x, t_varchar_b y where x.cb = y.cb order by 1, 2;
 show trace;
@@ -276,7 +302,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 5: utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY';
+evaluate 'Case 6: utf8_ko_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY';
 select min(ca), count(*)
 from t_varchar_a group by cb order by 1, 2;
 show trace;
@@ -293,7 +319,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from sort_rows difference all select * from hash_rows)
   ) diff_result;
 
-evaluate 'Case 6: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a';
+evaluate 'Case 7: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a';
 -- 1 to 2: 'A' and its overlong 2-byte form, which intl_utf8_to_cp () reads as 'A'
 SELECT /*+ no_parallel_subquery */ 1 AS ca,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('QQ==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
@@ -357,7 +383,26 @@ SELECT /*+ no_parallel_subquery */ 14 AS ca,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 show trace;
 
+evaluate 'Case 8: utf8_ko_cs - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan';
+select /*+ ordered parallel(0) */ x.ca, y.ca
+from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb order by 1, 2;
+show trace;
+
+-- compare with the join without the hash list scan: PASS when the two queries return the same rows as a multiset
+with
+  hashscan_rows as (select /*+ ordered parallel(0) */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb),
+  listscan_rows as (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ x.ca as x_ca, y.ca as y_ca from t_varchar_a x, (select /*+ NO_MERGE */ ca, cb from t_varchar_b where ca >= 1) y where x.cb = y.cb)
+select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
+  from
+  (
+    (select * from hashscan_rows difference all select * from listscan_rows)
+    union all
+    (select * from listscan_rows difference all select * from hashscan_rows)
+  ) diff_result;
+
 -- cleanup
+set system parameters 'agg_hash_respect_order=default';
+
 drop table if exists t_varchar_a, t_varchar_b, t_varchar_part;
 
 set trace off;

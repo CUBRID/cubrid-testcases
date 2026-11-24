@@ -50,7 +50,6 @@ INSERT INTO t_multiset_b VALUES (14, {2, 1, 1}), (15, {2, 2, 1}), (16, {1, 2});
 UPDATE STATISTICS ON t_multiset_a, t_multiset_b WITH FULLSCAN;
 
 evaluate 'Case 1: MULTISET - hash join of unsorted multisets returns the pairs of the nested loop join';
-
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_a.ca, t_multiset_b.ca
 FROM t_multiset_a, t_multiset_b WHERE t_multiset_a.cb = t_multiset_b.cb ORDER BY 1, 2;
 show trace;

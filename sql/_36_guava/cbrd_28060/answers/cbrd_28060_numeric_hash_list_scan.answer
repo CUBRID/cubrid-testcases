@@ -44,7 +44,7 @@
 2
 ===================================================
     
-Case 1: NUMERIC(20,5) against a float NUMERIC of scale 39 (cb / 1): the hash list scan finds every pair     
+Case 1: NUMERIC(20,5) and a float NUMERIC of scale 39 (cb / 1) - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -52,7 +52,7 @@ PASS
 
 ===================================================
     
-Case 2: INT against a float NUMERIC ((cb - 0.25) / 1): the hash list scan finds every pair     
+Case 2: INT and a float NUMERIC ((cb - 0.25) / 1) - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -60,7 +60,7 @@ PASS
 
 ===================================================
     
-Case 3: NUMERIC(10,2) against NUMERIC(20,5): the hash list scan finds every pair     
+Case 3: NUMERIC(10,2) and NUMERIC(20,5) - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -68,7 +68,7 @@ PASS
 
 ===================================================
     
-Case 4: NUMERIC(20,0) against NUMERIC(30,10), past 38 digits together: the hash list scan finds every pair     
+Case 4: NUMERIC(20,0) and NUMERIC(30,10), past 38 digits together - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -76,7 +76,7 @@ PASS
 
 ===================================================
     
-Case 5: trace: Cases 1 to 4 run as a hash list scan (SCAN (hash temp(m), ...))     
+Case 5: trace - Cases 1 to 4 run as a hash list scan (SCAN (hash temp(m), ...))     
 
 ===================================================
 count(*)    
@@ -192,7 +192,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 6: CONNECT BY with a float NUMERIC PRIOR key (prior (id / 1) = pid): 5 rows     
+Case 6: float NUMERIC PRIOR key (prior (id / 1) = pid) - CONNECT BY by a hash list scan returns 5 rows     
 
 ===================================================
 res    cnt    
@@ -200,7 +200,7 @@ PASS     5
 
 ===================================================
     
-Case 7: CONNECT BY with prior NUMERIC(20,5) = NUMERIC(30,10) and keys of 15 integer digits: 4 rows     
+Case 7: prior NUMERIC(20,5) = NUMERIC(30,10), keys of 15 integer digits - CONNECT BY by a hash list scan returns 4 rows     
 
 ===================================================
 res    cnt    
@@ -208,7 +208,7 @@ PASS     4
 
 ===================================================
     
-Case 8: CONNECT BY with prior BIGINT = NUMERIC(38,20): 4 rows     
+Case 8: prior BIGINT = NUMERIC(38,20) - CONNECT BY by a hash list scan returns 4 rows     
 
 ===================================================
 res    cnt    
@@ -216,7 +216,7 @@ PASS     4
 
 ===================================================
     
-Case 9: trace: Cases 6 to 8 run as a hash list scan     
+Case 9: trace - Cases 6 to 8 run as a hash list scan     
 
 ===================================================
 ca    lv    
@@ -293,7 +293,7 @@ Trace Statistics:
 
 ===================================================
     
-Case 10: NUMERIC(38,0) against a float NUMERIC of scale -5 (a NUMERIC(38,-5) cast to NUMERIC): the hash join and the hash list scan find the pair     
+Case 10: NUMERIC(38,0) and a float NUMERIC of scale -5 (a NUMERIC(38,-5) cast to NUMERIC) - hash join and hash list scan find the pair     
 
 ===================================================
 res    
@@ -301,7 +301,7 @@ PASS
 
 ===================================================
     
-Case 11: NUMERIC(38,-5) against a float NUMERIC (a NUMERIC(20,0) cast to NUMERIC): the hash list scan finds every pair     
+Case 11: NUMERIC(38,-5) and a float NUMERIC (a NUMERIC(20,0) cast to NUMERIC) - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -309,7 +309,7 @@ PASS
 
 ===================================================
     
-Case 12: a float NUMERIC against a float NUMERIC (cb * 1 against cc + 0), values of up to 32 integer digits: the hash list scan finds every pair     
+Case 12: two float NUMERIC keys (cb * 1 and cc + 0), values of up to 32 integer digits - hash list scan finds every pair     
 
 ===================================================
 res    
@@ -317,7 +317,7 @@ PASS
 
 ===================================================
     
-Case 13: NUMERIC(18,2) against INT plus a host variable, a coefficient past 2^53: the hash list scan finds the pair     
+Case 13: NUMERIC(18,2) and INT plus a host variable, a coefficient past 2^53 - hash list scan finds the pair     
 
 ===================================================
 0
@@ -329,7 +329,7 @@ PASS
 0
 ===================================================
     
-Case 14: trace: Cases 11 to 13 run as a hash list scan     
+Case 14: trace - Cases 11 to 13 run as a hash list scan     
 
 ===================================================
 count(*)    

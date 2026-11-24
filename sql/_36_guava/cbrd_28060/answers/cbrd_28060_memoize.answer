@@ -1,7 +1,33 @@
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+2
+===================================================
+0
+===================================================
     
 Case 1: DOUBLE - a nested loop join memoized by -0 and 0 returns the rows of the join without memoize; result = 50 100 100     
 
+===================================================
+0
+===================================================
+sum(case when t_double.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_double.ca>50 then t_varchar.cb else 0 end)    count(*)    
+50     100     100     
+
+===================================================
+0
+===================================================
+sum(case when t_double.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_double.ca>50 then t_varchar.cb else 0 end)    count(*)    
+50     100     100     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -15,17 +41,53 @@ Case 1: DOUBLE - a nested loop join memoized by -0 and 0 returns the rows of the
 ===================================================
 0
 ===================================================
+    
+Case 2: NUMERIC - a nested loop join memoized by 1.0 and 1.00 returns the rows of the join without memoize; result = 50 100 100     
+
+===================================================
 0
 ===================================================
-sum(case when t_double.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_double.ca>50 then t_varchar.cb else 0 end)    count(*)    
+sum(case when d.ca<=50 then t_varchar.cb else 0 end)    sum(case when d.ca>50 then t_varchar.cb else 0 end)    count(*)    
 50     100     100     
 
 ===================================================
 0
 ===================================================
-sum(case when t_double.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_double.ca>50 then t_varchar.cb else 0 end)    count(*)    
+sum(case when d.ca<=50 then t_varchar.cb else 0 end)    sum(case when d.ca>50 then t_varchar.cb else 0 end)    count(*)    
 50     100     100     
 
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 3: VARCHAR utf8_en_ci - a nested loop join memoized by a and A returns the rows of the join without memoize; result = 50 100 100     
+
+===================================================
+0
+===================================================
+sum(case when t_varchar_en_ci.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_varchar_en_ci.ca>50 then t_varchar.cb else 0 end)    count(*)    
+50     100     100     
+
+===================================================
+0
+===================================================
+sum(case when t_varchar_en_ci.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_varchar_en_ci.ca>50 then t_varchar.cb else 0 end)    count(*)    
+50     100     100     
+
+===================================================
+0
 ===================================================
 0
 ===================================================

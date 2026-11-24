@@ -16,7 +16,6 @@
  *             subquery keyed by the column returns the uncached results
  */
 
-evaluate 'Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE without an element type returns the uncached results';
 DROP TABLE IF EXISTS t_sequence_a;
 CREATE TABLE t_sequence_a (ca INT, cb SEQUENCE);
 
@@ -29,13 +28,13 @@ CREATE TABLE t_sequence_a (ca INT, cb SEQUENCE);
 -- 84 | {1}
 INSERT INTO t_sequence_a VALUES (81, {1}), (82, {CAST (1 AS DOUBLE)}), (83, {CAST (1 AS NUMERIC (5, 2))}), (84, {1});
 
+evaluate 'Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE without an element type returns the uncached results';
 SELECT t_sequence_a.ca, (SELECT t_sequence_a.cb FROM db_root)
 FROM t_sequence_a ORDER BY 1;
 
 SELECT t_sequence_a.ca, t_sequence_a.cb
 FROM t_sequence_a ORDER BY 1;
 
-evaluate 'Case 2: SEQUENCE OF SET - a correlated subquery keyed by the column returns the uncached results';
 DROP TABLE IF EXISTS t_sequence_set_a, t_sequence_sequence;
 
 -- CREATE TABLE AS SELECT makes the columns SEQUENCE OF SET and SEQUENCE OF SEQUENCE; t_sequence_set_a.ca 97 holds the
@@ -62,6 +61,7 @@ CREATE TABLE t_sequence_sequence AS SELECT 93 ca, {SEQUENCE {1, 2}} cb FROM db_r
 INSERT INTO t_sequence_sequence SELECT 94, {SEQUENCE {2, 1}} FROM db_root;
 INSERT INTO t_sequence_sequence SELECT 95, {SEQUENCE {3}} FROM db_root;
 
+evaluate 'Case 2: SEQUENCE OF SET - a correlated subquery keyed by the column returns the uncached results';
 SELECT t_sequence_set_a.ca,
   (SELECT COUNT (*) FROM t_sequence_sequence WHERE t_sequence_sequence.cb = t_sequence_set_a.cb)
 FROM t_sequence_set_a ORDER BY 1;
@@ -78,7 +78,6 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nocache_rows difference all select * from cache_rows)
   ) diff_result;
 
-evaluate 'Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE without an element type - a correlated subquery keyed by the column returns the uncached results';
 DROP TABLE IF EXISTS t_set_int_double, t_sequence_set_b, t_sequence_b;
 CREATE TABLE t_set_int_double (ca INT, cb SET (INT, DOUBLE));
 
@@ -89,12 +88,6 @@ CREATE TABLE t_set_int_double (ca INT, cb SET (INT, DOUBLE));
 -- 302 | {CAST (1 AS DOUBLE)}
 -- 303 | {1}
 INSERT INTO t_set_int_double VALUES (301, {1}), (302, {CAST (1 AS DOUBLE)}), (303, {1});
-
-SELECT t_set_int_double.ca, (SELECT t_set_int_double.cb FROM db_root)
-FROM t_set_int_double ORDER BY 1;
-
-SELECT t_set_int_double.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ t_set_int_double.cb FROM db_root)
-FROM t_set_int_double ORDER BY 1;
 
 -- CREATE TABLE AS SELECT makes the column SEQUENCE OF SET OF INTEGER: {{1}} and {{1, 2}} keys repeat;
 -- the subquery returns whether the key is {{1}}, which the JDBC driver reads (it cannot read a SEQUENCE OF SET,
@@ -110,6 +103,26 @@ INSERT INTO t_sequence_set_b SELECT 312, {SET {1, 2}} FROM db_root;
 INSERT INTO t_sequence_set_b SELECT 313, {SET {1}} FROM db_root;
 INSERT INTO t_sequence_set_b SELECT 314, {SET {2, 1}} FROM db_root;
 
+CREATE TABLE t_sequence_b (ca INT, cb SEQUENCE);
+
+-- a SEQUENCE without an element type holds elements of any type: {1}, {1.0} and {1.00} compare equal, but the subquery
+-- returns each as it is; the keys {1} and {1.0} repeat
+-- ca  | cb
+-- ----+--------
+-- 321 | {1}
+-- 322 | {1.0}
+-- 323 | {1.00}
+-- 324 | {1}
+-- 325 | {1.0}
+INSERT INTO t_sequence_b VALUES (321, {1}), (322, {1.0}), (323, {1.00}), (324, {1}), (325, {1.0});
+
+evaluate 'Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE without an element type - a correlated subquery keyed by the column returns the uncached results';
+SELECT t_set_int_double.ca, (SELECT t_set_int_double.cb FROM db_root)
+FROM t_set_int_double ORDER BY 1;
+
+SELECT t_set_int_double.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ t_set_int_double.cb FROM db_root)
+FROM t_set_int_double ORDER BY 1;
+
 SELECT t_sequence_set_b.ca, (SELECT t_sequence_set_b.cb = {SET {1}} FROM db_root)
 FROM t_sequence_set_b ORDER BY 1;
 
@@ -124,19 +137,6 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     union all
     (select * from nocache_rows difference all select * from cache_rows)
   ) diff_result;
-
-CREATE TABLE t_sequence_b (ca INT, cb SEQUENCE);
-
--- a SEQUENCE without an element type holds elements of any type: {1}, {1.0} and {1.00} compare equal, but the subquery
--- returns each as it is; the keys {1} and {1.0} repeat
--- ca  | cb
--- ----+--------
--- 321 | {1}
--- 322 | {1.0}
--- 323 | {1.00}
--- 324 | {1}
--- 325 | {1.0}
-INSERT INTO t_sequence_b VALUES (321, {1}), (322, {1.0}), (323, {1.00}), (324, {1}), (325, {1.0});
 
 SELECT t_sequence_b.ca, (SELECT t_sequence_b.cb FROM db_root)
 FROM t_sequence_b ORDER BY 1;

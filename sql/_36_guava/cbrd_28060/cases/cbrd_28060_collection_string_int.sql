@@ -7,7 +7,8 @@
  *  join prints PASS when the join and its twin return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  MULTISET - VARCHAR and INT elements join by nested loop, with the pairs of the nested loop join
+ *    Case 1:  MULTISET - VARCHAR and INT elements join by nested loop under a hash join hint, with the pairs of the
+ *             nested loop join
  */
 
 set trace on;
@@ -38,8 +39,7 @@ INSERT INTO t_multiset_int VALUES (71, {1}), (72, {3}), (73, {2, 1});
 
 UPDATE STATISTICS ON t_multiset_varchar, t_multiset_int WITH FULLSCAN;
 
-evaluate 'Case 1: MULTISET - VARCHAR and INT elements join by nested loop, with the pairs of the nested loop join';
-
+evaluate 'Case 1: MULTISET - VARCHAR and INT elements join by nested loop under a hash join hint, with the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_multiset_varchar.ca, t_multiset_int.ca
 FROM t_multiset_varchar, t_multiset_int WHERE t_multiset_varchar.cb = t_multiset_int.cb ORDER BY 1, 2;
 show trace;

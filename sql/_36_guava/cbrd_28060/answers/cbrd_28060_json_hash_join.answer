@@ -5,6 +5,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 11
 ===================================================
 0
@@ -14,7 +16,7 @@
 0
 ===================================================
     
-Case 1: JSON - hash join returns the pairs of the nested loop join     
+Case 1: JSON - hash join of t_json_a and t_json_b returns the pairs of the nested loop join     
 
 ===================================================
 id    id    
@@ -109,13 +111,13 @@ result
 PASS     
 
 ===================================================
+0
+===================================================
+0
+===================================================
     
-Case 3: JSON - hash GROUP BY returns the groups of the sort GROUP BY     
+Case 3: JSON - hash GROUP BY on t_json_ab returns the groups of the sort GROUP BY     
 
-===================================================
-0
-===================================================
-0
 ===================================================
 min(id)    count(*)    
 1     2     
@@ -151,7 +153,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_json_ab), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: false, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -159,6 +161,8 @@ Trace Statistics:
 result    
 PASS     
 
+===================================================
+0
 ===================================================
 0
 ===================================================

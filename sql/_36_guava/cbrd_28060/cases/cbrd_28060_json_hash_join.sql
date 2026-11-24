@@ -9,15 +9,19 @@
  *  return the same rows as a multiset.
  *
  *  Coverage:
- *    Case 1:  JSON - hash join returns the pairs of the nested loop join
+ *    Case 1:  JSON - hash join of t_json_a and t_json_b returns the pairs of the nested loop join
  *    Case 2:  JSON - hash join with the other build side returns the pairs of the nested loop join
- *    Case 3:  JSON - hash GROUP BY returns the groups of the sort GROUP BY
+ *    Case 3:  JSON - hash GROUP BY on t_json_ab returns the groups of the sort GROUP BY
  */
 
 set trace on;
 
 -- The hash cases add no_parallel_hash_join and no_parallel_subquery, or parallel(0), so that the trace holds no
 -- parallel workers lines, which depend on the number of cores of the server
+
+-- agg_hash_respect_order=no makes a hash GROUP BY return its groups without sorting them, so a group that the hash
+-- splits shows as two groups; with the default yes, the sort merges the two again
+set system parameters 'agg_hash_respect_order=no';
 
 DROP TABLE IF EXISTS t_json_b, t_json_a;
 CREATE TABLE t_json_a (id INT, body JSON);
@@ -89,8 +93,7 @@ INSERT INTO t_json_b VALUES
 
 UPDATE STATISTICS ON t_json_a, t_json_b WITH FULLSCAN;
 
-evaluate 'Case 1: JSON - hash join returns the pairs of the nested loop join';
-
+evaluate 'Case 1: JSON - hash join of t_json_a and t_json_b returns the pairs of the nested loop join';
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_json_a.id, t_json_b.id
 FROM t_json_a, t_json_b WHERE t_json_a.body = t_json_b.body ORDER BY 1, 2;
 show trace;
@@ -108,7 +111,6 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 evaluate 'Case 2: JSON - hash join with the other build side returns the pairs of the nested loop join';
-
 SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HASH_JOIN NO_PARALLEL_SUBQUERY */ t_json_a.id, t_json_b.id
 FROM t_json_b, t_json_a WHERE t_json_a.body = t_json_b.body ORDER BY 1, 2;
 show trace;
@@ -125,12 +127,12 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nl_rows difference all select * from hj_rows)
   ) diff_result;
 
-evaluate 'Case 3: JSON - hash GROUP BY returns the groups of the sort GROUP BY';
 -- true and "true" (t_json_a.id 3, t_json_b.id 13) are left out: the sort GROUP BY tells them apart, the hash GROUP BY
 -- does not, a difference that this change does not touch
 DROP TABLE IF EXISTS t_json_ab;
 CREATE TABLE t_json_ab AS SELECT * FROM t_json_a WHERE id <> 3 UNION ALL SELECT * FROM t_json_b WHERE id <> 13;
 
+evaluate 'Case 3: JSON - hash GROUP BY on t_json_ab returns the groups of the sort GROUP BY';
 SELECT /*+ PARALLEL(0) */ MIN (id), COUNT (*)
 FROM t_json_ab GROUP BY body ORDER BY 1, 2;
 show trace;
@@ -148,6 +150,8 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 -- cleanup
+set system parameters 'agg_hash_respect_order=default';
+
 DROP TABLE IF EXISTS t_json_a, t_json_b, t_json_ab;
 
 set trace off;
