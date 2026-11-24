@@ -7,6 +7,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 1
 ===================================================
 1
@@ -50,6 +52,18 @@
 0
 ===================================================
 0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+4
+===================================================
+5
 ===================================================
     
 Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)     
@@ -97,7 +111,7 @@ null     null     300
 
 ===================================================
     
-Case 6: issue Case 2, SEMI JOIN ON b.id is null; expected (3, NULL)     
+Case 6: issue Case 2, SEMI JOIN ON b.id is null, USE_MERGE; expected (3, NULL)     
 
 ===================================================
 id    id    
@@ -105,7 +119,7 @@ id    id
 
 ===================================================
     
-Case 7: Case 6 with USE_NL; expected (3, NULL)     
+Case 7: Case 6 with USE_NL instead of USE_MERGE; expected (3, NULL)     
 
 ===================================================
 id    id    
@@ -113,7 +127,7 @@ id    id
 
 ===================================================
     
-Case 8: Case 6 with USE_HASH; expected (3, NULL)     
+Case 8: Case 6 with USE_HASH instead of USE_MERGE; expected (3, NULL)     
 
 ===================================================
 id    id    
@@ -154,7 +168,7 @@ null     null     600
 
 ===================================================
     
-Case 12: RIGHT JOIN ON b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (3, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
+Case 12: RIGHT JOIN ON b.id is null, ORDERED; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (3, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
 
 ===================================================
 id    id    id    
@@ -167,7 +181,7 @@ null     null     600
 
 ===================================================
     
-Case 13: Case 12 with USE_NL     
+Case 13: Case 12 with USE_NL instead of ORDERED     
 
 ===================================================
 id    id    id    
@@ -180,7 +194,7 @@ null     null     600
 
 ===================================================
     
-Case 14: Case 12 with USE_HASH     
+Case 14: Case 12 with USE_HASH instead of ORDERED     
 
 ===================================================
 id    id    id    
@@ -305,7 +319,7 @@ id    id    id
 
 ===================================================
     
-Case 25: RIGHT JOIN ON c.v = b.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
+Case 25: RIGHT JOIN ON c.v = b.v and b.f = 1, the LEFT JOIN becomes INNER; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
 
 ===================================================
 id    id    id    
@@ -392,5 +406,155 @@ Case 32: count over the RIGHT JOIN of Case 12; expected (6, 1, 0)
 count(*)    count(a.id)    count(b.id)    
 6     1     0     
 
+===================================================
+    
+Case 33: indexed padded table, RIGHT JOIN ON c.v = b.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+1     10     100     
+2     21     200     
+2     21     201     
+null     null     300     
+null     null     400     
+null     null     600     
+
+===================================================
+    
+Case 34: indexed padded table, RIGHT JOIN ON c.v = a.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+1     10     100     
+2     21     200     
+2     21     201     
+null     null     300     
+null     null     400     
+null     null     600     
+
+===================================================
+    
+Case 35: a padded by a preceding RIGHT JOIN, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (NULL, NULL, 300) (4, 40, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+1     10     100     
+2     20     200     
+2     21     200     
+2     20     201     
+2     21     201     
+null     null     300     
+4     40     400     
+null     null     600     
+
+===================================================
+    
+Case 36: two RIGHT JOINs, ON c.v = a.v then ON d.v = b.v; expected (1, 10, 100, 1000) (2, 20, 200, 2000) (2, 21, 200, 2000) (2, 20, 201, 2000) (2, 21, 201, 2000)     
+
+===================================================
+id    id    id    id    
+1     10     100     1000     
+2     20     200     2000     
+2     21     200     2000     
+2     20     201     2000     
+2     21     201     2000     
+
+===================================================
+    
+Case 37: RIGHT JOIN ON c.v = b.v and b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+null     null     100     
+null     null     200     
+null     null     201     
+null     null     300     
+null     null     400     
+null     null     600     
+
+===================================================
+    
+Case 38: not rewritten, nothing pads b before c, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+1     10     100     
+2     20     200     
+2     21     200     
+2     20     201     
+2     21     201     
+3     null     300     
+4     40     400     
+null     null     600     
+
+===================================================
+    
+Case 39: not rewritten, RIGHT JOIN ON c.v = a.v and field (b.f, 1) = 0 (TRUE on NULL); expected (NULL, NULL, 100) (2, 20, 200) (2, 20, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+null     null     100     
+2     20     200     
+2     20     201     
+3     null     300     
+4     40     400     
+null     null     600     
+
+===================================================
+    
+Case 40: not rewritten, RIGHT JOIN ON c.v = a.v and 1 not between b.f and 0 (TRUE on NULL); expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)     
+
+===================================================
+id    id    id    
+1     10     100     
+2     20     200     
+2     21     200     
+2     20     201     
+2     21     201     
+3     null     300     
+4     40     400     
+null     null     600     
+
+===================================================
+    
+Case 41: foreign key, LEFT JOIN the primary key table, RIGHT JOIN ON c.v = a.id and b.id = a.bid; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+null     3     
+null     4     
+null     5     
+
+===================================================
+    
+Case 42: foreign key, INNER JOIN the primary key table, RIGHT JOIN ON c.v = a.id; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+null     3     
+null     4     
+null     5     
+
+===================================================
+    
+Case 43: DELETE with the RIGHT JOIN of Case 12, then the rows left; expected (1) (2) (4) (5)     
+
+===================================================
+0
+===================================================
+1
+===================================================
+id    
+1     
+2     
+4     
+5     
+
+===================================================
+0
 ===================================================
 0

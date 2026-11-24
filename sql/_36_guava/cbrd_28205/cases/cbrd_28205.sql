@@ -6,7 +6,11 @@
  *  INNER JOIN. Under a RIGHT OUTER JOIN or a SEMI JOIN the term stayed a scan filter of the padded table,
  *  ran before the padding and was not evaluated again at the join, so a RIGHT OUTER JOIN matched rows the
  *  term rejects and a SEMI JOIN kept rows the term rejects.
- *  Fix: the check for a NULL-padded table is done for the ON terms of every join type.
+ *  Fix: the check for a NULL-padded table is done for the ON terms of every join type. When a RIGHT OUTER
+ *  JOIN ON has a comparison that rejects NULL of the padded table, the preceding joins that pad that table
+ *  become INNER JOINs first, so the comparison stays a scan filter of the table. The join elimination by a
+ *  foreign key is not done for a primary key table that a RIGHT OUTER JOIN follows, since the IS NOT NULL
+ *  it puts on the foreign key would drop the rows the RIGHT OUTER JOIN keeps.
  *
  *  The expected result of each query is in its evaluate line. It is the result of the same query with the
  *  preceding join wrapped in a derived table that is not merged.
@@ -16,20 +20,27 @@
  *  Coverage:
  *    Case 1-3:   issue form, RIGHT JOIN ON reads the padded table only: default, USE_NL, USE_HASH
  *    Case 4-5:   issue Q1 and Q2, RIGHT JOIN ON y.id is null / y.id > 3
- *    Case 6-8:   issue Case 2, SEMI JOIN ON b.id is null: default, USE_NL, USE_HASH
+ *    Case 6-8:   issue Case 2, SEMI JOIN ON b.id is null: USE_MERGE, USE_NL, USE_HASH
  *    Case 9-10:  controls of Case 2: ANTI JOIN and WHERE EXISTS
- *    Case 11-17: RIGHT JOIN ON predicates on the padded table: null rejecting, is null with each join
- *                method, nvl, with the right table, OR with the preserved table
+ *    Case 11-17: RIGHT JOIN ON predicates on the padded table: null rejecting, is null with ORDERED and
+ *                each join method, nvl, with the right table, OR with the preserved table
  *    Case 18-21: the same kinds of predicates under a SEMI JOIN
  *    Case 22-24: controls: ANTI, LEFT and INNER JOIN with the same ON term
- *    Case 25:    RIGHT JOIN whose edge goes through the padded table only
+ *    Case 25:    RIGHT JOIN whose edge goes through the padded table only (the LEFT JOIN becomes INNER)
  *    Case 26-27: two preceding LEFT JOINs, RIGHT / SEMI JOIN ON the last padded table
  *    Case 28-29: the padded table comes from a preceding RIGHT JOIN
  *    Case 30-31: the padded table has an index on the join column
  *    Case 32:    count over a RIGHT JOIN
+ *    Case 33-34: indexed padded table, RIGHT JOIN ON b.f = 1 with the edge on b and on a
+ *    Case 35-37: the LEFT or RIGHT JOINs before the RIGHT JOIN become INNER: padded by a preceding RIGHT
+ *                JOIN, two RIGHT JOINs, c.v = b.v with b.id is null
+ *    Case 38-40: not rewritten: nothing pads b before c, field () and NOT BETWEEN that are TRUE on NULL
+ *    Case 41-42: foreign key join elimination with a RIGHT JOIN after the primary key table
+ *    Case 43:    DELETE with the RIGHT JOIN of Case 12
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
+drop table if exists t28205_a2, t28205_ka, t28205_kb, t28205_kc;
 
 create table t28205_m (a int);
 create table t28205_n (a int, b int);
@@ -59,6 +70,13 @@ create index i_t28205_bi_v on t28205_bi (v);
 create index i_t28205_bi_f on t28205_bi (f, id);
 update statistics on t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
 
+create table t28205_kb (id int primary key, f int);
+create table t28205_ka (id int, bid int, foreign key (bid) references t28205_kb (id));
+create table t28205_kc (id int, v int);
+insert into t28205_kb values (1, 7), (2, 7), (3, 0);
+insert into t28205_ka values (1, 1), (2, 2), (3, null), (4, 3);
+insert into t28205_kc values (1, 1), (2, 2), (3, 5), (4, null), (5, 3);
+
 
 evaluate 'Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)';
 select m.a, n.a, o.a from t28205_m m left join t28205_n n on m.a = n.a right join t28205_o o on m.a = o.a and n.b > 0;
@@ -75,13 +93,13 @@ select x.id, y.id, z.id from (t28205_x x left outer join t28205_y y on x.v = y.k
 evaluate 'Case 5: issue Q2, RIGHT JOIN ON y.id > 3; expected (1, 10, 100) (2, 10, 100) (NULL, NULL, 200) (NULL, NULL, 300)';
 select x.id, y.id, z.id from (t28205_x x left outer join t28205_y y on x.v = y.k) right outer join t28205_z z on x.v = z.v and y.id > 3 order by 3, 1, 2;
 
-evaluate 'Case 6: issue Case 2, SEMI JOIN ON b.id is null; expected (3, NULL)';
-select a.id, b.id from t28205_a a left join t28205_b b on b.v = a.v semi join t28205_c c on c.v = a.v and b.id is null order by 1, 2;
+evaluate 'Case 6: issue Case 2, SEMI JOIN ON b.id is null, USE_MERGE; expected (3, NULL)';
+select /*+ USE_MERGE */ a.id, b.id from t28205_a a left join t28205_b b on b.v = a.v semi join t28205_c c on c.v = a.v and b.id is null order by 1, 2;
 
-evaluate 'Case 7: Case 6 with USE_NL; expected (3, NULL)';
+evaluate 'Case 7: Case 6 with USE_NL instead of USE_MERGE; expected (3, NULL)';
 select /*+ USE_NL */ a.id, b.id from t28205_a a left join t28205_b b on b.v = a.v semi join t28205_c c on c.v = a.v and b.id is null order by 1, 2;
 
-evaluate 'Case 8: Case 6 with USE_HASH; expected (3, NULL)';
+evaluate 'Case 8: Case 6 with USE_HASH instead of USE_MERGE; expected (3, NULL)';
 select /*+ USE_HASH */ a.id, b.id from t28205_a a left join t28205_b b on b.v = a.v semi join t28205_c c on c.v = a.v and b.id is null order by 1, 2;
 
 evaluate 'Case 9: control, ANTI JOIN ON b.id is null; expected (1, 10) (2, 20) (2, 21) (4, 40) (5, NULL)';
@@ -93,13 +111,13 @@ select a.id, b.id from t28205_a a left join t28205_b b on b.v = a.v where exists
 evaluate 'Case 11: RIGHT JOIN ON b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.f = 1 order by 3, 1, 2;
 
-evaluate 'Case 12: RIGHT JOIN ON b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (3, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
-select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null order by 3, 1, 2;
+evaluate 'Case 12: RIGHT JOIN ON b.id is null, ORDERED; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (3, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+select /*+ ORDERED */ a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null order by 3, 1, 2;
 
-evaluate 'Case 13: Case 12 with USE_NL';
+evaluate 'Case 13: Case 12 with USE_NL instead of ORDERED';
 select /*+ USE_NL */ a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null order by 3, 1, 2;
 
-evaluate 'Case 14: Case 12 with USE_HASH';
+evaluate 'Case 14: Case 12 with USE_HASH instead of ORDERED';
 select /*+ USE_HASH */ a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null order by 3, 1, 2;
 
 evaluate 'Case 15: RIGHT JOIN ON nvl (b.f, 0) = 0; expected (NULL, NULL, 100) (2, 20, 200) (2, 20, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
@@ -132,7 +150,7 @@ select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v left j
 evaluate 'Case 24: control, INNER JOIN ON b.id is null; expected (3, NULL, 300)';
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v inner join t28205_c c on c.v = a.v and b.id is null order by 1, 2, 3;
 
-evaluate 'Case 25: RIGHT JOIN ON c.v = b.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+evaluate 'Case 25: RIGHT JOIN ON c.v = b.v and b.f = 1, the LEFT JOIN becomes INNER; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = b.v and b.f = 1 order by 3, 1, 2;
 
 evaluate 'Case 26: two LEFT JOINs, RIGHT JOIN ON d.h is null; expected (NULL, NULL, NULL, 100) (2, 20, 2000, 200) (2, 21, 2000, 200) (2, 20, 2000, 201) (2, 21, 2000, 201) (3, NULL, NULL, 300) (4, 40, NULL, 400) (NULL, NULL, NULL, 600)';
@@ -156,4 +174,41 @@ select a.id, b.id from t28205_a a left join t28205_bi b on b.v = a.v semi join t
 evaluate 'Case 32: count over the RIGHT JOIN of Case 12; expected (6, 1, 0)';
 select count(*), count(a.id), count(b.id) from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null;
 
+
+evaluate 'Case 33: indexed padded table, RIGHT JOIN ON c.v = b.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a left join t28205_bi b on b.v = a.v right join t28205_c c on c.v = b.v and b.f = 1 order by 3, 1, 2;
+
+evaluate 'Case 34: indexed padded table, RIGHT JOIN ON c.v = a.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a left join t28205_bi b on b.v = a.v right join t28205_c c on c.v = a.v and b.f = 1 order by 3, 1, 2;
+
+evaluate 'Case 35: a padded by a preceding RIGHT JOIN, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (NULL, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a right join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v order by 3, 2, 1;
+
+evaluate 'Case 36: two RIGHT JOINs, ON c.v = a.v then ON d.v = b.v; expected (1, 10, 100, 1000) (2, 20, 200, 2000) (2, 21, 200, 2000) (2, 20, 201, 2000) (2, 21, 201, 2000)';
+select a.id, b.id, c.id, d.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v right join t28205_d d on d.v = b.v order by 4, 3, 1, 2;
+
+evaluate 'Case 37: RIGHT JOIN ON c.v = b.v and b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = b.v and b.id is null order by 3, 1, 2;
+
+evaluate 'Case 38: not rewritten, nothing pads b before c, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_b b right join t28205_a a on b.v = a.v right join t28205_c c on c.v = a.v order by 3, 1, 2;
+
+evaluate 'Case 39: not rewritten, RIGHT JOIN ON c.v = a.v and field (b.f, 1) = 0 (TRUE on NULL); expected (NULL, NULL, 100) (2, 20, 200) (2, 20, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and field (b.f, 1) = 0 order by 3, 1, 2;
+
+evaluate 'Case 40: not rewritten, RIGHT JOIN ON c.v = a.v and 1 not between b.f and 0 (TRUE on NULL); expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
+select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and 1 not between b.f and 0 order by 3, 1, 2;
+
+evaluate 'Case 41: foreign key, LEFT JOIN the primary key table, RIGHT JOIN ON c.v = a.id and b.id = a.bid; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+select a.id, c.id from t28205_ka a left join t28205_kb b on b.id = a.bid right join t28205_kc c on c.v = a.id and b.id = a.bid order by 2, 1;
+
+evaluate 'Case 42: foreign key, INNER JOIN the primary key table, RIGHT JOIN ON c.v = a.id; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+select a.id, c.id from t28205_ka a inner join t28205_kb b on b.id = a.bid right join t28205_kc c on c.v = a.id order by 2, 1;
+
+evaluate 'Case 43: DELETE with the RIGHT JOIN of Case 12, then the rows left; expected (1) (2) (4) (5)';
+create table t28205_a2 as select * from t28205_a;
+delete a from t28205_a2 a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null;
+select id from t28205_a2 order by 1;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
+drop table if exists t28205_a2, t28205_ka, t28205_kb, t28205_kc;
