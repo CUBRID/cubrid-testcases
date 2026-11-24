@@ -1,0 +1,517 @@
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: MIN and MAX over an IN list, covering; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true)
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 2: Case 1 with the USE_DESC_IDX hint; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true, desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX */ min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 3: MIN and MAX over an OR of ranges, not covering; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb_cc) (key range: (([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? ) or ([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? )))
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? ) or ([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? )) and [dba.ta].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     8     
+
+===================================================
+    
+Case 4: MAX alone over an IN list; result = ignore index     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true)
+
+  rewritten query: select max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 5: Case 1 over an index whose first column is descending; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true)
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 6: Case 2 over an index whose first column is descending; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true, desc_index forced: true)
+
+  rewritten query: select /*+ USE_DESC_IDX */ min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 7: Case 3 over an index whose first column is descending; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     8     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd_cc) (key range: (([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? ) or ([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? )))
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? ) or ([dba.ta].cb>= ?:?  and [dba.ta].cb<= ?:? )) and [dba.ta].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     8     
+
+===================================================
+    
+Case 8: Case 4 over an index whose first column is descending; result = ignore index     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd_cc) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))key range: ([dba.ta].cc> ?:? ), covered: true)
+
+  rewritten query: select max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and ([dba.ta].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 9: an IN list over an ascending single-column index, covering and not covering; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )), covered: true)
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+min(cb)    max(cb)    
+1     5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )))
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and [dba.ta].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     5     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 10: Case 9 over a descending single-column index; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )), covered: true)
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+min(cb)    max(cb)    
+1     5     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd) (key range: (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )))
+
+  rewritten query: select min([dba.ta].cb), max([dba.ta].cb) from [dba.ta] [dba.ta] where (([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? ) or ([dba.ta].cb= ?:? )) and [dba.ta].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     5     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 11: an equality on the descending first column and an IN list on the ascending second column; result = ignore index     
+
+===================================================
+min(cc)    max(cc)    
+1     6     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cbd_cc) (key range: [dba.ta].cb= ?:? key range: (([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? )), covered: true)
+
+  rewritten query: select min([dba.ta].cc), max([dba.ta].cc) from [dba.ta] [dba.ta] where (([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? )) and [dba.ta].cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cbd_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cc)    max(cc)    
+1     6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 12: an equality on the ascending first column and an IN list on the descending second column; result = ignore index     
+
+===================================================
+min(cc)    max(cc)    
+1     6     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ta.i_ta_cb_ccd) (key range: [dba.ta].cb= ?:? key range: (([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? )), covered: true)
+
+  rewritten query: select min([dba.ta].cc), max([dba.ta].cc) from [dba.ta] [dba.ta] where (([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? ) or ([dba.ta].cc= ?:? )) and [dba.ta].cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ta.i_ta_cb_ccd), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cc)    max(cc)    
+1     6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+    
+Case 13: index_scan_in_oid_order=yes, one key range, not covering, MIN alone, MAX alone, and both; result = ignore index     
+
+===================================================
+min(cb)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ))
+
+  rewritten query: select min([dba.tb].cb) from [dba.tb] [dba.tb] where ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ) and [dba.tb].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    
+1     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ))
+
+  rewritten query: select max([dba.tb].cb) from [dba.tb] [dba.tb] where ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ) and [dba.tb].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+max(cb)    
+9     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ))
+
+  rewritten query: select min([dba.tb].cb), max([dba.tb].cb) from [dba.tb] [dba.tb] where ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ) and [dba.tb].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 14: index_scan_in_oid_order=yes, an IN list, not covering; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: (([dba.tb].cb= ?:? ) or ([dba.tb].cb= ?:? ) or ([dba.tb].cb= ?:? )))
+
+  rewritten query: select min([dba.tb].cb), max([dba.tb].cb) from [dba.tb] [dba.tb] where (([dba.tb].cb= ?:? ) or ([dba.tb].cb= ?:? ) or ([dba.tb].cb= ?:? )) and [dba.tb].cd= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+    
+Case 15: index_scan_in_oid_order=yes, one key range, covering; result = ignore index     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ), key filter: ([dba.tb].cc> ?:? ), covered: true)
+
+  rewritten query: select min([dba.tb].cb), max([dba.tb].cb) from [dba.tb] [dba.tb] where ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ) and ([dba.tb].cc> ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, min_max_only: true)
+     
+
+===================================================
+min(cb)    max(cb)    
+1     9     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
