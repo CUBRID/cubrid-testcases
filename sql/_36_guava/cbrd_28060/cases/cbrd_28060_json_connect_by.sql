@@ -38,8 +38,7 @@ INSERT INTO t_json_tree VALUES
   (9, '9', '[1]');
 
 evaluate 'Case 1: JSON - CONNECT BY by a hash list scan returns the rows of the CONNECT BY without the hash list scan';
-SELECT ca, LEVEL
-FROM t_json_tree START WITH ca = 1 CONNECT BY PRIOR id = pid ORDER BY 1, 2;
+SELECT ca, LEVEL FROM t_json_tree START WITH ca = 1 CONNECT BY PRIOR id = pid ORDER BY 1, 2;
 show trace;
 
 -- compare with the CONNECT BY without the hash list scan: PASS when the two queries return the same rows as a multiset

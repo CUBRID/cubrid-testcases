@@ -67,8 +67,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 evaluate 'Case 2: JSON - hash GROUP BY on t_json_a returns the groups of the sort GROUP BY';
-select min(id), count(*)
-from t_json_a group by body order by 1, 2;
+select min(id), count(*) from t_json_a group by body order by 1, 2;
 show trace;
 
 -- compare with the sort GROUP BY: PASS when the two queries return the same rows as a multiset

@@ -246,16 +246,13 @@ from
    from (select /*+ NO_HASH_LIST_SCAN */ ca, level lv from t_tree_bigint start with pid is null connect by prior id = pid) t) b;
 
 evaluate 'Case 9: trace - Cases 6 to 8 run as a hash list scan';
-select ca, level lv
-from t_tree_same_scale start with pid is null connect by prior (id / 1) = pid order siblings by ca;
+select ca, level lv from t_tree_same_scale start with pid is null connect by prior (id / 1) = pid order siblings by ca;
 show trace;
 
-select ca, level lv
-from t_tree_wider_scale start with pid is null connect by prior id = pid order siblings by ca;
+select ca, level lv from t_tree_wider_scale start with pid is null connect by prior id = pid order siblings by ca;
 show trace;
 
-select ca, level lv
-from t_tree_bigint start with pid is null connect by prior id = pid order siblings by ca;
+select ca, level lv from t_tree_bigint start with pid is null connect by prior id = pid order siblings by ca;
 show trace;
 
 evaluate 'Case 10: NUMERIC(38,0) and a float NUMERIC of scale -5 (a NUMERIC(38,-5) cast to NUMERIC) - hash join and hash list scan find the pair';

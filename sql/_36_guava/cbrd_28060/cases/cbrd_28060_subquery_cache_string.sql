@@ -22,8 +22,7 @@ CREATE TABLE t_varchar (ca INT, cb VARCHAR (10) COLLATE utf8_en_ci);
 INSERT INTO t_varchar VALUES (1, 'a'), (2, 'A'), (3, 'a'), (4, 'A');
 
 evaluate 'Case 1: VARCHAR utf8_en_ci - a correlated subquery keyed by a and A returns the uncached results';
-SELECT ca, (SELECT HEX (t_varchar.cb) FROM db_root)
-FROM t_varchar ORDER BY 1;
+SELECT ca, (SELECT HEX (t_varchar.cb) FROM db_root) FROM t_varchar ORDER BY 1;
 
 -- compare with the query without the subquery cache: PASS when the two queries return the same rows as a multiset
 with

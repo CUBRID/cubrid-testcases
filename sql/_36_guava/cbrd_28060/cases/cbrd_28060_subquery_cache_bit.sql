@@ -22,8 +22,7 @@ CREATE TABLE t_bit_varying (ca INT, cb BIT VARYING (8));
 INSERT INTO t_bit_varying VALUES (1, B'1'), (2, B'10'), (3, B'1'), (4, B'10');
 
 evaluate 'Case 1: BIT VARYING - a correlated subquery keyed by one byte of two bit lengths returns the uncached results';
-SELECT ca, (SELECT BIT_LENGTH (t_bit_varying.cb) || '' FROM db_root)
-FROM t_bit_varying ORDER BY 1;
+SELECT ca, (SELECT BIT_LENGTH (t_bit_varying.cb) || '' FROM db_root) FROM t_bit_varying ORDER BY 1;
 
 -- compare with the query without the subquery cache: PASS when the two queries return the same rows as a multiset
 with

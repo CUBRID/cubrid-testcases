@@ -38,8 +38,7 @@ INSERT INTO t_json VALUES
   (9, '1.0');
 
 evaluate 'Case 1: JSON - a correlated subquery keyed by a JSON value returns the uncached results';
-SELECT t_json.id, (SELECT JSON_TYPE (t_json.body) FROM db_root)
-FROM t_json ORDER BY 1;
+SELECT t_json.id, (SELECT JSON_TYPE (t_json.body) FROM db_root) FROM t_json ORDER BY 1;
 
 -- compare with the query without the subquery cache: PASS when the two queries return the same rows as a multiset
 with

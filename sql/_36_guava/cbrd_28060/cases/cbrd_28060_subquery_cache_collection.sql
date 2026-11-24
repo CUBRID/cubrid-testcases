@@ -29,11 +29,9 @@ CREATE TABLE t_sequence_a (ca INT, cb SEQUENCE);
 INSERT INTO t_sequence_a VALUES (81, {1}), (82, {CAST (1 AS DOUBLE)}), (83, {CAST (1 AS NUMERIC (5, 2))}), (84, {1});
 
 evaluate 'Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE without an element type returns the uncached results';
-SELECT t_sequence_a.ca, (SELECT t_sequence_a.cb FROM db_root)
-FROM t_sequence_a ORDER BY 1;
+SELECT t_sequence_a.ca, (SELECT t_sequence_a.cb FROM db_root) FROM t_sequence_a ORDER BY 1;
 
-SELECT t_sequence_a.ca, t_sequence_a.cb
-FROM t_sequence_a ORDER BY 1;
+SELECT t_sequence_a.ca, t_sequence_a.cb FROM t_sequence_a ORDER BY 1;
 
 DROP TABLE IF EXISTS t_sequence_set_a, t_sequence_sequence;
 
@@ -117,14 +115,12 @@ CREATE TABLE t_sequence_b (ca INT, cb SEQUENCE);
 INSERT INTO t_sequence_b VALUES (321, {1}), (322, {1.0}), (323, {1.00}), (324, {1}), (325, {1.0});
 
 evaluate 'Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE without an element type - a correlated subquery keyed by the column returns the uncached results';
-SELECT t_set_int_double.ca, (SELECT t_set_int_double.cb FROM db_root)
-FROM t_set_int_double ORDER BY 1;
+SELECT t_set_int_double.ca, (SELECT t_set_int_double.cb FROM db_root) FROM t_set_int_double ORDER BY 1;
 
 SELECT t_set_int_double.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ t_set_int_double.cb FROM db_root)
 FROM t_set_int_double ORDER BY 1;
 
-SELECT t_sequence_set_b.ca, (SELECT t_sequence_set_b.cb = {SET {1}} FROM db_root)
-FROM t_sequence_set_b ORDER BY 1;
+SELECT t_sequence_set_b.ca, (SELECT t_sequence_set_b.cb = {SET {1}} FROM db_root) FROM t_sequence_set_b ORDER BY 1;
 
 -- compare with the query without the subquery cache: PASS when the two queries return the same rows as a multiset
 with
@@ -138,11 +134,9 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
     (select * from nocache_rows difference all select * from cache_rows)
   ) diff_result;
 
-SELECT t_sequence_b.ca, (SELECT t_sequence_b.cb FROM db_root)
-FROM t_sequence_b ORDER BY 1;
+SELECT t_sequence_b.ca, (SELECT t_sequence_b.cb FROM db_root) FROM t_sequence_b ORDER BY 1;
 
-SELECT t_sequence_b.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ t_sequence_b.cb FROM db_root)
-FROM t_sequence_b ORDER BY 1;
+SELECT t_sequence_b.ca, (SELECT /*+ NO_SUBQUERY_CACHE */ t_sequence_b.cb FROM db_root) FROM t_sequence_b ORDER BY 1;
 
 -- cleanup
 DROP TABLE IF EXISTS

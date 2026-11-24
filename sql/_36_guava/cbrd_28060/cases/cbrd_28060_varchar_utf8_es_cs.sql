@@ -337,8 +337,7 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
   ) diff_result;
 
 evaluate 'Case 2: utf8_es_cs - hash GROUP BY on t_varchar_a returns the groups of the sort GROUP BY';
-select min(ca), count(*)
-from t_varchar_a group by cb order by 1, 2;
+select min(ca), count(*) from t_varchar_a group by cb order by 1, 2;
 show trace;
 
 -- compare with the sort GROUP BY: PASS when the two queries return the same rows as a multiset
@@ -355,382 +354,381 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 3: utf8_es_cs - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
-SELECT 1 AS ca,
+SELECT '[]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST ('' AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 2 AS ca,
+SELECT '[ ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 3 AS ca,
+SELECT '[  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 4 to 7: trailing spaces after a character, and its upper case
-SELECT 4 AS ca,
+SELECT '[a]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 5 AS ca,
+SELECT '[a ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 6 AS ca,
+SELECT '[a  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 7 AS ca,
+SELECT '[A]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 8 to 14: a NUL against a space in the middle, at the end and at the start
-SELECT 8 AS ca,
+SELECT '[a b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 9 AS ca,
+SELECT '[a\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 10 AS ca,
+SELECT '[a\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 11 AS ca,
+SELECT '[\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 12 AS ca,
+SELECT '[\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 13 AS ca,
+SELECT '[ b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 14 AS ca,
+SELECT '[b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 15 to 24: the 8-byte chunks of the hash: a space or NUL inside the first chunk, right past it, and past two chunks
-SELECT 15 AS ca,
+SELECT '[abcdefgh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 16 AS ca,
+SELECT '[abcdefgh ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 17 AS ca,
+SELECT '[abcdefgh\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 18 AS ca,
+SELECT '[abcdefgh \0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (32 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 19 AS ca,
+SELECT '[abcdefghi]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 20 AS ca,
+SELECT '[ABCDEFGHI]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING utf8) || CHR (66 USING utf8) || CHR (67 USING utf8) || CHR (68 USING utf8) || CHR (69 USING utf8) || CHR (70 USING utf8) || CHR (71 USING utf8) || CHR (72 USING utf8) || CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 21 AS ca,
+SELECT '[abc def gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (32 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (32 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 22 AS ca,
+SELECT '[abc\0def\0gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (0 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (0 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 23 AS ca,
+SELECT '[abcdefghijklmnop]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 24 AS ca,
+SELECT '[abcdefghijklmnop  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) || CHR (99 USING utf8) || CHR (100 USING utf8) || CHR (101 USING utf8) || CHR (102 USING utf8) || CHR (103 USING utf8) || CHR (104 USING utf8) || CHR (105 USING utf8) || CHR (106 USING utf8) || CHR (107 USING utf8) || CHR (108 USING utf8) || CHR (109 USING utf8) || CHR (110 USING utf8) || CHR (111 USING utf8) || CHR (112 USING utf8) || CHR (32 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 25 to 30: ASCII pairs the case insensitive and expansion collations find equal; a tab, not a space
-SELECT 25 AS ca,
+SELECT '[i]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (105 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 26 AS ca,
+SELECT '[I]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (73 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 27 AS ca,
+SELECT '[ss]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (115 USING utf8) || CHR (115 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 28 AS ca,
+SELECT '[e]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 29 AS ca,
+SELECT '[E]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 30 AS ca,
+SELECT '[a\tb]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (9 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 31 to 37: 2-byte characters: the Turkish i, accents and sharp s, the counterparts of the ASCII pairs above
-SELECT 31 AS ca,
+SELECT '[<U+0131>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50353 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 32 AS ca,
+SELECT '[<U+0130>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50352 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 33 AS ca,
+SELECT '[<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 34 AS ca,
+SELECT '[<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 35 AS ca,
+SELECT '[<U+00DF>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50079 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 36 AS ca,
+SELECT '[a<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 37 AS ca,
+SELECT '[A<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 38 to 39: U+3000 ideographic space: 3 bytes, none of them the byte 0x20
-SELECT 38 AS ca,
+SELECT '[<U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 39 AS ca,
+SELECT '[a<U+3000>b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (14909568 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 40 to 43: a 3-byte character followed by a space, a NUL or U+3000
-SELECT 40 AS ca,
+SELECT '[<U+AC00>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (15380608 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 41 AS ca,
+SELECT '[<U+AC00> ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (32 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 42 AS ca,
+SELECT '[<U+AC00>\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (0 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 43 AS ca,
+SELECT '[<U+AC00><U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (15380608 USING utf8) || CHR (14909568 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 44 to 45: e with a combining accent against '<U+00E9>' above, and 'SS' against sharp s and 'ss' above
-SELECT 44 AS ca,
+SELECT '[e<U+0301>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (101 USING utf8) || CHR (52353 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (101 USING utf8) || CHR (52353 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 45 AS ca,
+SELECT '[SS]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (83 USING utf8) || CHR (83 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (83 USING utf8) || CHR (83 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 46 to 48: an accent and upper case in a word
-SELECT 46 AS ca,
+SELECT '[cafe]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (99 USING utf8) || CHR (97 USING utf8) || CHR (102 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (99 USING utf8) || CHR (97 USING utf8) || CHR (102 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 47 AS ca,
+SELECT '[caf<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (99 USING utf8) || CHR (97 USING utf8) || CHR (102 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (99 USING utf8) || CHR (97 USING utf8) || CHR (102 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 48 AS ca,
+SELECT '[CAF<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (67 USING utf8) || CHR (65 USING utf8) || CHR (70 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (67 USING utf8) || CHR (65 USING utf8) || CHR (70 USING utf8) || CHR (50057 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 49 to 53: the weight 0 soft hyphen U+00AD and zero width space U+200B, against nothing and 'a b' and 'a\0b' above
-SELECT 49 AS ca,
+SELECT '[a<U+00AD>b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (49837 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (49837 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 50 AS ca,
+SELECT '[ab]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 51 AS ca,
+SELECT '[a<U+200B>b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (14844043 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (14844043 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 52 AS ca,
+SELECT '[a<U+200B>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (14844043 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (14844043 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 53 AS ca,
+SELECT '[<U+200B>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14844043 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14844043 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 54 to 57: more accents, precomposed and decomposed
-SELECT 54 AS ca,
+SELECT '[<U+00E4>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50084 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50084 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 55 AS ca,
+SELECT '[a<U+0308>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (52360 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (52360 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 56 AS ca,
+SELECT '[<U+00F1>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50097 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50097 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 57 AS ca,
+SELECT '[n<U+0303>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (110 USING utf8) || CHR (52355 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (110 USING utf8) || CHR (52355 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 58 to 65: the expansions of ae and oe, in lower, upper and mixed case
-SELECT 58 AS ca,
+SELECT '[<U+00E6>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50086 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50086 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 59 AS ca,
+SELECT '[ae]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 60 AS ca,
+SELECT '[AE]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 61 AS ca,
+SELECT '[<U+00C6>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50054 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50054 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 62 AS ca,
+SELECT '[Ae]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 63 AS ca,
+SELECT '[<U+0153>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50579 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50579 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 64 AS ca,
+SELECT '[oe]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (111 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (111 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 65 AS ca,
+SELECT '[<U+0152>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50578 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50578 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 66 to 68: a ring above: precomposed, decomposed, and upper case
-SELECT 66 AS ca,
+SELECT '[<U+00E5>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50085 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50085 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 67 AS ca,
+SELECT '[a<U+030A>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (52362 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (52362 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 68 AS ca,
+SELECT '[<U+00C5>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (50053 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (50053 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 69 to 72: accents on the second and the last letter of a word, and upper case without accents
-SELECT 69 AS ca,
+SELECT '[c<U+00F4>t<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (99 USING utf8) || CHR (50100 USING utf8) || CHR (116 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (99 USING utf8) || CHR (50100 USING utf8) || CHR (116 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 70 AS ca,
+SELECT '[c<U+00F4>te]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (99 USING utf8) || CHR (50100 USING utf8) || CHR (116 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (99 USING utf8) || CHR (50100 USING utf8) || CHR (116 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 71 AS ca,
+SELECT '[cot<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (99 USING utf8) || CHR (111 USING utf8) || CHR (116 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (99 USING utf8) || CHR (111 USING utf8) || CHR (116 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 72 AS ca,
+SELECT '[COTE]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (67 USING utf8) || CHR (79 USING utf8) || CHR (84 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (67 USING utf8) || CHR (79 USING utf8) || CHR (84 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 73 to 75: sharp s in a word against its upper case expansion, and a space before an accent
-SELECT 73 AS ca,
+SELECT '[stra<U+00DF>e]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (115 USING utf8) || CHR (116 USING utf8) || CHR (114 USING utf8) || CHR (97 USING utf8) || CHR (50079 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (115 USING utf8) || CHR (116 USING utf8) || CHR (114 USING utf8) || CHR (97 USING utf8) || CHR (50079 USING utf8) || CHR (101 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 74 AS ca,
+SELECT '[STRASSE]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (83 USING utf8) || CHR (84 USING utf8) || CHR (82 USING utf8) || CHR (65 USING utf8) || CHR (83 USING utf8) || CHR (83 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (83 USING utf8) || CHR (84 USING utf8) || CHR (82 USING utf8) || CHR (65 USING utf8) || CHR (83 USING utf8) || CHR (83 USING utf8) || CHR (69 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 75 AS ca,
+SELECT '[a <U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (32 USING utf8) || CHR (50089 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 76 to 81: punctuation in the middle, at the start and at the end
-SELECT 76 AS ca,
+SELECT '[a-b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (45 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (45 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 77 AS ca,
+SELECT '[a_b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (95 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (95 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 78 AS ca,
+SELECT '[a''b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (39 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (39 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 79 AS ca,
+SELECT '[-a]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45 USING utf8) || CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45 USING utf8) || CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 80 AS ca,
+SELECT '[a-]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (45 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (45 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 81 AS ca,
+SELECT '[a.b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING utf8) || CHR (46 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) || CHR (46 USING utf8) || CHR (98 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 82 to 87: Khmer: a consonant, a vowel sign, the coeng sign that joins two consonants, and a hyphen between consonants
-SELECT 82 AS ca,
+SELECT '[<U+1780>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 83 AS ca,
+SELECT '[<U+1780><U+17B6>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786230 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786230 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 84 AS ca,
+SELECT '[<U+1780><U+17D2><U+1780>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786450 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786450 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 85 AS ca,
+SELECT '[<U+1781>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786177 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786177 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 86 AS ca,
+SELECT '[<U+1780>-<U+1780>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (45 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (45 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 87 AS ca,
+SELECT '[<U+1780><U+1780>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14786176 USING utf8) || CHR (14786176 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
 -- 88 to 89: U+03A9 and U+2126, which differ only at level 4
-SELECT 88 AS ca,
+SELECT '[<U+03A9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (52905 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (52905 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT 89 AS ca,
+SELECT '[<U+2126>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (14845094 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (14845094 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs)) AS cnt_part;
 
-SELECT COUNT (*)
-FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs);
+SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING utf8) AS VARCHAR(40) COLLATE utf8_es_cs);
 show trace;
 
 evaluate 'Case 4: utf8_es_cs - hash list scan of t_varchar_a and t_varchar_b returns the pairs of the join without the hash list scan';

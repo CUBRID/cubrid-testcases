@@ -75,16 +75,13 @@ from
    where x.ca = y.ca and x.cb = y.cb) b;
 
 evaluate 'Case 4: trace - Cases 1 to 3 run as a hash join (HASHJOIN)';
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from t_bit_short x, t_bit_long y where x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from t_bit_short x, t_bit_long y where x.cb = y.cb;
 show trace;
 
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from t_bit_varying_short x, t_bit_varying_long y where x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from t_bit_varying_short x, t_bit_varying_long y where x.cb = y.cb;
 show trace;
 
-select /*+ recompile ordered USE_HASH parallel(0) */ count(*)
-from t_bit_short x, t_bit_long y where x.ca = y.ca and x.cb = y.cb;
+select /*+ recompile ordered USE_HASH parallel(0) */ count(*) from t_bit_short x, t_bit_long y where x.ca = y.ca and x.cb = y.cb;
 show trace;
 
 -- cleanup

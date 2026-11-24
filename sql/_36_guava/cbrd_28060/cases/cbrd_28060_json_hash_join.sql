@@ -133,8 +133,7 @@ DROP TABLE IF EXISTS t_json_ab;
 CREATE TABLE t_json_ab AS SELECT * FROM t_json_a WHERE id <> 3 UNION ALL SELECT * FROM t_json_b WHERE id <> 13;
 
 evaluate 'Case 3: JSON - hash GROUP BY on t_json_ab returns the groups of the sort GROUP BY';
-SELECT /*+ PARALLEL(0) */ MIN (id), COUNT (*)
-FROM t_json_ab GROUP BY body ORDER BY 1, 2;
+SELECT /*+ PARALLEL(0) */ MIN (id), COUNT (*) FROM t_json_ab GROUP BY body ORDER BY 1, 2;
 show trace;
 
 -- compare with the sort GROUP BY: PASS when the two queries return the same rows as a multiset

@@ -275,8 +275,7 @@ FROM t_int;
 UPDATE STATISTICS ON t_int, t_varchar WITH FULLSCAN;
 
 evaluate 'Case 6: utf8_de_exp_ai_ci - hash GROUP BY on t_varchar within the hash table returns the groups of the sort GROUP BY';
-select /*+ parallel(0) */ min(ca), count(*)
-from t_varchar group by cb order by 1, 2;
+select /*+ parallel(0) */ min(ca), count(*) from t_varchar group by cb order by 1, 2;
 show trace;
 
 -- compare with the sort GROUP BY: PASS when the two queries return the same rows as a multiset
