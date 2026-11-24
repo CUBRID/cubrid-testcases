@@ -26,9 +26,9 @@ autocommit off;
  *    Case 6:  Case 5 with the action INSERT on the client
  *    Case 7:  an action REPLACE on a row that an earlier statement updated
  *    Case 8:  Case 7 with the action INSERT on the client
+ *
+ *  the odd cases rely on insert_execution_mode at its default, under which these INSERT statements run on the server
  */
-
--- the odd cases rely on insert_execution_mode at its default, under which these INSERT statements run on the server
 
 drop table if exists t27752_p, t27752_ch, t27752_a, t27752_b, t27752_s, t27752_t;
 commit;

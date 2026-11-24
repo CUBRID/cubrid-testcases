@@ -1,0 +1,690 @@
+===================================================
+0
+===================================================
+0
+===================================================
+12002
+===================================================
+0
+===================================================
+60010
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
+0
+===================================================
+18000
+===================================================
+0
+===================================================
+0
+===================================================
+18000
+===================================================
+0
+===================================================
+0
+===================================================
+6000
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2000
+===================================================
+0
+===================================================
+    
+Case 1: ranges of 1 to 8 keys end on every key and in every gap, upper key included     
+
+===================================================
+w    g    count(*)    min(r.hi-i.k)    max(r.hi-i.k)    sum( cast(i.k as bigint))    
+1     0     1998     0     1     1998000     
+1     1     2000     0     1     5998000     
+1     2     2000     0     1     9998000     
+1     3     2000     0     1     13998000     
+1     4     2000     0     1     17998000     
+1     5     2000     0     1     21998000     
+1     6     2     0     1     24000     
+2     0     3994     0     3     3992004     
+2     1     4000     0     3     11992000     
+2     2     4000     0     3     19992000     
+2     3     4000     0     3     27992000     
+2     4     4000     0     3     35992000     
+2     5     4000     0     3     43992000     
+2     6     5     0     3     59996     
+3     0     5988     0     5     5982016     
+3     1     6000     0     5     17982000     
+3     2     6000     0     5     29982000     
+3     3     6000     0     5     41982000     
+3     4     6000     0     5     53982000     
+3     5     6000     0     5     65982000     
+3     6     8     0     5     95986     
+4     0     7980     0     7     7968040     
+4     1     8000     0     7     23968000     
+4     2     8000     0     7     39968000     
+4     3     8000     0     7     55968000     
+4     4     8000     0     7     71968000     
+4     5     8000     0     7     87968000     
+4     6     11     0     7     131970     
+8     0     15928     0     15     15872336     
+8     1     16000     0     15     47872000     
+8     2     16000     0     15     79872000     
+8     3     16000     0     15     111872000     
+8     4     16000     0     15     143872000     
+8     5     16000     0     15     175872000     
+8     6     23     0     15     275846     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: r node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: pk_t_key_k term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select r.w, r.hi div ?, count(*), min(r.hi-i.k), max(r.hi-i.k), sum( cast(i.k as bigint)) from t_rng r, t_key i where (i.k>=r.lo and i.k<=r.hi) group by r.w, r.hi div ? order by ?, ?
+===================================================
+    
+Case 2: ranges of 1 to 8 keys end on every key and in every gap, upper key excluded     
+
+===================================================
+w    g    count(*)    min(r.hi-i.k)    max(r.hi-i.k)    sum( cast(i.k as bigint))    
+1     0     999     1     1     999000     
+1     1     1000     1     1     2999000     
+1     2     1000     1     1     4999000     
+1     3     1000     1     1     6999000     
+1     4     1000     1     1     8999000     
+1     5     1000     1     1     10999000     
+1     6     1     1     1     12000     
+2     0     2995     1     3     2993004     
+2     1     3000     1     3     8993000     
+2     2     3000     1     3     14993000     
+2     3     3000     1     3     20993000     
+2     4     3000     1     3     26993000     
+2     5     3000     1     3     32993000     
+2     6     4     1     3     47996     
+3     0     4989     1     5     4983016     
+3     1     5000     1     5     14983000     
+3     2     5000     1     5     24983000     
+3     3     5000     1     5     34983000     
+3     4     5000     1     5     44983000     
+3     5     5000     1     5     54983000     
+3     6     7     1     5     83986     
+4     0     6981     1     7     6969040     
+4     1     7000     1     7     20969000     
+4     2     7000     1     7     34969000     
+4     3     7000     1     7     48969000     
+4     4     7000     1     7     62969000     
+4     5     7000     1     7     76969000     
+4     6     10     1     7     119970     
+8     0     14929     1     15     14873336     
+8     1     15000     1     15     44873000     
+8     2     15000     1     15     74873000     
+8     3     15000     1     15     104873000     
+8     4     15000     1     15     134873000     
+8     5     15000     1     15     164873000     
+8     6     22     1     15     263846     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: r node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: pk_t_key_k term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select r.w, r.hi div ?, count(*), min(r.hi-i.k), max(r.hi-i.k), sum( cast(i.k as bigint)) from t_rng r, t_key i where (i.k>=r.lo and i.k<r.hi) group by r.w, r.hi div ? order by ?, ?
+===================================================
+    
+Case 3: ranges of 900 keys cross a leaf and end on every key     
+
+===================================================
+g    count(*)    min(o.k-i.k)    max(o.k-i.k)    sum( cast(i.k as bigint))    
+0     494550     0     1798     332999700     
+1     900000     0     1798     1890000000     
+2     900000     0     1798     3690000000     
+3     900000     0     1798     5490000000     
+4     900000     0     1798     7290000000     
+5     900000     0     1798     9090000000     
+6     900     0     1798     9990900     
+
+===================================================
+    
+Case 4: a non-covering scan of 18000 rows resumes after each full OID buffer     
+
+===================================================
+count(*)    sum( cast(c as bigint))    min(b)    max(b)    
+17990     143916     1     17990     
+
+Query plan:
+iscan
+    class: t_pre node[?]
+    index: i_pre_ab term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(t_pre.c as bigint)), min(t_pre.b), max(t_pre.b) from t_pre t_pre where (t_pre.a>= ?:?  and t_pre.a<= ?:? ) and (t_pre.b<= ?:? ) using index t_pre.i_pre_ab(+)
+===================================================
+count(*)    sum( cast(c as bigint))    min(b)    max(b)    
+17989     143915     1     17989     
+
+===================================================
+    
+Case 5: descending scan of the same sweeps     
+
+===================================================
+w    g    sum((select /*+ USE_DESC_IDX */ count(*) from t_key i where i.k between r.lo and r.hi))    sum((select /*+ USE_DESC_IDX */ sum( cast(i.k as bigint)) from t_key i where i.k between r.lo and r.hi))    min((select /*+ USE_DESC_IDX */ min(i.k) from t_key i where i.k between r.lo and r.hi)-r.lo)    
+1     0     1998     1998000     0     
+1     1     2000     5998000     0     
+1     2     2000     9998000     0     
+1     3     2000     13998000     0     
+1     4     2000     17998000     0     
+1     5     2000     21998000     0     
+1     6     2     24000     0     
+2     0     3994     3992004     0     
+2     1     4000     11992000     0     
+2     2     4000     19992000     0     
+2     3     4000     27992000     0     
+2     4     4000     35992000     0     
+2     5     4000     43992000     0     
+2     6     5     59996     0     
+3     0     5988     5982016     0     
+3     1     6000     17982000     0     
+3     2     6000     29982000     0     
+3     3     6000     41982000     0     
+3     4     6000     53982000     0     
+3     5     6000     65982000     0     
+3     6     8     95986     0     
+4     0     7980     7968040     0     
+4     1     8000     23968000     0     
+4     2     8000     39968000     0     
+4     3     8000     55968000     0     
+4     4     8000     71968000     0     
+4     5     8000     87968000     0     
+4     6     11     131970     0     
+8     0     15928     15872336     0     
+8     1     16000     47872000     0     
+8     2     16000     79872000     0     
+8     3     16000     111872000     0     
+8     4     16000     143872000     0     
+8     5     16000     175872000     0     
+8     6     23     275846     0     
+
+Query plan:
+iscan
+    class: i node[?]
+    index: pk_t_key_k term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+(select /*+ USE_DESC_IDX */ count(*) from t_key i where (i.k>=r.lo and i.k<=r.hi))
+Query plan:
+iscan
+    class: i node[?]
+    index: pk_t_key_k term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+(select /*+ USE_DESC_IDX */ sum( cast(i.k as bigint)) from t_key i where (i.k>=r.lo and i.k<=r.hi))
+Query plan:
+iscan
+    class: i node[?]
+    index: pk_t_key_k term[?] (covers) (desc_index forced)
+    cost:  ? card ?
+Query stmt:
+(select /*+ USE_DESC_IDX */ min(i.k) from t_key i where (i.k>=r.lo and i.k<=r.hi))
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: sscan
+                              class: r node[?]
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select r.w, r.hi div ?, sum((select /*+ USE_DESC_IDX */ count(*) from t_key i where (i.k>=r.lo and i.k<=r.hi))), sum((select /*+ USE_DESC_IDX */ sum( cast(i.k as bigint)) from t_key i where (i.k>=r.lo and i.k<=r.hi))), min((select /*+ USE_DESC_IDX */ min(i.k) from t_key i where (i.k>=r.lo and i.k<=r.hi))-r.lo) from t_rng r group by r.w, r.hi div ? order by ?, ?
+===================================================
+w    g    sum((select /*+ USE_DESC_IDX */ count(*) from t_key i where i.k>r.lo and i.k<=r.hi))    sum((select /*+ USE_DESC_IDX */ sum( cast(i.k as bigint)) from t_key i where i.k>r.lo and i.k<=r.hi))    min((select /*+ USE_DESC_IDX */ min(i.k) from t_key i where i.k>r.lo and i.k<=r.hi)-r.lo)    
+1     0     999     999000     1     
+1     1     1000     2999000     1     
+1     2     1000     4999000     1     
+1     3     1000     6999000     1     
+1     4     1000     8999000     1     
+1     5     1000     10999000     1     
+1     6     1     12000     1     
+2     0     2996     2995002     1     
+2     1     3000     8995000     1     
+2     2     3000     14995000     1     
+2     3     3000     20995000     1     
+2     4     3000     26995000     1     
+2     5     3000     32995000     1     
+2     6     4     47998     1     
+3     0     4991     4987010     1     
+3     1     5000     14987000     1     
+3     2     5000     24987000     1     
+3     3     5000     34987000     1     
+3     4     5000     44987000     1     
+3     5     5000     54987000     1     
+3     6     7     83990     1     
+4     0     6984     6975028     1     
+4     1     7000     20975000     1     
+4     2     7000     34975000     1     
+4     3     7000     48975000     1     
+4     4     7000     62975000     1     
+4     5     7000     76975000     1     
+4     6     10     119976     1     
+8     0     14936     14887280     1     
+8     1     15000     44887000     1     
+8     2     15000     74887000     1     
+8     3     15000     104887000     1     
+8     4     15000     134887000     1     
+8     5     15000     164887000     1     
+8     6     22     263860     1     
+
+===================================================
+    
+Case 6: an index on a DESC column, upper key included and excluded     
+
+===================================================
+w    g    count(*)    min(r.hi-i.k)    max(r.hi-i.k)    sum( cast(i.k as bigint))    
+1     0     1998     0     1     1998000     
+1     1     2000     0     1     5998000     
+1     2     2000     0     1     9998000     
+1     3     2000     0     1     13998000     
+1     4     2000     0     1     17998000     
+1     5     2000     0     1     21998000     
+1     6     2     0     1     24000     
+2     0     3994     0     3     3992004     
+2     1     4000     0     3     11992000     
+2     2     4000     0     3     19992000     
+2     3     4000     0     3     27992000     
+2     4     4000     0     3     35992000     
+2     5     4000     0     3     43992000     
+2     6     5     0     3     59996     
+3     0     5988     0     5     5982016     
+3     1     6000     0     5     17982000     
+3     2     6000     0     5     29982000     
+3     3     6000     0     5     41982000     
+3     4     6000     0     5     53982000     
+3     5     6000     0     5     65982000     
+3     6     8     0     5     95986     
+4     0     7980     0     7     7968040     
+4     1     8000     0     7     23968000     
+4     2     8000     0     7     39968000     
+4     3     8000     0     7     55968000     
+4     4     8000     0     7     71968000     
+4     5     8000     0     7     87968000     
+4     6     11     0     7     131970     
+8     0     15928     0     15     15872336     
+8     1     16000     0     15     47872000     
+8     2     16000     0     15     79872000     
+8     3     16000     0     15     111872000     
+8     4     16000     0     15     143872000     
+8     5     16000     0     15     175872000     
+8     6     23     0     15     275846     
+
+===================================================
+w    g    count(*)    min(i.k-r.lo)    max(i.k-r.lo)    sum( cast(i.k as bigint))    
+1     0     999     1     1     999000     
+1     1     1000     1     1     2999000     
+1     2     1000     1     1     4999000     
+1     3     1000     1     1     6999000     
+1     4     1000     1     1     8999000     
+1     5     1000     1     1     10999000     
+1     6     1     1     1     12000     
+2     0     2996     1     3     2995002     
+2     1     3000     1     3     8995000     
+2     2     3000     1     3     14995000     
+2     3     3000     1     3     20995000     
+2     4     3000     1     3     26995000     
+2     5     3000     1     3     32995000     
+2     6     4     1     3     47998     
+3     0     4991     1     5     4987010     
+3     1     5000     1     5     14987000     
+3     2     5000     1     5     24987000     
+3     3     5000     1     5     34987000     
+3     4     5000     1     5     44987000     
+3     5     5000     1     5     54987000     
+3     6     7     1     5     83990     
+4     0     6984     1     7     6975028     
+4     1     7000     1     7     20975000     
+4     2     7000     1     7     34975000     
+4     3     7000     1     7     48975000     
+4     4     7000     1     7     62975000     
+4     5     7000     1     7     76975000     
+4     6     10     1     7     119976     
+8     0     14936     1     15     14887280     
+8     1     15000     1     15     44887000     
+8     2     15000     1     15     74887000     
+8     3     15000     1     15     104887000     
+8     4     15000     1     15     134887000     
+8     5     15000     1     15     164887000     
+8     6     22     1     15     263860     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: r node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: i_desc_k term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select r.w, r.hi div ?, count(*), min(i.k-r.lo), max(i.k-r.lo), sum( cast(i.k as bigint)) from t_rng r, t_desc i where (i.k>r.lo and i.k<=r.hi) group by r.w, r.hi div ? order by ?, ?
+===================================================
+    
+Case 7: a non-unique index whose keys hold three rows each     
+
+===================================================
+w    g    count(*)    min(r.hi-i.k)    max(r.hi-i.k)    sum( cast(i.v as bigint))    
+1     0     2994     0     1     2242506     
+1     1     3000     0     1     6742500     
+1     2     3000     0     1     11242500     
+1     3     3000     0     1     15742500     
+1     4     6     0     1     35994     
+2     0     5982     0     3     4476036     
+2     1     6000     0     3     13476000     
+2     2     6000     0     3     22476000     
+2     3     6000     0     3     31476000     
+2     4     15     0     3     89967     
+3     0     8964     0     5     6700608     
+3     1     9000     0     5     20200500     
+3     2     9000     0     5     33700500     
+3     3     9000     0     5     47200500     
+3     4     24     0     5     143913     
+4     0     11940     0     7     8916240     
+4     1     12000     0     7     26916000     
+4     2     12000     0     7     44916000     
+4     3     12000     0     7     62916000     
+4     4     33     0     7     197832     
+8     0     23784     0     15     17689728     
+8     1     24000     0     15     53688000     
+8     2     24000     0     15     89688000     
+8     3     24000     0     15     125688000     
+8     4     69     0     15     413238     
+
+===================================================
+    
+Case 8: leaves with a common prefix, full and partial upper keys     
+
+===================================================
+g    count(*)    min(o.b-i.b)    max(o.b-i.b)    sum( cast(i.b as bigint))    
+0     9955     0     27     14860450     
+1     10000     0     27     44860000     
+2     10000     0     27     74860000     
+3     10000     0     27     104860000     
+4     10000     0     27     134860000     
+5     10000     0     27     164860000     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: o node[?]
+                                         index: i_pre_ab term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: i_pre_ab term[?] AND term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.b div ?, count(*), min(o.b-i.b), max(o.b-i.b), sum( cast(i.b as bigint)) from t_pre o, t_pre i where (i.b>=o.b-? and i.b<=o.b) and i.a= ?:?  and o.a= ?:?  group by o.b div ? order by ?
+===================================================
+a    (select count(*) from t_pre p where p.a<=x.a)    (select sum( cast(p.b as bigint)) from t_pre p where p.a<x.a)    
+0     6000     null     
+1     12000     54009000     
+2     18000     108006000     
+
+===================================================
+    
+Case 9: a key filter on keys whose upper compare is skipped     
+
+===================================================
+g    count(*)    min(o.b-i.b)    max(o.b-i.b)    sum( cast(i.b as bigint))    
+0     7465     0     27     11145334     
+1     7500     0     27     33645000     
+2     7500     0     27     56145000     
+3     7500     0     27     78645000     
+4     7500     0     27     101145000     
+5     7500     0     27     123645000     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: o node[?]
+                                         index: i_pre_ab term[?] (covers)
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: i_pre_ab term[?] AND term[?] (covers)
+                                         filtr: term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.b div ?, count(*), min(o.b-i.b), max(o.b-i.b), sum( cast(i.b as bigint)) from t_pre o, t_pre i where (i.b>=o.b-? and i.b<=o.b+?) and  mod(i.b, ?)<>? and i.a= ?:?  and o.a= ?:?  group by o.b div ? order by ?
+===================================================
+    
+Case 10: index skip scan, one range per leading value     
+
+===================================================
+count(*)    sum( cast(b as bigint))    min(b)    max(b)    
+8001     40005000     1000     9000     
+
+Query plan:
+iscan
+    class: t_pre node[?]
+    index: i_pre_ab term[?] (covers) (index skip scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_SS */ count(*), sum( cast(t_pre.b as bigint)), min(t_pre.b), max(t_pre.b) from t_pre t_pre where (t_pre.b>= ?:?  and t_pre.b<= ?:? )
+===================================================
+count(*)    sum( cast(b as bigint))    min(b)    max(b)    
+7999     39995000     1001     8999     
+
+===================================================
+    
+Case 11: loose index scan, the range moves while the leaf is held     
+
+===================================================
+a    max(b)    
+0     18000     
+1     17998     
+
+Query plan:
+iscan
+    class: t_ls node[?]
+    index: i_ls_abc term[?] (covers) (loose index scan on prefix ?)
+    filtr: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ t_ls.a, max(t_ls.b) from t_ls t_ls where (t_ls.a<= ?:? ) and (t_ls.b> ?:? ) group by t_ls.a
+/* ---> skip GROUP BY */
+===================================================
+a    
+0     
+1     
+
+Query plan:
+temp(distinct)
+    subplan: iscan
+                 class: t_ls node[?]
+                 index: i_ls_abc term[?] (covers) (loose index scan on prefix ?)
+                 filtr: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ INDEX_LS */ distinct t_ls.a from t_ls t_ls where (t_ls.a< ?:? ) and (t_ls.b> ?:? ) order by ?
+===================================================
+    
+Case 12: several ranges in one scan from OR and IN     
+
+===================================================
+g    count(*)    sum( cast(i.k as bigint))    sum( cast(i.k-n.x as bigint))    
+0     15976     29585228     13593278     
+1     16000     61592000     13600000     
+2     16000     93592000     13600000     
+3     16000     125592000     13600000     
+4     16000     157592000     13600000     
+5     9192     102095572     2002550     
+6     11     131970     -40     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: n node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: pk_t_key_k term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select n.x div ?, count(*), sum( cast(i.k as bigint)), sum( cast(i.k-n.x as bigint)) from t_num n, t_key i where ((i.k>=n.x-? and i.k<=n.x) or (i.k>=n.x+? and i.k<=n.x+?)) group by n.x div ? order by ?
+===================================================
+g    count(*)    sum( cast(i.k as bigint))    sum( cast(i.k-n.x as bigint))    
+0     2996     4707288     1710290     
+1     3000     10709000     1712000     
+2     3000     16709000     1712000     
+3     3000     22709000     1712000     
+4     3000     28709000     1712000     
+5     2144     23703408     244816     
+6     3     35998     -4     
+
+===================================================
+    
+Case 13: every key is an overflow key     
+
+===================================================
+g    count(*)    min(o.n- cast( substr(i.s, 1, 6) as integer))    max(o.n- cast( substr(i.s, 1, 6) as integer))    sum( cast( substr(i.s, 1, 6) as bigint))    
+0     1235     0     4     153145     
+1     1250     0     4     465625     
+2     1250     0     4     778125     
+3     1250     0     4     1090625     
+4     1250     0     4     1403125     
+5     1250     0     4     1715625     
+6     1250     0     4     2028125     
+7     1250     0     4     2340625     
+8     5     0     4     9990     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: parallel idx-join (inner join)
+                              outer: sscan
+                                         class: o node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: i_long_s term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.n div ?, count(*), min(o.n- cast( substr(i.s, ?, ?) as integer)), max(o.n- cast( substr(i.s, ?, ?) as integer)), sum( cast( substr(i.s, ?, ?) as bigint)) from t_long o, t_long i where (i.s>=o.ls and i.s<=o.s) group by o.n div ? order by ?
+===================================================
+    
+Case 14: a two-column index with some overflow keys on leaves with a common prefix     
+
+===================================================
+g    count(*)    min(o.n-i.n)    max(o.n-i.n)    sum( cast(i.n as bigint))    
+0     615     0     8     75655     
+1     625     0     8     231875     
+2     625     0     8     388125     
+3     625     0     8     544375     
+4     625     0     8     700625     
+5     625     0     8     856875     
+6     625     0     8     1013125     
+7     625     0     8     1169375     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: iscan
+                                         class: o node[?]
+                                         index: i_mix_as term[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: i node[?]
+                                         index: i_mix_as term[?] AND term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.n div ?, count(*), min(o.n-i.n), max(o.n-i.n), sum( cast(i.n as bigint)) from t_mix o, t_mix i where (i.s>=o.ls and i.s<=o.s) and i.a= ?:?  and o.a= ?:?  group by o.n div ? order by ?
+===================================================
+0
+===================================================
+0

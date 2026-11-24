@@ -27,7 +27,7 @@ autocommit off;
  *    Case 8:  the same with a trigger with a condition only
  *    Case 9:  a BEFORE INSERT action inserts a child of the row not inserted yet - error -528, nothing changed
  *    Case 10: a BEFORE UPDATE action inserts a child of the row being updated
- *    Case 11: an UPDATE of two rows that changes no unique key; an action DELETEs the parent that the rows left
+ *    Case 11: an UPDATE of two rows that changes no unique key an action DELETEs the parent that the rows left
  *    Case 12: the same with the primary key changed too - the rows wait for the end of the statement, error -528, nothing changed
  *    Case 13: UPDATE k = k + 1 of a subclass whose unique key is defined on its superclass, with a row trigger with an action
  */
