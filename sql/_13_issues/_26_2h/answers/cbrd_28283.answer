@@ -510,6 +510,27 @@ min(cb)    max(cb)
 1     9     
 
 ===================================================
+    
+Case 16: index_scan_in_oid_order=yes, an index scan that is neither MIN/MAX nor covering returns the row with the smallest OID first; result = 7     
+
+===================================================
+cb    
+7     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.tb.i_tb_cb_cc) (key range: ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ))
+
+  rewritten query: select [dba.tb].cb from [dba.tb] [dba.tb] where ([dba.tb].cb>= ?:?  and [dba.tb].cb<= ?:? ) and (inst_num()<= ?:? ) and [dba.tb].cd= ?:?  using index [dba.tb].i_tb_cb_cc
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.tb.i_tb_cb_cc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0

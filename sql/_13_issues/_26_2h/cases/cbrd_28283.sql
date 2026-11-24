@@ -11,6 +11,8 @@
  *
  *  Each MIN/MAX query is followed by the same query that reads the table with IGNORE INDEX, and the two results
  *  must match. The trace of each MIN/MAX query shows the min_max_only index scan. CTP masks the digits of a trace.
+ *  Case 16 shows that index_scan_in_oid_order=yes takes effect on the other index scans: its first row follows the OID
+ *  order, which the USING INDEX hint and LIMIT fix.
  *
  *  Coverage:
  *    Case 1:  MIN and MAX over an IN list, covering
@@ -28,6 +30,8 @@
  *    Case 13: index_scan_in_oid_order=yes, one key range, not covering, MIN alone, MAX alone, and both
  *    Case 14: index_scan_in_oid_order=yes, an IN list, not covering
  *    Case 15: index_scan_in_oid_order=yes, one key range, covering
+ *    Case 16: index_scan_in_oid_order=yes, an index scan that is neither MIN/MAX nor covering returns the row with the
+ *             smallest OID first
  */
 
 drop table if exists ta, tb;
@@ -129,7 +133,7 @@ show trace;
 select min (cc), max (cc) from ta ignore index (i_ta_cb_ccd) where cb = 5 and cc in (1, 3, 6);
 
 /* cb falls as ca rises in tb, so the row of tb with the smallest OID holds cb = 7, neither MIN nor MAX. A plan is
- * cached with its constants as host variables, so Cases 13 to 15 read tb and get plans made under the parameter. */
+ * cached with its constants as host variables, so Cases 13 to 16 read tb and get plans made under the parameter. */
 set system parameters 'index_scan_in_oid_order=yes';
 
 create table tb (ca int primary key, cb int not null, cc int, cd varchar(10));
@@ -159,6 +163,10 @@ evaluate 'Case 15: index_scan_in_oid_order=yes, one key range, covering; result 
 select min (cb), max (cb) from tb where cb between 1 and 9 and cc > 0;
 show trace;
 select min (cb), max (cb) from tb ignore index (i_tb_cb_cc) where cb between 1 and 9 and cc > 0;
+
+evaluate 'Case 16: index_scan_in_oid_order=yes, an index scan that is neither MIN/MAX nor covering returns the row with the smallest OID first; result = 7';
+select cb from tb where cb between 1 and 9 and cd = 'y' using index i_tb_cb_cc limit 1;
+show trace;
 
 set trace off;
 set system parameters 'index_scan_in_oid_order=default';
