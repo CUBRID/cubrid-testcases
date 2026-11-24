@@ -2,20 +2,22 @@
  *  This test case verifies CBRD-28321: Fix NUMERIC defects in conversion, index key comparison, DESC and ELT
  *
  *  Each case is a defect of NUMERIC found while verifying CBRD-28289. Cases 1, 3, 4 and 5 come with a negative
- *  scale or a scale above 38, which CBRD-26006 brought in, and Cases 2 and 6 come with any scale.
+ *  scale or a scale above 40, which CBRD-26006 brought in, and Cases 2 and 6 come with any scale.
  *
  *  Coverage:
- *    Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale
+ *    Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale or of a scale above its
+ *            precision
  *    Case 2: BIGINT to NUMERIC keeps the target precision and raises an overflow
- *    Case 3: a DOUBLE zero converts to NUMERIC of a negative scale or of a scale above 40
+ *    Case 3: a DOUBLE zero, or a DOUBLE below the range of NUMERIC, converts to NUMERIC of a negative scale or of a scale
+ *            above 40
  *    Case 4: an index scan of NUMERIC of a negative scale compared with an integer returns the rows of a full scan
  *    Case 5: DESC and SHOW COLUMNS print the scale of NUMERIC, negative or not
  *    Case 6: ELT of NUMERIC whose scale is not below its precision, negative, and of a negative scale
  */
 
-drop table if exists t_neg, t_src, t_big, t_dbl, t_dbl_neg, t_negidx, t_desc;
+drop table if exists t_neg, t_frac, t_src, t_big, t_dbl, t_dbl_neg, t_negidx, t_desc;
 
-evaluate 'Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale';
+evaluate 'Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale or of a scale above its precision';
 create table t_neg (a numeric(1,-1));
 create table t_src (i int, b bigint, s smallint);
 insert into t_src values (10, 90, 0);
@@ -26,6 +28,11 @@ select a from t_neg order by a;
 -- the next INSERT fails on purpose: 100 needs 3 integer digits and numeric(1,-1) holds 2
 insert into t_neg select i * 10 from t_src;
 select count(*) from t_neg;
+create table t_frac (a numeric(3,5));
+insert into t_frac select s from t_src;
+-- the next INSERT fails on purpose: 1 needs an integer digit and numeric(3,5) holds none
+insert into t_frac select s + 1 from t_src;
+select a from t_frac;
 
 evaluate 'Case 2: BIGINT to NUMERIC keeps the target precision and raises an overflow';
 create table t_big (b bigint);
@@ -35,7 +42,7 @@ select cast(b as numeric(2,0)), typeof(cast(b as numeric(2,0))) from t_big;
 -- the next SELECT fails on purpose: 10 does not fit numeric(1,0), as for an INT
 select cast(b as numeric(1,0)) from t_big;
 
-evaluate 'Case 3: a DOUBLE zero converts to NUMERIC of a negative scale or of a scale above 40';
+evaluate 'Case 3: a DOUBLE zero, or a DOUBLE below the range of NUMERIC, converts to NUMERIC of a negative scale or of a scale above 40';
 -- row 1 comes before the zero, so a zero that took the value of the row before it shows
 create table t_dbl (id int, d double);
 insert into t_dbl values (1, 1);
@@ -43,6 +50,10 @@ insert into t_dbl values (2, 0);
 insert into t_dbl values (3, 100000);
 select id, cast(d as numeric(30,-5)) from t_dbl order by id;
 select id, cast(d as numeric(10,50)) from t_dbl where id = 2;
+-- an INT zero converted to the same type, to compare the two results
+select cast(0 as numeric(10,50));
+-- a DOUBLE below the range of NUMERIC, positive and negative, and a negative zero
+select cast(1e-300 as numeric(30,-5)), cast(-1e-300 as numeric(10,50)), cast(-0e0 as numeric(30,-5));
 -- ROUND after the cast in the same SELECT
 create table t_dbl_neg (v numeric(30,-5));
 insert into t_dbl_neg values (0);
@@ -75,4 +86,4 @@ select elt(1, cast(-12.5 as numeric(3,1)));
 select elt(1, cast(-12000 as numeric(2,-3)));
 select elt(1, cast(-99000 as numeric(2,-3)));
 
-drop table t_neg, t_src, t_big, t_dbl, t_dbl_neg, t_negidx, t_desc;
+drop table t_neg, t_frac, t_src, t_big, t_dbl, t_dbl_neg, t_negidx, t_desc;

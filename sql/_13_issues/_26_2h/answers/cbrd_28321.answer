@@ -2,7 +2,7 @@
 0
 ===================================================
     
-Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale     
+Case 1: INSERT SELECT of an integer into NUMERIC of a negative scale or of a scale above its precision     
 
 ===================================================
 0
@@ -29,6 +29,16 @@ count(*)
 3     
 
 ===================================================
+0
+===================================================
+1
+===================================================
+Error:-427
+===================================================
+a    
+0.00000     
+
+===================================================
     
 Case 2: BIGINT to NUMERIC keeps the target precision and raises an overflow     
 
@@ -48,7 +58,7 @@ cast(b as numeric(2,0))    typeof( cast(b as numeric(2,0)))
 Error:-427
 ===================================================
     
-Case 3: a DOUBLE zero converts to NUMERIC of a negative scale or of a scale above 40     
+Case 3: a DOUBLE zero, or a DOUBLE below the range of NUMERIC, converts to NUMERIC of a negative scale or of a scale above 40     
 
 ===================================================
 0
@@ -67,6 +77,14 @@ id    cast(d as numeric(30,-5))
 ===================================================
 id    cast(d as numeric(10,50))    
 2     0E-50     
+
+===================================================
+cast(0 as numeric(10,50))    
+0E-50     
+
+===================================================
+cast(1e-300 as numeric(30,-5))    cast(-1e-300 as numeric(10,50))    cast(-0e0 as numeric(30,-5))    
+0     0E-50     0     
 
 ===================================================
 0
