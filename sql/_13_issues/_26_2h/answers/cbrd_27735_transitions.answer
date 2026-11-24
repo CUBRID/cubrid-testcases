@@ -160,8 +160,8 @@ Trace Statistics:
 Case 4: Only serial partition contributes; result = NO_PARALLEL_SCAN     
 
 ===================================================
-count(distinct case when id>=1000000 and id<2000000 then v end)    sum(distinct case when id>=1000000 and id<2000000 then v end)    cast(median(case when id>=1000000 and id<2000000 then v end) as numeric(20,6))    
-100     505050     5050.500000     
+count(distinct case when id>=1000000 and id<2000000 then v end)    sum(distinct case when id>=1000000 and id<2000000 then v end)    cast(median(case when id>=1000000 and id<2000000 then v end) as numeric(20,6))    concat_md5    
+100     505050     5050.500000     ee7d1294dce23eb552d54ff253ddd7f6     
 
 ===================================================
 trace    
@@ -169,7 +169,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select count(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end), sum(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end),  cast(median(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end) as numeric(?,?)) from [dba.td] [dba.td]
+  rewritten query: select count(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end), sum(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end),  cast(median(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end) as numeric(?,?)),  md?(group_concat(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -181,8 +181,8 @@ Trace Statistics:
      
 
 ===================================================
-count(distinct case when id>=1000000 and id<2000000 then v end)    sum(distinct case when id>=1000000 and id<2000000 then v end)    cast(median(case when id>=1000000 and id<2000000 then v end) as numeric(20,6))    
-100     505050     5050.500000     
+count(distinct case when id>=1000000 and id<2000000 then v end)    sum(distinct case when id>=1000000 and id<2000000 then v end)    cast(median(case when id>=1000000 and id<2000000 then v end) as numeric(20,6))    concat_md5    
+100     505050     5050.500000     ee7d1294dce23eb552d54ff253ddd7f6     
 
 ===================================================
 trace    
@@ -190,7 +190,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end), sum(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end),  cast(median(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end) as numeric(?,?)) from [dba.td] [dba.td]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end), sum(distinct case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end),  cast(median(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end) as numeric(?,?)),  md?(group_concat(case when [dba.td].id>=? and [dba.td].id<? then [dba.td].v end order by ? separator ',')) from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -250,8 +250,8 @@ Trace Statistics:
 Case 6: Exactly one non-NULL serial value; result = NO_PARALLEL_SCAN     
 
 ===================================================
-count(distinct case when id=1000001 then v end)    sum(distinct case when id=1000001 then v end)    median(case when id=1000001 then v end)    
-1     5001     5001.0     
+count(distinct case when id=1000001 then v end)    sum(distinct case when id=1000001 then v end)    median(case when id=1000001 then v end)    concat_value    
+1     5001     5001.0     5001     
 
 ===================================================
 trace    
@@ -259,7 +259,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select count(distinct case when [dba.td].id=? then [dba.td].v end), sum(distinct case when [dba.td].id=? then [dba.td].v end), median(case when [dba.td].id=? then [dba.td].v end) from [dba.td] [dba.td]
+  rewritten query: select count(distinct case when [dba.td].id=? then [dba.td].v end), sum(distinct case when [dba.td].id=? then [dba.td].v end), median(case when [dba.td].id=? then [dba.td].v end), group_concat(case when [dba.td].id=? then [dba.td].v end order by ? separator ',') from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -271,8 +271,8 @@ Trace Statistics:
      
 
 ===================================================
-count(distinct case when id=1000001 then v end)    sum(distinct case when id=1000001 then v end)    median(case when id=1000001 then v end)    
-1     5001     5001.0     
+count(distinct case when id=1000001 then v end)    sum(distinct case when id=1000001 then v end)    median(case when id=1000001 then v end)    concat_value    
+1     5001     5001.0     5001     
 
 ===================================================
 trace    
@@ -280,7 +280,7 @@ trace
 Query Plan:
   TABLE SCAN (dba.td)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct case when [dba.td].id=? then [dba.td].v end), sum(distinct case when [dba.td].id=? then [dba.td].v end), median(case when [dba.td].id=? then [dba.td].v end) from [dba.td] [dba.td]
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(distinct case when [dba.td].id=? then [dba.td].v end), sum(distinct case when [dba.td].id=? then [dba.td].v end), median(case when [dba.td].id=? then [dba.td].v end), group_concat(case when [dba.td].id=? then [dba.td].v end order by ? separator ',') from [dba.td] [dba.td]
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -288,6 +288,122 @@ Trace Statistics:
            PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
            PARTITION (table: dba.td__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: PERCENTILE_CONT and PERCENTILE_DISC; result = NO_PARALLEL_SCAN     
+
+===================================================
+p_cont    p_disc    
+592.000000     592     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select  cast(percentile_cont( cast(?.? as double)) within group (order by [dba.td].v) as numeric(?,?)), percentile_disc( cast(?.? as double)) within group (order by [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+p_cont    p_disc    
+592.000000     592     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  cast(percentile_cont( cast(?.? as double)) within group (order by [dba.td].v) as numeric(?,?)), percentile_disc( cast(?.? as double)) within group (order by [dba.td].v) from [dba.td] [dba.td]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td__p__p_last), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2048
+===================================================
+2048
+===================================================
+4096
+===================================================
+8192
+===================================================
+100
+===================================================
+16384
+===================================================
+100
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 8: Parallel, serial, parallel, serial - scan ends on the serial append; result = NO_PARALLEL_SCAN     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_md5    
+32968     1200     2509600     491.000000     fe5d0abfcce31f74078c088e619b505c     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td_ends)
+
+  rewritten query: select count(*), count(distinct [dba.td_ends].v), sum(distinct [dba.td_ends].v),  cast(median([dba.td_ends].v) as numeric(?,?)),  md?(group_concat(distinct [dba.td_ends].v order by ? separator ',')) from [dba.td_ends] [dba.td_ends]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td_ends), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+           PARTITION (table: dba.td_ends__p__pa_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pb_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pc_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pd_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(distinct v)    sum(distinct v)    cast(median(v) as numeric(20,6))    concat_md5    
+32968     1200     2509600     491.000000     fe5d0abfcce31f74078c088e619b505c     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.td_ends)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), count(distinct [dba.td_ends].v), sum(distinct [dba.td_ends].v),  cast(median([dba.td_ends].v) as numeric(?,?)),  md?(group_concat(distinct [dba.td_ends].v order by ? separator ',')) from [dba.td_ends] [dba.td_ends]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.td_ends), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pa_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pb_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pc_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.td_ends__p__pd_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
