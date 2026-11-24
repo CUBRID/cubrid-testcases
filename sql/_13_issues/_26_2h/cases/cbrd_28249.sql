@@ -11,6 +11,9 @@
  *    Case 4: host-variable orders, a NULL bound value
  *    Case 5: an ESCAPE the bounds reject: the error on a table with rows, none on an empty table, none where an
  *            earlier term is FALSE on every row, and a valid ESCAPE
+ *    Case 6: the same handle again after the bounds failed: a valid ESCAPE, the failing one, other bounds -- each
+ *            execution computes its own bounds -- and an ESCAPE the bounds reject where an earlier term lets some
+ *            rows reach the LIKE (the error) or none
  */
 drop table if exists tb, te;
 create table tb (id int, v varchar(20) collate utf8_bin, e varchar(20) collate utf8_en_ci, c char(10));
@@ -62,6 +65,18 @@ prepare q3 from 'select count(*) from tb where id < 0 and v like ? escape ?';
 execute q3 using 'ab%', 'xy';
 prepare q4 from 'select count(*), sum(id) from tb where v like ? escape ?';
 execute q4 using 'a\_%', '\';
+evaluate 'Case 6: the same handle after a failed execution, and the rows an earlier term lets through';
+prepare q from 'select count(*), sum(id) from tb where v like ? escape ?';
+execute q using 'ab%', 'xy';
+execute q using 'a\_%', '\';
+execute q using 'ab%', 'xy';
+execute q using 'abc%', '\';
+execute q using 'b%', '\';
+prepare q3 from 'select count(*) from tb where id <= 10 and v like ? escape ?';
+execute q3 using 'ab%', 'xy';
+execute q3 using 'ab%', '\';
+prepare q2 from 'select count(*) from tb where id > 6000 and v like ? escape ?';
+execute q2 using 'ab%', 'xy';
 deallocate prepare q;
 deallocate prepare q2;
 deallocate prepare q3;
