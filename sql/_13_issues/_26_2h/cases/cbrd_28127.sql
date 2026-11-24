@@ -28,6 +28,8 @@
  *             next INSERT gets and current_val the last value NEXT_VALUE gave
  *    Case 12: a condition on current_val is checked outside the unmerged
  *             db_serial view
+ *    Case 13: past the BIGINT range, current_val of a cached serial is the last
+ *             value NEXT_VALUE gave, going up and going down
  */
 
 -- AUTO_INCREMENT values come from the serial cache: auto_increment_cache_size is left at its default 20
@@ -35,6 +37,8 @@ drop table if exists t28127_ai, t28127_ai_start, t28127_no_ai, t28127_ai_max, t2
 drop serial if exists s28127_cached;
 drop serial if exists s28127_unused;
 drop serial if exists s28127_rows;
+drop serial if exists s28127_above_bigint;
+drop serial if exists s28127_below_bigint;
 
 evaluate 'Case 1: after 5 rows, auto_increment equals the id the next INSERT gets; result = 6, 6';
 create table t28127_ai (id int auto_increment primary key, v int);
@@ -102,18 +106,21 @@ select current_val from db_serial where name = 's28127_unused';
 evaluate 'Case 9: in a correlated subquery, serial_current_value_by_oid gives the value NEXT_VALUE gave in the same row; result = 1 to 5 in both columns';
 create table t28127_rows (n int);
 insert into t28127_rows values (1), (2), (3), (4), (5);
-create serial s28127_rows;
+-- cache 10 keeps the block end (10) in _db_serial, so only a read of the serial cache gives the value NEXT_VALUE gave
+create serial s28127_rows cache 10;
 -- every row joins the same _db_serial row s: a subquery result cache keyed on s would reuse the first row's value
 select s28127_rows.next_value, (select serial_current_value_by_oid (s) from db_root)
 from _db_serial s, t28127_rows r
 where s.name = 's28127_rows'
 order by 1;
 
-evaluate 'Case 10: serial_current_value_by_oid takes only a _db_serial alias; result = 5, then the same error five times';
+evaluate 'Case 10: serial_current_value_by_oid takes only a _db_serial alias; result = 5, s28127_rows, then the same error five times';
 -- s28127_rows has given values with NEXT_VALUE in Case 9
 create table t28127_oid (o _db_serial);
 insert into t28127_oid select s from _db_serial s where s.name = 's28127_rows';
 select serial_current_value_by_oid (s) from _db_serial s where s.name = 's28127_rows';
+-- the statement with serial_current_value_by_oid (s) > 0 below, without that condition: its error then comes from that function
+select s.name from _db_serial s where s = (select o from t28127_oid);
 -- an alias of another class, an alias of _db_serial and another class, an object column, a host variable,
 -- and an alias that a rewrite replaces with the subquery column
 select serial_current_value_by_oid (r) from db_root r;
@@ -144,7 +151,20 @@ evaluate 'Case 12: a condition on current_val is checked outside the unmerged db
 --@queryplan
 select name, current_val from db_serial where name = 's28127_unused' and current_val = 5;
 
+evaluate 'Case 13: past the BIGINT range, current_val of a cached serial is the last value NEXT_VALUE gave, going up and going down; result = 9223372036854775811, -9223372036854775811';
+-- the serial cache keeps a value past the BIGINT range apart from the values it counts within that range
+create serial s28127_above_bigint start with 9223372036854775810 cache 10;
+select s28127_above_bigint.next_value from db_root;
+select s28127_above_bigint.next_value from db_root;
+select current_val from db_serial where name = 's28127_above_bigint';
+create serial s28127_below_bigint start with -9223372036854775810 increment by -1 cache 10;
+select s28127_below_bigint.next_value from db_root;
+select s28127_below_bigint.next_value from db_root;
+select current_val from db_serial where name = 's28127_below_bigint';
+
 drop table t28127_ai, t28127_ai_start, t28127_no_ai, t28127_ai_max, t28127_ai_down, t28127_rows, t28127_oid;
 drop serial s28127_cached;
 drop serial s28127_unused;
 drop serial s28127_rows;
+drop serial s28127_above_bigint;
+drop serial s28127_below_bigint;

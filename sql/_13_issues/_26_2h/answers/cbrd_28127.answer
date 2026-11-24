@@ -7,6 +7,10 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
     
 Case 1: after 5 rows, auto_increment equals the id the next INSERT gets; result = 6, 6     
 
@@ -176,7 +180,7 @@ serial_next_value(s28127_rows, 1)    (select serial_current_value_by_oid(s) from
 
 ===================================================
     
-Case 10: serial_current_value_by_oid takes only a _db_serial alias; result = 5, then the same error five times     
+Case 10: serial_current_value_by_oid takes only a _db_serial alias; result = 5, s28127_rows, then the same error five times     
 
 ===================================================
 0
@@ -185,6 +189,10 @@ Case 10: serial_current_value_by_oid takes only a _db_serial alias; result = 5, 
 ===================================================
 serial_current_value_by_oid(s)    
 5     
+
+===================================================
+name    
+s28127_rows     
 
 ===================================================
 Error:-494
@@ -267,6 +275,42 @@ sscan
     cost:  ? card ?
 Query stmt:
 select db_serial.[name], db_serial.current_val from (select db_serial.[name] as [name], (serial_current_value_by_oid(db_serial)) as [current_val] from [_db_serial] db_serial where (db_serial.class_name is null ) and db_serial.[name]= ?:? ) db_serial ([name], current_val) where db_serial.current_val= ?:? 
+===================================================
+    
+Case 13: past the BIGINT range, current_val of a cached serial is the last value NEXT_VALUE gave, going up and going down; result = 9223372036854775811, -9223372036854775811     
+
+===================================================
+0
+===================================================
+serial_next_value(s28127_above_bigint, 1)    
+9223372036854775810     
+
+===================================================
+serial_next_value(s28127_above_bigint, 1)    
+9223372036854775811     
+
+===================================================
+current_val    
+9223372036854775811     
+
+===================================================
+0
+===================================================
+serial_next_value(s28127_below_bigint, 1)    
+-9223372036854775810     
+
+===================================================
+serial_next_value(s28127_below_bigint, 1)    
+-9223372036854775811     
+
+===================================================
+current_val    
+-9223372036854775811     
+
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
