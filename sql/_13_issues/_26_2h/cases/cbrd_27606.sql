@@ -15,7 +15,7 @@
  *    Case 1:  the column name of a binary minus with a negative right operand has the operand once
  *    Case 2:  the column name of a unary minus over a negative operand has parentheses
  *    Case 3:  the same forms over columns
- *    Case 4:  the column names of expressions without a doubled minus stay the same
+ *    Case 4:  the column names of expressions without a doubled minus, or with one the query already puts in parentheses, stay the same
  *    Case 5:  a view of 1 minus negative 5 stores the operand once and returns 6
  *    Case 6:  a view of a doubled unary minus can be read
  *    Case 7:  views over columns return the values of the expressions they were created with
@@ -23,7 +23,7 @@
  *    Case 9:  the same expressions in a WHERE clause and in a prepared statement
  *    Case 10: a filter index stores its predicate with parentheses and is used by a scan
  *    Case 11: a filter index is rebuilt from its stored predicate by ALTER TABLE CHANGE
- *    Case 12: a function index stores its expression with parentheses and its query returns the row
+ *    Case 12: a function index stores its expression with parentheses and is used by a scan
  *    Case 13: a partition expression is stored with parentheses and places the rows
  *    Case 14: a trigger condition of 1 minus negative 5 compares with 6
  *    Case 15: a trigger condition of a doubled unary minus and a trigger action
@@ -50,7 +50,7 @@ evaluate 'Case 3: the same forms over columns';
 select a - -b, - -a, - - -a, a - - -b, 1 - -a * 2, a - -b - b from t_um;
 
 
-evaluate 'Case 4: the column names of expressions without a doubled minus stay the same';
+evaluate 'Case 4: the column names of expressions without a doubled minus, or with one the query already puts in parentheses, stay the same';
 select 1 - 5, -5, 1 + -5, a * -b, a + -b, 1 - (-a), -a, a - (b - 1), -(a - b), a - abs (-b) from t_um;
 select -(-5), -(-a), a - (-b) - b from t_um;
 
@@ -86,6 +86,7 @@ select vclass_name, vclass_def from db_vclass where vclass_name in ('v_col_bin',
 
 
 -- no recompile hint in Case 8: the second statement must not take the cached plan of the first
+-- the plan cache is on by default, and its key is the printed text of a statement
 evaluate 'Case 8: two statements with different expressions do not share one cached plan';
 select a - (-b) - b from t_um;
 select a - -b from t_um;
@@ -107,7 +108,9 @@ create index i_una on t_fidx (a) where a > - -5;
 create index i_bin on t_fidx (b) where b > 1 - -5;
 create index i_neg on t_fidx (id) where id > -5;
 select index_name, filter_expression from db_index where class_name = 't_fidx' order by index_name;
+--@queryplan
 select /*+ recompile */ id, a from t_fidx where a > - -5 using index i_una(+) order by id;
+--@queryplan
 select /*+ recompile */ id, b from t_fidx where b > 1 - -5 using index i_bin(+) order by id;
 
 
@@ -116,13 +119,16 @@ alter table t_fidx change column a a bigint;
 alter table t_fidx change column b b bigint;
 select index_name, filter_expression from db_index where class_name = 't_fidx' order by index_name;
 insert into t_fidx values (4, 5, 6), (6, 8, 9);
+--@queryplan
 select /*+ recompile */ id, a from t_fidx where a > - -5 using index i_una(+) order by id;
+--@queryplan
 select /*+ recompile */ id, b from t_fidx where b > 1 - -5 using index i_bin(+) order by id;
 
 
-evaluate 'Case 12: a function index stores its expression with parentheses and its query returns the row';
+evaluate 'Case 12: a function index stores its expression with parentheses and is used by a scan';
 create index i_mod on t_fidx (mod (id, - -5));
 select index_name, func from db_index_key where class_name = 't_fidx' and index_name = 'i_mod';
+--@queryplan
 select /*+ recompile */ id from t_fidx where mod (id, - -5) = 1 order by id;
 
 
@@ -134,7 +140,8 @@ insert into t_part_hash values (1), (2), (3);
 select class_name, partition_name, partition_expr from db_partition where class_name in ('t_part_rng', 't_part_hash') order by class_name, partition_name;
 select a from t_part_rng partition (p_low) order by a;
 select a from t_part_rng partition (p_high) order by a;
-select a from t_part_hash order by a;
+select a from t_part_hash partition (p0) order by a;
+select a from t_part_hash partition (p1) order by a;
 
 
 create table t_trg (a int);

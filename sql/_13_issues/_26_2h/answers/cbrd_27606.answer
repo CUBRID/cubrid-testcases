@@ -40,7 +40,7 @@ a-(-b)    -(-a)    -(-(-a))    a-(-(-b))    1-(-a*2)    a-(-b)-b
 
 ===================================================
     
-Case 4: the column names of expressions without a doubled minus stay the same     
+Case 4: the column names of expressions without a doubled minus, or with one the query already puts in parentheses, stay the same     
 
 ===================================================
 1-5    -5    1+-5    a*-b    a+-b    1-(-a)    -a    a-(b-1)    -(a-b)    a- abs(-b)    
@@ -191,10 +191,30 @@ id    a
 2     6     
 3     7     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_fidx node[?]
+                 index: i_una term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_fidx.id, t_fidx.a from t_fidx t_fidx where (t_fidx.a> ?:? ) using index t_fidx.i_una(+) order by ?
 ===================================================
 id    b    
 3     7     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_fidx node[?]
+                 index: i_bin term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_fidx.id, t_fidx.b from t_fidx t_fidx where (t_fidx.b> ?:? ) using index t_fidx.i_bin(+) order by ?
 ===================================================
     
 Case 11: a filter index is rebuilt from its stored predicate by ALTER TABLE CHANGE     
@@ -217,14 +237,34 @@ id    a
 3     7     
 6     8     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_fidx node[?]
+                 index: i_una term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_fidx.id, t_fidx.a from t_fidx t_fidx where (t_fidx.a> ?:? ) using index t_fidx.i_una(+) order by ?
 ===================================================
 id    b    
 3     7     
 6     9     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_fidx node[?]
+                 index: i_bin term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_fidx.id, t_fidx.b from t_fidx t_fidx where (t_fidx.b> ?:? ) using index t_fidx.i_bin(+) order by ?
 ===================================================
     
-Case 12: a function index stores its expression with parentheses and its query returns the row     
+Case 12: a function index stores its expression with parentheses and is used by a scan     
 
 ===================================================
 0
@@ -237,6 +277,16 @@ id
 1     
 6     
 
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_fidx node[?]
+                 index: i_mod term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_fidx.id from t_fidx t_fidx where  mod(t_fidx.id, -(-?))= ?:?  order by ?
 ===================================================
     
 Case 13: a partition expression is stored with parentheses and places the rows     
@@ -267,9 +317,12 @@ a
 
 ===================================================
 a    
+3     
+
+===================================================
+a    
 1     
 2     
-3     
 
 ===================================================
 0
