@@ -138,10 +138,16 @@ u     DATETIME     23     ON UPDATE CURRENT_DATETIME
 Case 7: MODIFY with a DEFAULT clause still fails on the kept ON UPDATE expression     
 
 ===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_upd     CREATE TABLE [t_upd] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_upd_def     CREATE TABLE [t_upd_def] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 id    x    year(a)- year( SYS_DATE )    
@@ -269,7 +275,13 @@ Case 13: a literal DEFAULT that the new type does not take fails as before
 Error:-214
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_lit     CREATE TABLE [t_lit] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT 'abc', [n] CHARACTER VARYING(100) DEFAULT '12') REUSE_OID, COLLATE utf8_bin     
+dba.t_lit     CREATE TABLE [t_lit] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT 'abc') REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a    
+1     abc     
 
 ===================================================
     
@@ -278,14 +290,16 @@ Case 14: a literal DEFAULT that the new type takes is converted as before
 ===================================================
 0
 ===================================================
+0
+===================================================
 TABLE    CREATE TABLE    
-dba.t_lit     CREATE TABLE [t_lit] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT 'abc', [n] INTEGER DEFAULT 12) REUSE_OID, COLLATE utf8_bin     
+dba.t_lit_n     CREATE TABLE [t_lit_n] ([id] INTEGER, [n] INTEGER DEFAULT 12) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
 ===================================================
-id    a    n    
-1     abc     12     
+id    n    
+1     12     
 
 ===================================================
     

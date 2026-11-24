@@ -36,7 +36,7 @@
  *    Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
  */
 
-drop table if exists t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
+drop table if exists t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu;
 
 
 evaluate 'Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE or INT fails';
@@ -95,11 +95,13 @@ show create table t_chg;
 select attr_name, data_type, prec, default_value from db_attribute where class_name = 't_chg' order by def_order;
 
 
--- Case 7 alters the column of t_upd that Case 5 left as DATETIME ON UPDATE CURRENT_DATETIME
 evaluate 'Case 7: MODIFY with a DEFAULT clause still fails on the kept ON UPDATE expression';
-alter table t_upd modify a varchar(100) default 'x';
-show create table t_upd;
-select id, x, year(a) - year(sys_date) from t_upd order by id;
+create table t_upd_def (id int, x int, a datetime on update current_datetime);
+insert into t_upd_def (id, x) values (1, 1);
+update t_upd_def set x = 2 where id = 1;
+alter table t_upd_def modify a varchar(100) default 'x';
+show create table t_upd_def;
+select id, x, year(a) - year(sys_date) from t_upd_def order by id;
 
 
 evaluate 'Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expression';
@@ -152,16 +154,19 @@ select id, b - year(sys_date), length(g), year(v) - year(sys_date) from t_name o
 
 
 evaluate 'Case 13: a literal DEFAULT that the new type does not take fails as before';
-create table t_lit (id int, a varchar(100) default 'abc', n varchar(100) default '12');
+create table t_lit (id int, a varchar(100) default 'abc');
 alter table t_lit modify a int;
 show create table t_lit;
+insert into t_lit (id) values (1);
+select id, a from t_lit order by id;
 
 
 evaluate 'Case 14: a literal DEFAULT that the new type takes is converted as before';
-alter table t_lit modify n int;
-show create table t_lit;
-insert into t_lit (id) values (1);
-select id, a, n from t_lit order by id;
+create table t_lit_n (id int, n varchar(100) default '12');
+alter table t_lit_n modify n int;
+show create table t_lit_n;
+insert into t_lit_n (id) values (1);
+select id, n from t_lit_n order by id;
 
 
 evaluate 'Case 15: MODIFY or CHANGE to AUTO_INCREMENT drops the DEFAULT and succeeds';
@@ -185,4 +190,4 @@ insert into t_onu (id) values (1);
 select id, length(a), a - year(sys_date) from t_onu order by id;
 
 
-drop table t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
+drop table t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu;
