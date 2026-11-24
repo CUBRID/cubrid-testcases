@@ -88,7 +88,7 @@ drop table td;
 -- one, so this table ends on a serial partition instead (big, small, big,
 -- small) to also cover a scan whose last pass is the serial append itself.
 drop table if exists td_ends;
-create table td_ends (id int, v int, pad varchar(200)) partition by range(id) (partition pa_big values less than (1000000), partition pb_small values less than (1000100), partition pc_big values less than (2000000), partition pd_small values less than maxvalue);
+create table td_ends (id int, v int, pad varchar(200)) partition by range(id) (partition pa_big values less than (1000000), partition pb_small values less than (1000101), partition pc_big values less than (2000000), partition pd_small values less than maxvalue);
 insert into td_ends select 0+rownum, mod(rownum,1000), concat(sha2(cast(rownum as varchar),512),sha2(cast(rownum as varchar),256)) from db_class aa, db_class bb, db_class cc limit 2048;
 insert into td_ends select id+2048, mod(id+2048-0,1000), pad from td_ends where id <= 2048;
 insert into td_ends select id+4096, mod(id+4096-0,1000), pad from td_ends where id <= 4096;
