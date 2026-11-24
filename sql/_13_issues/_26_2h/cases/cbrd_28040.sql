@@ -31,10 +31,13 @@
  *    Case 16: the action of a trigger that inserts into the view with a query gives the DEFAULTs
  *    Case 17: a shared attribute of the view that the statement leaves out keeps its value
  *    Case 18: a DEFAULT that makes another type than its column is converted into the column
+ *    Case 19: a PL/CSQL procedure with a quoted view name gives the DEFAULTs the same way
+ *    Case 20: ALTER VIEW SET DEFAULT takes effect on a procedure created before it
+ *    Case 21: a PL/CSQL variable in a column that a merged derived table drops still gets its value
  */
 
-drop view if exists v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty;
-drop table if exists t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty;
+drop view if exists v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty, v_pl, v_plk;
+drop table if exists t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty, t_pl, t_plk;
 
 create table t_src (x int, y int);
 insert into t_src values (1, 10), (1, 10), (2, 20);
@@ -186,6 +189,48 @@ select a, if (dt is null, 'null', 'set'), if (d is null, 'null', 'set'), if (ts 
 select count (*), count (distinct g) from t_ty;
 
 
+evaluate 'Case 19: a PL/CSQL procedure with a quoted view name gives the DEFAULTs the same way';
+create table t_pl (a int, k int default 1, r varchar(40) default sys_guid()) dont_reuse_oid;
+create view v_pl as select a, k, r from t_pl;
+alter view v_pl alter column k set default 7;
+create table t_plk (a int primary key, cnt int default 0, r varchar(40) default sys_guid()) dont_reuse_oid;
+create view v_plk as select a, cnt, r from t_plk;
+insert into t_plk (a, cnt) values (1, 100);
+create or replace procedure p_28040_quoted () as
+begin
+    insert into "v_pl" (a) select distinct x from t_src;
+    insert into "v_pl" (a) select x from t_src union select x from t_src;
+    insert into "v_plk" (a) select distinct x from t_src on duplicate key update cnt = t_src.y + cnt;
+end;
+call p_28040_quoted ();
+select a, k, count(*), count(distinct r) from t_pl group by a, k order by a;
+select a, cnt, if (r is null, 'no guid', 'guid') from t_plk order by a;
+delete from t_pl;
+
+
+evaluate 'Case 20: ALTER VIEW SET DEFAULT takes effect on a procedure created before it';
+create or replace procedure p_28040_set () as
+begin
+    insert into "v_pl" (a) select distinct x from t_src;
+end;
+call p_28040_set ();
+alter view v_pl alter column k set default 9;
+call p_28040_set ();
+select a, k, count(*) from t_pl group by a, k order by a, k;
+delete from t_pl;
+
+
+evaluate 'Case 21: a PL/CSQL variable in a column that a merged derived table drops still gets its value';
+create or replace procedure p_28040_drop (p_unused int, p_add int) as
+begin
+    insert into v_pl (a) select distinct x + p_add from (select x, p_unused as u from t_src) dt;
+end;
+call p_28040_drop (5, 10);
+select a, k, count(*) from t_pl group by a, k order by a;
+delete from t_pl;
+
+
+drop procedure p_28040_quoted, p_28040_set, p_28040_drop;
 drop trigger trg_28040, trg_28040_act;
-drop view v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty;
-drop table t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty;
+drop view v_all, v_pk, v_cnt, v_own, v_set, v_expr, v_trg, v_uq, v_act, v_sh, v_ty, v_pl, v_plk;
+drop table t_src, t_all, t_pk, t_cnt, t_own, t_trg, t_trg_log, t_uq, t_ev, t_act, t_sh, t_ty, t_pl, t_plk;
