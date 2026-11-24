@@ -2,6 +2,7 @@
 -- Case 1-5: COUNT DISTINCT of integer and date-time columns kept in memory per group, beside the types that keep the list
 -- Case 6-9: the query of IN, NOT IN, =ANY, <>ALL, EXISTS and an ORDER BY that has every GROUP BY key
 -- Case 10-13: the blocks whose group order reaches the result (no ORDER BY, part of the keys, LIMIT, a CAST of a key)
+-- Case 14: a serial in the select list, which numbers the groups as they come out
 drop table if exists t28181;
 create table t28181 (id int primary key, k int, v int, b bigint, d date, dt datetime, s varchar(10) collate utf8_en_ci, c char(4));
 insert into t28181
@@ -62,5 +63,16 @@ select k, groupby_num () from t28181 group by k having groupby_num () < 5;
 -- Case 13: an ORDER BY on a CAST of the key that narrows it: the five dt groups tie on the date and keep the GROUP BY's order
 select cast(dt as date) c, count(*) n, sum(v) sv from t28181 where id < 20000 group by dt order by 1 desc;
 select cast(dt as date) c, count(*) n from t28181 where id < 20000 group by dt order by 1, 2 desc;
+
+-- Case 14: a serial in the select list numbers the groups in the GROUP BY's order, under an ORDER BY with every key and under DISTINCT
+create table t28181s (k int);
+insert into t28181s values (3), (1), (2), (2), (5), (4), (4), (7), (6), (9), (8), (8);
+create serial s28181;
+select k, count(*) c, s28181.next_value sv from t28181s group by k order by c, k;
+drop serial s28181;
+create serial s28181;
+select distinct k, s28181.next_value sv from t28181s group by k;
+drop serial s28181;
+drop table t28181s;
 
 drop table t28181;
