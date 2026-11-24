@@ -7,7 +7,8 @@
  *  Case 2: an analytic function over an aggregate with a USING INDEX clause crashed the client, since
  *          the clause moved to the derived table of the aggregate was not resolved.
  *  Case 3: an analytic function ordered DESC whose sort is skipped over an index key list scan
- *          (IN, OR of equalities) was computed in ascending order.
+ *          (IN, OR of equalities) was computed in ascending order. The keys are read in the order of the
+ *          sort, by the first column they differ at (a multi-column IN, a column fixed by an equality).
  *  Case 4: multi range optimization was applied to a query with analytic functions, which then saw
  *          the top N rows only.
  *  Case 5: a constant column of a merged view or derived table used in PARTITION BY / ORDER BY of an
@@ -17,7 +18,7 @@
  *  Where a query has a reference, the reference follows it and must return the same rows.
  */
 
-drop table if exists t_digit, t_spill, t_agg, t_klist, t_klist2, t_outer, t_mro, t_const;
+drop table if exists t_digit, t_spill, t_agg, t_klist, t_klist2, t_outer, t_mcol, t_mro, t_const;
 drop view if exists v_const;
 
 create table t_digit (i int);
@@ -37,7 +38,7 @@ commit;
 select id, v, count(*) over () as c from t_spill order by id desc limit 3;
 select id, v, count(*) over () as c from t_spill order by id limit 3;
 select id, v, a, sum(a) over (partition by g) as s from t_spill order by id desc limit 4;
-select id, v, cast(percent_rank() over (order by g) as numeric(10,4)) as p from t_spill order by id desc limit 4;
+select id, v, cast(round(percent_rank() over (order by g) * 10000) as int) as p from t_spill order by id desc limit 4;
 select id, v, ntile(3) over (order by id) as n, max(id) over () as m from t_spill order by id desc limit 3;
 select id, v, nth_value(id, 2) over (partition by g order by id) as n, count(*) over (partition by g) as c
   from t_spill order by id desc limit 4;
@@ -68,9 +69,13 @@ create table t_klist2 (id int primary key, a int not null, b int not null);
 insert into t_klist2 select id, a, mod(id, 4) from t_klist;
 create index i_klist2_a on t_klist2 (a);
 create index i_klist2_adb on t_klist2 (a desc, b);
+create index i_klist2_ab on t_klist2 (a, b desc);
+create table t_mcol (c1 int, c2 int, c3 int);
+insert into t_mcol select d1.i / 3 + 1, mod(d1.i + d2.i * 10, 6) + 1, d1.i + d2.i * 10 from t_digit d1, t_digit d2;
+create index i_mcol on t_mcol (c1 desc, c2);
 create table t_outer (k int primary key, a int);
 insert into t_outer values (1, 1), (2, 3), (3, 5);
-update statistics on t_klist, t_klist2, t_outer with fullscan;
+update statistics on t_klist, t_klist2, t_outer, t_mcol with fullscan;
 
 -- descending index, key list
 select a, min(r), max(r), count(*) from (select id, a, rank() over (order by a desc) as r from t_klist where a in (1, 3, 5)) z group by a order by a;
@@ -95,6 +100,14 @@ select a, b, min(r), max(r), count(*) from (select id, a, b, dense_rank() over (
 -- the key list is on both columns, one descending and one ascending: no order of the key list fits
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
+-- a multi-column IN: the keys are ordered by the first column they differ at, in its direction
+select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 3), (1, 5)) using index i_mcol(+)) z group by c1, c2 order by c1, c2;
+select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 3), (1, 5)) using index none) z group by c1, c2 order by c1, c2;
+select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 2), (3, 1)) using index i_mcol(+)) z group by c1, c2 order by c1, c2;
+select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 2), (3, 1)) using index none) z group by c1, c2 order by c1, c2;
+-- a single range on the second column is the same in every key, so its direction does not order them
+select a, b, min(r), max(r), count(*) from (select a, b, rank() over (order by a, b desc) as r from t_klist2 force index (i_klist2_ab) where a in (1, 2) and b > 1) z group by a, b order by a, b;
+select a, b, min(r), max(r), count(*) from (select a, b, rank() over (order by a, b desc) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb, i_klist2_ab) where a in (1, 2) and b > 1) z group by a, b order by a, b;
 -- other functions, a nested loop join, top level with LIMIT
 select a, min(f), max(f), min(c), count(*) from (select a, first_value(a) over (order by a desc) as f, count(*) over (order by a desc) as c from t_klist where a in (1, 3, 5)) z group by a order by a;
 select a, min(r), max(r), count(*) from (select /*+ ordered use_nl */ x.a, rank() over (order by x.a desc) as r from t_klist x, t_outer o where x.a in (1, 3, 5) and o.a = x.a) z group by a order by a;
@@ -145,4 +158,4 @@ select 7, c, id, sum(c) over (partition by 1, 3 order by 2 desc, 1) as s from t_
 select c, sum(c) over (partition by 5) as s from t_const;
 
 drop view v_const;
-drop table t_digit, t_spill, t_agg, t_klist, t_klist2, t_outer, t_mro, t_const;
+drop table t_digit, t_spill, t_agg, t_klist, t_klist2, t_outer, t_mcol, t_mro, t_const;
