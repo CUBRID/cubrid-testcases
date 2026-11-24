@@ -22,7 +22,7 @@ col16 varchar(44)
 partition by hash(col1)
 partitions 4;
 create view xp as select * from t1__p__p1; 
-insert into xp ( col1, col2, col3, col4) values(1,0,0,1);
+insert into xp ( col1, col2, col3, col4) values(3,0,0,1);
 
 
 drop class t1;
