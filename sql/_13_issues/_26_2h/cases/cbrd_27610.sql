@@ -17,7 +17,8 @@
  *  they are set, or their difference from the current year.
  *
  *  Coverage:
- *    Case 1:  MODIFY of a TO_CHAR DEFAULT column to DATE fails
+ *    Case 1:  MODIFY of a TO_CHAR DEFAULT column fails: to DATE with the format 'YYYY' and
+ *             to INT without a format, which gives the default format and not NULL
  *    Case 2:  MODIFY of a UNIX_TIMESTAMP DEFAULT column to SMALLINT fails
  *    Case 3:  MODIFY of a SYS_GUID DEFAULT column to INT fails
  *    Case 4:  MODIFY of a SYS_DATETIME DEFAULT column to VARCHAR fails
@@ -35,15 +36,20 @@
  *    Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
  */
 
-drop table if exists t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
+drop table if exists t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
 
 
-evaluate 'Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE fails';
+evaluate 'Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE or INT fails';
 create table t_tochar (id int, a varchar(100) default to_char(sys_datetime, 'YYYY'));
 alter table t_tochar modify a date;
 show create table t_tochar;
 insert into t_tochar (id) values (1);
 select id, length(a), a - year(sys_date) from t_tochar order by id;
+create table t_tochar_nf (id int, a varchar(100) default to_char(sys_datetime));
+alter table t_tochar_nf modify a int;
+show create table t_tochar_nf;
+insert into t_tochar_nf (id) values (1);
+select id, a is not null from t_tochar_nf order by id;
 
 
 evaluate 'Case 2: MODIFY of a UNIX_TIMESTAMP DEFAULT column to SMALLINT fails';
@@ -179,4 +185,4 @@ insert into t_onu (id) values (1);
 select id, length(a), a - year(sys_date) from t_onu order by id;
 
 
-drop table t_tochar, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;
+drop table t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_inc, t_inc_chg, t_onu;

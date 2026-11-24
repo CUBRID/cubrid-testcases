@@ -2,7 +2,7 @@
 0
 ===================================================
     
-Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE fails     
+Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE or INT fails     
 
 ===================================================
 0
@@ -17,6 +17,20 @@ dba.t_tochar     CREATE TABLE [t_tochar] ([id] INTEGER, [a] CHARACTER VARYING(10
 ===================================================
 id    char_length(a)    a- year( SYS_DATE )    
 1     4     0.0     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_tochar_nf     CREATE TABLE [t_tochar_nf] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME)) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a is not null    
+1     1     
 
 ===================================================
     
