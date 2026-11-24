@@ -16,7 +16,9 @@
  *  Coverage:
  *    J1, J2, J3: the reported queries (the left side of J2 is a LEFT JOIN result)
  *    M1, M2: many-to-many key groups where the passing left row is the first, a middle or the last one, a group
- *            where every left row fails, NULL keys and keys on one side only
+ *            where every left row fails, NULL keys and keys on one side only, a key group with an even number of
+ *            left rows followed by another key (6), and a last right key group with an odd number of left rows
+ *            followed by a larger left key only (11, 12)
  *    L1: LEFT OUTER JOIN of the same tables (guard, was already correct)
  *    O1: the left side is a LEFT JOIN result and the term reads only the left side
  *    B1: one key group of 20 x 200 rows whose right list spans several pages
@@ -44,8 +46,10 @@ insert into la values
   (31, 3, 0), (32, 3, 0), (33, 3, 1),
   (41, 4, 0), (42, 4, 0), (43, 4, 0),
   (51, 5, 1), (52, 5, 1), (53, 5, 1),
+  (61, 6, 1), (62, 6, 2),
   (71, 7, 0),
-  (111, 11, 0), (112, 11, 0), (113, 11, 1), (114, 11, 0);
+  (111, 11, 0), (112, 11, 0), (113, 11, 1), (114, 11, 0), (115, 11, 0),
+  (121, 12, 1);
 insert into rb values
   (1000, null, 1),
   (1001, 0, 1),
@@ -54,6 +58,7 @@ insert into rb values
   (1031, 3, 1), (1032, 3, 2),
   (1041, 4, 1), (1042, 4, 2),
   (1051, 5, 1), (1052, 5, 2),
+  (1061, 6, 3),
   (1071, 7, 1),
   (1101, 10, 1),
   (1111, 11, 1), (1112, 11, 1), (1113, 11, 2);
