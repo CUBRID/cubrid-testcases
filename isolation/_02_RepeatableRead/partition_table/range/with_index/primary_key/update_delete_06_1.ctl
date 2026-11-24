@@ -40,6 +40,9 @@ MC: wait until C1 ready;
 /* test case */
 C1: UPDATE t SET col = 'abcd' WHERE id = 1 or id = 20 or id = 3;
 MC: wait until C1 ready;
+/* C2 locks row 7 first with SELECT ... FOR UPDATE (no new version). Since CBRD-27654 a failed UPDATE gives back its row locks, so without this C3 can finish before C2's error is printed. C3 also deletes row 7, so it waits for C2's commit */
+C2: SELECT * FROM t WHERE id = 7 FOR UPDATE;
+MC: wait until C2 ready;
 C2: UPDATE t SET id = 2 WHERE col = 'b';
 MC: wait until C2 blocked;
 C3: delete from t where id<10;
