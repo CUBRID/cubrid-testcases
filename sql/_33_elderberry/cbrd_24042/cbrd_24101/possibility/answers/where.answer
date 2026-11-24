@@ -14,80 +14,21 @@ col_a
 3     
 
 Query plan:
-temp(distinct)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: a node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: b node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
-Query plan:
-sscan
-    class: aa node[?]
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select aa.col_a from t_a aa where aa.col_a in (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
-===================================================
-col_a    
-2     
-3     
-
-Query plan:
 nl-join (inner join)
     edge:  term[?]
     outer: sscan
                class: a node[?]
-               sargs: term[?] AND term[?] AND term[?]
+               sargs: term[?]
                cost:  ? card ?
     inner: sscan
                class: b node[?]
                sargs: term[?] AND term[?]
                cost:  ? card ?
-    sargs: term[?]
     cost:  ? card ?
 Query stmt:
-(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and inst_num()<= ?:? )
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
 Query plan:
-sscan
-    class: aa node[?]
-    sargs: term[?]
-    subqs: ?
-    cost:  ? card ?
-Query stmt:
-select aa.col_a from t_a aa where  exists (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a=aa.col_a and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ) and inst_num()<= ?:? )
-===================================================
-col_a    
-2     
-3     
-
-Query plan:
-temp(distinct)
-    subplan: nl-join (inner join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: a node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 inner: sscan
-                            class: b node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
-Query plan:
-nl-join (inner join)
+nl-join (semi join)
     edge:  term[?]
     outer: sscan
                class: aa node[?]
@@ -98,6 +39,70 @@ nl-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select aa.col_a from t_a aa, (select distinct a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) where aa.col_a=av?.av_?
+select aa.col_a from t_a aa semi join (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) on av?.av_?=aa.col_a
+===================================================
+col_a    
+2     
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: aa node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select aa.col_a from t_a aa semi join (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) on av?.av_?=aa.col_a
+===================================================
+col_a    
+2     
+3     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: a node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: b node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? ))
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: sscan
+               class: aa node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select aa.col_a from t_a aa semi join (select a.col_a from t_a a, t_b b where (a.col_a=b.col_a) and a.col_a<>? and (a.col_a> ?:?  and a.col_a< ?:? ) and (b.col_a> ?:? )) av? (av_?) on aa.col_a=av?.av_?
 ===================================================
 0

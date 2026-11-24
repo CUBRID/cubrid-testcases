@@ -81,7 +81,7 @@ show trace;
 -- in operation
 select /*+ ordered */ aa.* from (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b,aa.c) in (select a,b,c from tmp_hls);
 show trace;
-select /*+ ordered */ aa.* from (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b) in (select a,b from tmp_hls) and aa.c in (select c from tmp_hls);
+select /*+ ordered */ aa.* from (select /*+ NO_MERGE */ * from tmp_hls b where b.c >=1) aa where (aa.a,aa.b) in (select a,b from tmp_hls) and aa.c in (select /*+ NO_UNNEST */ c from tmp_hls);
 show trace;
 
 -- correlated subquery

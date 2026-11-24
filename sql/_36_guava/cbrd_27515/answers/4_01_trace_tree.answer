@@ -1,0 +1,208 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+    
+TC-4-01-01: join of four tables     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+temp_scans    pass_through    
+3     3     
+
+===================================================
+cb    cb    cb    cb    
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+11     101     1001     7     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      HASH JOIN (inner join)
+        TABLE SCAN (c)
+        TABLE SCAN (d)
+      TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb, b.cb, c.cb, d.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c, [dba.td] d where a.ca=b.ca and b.ca=c.ca and c.ca=d.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                        SUBQUERY (uncorrelated)
+                                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                            SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC-4-01-02: join of three tables     
+
+===================================================
+cb    cb    cb    
+11     101     1001     
+11     101     1001     
+11     101     1001     
+11     101     1001     
+
+===================================================
+temp_scans    pass_through    
+2     2     
+
+===================================================
+cb    cb    cb    
+11     101     1001     
+11     101     1001     
+11     101     1001     
+11     101     1001     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (c)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb, b.cb, c.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and b.ca=c.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+TC-4-01-03: join of three tables, expressions     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+temp_scans    pass_through    
+2     2     
+
+===================================================
+a.cb*2    b.cb+c.cb    
+22     1102     
+22     1102     
+22     1102     
+22     1102     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    HASH JOIN (inner join)
+      TABLE SCAN (a)
+      TABLE SCAN (c)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ USE_HASH */ a.cb*?, b.cb+c.cb from [dba.ta] a, [dba.tb] b, [dba.tc] c where a.ca=b.ca and b.ca=c.ca
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+              HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+                PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+                SUBQUERY (uncorrelated)
+                         (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+                    SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0

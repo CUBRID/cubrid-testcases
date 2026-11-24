@@ -48,6 +48,10 @@
  *  UNION ALL that would otherwise run its branches in parallel.
  */
 
+-- CBRD-27361: the hash join's runtime filter stays off, so that the cases keep testing the parallel hash join
+-- paths they were written for
+set system parameters 'hash_join_runtime_filter=no';
+
 drop table if exists t_u, t_h1, t_h2;
 drop serial if exists s_a;
 drop serial if exists s_b;
@@ -138,3 +142,6 @@ drop function f_npe;
 drop serial s_a;
 drop serial s_b;
 drop table t_u, t_h1, t_h2;
+
+-- restore default so it does not leak into later cases
+set system parameters 'hash_join_runtime_filter=default';

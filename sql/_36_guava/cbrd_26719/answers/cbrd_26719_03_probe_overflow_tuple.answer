@@ -44,13 +44,14 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
             BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 SCAN (table: dba.t_b_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
             PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                   (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
               SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_p_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                SCAN (table: dba.t_p_overflow), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
      
 
 ===================================================

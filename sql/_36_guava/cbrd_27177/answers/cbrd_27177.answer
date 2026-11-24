@@ -59,7 +59,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -100,7 +100,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -145,7 +145,7 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -163,7 +163,7 @@ k    count(*)    sum(v)    min(v)    max(v)
 
 ===================================================
     
-Case 4: hashing kept, GROUP BY sort and one-page partial list serial, no_hash_aggregate sorts in parallel; result = no_hash_aggregate parallel(0)     
+Case 4: hashing kept, GROUP BY sort parallel since CBRD-27727, one-page partial list serial; result = no_hash_aggregate parallel(0)     
 
 ===================================================
 k    count(*)    count(pad)    sum(v)    min(v)    max(v)    
@@ -189,7 +189,8 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_small), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -261,7 +262,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_mid), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -299,7 +300,8 @@ trace
 
 Query Plan:
   SORT (order by)
-    TABLE SCAN (dba.t_reject)
+    SORT (group by)
+      TABLE SCAN (dba.t_reject)
 
   rewritten query: select /*+ NO_PARALLEL_SCAN */  mod([dba.t_reject].k, ?), [dba.t_reject].k, count(*), sum([dba.t_reject].v) from [dba.t_reject] [dba.t_reject] group by  mod([dba.t_reject].k, ?), [dba.t_reject].k with rollup having count(*)>? order by ?, ?, ?
 
@@ -349,7 +351,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -374,7 +376,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_reject), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: partial, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
@@ -415,7 +417,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -443,7 +445,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.t_keep), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
             (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
