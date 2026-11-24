@@ -1,0 +1,139 @@
+===================================================
+    
+Case 1: a name that is a PL/CSQL keyword but not an SQL one is quoted in the saved source     
+
+===================================================
+0
+===================================================
+0
+===================================================
+scode_spec    scode_body    
+CREATE OR REPLACE PACKAGE [raise] AS procedure p; end     CREATE OR REPLACE PACKAGE BODY [raise] AS procedure p as begin null; end; end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+scode_spec    scode_body    
+CREATE OR REPLACE PACKAGE [body] AS procedure p; end     CREATE OR REPLACE PACKAGE BODY [body] AS procedure p as begin null; end; end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+scode    
+CREATE OR REPLACE PROCEDURE [exit]([elsif] IN integer) AUTHID OWNER AS
+begin null; end     
+
+===================================================
+0
+===================================================
+    
+Case 2: a block with strings with backslash escapes is saved to its end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+scode_body    
+CREATE OR REPLACE PACKAGE BODY [pk_esc] AS
+procedure p as begin dbms_output.put_line('a\nb'); dbms_output.put_line('\\'); end;
+end pk_esc     
+
+===================================================
+0
+===================================================
+0
+===================================================
+scode    
+CREATE OR REPLACE PROCEDURE [sp_esc]() AUTHID OWNER AS
+begin dbms_output.put_line('a\nb\tc'); end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 3: the saved block keeps its lines when AS has text after it on its line     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+scode_spec    scode_body    
+CREATE OR REPLACE PACKAGE [e2] AS /* c */
+function f return int;
+end     CREATE OR REPLACE PACKAGE BODY [e2] AS /* c */
+function f return int is n int;
+begin
+select count(*) into n from t27527_src;
+return n;
+end;
+end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+scode_spec    scode_body    
+CREATE OR REPLACE PACKAGE [e3] AS function f return int;
+end     CREATE OR REPLACE PACKAGE BODY [e3] AS function f return int is n int;
+begin
+select count(*) into n from t27527_src;
+return n;
+end;
+end     
+
+===================================================
+pkg_unique_name    select_line    
+dba.e2     4     
+dba.e3     3     
+
+===================================================
+0
+===================================================
+Error:-1400
+===================================================
+Error:-1400
+===================================================
+    
+Case 4: a block with no white space after AS or IS is saved right after AS and compiles     
+
+===================================================
+0
+===================================================
+0
+===================================================
+scode_spec    scode_body    
+CREATE OR REPLACE PACKAGE [p1] AS/*c*/procedure p; end     CREATE OR REPLACE PACKAGE BODY [p1] AS/*c*/procedure p as begin null; end; end     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
