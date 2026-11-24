@@ -15,8 +15,8 @@ dba.t_tochar     CREATE TABLE [t_tochar] ([id] INTEGER, [a] CHARACTER VARYING(10
 ===================================================
 1
 ===================================================
-id    char_length(a)    a- year( SYS_DATE )    
-1     4     0.0     
+id    char_length(a)    a- year( SYS_DATE ) in multiset{0, -1}    
+1     4     1     
 
 ===================================================
 0
@@ -47,8 +47,8 @@ dba.t_unix     CREATE TABLE [t_unix] ([id] INTEGER, [a] BIGINT DEFAULT UNIX_TIME
 ===================================================
 1
 ===================================================
-id    char_length(a)    year( from_unixtime(a))- year( SYS_DATE )    
-1     10     0     
+id    char_length(a)    year( from_unixtime(a))- year( SYS_DATE ) in multiset{0, -1}    
+1     10     1     
 
 ===================================================
     
@@ -83,8 +83,8 @@ dba.t_dt     CREATE TABLE [t_dt] ([id] INTEGER, [a] DATETIME DEFAULT SYS_DATETIM
 ===================================================
 1
 ===================================================
-id    year(a)- year( SYS_DATE )    
-1     0     
+id    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     1     
 
 ===================================================
     
@@ -107,8 +107,8 @@ id    x    a
 ===================================================
 1
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     2     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     2     1     
 
 ===================================================
     
@@ -150,8 +150,8 @@ TABLE    CREATE TABLE
 dba.t_upd_def     CREATE TABLE [t_upd_def] ([id] INTEGER, [x] INTEGER, [a] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     2     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     2     1     
 
 ===================================================
     
@@ -168,16 +168,16 @@ dba.t_both     CREATE TABLE [t_both] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP D
 ===================================================
 1
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     1     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     1     1     
 
 ===================================================
 1
 ===================================================
 1
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     2     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     2     1     
 
 ===================================================
     
@@ -194,8 +194,8 @@ dba.t_year     CREATE TABLE [t_year] ([id] INTEGER, [a] INTEGER DEFAULT TO_CHAR(
 ===================================================
 1
 ===================================================
-id    a- year( SYS_DATE )    
-1     0     
+id    a- year( SYS_DATE ) in multiset{0, -1}    
+1     1     
 
 ===================================================
     
@@ -212,16 +212,16 @@ dba.t_keep     CREATE TABLE [t_keep] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP D
 ===================================================
 1
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     1     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     1     1     
 
 ===================================================
 1
 ===================================================
 1
 ===================================================
-id    x    year(a)- year( SYS_DATE )    
-1     2     0     
+id    x    year(a)- year( SYS_DATE ) in multiset{0, -1}    
+1     2     1     
 
 ===================================================
     
@@ -238,8 +238,8 @@ dba.t_ren     CREATE TABLE [t_ren] ([id] INTEGER, [b] TIMESTAMP DEFAULT SYS_DATE
 ===================================================
 1
 ===================================================
-id    year(b)- year( SYS_DATE )    
-1     0     
+id    year(b)- year( SYS_DATE ) in multiset{0, -1}    
+1     1     
 
 ===================================================
     
@@ -262,8 +262,8 @@ dba.t_name     CREATE TABLE [t_name] ([id] INTEGER, [b] CHARACTER VARYING(100) D
 ===================================================
 1
 ===================================================
-id    b- year( SYS_DATE )    char_length(g)    year(v)- year( SYS_DATE )    
-2     0.0     32     0     
+id    b- year( SYS_DATE ) in multiset{0, -1}    char_length(g)    year(v)- year( SYS_DATE ) in multiset{0, -1}    
+2     1     32     1     
 
 ===================================================
     
@@ -348,8 +348,54 @@ dba.t_onu     CREATE TABLE [t_onu] ([id] INTEGER, [a] CHARACTER VARYING(100) DEF
 ===================================================
 1
 ===================================================
-id    char_length(a)    a- year( SYS_DATE )    
-1     4     0.0     
+id    char_length(a)    a- year( SYS_DATE ) in multiset{0, -1}    
+1     4     1     
+
+===================================================
+    
+Case 17: MODIFY that only widens the length or the precision keeps the DEFAULT     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_prec     CREATE TABLE [t_prec] ([id] INTEGER, [g] CHARACTER VARYING(200) DEFAULT SYS_GUID(), [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [n] NUMERIC(15,0) DEFAULT UNIX_TIMESTAMP()) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    char_length(g)    a- year( SYS_DATE ) in multiset{0, -1}    n>0    
+1     32     1     1     
+
+===================================================
+    
+Case 18: MODIFY that shortens a CURRENT_USER DEFAULT column checks the name of the user who runs it     
+
+===================================================
+0
+===================================================
+Error:-495
+===================================================
+TABLE    CREATE TABLE    
+dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(255) DEFAULT CURRENT_USER) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+0
+===================================================
+TABLE    CREATE TABLE    
+dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(3) DEFAULT CURRENT_USER) REUSE_OID, COLLATE utf8_bin     
+
+===================================================
+1
+===================================================
+id    a    
+1     DBA     
 
 ===================================================
 0

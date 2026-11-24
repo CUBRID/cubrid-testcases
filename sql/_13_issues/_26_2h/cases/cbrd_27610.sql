@@ -14,7 +14,8 @@
  *  it was, and an accepted one keeps the DEFAULT and the ON UPDATE expression. A change to
  *  AUTO_INCREMENT drops the DEFAULT, so it has no kept DEFAULT to check. The values
  *  of the DEFAULTs change from run to run, so the cases print only their length, whether
- *  they are set, or their difference from the current year.
+ *  they are set, or whether their year is the current year or the year before it, which a
+ *  run across midnight of December 31 gives.
  *
  *  Coverage:
  *    Case 1:  MODIFY of a TO_CHAR DEFAULT column fails: to DATE with the format 'YYYY' and
@@ -34,9 +35,12 @@
  *    Case 14: a literal DEFAULT that the new type takes is converted as before
  *    Case 15: MODIFY or CHANGE to AUTO_INCREMENT drops the DEFAULT and succeeds
  *    Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
+ *    Case 17: MODIFY that only widens the length or the precision keeps the DEFAULT
+ *    Case 18: MODIFY that shortens a CURRENT_USER DEFAULT column checks the name of the
+ *             user who runs the ALTER, as CREATE TABLE does
  */
 
-drop table if exists t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu;
+drop table if exists t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu, t_prec, t_user;
 
 
 evaluate 'Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE or INT fails';
@@ -44,7 +48,7 @@ create table t_tochar (id int, a varchar(100) default to_char(sys_datetime, 'YYY
 alter table t_tochar modify a date;
 show create table t_tochar;
 insert into t_tochar (id) values (1);
-select id, length(a), a - year(sys_date) from t_tochar order by id;
+select id, length(a), a - year(sys_date) in (0, -1) from t_tochar order by id;
 create table t_tochar_nf (id int, a varchar(100) default to_char(sys_datetime));
 alter table t_tochar_nf modify a int;
 show create table t_tochar_nf;
@@ -57,7 +61,7 @@ create table t_unix (id int, a bigint default unix_timestamp());
 alter table t_unix modify a smallint;
 show create table t_unix;
 insert into t_unix (id) values (1);
-select id, length(a), year(from_unixtime(a)) - year(sys_date) from t_unix order by id;
+select id, length(a), year(from_unixtime(a)) - year(sys_date) in (0, -1) from t_unix order by id;
 
 
 evaluate 'Case 3: MODIFY of a SYS_GUID DEFAULT column to INT fails';
@@ -73,7 +77,7 @@ create table t_dt (id int, a datetime default sys_datetime);
 alter table t_dt modify a varchar(100);
 show create table t_dt;
 insert into t_dt (id) values (1);
-select id, year(a) - year(sys_date) from t_dt order by id;
+select id, year(a) - year(sys_date) in (0, -1) from t_dt order by id;
 
 
 evaluate 'Case 5: MODIFY of an ON UPDATE CURRENT_DATETIME column to VARCHAR fails';
@@ -83,7 +87,7 @@ show create table t_upd;
 insert into t_upd (id, x) values (1, 1);
 select id, x, a from t_upd order by id;
 update t_upd set x = 2 where id = 1;
-select id, x, year(a) - year(sys_date) from t_upd order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_upd order by id;
 
 
 evaluate 'Case 6: CHANGE to a new name and a type that does not take the kept DEFAULT fails';
@@ -101,7 +105,7 @@ insert into t_upd_def (id, x) values (1, 1);
 update t_upd_def set x = 2 where id = 1;
 alter table t_upd_def modify a varchar(100) default 'x';
 show create table t_upd_def;
-select id, x, year(a) - year(sys_date) from t_upd_def order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_upd_def order by id;
 
 
 evaluate 'Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expression';
@@ -109,10 +113,10 @@ create table t_both (id int, x int, a datetime default sys_datetime on update cu
 alter table t_both modify a timestamp;
 show create table t_both;
 insert into t_both (id, x) values (1, 1);
-select id, x, year(a) - year(sys_date) from t_both order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_both order by id;
 update t_both set a = null where id = 1;
 update t_both set x = 2 where id = 1;
-select id, x, year(a) - year(sys_date) from t_both order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_both order by id;
 
 
 evaluate 'Case 9: MODIFY of a TO_CHAR DEFAULT column to INT keeps the DEFAULT';
@@ -120,7 +124,7 @@ create table t_year (id int, a varchar(100) default to_char(sys_datetime, 'YYYY'
 alter table t_year modify a int;
 show create table t_year;
 insert into t_year (id) values (1);
-select id, a - year(sys_date) from t_year order by id;
+select id, a - year(sys_date) in (0, -1) from t_year order by id;
 
 
 evaluate 'Case 10: MODIFY with a DEFAULT clause keeps the ON UPDATE expression';
@@ -128,10 +132,10 @@ create table t_keep (id int, x int, a datetime on update current_datetime);
 alter table t_keep modify a timestamp default sys_timestamp;
 show create table t_keep;
 insert into t_keep (id, x) values (1, 1);
-select id, x, year(a) - year(sys_date) from t_keep order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_keep order by id;
 update t_keep set a = null where id = 1;
 update t_keep set x = 2 where id = 1;
-select id, x, year(a) - year(sys_date) from t_keep order by id;
+select id, x, year(a) - year(sys_date) in (0, -1) from t_keep order by id;
 
 
 evaluate 'Case 11: CHANGE to a new name and a type that takes the kept DEFAULT succeeds';
@@ -139,7 +143,7 @@ create table t_ren (id int, a datetime default sys_datetime);
 alter table t_ren change a b timestamp;
 show create table t_ren;
 insert into t_ren (id) values (1);
-select id, year(b) - year(sys_date) from t_ren order by id;
+select id, year(b) - year(sys_date) in (0, -1) from t_ren order by id;
 
 
 evaluate 'Case 12: CHANGE of the name alone and MODIFY to NOT NULL keep the DEFAULT';
@@ -150,7 +154,7 @@ alter table t_name change u v datetime;
 show create table t_name;
 insert into t_name (id) values (1);
 update t_name set id = 2 where id = 1;
-select id, b - year(sys_date), length(g), year(v) - year(sys_date) from t_name order by id;
+select id, b - year(sys_date) in (0, -1), length(g), year(v) - year(sys_date) in (0, -1) from t_name order by id;
 
 
 evaluate 'Case 13: a literal DEFAULT that the new type does not take fails as before';
@@ -187,7 +191,28 @@ create table t_onu (id int, a varchar(100) default to_char(sys_datetime, 'YYYY')
 alter table t_onu modify a datetime on update current_datetime;
 show create table t_onu;
 insert into t_onu (id) values (1);
-select id, length(a), a - year(sys_date) from t_onu order by id;
+select id, length(a), a - year(sys_date) in (0, -1) from t_onu order by id;
 
 
-drop table t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu;
+evaluate 'Case 17: MODIFY that only widens the length or the precision keeps the DEFAULT';
+create table t_prec (id int, g varchar(32) default sys_guid(), a varchar(10) default to_char(sys_datetime, 'YYYY'), n numeric(12,0) default unix_timestamp());
+alter table t_prec modify g varchar(200);
+alter table t_prec modify a varchar(100);
+alter table t_prec modify n numeric(15,0);
+show create table t_prec;
+insert into t_prec (id) values (1);
+select id, length(g), a - year(sys_date) in (0, -1), n > 0 from t_prec order by id;
+
+
+-- CTP runs the TC as dba, so CURRENT_USER gives DBA, a name of 3 characters
+evaluate 'Case 18: MODIFY that shortens a CURRENT_USER DEFAULT column checks the name of the user who runs it';
+create table t_user (id int, a varchar(255) default current_user);
+alter table t_user modify a varchar(2);
+show create table t_user;
+alter table t_user modify a varchar(3);
+show create table t_user;
+insert into t_user (id) values (1);
+select id, a from t_user order by id;
+
+
+drop table t_tochar, t_tochar_nf, t_unix, t_guid, t_dt, t_upd, t_chg, t_upd_def, t_both, t_year, t_keep, t_ren, t_name, t_lit, t_lit_n, t_inc, t_inc_chg, t_onu, t_prec, t_user;
