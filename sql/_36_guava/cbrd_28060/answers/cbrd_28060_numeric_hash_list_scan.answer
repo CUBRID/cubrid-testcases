@@ -31,6 +31,18 @@
 ===================================================
 1
 ===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+12
+===================================================
+0
+===================================================
+2
+===================================================
     
 Case 1: NUMERIC(20,5) against a float NUMERIC of scale 39 (cb / 1): the hash list scan finds every pair     
 
@@ -287,6 +299,126 @@ Case 10: NUMERIC(38,0) against a float NUMERIC of scale -5 (a NUMERIC(38,-5) cas
 res    
 PASS     
 
+===================================================
+    
+Case 11: NUMERIC(38,-5) against a float NUMERIC (a NUMERIC(20,0) cast to NUMERIC): the hash list scan finds every pair     
+
+===================================================
+res    
+PASS     
+
+===================================================
+    
+Case 12: a float NUMERIC against a float NUMERIC (cb * 1 against cc + 0), values of up to 32 integer digits: the hash list scan finds every pair     
+
+===================================================
+res    
+PASS     
+
+===================================================
+    
+Case 13: NUMERIC(18,2) against INT plus a host variable, a coefficient past 2^53: the hash list scan finds the pair     
+
+===================================================
+0
+===================================================
+res    
+PASS     
+
+===================================================
+0
+===================================================
+    
+Case 14: trace: Cases 11 to 13 run as a hash list scan     
+
+===================================================
+count(*)    
+5     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_numeric_negative_scale_rows)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_negative_scale_rows].ca,  cast([dba.t_numeric_negative_scale_rows].cc as numeric) from [dba.t_numeric_negative_scale_rows] [dba.t_numeric_negative_scale_rows] where ([dba.t_numeric_negative_scale_rows].ca>= ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_negative_scale_rows] x, (select /*+ NO_MERGE */ [dba.t_numeric_negative_scale_rows].ca,  cast([dba.t_numeric_negative_scale_rows].cc as numeric) from [dba.t_numeric_negative_scale_rows] [dba.t_numeric_negative_scale_rows] where ([dba.t_numeric_negative_scale_rows].ca>= ?:? )) y (ca, cf) where x.cb=y.cf
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_numeric_negative_scale_rows), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_numeric_negative_scale_rows), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    
+12     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_numeric_digits)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_digits].ca, [dba.t_numeric_digits].cc+ cast(? as numeric) from [dba.t_numeric_digits] [dba.t_numeric_digits] where ([dba.t_numeric_digits].ca>= ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_digits] x, (select /*+ NO_MERGE */ [dba.t_numeric_digits].ca, [dba.t_numeric_digits].cc+ cast(? as numeric) from [dba.t_numeric_digits] [dba.t_numeric_digits] where ([dba.t_numeric_digits].ca>= ?:? )) y (ca, cf) where y.cf=x.cb* cast(? as numeric)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_numeric_digits), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_numeric_digits), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_numeric_host_variable)
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.t_numeric_host_variable].ca, [dba.t_numeric_host_variable].ca+ ?:?  from [dba.t_numeric_host_variable] [dba.t_numeric_host_variable] where ([dba.t_numeric_host_variable].ca>= ?:? ))
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (x)
+    TABLE SCAN (y)
+
+  rewritten query: select /*+ ORDERED PARALLEL(?) */ count(*) from [dba.t_numeric_host_variable] x, (select /*+ NO_MERGE */ [dba.t_numeric_host_variable].ca, [dba.t_numeric_host_variable].ca+ ?:?  from [dba.t_numeric_host_variable] [dba.t_numeric_host_variable] where ([dba.t_numeric_host_variable].ca>= ?:? )) y (ca, cf) where x.cb=y.cf
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_numeric_host_variable), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_numeric_host_variable), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================

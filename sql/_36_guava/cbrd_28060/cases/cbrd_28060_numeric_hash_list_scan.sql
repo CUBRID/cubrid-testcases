@@ -20,12 +20,20 @@
  *    Case 9:  trace: Cases 6 to 8 run as a hash list scan
  *    Case 10: NUMERIC(38,0) against a float NUMERIC of scale -5 (a NUMERIC(38,-5) cast to NUMERIC): the hash join
  *             and the hash list scan find the pair
+ *    Case 11: NUMERIC(38,-5) against a float NUMERIC (a NUMERIC(20,0) cast to NUMERIC): the hash list scan finds
+ *             every pair
+ *    Case 12: a float NUMERIC against a float NUMERIC (cb * 1 against cc + 0), values of up to 32 integer digits:
+ *             the hash list scan finds every pair
+ *    Case 13: NUMERIC(18,2) against INT plus a host variable, a coefficient past 2^53: the hash list scan finds
+ *             the pair
+ *    Case 14: trace: Cases 11 to 13 run as a hash list scan
  */
 
 set trace on;
 
 drop table if exists
-  t_numeric_a, t_numeric_b, t_tree_same_scale, t_tree_wider_scale, t_tree_bigint, t_numeric_int, t_numeric_negative_scale;
+  t_numeric_a, t_numeric_b, t_tree_same_scale, t_tree_wider_scale, t_tree_bigint, t_numeric_int,
+  t_numeric_negative_scale, t_numeric_negative_scale_rows, t_numeric_digits, t_numeric_host_variable;
 
 -- Each join reads a derived table with NO_MERGE, the build side of the hash list scan. The joins add parallel(0) so
 -- that the trace holds no parallel workers lines, which depend on the number of cores of the server
@@ -94,6 +102,57 @@ create table t_numeric_int (ca numeric(38,0));
 insert into t_numeric_int values (1500000);
 create table t_numeric_negative_scale (ca numeric(38,-5));
 insert into t_numeric_negative_scale values (1500000);
+create table t_numeric_negative_scale_rows (ca int, cb numeric(38,-5), cc numeric(20,0));
+
+-- ca | cb      | cc
+-- ---+---------+---------
+-- 1  | 1500000 | 1500000
+-- 2  | 2500000 | 2500000
+-- 3  | 100000  | 100000
+-- 4  | 0       | 0
+-- 5  | -300000 | -300000
+insert into t_numeric_negative_scale_rows values
+  (1, 1500000, 1500000),
+  (2, 2500000, 2500000),
+  (3, 100000, 100000),
+  (4, 0, 0),
+  (5, -300000, -300000);
+create table t_numeric_digits (ca int, cb numeric(38,2), cc numeric(38,6));
+
+-- ca | cb                                  | cc
+-- ---+-------------------------------------+-----------------------------------------
+-- 1  | 753980177740970.00                  | 753980177740970.000000
+-- 2  | 4381872152352264.00                 | 4381872152352264.000000
+-- 3  | 1000000000000002.00                 | 1000000000000002.000000
+-- 4  | 12345678901234567890123456789012.34 | 12345678901234567890123456789012.340000
+-- 5  | -9007199254740993.50                | -9007199254740993.500000
+-- 6  | 0.00                                | 0.000000
+-- 7  | 1.23                                | 1.230000
+-- 8  | 12.30                               | 12.300000
+-- 9  | 123.00                              | 123.000000
+-- 10 | -123.00                             | -123.000000
+-- 11 | 100.00                              | 100.000000
+-- 12 | 99999999999999999.99                | 99999999999999999.990000
+insert into t_numeric_digits values
+  (1, 753980177740970.00, 753980177740970.000000),
+  (2, 4381872152352264.00, 4381872152352264.000000),
+  (3, 1000000000000002.00, 1000000000000002.000000),
+  (4, 12345678901234567890123456789012.34, 12345678901234567890123456789012.340000),
+  (5, -9007199254740993.50, -9007199254740993.500000),
+  (6, 0.00, 0.000000),
+  (7, 1.23, 1.230000),
+  (8, 12.30, 12.300000),
+  (9, 123.00, 123.000000),
+  (10, -123.00, -123.000000),
+  (11, 100.00, 100.000000),
+  (12, 99999999999999999.99, 99999999999999999.990000);
+create table t_numeric_host_variable (ca int, cb numeric(18,2));
+
+-- ca | cb
+-- ---+--------------------
+-- 1  | 753980177740970.00
+-- 2  | 5.00
+insert into t_numeric_host_variable values (1, 753980177740970.00), (2, 5.00);
 
 evaluate 'Case 1: NUMERIC(20,5) against a float NUMERIC of scale 39 (cb / 1): the hash list scan finds every pair';
 select case when a.c = b.c and a.c = 3000 then 'PASS' else 'FAIL' end res
@@ -209,7 +268,53 @@ from
    from t_numeric_int x, (select /*+ NO_MERGE */ cast (ca as numeric) c from t_numeric_negative_scale where ca > 0) y
    where x.ca = y.c) c;
 
+evaluate 'Case 11: NUMERIC(38,-5) against a float NUMERIC (a NUMERIC(20,0) cast to NUMERIC): the hash list scan finds every pair';
+select case when a.c = b.c and a.c = 5 then 'PASS' else 'FAIL' end res
+from
+  (select /*+ ordered parallel(0) */ count(*) c
+   from t_numeric_negative_scale_rows x,
+     (select /*+ NO_MERGE */ ca, cast (cc as numeric) as cf from t_numeric_negative_scale_rows where ca >= 1) y
+   where x.cb = y.cf) a,
+  (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ count(*) c
+   from t_numeric_negative_scale_rows x,
+     (select /*+ NO_MERGE */ ca, cast (cc as numeric) as cf from t_numeric_negative_scale_rows where ca >= 1) y
+   where x.cb = y.cf) b;
+
+evaluate 'Case 12: a float NUMERIC against a float NUMERIC (cb * 1 against cc + 0), values of up to 32 integer digits: the hash list scan finds every pair';
+select case when a.c = b.c and a.c = 12 then 'PASS' else 'FAIL' end res
+from
+  (select /*+ ordered parallel(0) */ count(*) c
+   from t_numeric_digits x, (select /*+ NO_MERGE */ ca, cc + 0 as cf from t_numeric_digits where ca >= 1) y
+   where x.cb * 1 = y.cf) a,
+  (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ count(*) c
+   from t_numeric_digits x, (select /*+ NO_MERGE */ ca, cc + 0 as cf from t_numeric_digits where ca >= 1) y
+   where x.cb * 1 = y.cf) b;
+
+evaluate 'Case 13: NUMERIC(18,2) against INT plus a host variable, a coefficient past 2^53: the hash list scan finds the pair';
+-- 753980177740970 is exact in DOUBLE; its coefficient at scale 2 (the value x 10^2) passes 2^53
+prepare st_cmp from 'select case when a.c = b.c and a.c = 1 then ''PASS'' else ''FAIL'' end res from (select /*+ ordered parallel(0) */ count(*) c from t_numeric_host_variable x, (select /*+ NO_MERGE */ ca, ca + ? as cf from t_numeric_host_variable where ca >= 1) y where x.cb = y.cf) a, (select /*+ ordered parallel(0) NO_HASH_LIST_SCAN */ count(*) c from t_numeric_host_variable x, (select /*+ NO_MERGE */ ca, ca + ? as cf from t_numeric_host_variable where ca >= 1) y where x.cb = y.cf) b';
+execute st_cmp using 753980177740969.0, 753980177740969.0;
+deallocate prepare st_cmp;
+
+evaluate 'Case 14: trace: Cases 11 to 13 run as a hash list scan';
+select /*+ ordered parallel(0) */ count(*)
+from t_numeric_negative_scale_rows x,
+  (select /*+ NO_MERGE */ ca, cast (cc as numeric) as cf from t_numeric_negative_scale_rows where ca >= 1) y
+where x.cb = y.cf;
+show trace;
+
+select /*+ ordered parallel(0) */ count(*)
+from t_numeric_digits x, (select /*+ NO_MERGE */ ca, cc + 0 as cf from t_numeric_digits where ca >= 1) y
+where x.cb * 1 = y.cf;
+show trace;
+
+prepare st_hash from 'select /*+ ordered parallel(0) */ count(*) from t_numeric_host_variable x, (select /*+ NO_MERGE */ ca, ca + ? as cf from t_numeric_host_variable where ca >= 1) y where x.cb = y.cf';
+execute st_hash using 753980177740969.0;
+show trace;
+deallocate prepare st_hash;
+
 drop table
-  t_numeric_a, t_numeric_b, t_tree_same_scale, t_tree_wider_scale, t_tree_bigint, t_numeric_int, t_numeric_negative_scale;
+  t_numeric_a, t_numeric_b, t_tree_same_scale, t_tree_wider_scale, t_tree_bigint, t_numeric_int,
+  t_numeric_negative_scale, t_numeric_negative_scale_rows, t_numeric_digits, t_numeric_host_variable;
 
 set trace off;
