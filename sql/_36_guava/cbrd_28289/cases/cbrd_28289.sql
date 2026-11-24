@@ -16,9 +16,10 @@
  *    Case 3: UPDATE and DELETE of kept rows, then the same rows as the twin
  *    Case 4: a constant folded to NUMERIC and assigned by UPDATE is converted to the column type, also on a cached plan
  *    Case 5: a DOUBLE near 1e-252 converts to NUMERIC within the scale limit of 252
+ *    Case 6: rows kept by two schema-only ALTERs, and kept rows rewritten by a later ALTER
  */
 
-drop table if exists t_alt, t_alt_twin, t_flt, t_flt_twin, t_asg_num, t_asg_oth, t_tiny;
+drop table if exists t_alt, t_alt_twin, t_flt, t_flt_twin, t_asg_num, t_asg_oth, t_asg_col, t_tiny, t_seq, t_rw;
 
 evaluate 'Case 1: rows kept by numeric(10,2) to numeric(12,2) give the same results as the twin';
 create table t_alt (id int primary key, a numeric(10,2), b numeric(10,2));
@@ -32,8 +33,15 @@ alter table t_alt modify b numeric(12,2);
 -- rows 6 and 7 are inserted after the ALTERs, row 6 with more digits than numeric(10,2) holds
 insert into t_alt values (6, 9999999999.99, -1234567890.12);
 insert into t_alt values (7, 1.25, 100);
+-- the twin gets the same literals, not the rows read from t_alt
 create table t_alt_twin (id int primary key, a numeric(12,2), b numeric(12,2));
-insert into t_alt_twin select id, a, b from t_alt;
+insert into t_alt_twin values (1, 0, null);
+insert into t_alt_twin values (2, 1.25, 1.25);
+insert into t_alt_twin values (3, -99999999.99, 99999999.99);
+insert into t_alt_twin values (4, 2.55, -2.56);
+insert into t_alt_twin values (5, null, 0.01);
+insert into t_alt_twin values (6, 9999999999.99, -1234567890.12);
+insert into t_alt_twin values (7, 1.25, 100);
 select id, a, b, typeof(a), typeof(b) from t_alt order by id;
 select id, a, b, typeof(a), typeof(b) from t_alt_twin order by id;
 select id, a + b, a * 2, b / 4, -a, abs(b), round(a, 1), cast(a as numeric), cast(b as varchar) from t_alt order by id;
@@ -55,9 +63,17 @@ insert into t_flt values (6, 1.5);
 insert into t_flt values (7, 1234567890123456789012345678901234567890);
 insert into t_flt values (8, 1e-100);
 create table t_flt_twin (id int primary key, a numeric);
-insert into t_flt_twin select id, a from t_flt;
+insert into t_flt_twin values (1, 0);
+insert into t_flt_twin values (2, 1.50);
+insert into t_flt_twin values (3, -9999999999.99);
+insert into t_flt_twin values (4, null);
+insert into t_flt_twin values (5, 0.01);
+insert into t_flt_twin values (6, 1.5);
+insert into t_flt_twin values (7, 1234567890123456789012345678901234567890);
+insert into t_flt_twin values (8, 1e-100);
 select id, a, typeof(a) from t_flt order by id;
 select id, a, typeof(a) from t_flt_twin order by id;
+-- rows 7 and 8 are left out: the 40 digit value overflows numeric(38,2), and 1e-100 squared prints 200 fraction digits
 select id, a + 1, a * a, cast(a as numeric(38,2)), cast(a as double) from t_flt where id < 7 order by id;
 select id, a + 1, a * a, cast(a as numeric(38,2)), cast(a as double) from t_flt_twin where id < 7 order by id;
 select a, count(*) from t_flt group by a order by a;
@@ -92,6 +108,15 @@ update t_asg_oth set i = 2.5 + 0, d = 7.25 + 0, v = 12.75 + 0 where id = 1;
 select id, i, d, v from t_asg_oth;
 update t_asg_oth set i = -3.5 + 0, d = -0.125 + 0, v = -1.5 + 0 where id = 1;
 select id, i, d, v from t_asg_oth;
+-- a collection folded the same way keeps its collection type on the cached plan
+create table t_asg_col (id int, st set(int), sq sequence(int));
+insert into t_asg_col values (1, {}, {});
+update t_asg_col set st = {1,2} + {3}, sq = {1,2} + {3} where id = 1;
+select id, st, sq from t_asg_col;
+update t_asg_col set st = {4,5} + {6}, sq = {4,5} + {6} where id = 1;
+select id, st, sq from t_asg_col;
+-- the next UPDATE fails on purpose with no row to update: the folded constant overflows numeric(10,2), as a literal does
+update t_asg_num set b = 123456789012.3 + 0 where id = 999;
 
 evaluate 'Case 5: a DOUBLE near 1e-252 converts to NUMERIC within the scale limit of 252';
 create table t_tiny (id int, d double);
@@ -101,4 +126,23 @@ insert into t_tiny values (3, -1.2345678901234567e-240);
 select id, cast(d as numeric(10,2)) from t_tiny order by id;
 select id, cast(d as numeric) from t_tiny order by id;
 
-drop table t_alt, t_alt_twin, t_flt, t_flt_twin, t_asg_num, t_asg_oth, t_tiny;
+evaluate 'Case 6: rows kept by two schema-only ALTERs, and kept rows rewritten by a later ALTER';
+create table t_seq (id int primary key, a numeric(10,2));
+insert into t_seq values (1, 12345678.91), (2, -0.05), (3, null);
+alter table t_seq modify a numeric(12,2);
+insert into t_seq values (4, 1234567890.12);
+alter table t_seq modify a numeric;
+insert into t_seq values (5, 1.5);
+select id, a, typeof(a) from t_seq order by id;
+create table t_rw (id int primary key, a numeric(10,2));
+insert into t_rw values (1, 12345678.91), (2, -0.05), (3, null);
+alter table t_rw modify a numeric(12,2);
+insert into t_rw values (4, 1234567890.12);
+-- a scale change rewrites the rows, the ones kept by the ALTER before it included
+alter table t_rw modify a numeric(13,3);
+select id, a, typeof(a) from t_rw order by id;
+-- the next ALTER fails on purpose: row 4 does not fit numeric(10,2), and the rows stay as they were
+alter table t_rw modify a numeric(10,2);
+select id, a, typeof(a) from t_rw order by id;
+
+drop table t_alt, t_alt_twin, t_flt, t_flt_twin, t_asg_num, t_asg_oth, t_asg_col, t_tiny, t_seq, t_rw;
