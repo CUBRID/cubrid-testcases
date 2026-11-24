@@ -334,6 +334,8 @@ FROM t_char_long_part WHERE cb = CAST (CHR (97 USING binary) AS CHAR(5) COLLATE 
 show trace;
 
 evaluate 'Case 7: binary - t_char_long_part prune per VARCHAR(40) constant reads one partition and matches t_char_long';
+-- the constants are not padded: CHAR of the binary charset pads with 0x00, which the binary comparison ignores at
+-- the end, so each constant matches the rows that hold it
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
 SELECT 1 AS ca,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST ('' AS VARCHAR(40) COLLATE binary)) AS cnt_base,
