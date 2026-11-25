@@ -44,12 +44,15 @@ evaluate 'Case 1: DOUBLE - a nested loop join memoized by -0 and 0 returns the r
 -- t_double.cb || '' is the string 0 or -0, which joins t_varchar.ca
 -- the first query memoizes the inner scan of t_varchar, the second runs with memoize turned off
 set system parameters 'memoize_memory_limit=64M';
+set trace on;
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */
   SUM (CASE WHEN t_double.ca <= 50 THEN t_varchar.cb ELSE 0 END),
   SUM (CASE WHEN t_double.ca > 50 THEN t_varchar.cb ELSE 0 END),
   COUNT (*)
 FROM t_double INNER JOIN t_varchar ON t_varchar.ca = t_double.cb || '';
+show trace;
+set trace off;
 set system parameters 'memoize_memory_limit=0';
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */
@@ -80,6 +83,7 @@ evaluate 'Case 2: NUMERIC - a nested loop join memoized by 1.0 and 1.00 returns 
 -- 1.00, which joins t_varchar.ca
 -- the first query memoizes the inner scan of t_varchar, the second runs with memoize turned off
 set system parameters 'memoize_memory_limit=64M';
+set trace on;
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */
   SUM (CASE WHEN d.ca <= 50 THEN t_varchar.cb ELSE 0 END),
@@ -90,6 +94,8 @@ FROM
    UNION ALL
    SELECT ca, CAST (1 AS NUMERIC (5, 2)) FROM t_int WHERE ca > 50) d
   INNER JOIN t_varchar ON t_varchar.ca = d.cb || '';
+show trace;
+set trace off;
 set system parameters 'memoize_memory_limit=0';
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */
@@ -132,12 +138,15 @@ evaluate 'Case 3: VARCHAR utf8_en_ci - a nested loop join memoized by a and A re
 -- HEX (t_varchar_en_ci.cb) is the string 61 or 41, which joins t_varchar.ca
 -- the first query memoizes the inner scan of t_varchar, the second runs with memoize turned off
 set system parameters 'memoize_memory_limit=64M';
+set trace on;
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */
   SUM (CASE WHEN t_varchar_en_ci.ca <= 50 THEN t_varchar.cb ELSE 0 END),
   SUM (CASE WHEN t_varchar_en_ci.ca > 50 THEN t_varchar.cb ELSE 0 END),
   COUNT (*)
 FROM t_varchar_en_ci INNER JOIN t_varchar ON t_varchar.ca = HEX (t_varchar_en_ci.cb);
+show trace;
+set trace off;
 set system parameters 'memoize_memory_limit=0';
 
 SELECT /*+ RECOMPILE PARALLEL(0) ORDERED USE_NL(t_varchar) */

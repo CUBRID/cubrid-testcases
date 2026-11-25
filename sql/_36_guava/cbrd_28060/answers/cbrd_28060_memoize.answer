@@ -17,9 +17,30 @@ Case 1: DOUBLE - a nested loop join memoized by -0 and 0 returns the rows of the
 ===================================================
 0
 ===================================================
+0
+===================================================
 sum(case when t_double.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_double.ca>50 then t_varchar.cb else 0 end)    count(*)    
 50     100     100     
 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_double)
+    TABLE SCAN (dba.t_varchar)
+
+  rewritten query: select /*+ ORDERED USE_NL(t_varchar) PARALLEL(?) */ sum(case when [dba.t_double].ca<=? then [dba.t_varchar].cb else ? end), sum(case when [dba.t_double].ca>? then [dba.t_varchar].cb else ? end), count(*) from [dba.t_double] [dba.t_double] inner join [dba.t_varchar] [dba.t_varchar] on [dba.t_varchar].ca= cast([dba.t_double].cb as varchar)|| cast('' as varchar)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_double), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -47,9 +68,44 @@ Case 2: NUMERIC - a nested loop join memoized by 1.0 and 1.00 returns the rows o
 ===================================================
 0
 ===================================================
+0
+===================================================
 sum(case when d.ca<=50 then t_varchar.cb else 0 end)    sum(case when d.ca>50 then t_varchar.cb else 0 end)    count(*)    
 50     100     100     
 
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_int)
+
+  rewritten query: select [dba.t_int].ca,  cast( cast(? as numeric(?,?)) as numeric) from [dba.t_int] [dba.t_int] where ([dba.t_int].ca<= ?:? )
+
+  TABLE SCAN (dba.t_int)
+
+  rewritten query: select [dba.t_int].ca,  cast( cast(? as numeric(?,?)) as numeric) from [dba.t_int] [dba.t_int] where ([dba.t_int].ca> ?:? )
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (d)
+    TABLE SCAN (dba.t_varchar)
+
+  rewritten query: select /*+ ORDERED USE_NL(t_varchar) PARALLEL(?) */ sum(case when d.ca<=? then [dba.t_varchar].cb else ? end), sum(case when d.ca>? then [dba.t_varchar].cb else ? end), count(*) from (select [dba.t_int].ca,  cast( cast(? as numeric(?,?)) as numeric) as [cb] from [dba.t_int] [dba.t_int] where ([dba.t_int].ca<= ?:? ) union all select [dba.t_int].ca,  cast( cast(? as numeric(?,?)) as numeric) from [dba.t_int] [dba.t_int] where ([dba.t_int].ca> ?:? )) d (ca, cb) inner join [dba.t_varchar] [dba.t_varchar] on [dba.t_varchar].ca= cast(d.cb as varchar)|| cast('' as varchar)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_int), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -77,9 +133,30 @@ Case 3: VARCHAR utf8_en_ci - a nested loop join memoized by a and A returns the 
 ===================================================
 0
 ===================================================
+0
+===================================================
 sum(case when t_varchar_en_ci.ca<=50 then t_varchar.cb else 0 end)    sum(case when t_varchar_en_ci.ca>50 then t_varchar.cb else 0 end)    count(*)    
 50     100     100     
 
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (dba.t_varchar_en_ci)
+    TABLE SCAN (dba.t_varchar)
+
+  rewritten query: select /*+ ORDERED USE_NL(t_varchar) PARALLEL(?) */ sum(case when [dba.t_varchar_en_ci].ca<=? then [dba.t_varchar].cb else ? end), sum(case when [dba.t_varchar_en_ci].ca>? then [dba.t_varchar].cb else ? end), count(*) from [dba.t_varchar_en_ci] [dba.t_varchar_en_ci] inner join [dba.t_varchar] [dba.t_varchar] on [dba.t_varchar].ca= hex([dba.t_varchar_en_ci].cb)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_varchar_en_ci), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (table: dba.t_varchar), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
