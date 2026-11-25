@@ -1,21 +1,24 @@
 /*
 Test Case: owner_retouch/retouch_cascade_past_upgrading_fk_holder
 Priority: 1
-Reference case: CBRD-27034 (CUBRID/cubrid#7881)
+Reference case: CBRD-27034 (CUBRID/cubrid#7881), CBRD-27463 (CUBRID/cubrid#8198)
 Author: hgryoo
 
 Test Point:
-Two transactions hold S on a parent row through the foreign-key checks of their child inserts, and one of them waits to upgrade it to X.
-The transaction that updated the parent in an earlier statement then deletes it with ON DELETE CASCADE.
-The owner must wait for the S locks, also the one held beside the upgrade, instead of passing them: here it times out.
+Two transactions insert uncommitted children of a parent row, and one of them then waits to update the row on the stamp of the transaction that updated it in an earlier statement.
+That owner then deletes the parent with ON DELETE CASCADE.
+The owner must wait for the transactions of the uncommitted children instead of passing them: here it times out.
 If it passed them, the cascade would miss the two uncommitted children and leave them without a parent.
+CBRD-27034 wrote this case when the foreign key check of a child insert held S on the parent row, so the owner waited for two S holders, one of them waiting to upgrade to X.
+Since CBRD-27463 the check takes no lock on a committed parent row, so the owner waits for a child's transaction instead.
+The name keeps "fk_holder". This case no longer reaches the path where the owner waits for S holders on the row, and no other case covers that path.
 
 NUM_CLIENTS = 3
 C1: UPDATE t27034_p SET v=v+1 WHERE id=1;
 C2: INSERT INTO t27034_c VALUES (10,1);
 C3: INSERT INTO t27034_c VALUES (11,1);
-C3: UPDATE t27034_p SET v=v+100 WHERE id=1; -- blocks: S to X upgrade behind C2's S
-C1: DELETE FROM t27034_p WHERE id=1; -- waits for the S locks and times out after 2 seconds
+C3: UPDATE t27034_p SET v=v+100 WHERE id=1; -- blocks: waits on C1's stamp
+C1: DELETE FROM t27034_p WHERE id=1; -- waits for a child's transaction and times out after 2 seconds
 C1: COMMIT;
 C2: COMMIT;
 C3: (released)
@@ -54,7 +57,7 @@ C3: UPDATE t27034_p SET v=v+100 WHERE id=1;
 MC: wait until C3 blocked;
 C1: set transaction lock timeout 2;
 MC: wait until C1 ready;
-/* the owner waits for the S locks of C2 and C3 and times out */
+/* CBRD-27463: the foreign key checks take no lock on a committed parent row, so the owner waits for a child's transaction, not for row locks, and times out there */
 C1: DELETE FROM t27034_p WHERE id=1;
 MC: wait until C1 ready;
 C1: COMMIT;
