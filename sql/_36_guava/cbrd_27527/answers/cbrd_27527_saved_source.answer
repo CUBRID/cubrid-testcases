@@ -7,9 +7,13 @@ Case 1: a name that is a PL/CSQL keyword but not an SQL one is quoted in the sav
 ===================================================
 0
 ===================================================
+0
+===================================================
 scode_spec    scode_body    
 CREATE OR REPLACE PACKAGE [raise] AS procedure p; end     CREATE OR REPLACE PACKAGE BODY [raise] AS procedure p as begin null; end; end     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -42,6 +46,8 @@ Case 2: a block with strings with backslash escapes is saved to its end
 ===================================================
 0
 ===================================================
+0
+===================================================
 scode_body    
 CREATE OR REPLACE PACKAGE BODY [pk_esc] AS
 procedure p as begin dbms_output.put_line('a\nb'); dbms_output.put_line('\\'); end;
@@ -62,8 +68,10 @@ begin dbms_output.put_line('a\nb\tc'); end
 0
 ===================================================
     
-Case 3: the saved block keeps its lines when AS has text after it on its line     
+Case 3: the saved block keeps its lines when AS has text after it on its line; result = select_line 4 for e2 and 3 for e3     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -111,6 +119,8 @@ Error:-1400
     
 Case 4: a block with no white space after AS or IS is saved right after AS and compiles     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
