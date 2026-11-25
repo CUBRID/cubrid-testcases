@@ -6,36 +6,39 @@
  *  server computes it. The client evaluator still returned the database name, so the
  *  same SCHEMA() gave another value in a SET of a session variable, in an INSERT that
  *  the client runs (the INSERT_EXECUTION_MODE(0) hint, a table with a trigger) and in a
- *  DEFAULT SCHEMA() that is folded when a CREATE TABLE or an ALTER TABLE runs. The fix
- *  makes the client evaluator return the name of the current user as well.
+ *  DEFAULT (SCHEMA()) that the client computes for such an INSERT or for the rows that
+ *  ADD COLUMN fills. The fix makes the client evaluator return the name of the current
+ *  user as well.
  *
  *  Each client path is printed next to the server path of the same statement, first as
  *  dba and then as the user u_27608. DATABASE() must stay the database name on both
  *  paths, which is basic under CTP. The login of the whole file needs one CAS, so the
  *  file keeps it with the holdcas control lines.
  *
- *  A DEFAULT SCHEMA() is folded to a constant when its DDL runs, so it stores the name
- *  of the user who runs the DDL, not of the owner of the table. ADD COLUMN also fills
- *  the rows that the table already has with that constant.
+ *  A DEFAULT (SCHEMA()) is computed for each INSERT, so it stores the name of the user
+ *  who inserts the row, not of the owner of the table or of the user who ran the DDL.
+ *  ADD COLUMN fills the rows that the table already has with the value it computes when
+ *  it runs, the name of the user who runs it.
  *
  *  Coverage:
  *    Case 1:  as dba, SCHEMA() and current_schema of a SELECT are DBA
  *    Case 2:  as dba, a session variable set from SCHEMA() or current_schema is DBA
  *    Case 3:  as dba, the INSERT that the client runs stores DBA like the INSERT of the server
  *    Case 4:  as dba, an INSERT into a table with a trigger stores DBA
- *    Case 5:  as dba, DEFAULT SCHEMA() of a new table is DBA
+ *    Case 5:  as dba, DEFAULT (SCHEMA()) of a new table gives DBA
  *    Case 6:  as u_27608, SCHEMA() and current_schema of a SELECT are U_27608
  *    Case 7:  as u_27608, a session variable set from SCHEMA() or current_schema is U_27608
  *    Case 8:  as u_27608, a session variable set from an expression over SCHEMA() uses U_27608
  *    Case 9:  as u_27608, the INSERT that the client runs stores U_27608 like the INSERT of the server
  *    Case 10: as u_27608, an INSERT into a table with a trigger stores U_27608
  *    Case 11: as u_27608, INSERT SELECT and UPDATE store U_27608
- *    Case 12: as u_27608, DEFAULT SCHEMA() of a new table is U_27608
- *    Case 13: as u_27608, DEFAULT SCHEMA() of the table that dba created stays DBA
+ *    Case 12: as u_27608, DEFAULT (SCHEMA()) of a new table gives U_27608
+ *    Case 13: as u_27608, DEFAULT (SCHEMA()) of the table that dba created gives U_27608
+ *             on the server and the client paths
  *    Case 14: as u_27608, DATABASE() is the database name on the client and the server paths
- *    Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT SCHEMA() on a table of dba
+ *    Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT (SCHEMA()) on a table of dba
  *             stores U_27608 in the existing and the new rows
- *    Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT SCHEMA() on a table of dba
+ *    Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT (SCHEMA()) on a table of dba
  *             stores U_27608 in the new rows
  */
 
@@ -83,8 +86,8 @@ select id, c from t_schema_trg order by id;
 delete from t_schema_trg;
 
 
-evaluate 'Case 5: as dba, DEFAULT SCHEMA() of a new table is DBA';
-create table t_schema_def (id int, c varchar(40) default schema(), e varchar(40) default database());
+evaluate 'Case 5: as dba, DEFAULT (SCHEMA()) of a new table gives DBA';
+create table t_schema_def (id int, c varchar(40) default (schema()), e varchar(40) default (database()));
 grant all privileges on t_schema_def to u_27608;
 insert into t_schema_def (id) values (1);
 select id, c, e from t_schema_def order by id;
@@ -138,8 +141,8 @@ delete from dba.t_schema;
 delete from dba.t_schema_trg;
 
 
-evaluate 'Case 12: as u_27608, DEFAULT SCHEMA() of a new table is U_27608';
-create table t_schema_def (id int, c varchar(40) default schema(), e varchar(40) default database());
+evaluate 'Case 12: as u_27608, DEFAULT (SCHEMA()) of a new table gives U_27608';
+create table t_schema_def (id int, c varchar(40) default (schema()), e varchar(40) default (database()));
 insert into t_schema_def (id) values (1);
 insert into t_schema_def values (2, default, default);
 select id, c, e from t_schema_def order by id;
@@ -148,7 +151,7 @@ drop table t_schema_def;
 
 
 -- dba created dba.t_schema_def in Case 5 and inserted its row 1
-evaluate 'Case 13: as u_27608, DEFAULT SCHEMA() of the table that dba created stays DBA';
+evaluate 'Case 13: as u_27608, DEFAULT (SCHEMA()) of the table that dba created gives U_27608 on the server and the client paths';
 insert into dba.t_schema_def (id) values (2);
 insert /*+ insert_execution_mode(0) */ into dba.t_schema_def (id) values (3);
 select id, c, e from dba.t_schema_def order by id;
@@ -165,17 +168,17 @@ select id, c from dba.t_schema_trg order by id;
 
 
 -- dba created dba.t_schema_alt in the setup, and row 1 goes in before the column d is added
-evaluate 'Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT SCHEMA() on a table of dba stores U_27608 in the existing and the new rows';
+evaluate 'Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT (SCHEMA()) on a table of dba stores U_27608 in the existing and the new rows';
 insert into dba.t_schema_alt (id) values (1);
-alter table dba.t_schema_alt add column d varchar(40) default schema();
+alter table dba.t_schema_alt add column d varchar(40) default (schema());
 insert into dba.t_schema_alt (id) values (2);
 select id, c, d from dba.t_schema_alt order by id;
 select attr_name, default_value from db_attribute where class_name = 't_schema_alt' and owner_name = 'DBA' order by attr_name;
 
 
 -- Case 16 alters the column c of the table that Case 15 altered and filled
-evaluate 'Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT SCHEMA() on a table of dba stores U_27608 in the new rows';
-alter table dba.t_schema_alt alter column c set default schema();
+evaluate 'Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT (SCHEMA()) on a table of dba stores U_27608 in the new rows';
+alter table dba.t_schema_alt alter column c set default (schema());
 insert into dba.t_schema_alt (id) values (3);
 select id, c, d from dba.t_schema_alt order by id;
 select attr_name, default_value from db_attribute where class_name = 't_schema_alt' and owner_name = 'DBA' order by attr_name;

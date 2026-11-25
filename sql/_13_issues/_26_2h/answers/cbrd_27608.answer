@@ -79,7 +79,7 @@ id    c
 3
 ===================================================
     
-Case 5: as dba, DEFAULT SCHEMA() of a new table is DBA     
+Case 5: as dba, DEFAULT (SCHEMA()) of a new table gives DBA     
 
 ===================================================
 0
@@ -93,8 +93,8 @@ id    c    e
 
 ===================================================
 attr_name    default_value    
-c     DBA     
-e     basic     
+c     (schema())     
+e     (database())     
 id     null     
 
 ===================================================
@@ -204,7 +204,7 @@ id    c
 1
 ===================================================
     
-Case 12: as u_27608, DEFAULT SCHEMA() of a new table is U_27608     
+Case 12: as u_27608, DEFAULT (SCHEMA()) of a new table gives U_27608     
 
 ===================================================
 0
@@ -219,15 +219,15 @@ id    c    e
 
 ===================================================
 attr_name    default_value    
-c     U_27608     
-e     basic     
+c     (schema())     
+e     (database())     
 id     null     
 
 ===================================================
 0
 ===================================================
     
-Case 13: as u_27608, DEFAULT SCHEMA() of the table that dba created stays DBA     
+Case 13: as u_27608, DEFAULT (SCHEMA()) of the table that dba created gives U_27608 on the server and the client paths     
 
 ===================================================
 1
@@ -236,8 +236,8 @@ Case 13: as u_27608, DEFAULT SCHEMA() of the table that dba created stays DBA
 ===================================================
 id    c    e    
 1     DBA     basic     
-2     DBA     basic     
-3     DBA     basic     
+2     U_27608     basic     
+3     U_27608     basic     
 
 ===================================================
     
@@ -266,7 +266,7 @@ id    c
 
 ===================================================
     
-Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT SCHEMA() on a table of dba stores U_27608 in the existing and the new rows     
+Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT (SCHEMA()) on a table of dba stores U_27608 in the existing and the new rows     
 
 ===================================================
 1
@@ -282,12 +282,12 @@ id    c    d
 ===================================================
 attr_name    default_value    
 c     none     
-d     U_27608     
+d     (schema())     
 id     null     
 
 ===================================================
     
-Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT SCHEMA() on a table of dba stores U_27608 in the new rows     
+Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT (SCHEMA()) on a table of dba stores U_27608 in the new rows     
 
 ===================================================
 0
@@ -301,8 +301,8 @@ id    c    d
 
 ===================================================
 attr_name    default_value    
-c     U_27608     
-d     U_27608     
+c     (schema())     
+d     (schema())     
 id     null     
 
 ===================================================

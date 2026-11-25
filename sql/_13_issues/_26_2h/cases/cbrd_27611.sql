@@ -281,7 +281,7 @@ select id, v from t_trig_log where id = 16 order by 1, 2;
 
 evaluate 'Case 17: a DEFAULT of a CAST to a shorter VARCHAR keeps the first three characters at CREATE TABLE';
 drop table if exists t_def_create;
-create table t_def_create (id int, c varchar(10) default cast('abcdef' as varchar(3)));
+create table t_def_create (id int, c varchar(10) default (cast('abcdef' as varchar(3))));
 insert into t_def_create (id) values (17);
 insert /*+ insert_execution_mode(0) */ into t_def_create (id) values (171);
 select id, c, char_length(c) from t_def_create order by 1;
@@ -293,7 +293,7 @@ evaluate 'Case 18: ALTER TABLE MODIFY with a DEFAULT of a CAST to a shorter VARC
 drop table if exists t_def_alter;
 create table t_def_alter (id int, c varchar(10));
 insert into t_def_alter (id) values (18);
-alter table t_def_alter modify c varchar(10) default cast('abcdef' as varchar(3));
+alter table t_def_alter modify c varchar(10) default (cast('abcdef' as varchar(3)));
 insert into t_def_alter (id) values (181);
 select id, c from t_def_alter order by 1;
 select attr_name, default_value from db_attribute where class_name = 't_def_alter' and attr_name = 'c';
@@ -303,9 +303,9 @@ select attr_name, default_value from db_attribute where class_name = 't_def_alte
 evaluate 'Case 19: ALTER COLUMN SET DEFAULT and ADD COLUMN with a CAST to a shorter VARCHAR keep the first two characters';
 drop table if exists t_def_set;
 create table t_def_set (id int, c varchar(10));
-alter table t_def_set alter column c set default cast('uvwxyz' as varchar(2));
+alter table t_def_set alter column c set default (cast('uvwxyz' as varchar(2)));
 insert into t_def_set (id) values (19);
-alter table t_def_set add column c2 varchar(10) default cast('uvwxyz' as varchar(2));
+alter table t_def_set add column c2 varchar(10) default (cast('uvwxyz' as varchar(2)));
 insert into t_def_set (id) values (191);
 select id, c, c2 from t_def_set order by 1;
 select attr_name, default_value from db_attribute where class_name = 't_def_set' and attr_name in ('c', 'c2') order by 1;
@@ -313,11 +313,11 @@ select attr_name, default_value from db_attribute where class_name = 't_def_set'
 
 evaluate 'Case 20: a DEFAULT of a number CAST to a shorter VARCHAR, or of a string longer than its column, still fails, and the column keeps its default';
 drop table if exists t_def_num;
-create table t_def_num (id int, c varchar(10) default cast(123456 as varchar(3)));
+create table t_def_num (id int, c varchar(10) default (cast(123456 as varchar(3))));
 select count(*) from db_class where class_name = 't_def_num';
 create table t_def_num (id int, c varchar(10) default 'kept');
-alter table t_def_num modify c varchar(10) default cast(123456 as varchar(3));
-alter table t_def_num alter column c set default cast(123456 as varchar(3));
+alter table t_def_num modify c varchar(10) default (cast(123456 as varchar(3)));
+alter table t_def_num alter column c set default (cast(123456 as varchar(3)));
 alter table t_def_num alter column c set default 'abcdefghijkl';
 insert into t_def_num (id) values (20);
 select id, c from t_def_num order by 1;
