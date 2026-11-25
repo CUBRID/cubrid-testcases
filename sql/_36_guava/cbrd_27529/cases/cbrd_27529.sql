@@ -14,12 +14,16 @@
  *  7. strings a collation compares equal: a space and a NUL in a byte collation, the same and an EUC space in
  *     euckr_bin, binary, utf8_ko_cs, utf8_tr_cs and utf8_gen_ci, a character with no weight in an expanding collation
  *  8. long strings stored compressed, negative NUMERIC values of other scales
+ *  9. SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, with a NULL in the list
+ * 10. PX scan: the hash the leader builds before the workers start, in memory and by tuple positions, with no
+ *     outer row, with a NULL in the list
+ * 11. uncorrelated subqueries executed in parallel, each holding a term with a hash
  */
 
 set @i = 0;
 
 -- PREPARE TEST
-drop table if exists ta, tb;
+drop table if exists ta, tb, tc, td, te;
 create table ta (id int, ca int, cb bigint, cc numeric(10,2), cd double, ce char(10), cf varchar(20),
                  cg varchar(20) collate utf8_en_ci, ch varchar(20), ci datetime, cj date);
 create table tb (k varchar(10), ca int, cb bigint, cc numeric(12,3), cd double, ce char(10), cf varchar(20),
@@ -283,6 +287,96 @@ insert into td values (-1.0000), (-2.5000), (1.0000), (-10.0000), (-0.5000);
 select id from tc where tc.n * 1.00 not in (select td.m * 1.0 from td) order by 1;
 select id from tc where tc.n * 1.00 in (select td.m + 0.000 from td) order by 1;
 drop table tc, td;
+
+do @i := @i + 1;
+evaluate concat ('####', lpad (@i, 3), '. SMALLINT, FLOAT, TIME and TIMESTAMP, alone and with the types they compare with; NO_HASH_LOOKUP gives the same rows');
+
+create table tc (id int, sa smallint, fa float, ta time, tsa timestamp);
+create table td (k varchar(10), sb smallint, ib int, fb float, db double, tb time, tsb timestamp, dtb datetime);
+insert into tc values (1, 1, 1.5, time'10:00:00', timestamp'2026-01-01 10:00:00');
+insert into tc values (2, 2, 2.25, time'11:00:00', timestamp'2026-01-02 11:00:00');
+insert into tc values (3, 3, 0.1, time'12:00:00', timestamp'2026-01-03 12:00:00');
+insert into tc values (4, null, null, null, null);
+insert into td values ('plain', 1, 2, 1.5, 2.25, time'10:00:00', timestamp'2026-01-01 10:00:00', datetime'2026-01-02 11:00:00');
+insert into td values ('plain', 3, 3, 0.1, 0.1, time'12:00:00', timestamp'2026-01-03 12:00:00', datetime'2026-01-03 12:00:00');
+insert into td values ('null', null, null, null, null, null, null, null);
+update statistics on tc, td with fullscan;
+
+select id from tc where tc.sa not in (select td.sb from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa not in (select /*+ NO_HASH_LOOKUP */ td.sb from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa in (select /*+ NO_UNNEST */ td.ib from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.ib from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa not in (select td.fb from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa not in (select /*+ NO_HASH_LOOKUP */ td.fb from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa in (select /*+ NO_UNNEST */ td.db from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.db from td where td.k = 'plain') order by 1;
+select id from tc where tc.ta not in (select td.tb from td where td.k = 'plain') order by 1;
+select id from tc where tc.ta not in (select /*+ NO_HASH_LOOKUP */ td.tb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa not in (select td.tsb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa not in (select /*+ NO_HASH_LOOKUP */ td.tsb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST */ td.dtb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.dtb from td where td.k = 'plain') order by 1;
+-- the lists below hold the NULL row of td
+select id from tc where tc.sa not in (select td.sb from td) order by 1;
+select id from tc where tc.sa not in (select /*+ NO_HASH_LOOKUP */ td.sb from td) order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST */ td.tsb from td) order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.tsb from td) order by 1;
+
+set trace on;
+select /*+ recompile */ count (*) from tc
+where tc.sa not in (select td.sb from td where td.k = 'plain') and tc.fa not in (select td.fb from td where td.k = 'plain')
+  and tc.ta not in (select td.tb from td where td.k = 'plain') and tc.tsa not in (select td.tsb from td where td.k = 'plain');
+show trace;
+set trace off;
+drop table tc, td;
+
+do @i := @i + 1;
+evaluate concat ('####', lpad (@i, 3), '. PX scan: the leader executes the subquery and builds the hash before the workers start, and the workers read through it; NO_HASH_LOOKUP gives the same counts');
+
+-- 20,000 rows of about 230 bytes: about 300 heap pages, past the parallel heap scan threshold of 32 pages under CTP, so that the scan of tc runs in parallel
+create table tc (id int, ca int, cs varchar(20), pad char(200));
+create table td (ca int);
+create table te (cs varchar(20));
+insert into tc select rownum, rownum mod 5000, 'k' || (rownum mod 3000), 'x' from db_class a, db_class b, db_class c limit 20000;
+insert into td select rownum * 2 from db_class a, db_class b limit 1000;
+insert into te select 'k' || (rownum * 3) from db_class a, db_class b limit 800;
+update statistics on tc, td, te with fullscan;
+
+set trace on;
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select td.ca from td);
+show trace;
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca in (select /*+ NO_UNNEST */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.cs not in (select te.cs from te);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.cs not in (select /*+ NO_HASH_LOOKUP */ te.cs from te);
+-- no outer row reaches the term, and the leader executes the subquery before the workers start all the same
+select /*+ recompile parallel(4) */ count (*) from tc where tc.id < 0 and tc.ca not in (select td.ca from td);
+show trace;
+-- 800 strings of 200 bytes: the list of the subquery takes about 11 pages, so that a hash of its tuples needs about 200 KB and a hash of their positions about 40 KB
+-- max_hash_list_scan_size 100k lies between the two: the hash keeps the positions in memory, and each worker reads the leader's list through a scan of its own
+set system parameters 'max_hash_list_scan_size=100k';
+select /*+ recompile parallel(4) */ count (*) from tc where rpad (tc.cs, 200, '-') not in (select rpad (te.cs, 200, '-') from te);
+show trace;
+select /*+ recompile parallel(4) */ count (*) from tc where rpad (tc.cs, 200, '-') not in (select /*+ NO_HASH_LOOKUP */ rpad (te.cs, 200, '-') from te);
+set system parameters 'max_hash_list_scan_size=default';
+-- td holds a NULL from here on
+insert into td values (null);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td);
+set trace off;
+
+do @i := @i + 1;
+evaluate concat ('####', lpad (@i, 3), '. uncorrelated subqueries executed in parallel: a subquery that holds the term frees its hash before its list');
+
+set trace on;
+select /*+ recompile */ * from (select count (*) from tc where tc.ca not in (select td.ca from td)) a,
+                               (select count (*) from tc where tc.cs not in (select te.cs from te)) b;
+show trace;
+select /*+ recompile */ * from (select count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td)) a,
+                               (select count (*) from tc where tc.cs not in (select /*+ NO_HASH_LOOKUP */ te.cs from te)) b;
+set trace off;
+drop table tc, td, te;
 
 -- CLEAN UP
 drop table ta, tb;
