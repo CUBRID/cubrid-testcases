@@ -9,12 +9,14 @@
  *  rows and joined to t_ord with a hash join over a full scan of t_ord.
  *
  *  Fix: the group count is multiplied by the HAVING selectivity. SUM, AVG, MIN
- *  and MAX compared with constants (>, <, BETWEEN, =, IN) are estimated with
- *  the histogram of the aggregated column, COUNT (*) with the histogram of the
- *  GROUP BY column, and AND, OR and NOT combine them. An aggregate compared
- *  with a host variable is planned under the value of the first execution, and
- *  AVG, MIN and MAX are replanned when the value moves far. Any other
- *  aggregate predicate takes a default selectivity.
+ *  and MAX compared with constants (>, <, BETWEEN, and = and IN except for
+ *  SUM) are estimated with the histogram of the aggregated column, and <>,
+ *  NOT BETWEEN and NOT IN as the complement among the groups whose aggregate
+ *  is not NULL. COUNT (*) is estimated with the histogram of the GROUP BY
+ *  column, and AND, OR and NOT combine them. An aggregate compared with a host
+ *  variable is planned under the value of the first execution, and AVG, MIN
+ *  and MAX are replanned when the value moves far. Any other aggregate
+ *  predicate takes a default selectivity.
  *
  *  Data: t_ord 20,000 orders, t_line 1 to 7 lines per order (80,003 rows),
  *  l_qty 1..50, l_date in 2020, l_n NULL for every line of every fifth order.
