@@ -74,6 +74,29 @@ deallocate prepare st1;
 deallocate prepare st2;
 deallocate prepare st3;
 
+-- Case 6: a folded derived table keeps the hidden columns of an ORDER BY key outside its select list
+-- false by WHERE, HAVING, START WITH; the last one is not folded
+select a.id, d.x from t28231_ra a left join (select id x from t28231_rb where 1=0 order by c) d on a.id = d.x order by 1;
+select a.id, d.x from t28231_ra a left join (select id x from t28231_rb group by id having 1=0 order by max(c)) d on a.id = d.x order by 1;
+select a.id, d.x from t28231_ra a left join (select id x from t28231_rb start with 1=0 connect by prior id = c order by c) d on a.id = d.x order by 1;
+select a.id, d.x, d.y from t28231_ra a left join (select id x, c y from t28231_rb where 1=0 order by c, id desc) d on a.id = d.x order by 1;
+select a.id, d.x from t28231_ra a left join (select id x from t28231_rb where id = -1 order by c) d on a.id = d.x order by 1;
+insert into t28231_ri select id from t28231_rb where 1=0 order by c;
+select count(*) from t28231_ri;
+
+-- Case 7: an aggregate query without GROUP BY returns a row though START WITH or its WHERE empties the hierarchy
+select count(*) from t28231_ra start with 1=0 connect by prior id + 1 = id;
+select count(*), max(id) from t28231_ra where 1=0 start with id = 1 connect by prior id + 1 = id;
+select x from ((select count(*) x from t28231_ra start with 1=0 connect by prior id + 1 = id) union all (select 7)) u order by 1;
+with c1 as (select count(*) x from t28231_ra start with 1=0 connect by prior id + 1 = id) select x from c1;
+select a.id, d.x from t28231_ra a left join (select count(*) x from t28231_rb start with 1=0 connect by prior id + 1 = id) d on a.id - 1 = d.x order by 1;
+insert into t28231_ri select count(*) from t28231_ra start with 1=0 connect by prior id + 1 = id;
+insert into t28231_ri select sum(id) from t28231_ra start with 1=0 connect by prior id + 1 = id;
+select x from t28231_ri order by 1;
+-- still false: with GROUP BY, without an aggregate
+select count(*) from t28231_ra start with 1=0 connect by prior id + 1 = id group by id;
+select id from t28231_ra start with 1=0 connect by prior id + 1 = id;
+
 drop table t28231_pc;
 drop table t28231_pa;
 drop view v28231;
