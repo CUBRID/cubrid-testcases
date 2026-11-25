@@ -1,15 +1,15 @@
 ===================================================
-    
-Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE of no element domain returns the uncached results     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
 4
 ===================================================
-ca    (select ta.cb from db_root)    
+    
+Case 1: SEQUENCE - a correlated subquery keyed by a SEQUENCE without an element type returns the uncached results     
+
+===================================================
+ca    (select t_sequence_a.cb from db_root)    
 81     1,     
 82     1.0,     
 83     1.0,     
@@ -23,42 +23,35 @@ ca    cb
 84     1,     
 
 ===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
     
 Case 2: SEQUENCE OF SET - a correlated subquery keyed by the column returns the uncached results     
 
 ===================================================
-0
-===================================================
-0
-===================================================
-1
-===================================================
-1
-===================================================
-1
-===================================================
-0
-===================================================
-1
-===================================================
-1
-===================================================
-ca    (select count(*) from tc where tc.cb=tb.cb)    
+ca    (select count(*) from t_sequence_sequence where t_sequence_sequence.cb=t_sequence_set_a.cb)    
 91     1     
 92     1     
 96     0     
 97     1     
 
 ===================================================
-ca    (select /*+ NO_SUBQUERY_CACHE */ count(*) from tc where tc.cb=tb.cb)    
-91     1     
-92     1     
-96     0     
-97     1     
-
-===================================================
-    
-Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE of no element type - a correlated subquery keyed by the column returns the uncached results     
+result    
+PASS     
 
 ===================================================
 0
@@ -67,18 +60,6 @@ Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE of no element
 ===================================================
 3
 ===================================================
-ca    (select td.cb from db_root)    
-301     1,     
-302     1.0,     
-303     1,     
-
-===================================================
-ca    (select /*+ NO_SUBQUERY_CACHE */ td.cb from db_root)    
-301     1,     
-302     1.0,     
-303     1,     
-
-===================================================
 0
 ===================================================
 1
@@ -86,26 +67,39 @@ ca    (select /*+ NO_SUBQUERY_CACHE */ td.cb from db_root)
 1
 ===================================================
 1
-===================================================
-ca    (select te.cb={set{1}} from db_root)    
-311     1     
-312     0     
-313     1     
-314     0     
-
-===================================================
-ca    (select /*+ NO_SUBQUERY_CACHE */ te.cb={set{1}} from db_root)    
-311     1     
-312     0     
-313     1     
-314     0     
-
 ===================================================
 0
 ===================================================
 5
 ===================================================
-ca    (select tf.cb from db_root)    
+    
+Case 3: SET of several element types, SEQUENCE OF SET and SEQUENCE without an element type - a correlated subquery keyed by the column returns the uncached results     
+
+===================================================
+ca    (select t_set_int_double.cb from db_root)    
+301     1,     
+302     1.0,     
+303     1,     
+
+===================================================
+ca    (select /*+ NO_SUBQUERY_CACHE */ t_set_int_double.cb from db_root)    
+301     1,     
+302     1.0,     
+303     1,     
+
+===================================================
+ca    (select t_sequence_set_b.cb={set{1}} from db_root)    
+311     1     
+312     0     
+313     1     
+314     0     
+
+===================================================
+result    
+PASS     
+
+===================================================
+ca    (select t_sequence_b.cb from db_root)    
 321     1,     
 322     1.0,     
 323     1.0,     
@@ -113,7 +107,7 @@ ca    (select tf.cb from db_root)
 325     1.0,     
 
 ===================================================
-ca    (select /*+ NO_SUBQUERY_CACHE */ tf.cb from db_root)    
+ca    (select /*+ NO_SUBQUERY_CACHE */ t_sequence_b.cb from db_root)    
 321     1,     
 322     1.0,     
 323     1.0,     
