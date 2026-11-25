@@ -13,11 +13,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 20
 ===================================================
 0
 ===================================================
 2000
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -734,6 +738,52 @@ Trace Statistics:
           ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
+===================================================
+    
+S16: UNION ALL view read by the FROM clause and a WHERE subquery, the shape cbrd_28126 Case 1 had     
+
+===================================================
+count(*)    max(a.k)    
+101     20     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (a)
+
+  rewritten query: select a.l_suppkey from [dba.t_?_li] a
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.s_suppkey from [dba.t_?_su] a
+
+  TABLE SCAN (b)
+
+  rewritten query: (select max(b.k) from (select b.l_suppkey from [dba.t_?_li] b union all select b.s_suppkey from [dba.t_?_su] b) b (k))
+
+  TABLE SCAN (a)
+
+  rewritten query: select count(*), max(a.k) from (select a.l_suppkey from [dba.t_?_li] a union all select a.s_suppkey from [dba.t_?_su] a) a (k) where a.k=(select max(b.k) from (select b.l_suppkey from [dba.t_?_li] b union all select b.s_suppkey from [dba.t_?_su] b) b (k))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_su), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
 ===================================================

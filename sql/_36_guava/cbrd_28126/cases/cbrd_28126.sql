@@ -16,6 +16,10 @@
  *  Each query is followed by its NO_PARALLEL_SUBQUERY twin, whose result block must
  *  be identical. CTP masks digits, so only trace tokens are checked.
  *
+ *  v_both2 and v_both3 have the body of v_both. A view read twice or more in a statement
+ *  runs once as a CTE (CBRD-27351), so Cases 1, 2, 5 and 6 read different views to keep
+ *  the executors they check.
+ *
  *  Coverage:
  *    Case 1:  WHERE subquery over a UNION after the FROM UNION finished
  *    Case 2:  select list subquery over a UNION after the FROM UNION finished
@@ -32,6 +36,8 @@
  */
 
 drop view if exists v_both;
+drop view if exists v_both2;
+drop view if exists v_both3;
 drop table if exists t_lo, t_hi, t_mix, t_big;
 
 -- two rows per table: the executor needs no data size, only two or more UNION arms
@@ -42,6 +48,8 @@ insert into t_lo values (1), (2);
 insert into t_hi values (3), (4);
 insert into t_mix values (1, 'a'), (3, 'b'), (5, 'c');
 create view v_both as select col_a from t_lo union all select col_a from t_hi;
+create view v_both2 as select col_a from t_lo union all select col_a from t_hi;
+create view v_both3 as select col_a from t_lo union all select col_a from t_hi;
 -- the CTE of Cases 11 and 12 reads enough rows to still run when its reader starts
 create table t_big (col_a int);
 insert into t_big select rownum from db_class a, db_class b, db_class c limit 100000;
@@ -51,15 +59,15 @@ set trace on;
 
 
 evaluate 'Case 1: WHERE subquery after the FROM UNION; result = no_parallel_subquery';
-select /*+ recompile */ a.col_a from v_both a where a.col_a = (select max (b.col_a) from v_both b) order by 1;
+select /*+ recompile */ a.col_a from v_both a where a.col_a = (select max (b.col_a) from v_both2 b) order by 1;
 show trace;
-select /*+ no_parallel_subquery */ a.col_a from v_both a where a.col_a = (select max (b.col_a) from v_both b) order by 1;
+select /*+ no_parallel_subquery */ a.col_a from v_both a where a.col_a = (select max (b.col_a) from v_both2 b) order by 1;
 
 
 evaluate 'Case 2: select list subquery after the FROM UNION; result = no_parallel_subquery';
-select /*+ recompile */ a.col_a, (select max (b.col_a) from v_both b) from v_both a order by 1;
+select /*+ recompile */ a.col_a, (select max (b.col_a) from v_both b) from v_both2 a order by 1;
 show trace;
-select /*+ no_parallel_subquery */ a.col_a, (select max (b.col_a) from v_both b) from v_both a order by 1;
+select /*+ no_parallel_subquery */ a.col_a, (select max (b.col_a) from v_both b) from v_both2 a order by 1;
 
 
 evaluate 'Case 3: NOT IN subquery over a UNION; result = no_parallel_subquery';
@@ -75,15 +83,15 @@ select /*+ no_parallel_subquery */ a.col_a from v_both a where a.col_a = (select
 
 
 evaluate 'Case 5: select list subquery with a join of two UNION views; result = no_parallel_subquery';
-select /*+ recompile */ a.col_a, (select max (col_a) from v_both) from v_both a, v_both b where a.col_a = b.col_a order by 1;
+select /*+ recompile */ a.col_a, (select max (col_a) from v_both) from v_both2 a, v_both3 b where a.col_a = b.col_a order by 1;
 show trace;
-select /*+ no_parallel_subquery */ a.col_a, (select max (col_a) from v_both) from v_both a, v_both b where a.col_a = b.col_a order by 1;
+select /*+ no_parallel_subquery */ a.col_a, (select max (col_a) from v_both) from v_both2 a, v_both3 b where a.col_a = b.col_a order by 1;
 
 
 evaluate 'Case 6: nested parallel subqueries; result = no_parallel_subquery';
-select /*+ recompile */ x.col_a, y.col_a from (select col_a from v_both union all select col_a from t_mix) x, (select col_a from t_mix union all select col_a from v_both) y where x.col_a = y.col_a order by 1, 2;
+select /*+ recompile */ x.col_a, y.col_a from (select col_a from v_both union all select col_a from t_mix) x, (select col_a from t_mix union all select col_a from v_both2) y where x.col_a = y.col_a order by 1, 2;
 show trace;
-select /*+ no_parallel_subquery */ x.col_a, y.col_a from (select col_a from v_both union all select col_a from t_mix) x, (select col_a from t_mix union all select col_a from v_both) y where x.col_a = y.col_a order by 1, 2;
+select /*+ no_parallel_subquery */ x.col_a, y.col_a from (select col_a from v_both union all select col_a from t_mix) x, (select col_a from t_mix union all select col_a from v_both2) y where x.col_a = y.col_a order by 1, 2;
 
 
 evaluate 'Case 7: one arm fails; result = the same error, then rows';
@@ -128,4 +136,6 @@ set trace off;
 with c as (select col_a mod 10 k, count (*) n from t_big group by col_a mod 10) select /*+ no_parallel_subquery */ q.k, q.n, o.cnt from (select k, n from c) q, (select count (*) cnt from c) o order by 1;
 
 drop view v_both;
+drop view v_both2;
+drop view v_both3;
 drop table t_lo, t_hi, t_mix, t_big;

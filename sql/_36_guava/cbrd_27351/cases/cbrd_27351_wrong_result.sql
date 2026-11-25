@@ -12,8 +12,13 @@
  *              query must not use the plan of the first one (it would read the result of one view for both).
  *              R4: the shared view is executed before the statement. An error of the view body shows even where
  *              each reference would not have been executed before the fix (here, the outer table is empty).
+ *              R5-R7: the workers of a parallel scan run again a subquery that reads the shared view: an IN
+ *              subquery under OR (R5), a scalar subquery in a condition pushed into the input of a hash join (R6),
+ *              a scalar subquery alone in the select list (R7). Each worker must read the result the statement
+ *              made, not an empty copy (before the fix: 0 rows, or NULL for R7). The table is large enough for a
+ *              parallel scan; each query is followed by its PARALLEL(0) twin, whose result must be the same.
  * Coverage: ORDER BY view, parallel subquery execution of a statement that shares a view, XASL cache, error of a
- *           view executed first
+ *           view executed first, subqueries run again by the workers of a parallel scan
  */
 
 --
@@ -25,11 +30,14 @@ drop view if exists v_27351_rev;
 drop view if exists v_27351_hv;
 drop view if exists v_27351_hw;
 drop view if exists v_27351_zero;
+drop view if exists v_27351_pv;
 drop table if exists t_27351_ord;
 drop table if exists t_27351_li;
 drop table if exists t_27351_su;
 drop table if exists t_27351_hv;
 drop table if exists t_27351_empty;
+drop table if exists t_27351_pt;
+drop table if exists t_27351_pu;
 
 create table t_27351_ord (a int, b varchar(10));
 insert into t_27351_ord values (1, 'z'), (2, 'y'), (3, 'x');
@@ -56,6 +64,13 @@ create view v_27351_hw (k, s) as select k, sum(x) from t_27351_hv where x > 900 
 
 create table t_27351_empty (k int);
 create view v_27351_zero (k, q) as select k, sum(x) / min(x - x) from t_27351_hv group by k;
+
+create table t_27351_pt (k int, x int);
+insert into t_27351_pt select mod(level, 1000), mod(level, 97) from db_root connect by level <= 300000;
+create table t_27351_pu (k int, y int);
+insert into t_27351_pu select mod(level, 1000), mod(level, 89) from db_root connect by level <= 300000;
+update statistics on t_27351_pt, t_27351_pu with fullscan;
+create view v_27351_pv (k, s) as select k, sum(y) from t_27351_pu group by k;
 
 evaluate 'R1: ORDER BY view, select-list subquery reference and FROM reference (expected 3,2,1)';
 select /*+ recompile */ (select group_concat(s.a) from v_27351_ord s) g1, group_concat(x.b) g2, max(x.a)
@@ -93,6 +108,24 @@ select count(*), sum(a.s), sum(b.s) from v_27351_hw a, v_27351_hv b where a.k = 
 evaluate 'R4: an error of the shared view body shows although the outer table is empty';
 select /*+ recompile */ (select max(q) from v_27351_zero), (select min(q) from v_27351_zero) from t_27351_empty;
 
+evaluate 'R5: IN subquery under OR run again by the workers of a parallel scan (expected the same as PARALLEL(0))';
+select /*+ recompile parallel(4) */ count(*), sum(t.x)
+from t_27351_pt t, v_27351_pv a where t.k = a.k and (t.k in (select b.k from v_27351_pv b) or t.x = -1);
+select /*+ recompile parallel(0) */ count(*), sum(t.x)
+from t_27351_pt t, v_27351_pv a where t.k = a.k and (t.k in (select b.k from v_27351_pv b) or t.x = -1);
+
+evaluate 'R6: scalar subquery in a condition pushed into the input of a hash join (expected the same as PARALLEL(0))';
+select /*+ recompile */ count(*), sum(t.x)
+from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x >= (select min(b.s) / 1000 from v_27351_pv b);
+select /*+ recompile parallel(0) */ count(*), sum(t.x)
+from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x >= (select min(b.s) / 1000 from v_27351_pv b);
+
+evaluate 'R7: scalar subquery alone in the select list run by the workers of a parallel scan (expected no NULL)';
+select /*+ recompile parallel(4) */ t.k, (select max(b.s) from v_27351_pv b) sq, a.s
+from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x = 7 and t.k < 3 order by 1, 2, 3;
+select /*+ recompile parallel(0) */ t.k, (select max(b.s) from v_27351_pv b) sq, a.s
+from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x = 7 and t.k < 3 order by 1, 2, 3;
+
 --
 -- clean up test data
 --
@@ -102,8 +135,11 @@ drop view v_27351_rev;
 drop view v_27351_hv;
 drop view v_27351_hw;
 drop view v_27351_zero;
+drop view v_27351_pv;
 drop table t_27351_ord;
 drop table t_27351_li;
 drop table t_27351_su;
 drop table t_27351_hv;
 drop table t_27351_empty;
+drop table t_27351_pt;
+drop table t_27351_pu;

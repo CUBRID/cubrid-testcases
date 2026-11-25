@@ -8,7 +8,8 @@
  * Coverage: FROM + uncorrelated subquery (TPC-H Q15 shape), 3 references, derived table, UNION ALL operands,
  *           references using different columns, IN and HAVING subqueries, nested subqueries, no reference in the
  *           FROM clause, DISTINCT view, set operation view, a predicate pushed into one of three references,
- *           references reading no column, ROWNUM view, analytic function in the statement, two share groups
+ *           references reading no column, ROWNUM view, analytic function in the statement, two share groups,
+ *           UNION ALL view read by the FROM clause and a WHERE subquery (the shape cbrd_28126 Case 1 had)
  */
 
 --
@@ -19,6 +20,7 @@ drop view if exists v_27351_rev;
 drop view if exists v_27351_dist;
 drop view if exists v_27351_union;
 drop view if exists v_27351_rownum;
+drop view if exists v_27351_uall;
 drop table if exists t_27351_li;
 drop table if exists t_27351_su;
 
@@ -39,6 +41,7 @@ create view v_27351_rev (supplier_no, total_revenue) as
 create view v_27351_dist (k) as select distinct l_suppkey from t_27351_li;
 create view v_27351_union (k) as select l_suppkey from t_27351_li union select s_suppkey from t_27351_su;
 create view v_27351_rownum (k, m) as select l_suppkey, max(l_price) from t_27351_li where rownum <= 1000 group by l_suppkey;
+create view v_27351_uall (k) as select l_suppkey from t_27351_li union all select s_suppkey from t_27351_su;
 
 set trace on;
 
@@ -133,6 +136,10 @@ from v_27351_rev a, v_27351_rev b, v_27351_dist c, v_27351_dist d
 where a.supplier_no = b.supplier_no and b.supplier_no = c.k and c.k = d.k;
 show trace;
 
+evaluate 'S16: UNION ALL view read by the FROM clause and a WHERE subquery, the shape cbrd_28126 Case 1 had';
+select /*+ recompile */ count(*), max(a.k) from v_27351_uall a where a.k = (select max(b.k) from v_27351_uall b);
+show trace;
+
 set trace off;
 
 --
@@ -143,5 +150,6 @@ drop view v_27351_rev;
 drop view v_27351_dist;
 drop view v_27351_union;
 drop view v_27351_rownum;
+drop view v_27351_uall;
 drop table t_27351_li;
 drop table t_27351_su;
