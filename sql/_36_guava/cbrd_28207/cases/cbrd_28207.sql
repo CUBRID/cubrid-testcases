@@ -36,6 +36,9 @@ select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_
   where (x.b = 2 or w2.c = x.c + 1) and x.b = 3 order by 1, 2;
 with x as (select /*+ NO_MERGE */ a, b, c from t28207_w1)
   select x.a, w2.a from t28207_w2 w2, x where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
+-- two disjuncts before the join term fold away
+select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
+  where (x.b = 2 or x.b = 4 or w2.c = x.c) and x.b = 3 order by 2;
 -- the same query on a table, and an OR that is not folded
 select /*+ USE_HASH */ x.a, w2.a from t28207_w2 w2, t28207_w1 x where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
 select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
