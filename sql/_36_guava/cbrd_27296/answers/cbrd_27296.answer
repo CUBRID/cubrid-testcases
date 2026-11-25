@@ -1,0 +1,292 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: EXECUTE on a table, a procedure and a package granted to a user: one line each, the package line with PACKAGE after ON     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+Case 2: a package with only a spec and a package of another owner are listed, each with its owner and its name in lowercase     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+Case 3: the user gets the same lines from SHOW GRANTS and SHOW GRANTS FOR CURRENT_USER     
+
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+null     
+
+===================================================
+    
+Case 4: EXECUTE granted to a group is listed for the group and for its member, with the group as the grantee     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_GROUP    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_GROUP     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+Grants for SG_MEMBER    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_GROUP     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+    
+Case 5: EXECUTE granted to PUBLIC is listed for PUBLIC and for a user, with PUBLIC as the grantee, and no longer after REVOKE     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for PUBLIC    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO PUBLIC     
+GRANT SELECT ON sg_owner.sg_tbl TO PUBLIC     
+
+===================================================
+Grants for SG_MEMBER    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_GROUP     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO PUBLIC     
+GRANT SELECT ON sg_owner.sg_tbl TO PUBLIC     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for PUBLIC    
+
+===================================================
+Grants for SG_MEMBER    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_GROUP     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+    
+Case 6: WITH GRANT OPTION on a package is refused, and no line has WITH GRANT OPTION     
+
+===================================================
+    
+null     
+
+===================================================
+Error:-494
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+Case 7: EXECUTE on the system package dbms_output is in _db_auth but not listed     
+
+===================================================
+0
+===================================================
+unique_name    system_package    auth_type    
+public.dbms_output     1     EXECUTE     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+Case 8: after CREATE OR REPLACE PACKAGE the line of the package is still listed     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+    
+Case 9: after REVOKE the line of the package is gone and the other lines remain     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg_spec TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+Grants for SG_GROUP    
+GRANT EXECUTE ON PACKAGE sg_owner.sg_pkg TO SG_GROUP     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+    
+Case 10: after DROP PACKAGE the lines of the package are gone     
+
+===================================================
+0
+===================================================
+0
+===================================================
+Grants for SG_USER    
+GRANT EXECUTE ON PACKAGE dba.sg_dba_pkg TO SG_USER     
+GRANT EXECUTE ON PROCEDURE sg_owner.sg_proc TO SG_USER     
+GRANT SELECT ON sg_owner.sg_tbl TO SG_USER     
+
+===================================================
+Grants for SG_GROUP    
+GRANT SELECT ON sg_owner.sg_tbl TO SG_GROUP     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0

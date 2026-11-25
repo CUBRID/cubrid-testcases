@@ -1,0 +1,181 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the spec is saved without the owner name and the comment     
+
+===================================================
+0
+===================================================
+pkg_unique_name    scode_spec    scode_body    
+u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+function a return int;
+function b (n int) return varchar;
+end     null     
+
+===================================================
+unique_name    owner.name    comment    
+u26487.pk1     U26487     pk1 spec     
+
+===================================================
+    
+Case 2: the body is saved without the owner name     
+
+===================================================
+0
+===================================================
+0
+===================================================
+pkg_unique_name    scode_body    
+u26487.pk1     CREATE OR REPLACE PACKAGE BODY pk1 AS
+function a return int is
+begin
+return 1;
+end;
+function b (n int) return varchar is
+begin
+return 'b' || n;
+end;
+end     
+
+===================================================
+    
+Case 3: IS and the end label on one line, without the owner name     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+w26487()    
+b111     
+
+===================================================
+    
+null     
+
+===================================================
+pkg_unique_name    scode_spec    scode_body    
+u26487.pk2     CREATE OR REPLACE PACKAGE pk2 AS
+function c return int; end pk2     CREATE OR REPLACE PACKAGE BODY pk2 AS
+function c return int is begin return pk1.a () + 10; end; end pk2     
+
+===================================================
+unique_name    owner.name    comment    
+u26487.pk2     U26487     pk2 spec     
+
+===================================================
+0
+===================================================
+    
+Case 4: the saved code runs again and is saved the same; result = 2     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+w26487()    
+b111     
+
+===================================================
+    
+null     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+    
+Case 5: a replace of the spec saves the new spec and comment, the body and the grant are kept     
+
+===================================================
+0
+===================================================
+pkg_unique_name    scode_spec    scode_body    
+u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+FUNCTION a RETURN int;
+FUNCTION b (n int) RETURN varchar;
+end     CREATE OR REPLACE PACKAGE BODY pk1 AS
+function a return int is
+begin
+return 1;
+end;
+function b (n int) return varchar is
+begin
+return 'b' || n;
+end;
+end     
+
+===================================================
+unique_name    comment    
+u26487.pk1     pk1 spec 2     
+
+===================================================
+grantee_name    object_type    object_name    owner_name    auth_type    
+U26487B     PACKAGE     pk1     U26487     EXECUTE     
+
+===================================================
+    
+null     
+
+===================================================
+w26487()    
+b111     
+
+===================================================
+    
+null     
+
+===================================================
+    
+Case 6: a drop of the body keeps the spec, the comment and the grant     
+
+===================================================
+0
+===================================================
+pkg_unique_name    scode_spec    scode_body    
+u26487.pk1     CREATE OR REPLACE PACKAGE pk1 AS
+FUNCTION a RETURN int;
+FUNCTION b (n int) RETURN varchar;
+end     null     
+
+===================================================
+unique_name    comment    
+u26487.pk1     pk1 spec 2     
+
+===================================================
+grantee_name    object_type    object_name    owner_name    auth_type    
+U26487B     PACKAGE     pk1     U26487     EXECUTE     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
