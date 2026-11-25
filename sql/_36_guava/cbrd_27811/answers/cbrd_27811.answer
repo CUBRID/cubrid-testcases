@@ -20,7 +20,7 @@ count(*)
 
 ===================================================
     
-[1] sum (l_qty) > 300: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 1: sum (l_qty) > 300: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -49,7 +49,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[2] 300 < sum (l_qty): idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 2: 300 < sum (l_qty): idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -78,7 +78,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having ?<sum(t_line.l_qty)) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[3] max (l_qty) > 49: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 3: max (l_qty) > 49: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -107,7 +107,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[4] min (l_qty) > 40: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 4: min (l_qty) > 40: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -136,7 +136,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[5] max (l_date) > date 2020-12-20: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 5: max (l_date) > date 2020-12-20: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -165,7 +165,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_date)>date '?-?-?') av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[6] count (*) > 6: idx-join, inner iscan t_ord on pk_t_ord_o_id     
+Case 6: count (*) > 6: idx-join, inner iscan t_ord on pk_t_ord_o_id     
 
 ===================================================
 count(*)    
@@ -194,7 +194,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having count(*)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[7] control, sum (l_qty) > 10: hash join     
+Case 7: control, sum (l_qty) > 10: hash join     
 
 ===================================================
 count(*)    
@@ -223,7 +223,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[8] control, no HAVING: hash join     
+Case 8: control, no HAVING: hash join     
 
 ===================================================
 count(*)    
@@ -252,7 +252,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[9] sum (l_qty) between 250 and 400: idx-join     
+Case 9: sum (l_qty) between 250 and 400: idx-join     
 
 ===================================================
 count(*)    
@@ -281,7 +281,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty) between ? and ?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[10] max (l_qty) = 50: idx-join     
+Case 10: max (l_qty) = 50: idx-join     
 
 ===================================================
 count(*)    
@@ -310,7 +310,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)=?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[11] min (l_qty) in (49, 50): idx-join     
+Case 11: min (l_qty) in (49, 50): idx-join     
 
 ===================================================
 count(*)    
@@ -339,7 +339,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty) in multiset{?, ?}) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[12] sum (l_qty) > 300 or max (l_qty) > 49: idx-join     
+Case 12: sum (l_qty) > 300 or max (l_qty) > 49: idx-join     
 
 ===================================================
 count(*)    
@@ -368,7 +368,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having (sum(t_line.l_qty)>? or max(t_line.l_qty)>?)) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[13] l_oid + 1 > 18000 and sum (l_qty) > 300 over GROUP BY l_oid + 1: idx-join     
+Case 13: l_oid + 1 > 18000 and sum (l_qty) > 300 over GROUP BY l_oid + 1: idx-join     
 
 ===================================================
 count(*)    
@@ -397,7 +397,7 @@ Query stmt:
 select count(*) from t_ord o, (select (t_line.l_oid+?) from t_line t_line group by t_line.l_oid+? having sum(t_line.l_qty)>? and t_line.l_oid+?>?) av (k) where o.o_id=av.k
 ===================================================
     
-[14] DISTINCT over GROUP BY with sum (l_qty) > 300: idx-join     
+Case 14: DISTINCT over GROUP BY with sum (l_qty) > 300: idx-join     
 
 ===================================================
 count(*)    
@@ -428,7 +428,7 @@ Query stmt:
 select count(*) from t_ord o, (select distinct count(*)+ cast(? as bigint) from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (k) where o.o_id=av.k
 ===================================================
     
-[15] max (l_n) < 3 with all-NULL groups: idx-join     
+Case 15: max (l_n) < 3 with all-NULL groups: idx-join     
 
 ===================================================
 count(*)    
@@ -457,7 +457,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_n)<?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[16] control, count (*) > 1 over UNION ALL: hash join     
+Case 16: control, count (*) > 1 over UNION ALL: hash join     
 
 ===================================================
 count(*)    
@@ -498,7 +498,7 @@ Query stmt:
 select count(*) from t_ord o, (select u.k from (select t_line.l_oid as [k] from t_line t_line union all select t_line.l_oid from t_line t_line) u (k) group by u.k having count(*)>?) av (k) where o.o_id=av.k
 ===================================================
     
-[17] control, sum (l_qty) > -1e30: hash join     
+Case 17: control, sum (l_qty) > -1e30: hash join     
 
 ===================================================
 count(*)    
@@ -527,7 +527,7 @@ Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>-?e?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
     
-[18] max (l_qty) > ? with 10: hash join, then with 49: nested loops     
+Case 18: max (l_qty) > ? with 10: hash join, then with 49: nested loops     
 
 ===================================================
 0
@@ -610,7 +610,7 @@ Trace Statistics:
 0
 ===================================================
     
-[19] sum (l_qty) > ? first with 300: nested loops     
+Case 19: sum (l_qty) > ? first with 300: nested loops     
 
 ===================================================
 0
@@ -650,7 +650,7 @@ Trace Statistics:
 0
 ===================================================
     
-[20] control, count (*) > ? first with 1: hash join     
+Case 20: control, count (*) > ? first with 1: hash join     
 
 ===================================================
 0
@@ -700,7 +700,7 @@ Trace Statistics:
 0
 ===================================================
     
-[21] avg (l_qty) > 49: idx-join     
+Case 21: avg (l_qty) > 49: idx-join     
 
 ===================================================
 count(*)    
@@ -727,5 +727,92 @@ idx-join (inner join)
     cost:  ? card ?
 Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having avg(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+Case 22: sum (l_qty) > 150, a middle range that keeps some groups: idx-join     
+
+===================================================
+count(*)    
+4345     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty)>?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+Case 23: sum (l_qty) not between 0 and 150, the groups of Case 22: idx-join, the same count     
+
+===================================================
+count(*)    
+4345     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty) not between ? and ?)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: av node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: o node[?]
+               index: pk_t_ord_o_id term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty) not between ? and ?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+Case 24: control, max (l_qty) <> 50 keeps every group that Case 10 leaves out: hash join     
+
+===================================================
+count(*)    
+18398     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)<>?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)<>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
 0
