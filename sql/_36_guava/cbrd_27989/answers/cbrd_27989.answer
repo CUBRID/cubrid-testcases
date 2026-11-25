@@ -199,7 +199,7 @@ a    max(a) over (order by a)    ntile(4) over (order by b, a)    first_value(a)
 
 ===================================================
     
-Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order     
+Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order; result = first ANALYTIC line sort: false, second sort: true     
 
 ===================================================
 0
@@ -232,7 +232,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 13: the trace of the single group shows that its sort is skipped (control)     
+Case 13: the trace of the single group shows that its sort is skipped (control); result = one ANALYTIC line, sort: false     
 
 ===================================================
 0

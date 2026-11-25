@@ -67,15 +67,15 @@ select a, max (a) over (order by a), lead (a) over (order by b, a), lag (a, 2) o
 evaluate 'Case 11: ROWNUM range without a selected ROWNUM, NTILE, FIRST_VALUE and LAST_VALUE of the sorting group are computed from all rows';
 select a, max (a) over (order by a), ntile (4) over (order by b, a), first_value (a) over (order by b, a), last_value (a) over (order by b, a) from t27989 where a > 0 and rownum between 3 and 8;
 
--- same query as Case 1: in its trace the first ANALYTIC line has sort: false (the group that skips its sort) and the second has sort: true
-evaluate 'Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order';
+-- same query as Case 1
+evaluate 'Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order; result = first ANALYTIC line sort: false, second sort: true';
 set trace on;
 select rownum, a, row_number () over (order by a), sum (c) over (order by b, a) from t27989 where a > 0;
 show trace;
 set trace off;
 
--- same query as Case 9: its only ANALYTIC line has sort: false
-evaluate 'Case 13: the trace of the single group shows that its sort is skipped (control)';
+-- same query as Case 9
+evaluate 'Case 13: the trace of the single group shows that its sort is skipped (control); result = one ANALYTIC line, sort: false';
 set trace on;
 select rownum, a, row_number () over (order by a), lead (a) over (order by a) from t27989 where a > 0;
 show trace;
