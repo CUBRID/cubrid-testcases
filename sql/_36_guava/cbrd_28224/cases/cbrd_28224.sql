@@ -62,6 +62,49 @@ select 'n1', a from v28224_n1;
 select 'n2', a from v28224_n2;
 select 'n3', a, b from v28224_n3 order by 2;
 
+-- a subquery that returns no row folded to a value (CBRD-28219): it must not be stored as a bare null
+create table t28224_c (a int, b int);
+insert into t28224_c values (1, 1), (2, null), (null, 3);
+create view v28224_f01 as select a from t28224_c where a in (select a from t28224_c where 1=0);
+create view v28224_f02 as select a from t28224_c where a not in (select a from t28224_c where 1=0);
+create view v28224_f03 as select a from t28224_c where not exists (select a from t28224_c where 1=0);
+create view v28224_f04 as select (select a from t28224_c where 1=0) m from db_root;
+create view v28224_f05 as select a from t28224_c where a in (select a from t28224_c intersect select 9 from db_root where 1=0);
+create view v28224_f06 as select a from t28224_c where (a, b) in (select a, b from t28224_c where 1=0);
+create view v28224_f07 as select a from t28224_c where (a, b) not in (select a, b from t28224_c where 1=0);
+create view v28224_f08 as select a from t28224_c where a > all (select a from t28224_c where 1=0);
+create view v28224_f09 as select a from t28224_c where a = some (select a from t28224_c where 1=0);
+create view v28224_f10 as select a from t28224_c where not (a in (select a from t28224_c where 1=0));
+create view v28224_f11 as select a, case when a in (select a from t28224_c where 1=0) then 'y' else 'n' end c from t28224_c;
+create view v28224_f12 as select a, (select a from t28224_c where 1=0) + 1 m from t28224_c;
+create view v28224_f13 as select a from t28224_c where a not in (select a from t28224_c where 1=0) or b = 1;
+create view v28224_f14 as select a from t28224_c where a in (select a from t28224_c where 1=0) or b = 1;
+
+select vclass_name, vclass_def from db_vclass where vclass_name like 'v28224\_f%' escape '\' order by 1;
+
+select 'f01', a from v28224_f01 order by 2;
+select 'f02', a from v28224_f02 order by 2;
+select 'f03', a from v28224_f03 order by 2;
+select 'f04', m, m is null from v28224_f04;
+select 'f05', a from v28224_f05 order by 2;
+select 'f06', a from v28224_f06 order by 2;
+select 'f07', a from v28224_f07 order by 2;
+select 'f08', a from v28224_f08 order by 2;
+select 'f09', a from v28224_f09 order by 2;
+select 'f10', a from v28224_f10 order by 2;
+select 'f11', a, c from v28224_f11 order by 2;
+select 'f12', a, m from v28224_f12 order by 2;
+select 'f13', a from v28224_f13 order by 2;
+select 'f14', a from v28224_f14 order by 2;
+
+-- the same queries without a view
+select a from t28224_c where a not in (select a from t28224_c where 1=0) order by 1;
+select a from t28224_c where not exists (select a from t28224_c where 1=0) order by 1;
+select (select a from t28224_c where 1=0) m from db_root;
+select a from t28224_c where a in (select a from t28224_c where 1=0) or b = 1 order by 1;
+
 drop view v28224_01, v28224_02, v28224_03, v28224_04, v28224_05, v28224_06, v28224_07, v28224_08, v28224_09, v28224_10;
 drop view v28224_11, v28224_12, v28224_13, v28224_14, v28224_15, v28224_n1, v28224_n2, v28224_n3;
-drop table t28224, t28224_b;
+drop view v28224_f01, v28224_f02, v28224_f03, v28224_f04, v28224_f05, v28224_f06, v28224_f07, v28224_f08, v28224_f09;
+drop view v28224_f10, v28224_f11, v28224_f12, v28224_f13, v28224_f14;
+drop table t28224, t28224_b, t28224_c;
