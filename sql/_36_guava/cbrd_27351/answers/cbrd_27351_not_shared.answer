@@ -29,11 +29,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 20
 ===================================================
 0
 ===================================================
 2000
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -566,6 +570,98 @@ Trace Statistics:
      
 
 ===================================================
+    
+N10: a predicate pushed into one of two references breaks up the group, the other selects only what it reads     
+
+===================================================
+k    cd    
+3     1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select a.l_suppkey, count(distinct a.l_disc), sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (b)
+
+  rewritten query: (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s))
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ PARALLEL(?) */ a.k, a.cd from (select a.l_suppkey, count(distinct a.l_disc), sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey) a (k, cd, s) where (a.s>=(select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+N11: the reference with the pushed predicate keeps the column read only by that predicate     
+
+===================================================
+cd    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select count(distinct a.l_disc), a.l_suppkey, sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (b)
+
+  rewritten query: (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s))
+
+  TABLE SCAN (a)
+
+  rewritten query: select /*+ PARALLEL(?) */ a.cd from (select count(distinct a.l_disc), a.l_suppkey, sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey) a (cd, k, s) where (a.s>=(select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
     
@@ -583,6 +679,8 @@ count(*)    sum(b)
 count(*)    
 11     
 
+===================================================
+0
 ===================================================
 0
 ===================================================

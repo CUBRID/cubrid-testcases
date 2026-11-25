@@ -9,7 +9,9 @@
  *           references using different columns, IN and HAVING subqueries, nested subqueries, no reference in the
  *           FROM clause, DISTINCT view, set operation view, a predicate pushed into one of three references,
  *           references reading no column, ROWNUM view, analytic function in the statement, two share groups,
- *           UNION ALL view read by the FROM clause and a WHERE subquery (the shape cbrd_28126 Case 1 had)
+ *           UNION ALL view read by the FROM clause and a WHERE subquery (the shape cbrd_28126 Case 1 had),
+ *           the columns of a group a reference with a pushed predicate leaves, a view read by a statement with a WITH
+ *           clause or a CONNECT BY (every column of the view is kept, as before the fix)
  */
 
 --
@@ -21,6 +23,7 @@ drop view if exists v_27351_dist;
 drop view if exists v_27351_union;
 drop view if exists v_27351_rownum;
 drop view if exists v_27351_uall;
+drop view if exists v_27351_wide;
 drop table if exists t_27351_li;
 drop table if exists t_27351_su;
 
@@ -42,6 +45,7 @@ create view v_27351_dist (k) as select distinct l_suppkey from t_27351_li;
 create view v_27351_union (k) as select l_suppkey from t_27351_li union select s_suppkey from t_27351_su;
 create view v_27351_rownum (k, m) as select l_suppkey, max(l_price) from t_27351_li where rownum <= 1000 group by l_suppkey;
 create view v_27351_uall (k) as select l_suppkey from t_27351_li union all select s_suppkey from t_27351_su;
+create view v_27351_wide (k, s, cd) as select l_suppkey, sum(l_price), count(distinct l_disc) from t_27351_li group by l_suppkey;
 
 set trace on;
 
@@ -140,6 +144,26 @@ evaluate 'S16: UNION ALL view read by the FROM clause and a WHERE subquery, the 
 select /*+ recompile */ count(*), max(a.k) from v_27351_uall a where a.k = (select max(b.k) from v_27351_uall b);
 show trace;
 
+evaluate 'S17: a reference with a pushed predicate leaves the group, the other two share only the columns they read';
+select /*+ recompile parallel(0) */ count(*), sum(a.cd), sum(b.s)
+from v_27351_wide a, v_27351_wide b, v_27351_wide c
+where a.k = 3 and b.k = c.k;
+show trace;
+
+evaluate 'S18: a statement with a WITH clause reads every column of the view, as before the fix';
+with c as (select s_suppkey k from t_27351_su where s_suppkey < 10)
+select /*+ recompile parallel(0) */ count(*)
+from c x, c y, v_27351_wide a
+where x.k = y.k and y.k = a.k and a.s >= (select avg(b.s) from v_27351_wide b);
+show trace;
+
+evaluate 'S19: a hierarchical statement reads every column of the view, as before the fix';
+select /*+ recompile parallel(0) */ a.k from v_27351_wide a, v_27351_wide b
+where a.k = b.k
+start with a.k = 1 connect by prior a.k + 1 = a.k
+order by 1;
+show trace;
+
 set trace off;
 
 --
@@ -151,5 +175,6 @@ drop view v_27351_dist;
 drop view v_27351_union;
 drop view v_27351_rownum;
 drop view v_27351_uall;
+drop view v_27351_wide;
 drop table t_27351_li;
 drop table t_27351_su;

@@ -8,7 +8,8 @@
  *              another view, an inline view), and in statements other than SELECT. Each reference executes the view
  *              as before the fix, and the result is unchanged.
  * Coverage: control, merged view, pushed predicates, correlated subquery, DRANDOM, serial, stored function, BENCHMARK,
- *           ALL over a view hierarchy, VALUES view, nested view, inline views of the same text, INSERT / UPDATE
+ *           ALL over a view hierarchy, VALUES view, nested view, inline views of the same text, INSERT / UPDATE,
+ *           the columns of the references whose group breaks up (each selects the columns it reads, as before the fix)
  */
 
 --
@@ -25,6 +26,7 @@ drop view if exists v_27351_func;
 drop view if exists v_27351_bench;
 drop view if exists v_27351_val;
 drop view if exists v_27351_nest;
+drop view if exists v_27351_wide;
 drop serial if exists s_27351;
 drop table if exists t_27351_ins;
 drop table if exists t_27351_li;
@@ -60,6 +62,7 @@ create view v_27351_func (k, f) as select l_suppkey, f_27351 (l_suppkey) from t_
 create view v_27351_bench (k, m) as select l_suppkey, benchmark (1, md5 ('x')) from t_27351_li group by l_suppkey;
 create view v_27351_val (a, b) as values (1, 2), (3, 4);
 create view v_27351_nest (k, t) as select supplier_no, total_revenue from v_27351_rev where supplier_no <= 10;
+create view v_27351_wide (k, s, cd) as select l_suppkey, sum(l_price), count(distinct l_disc) from t_27351_li group by l_suppkey;
 
 set trace on;
 
@@ -112,6 +115,14 @@ from (select l_suppkey k, sum(l_price) s from t_27351_li group by l_suppkey) a,
 where a.k = b.k;
 show trace;
 
+evaluate 'N10: a predicate pushed into one of two references breaks up the group, the other selects only what it reads';
+select /*+ recompile parallel(0) */ a.k, a.cd from v_27351_wide a where a.k = 3 and a.s >= (select min(b.s) from v_27351_wide b);
+show trace;
+
+evaluate 'N11: the reference with the pushed predicate keeps the column read only by that predicate';
+select /*+ recompile parallel(0) */ a.cd from v_27351_wide a where a.k = 3 and a.s >= (select min(b.s) from v_27351_wide b);
+show trace;
+
 set trace off;
 
 evaluate 'N9: statements other than SELECT keep executing each reference';
@@ -129,6 +140,7 @@ select count(*) from t_27351_ins where b = 0;
 --
 
 drop view v_27351_nest;
+drop view v_27351_wide;
 drop view v_27351_rev;
 drop view v_27351_child;
 drop view v_27351_parent;
