@@ -3,7 +3,7 @@
  *  1. predicate:  1 = abs (ta.b)                               key range: ( abs(ta.b)= ?:0 )
  *  2. predicate:  1 = -abs (ta.b)                              key range: ( abs(ta.b)=-1)
  *  3. predicate:  1 = -(-abs (ta.b))                           key range: ( abs(ta.b)= ?:0 )
- *  4. predicate: -1 = -abs (ta.b)                              key range: ( abs(ta.b)=--1)
+ *  4. predicate: -1 = -abs (ta.b)                              key range: ( abs(ta.b)=-(-1))
  *  5. predicate: -1 = -(-abs (ta.b))                           key range: ( abs(ta.b)= ?:0 )
  *  6. predicate:  1 > abs (tb.b)                               key range: ( abs(ta.b)< ?:0 )
  *  7. predicate:  1 > -abs (ta.b)                              key range: ( abs(ta.b)>-1)
@@ -35,10 +35,10 @@
  * 23. predicate: abs (ta.b) between 1 and 1000 and 999 <= abs (ta.b)
  *                                                              key range: ( abs(ta.b)>= ?:0  and  abs(ta.b)<= ?:1 )
  * 24. predicate: -abs (ta.b) between -1000 and -1 and 999 <= abs (ta.b)
- *                                                              key range: ( abs(ta.b)>=--1 and  abs(ta.b)<=--1000)
+ *                                                              key range: ( abs(ta.b)>=-(-1) and  abs(ta.b)<=-(-1000))
  *                                                               - data filter: ( abs(ta.b)>= ?:0 )
  * 25. predicate: -ta.b between -1000 and -1 and 999 <= ta.b
- *                                                              key range: (ta.b>=--1 and ta.b<=--1000)
+ *                                                              key range: (ta.b>=-(-1) and ta.b<=-(-1000))
  *                                                               - key filter: (ta.b>= ?:0 )
  * 26. predicate: length (ta.b) > 5 and length (ta.b) <= 6      key range:  char_length( cast(ta.b as varchar))<=6
  * 27. predicate: length (cast (ta.b as varchar)) > 5 and length (cast (ta.b as varchar)) <= 6
