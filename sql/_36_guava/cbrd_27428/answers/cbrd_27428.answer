@@ -94,10 +94,10 @@ Case 5: the db_package_code row of pkg_full holds its spec and body source
 
 ===================================================
 pkg_name    owner    spec_code    body_code    
-pkg_full     PKG_OWNER     create package pkg_full as
+pkg_full     PKG_OWNER     CREATE OR REPLACE PACKAGE [pkg_full] AS
 procedure p (a int);
 function f (a int) return int;
-end comment 'pkg_full comment'     create package body pkg_full as
+end     CREATE OR REPLACE PACKAGE BODY [pkg_full] AS
 procedure p (a int) as begin null; end;
 function f (a int) return int as begin return a; end;
 end     
@@ -108,7 +108,7 @@ Case 6: a package with only a body has a db_package_code row and no db_package r
 
 ===================================================
 pkg_name    owner    spec_code    body_code    
-pkg_body_only     PKG_OWNER     null     create package body pkg_body_only as
+pkg_body_only     PKG_OWNER     null     CREATE OR REPLACE PACKAGE BODY [pkg_body_only] AS
 procedure q as begin null; end;
 end     
 
@@ -272,7 +272,7 @@ pkg_spec_only     PKG_OWNER     1
 
 ===================================================
 pkg_name    owner    spec_code    body_code    
-pkg_spec_only     PKG_OWNER     create package pkg_spec_only as
+pkg_spec_only     PKG_OWNER     CREATE OR REPLACE PACKAGE [pkg_spec_only] AS
 procedure r;
 end     null     
 
