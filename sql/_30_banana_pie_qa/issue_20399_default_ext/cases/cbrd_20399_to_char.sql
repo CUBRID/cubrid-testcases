@@ -9,7 +9,7 @@ create table t1(s1 string default to_char(SUBDATE(SYSDATE,INTERVAL 24 HOUR),'HH:
 create table t1(s1 datetime default cast(TO_CHAR(SYS_DATETIME, 'HH:MI:SS.FF AM MM/DD/YYYY') as datetime));
 
 -- success
-create table t1(s1 varchar default TO_CHAR(SYS_DATETIME, 'HH:MI:SS.FF AM MM/DD/YYYY'||'MM/DD/YYYY'));
+create table t1(s1 varchar default TO_CHAR(SYS_DATETIME, 'HH:MI:SS.FF AM MM/DD/YYYYMM/DD/YYYY'));
 
 drop t1;
 
@@ -134,7 +134,7 @@ drop table if exists t7;
 create table t7(s1 time default TO_TIME(systime, 'HH24:MI:SS'));
 
 -- success
-create table t7(s1 time default TO_TIME('12:23:23', 'HH24:MI:SS'));
+create table t7(s1 time default TIME'12:23:23');
 
 insert into t7 values default;
 
