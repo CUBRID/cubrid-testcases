@@ -30,7 +30,7 @@
 0
 ===================================================
     
-Case 1: scenario 1 - a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN; result = 10 rows     
+Case 1: a LEFT JOIN whose ON reads only the two tables of the CROSS JOIN (scenario 1); result = 10 rows     
 
 ===================================================
 ca    ca    ca    
@@ -68,7 +68,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca from ta ta cross join tb tb left outer join tc tc on ta.ca=tb.ca order by ?, ?, ?
 ===================================================
     
-Case 2: scenario 2 - a LEFT JOIN whose ON joins the inner table to the second table and filters the first; result = 6 rows     
+Case 2: a LEFT JOIN whose ON joins the inner table to the second table and filters the first (scenario 2); result = 6 rows     
 
 ===================================================
 ca    ca    ca    
@@ -103,7 +103,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca from ta ta cross join tb tb left outer join tc tc on ta.ca= ?:?  and tc.ca=tb.ca order by ?, ?, ?
 ===================================================
     
-Case 3: scenario 4 - two CROSS JOINs before a LEFT JOIN whose ON reads the first and the last table; result = 18 rows     
+Case 3: two CROSS JOINs before a LEFT JOIN whose ON reads the first and the last table (scenario 4); result = 18 rows     
 
 ===================================================
 ca    ca    ca    ca    
@@ -155,7 +155,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb cross join tc tc left outer join td td on ta.ca= ?:?  and td.ca=tc.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 4: scenario 8 - two LEFT JOINs, each after a CROSS JOIN, the second ON reads both CROSS JOINs; result = 18 rows     
+Case 4: two LEFT JOINs, each after a CROSS JOIN, the second ON reads both CROSS JOINs (scenario 8); result = 18 rows     
 
 ===================================================
 ca    ca    ca    ca    ca    
@@ -216,7 +216,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca, te.ca from ta ta cross join tb tb left outer join tc tc on tc.ca=ta.ca cross join td td left outer join te te on te.cb=td.cb and te.ca=tb.ca order by ?, ?, ?, ?, ?
 ===================================================
     
-Case 5: scenario 9 - two LEFT JOINs whose ONs read the same two tables of the CROSS JOIN; result = 6 rows     
+Case 5: two LEFT JOINs whose ONs read the same two tables of the CROSS JOIN (scenario 9); result = 6 rows     
 
 ===================================================
 ca    ca    ca    ca    
@@ -257,7 +257,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca left outer join td td on td.cb=tb.cb and td.ca=ta.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 6: scenario 10 - three LEFT JOINs whose ONs read the same two tables of the CROSS JOIN; result = 6 rows     
+Case 6: three LEFT JOINs whose ONs read the same two tables of the CROSS JOIN (scenario 10); result = 6 rows     
 
 ===================================================
 ca    ca    ca    ca    ca    
@@ -381,7 +381,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, d.x from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca and tc.ca=ta.ca, table({tc.ca+?}) d (x) where (ta.ca<d.x) and (tb.ca<d.x) order by ?, ?, ?, ?
 ===================================================
     
-Case 9: scenario 5 - a LEFT JOIN whose ON reads both tables of a merged comma-join view; result = 4 rows     
+Case 9: a LEFT JOIN whose ON reads both tables of a merged comma-join view (scenario 5); result = 4 rows     
 
 ===================================================
 ca    cc    ca    ca    
@@ -421,7 +421,7 @@ Query stmt:
 select va.ca, b.ca, tb.ca, tc.ca from ta va, tb b inner join tb tb on tb.ca=va.ca left outer join tc tc on va.cb= ?:?  and tc.ca=b.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 10: scenario 6 - a merged comma-join view and a CROSS JOIN before the LEFT JOIN; result = 12 rows     
+Case 10: a merged comma-join view and a CROSS JOIN before the LEFT JOIN (scenario 6); result = 12 rows     
 
 ===================================================
 ca    cc    ca    ca    
@@ -467,362 +467,7 @@ Query stmt:
 select va.ca, b.ca, tb.ca, tc.ca from ta va, tb b cross join tb tb left outer join tc tc on va.cb= ?:?  and tc.ca=tb.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 11: scenario 7 - a LEFT JOIN whose ON reads both tables of a merged view with an inner join; result = 2 rows     
-
-===================================================
-ca    cc    ca    ca    
-1     1     1     1     
-2     2     2     null     
-
-===================================================
-    
-Case 12: a LEFT JOIN whose ON reads only its own table, after a CROSS JOIN; result = 6 rows     
-
-===================================================
-ca    ca    ca    
-1     1     1     
-1     2     1     
-2     1     1     
-2     2     1     
-3     1     1     
-3     2     1     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-200
-===================================================
-500
-===================================================
-200
-===================================================
-1
-===================================================
-1
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-    
-Case 13: a LEFT JOIN whose ON reads only its own table, joined after a later CROSS JOIN table that another ON reads; result = 1 row     
-
-===================================================
-ca    ca    ca    ca    ca    ca    ca    
-1     null     1     null     1     1     null     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?] AND term[?]
-                 outer: nl-join (left outer join)
-                            outer: nl-join (left outer join)
-                                       edge:  term[?] AND term[?]
-                                       outer: nl-join (cross join)
-                                                  outer: idx-join (inner join)
-                                                             outer: nl-join (inner join)
-                                                                        edge:  term[?]
-                                                                        outer: sscan
-                                                                                   class: te node[?]
-                                                                                   cost:  ? card ?
-                                                                        inner: sscan
-                                                                                   class: ta node[?]
-                                                                                   sargs: term[?]
-                                                                                   cost:  ? card ?
-                                                                        cost:  ? card ?
-                                                             inner: iscan
-                                                                        class: tc node[?]
-                                                                        index: i_tc_ca term[?] (covers)
-                                                                        cost:  ? card ?
-                                                             cost:  ? card ?
-                                                  inner: sscan
-                                                             class: tf node[?]
-                                                             cost:  ? card ?
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: tg node[?]
-                                                  sargs: term[?] AND term[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: tb node[?]
-                                       sargs: term[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: td node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, tb.ca, tc.ca, td.ca, te.ca, tf.ca, tg.ca from ta ta left outer join tb tb on (tb.ca>tb.cb) cross join tc tc left outer join td td on td.cb=tc.ca and td.ca=tb.ca inner join te te on te.cb=tc.ca and te.ca=ta.ca cross join tf tf left outer join tg tg on tg.cb=tf.ca and tg.ca=te.ca order by ?, ?, ?, ?, ?, ?, ?
-===================================================
-    
-Case 14: Case 13 with the ORDERED hint; result = same rows as Case 13     
-
-===================================================
-ca    ca    ca    ca    ca    ca    ca    
-1     null     1     null     1     1     null     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-4
-===================================================
-0
-===================================================
-3
-===================================================
-0
-===================================================
-4
-===================================================
-0
-===================================================
-    
-Case 15: a LEFT JOIN whose ON joins the inner table to both tables of the CROSS JOIN; result = 12 rows     
-
-===================================================
-ca    cb    ca    cb    ca    cb    
-1     1     1     1     1     1     
-1     1     2     2     1     2     
-1     1     3     null     null     null     
-2     2     1     1     null     null     
-2     2     2     2     null     null     
-2     2     3     null     null     null     
-3     3     1     1     null     null     
-3     3     2     2     null     null     
-3     3     3     null     null     null     
-4     null     1     1     null     null     
-4     null     2     2     null     null     
-4     null     3     null     null     null     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?] AND term[?]
-                 outer: nl-join (cross join)
-                            outer: sscan
-                                       class: tb node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: ta node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: tc node[?]
-                            sargs: term[?] AND term[?]
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca order by ?, ?, ?, ?, ?, ?
-===================================================
-    
-Case 16: Case 15 with an IS NULL filter on the NULL-padded table in the WHERE; result = 10 rows     
-
-===================================================
-ca    cb    ca    cb    ca    cb    
-1     1     3     null     null     null     
-2     2     1     1     null     null     
-2     2     2     2     null     null     
-2     2     3     null     null     null     
-3     3     1     1     null     null     
-3     3     2     2     null     null     
-3     3     3     null     null     null     
-4     null     1     1     null     null     
-4     null     2     2     null     null     
-4     null     3     null     null     null     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?] AND term[?]
-                 outer: nl-join (cross join)
-                            outer: sscan
-                                       class: tb node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: ta node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: tc node[?]
-                            sargs: term[?] AND term[?] AND term[?]
-                            cost:  ? card ?
-                 after: term[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca where tc.cb is null  order by ?, ?, ?, ?, ?, ?
-===================================================
-    
-Case 17: Case 15 with a WHERE that reads the NULL-padded table and the second table of the CROSS JOIN; result = 11 rows     
-
-===================================================
-ca    cb    ca    cb    ca    cb    
-1     1     1     1     1     1     
-1     1     3     null     null     null     
-2     2     1     1     null     null     
-2     2     2     2     null     null     
-2     2     3     null     null     null     
-3     3     1     1     null     null     
-3     3     2     2     null     null     
-3     3     3     null     null     null     
-4     null     1     1     null     null     
-4     null     2     2     null     null     
-4     null     3     null     null     null     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?] AND term[?]
-                 outer: nl-join (cross join)
-                            outer: sscan
-                                       class: tb node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: ta node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-                 inner: sscan
-                            class: tc node[?]
-                            sargs: term[?] AND term[?] AND term[?]
-                            cost:  ? card ?
-                 after: term[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca where tb.ca=nvl(tc.ca, tb.ca) order by ?, ?, ?, ?, ?, ?
-===================================================
-    
-Case 18: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the first table and the inner table; result = 7 rows     
-
-===================================================
-ca    cb    ca    cb    ca    cb    
-null     null     null     null     5     1     
-1     1     1     1     1     1     
-2     2     1     1     1     2     
-3     3     2     2     2     3     
-4     null     1     1     1     1     
-4     null     1     1     1     2     
-4     null     2     2     2     3     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: tc node[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (cross join)
-                                         outer: sscan
-                                                    class: tb node[?]
-                                                    cost:  ? card ?
-                                         inner: sscan
-                                                    class: ta node[?]
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 after: term[?]
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb right outer join tc tc on tb.ca=tc.ca where ((ta.cb=tc.cb) or ta.cb is null ) order by ?, ?, ?, ?, ?, ?
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-3
-===================================================
-2
-===================================================
-3
-===================================================
-3
-===================================================
-0
-===================================================
-    
-Case 19: scenario 3 - a RIGHT JOIN pads the unmatched row of tc once, not once per row of the CROSS JOIN; result = 7 rows     
-
-===================================================
-ca    ca    ca    
-null     null     5     
-1     1     1     
-1     2     2     
-2     1     1     
-2     2     2     
-3     1     1     
-3     2     2     
-
-Query plan:
-temp(order by)
-    subplan: nl-join (left outer join)
-                 edge:  term[?]
-                 outer: sscan
-                            class: tc node[?]
-                            cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: nl-join (cross join)
-                                         outer: sscan
-                                                    class: tb node[?]
-                                                    cost:  ? card ?
-                                         inner: sscan
-                                                    class: ta node[?]
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
-                            cost:  ? card ?
-                 cost:  ? card ?
-    sort:  ? asc, ? asc, ? asc
-    cost:  ? card ?
-Query stmt:
-select ta.ca, tb.ca, tc.ca from ta ta cross join tb tb right outer join tc tc on tb.ca=tc.ca order by ?, ?, ?
-===================================================
-    
-Case 20: a RIGHT JOIN whose ON reads the inner table of a LEFT JOIN that follows a CROSS JOIN; result = 5 rows     
+Case 11: a RIGHT JOIN whose ON reads the inner table of a LEFT JOIN that follows a CROSS JOIN; result = 5 rows     
 
 ===================================================
 ca    ca    ca    ca    
@@ -864,7 +509,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb left outer join tc tc on tc.ca=ta.ca right outer join td td on td.ca=tc.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 21: a RIGHT JOIN whose ON reads the first table, after an INNER JOIN that follows a CROSS JOIN; result = 5 rows     
+Case 12: a RIGHT JOIN whose ON reads the first table, after an INNER JOIN that follows a CROSS JOIN; result = 5 rows     
 
 ===================================================
 ca    ca    ca    ca    
@@ -906,7 +551,7 @@ Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb inner join tc tc on tc.ca=tb.ca right outer join td td on td.ca=ta.ca order by ?, ?, ?, ?
 ===================================================
     
-Case 22: a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN; result = 5 rows     
+Case 13: a RIGHT JOIN whose ON reads the first table, after a LEFT JOIN that follows a CROSS JOIN; result = 5 rows     
 
 ===================================================
 ca    ca    ca    ca    
@@ -947,7 +592,27 @@ temp(order by)
 Query stmt:
 select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb left outer join tc tc on tc.ca=tb.ca right outer join td td on td.ca=ta.ca order by ?, ?, ?, ?
 ===================================================
-0
+    
+Case 14: a LEFT JOIN whose ON reads both tables of a merged view with an inner join (scenario 7); result = 2 rows     
+
+===================================================
+ca    cc    ca    ca    
+1     1     1     1     
+2     2     2     null     
+
+===================================================
+    
+Case 15: a LEFT JOIN whose ON reads only its own table, after a CROSS JOIN; result = 6 rows     
+
+===================================================
+ca    ca    ca    
+1     1     1     
+1     2     1     
+2     1     1     
+2     2     1     
+3     1     1     
+3     2     1     
+
 ===================================================
 0
 ===================================================
@@ -957,754 +622,173 @@ select ta.ca, tb.ca, tc.ca, td.ca from ta ta cross join tb tb left outer join tc
 ===================================================
 0
 ===================================================
-0
-===================================================
-0
+4
 ===================================================
 0
 ===================================================
 3
 ===================================================
-100
-===================================================
-1
-===================================================
-2
-===================================================
-1
-===================================================
 0
 ===================================================
-0
+4
 ===================================================
 0
 ===================================================
     
-Case 23: a RIGHT JOIN after a merged comma-join view and a CROSS JOIN; result = 301, 300     
+Case 16: a LEFT JOIN whose ON joins the inner table to both tables of the CROSS JOIN; result = 12 rows     
 
 ===================================================
-count(*)    count(vc.ca)    
-301     300     
+ca    cb    ca    cb    ca    cb    
+1     1     1     1     1     1     
+1     1     2     2     1     2     
+1     1     3     null     null     null     
+2     2     1     1     null     null     
+2     2     2     2     null     null     
+2     2     3     null     null     null     
+3     3     1     1     null     null     
+3     3     2     2     null     null     
+3     3     3     null     null     null     
+4     null     1     1     null     null     
+4     null     2     2     null     null     
+4     null     3     null     null     null     
 
 Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: vc node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select vc.ca from ta vc, tb tb)
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: td node[?]
-               cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (cross join)
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
                             outer: sscan
-                                       class: tc node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: vc node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(vc.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca
-===================================================
-    
-Case 24: a merged comma-join view, a CROSS JOIN and a RIGHT JOIN, then a LEFT JOIN whose ON reads the view; result = 301, 300, 100     
-
-===================================================
-count(*)    count(vc.ca)    count(te.ca)    
-301     300     100     
-
-Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: vc node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select vc.ca from ta vc, tb tb)
-Query plan:
-nl-join (left outer join)
-    edge:  term[?] AND term[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: td node[?]
-                          cost:  ? card ?
-               inner: temp
-                          order: UNORDERED
-                          subplan: nl-join (cross join)
-                                       outer: sscan
-                                                  class: tc node[?]
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: vc node[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: te node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(vc.ca), count(te.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca left outer join te te on te.cb=td.ca and te.ca=vc.ca
-===================================================
-    
-Case 25: Case 24 with the ORDERED hint; result = same counts as Case 24     
-
-===================================================
-count(*)    count(vc.ca)    count(te.ca)    
-301     300     100     
-
-Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: vc node[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tb node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-(select vc.ca from ta vc, tb tb)
-Query plan:
-nl-join (left outer join)
-    edge:  term[?] AND term[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: sscan
-                          class: td node[?]
-                          cost:  ? card ?
-               inner: temp
-                          order: UNORDERED
-                          subplan: nl-join (cross join)
-                                       outer: sscan
-                                                  class: vc node[?]
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: tc node[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: te node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED */ count(*), count(vc.ca), count(te.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca left outer join te te on te.cb=td.ca and te.ca=vc.ca
-===================================================
-    
-Case 26: a RIGHT JOIN after a filtered single-table view and a CROSS JOIN; result = 3, 2     
-
-===================================================
-count(*)    count(vd.ca)    
-3     2     
-
-Query plan:
-sscan
-    class: vd node[?]
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-(select vd.ca from ta vd where (vd.ca> ?:? ))
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: td node[?]
-               cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (cross join)
-                            outer: sscan
-                                       class: tc node[?]
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: vd node[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(vd.ca) from (select vd.ca from ta vd where (vd.ca> ?:? )) vd (ca) cross join tc tc right outer join td td on td.ca=tc.ca
-===================================================
-    
-Case 27: a RIGHT JOIN after a CROSS JOIN, with no view; result = 4     
-
-===================================================
-count(*)    
-4     
-
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: sscan
-               class: td node[?]
-               cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (cross join)
-                            outer: sscan
-                                       class: tc node[?]
+                                       class: tb node[?]
                                        cost:  ? card ?
                             inner: sscan
                                        class: ta node[?]
                                        cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
+                 inner: sscan
+                            class: tc node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta cross join tc tc right outer join td td on td.ca=tc.ca
+select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca order by ?, ?, ?, ?, ?, ?
 ===================================================
     
-Case 28: Case 27 with IS NOT NULL in the WHERE on a NOT NULL column of the first table; result = 3     
+Case 17: Case 16 with an IS NULL filter on the NULL-padded table in the WHERE; result = 10 rows     
 
 ===================================================
-count(*)    
-3     
+ca    cb    ca    cb    ca    cb    
+1     1     3     null     null     null     
+2     2     1     1     null     null     
+2     2     2     2     null     null     
+2     2     3     null     null     null     
+3     3     1     1     null     null     
+3     3     2     2     null     null     
+3     3     3     null     null     null     
+4     null     1     1     null     null     
+4     null     2     2     null     null     
+4     null     3     null     null     null     
 
 Query plan:
-nl-join (cross join)
-    outer: sscan
-               class: ta node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?]
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
                             outer: sscan
-                                       class: tc node[?]
+                                       class: tb node[?]
                                        cost:  ? card ?
                             inner: sscan
-                                       class: td node[?]
-                                       sargs: term[?]
+                                       class: ta node[?]
                                        cost:  ? card ?
                             cost:  ? card ?
-               cost:  ? card ?
+                 inner: sscan
+                            class: tc node[?]
+                            sargs: term[?] AND term[?] AND term[?]
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select count(*) from ta ta cross join tc tc, td td where ta.ca is not null  and td.ca=tc.ca
+select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca where tc.cb is null  order by ?, ?, ?, ?, ?, ?
 ===================================================
     
-Case 29: Case 27 with a comma in place of the CROSS JOIN, which closes the join before the RIGHT JOIN; result = 6, 6, 3, 6     
+Case 18: Case 16 with a WHERE that reads the NULL-padded table and the second table of the CROSS JOIN; result = 11 rows     
 
 ===================================================
-count(*)    count(ta.ca)    count(tc.ca)    count(td.ca)    
-6     6     3     6     
-
-===================================================
-    
-Case 30: the parser refuses a RIGHT JOIN ON after a comma that reads the table before the comma; result = fails with an error     
-
-===================================================
-Error:-494
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-1
-===================================================
-2
-===================================================
-2
-===================================================
-0
-===================================================
-    
-Case 31: scenario 11 - a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE; result = 2 rows     
-
-===================================================
-cb    cb    
-1     null     
-1     20     
-
-===================================================
-    
-Case 32: scenario 12 - Case 31 with the ORDERED hint, which the planner ignores; result = same rows as Case 31     
-
-===================================================
-cb    cb    
-1     null     
-1     20     
+ca    cb    ca    cb    ca    cb    
+1     1     1     1     1     1     
+1     1     3     null     null     null     
+2     2     1     1     null     null     
+2     2     2     2     null     null     
+2     2     3     null     null     null     
+3     3     1     1     null     null     
+3     3     2     2     null     null     
+3     3     3     null     null     null     
+4     null     1     1     null     null     
+4     null     2     2     null     null     
+4     null     3     null     null     null     
 
 Query plan:
 temp(order by)
-    subplan: nl-join (cross join)
-                 outer: sscan
-                            class: ta node[?]
+    subplan: nl-join (left outer join)
+                 edge:  term[?] AND term[?]
+                 outer: nl-join (cross join)
+                            outer: sscan
+                                       class: tb node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: ta node[?]
+                                       cost:  ? card ?
                             cost:  ? card ?
-                 inner: temp
-                            order: UNORDERED
-                            subplan: idx-join (left outer join)
-                                         outer: sscan
-                                                    class: tb node[?]
-                                                    cost:  ? card ?
-                                         inner: iscan
-                                                    class: tc node[?]
-                                                    index: pk_tc_ca term[?]
-                                                    cost:  ? card ?
-                                         cost:  ? card ?
+                 inner: sscan
+                            class: tc node[?]
+                            sargs: term[?] AND term[?] AND term[?]
                             cost:  ? card ?
-                 sargs: term[?]
+                 after: term[?]
                  cost:  ? card ?
-    sort:  ? asc, ? asc
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
+Query stmt:
+select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb left outer join tc tc on tc.cb=tb.cb and tc.ca=ta.ca where tb.ca=nvl(tc.ca, tb.ca) order by ?, ?, ?, ?, ?, ?
 ===================================================
     
-Case 33: scenario 13 - Case 31 with a LEADING hint, which the planner ignores; result = same rows as Case 31     
+Case 19: a RIGHT JOIN after a CROSS JOIN with a WHERE that reads the first table and the inner table; result = 7 rows     
 
 ===================================================
-cb    cb    
-1     null     
-1     20     
+ca    cb    ca    cb    ca    cb    
+null     null     null     null     5     1     
+1     1     1     1     1     1     
+2     2     1     1     1     2     
+3     3     2     2     2     3     
+4     null     1     1     1     1     
+4     null     1     1     1     2     
+4     null     2     2     2     3     
 
 Query plan:
 temp(order by)
-    subplan: nl-join (cross join)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
                  outer: sscan
-                            class: ta node[?]
+                            class: tc node[?]
                             cost:  ? card ?
                  inner: temp
                             order: UNORDERED
-                            subplan: idx-join (left outer join)
+                            subplan: nl-join (cross join)
                                          outer: sscan
                                                     class: tb node[?]
                                                     cost:  ? card ?
-                                         inner: iscan
-                                                    class: tc node[?]
-                                                    index: pk_tc_ca term[?]
+                                         inner: sscan
+                                                    class: ta node[?]
                                                     cost:  ? card ?
                                          cost:  ? card ?
                             cost:  ? card ?
-                 sargs: term[?]
+                 after: term[?]
                  cost:  ? card ?
-    sort:  ? asc, ? asc
-    cost:  ? card ?
-Query stmt: [Warning: HINT ignored]
-select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-3
-===================================================
-2
-===================================================
-2
-===================================================
-3
-===================================================
-2
-===================================================
-0
-===================================================
-    
-Case 34: an INNER JOIN whose ON reads the NULL-padded table of a LEFT JOIN and the table after a CROSS JOIN in one condition; result = 4, 4     
-
-===================================================
-count(*)    count(tb.ca)    
-4     4     
-
-Query plan:
-nl-join (cross join)
-    outer: nl-join (cross join)
-               outer: nl-join (left outer join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: ta node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: tb node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: tc node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: td node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    sargs: term[?]
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb
-===================================================
-    
-Case 35: Case 34 with a second condition that joins the inner table to the table after the CROSS JOIN; result = 2, 2     
-
-===================================================
-count(*)    count(tb.ca)    
-2     2     
-
-Query plan:
-nl-join (inner join)
-    edge:  term[?]
-    outer: nl-join (cross join)
-               outer: nl-join (left outer join)
-                          edge:  term[?]
-                          outer: sscan
-                                     class: ta node[?]
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: tb node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: tc node[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: td node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb and td.ca=tc.ca+?
-===================================================
-    
-Case 36: Case 34 followed by a LEFT JOIN; result = 4, 4, 3     
-
-===================================================
-count(*)    count(tb.ca)    count(t2.ca)    
-4     4     3     
-
-Query plan:
-nl-join (left outer join)
-    edge:  term[?]
-    outer: nl-join (cross join)
-               outer: nl-join (cross join)
-                          outer: nl-join (left outer join)
-                                     edge:  term[?]
-                                     outer: sscan
-                                                class: ta node[?]
-                                                cost:  ? card ?
-                                     inner: sscan
-                                                class: tb node[?]
-                                                sargs: term[?]
-                                                cost:  ? card ?
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: tc node[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: td node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: t? node[?]
-               sargs: term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tb.ca), count(t?.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tc tc inner join td td on td.cb=tb.cb+tc.cb left outer join tb t? on t?.ca=td.ca
-===================================================
-    
-Case 37: Case 34 with a table between the CROSS JOINs that no ON reads; result = 8, 8     
-
-===================================================
-count(*)    count(tb.ca)    
-8     8     
-
-Query plan:
-nl-join (cross join)
-    outer: nl-join (cross join)
-               outer: nl-join (cross join)
-                          outer: nl-join (left outer join)
-                                     edge:  term[?]
-                                     outer: sscan
-                                                class: ta node[?]
-                                                cost:  ? card ?
-                                     inner: sscan
-                                                class: tb node[?]
-                                                sargs: term[?]
-                                                cost:  ? card ?
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: tc node[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: td node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               sargs: term[?]
-               cost:  ? card ?
-    inner: sscan
-               class: tx node[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tb.ca) from ta ta left outer join tb tb on tb.ca=ta.ca cross join tx tx cross join tc tc inner join td td on td.cb=tb.cb+tc.cb
-===================================================
-    
-Case 38: Case 34 with an INNER JOIN in place of the LEFT JOIN; result = 4, 4     
-
-===================================================
-count(*)    count(tb.ca)    
-4     4     
-
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-0
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-3
-===================================================
-0
-===================================================
-    
-Case 39: two LEFT JOIN chains around a CROSS JOIN, bridged by a later INNER JOIN and a LEFT JOIN; result = 4, 3     
-
-===================================================
-count(*)    count(tg.ca)    
-4     3     
-
-Query plan:
-nl-join (left outer join)
-    edge:  term[?] AND term[?]
-    outer: nl-join (inner join)
-               edge:  term[?] AND term[?]
-               outer: nl-join (left outer join)
-                          edge:  term[?]
-                          outer: nl-join (cross join)
-                                     outer: nl-join (inner join)
-                                                edge:  term[?]
-                                                outer: nl-join (inner join)
-                                                           edge:  term[?]
-                                                           outer: nl-join (left outer join)
-                                                                      edge:  term[?]
-                                                                      outer: sscan
-                                                                                 class: ta node[?]
-                                                                                 cost:  ? card ?
-                                                                      inner: sscan
-                                                                                 class: tb node[?]
-                                                                                 sargs: term[?]
-                                                                                 cost:  ? card ?
-                                                                      cost:  ? card ?
-                                                           inner: sscan
-                                                                      class: tc node[?]
-                                                                      sargs: term[?]
-                                                                      cost:  ? card ?
-                                                           cost:  ? card ?
-                                                inner: sscan
-                                                           class: tx node[?]
-                                                           sargs: term[?]
-                                                           cost:  ? card ?
-                                                cost:  ? card ?
-                                     inner: sscan
-                                                class: td node[?]
-                                                cost:  ? card ?
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: te node[?]
-                                     sargs: term[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: tf node[?]
-                          sargs: term[?] AND term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: tg node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tg.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb left outer join tg tg on tg.cb=tf.cb and tg.ca=tc.cb
-===================================================
-    
-Case 40: Case 39 without the last LEFT JOIN; result = 4, 4     
-
-===================================================
-count(*)    count(tx.ca)    
-4     4     
-
-Query plan:
-nl-join (inner join)
-    edge:  term[?] AND term[?]
-    outer: nl-join (left outer join)
-               edge:  term[?]
-               outer: nl-join (cross join)
-                          outer: nl-join (inner join)
-                                     edge:  term[?]
-                                     outer: nl-join (inner join)
-                                                edge:  term[?]
-                                                outer: nl-join (left outer join)
-                                                           edge:  term[?]
-                                                           outer: sscan
-                                                                      class: ta node[?]
-                                                                      cost:  ? card ?
-                                                           inner: sscan
-                                                                      class: tb node[?]
-                                                                      sargs: term[?]
-                                                                      cost:  ? card ?
-                                                           cost:  ? card ?
-                                                inner: sscan
-                                                           class: tc node[?]
-                                                           sargs: term[?]
-                                                           cost:  ? card ?
-                                                cost:  ? card ?
-                                     inner: sscan
-                                                class: tx node[?]
-                                                sargs: term[?]
-                                                cost:  ? card ?
-                                     cost:  ? card ?
-                          inner: sscan
-                                     class: td node[?]
-                                     cost:  ? card ?
-                          cost:  ? card ?
-               inner: sscan
-                          class: te node[?]
-                          sargs: term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: sscan
-               class: tf node[?]
-               sargs: term[?] AND term[?]
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb
-===================================================
-    
-Case 41: Case 39 with a RIGHT JOIN in place of the last LEFT JOIN; result = 4, 3, 4     
-
-===================================================
-count(*)    count(tc.ca)    count(tg.ca)    
-4     3     4     
-
-Query plan:
-nl-join (left outer join)
-    edge:  term[?] AND term[?]
-    outer: sscan
-               class: tg node[?]
-               cost:  ? card ?
-    inner: temp
-               order: UNORDERED
-               subplan: nl-join (inner join)
-                            edge:  term[?] AND term[?]
-                            outer: nl-join (left outer join)
-                                       edge:  term[?]
-                                       outer: nl-join (cross join)
-                                                  outer: nl-join (inner join)
-                                                             edge:  term[?]
-                                                             outer: nl-join (inner join)
-                                                                        edge:  term[?]
-                                                                        outer: nl-join (left outer join)
-                                                                                   edge:  term[?]
-                                                                                   outer: sscan
-                                                                                              class: ta node[?]
-                                                                                              cost:  ? card ?
-                                                                                   inner: sscan
-                                                                                              class: tb node[?]
-                                                                                              sargs: term[?]
-                                                                                              cost:  ? card ?
-                                                                                   cost:  ? card ?
-                                                                        inner: sscan
-                                                                                   class: tc node[?]
-                                                                                   sargs: term[?]
-                                                                                   cost:  ? card ?
-                                                                        cost:  ? card ?
-                                                             inner: sscan
-                                                                        class: tx node[?]
-                                                                        sargs: term[?]
-                                                                        cost:  ? card ?
-                                                             cost:  ? card ?
-                                                  inner: sscan
-                                                             class: td node[?]
-                                                             cost:  ? card ?
-                                                  cost:  ? card ?
-                                       inner: sscan
-                                                  class: te node[?]
-                                                  sargs: term[?]
-                                                  cost:  ? card ?
-                                       cost:  ? card ?
-                            inner: sscan
-                                       class: tf node[?]
-                                       sargs: term[?] AND term[?]
-                                       cost:  ? card ?
-                            cost:  ? card ?
-               cost:  ? card ?
-    cost:  ? card ?
-Query stmt:
-select count(*), count(tc.ca), count(tg.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb right outer join tg tg on tg.cb=tf.cb and tg.ca=tc.cb
+select ta.ca, ta.cb, tb.ca, tb.cb, tc.ca, tc.cb from ta ta cross join tb tb right outer join tc tc on tb.ca=tc.ca where ((ta.cb=tc.cb) or ta.cb is null ) order by ?, ?, ?, ?, ?, ?
 ===================================================
 0
