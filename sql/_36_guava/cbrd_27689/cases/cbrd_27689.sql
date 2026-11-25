@@ -23,7 +23,8 @@
  */
 
 drop table if exists t_27689;
--- 150000 rows: the index i_27689_name has 313 pages, about 10 times the 32 pages that a parallel index scan needs under CTP
+-- 150000 rows: the index i_27689_name has 313 B-tree pages (Num_total_page of show index capacity, 312 leaf and 1 non-leaf,
+-- and the index file that the run-time check counts is a few pages larger), about 10 times the 32 pages that a parallel index scan needs under CTP
 -- (the index size at run time is checked against parallel_scan_page_threshold, 256 by default and 32 under CTP, whose
 -- sql.conf sets test_mode=yes, and the optimizer estimate of the pages to read against parallel_index_scan_page_threshold,
 -- 32), so that the scans of Cases 1 to 4 run in parallel without a hint, and above the default 256 as well
