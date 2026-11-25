@@ -3,14 +3,14 @@
  *  picks.
  *
  *  ELT returns one of its arguments by an index. When the index comes from the row and the branches are binds or
- *  session variables of different collations, develop labelled each row's value with the collation of the branch
- *  that row picked, and the first row's branch decided the collation that a sort, a DISTINCT or a comparison used.
+ *  session variables of different collations, develop labelled the value of each row with the collation of the branch
+ *  that row picked, and the branch of the first row decided the collation that a sort, a DISTINCT or a comparison used.
  *  CBRD-27510 decides every string collation at the gate (qexec_resolve_domains, before the first row). For ELT
  *  whose index the row gives, the branch collations are merged into one domain for the statement and every picked
  *  value takes it, as MySQL does for ELT.
  *
  *  The new answers are in Case 2 and Case 3. In Case 2 every row carries the merged collation utf8_en_ci. develop
- *  gave the rows that picked the session variable utf8_bin, sorted by the first row's branch and kept 'b' and 'B'
+ *  gave the rows that picked the session variable utf8_bin, sorted by the branch of the first row and kept the strings b and B
  *  apart under DISTINCT. In Case 3 the branches do not merge (utf8_en_ci against utf8_en_cs), which is -1150 before
  *  any row, where develop answered with rows. Every other answer is the develop answer.
  *

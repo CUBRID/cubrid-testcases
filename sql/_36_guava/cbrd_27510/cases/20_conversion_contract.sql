@@ -1,24 +1,24 @@
 /**
- *  This test case verifies CBRD-27510: the conversion cells keep develop's conversion contracts.
+ *  This test case verifies CBRD-27510: the conversion cells keep the conversion contracts of develop.
  *
  *  CBRD-27510 moved the type-pair bodies of tp_value_cast and tp_value_coerce into cell functions, which the casts
  *  and the planned converters of the row paths call. This case pins the contracts those cells keep - truncation of
  *  a string cast to CHAR under both allow_truncated_string settings, date arithmetic with real and string operands
  *  (the operand becomes a rounded BIGINT), equality between INT and TIME values and between an INT column and other
- *  numbers on a sequential and an index scan, index keys whose parse sets an error, results that depend on a
- *  value's content, a bound VARCHAR under a CAST and timestamp encodings that fail.
+ *  numbers on a sequential and an index scan, index keys whose parse sets an error, results that depend on the
+ *  content of a value, a bound VARCHAR under a CAST and timestamp encodings that fail.
  *
  *  Every answer here is the develop answer except two statements of Case 5. MEDIAN over a VARCHAR column that holds
  *  date-time or time strings is -1118, because the MEDIAN of a string column is DOUBLE by its type. develop
  *  classified the first value and answered a DATETIME (2024-01-02 10:00:00.0) and a TIME (02:00:00). The column of
- *  numeric strings and the session variables keep develop's answers.
+ *  numeric strings and the session variables keep the develop answers.
  *
  *  Coverage:
  *    Case 1: a VARCHAR cast to CHAR(3) with truncation, under both allow_truncated_string settings
  *    Case 2: date arithmetic with real and string operands
  *    Case 3: INT against TIME and against other numbers, sequential and index scan
  *    Case 4: index keys whose parse fails - a date that does not parse, a NUMERIC overflow
- *    Case 5: results that depend on a value's content - MEDIAN, STR_TO_DATE, ADDTIME
+ *    Case 5: results that depend on the content of a value - MEDIAN, STR_TO_DATE, ADDTIME
  *    Case 6: a VARCHAR bind under a CAST to CHAR(3)
  *    Case 7: timestamp encodings that fail
  */

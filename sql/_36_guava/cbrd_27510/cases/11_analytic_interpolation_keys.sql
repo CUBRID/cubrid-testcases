@@ -4,31 +4,31 @@
  *
  *  CBRD-27583: this case no longer checks that. A string argument of MEDIAN, PERCENTILE_CONT and PERCENTILE_DISC is
  *  DOUBLE whatever it holds, so no class is chosen before the sort and a date or time string is error -1118. The
- *  answers of Case 1 to 5 are CBRD-27583's; Case 6 and 7 keep their meaning.
+ *  answers of Case 1 to 5 are those of CBRD-27583; Case 6 and 7 keep their meaning.
  *
- *  An analytic MEDIAN, PERCENTILE_CONT or PERCENTILE_DISC sorts a string operand in the function's class - DOUBLE,
+ *  An analytic MEDIAN, PERCENTILE_CONT or PERCENTILE_DISC sorts a string operand in the class of the function - DOUBLE,
  *  DATETIME or TIME. develop took the class from the first pair of values the sort compared. CBRD-27510 decides it
  *  in the analytic setup before the sort, from the compiled function domain or from the class the gate
  *  (qexec_resolve_domains) gave a value argument. A class over a session variable is the one its value gives when
  *  the execution starts, for the whole statement. A bind or a literal given directly is constant and has no sort
  *  key, one seen through a derived table column has one.
  *
- *  The answers are develop's except three cases. Case 2 - a set operation's string column is DOUBLE by its type, so
- *  a first value such as '01:00:00' is -1118 (develop typed the column TIME by that first value and failed at 'abc'
- *  with -181). Case 5 - a session variable's class is the one its value gives when the execution starts, so the
+ *  The answers are the develop answers except three cases. Case 2 - the string column of a set operation is DOUBLE by its type, so
+ *  a first value such as 01:00:00 is -1118 (develop typed the column TIME by that first value and failed at abc
+ *  with -181). Case 5 - the class of a session variable is the one its value gives when the execution starts, so the
  *  values a derived table assigns before any row reads the variable fail the conversion with -181. Case 7 - another
- *  analytic function's string ORDER BY key that shares the sort with a MEDIAN over a constant or a number compares
- *  in its own domain. develop compared it in the class of the MEDIAN's first value, so 'b' raised an error and '10'
- *  and '9' sorted as numbers.
+ *  analytic function whose string ORDER BY key shares the sort with a MEDIAN over a constant or a number compares
+ *  in its own domain. develop compared it in the class of the first value of the MEDIAN, so the string b raised an error and the strings 10
+ *  and 9 sorted as numbers.
  *
  *  Coverage:
  *    Case 1: a string bind seen through a derived table column
- *    Case 2: a set operation's column over string binds
+ *    Case 2: the column of a set operation over string binds
  *    Case 3: a bind or a literal given directly, which has no sort key
  *    Case 4: a session variable the statement does not change
  *    Case 5: a session variable a derived table changes before any row reads it
  *    Case 6: a string column, DOUBLE at compile time
- *    Case 7: another function's string ORDER BY key sharing the sort with a MEDIAN
+ *    Case 7: the string ORDER BY key of another function sharing the sort with a MEDIAN
  */
 --+ holdcas on;
 drop table if exists ai_t;

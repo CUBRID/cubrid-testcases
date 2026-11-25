@@ -1,11 +1,11 @@
 /**
- *  This test case verifies CBRD-27510: a common-value node over a CHAR column and a bind keeps develop's CHAR answers.
+ *  This test case verifies CBRD-27510: a common-value node over a CHAR column and a bind keeps the develop CHAR answers.
  *
  *  NVL, NVL2, IFNULL, COALESCE, NULLIF, LEAST and GREATEST return one of their operands. Over a CHAR column and a bind,
- *  develop casts the operand NVL, NVL2, IFNULL and COALESCE return to the node's compiled CHAR domain, so the results
+ *  develop casts the operand NVL, NVL2, IFNULL and COALESCE return to the compiled CHAR domain of the node, so the results
  *  group, sort and compare as CHAR, without regard to trailing spaces. CBRD-27510 resolves these nodes before the
  *  first row and gives them the same CHAR domain. NULLIF, LEAST and GREATEST compare a string bind the client cast to
- *  VARCHAR, so the column's trailing spaces count, as in develop. Every answer here is the develop answer.
+ *  VARCHAR, so the trailing spaces of the column count, as in develop. Every answer here is the develop answer.
  *
  *  Coverage:
  *    Case 1: NULLIF, LEAST and GREATEST of a bind and a CHAR column

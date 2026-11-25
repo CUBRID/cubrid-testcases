@@ -1,5 +1,5 @@
 /**
- *  This test case verifies CBRD-27510: an analytic SUM or AVG whose first value is a string the function's domain
+ *  This test case verifies CBRD-27510: an analytic SUM or AVG whose first value is a string the domain of the function
  *  (DOUBLE) does not take raises -181 (ER_TP_CANT_COERCE) at that value, as the aggregate SUM and AVG do. develop and
  *  the earlier heads of CBRD-27510 returned no row and no error there (optdebug: an assert), the one first-value
  *  conversion failure the analytic path still answered silently.
@@ -8,7 +8,7 @@
  *    Case 1: the analytic SUM / AVG over NVL, COALESCE, NULLIF of a date, time or datetime column with a string bind,
  *            and over a string constant expression
  *    Case 2: the aggregate SUM / AVG of the same shapes (the error they raised before), and a numeric string
- *    Case 3: the analytic SUM DISTINCT (its list's domain) and STDDEV / VARIANCE (DOUBLE) over a string value they do
+ *    Case 3: the analytic SUM DISTINCT (the domain of its list) and STDDEV / VARIANCE (DOUBLE) over a string value they do
  *            not take - the same silent empty result before, -181 now - and the aggregate forms
  */
 --+ holdcas on;

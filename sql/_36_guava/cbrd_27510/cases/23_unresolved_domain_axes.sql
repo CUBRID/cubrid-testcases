@@ -2,32 +2,34 @@
  *  This test case verifies CBRD-27510: the unresolved-domain check at load accepts two shapes develop ran - a string
  *  function over a CAST of a bind, and a CONNECT BY block over a derived table with a bind.
  *
- *  The load refuses a plan that leaves a node's domain unresolved (ER_QPROC_DOMAIN_UNRESOLVED, -1383), on two axes:
+ *  The load refuses a plan that leaves the domain of a node unresolved (ER_QPROC_DOMAIN_UNRESOLVED, -1383), on two axes:
  *  the type must be fixed, and a string whose collation the values give must be a collation late-binding node. Two
  *  shapes failed the check although every domain is known before the rows:
- *    - MIN / MAX, and the analytic MIN / MAX, LAG / LEAD, FIRST_VALUE / NTH_VALUE, over CAST (? AS VARCHAR (n)) or
+ *    - MIN / MAX, and the analytic MIN / MAX, LAG / LEAD, FIRST_VALUE / NTH_VALUE, over a CAST of a bind to VARCHAR (n) or
  *      CHAR (n), STRING, NCHAR VARYING (n): the compiler types the function with ENFORCE over an argument it could
- *      not type, and the argument's fixed domain carries the collation - the function takes the rule's domain at
+ *      not type, and the fixed domain of the argument carries the collation - the function takes the domain of the rule at
  *      load (the collation axis).
- *    - a CONNECT BY block joined with a derived table whose column holds a bind (AVG (w) * ?): the block's position
- *      lists read its input list, the parent tuple and its own list without a list scan, so their readers of the
- *      derived column stayed variable (the type axis); once they resolve, they take the column's resolved domain
+ *    - a CONNECT BY block joined with a derived table whose column holds a bind (AVG (w) times a bind): the position
+ *      lists of the block read its input list, the parent tuple and its own list without a list scan, so their readers of the
+ *      derived column stayed variable (the type axis); once they resolve, they take the resolved domain of the column
  *      before the block reads a tuple, or the slot read gives NULL.
- *    - PRIOR ? and PRIOR t.thr over such a column: the node's type is MAYBE and a user host variable carries no
+ *    - PRIOR over a bind and PRIOR t.thr over such a column: the type of the node is MAYBE and a user host variable carries no
  *      expected domain, so XASL generation stopped without a message; the node is a late-binding node now, and a
- *      row's value (PRIOR reads another tuple), never a constant expression. CONNECT_BY_ROOT t.thr read the root
- *      tuple's column in the compiled variable domain and answered NULL; it reads it in the execution's domain.
- *  Every answer is the develop answer. The control statements (COUNT, SUM, GROUP_CONCAT, a numeric or date CAST, a
- *  literal CAST, a bare bind, the join without CONNECT BY, a derived column with a fixed domain, a scalar subquery)
- *  ran before as well.
+ *      row value (PRIOR reads another tuple), never a constant expression. CONNECT_BY_ROOT t.thr read the column of the
+ *      root tuple in the compiled variable domain and answered NULL; it reads it in the domain of the execution.
+ *  The answers are the develop answers except where a CONNECT BY block reads a derived column that holds a bind. There
+ *  develop answered NULL for the column (the statement of Case 3 that selects t.thr, and Case 4) and failed the
+ *  statements with PRIOR or CONNECT_BY_ROOT at PREPARE with -495 (Case 4). The control statements (COUNT, SUM,
+ *  GROUP_CONCAT, a numeric or date CAST, a literal CAST, a bare bind, the join without CONNECT BY, a derived column with
+ *  a fixed domain, a scalar subquery) ran before as well.
  *
  *  Coverage:
- *    Case 1: MIN / MAX over CAST (? AS VARCHAR (10)), CHAR (5), STRING, NCHAR VARYING (5), with a string and an
+ *    Case 1: MIN / MAX over a CAST of a bind to VARCHAR (10), CHAR (5), STRING, NCHAR VARYING (5), with a string and an
  *            integer bind; the controls
  *    Case 2: the analytic MIN / MAX, LAG / LEAD, FIRST_VALUE / NTH_VALUE over the same CAST
- *    Case 3: CONNECT BY with a derived table over AVG (w) * ?, in the CONNECT BY condition and in the select list
+ *    Case 3: CONNECT BY with a derived table over AVG (w) times a bind, in the CONNECT BY condition and in the select list
  *            alone, an INT, string, DOUBLE and NULL bind; the four shapes that ran before
- *    Case 4: the derived column's value in the CONNECT BY output (it came out NULL once the block loaded), and
+ *    Case 4: the value of the derived column in the CONNECT BY output (it came out NULL once the block loaded), and
  *            PRIOR / CONNECT_BY_ROOT over a bind and over such a column (they failed at execution with an internal
  *            semantic error)
  */

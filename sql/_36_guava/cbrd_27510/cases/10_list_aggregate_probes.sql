@@ -2,19 +2,21 @@
  *  This test case verifies CBRD-27510: list files, sorts, GROUP BY, aggregates and analytic functions take their
  *  domains from the plan before the first row.
  *
- *  develop updated an open list file column's type from the values written into it, and resolved an aggregate's or
- *  analytic function's domain from its first value (qexec_resolve_domains_for_aggregation). CBRD-27510 opens list
- *  files with the plan's column domains, and sorts, GROUP BY positions and list scans read the plan. Aggregates and
+ *  develop updated the type of an open list file column from the values written into it, and resolved the domain of an aggregate or
+ *  analytic function from its first value (qexec_resolve_domains_for_aggregation). CBRD-27510 opens list
+ *  files with the column domains of the plan, and sorts, GROUP BY positions and list scans read the plan. Aggregates and
  *  analytic functions are set up from the plan before the first row, and the gate (qexec_resolve_domains) decides
  *  the domains over binds and session variables once per execution.
  *
- *  The answers are develop's except in four cases. Case 10 - a statement that assigns a session variable another
+ *  The answers are the develop answers except in four cases. Case 10 - a statement that assigns a session variable another
  *  type while reading it fails before any row with -1384. Case 11 - MEDIAN over a session variable classifies its
  *  string by the value the variable holds when the execution starts, so the values a derived table assigns before
- *  the scan fail their conversion (-181). Case 17 - a MEDIAN value that no class takes is -1118 even over no row.
+ *  the scan fail their conversion (-181). Case 17 - a MEDIAN over the string bind 01:00:00 is -1118,
+ *  where develop answered a TIME, and over no row a literal that no class takes is NULL, as in develop.
  *  Case 18 - a set operation or CTE column whose branch binds differ in type is rejected before any row (-456). Two
- *  executions stop develop's debug server on an assertion, and CBRD-27510 answers them - the GROUP_CONCAT DISTINCT
- *  over NULL binds in Case 15 and the set operation over an integer and a NULL bind in Case 18.
+ *  executions stop the debug server of develop on an assertion, and CBRD-27510 answers them - the GROUP_CONCAT DISTINCT
+ *  over NULL binds in Case 15 and the set operation over an integer and a NULL bind in Case 18. The last statement of
+ *  Case 1 is -494 where develop raised -456.
  *
  *  Coverage:
  *    Case 1: list columns over binds - derived table, set operation, sort
@@ -255,9 +257,9 @@ execute q using null;
 select i, lead(null, 1, 'x') over (order by i) from la_sv order by i;
 select i, lag(null, 1) over (order by i) from la_sv order by i;
 
--- Case 17 [UNCLASS]. MEDIAN over a bind or a literal that none of DOUBLE, DATETIME and TIME takes is -1118 before
--- any row, so the literal fails even when no row qualifies. UNdevelop took the class of the assigned value and
--- answered a TIME and a DATETIME, and -1118 for 'abc'.
+-- Case 17 [UNCLASS]. MEDIAN over a bind or a literal that none of DOUBLE, DATETIME and TIME takes is -1118 when a
+-- row reads it, and NULL when no row qualifies (the last statement, a literal under WHERE i > 5, answers NULL on develop
+-- too). The statement that differs from develop is the GROUP BY one with the bind 01:00:00: -1118, where develop answered a TIME.
 evaluate 'Case 17: MEDIAN over a value of no class';
 prepare q from 'select median(?) from la_sv';
 execute q using 'abc';

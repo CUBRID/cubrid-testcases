@@ -10,14 +10,15 @@
  *  - and the row runs the planned conversion.
  *
  *  Every answer here is the develop answer, including the errors of a string that does not convert, with
- *  return_null_on_function_errors off and on.
+ *  return_null_on_function_errors off and on, except one statement of Case 9: the ORDERBY_NUM bound over the string bind 3
+ *  answers the rows 1 and 2 where develop raised -181.
  *
  *  Coverage:
  *    Case 1: a string beside a number in compiled nodes
  *    Case 2: a string that does not convert, with return_null_on_function_errors off and on
  *    Case 3: a NULL operand, which converts nothing
  *    Case 4: dates beside numbers and strings
- *    Case 5: an ENUM's name beside a string and its ordinal beside a number
+ *    Case 5: the name of an ENUM beside a string and its ordinal beside a number
  *    Case 6: binds, whose types the gate gives the nodes
  *    Case 7: strings and an ENUM name as DOUBLE with plus_as_concat off
  *    Case 8: a session variable holding a string under SUM and AVG
