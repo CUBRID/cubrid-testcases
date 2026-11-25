@@ -45,7 +45,7 @@ alter table t add partition partitions 6;
 alter table t coalesce partition 52;
 select distinct i from t__p__p1;
 select count(*) from t;
-update t set i=10 where i=2;
+update t set i=10 where i=3;
 select distinct i from t__p__p1;
 select count(*) from t;
 drop table t;

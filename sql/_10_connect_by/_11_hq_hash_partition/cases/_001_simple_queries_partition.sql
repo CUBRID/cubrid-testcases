@@ -27,7 +27,7 @@ select *
         order by id;
 
 select *
-        from hash_test__p__p1
+        from hash_test__p__p0
         start with parentid is null
         connect by prior id=parentid
         order by id;

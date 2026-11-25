@@ -69,7 +69,7 @@ ALTER VIEW v1 as select * from s1 partition (p5);
 
 select * from v1;
 
-insert into s1 values (1,1);
+insert into s1 values (29,29);
 
 select * from v1 order by 1;
 

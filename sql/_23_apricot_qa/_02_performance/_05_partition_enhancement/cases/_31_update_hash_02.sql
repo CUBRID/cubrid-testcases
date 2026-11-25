@@ -20,14 +20,14 @@ select d,add_months(d,3),count(*) from t__p__p0 where d <> '2012-5-6' group by d
 select d,add_months(d,3),count(*) from t__p__p2 where d <> '2012-5-6' group by d;
 select d,add_months(d,3),count(*) from t__p__p17 where d <> '2012-5-6' group by d;
 select d,add_months(d,3),count(*) from t__p__p24 where d <> '2012-5-6' group by d;
-select count(*) from t__p__p2 where d='2015-08-6';
+select count(*) from t__p__p0 where d='2015-08-6';
 select count(*) from t where d='2012-5-6';
 
 update /*+ recompile */ t set d=add_months(d,13) where add_months(d,3) in ('2014-10-06');
 update /*+ recompile */ t set d=add_months(d,13) where add_months(d,3) in (add_months('2012-5-6',3));
 select count(*) from t where add_months(d,3)='2014-10-06';
 select count(*) from t where d='2015-08-6';
-select count(*) from t__p__p2 where add_months(d,3)='2015-11-06';
+select count(*) from t__p__p0 where add_months(d,3)='2015-11-06';
 select count(*) from t where add_months(d,3)='2012-5-6';
 select count(*) from t where d=add_months('2012-5-6',13);
 

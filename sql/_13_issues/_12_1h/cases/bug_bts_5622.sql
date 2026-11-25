@@ -21,9 +21,8 @@ insert into temp values('9');
 insert into t select * from temp;
 
 select * from t order by 1;
-select * from t__p__p13 order by 1;
+select * from t__p__p22 order by 1;
 select * from t__p__p17 order by 1;
-select * from t__p__p26 order by 1;
 
 drop t;
 drop temp;

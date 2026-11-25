@@ -12,11 +12,11 @@ insert into t2 values(3,repeat('h',100),repeat('abc',100));
 
 insert into t2 values(4,repeat('master',100),repeat('h',100)); 
 
-select length(s1),disk_size(s1),s1 from t2__p__p3; 
+select length(s1),disk_size(s1),s1 from t2__p__p1; 
  
 create index idx_t2 on t2(s1,s2);
  
-select * from t2__p__p1 a,t2__p__p3 b where a.s2 > b.s2 group by a.s1 having a.s1>'a' using index a.idx_t2 order by b.id desc limit 10;
+select * from t2__p__p4 a,t2__p__p1 b where a.s2 > b.s2 group by a.s1 having a.s1>'a' using index a.idx_t2 order by b.id desc limit 10;
 
 select connect_by_root s1,level,s1,s2 from t2 connect by nocycle s1 = prior s2 start with s1 > 'a' order by id ,s1,s2 limit 1; 
 

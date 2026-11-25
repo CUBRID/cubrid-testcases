@@ -18,6 +18,7 @@ select * from test_class  order by 1;
 select * from test_class__p__p0 order by 1;
 select * from test_class__p__p1 order by 1;
 select * from test_class__p__p2 order by 1;
+select * from test_class__p__p3 order by 1;
 
 select * from test_class__p__p1 where bigint_col = 9223372036854775807 order by 1;
 
