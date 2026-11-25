@@ -36,7 +36,7 @@ drop table if exists t1;
 create table t1(
 a int primary key,
 b int,
-c varchar default DATABASE()
+c varchar default (DATABASE())
 );
 
 merge into t1 A
@@ -51,7 +51,7 @@ drop table if exists t1;
 create table t1(
 a int primary key,
 b int,
-c varchar(20) default SCHEMA()
+c varchar(20) default (SCHEMA())
 );
 
 merge into t1 A

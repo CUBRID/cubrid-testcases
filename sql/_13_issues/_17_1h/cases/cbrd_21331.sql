@@ -6,9 +6,9 @@ insert into t3 values(1),(2),(3);
 
 alter table t3 add s1 varchar default 'aaaaaa';
 
-alter table t3 add s2 varchar default 'b'+'b';
+alter table t3 add s2 varchar default ('b'+'b');
 
-alter table t3 add s3 varchar default concat('abc',123);
+alter table t3 add s3 varchar default (concat('abc',123));
 
 alter table t3 add s4 varchar default to_char(123.4567,'99999.999');
 
