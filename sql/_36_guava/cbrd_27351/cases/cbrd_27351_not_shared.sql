@@ -9,7 +9,8 @@
  *              as before the fix, and the result is unchanged.
  * Coverage: control, merged view, pushed predicates, correlated subquery, DRANDOM, serial, stored function, BENCHMARK,
  *           ALL over a view hierarchy, VALUES view, nested view, inline views of the same text, INSERT / UPDATE,
- *           the columns of the references whose group breaks up (each selects the columns it reads, as before the fix)
+ *           the columns of the references whose group breaks up (each selects the columns it reads, as before the fix),
+ *           also in a PL/CSQL static SQL
  */
 
 --
@@ -63,6 +64,7 @@ create view v_27351_bench (k, m) as select l_suppkey, benchmark (1, md5 ('x')) f
 create view v_27351_val (a, b) as values (1, 2), (3, 4);
 create view v_27351_nest (k, t) as select supplier_no, total_revenue from v_27351_rev;
 create view v_27351_wide (k, s, cd) as select l_suppkey, sum(l_price), count(distinct l_disc) from t_27351_li group by l_suppkey;
+create or replace procedure p_27351_wide () as v bigint; begin select a.cd into v from v_27351_wide a where a.k = 3 and a.s >= (select min(b.s) from v_27351_wide b); end;
 
 set trace on;
 
@@ -123,6 +125,10 @@ evaluate 'N11: the reference with the pushed predicate keeps the column read onl
 select /*+ recompile parallel(0) */ a.cd from v_27351_wide a where a.k = 3 and a.s >= (select min(b.s) from v_27351_wide b);
 show trace;
 
+evaluate 'N12: the shape of N11 as a PL/CSQL static SQL, compiled as any statement';
+call p_27351_wide ();
+show trace;
+
 evaluate 'N9: statements other than SELECT keep executing each reference';
 insert into t_27351_ins
   select a.supplier_no, b.total_revenue from v_27351_rev a, v_27351_rev b where a.supplier_no = b.supplier_no;
@@ -143,6 +149,7 @@ select count(*) from t_27351_ins where b = 0;
 --
 
 drop view v_27351_nest;
+drop procedure p_27351_wide;
 drop view v_27351_wide;
 drop view v_27351_rev;
 drop view v_27351_child;

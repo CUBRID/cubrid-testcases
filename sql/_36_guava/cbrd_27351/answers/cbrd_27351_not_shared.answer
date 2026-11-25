@@ -69,6 +69,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
     
 N0: control, the view is shared when nothing prevents it     
 
@@ -663,6 +665,52 @@ Trace Statistics:
 
 ===================================================
     
+N12: the shape of N11 as a PL/CSQL static SQL, compiled as any statement     
+
+===================================================
+    
+null     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select count(distinct a.l_disc), a.l_suppkey, sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (b)
+
+  rewritten query: (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey)
+
+  TABLE SCAN (b)
+
+  rewritten query: (select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s))
+
+  TABLE SCAN (a)
+
+  rewritten query: select a.cd from (select count(distinct a.l_disc), a.l_suppkey, sum(a.l_price) from [dba.t_?_li] a where a.l_suppkey= ?:?  group by a.l_suppkey) a (cd, k, s) where (a.s>=(select min(b.s) from (select sum(b.l_price) from [dba.t_?_li] b group by b.l_suppkey) b (s)))
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SUBQUERY (uncorrelated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+            GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
 N9: statements other than SELECT keep executing each reference     
 
 ===================================================
@@ -780,6 +828,8 @@ Trace Statistics:
 count(*)    
 11     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
