@@ -1,0 +1,298 @@
+===================================================
+    
+Case 1: db_package has its ten columns with their types in order     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+pkg_name     VARCHAR(255)     YES          null          
+owner     VARCHAR(32)     YES          null          
+procedure_count     INTEGER     YES          null          
+variable_count     INTEGER     YES          null          
+exception_count     INTEGER     YES          null          
+cursor_count     INTEGER     YES          null          
+record_type_count     INTEGER     YES          null          
+comment     VARCHAR(1024)     YES          null          
+created_time     DATETIME     YES          null          
+updated_time     DATETIME     YES          null          
+
+===================================================
+    
+Case 2: db_package_code has its four columns with their types in order     
+
+===================================================
+Field    Type    Null    Key    Default    Extra    
+pkg_name     VARCHAR(255)     YES          null          
+owner     VARCHAR(32)     YES          null          
+spec_code     VARCHAR(1073741823)     YES          null          
+body_code     VARCHAR(1073741823)     YES          null          
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+sleep(0.1)    
+0     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+    
+Case 3: the db_package row of pkg_full shows its column values and the times of _db_package     
+
+===================================================
+pkg_name    owner    procedure_count    variable_count    exception_count    cursor_count    record_type_count    comment    same_created_time    same_updated_time    body_after_spec    
+pkg_full     PKG_OWNER     2     0     0     0     0     pkg_full comment     1     1     1     
+
+===================================================
+    
+Case 4: db_package has no row for the system package dbms_output     
+
+===================================================
+pkg_name    system_package    
+dbms_output     1     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 5: the db_package_code row of pkg_full holds its spec and body source     
+
+===================================================
+pkg_name    owner    spec_code    body_code    
+pkg_full     PKG_OWNER     create package pkg_full as
+procedure p (a int);
+function f (a int) return int;
+end comment 'pkg_full comment'     create package body pkg_full as
+procedure p (a int) as begin null; end;
+function f (a int) return int as begin return a; end;
+end     
+
+===================================================
+    
+Case 6: a package with only a body has a db_package_code row and no db_package row     
+
+===================================================
+pkg_name    owner    spec_code    body_code    
+pkg_body_only     PKG_OWNER     null     create package body pkg_body_only as
+procedure q as begin null; end;
+end     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 7: a DBA group member sees pkg_full in both views     
+
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+    
+Case 8: the owner sees pkg_full in both views     
+
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+    
+Case 9: a member of the owner group sees pkg_full in both views     
+
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+    
+Case 10: a user with EXECUTE sees pkg_full only in db_package     
+
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 11: a user with no privilege sees pkg_full in neither view     
+
+===================================================
+    
+null     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 12: after REVOKE EXECUTE the user no longer sees pkg_full in db_package     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 13: a member of a group with EXECUTE sees pkg_full only in db_package     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 14: with EXECUTE granted to PUBLIC, a user with no privilege of its own sees pkg_full only in db_package     
+
+===================================================
+    
+null     
+
+===================================================
+0
+===================================================
+    
+null     
+
+===================================================
+pkg_name    owner    
+pkg_full     PKG_OWNER     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+null     
+
+===================================================
+    
+Case 15: a package with only a spec has a db_package row and a db_package_code row with body_code NULL     
+
+===================================================
+pkg_name    owner    procedure_count    
+pkg_spec_only     PKG_OWNER     1     
+
+===================================================
+pkg_name    owner    spec_code    body_code    
+pkg_spec_only     PKG_OWNER     create package pkg_spec_only as
+procedure r;
+end     null     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
