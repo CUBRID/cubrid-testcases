@@ -3,11 +3,11 @@
  * Scenario file: references that must not share the result of the view
  * Description: The result of a view is not shared when a reference reads other rows than the others (merged into
  *              its query, a pushed predicate, a correlated subquery), when evaluating the view once would change
- *              what each reference reads or the database state (random value, serial, stored function), when the
- *              view is not read as one result (ALL over a view hierarchy, VALUES, a view inside the body of another
- *              view, an inline view), and in statements other than SELECT. Each reference executes the view as
- *              before the fix, and the result is unchanged.
- * Coverage: control, merged view, pushed predicates, correlated subquery, DRANDOM, serial, stored function,
+ *              what each reference reads or the database state (random value, serial, stored function, BENCHMARK),
+ *              when the view is not read as one result (ALL over a view hierarchy, VALUES, a view inside the body of
+ *              another view, an inline view), and in statements other than SELECT. Each reference executes the view
+ *              as before the fix, and the result is unchanged.
+ * Coverage: control, merged view, pushed predicates, correlated subquery, DRANDOM, serial, stored function, BENCHMARK,
  *           ALL over a view hierarchy, VALUES view, nested view, inline views of the same text, INSERT / UPDATE
  */
 
@@ -22,6 +22,7 @@ drop view if exists v_27351_plain;
 drop view if exists v_27351_drandom;
 drop view if exists v_27351_next;
 drop view if exists v_27351_func;
+drop view if exists v_27351_bench;
 drop view if exists v_27351_val;
 drop view if exists v_27351_nest;
 drop serial if exists s_27351;
@@ -56,6 +57,7 @@ create view v_27351_plain (k, p) as select l_suppkey, l_price from t_27351_li wh
 create view v_27351_drandom (k, r) as select l_suppkey, sum(l_price) + drandom () from t_27351_li group by l_suppkey;
 create view v_27351_next (k, n) as select l_suppkey, s_27351.next_value from t_27351_li group by l_suppkey;
 create view v_27351_func (k, f) as select l_suppkey, f_27351 (l_suppkey) from t_27351_li group by l_suppkey;
+create view v_27351_bench (k, m) as select l_suppkey, benchmark (1, md5 ('x')) from t_27351_li group by l_suppkey;
 create view v_27351_val (a, b) as values (1, 2), (3, 4);
 create view v_27351_nest (k, t) as select supplier_no, total_revenue from v_27351_rev where supplier_no <= 10;
 
@@ -81,12 +83,14 @@ where m.supplier_no = t_27351_su.s_suppkey
   and exists (select 1 from v_27351_rev r where r.supplier_no = t_27351_su.s_suppkey and r.total_revenue >= m.total_revenue);
 show trace;
 
-evaluate 'N4: views whose values differ at each execution or that change the database state';
+evaluate 'N4: views whose values differ at each execution, that change the database state or whose run is their result';
 select /*+ recompile parallel(0) */ count(*) from v_27351_drandom a, v_27351_drandom b where a.k = b.k and a.r = b.r;
 show trace;
 select /*+ recompile parallel(0) */ count(*) from v_27351_next a, v_27351_next b where a.k = b.k and a.n = b.n;
 show trace;
 select /*+ recompile parallel(0) */ count(*), count(a.f), count(b.f) from v_27351_func a, v_27351_func b where a.k = b.k;
+show trace;
+select /*+ recompile parallel(0) */ count(*), count(a.m), count(b.m) from v_27351_bench a, v_27351_bench b where a.k = b.k;
 show trace;
 
 evaluate 'N5: ALL over a view hierarchy';
@@ -132,6 +136,7 @@ drop view v_27351_plain;
 drop view v_27351_drandom;
 drop view v_27351_next;
 drop view v_27351_func;
+drop view v_27351_bench;
 drop view v_27351_val;
 drop function f_27351;
 drop serial s_27351;

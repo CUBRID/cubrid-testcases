@@ -27,11 +27,15 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 20
 ===================================================
 0
 ===================================================
 2000
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -219,7 +223,7 @@ Trace Statistics:
 
 ===================================================
     
-N4: views whose values differ at each execution or that change the database state     
+N4: views whose values differ at each execution, that change the database state or whose run is their result     
 
 ===================================================
 count(*)    
@@ -334,6 +338,44 @@ Trace Statistics:
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    count(a.m)    count(b.m)    
+20     20     20     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (group by)
+    TABLE SCAN (a)
+
+  rewritten query: (select benchmark(?,  md?('x'))), a.l_suppkey from [dba.t_?_li] a group by a.l_suppkey)
+
+  SORT (group by)
+    TABLE SCAN (b)
+
+  rewritten query: (select benchmark(?,  md?('x'))), b.l_suppkey from [dba.t_?_li] b group by b.l_suppkey)
+
+  NESTED LOOPS (inner join)
+    TABLE SCAN (a)
+    TABLE SCAN (b)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), count(a.m), count(b.m) from (select benchmark(?,  md?('x'))), a.l_suppkey from [dba.t_?_li] a group by a.l_suppkey) a (m, k), (select benchmark(?,  md?('x'))), b.l_suppkey from [dba.t_?_li] b group by b.l_suppkey) b (m, k) where a.k=b.k
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
      
@@ -541,6 +583,8 @@ count(*)    sum(b)
 count(*)    
 11     
 
+===================================================
+0
 ===================================================
 0
 ===================================================
