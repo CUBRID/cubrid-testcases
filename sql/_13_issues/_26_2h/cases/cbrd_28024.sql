@@ -2,10 +2,10 @@
  *  This test case verifies CBRD-28024: WIDTH_BUCKET of a BIGINT or NUMERIC operand no longer divides by 0 when the
  *  width of a bucket is below the smallest NUMERIC, and gives the bucket count + 1 below a descending range
  *
- *  For a BIGINT or NUMERIC operand, WIDTH_BUCKET divided the operand's distance from the start of the range by the
- *  width of a bucket, (max - min) / count, in floating NUMERIC. A width below the smallest NUMERIC (scale 252) was
+ *  For a BIGINT or NUMERIC operand, WIDTH_BUCKET divided the distance of the operand from the start of the range by
+ *  the width of a bucket, (max - min) / count, in floating NUMERIC. A width below the smallest NUMERIC (scale 252) was
  *  rounded to 0 and the division by it raised SIGFPE: the server process died. A width just above that lost digits and
- *  gave a wrong bucket. The bucket is now the operand's fraction of the range times the count.
+ *  gave a wrong bucket. The bucket is now the fraction of the range below the operand, times the count.
  *  In a descending range, an operand below the end of the range went through the formula instead of getting the
  *  count + 1 that a DOUBLE operand gets: a bucket past count + 1, or an overflow error when the operand was far below.
  *
@@ -15,9 +15,11 @@
  *    Case 2: a width near the smallest NUMERIC that lost digits
  *    Case 3: forms that were right - ascending bounds, between them and outside, BIGINT and NUMERIC (5, 1) beside
  *            DOUBLE, a range near the largest NUMERIC - and an operand exactly on a bucket boundary, which got the
- *            bucket below (1000 for 1001)
+ *            bucket below the right one
  *    Case 4: a descending range, the operand below it included, BIGINT and NUMERIC (5, 1) beside DOUBLE, and an
  *            operand far below the range, which overflowed
+ *    Case 5: a descending range whose width is near the smallest NUMERIC, the same loss of digits as Case 2 in the
+ *            other direction
  */
 
 drop table if exists d_28024, e_28024, n_28024;
@@ -58,5 +60,9 @@ select x, width_bucket (x, 6, 0, 9) as wb, width_bucket (cast (x as double), 6, 
 select width_bucket (cast (-1e20 as numeric), 5, 0, 10) as wb_num,
        width_bucket (cast (-9000000000000000000 as bigint), 5, 0, 10) as wb_big,
        width_bucket (cast (-1e20 as double), 5, 0, 10) as wb_double;
+
+evaluate 'Case 5: descending, a width near the smallest NUMERIC; result = 5, 429';
+select width_bucket (cast (1e-252 as numeric), cast (7e-252 as numeric), 0, 5) as wb5,
+       width_bucket (cast (1e-250 as numeric), cast (7e-250 as numeric), 0, 500) as wb500;
 
 drop table d_28024, e_28024, n_28024;
