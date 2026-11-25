@@ -15,7 +15,7 @@
  *    Case 2:  ORDERBY_NUM () in the select list numbers the rows before duplicates are removed
  *    Case 3:  a set operation with LIMIT cuts the UNION ALL and INTERSECT ALL rows, and EXCEPT ALL keeps duplicate values
  *    Case 4:  UPDATE and DELETE pick the same rows as the subquery run alone
- *    Case 5:  control: a subquery without a row count after DISTINCT keeps the previous results
+ *    Case 5:  control: a subquery whose values the added DISTINCT cannot change keeps the previous results
  *    Case 6:  control: forms that the change does not reach keep the previous results
  *    Case 7:  inequality ANY over a row cut compares with the MIN or MAX of the cut rows
  *    Case 8:  ORDER SIBLINGS BY with LIMIT cuts rows before duplicates are removed
@@ -73,7 +73,7 @@ select id from t_27719_tgt order by 1;
 delete from t_27719_tgt;
 insert into t_27719_tgt (id) values (1), (2), (3), (4);
 
-evaluate 'Case 5: control, a subquery without a row count after DISTINCT keeps the previous results';
+evaluate 'Case 5: control, a subquery whose values the added DISTINCT cannot change keeps the previous results';
 select id from t_27719_tgt where id in (select id from t_27719_loc limit 2) order by 1;
 select id from t_27719_tgt where id in (select id from t_27719_loc order by id) order by 1;
 select id from t_27719_tgt where id in (select distinct id from t_27719_loc order by id limit 2) order by 1;
