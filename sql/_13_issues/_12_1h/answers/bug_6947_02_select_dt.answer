@@ -718,7 +718,7 @@ temp(order by)
                             cost:  ? card ?
                  inner: temp
                             order: UNORDERED
-                            subplan: nl-join (left outer join)
+                            subplan: nl-join (inner join)
                                          edge:  term[?]
                                          outer: sscan
                                                     class: vt node[?]
@@ -733,7 +733,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select vt.i, vt.j, u.i, u.j, v.i, v.j from (select vt.i, vt.j from t vt where (inst_num()<= ?:? )) vt (i, j) left outer join u u on vt.i=u.i right outer join v v on u.i=v.i order by ?
+select vt.i, vt.j, u.i, u.j, v.i, v.j from (select vt.i, vt.j from t vt where (inst_num()<= ?:? )) vt (i, j) inner join u u on vt.i=u.i right outer join v v on u.i=v.i order by ?
 ===================================================
 i    j    i    j    i    j    
 1     1     1     1     1     1     
@@ -749,7 +749,7 @@ temp(order by)
                             cost:  ? card ?
                  inner: temp
                             order: UNORDERED
-                            subplan: nl-join (left outer join)
+                            subplan: nl-join (inner join)
                                          edge:  term[?]
                                          outer: sscan
                                                     class: t node[?]
@@ -764,7 +764,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.i, t.j, u.i, u.j, v.i, v.j from t t left outer join u u on t.i=u.i right outer join v v on u.i=v.i order by ?
+select t.i, t.j, u.i, u.j, v.i, v.j from t t inner join u u on t.i=u.i right outer join v v on u.i=v.i order by ?
 ===================================================
 i    j    i    j    i    j    
 1     1     1     1     1     1     
