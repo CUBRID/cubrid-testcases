@@ -28,17 +28,17 @@
  * Case 4: NUMERIC keys of different scales on a single table without an
  *   index, NUMERIC(12,4) parent key against NUMERIC(10,2) child key and the
  *   reverse. 3 rows each, same as develop and as the NO_HASH_LIST_SCAN hint.
- *   An earlier revision moved these queries to the hash list scan, which
- *   hashes NUMERIC by its unscaled digits, and returned only the root.
+ *   These queries use the hash list scan, which hashes both keys in one
+ *   NUMERIC domain common to the pair, so both scales find the children.
  *
  * Case 5: keys of different types on a single table without an index,
  *   SMALLINT parent key against INT child key, CHAR(3) against VARCHAR(10)
  *   and BIGINT against DOUBLE. Each query returns the same rows as develop
- *   and as the NO_HASH_LIST_SCAN hint (3, 3 and 3 rows). An earlier revision
- *   moved these queries to the hash list scan, which coerces the child keys to
- *   the parent key's type: it failed with "Cannot coerce value of domain" on
- *   the child keys 100000 and 'abcdef' and missed the child of
- *   9007199254740993 whose key 9007199254740992 is equal as DOUBLE.
+ *   and as the NO_HASH_LIST_SCAN hint (3, 3 and 3 rows). These queries use
+ *   the hash list scan, which hashes both keys in a domain common to the
+ *   pair, so the child keys 100000 and 'abcdef' raise no coercion error and
+ *   the child of 9007199254740993 whose key 9007199254740992 is equal as
+ *   DOUBLE is found.
  *
  * Case 6: LEVEL generator (CONNECT BY without PRIOR) over a one-row table
  *   whose CONNECT BY assigns a session variable, directly or inside the
