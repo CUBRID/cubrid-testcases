@@ -1,0 +1,192 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 29-1     
+
+===================================================
+id    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o, t?i i where  substring('abcdef' from i.n for ?)='bc' and o.id=i.id order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-2     
+
+===================================================
+id    
+1     
+2     
+3     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o, t?i i where  round(?.?, i.n)>?.? and o.id=i.id order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-3     
+
+===================================================
+id    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o, t?i i where  repeat('a', i.n)='aaa' and o.id=i.id order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-4     
+
+===================================================
+id    
+2     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o, t?i i where  instr('abcabc', 'b', i.n)=? and o.id=i.id order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-5     
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o left outer join t?i i on o.id=i.id where  week(date '?-?-?', i.n)=? order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-6     
+
+===================================================
+id    
+1     
+2     
+3     
+4     
+
+Query plan:
+idx-join (left outer join)
+    outer: iscan
+               class: o node[?]
+               index: pk_t?o_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: i node[?]
+               index: i?_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    after: term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select o.id from t?o o left outer join t?i i on o.id=i.id where  like_match_lower_bound('a%', i.s)='a' order by ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 29-7     
+
+===================================================
+a    
+1     
+2     
+3     
+
+Query plan:
+iscan
+    class: t?i node[?]
+    index: i?_ab (covers)
+    filtr: term[?]
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t?i.a, t?i.b from t?i t?i where  round(?.?, t?i.a)>?.? using index t?i.i?_ab order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0
