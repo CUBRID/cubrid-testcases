@@ -1,4 +1,4 @@
--- Ticket08 R06 accepted DEFAULT/PREFER_INLINE/FORCE_OUTLINE matrix. Fixed BIT is fixed; CHAR is eligible. External parser errors=-493 for shared/class; execution errors=-495 for fixed/view domains, from native interface reporting in db_vdb.c/query_result.c. FORCE_INLINE/fixed DEFAULT exceptions are proposals. Policy metadata and placement are independently asserted in shell.
+-- Ticket08 R06 accepted DEFAULT/PREFER_INLINE/FORCE_OUTLINE matrix. Fixed BIT is fixed; CHAR is eligible. External parser errors=-493 for shared/class; execution errors=-495 for fixed/view domains, from native interface reporting in db_vdb.c/query_result.c. CBRD-27259 implemented the FORCE_INLINE/fixed DEFAULT exceptions: a fixed-type column accepts STORAGE DEFAULT and FORCE_INLINE and persists nothing, so those statements succeed and the fixture is dropped at once; PREFER_INLINE, PREFER_OUTLINE and FORCE_OUTLINE stay rejected on fixed types. Policy metadata and placement are independently asserted in shell.
 
 drop table if exists oos08_policy;
 drop table if exists oos08_like;
@@ -25,7 +25,7 @@ alter table oos08_policy change b b bit varying storage prefer_outline;
 select count(*) as n,min(case when id=1 and a=cast(repeat('a1',3500) as bit varying) and b=cast(repeat('b2',300) as bit varying) and c=cast(repeat('c3',2500) as bit varying) then 1 else 0 end) as exact_ok from oos08_policy;
 create table oos08_fixed(c varchar(4) storage force_outline);
 insert into oos08_fixed values('1234');
-alter table oos08_fixed modify c int storage default;
+alter table oos08_fixed modify c int storage prefer_inline;
 select count(*) as exact_before from oos08_fixed where c='1234';
 alter table oos08_fixed modify c int;
 select c from oos08_fixed;
@@ -33,7 +33,9 @@ create table oos08_char(c char(32) storage prefer_inline);
 insert into oos08_char values('variable-char');
 select count(*) as exact_char from oos08_char where trim(c)='variable-char';
 create table oos08_bad(c int storage default);
+drop table oos08_bad;
 create table oos08_bad(c bit(128) storage default);
+drop table oos08_bad;
 create table oos08_bad(c varchar(100) shared 'x' storage default);
 create table oos08_bad class attribute(c varchar(100) storage default);
 create vclass oos08_bad(c varchar(100) storage default);

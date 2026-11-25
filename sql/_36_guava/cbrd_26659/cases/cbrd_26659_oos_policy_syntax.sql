@@ -1,6 +1,10 @@
 -- Work456/02: independently specified syntax, semantic/context and identifier cases.
 -- CS JDBC interface error codes do not alone identify the parser rejection stage.
 -- The contained policy_contract shell case verifies messages and exact metadata/record preservation.
+-- CBRD-27259: FORCE_INLINE is a policy keyword, and a fixed-type normal column accepts STORAGE DEFAULT and
+-- FORCE_INLINE (nothing is persisted). Those statements succeed, so each fixture they create is dropped at once and
+-- cannot turn a later statement into a name conflict. PREFER_INLINE, PREFER_OUTLINE and FORCE_OUTLINE stay rejected
+-- on fixed types, and every STORAGE clause stays rejected on CLASS, SHARED and VCLASS attributes.
 drop table if exists oos02_policy;
 drop table if exists oos02_bad;
 create table oos02_policy(id int primary key, c varchar(100) storage force_outline, note int not null default 77);
@@ -24,13 +28,18 @@ select count(*) as n from oos02_policy where (id=1 and c='head-middle-tail-one' 
 alter table oos02_policy modify c varchar(100) storage default storage prefer_outline;
 select count(*) as n from oos02_policy where (id=1 and c='head-middle-tail-one' and note=101) or (id=2 and c='head-middle-tail-two' and note=202);
 create table oos02_bad(c int storage default);
+drop table oos02_bad;
 create table oos02_bad(c bit(128) storage default);
+drop table oos02_bad;
+create table oos02_bad(c int storage force_inline);
+drop table oos02_bad;
 create table oos02_bad (c varchar(100) shared 'x' storage default);
 create table oos02_bad class attribute(c varchar(100) storage default);
 create vclass oos02_bad(c varchar(100) storage default);
 alter table oos02_policy add class attribute rejected_class varchar(100) storage default;
 alter table oos02_policy add rejected_shared varchar(100) shared 'new-shared' storage default;
 alter table oos02_policy add rejected int storage default;
+alter table oos02_policy drop rejected;
 alter table oos02_policy modify note int storage default;
 alter table oos02_policy change note note int storage default;
 select count(*) as n from oos02_policy where (id=1 and c='head-middle-tail-one' and note=101) or (id=2 and c='head-middle-tail-two' and note=202);

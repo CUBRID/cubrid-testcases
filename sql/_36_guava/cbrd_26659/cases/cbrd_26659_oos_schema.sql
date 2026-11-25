@@ -1,6 +1,8 @@
 -- JIRA4774943 logical schema regression through JDBC. Physical placement is observed
 -- separately by schema_sa/schema_cs. Literal DEFAULT is not ALTER rewrite evidence.
 -- Expected values/catalog and lower-case hex-string MD5s are independently authored.
+-- The rejected ALTER uses PREFER_INLINE on a fixed type: STORAGE DEFAULT is accepted on a fixed type since CBRD-27259,
+-- so it would no longer reach the storage rule and would fail on the unsupported VARBIT-to-INT domain change instead.
 
 drop table if exists oos08_schema;
 drop table if exists oos08_grow;
@@ -28,7 +30,7 @@ alter table oos08_schema modify a bit varying(50000) not null;
 alter table oos08_schema modify note varchar(40);
 select count(*) as n, min(case when id=1 and a=cast(repeat('a1',5000) as bit varying) and b=cast(repeat('b2',4600) as bit varying) and note='rewrite' and keep_col=10 then 1 else 0 end) as exact_ok, min(md5(a)) as a_md5, min(md5(b)) as b_md5 from oos08_schema;
 select attr_name,prec,is_nullable from db_attribute where class_name='oos08_schema' and attr_name in ('a','note') order by attr_name;
-alter table oos08_schema modify a int storage default;
+alter table oos08_schema modify a int storage prefer_inline;
 select count(*) as n, min(case when id=1 and a=cast(repeat('a1',5000) as bit varying) and b=cast(repeat('b2',4600) as bit varying) and note='rewrite' and keep_col=10 then 1 else 0 end) as exact_ok, min(md5(a)) as a_md5, min(md5(b)) as b_md5 from oos08_schema;
 select count(*) as schema_ok from db_attribute where class_name='oos08_schema' and attr_name='a' and prec=50000 and is_nullable='NO' and data_type='VARBIT';
 set system parameters 'add_column_update_hard_default=yes';
