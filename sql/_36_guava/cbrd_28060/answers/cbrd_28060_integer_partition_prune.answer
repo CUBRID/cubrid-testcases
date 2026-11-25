@@ -1,0 +1,318 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+4
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+3
+===================================================
+0
+===================================================
+    
+Case 1: SMALLINT - t_smallint_part prune per INT constant reads one partition and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [32767]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+3     [4]     0     0     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+4     [70000]     0     0     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_part)
+
+  rewritten query: select count(*) from [dba.t_smallint_part] [dba.t_smallint_part] where [dba.t_smallint_part].cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: SMALLINT - t_smallint_part prune per IN list of INT constants reads two partitions and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1, 3]     2     2     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [1, 70000]     1     1     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_part)
+
+  rewritten query: select count(*) from [dba.t_smallint_part] [dba.t_smallint_part] where (([dba.t_smallint_part].cb= ?:? ) or ([dba.t_smallint_part].cb= ?:? ))
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 3: SMALLINT - t_smallint_part prune per BIGINT constant reads one partition and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [70000]     0     0     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_part)
+
+  rewritten query: select count(*) from [dba.t_smallint_part] [dba.t_smallint_part] where [dba.t_smallint_part].cb= cast(? as bigint)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 4: SMALLINT - t_smallint_hash_expression prune per INT constant past the SMALLINT range reads every partition and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [70000]     0     0     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [1, 70000]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+3     [ANY 1, 70000]     1     1     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_hash_expression)
+
+  rewritten query: select count(*) from [dba.t_smallint_hash_expression] [dba.t_smallint_hash_expression] where [dba.t_smallint_hash_expression].cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_hash_expression), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_hash_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 5: SMALLINT - t_smallint_range_expression prune per INT constant past the SMALLINT range reads every partition and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [70000]     0     0     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [1, 70000]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+3     [ANY 1, 70000]     1     1     
+
+===================================================
+count(*)    
+0     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_range_expression)
+
+  rewritten query: select count(*) from [dba.t_smallint_range_expression] [dba.t_smallint_range_expression] where [dba.t_smallint_range_expression].cb= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_range_expression), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_range_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_range_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 6: INT - t_int_part prune per BIGINT constant reads one partition and matches t_int     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [33554433]     1     1     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_int_part)
+
+  rewritten query: select count(*) from [dba.t_int_part] [dba.t_int_part] where [dba.t_int_part].cb= cast(? as bigint)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_int_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 7: INT - t_int_part prune per FLOAT constant reads every partition and matches t_int     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [33554432]     2     2     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_int_part)
+
+  rewritten query: select count(*) from [dba.t_int_part] [dba.t_int_part] where [dba.t_int_part].cb= cast(? as float)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_int_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_int_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 8: BIGINT - t_bigint_part prune per DOUBLE constant reads every partition and matches t_bigint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [9007199254740992]     2     2     
+
+===================================================
+count(*)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_bigint_part)
+
+  rewritten query: select count(*) from [dba.t_bigint_part] [dba.t_bigint_part] where [dba.t_bigint_part].cb= cast(? as double)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_bigint_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_bigint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
