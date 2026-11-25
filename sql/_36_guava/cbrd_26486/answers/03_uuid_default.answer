@@ -8,13 +8,13 @@
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([id4] BIT(128) DEFAULT UUID(4), [id7] BIT(128) DEFAULT UUID(7), [g] CHARACTER(32) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([id4] BIT(128) DEFAULT (uuid(4)), [id7] BIT(128) DEFAULT (uuid(7)), [g] CHARACTER(32) DEFAULT (sys_guid())) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 attr_name    data_type    prec    default_value    
-id4     BIT     128     UUID(4)     
-id7     BIT     128     UUID(7)     
-g     CHAR     32     SYS_GUID()     
+id4     BIT     128     (uuid(4))     
+id7     BIT     128     (uuid(7))     
+g     CHAR     32     (sys_guid())     
 
 ===================================================
     
@@ -52,7 +52,7 @@ id4_is_v4    id7_is_v7    g_is_hex
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_noarg     CREATE TABLE [uuid_def_noarg] ([a] BIT(128) DEFAULT UUID(4), [b] BIT(128) DEFAULT UUID(4), [c] BIT(128) DEFAULT UUID(4), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_def_noarg     CREATE TABLE [uuid_def_noarg] ([a] BIT(128) DEFAULT (uuid()), [b] BIT(128) DEFAULT (uuid(0)), [c] BIT(128) DEFAULT (uuid(4)), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 3
@@ -88,7 +88,7 @@ id4_is_v4    id7_is_v7
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAULT UUID(4), [id7] BIT(128) DEFAULT UUID(7), [g1] CHARACTER(32) DEFAULT SYS_GUID(), [g2] CHARACTER VARYING(1073741823) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAULT (uuid(4)), [id7] BIT(128) DEFAULT (uuid(7)), [g1] CHARACTER(32) DEFAULT (sys_guid()), [g2] CHARACTER VARYING(1073741823) DEFAULT (sys_guid())) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -102,7 +102,7 @@ dba.uuid_def_t     CREATE TABLE [uuid_def_t] ([n] INTEGER, [id4] BIT(128) DEFAUL
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [b] BIT(128) DEFAULT UUID(4), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [b] BIT(128) DEFAULT (uuid(4)), [g] CHARACTER(32) DEFAULT (sys_guid()),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
     
@@ -114,7 +114,7 @@ dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) 
 0
 ===================================================
 default_value    
-UUID(7)     
+(uuid(7))     
 
 ===================================================
 1
@@ -132,7 +132,7 @@ old_v4_preserved    new_v7
 0
 ===================================================
 default_value    
-UUID(4)     
+(uuid())     
 
 ===================================================
 1
@@ -150,7 +150,7 @@ b_ver
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT UUID(7), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT (uuid(7)), [g] CHARACTER(32) DEFAULT (sys_guid()),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -168,7 +168,7 @@ bid_ver
 0
 ===================================================
 default_value    
-UUID(4)     
+(uuid(4))     
 
 ===================================================
 1
@@ -204,7 +204,7 @@ total    g_non_null
 0
 ===================================================
 default_value    
-SYS_GUID()     
+(sys_guid())     
 
 ===================================================
 1
@@ -222,7 +222,7 @@ g_hex
 0
 ===================================================
 default_value    
-UUID(7)     
+(uuid(7))     
 
 ===================================================
 1
@@ -232,7 +232,7 @@ bid_ver
 
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT UUID(7), [g] CHARACTER(32) DEFAULT SYS_GUID(),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_alt_t     CREATE TABLE [uuid_alt_t] ([k] INTEGER AUTO_INCREMENT (1, 1) NOT NULL, [bid] BIT(128) DEFAULT (uuid(7)), [g] CHARACTER(32) DEFAULT (sys_guid()),  CONSTRAINT [pk_uuid_alt_t_k] PRIMARY KEY  ([k])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
@@ -272,7 +272,7 @@ wrongly_created
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_def_nest     CREATE TABLE [uuid_def_nest] ([a] CHARACTER VARYING(1073741823) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_def_nest     CREATE TABLE [uuid_def_nest] ([a] CHARACTER VARYING(1073741823) DEFAULT (to_char( sys_guid() ))) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -352,7 +352,7 @@ wrongly_added
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_arg_def_t     CREATE TABLE [uuid_arg_def_t] ([u4] BIT(128) DEFAULT UUID(4), [u7] BIT(128) DEFAULT UUID(7), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_arg_def_t     CREATE TABLE [uuid_arg_def_t] ([u4] BIT(128) DEFAULT (uuid(4.111)), [u7] BIT(128) DEFAULT (uuid(7.321)), [v] INTEGER) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 3
