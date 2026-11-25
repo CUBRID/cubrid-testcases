@@ -5,7 +5,7 @@
  *  For a BIGINT or NUMERIC operand, WIDTH_BUCKET divided the distance of the operand from the start of the range by
  *  the width of a bucket, (max - min) / count, in floating NUMERIC. A width below the smallest NUMERIC (scale 252) was
  *  rounded to 0 and the division by it raised SIGFPE: the server process died. A width just above that lost digits and
- *  gave a wrong bucket. The bucket is now the fraction of the range below the operand, times the count.
+ *  gave a wrong bucket. The bucket is now the fraction of the range from its start to the operand, times the count.
  *  In a descending range, an operand below the end of the range went through the formula instead of getting the
  *  count + 1 that a DOUBLE operand gets: a bucket past count + 1, or an overflow error when the operand was far below.
  *
