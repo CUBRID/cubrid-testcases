@@ -5,7 +5,7 @@
  *
  *    Case 1: the inner key reads a session variable the select list assigns
  *    Case 2: the inner key reads a serial the select list advances
- *    Case 3: the same join with no such value: batched (nlbatch in the trace), same rows as Case 1
+ *    Case 3: the same join with no such value: batched, same rows as Case 1
  */
 
 drop table if exists bj_o, bj_i;
