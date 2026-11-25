@@ -98,13 +98,19 @@ u27527a.pk     U27527A     pk comment by u27527a
 0
 ===================================================
     
-Case 3: COMMENT changes the comment only, and an empty comment is stored as NULL     
+Case 3: COMMENT changes the comment and updated_time but compiles nothing, and an empty comment is stored as NULL     
+
+===================================================
+1
+===================================================
+sleep(1)    
+0     
 
 ===================================================
 0
 ===================================================
-comment    p.created_time=s.ct    p.updated_time>=p.created_time    c.scode_spec=s.sspec    c.scode_body=s.sbody    
-pk comment 2     1     1     1     1     
+comment    c.compile_id=s.cid    p.created_time=s.ct    p.updated_time>s.ut    c.scode_spec=s.sspec    c.scode_body=s.sbody    
+pk comment 2     1     1     1     1     1     
 
 ===================================================
 0
@@ -173,7 +179,7 @@ null
 pk.p: u27527a.t one
 ===================================================
     
-Case 6: COMPILE of a package without its body, and COMPILE by the owner     
+Case 6: COMPILE of a package without its body, and COMPILE by the owner gives a new compile ID     
 
 ===================================================
 0
@@ -188,6 +194,8 @@ unique_name
 u27527a.nobody.p     
 
 ===================================================
+1
+===================================================
     
 null     
 
@@ -196,6 +204,10 @@ null
 ===================================================
     
 null     
+
+===================================================
+c.compile_id<>s.cid    
+1     
 
 ===================================================
     
@@ -221,19 +233,23 @@ u27527a.pk     U27527A
 
 ===================================================
     
-Case 8: OWNER TO the current owner compiles nothing     
+Case 8: OWNER TO the current owner compiles nothing and keeps updated_time     
 
 ===================================================
 1
 ===================================================
+sleep(1)    
+0     
+
+===================================================
 0
 ===================================================
-c.compile_id=s.cid    
-1     
+c.compile_id=s.cid    p.updated_time=s.ut    
+1     1     
 
 ===================================================
     
-Case 9: OWNER TO u27527b with COMMENT moves the rows and the grants, keeps the source, and reads u27527b.t     
+Case 9: OWNER TO u27527b with COMMENT moves the rows and the grants, keeps the source, and reads u27527b.t; result = the grant by u27527a to u27527b is revoked, and the grant to u27527c is now by u27527b     
 
 ===================================================
 0
@@ -362,13 +378,13 @@ sleep(1)
 null     
 
 ===================================================
-p.code.compile_id=s.cid    p.updated_time=s.ct    
+p.code.compile_id=s.cid    p.updated_time=s.ut    
 1     1     
 
 ===================================================
 0
 ===================================================
-comment    p.code.compile_id=s.cid    p.updated_time>s.ct    
+comment    p.code.compile_id=s.cid    p.updated_time>s.ut    
 sp1 comment     1     1     
 
 ===================================================
@@ -380,7 +396,7 @@ sleep(1)
 ===================================================
 0
 ===================================================
-p.code.compile_id<>s.cid    p.updated_time>s.ct    
+p.code.compile_id<>s.cid    p.updated_time>s.ut    
 1     1     
 
 ===================================================
