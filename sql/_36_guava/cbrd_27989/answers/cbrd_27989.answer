@@ -7,6 +7,10 @@
 ===================================================
 0
 ===================================================
+    
+Case 1: SUM in the sorting group, ROWNUM is 1 to 12 in output order     
+
+===================================================
 rownum    a    row_number() over (order by a)    sum(c) over (order by b, a)    
 1     3     3     1     
 2     6     6     1     
@@ -20,6 +24,10 @@ rownum    a    row_number() over (order by a)    sum(c) over (order by b, a)
 10     5     5     5     
 11     8     8     5     
 12     11     11     6     
+
+===================================================
+    
+Case 2: RANK in the sorting group, ROWNUM is 1 to 12 in output order     
 
 ===================================================
 rownum    a    row_number() over (order by a)    rank() over (order by b desc , a)    
@@ -37,6 +45,10 @@ rownum    a    row_number() over (order by a)    rank() over (order by b desc , 
 12     12     12     12     
 
 ===================================================
+    
+Case 3: LEAD and LAG in the sorting group, ROWNUM is 1 to 12 in output order     
+
+===================================================
 rownum    a    sum(c) over (order by a)    lead(a, 1, null) over (order by b, a)    lag(a, 2, null) over (order by b, a)    
 1     3     2     6     null     
 2     6     3     9     null     
@@ -50,6 +62,10 @@ rownum    a    sum(c) over (order by a)    lead(a, 1, null) over (order by b, a)
 10     5     3     8     10     
 11     8     4     11     2     
 12     11     6     null     5     
+
+===================================================
+    
+Case 4: NTILE, FIRST_VALUE and LAST_VALUE in the sorting group, ROWNUM is 1 to 12 in output order     
 
 ===================================================
 rownum    a    sum(c) over (order by a)    ntile(4) over (order by b, a)    first_value(a) over (order by b, a)    last_value(a) over (order by b, a)    
@@ -67,6 +83,10 @@ rownum    a    sum(c) over (order by a)    ntile(4) over (order by b, a)    firs
 12     11     6     4     3     11     
 
 ===================================================
+    
+Case 5: three evaluation groups, ROWNUM is 1 to 12 in output order     
+
+===================================================
 rownum    a    row_number() over (order by a)    count(*) over (order by c, a)    sum(a) over (order by b, a)    
 1     2     2     1     54     
 2     4     4     2     35     
@@ -82,6 +102,10 @@ rownum    a    row_number() over (order by a)    count(*) over (order by c, a)  
 12     11     11     12     78     
 
 ===================================================
+    
+Case 6: INST_NUM () and an expression over ROWNUM follow the output order     
+
+===================================================
 inst_num()    rownum+100    a    row_number() over (order by a)    sum(c) over (order by b, a)    
 1     101     3     3     1     
 2     102     6     6     1     
@@ -95,6 +119,10 @@ inst_num()    rownum+100    a    row_number() over (order by a)    sum(c) over (
 10     110     5     5     5     
 11     111     8     8     5     
 12     112     11     11     6     
+
+===================================================
+    
+Case 7: ROWNUM predicate with LEAD in the sorting group, ROWNUM follows the output order     
 
 ===================================================
 rownum    a    row_number() over (order by a)    lead(a, 1, null) over (order by b, a)    
@@ -114,11 +142,19 @@ rownum    a    max(a) over (order by a)    lead(a, 1, null) over (order by b, a)
 8     10     10     2     
 
 ===================================================
+    
+Case 8: LIMIT keeps ROWNUM 1 to 4 on the first 4 output rows     
+
+===================================================
 rownum    a    row_number() over (order by a)    sum(c) over (order by b, a)    
 1     3     3     1     
 2     6     6     1     
 3     9     9     2     
 4     12     12     2     
+
+===================================================
+    
+Case 9: only the first group, which skips its sort, ROWNUM is 1 to 12 as before the fix (control)     
 
 ===================================================
 rownum    a    row_number() over (order by a)    lead(a, 1, null) over (order by a)    
@@ -135,5 +171,96 @@ rownum    a    row_number() over (order by a)    lead(a, 1, null) over (order by
 11     11     11     12     
 12     12     12     null     
 
+===================================================
+    
+Case 10: ROWNUM range without a selected ROWNUM, LEAD and LAG of the sorting group are computed from all rows     
+
+===================================================
+a    max(a) over (order by a)    lead(a, 1, null) over (order by b, a)    lag(a, 2, null) over (order by b, a)    
+9     9     12     3     
+12     12     1     6     
+1     1     4     9     
+4     4     7     12     
+7     7     10     1     
+10     10     2     4     
+
+===================================================
+    
+Case 11: ROWNUM range without a selected ROWNUM, NTILE, FIRST_VALUE and LAST_VALUE of the sorting group are computed from all rows     
+
+===================================================
+a    max(a) over (order by a)    ntile(4) over (order by b, a)    first_value(a) over (order by b, a)    last_value(a) over (order by b, a)    
+9     9     1     3     9     
+12     12     2     3     12     
+1     1     2     3     1     
+4     4     2     3     4     
+7     7     3     3     7     
+10     10     3     3     10     
+
+===================================================
+    
+Case 12: the trace of the reproduction shows the first group skipping its sort and the second group sorting, ROWNUM is 1 to 12 in output order     
+
+===================================================
+0
+===================================================
+rownum    a    row_number() over (order by a)    sum(c) over (order by b, a)    
+1     3     3     1     
+2     6     6     1     
+3     9     9     2     
+4     12     12     2     
+5     1     1     3     
+6     4     4     3     
+7     7     7     4     
+8     10     10     4     
+9     2     2     4     
+10     5     5     5     
+11     8     8     5     
+12     11     11     6     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.i_t?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+    ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 13: the trace of the single group shows that its sort is skipped (control)     
+
+===================================================
+0
+===================================================
+rownum    a    row_number() over (order by a)    lead(a, 1, null) over (order by a)    
+1     1     1     2     
+2     2     2     3     
+3     3     3     4     
+4     4     4     5     
+5     5     5     6     
+6     6     6     7     
+7     7     7     8     
+8     8     8     9     
+9     9     9     10     
+10     10     10     11     
+11     11     11     12     
+12     12     12     null     
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t?.i_t?_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+0
 ===================================================
 0
