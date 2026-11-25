@@ -1,0 +1,103 @@
+===================================================
+0
+===================================================
+0
+===================================================
+15000
+===================================================
+45000
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+60002
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: MIN (ROUND) over c0 > -32000 in parallel; result = 60000, -30000, 30000     
+
+===================================================
+0
+===================================================
+count(*)    min(m)    max(m)    
+60000     -30000.0     30000.0     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_dsc.i_dsc) (key range: ([dba.t_dsc].c?> ?:? ), covered: true, desc_index: true)
+  group by nosort: true
+
+  rewritten query: (select /*+ PARALLEL(?) */ min( round( cast([dba.t_dsc].c? as double), 'default')) from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].c?> ?:? ) group by [dba.t_dsc].c?)
+
+  TABLE SCAN (d)
+
+  rewritten query: select count(*), min(d.m), max(d.m) from (select /*+ PARALLEL(?) */ min( round( cast([dba.t_dsc].c? as double), 'default')) as [m] from [dba.t_dsc] [dba.t_dsc] where ([dba.t_dsc].c?> ?:? ) group by [dba.t_dsc].c?) d (m)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_dsc.i_dsc), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+             (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: mergeable list)
+        GROUPBY (time: ?, hash: false, sort: false, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 2: MIN (CAST (ROUND AS VARCHAR)) over c0 > -32000 in parallel; result = 60000 groups     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -1     9999     
+
+===================================================
+    
+Case 3: c0 > -15000, a bound between two keys; result = 45000, -14999, 30000     
+
+===================================================
+count(*)    min(m)    max(m)    
+45000     -14999.0     30000.0     
+
+===================================================
+    
+Case 4: the ascending index read backward by GROUP BY c0 DESC over c0 < 32000; result = 60000, -30000, 30000     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -30000.0     30000.0     
+
+===================================================
+    
+Case 5: controls - serial, no ROUND, no index and the ascending index forward return the groups of Case 1 and 2     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -30000.0     30000.0     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -1     9999     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -30000.0     30000.0     
+
+===================================================
+count(*)    min(m)    max(m)    
+60000     -30000.0     30000.0     
+
+===================================================
+0
