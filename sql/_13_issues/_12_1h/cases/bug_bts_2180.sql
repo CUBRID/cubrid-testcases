@@ -19,7 +19,7 @@ drop tbl;
 create table tbl (v varchar(10)) partition by hash(substring(v,1,1)) partitions 2;
 insert into tbl values('aa');
 select tbl into :x from tbl;
-update object :x set v = 'ca';
+update object :x set v = 'ea';
 select * from tbl;
 
 delete from tbl;

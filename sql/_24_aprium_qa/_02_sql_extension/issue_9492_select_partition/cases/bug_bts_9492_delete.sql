@@ -4,7 +4,7 @@ insert into t select rownum from _db_class limit 40;
 
 delete from t partition (p0);
 
-insert into t partition (p0) select * from t partition (p2) where i = 10;
+insert into t partition (p0) select * from t partition (p2) where i = 7;
 
 delete t from t, t partition (p0) u where u.i = t.i;
 
