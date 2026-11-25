@@ -57,6 +57,10 @@
  *             -> idx-join, the same count
  *    Case 24: control, max (l_qty) <> 50 keeps every group that Case 10 leaves
  *             out -> hash join
+ *    Case 25: control, sum (l_qty) not between 150 and 250, a large complement
+ *             -> hash join
+ *    Case 26: control, min (l_qty) not in (49, 50) keeps every group that
+ *             Case 11 leaves out -> hash join
  */
 drop table if exists t_ord, t_line;
 
@@ -82,7 +86,7 @@ update statistics on t_ord, t_line;
 select count (*) from t_ord;
 select count (*) from t_line;
 
--- the statements of Cases 1 to 17 and Cases 21 to 24 carry the recompile hint, so that none of them reuses a cached plan
+-- the statements of Cases 1 to 17 and Cases 21 to 26 carry the recompile hint, so that none of them reuses a cached plan
 evaluate 'Case 1: sum (l_qty) > 300: idx-join, inner iscan t_ord on pk_t_ord_o_id';
 --@queryplan
 select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having sum (l_qty) > 300) av where o.o_id = av.l_oid;
@@ -190,5 +194,13 @@ select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group 
 evaluate 'Case 24: control, max (l_qty) <> 50 keeps every group that Case 10 leaves out: hash join';
 --@queryplan
 select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having max (l_qty) <> 50) av where o.o_id = av.l_oid;
+
+evaluate 'Case 25: control, sum (l_qty) not between 150 and 250, a large complement: hash join';
+--@queryplan
+select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having sum (l_qty) not between 150 and 250) av where o.o_id = av.l_oid;
+
+evaluate 'Case 26: control, min (l_qty) not in (49, 50) keeps every group that Case 11 leaves out: hash join';
+--@queryplan
+select /*+ recompile */ count (*) from t_ord o, (select l_oid from t_line group by l_oid having min (l_qty) not in (49, 50)) av where o.o_id = av.l_oid;
 
 drop table t_ord, t_line;

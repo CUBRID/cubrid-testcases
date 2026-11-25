@@ -815,4 +815,62 @@ hash-join (inner join)
 Query stmt:
 select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having max(t_line.l_qty)<>?) av (l_oid) where o.o_id=av.l_oid
 ===================================================
+    
+Case 25: control, sum (l_qty) not between 150 and 250, a large complement: hash join     
+
+===================================================
+count(*)    
+15483     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty) not between ? and ?)
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having sum(t_line.l_qty) not between ? and ?) av (l_oid) where o.o_id=av.l_oid
+===================================================
+    
+Case 26: control, min (l_qty) not in (49, 50) keeps every group that Case 11 leaves out: hash join     
+
+===================================================
+count(*)    
+19886     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_line node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty) not in multiset{?, ?})
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: sscan
+               class: o node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: av node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from t_ord o, (select t_line.l_oid from t_line t_line group by t_line.l_oid having min(t_line.l_qty) not in multiset{?, ?}) av (l_oid) where o.o_id=av.l_oid
+===================================================
 0
