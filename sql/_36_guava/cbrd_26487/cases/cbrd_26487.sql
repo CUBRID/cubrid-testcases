@@ -2,10 +2,11 @@
  *  This test case verifies CBRD-26487: unloaddb and loaddb include PL/CSQL packages.
  *
  *  A package spec and body are now saved in _db_package_code as
- *  CREATE OR REPLACE PACKAGE [BODY] <name> AS <text after AS or IS>, without the owner name and
+ *  CREATE OR REPLACE PACKAGE [BODY] [<name>] AS<text after AS or IS>, without the owner name and
  *  the comment, as stored procedures are saved. unloaddb then prints them with or without the
- *  owner name and adds the comment of _db_package. The blank lines before the text and the white
- *  spaces after it are dropped, so that the text does not grow each time it is saved again.
+ *  owner name and adds the comment of _db_package. The name is quoted, and the text follows AS as
+ *  it is, so that its lines keep their numbers (CBRD-27527). The white spaces after the text are
+ *  dropped, so that the text does not grow each time it is saved again.
  *  The unload and the load themselves are checked by the shell TCs in
  *  shell/_40_guava/cbrd_26487 of cubrid-testcases-private-ex.
  *
@@ -14,7 +15,7 @@
  *             saved without them, and the comment is in _db_package
  *    Case 2:  DBA creates the body of u26487.pk1 with the owner name - the body is saved without it
  *    Case 3:  u26487 creates pk2 on one line without the owner name, with IS, the end label and a
- *             comment - the text after IS follows AS and a line break, and the end label is kept
+ *             comment - the text after IS follows AS on the same line, and the end label is kept
  *    Case 4:  the saved specs and bodies, run again as they are by their owner, are saved the same
  *    Case 5:  a replace of the spec of pk1 with another comment saves the new spec and comment,
  *             and keeps the body and the grant
@@ -74,11 +75,11 @@ create table t26487_code as select pkg_unique_name, scode_spec, scode_body from 
 -- the statements below are the saved code that Case 1 to Case 3 print, run by u26487, the owner
 evaluate 'Case 4: the saved code runs again and is saved the same; result = 2';
 call login('u26487', '') on class db_user;
-CREATE OR REPLACE PACKAGE pk1 AS
+CREATE OR REPLACE PACKAGE [pk1] AS
 function a return int;
 function b (n int) return varchar;
 end;
-CREATE OR REPLACE PACKAGE BODY pk1 AS
+CREATE OR REPLACE PACKAGE BODY [pk1] AS
 function a return int is
 begin
 return 1;
@@ -88,10 +89,8 @@ begin
 return 'b' || n;
 end;
 end;
-CREATE OR REPLACE PACKAGE pk2 AS
-function c return int; end pk2;
-CREATE OR REPLACE PACKAGE BODY pk2 AS
-function c return int is begin return pk1.a () + 10; end; end pk2;
+CREATE OR REPLACE PACKAGE [pk2] AS function c return int; end pk2;
+CREATE OR REPLACE PACKAGE BODY [pk2] AS function c return int is begin return pk1.a () + 10; end; end pk2;
 select w26487 () from db_root;
 call login('dba', '') on class db_user;
 select count(*) from _db_package_code c, t26487_code t
