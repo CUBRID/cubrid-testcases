@@ -14,6 +14,8 @@
  *             pairs of the nested loop join, for each of two bound values
  *    Case 3:  MULTISET - a key of a host variable expression beside a scalar key joins by nested loop under a hash join
  *             hint, with the pairs of the nested loop join
+ *    Case 4:  MULTISET - a join on a derived table by a host variable expression bound to NULL returns no row
+ *    Case 5:  MULTISET - CONNECT BY a host variable expression bound to NULL returns the START WITH row only
  */
 
 set trace on;
@@ -81,6 +83,17 @@ prepare st_cmp from 'with hj_rows as (SELECT /*+ USE_HASH ORDERED NO_PARALLEL_HA
 execute st_cmp using {'x'}, {'x'};
 deallocate prepare st_hash;
 deallocate prepare st_cmp;
+
+evaluate 'Case 4: MULTISET - a join on a derived table by a host variable expression bound to NULL returns no row';
+-- t_multiset_int.cb against the NULL of cb - ?: the planner checks whether the two can be hashed alike
+prepare st_nl from 'SELECT /*+ ORDERED USE_NL NO_PARALLEL_SUBQUERY */ a.ca FROM t_multiset_int a JOIN (SELECT cb FROM t_multiset_int LIMIT 3) b ON a.cb = b.cb - ? ORDER BY 1';
+execute st_nl using NULL;
+deallocate prepare st_nl;
+
+evaluate 'Case 5: MULTISET - CONNECT BY a host variable expression bound to NULL returns the START WITH row only';
+prepare st_connect_by from 'SELECT ca FROM t_multiset_int START WITH ca = 71 CONNECT BY PRIOR cb = cb + ? ORDER BY 1';
+execute st_connect_by using NULL;
+deallocate prepare st_connect_by;
 
 -- cleanup
 DROP TABLE IF EXISTS t_multiset_varchar, t_multiset_int;
