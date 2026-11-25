@@ -22,8 +22,12 @@
  * HAVING, bound values in the select list and HAVING of a prepared query,
  * and a non-1:1 aggregate query used as a derived table. Case 14 keeps a 1:1
  * query with scalar expressions over its aggregates on the buildvalue path.
+ * Cases 15 and 16 pin the checks that still keep a non-1:1 query off that
+ * path now that the 1:1 check is gone: a ROWNUM condition turns off
+ * buildvalue, and a session variable keeps the whole scan serial.
  *
- * Each parallel query runs under trace so the answer pins "gather: buildvalue".
+ * Each parallel query runs under trace so the answer pins its gather mode,
+ * "gather: buildvalue" for Cases 1 to 14, or that it runs no parallel scan.
  * It is followed by the same query with NO_PARALLEL_SCAN, whose result must be
  * identical. The values are deterministic: a and b take 1..10, 1000 rows each.
  * Names have no digits so CTP does not mask them.
@@ -50,6 +54,10 @@
  *            that adds a constant                               (2 / 1 inside)
  *   Case 14: COUNT(*) + 1, SUM(a) * 2                           (2 / 2), a 1:1
  *            query that ran with buildvalue before the fix too and still does
+ *   Case 15: COUNT(*) * 2, tag where ROWNUM <= 5000             (1 / 2), not
+ *            buildvalue: a ROWNUM condition turns that path off
+ *   Case 16: SUM(a) + a session variable, tag                   (1 / 2), no
+ *            parallel scan: a session variable keeps the scan serial
  */
 
 drop table if exists tg;
@@ -156,6 +164,21 @@ evaluate 'Case 14: scalar expressions over single aggregates  (2 aggregates, 2 c
 select /*+ recompile PARALLEL(8) */ count(*) + 1, sum(a) * 2 from tg;
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ count(*) + 1, sum(a) * 2 from tg;
+
+-- Cases 15 and 16 are non-1:1 like Cases 1 to 13, but another check keeps each one off
+-- the buildvalue path: a ROWNUM condition turns buildvalue off, and an expression that
+-- reads a session variable keeps the whole scan serial
+evaluate 'Case 15: a ROWNUM condition keeps a non-1:1 aggregate query off buildvalue  (1 aggregate, 2 columns)';
+select /*+ recompile PARALLEL(8) */ count(*) * 2, 'tag' from tg where rownum <= 5000;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ count(*) * 2, 'tag' from tg where rownum <= 5000;
+
+evaluate 'Case 16: a session variable keeps a non-1:1 aggregate query serial  (1 aggregate, 2 columns)';
+set @v = 7;
+select /*+ recompile PARALLEL(8) */ sum(a) + @v, 'tag' from tg;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ sum(a) + @v, 'tag' from tg;
+drop variable @v;
 
 set trace off;
 
