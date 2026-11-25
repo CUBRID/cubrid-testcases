@@ -6,13 +6,17 @@
  *  server computes it. The client evaluator still returned the database name, so the
  *  same SCHEMA() gave another value in a SET of a session variable, in an INSERT that
  *  the client runs (the INSERT_EXECUTION_MODE(0) hint, a table with a trigger) and in a
- *  DEFAULT SCHEMA() that is folded when the table is created. The fix makes the client
- *  evaluator return the name of the current user as well.
+ *  DEFAULT SCHEMA() that is folded when a CREATE TABLE or an ALTER TABLE runs. The fix
+ *  makes the client evaluator return the name of the current user as well.
  *
  *  Each client path is printed next to the server path of the same statement, first as
  *  dba and then as the user u_27608. DATABASE() must stay the database name on both
  *  paths, which is basic under CTP. The login of the whole file needs one CAS, so the
  *  file keeps it with the holdcas control lines.
+ *
+ *  A DEFAULT SCHEMA() is folded to a constant when its DDL runs, so it stores the name
+ *  of the user who runs the DDL, not of the owner of the table. ADD COLUMN also fills
+ *  the rows that the table already has with that constant.
  *
  *  Coverage:
  *    Case 1:  as dba, SCHEMA() and current_schema of a SELECT are DBA
@@ -29,11 +33,15 @@
  *    Case 12: as u_27608, DEFAULT SCHEMA() of a new table is U_27608
  *    Case 13: as u_27608, DEFAULT SCHEMA() of the table that dba created stays DBA
  *    Case 14: as u_27608, DATABASE() is the database name on the client and the server paths
+ *    Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT SCHEMA() on a table of dba
+ *             stores U_27608 in the existing and the new rows
+ *    Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT SCHEMA() on a table of dba
+ *             stores U_27608 in the new rows
  */
 
 --+ holdcas on;
 
-drop table if exists t_schema, t_schema_trg, t_schema_def;
+drop table if exists t_schema, t_schema_trg, t_schema_def, t_schema_alt;
 
 create user u_27608;
 create table t_schema (id int, c varchar(40));
@@ -41,6 +49,9 @@ create table t_schema_trg (id int, c varchar(40));
 create trigger trg_27608 before insert on t_schema_trg if new.id < 0 execute reject;
 grant all privileges on t_schema to u_27608;
 grant all privileges on t_schema_trg to u_27608;
+-- u_27608 alters t_schema_alt in Case 15 and Case 16, which needs the ALTER privilege that ALL PRIVILEGES gives
+create table t_schema_alt (id int, c varchar(40) default 'none');
+grant all privileges on t_schema_alt to u_27608;
 
 
 evaluate 'Case 1: as dba, SCHEMA() and current_schema of a SELECT are DBA';
@@ -153,11 +164,28 @@ select id, c from dba.t_schema order by id;
 select id, c from dba.t_schema_trg order by id;
 
 
+-- dba created dba.t_schema_alt in the setup, and row 1 goes in before the column d is added
+evaluate 'Case 15: as u_27608, ALTER TABLE ADD COLUMN with DEFAULT SCHEMA() on a table of dba stores U_27608 in the existing and the new rows';
+insert into dba.t_schema_alt (id) values (1);
+alter table dba.t_schema_alt add column d varchar(40) default schema();
+insert into dba.t_schema_alt (id) values (2);
+select id, c, d from dba.t_schema_alt order by id;
+select attr_name, default_value from db_attribute where class_name = 't_schema_alt' and owner_name = 'DBA' order by attr_name;
+
+
+-- Case 16 alters the column c of the table that Case 15 altered and filled
+evaluate 'Case 16: as u_27608, ALTER TABLE ALTER COLUMN SET DEFAULT SCHEMA() on a table of dba stores U_27608 in the new rows';
+alter table dba.t_schema_alt alter column c set default schema();
+insert into dba.t_schema_alt (id) values (3);
+select id, c, d from dba.t_schema_alt order by id;
+select attr_name, default_value from db_attribute where class_name = 't_schema_alt' and owner_name = 'DBA' order by attr_name;
+
+
 call login ('dba', '') on class db_user;
 
 drop variable @s_27608, @cs_27608, @d_27608, @c_27608;
 drop trigger trg_27608;
-drop table t_schema, t_schema_trg, t_schema_def;
+drop table t_schema, t_schema_trg, t_schema_def, t_schema_alt;
 drop user u_27608;
 
 --+ holdcas off;
