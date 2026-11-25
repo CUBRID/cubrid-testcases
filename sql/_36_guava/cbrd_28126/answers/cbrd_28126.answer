@@ -46,14 +46,6 @@ Query Plan:
 
   TABLE SCAN (b)
 
-  rewritten query: select b.col_a from [dba.t_lo] b
-
-  TABLE SCAN (b)
-
-  rewritten query: select b.col_a from [dba.t_hi] b
-
-  TABLE SCAN (b)
-
   rewritten query: (select max(b.col_a) from (select b.col_a from [dba.t_lo] b union all select b.col_a from [dba.t_hi] b) b (col_a))
 
   SORT (order by)
@@ -65,20 +57,16 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -100,14 +88,6 @@ col_a    (select max(b.col_a) from v_both b)
 trace    
 
 Query Plan:
-  TABLE SCAN (a)
-
-  rewritten query: select a.col_a from [dba.t_lo] a
-
-  TABLE SCAN (a)
-
-  rewritten query: select a.col_a from [dba.t_hi] a
-
   TABLE SCAN (b)
 
   rewritten query: select b.col_a from [dba.t_lo] b
@@ -131,20 +111,15 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -296,22 +271,6 @@ col_a    (select max(col_a) from v_both)
 trace    
 
 Query Plan:
-  TABLE SCAN (a)
-
-  rewritten query: select a.col_a from [dba.t_lo] a
-
-  TABLE SCAN (a)
-
-  rewritten query: select a.col_a from [dba.t_hi] a
-
-  TABLE SCAN (b)
-
-  rewritten query: select b.col_a from [dba.t_lo] b
-
-  TABLE SCAN (b)
-
-  rewritten query: select b.col_a from [dba.t_hi] b
-
   TABLE SCAN (dba.v_both)
 
   rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
@@ -338,27 +297,15 @@ Trace Statistics:
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
     SUBQUERY (uncorrelated)
-             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-          UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-      UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-            (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-          SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -412,14 +359,6 @@ Query Plan:
 
   TABLE SCAN (dba.v_both)
 
-  rewritten query: select [dba.v_both].col_a from [dba.t_lo] [dba.v_both]
-
-  TABLE SCAN (dba.v_both)
-
-  rewritten query: select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]
-
-  TABLE SCAN (dba.v_both)
-
   rewritten query: select [dba.v_both].col_a from (select [dba.v_both].col_a from [dba.t_lo] [dba.v_both] union all select [dba.v_both].col_a from [dba.t_hi] [dba.v_both]) [dba.v_both] (col_a)
 
   SORT (order by)
@@ -436,16 +375,19 @@ Trace Statistics:
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       MEMOIZE (time: ?, hit: ?, miss: ?, size: ?KB, enabled: true)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+      CTE (non_recursive_part)
+        UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+              (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -454,12 +396,6 @@ Trace Statistics:
           SCAN (table: dba.t_mix), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
           SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_lo), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-              SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
      
 
 ===================================================

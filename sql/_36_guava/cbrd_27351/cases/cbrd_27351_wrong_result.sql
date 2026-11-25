@@ -2,17 +2,18 @@
  * This test case verifies CBRD-27351: a view referenced more than once in a query is executed once
  * Scenario file: results that sharing the view must not change
  * Description: Results that a wrong sharing of the view result would change.
- *              R1: a view with ORDER BY. A select-list subquery reference is generated before the FROM reference and
- *              does not reuse its result; its rows must keep the order of the view.
+ *              R1: a view with ORDER BY read by a select-list subquery and by the FROM clause; the rows of both
+ *              must keep the order of the view.
  *              R2: a shared view read by an uncorrelated subquery inside a derived table of the FROM clause. The
  *              view must be fully built before it is read, also when the subqueries of the statement may run in
  *              parallel (an empty result read too early gives 0 rows).
- *              R3: a reference in a correlated subquery of a query scanned in parallel. The workers run the subquery
- *              on their own copy of the plan, where the view is not built.
- *              R4: a member in an uncorrelated subquery of the expression of a query scanned in parallel. The
- *              workers evaluate the expression on their own copy of the plan, where the view is not built.
- * Coverage: ORDER BY view, parallel subquery execution of a statement that shares a view, parallel heap scan of a
- *           query with a reference in a correlated or uncorrelated subquery
+ *              R3: a query sharing a view and a query reading two views that differ only in a constant print alike
+ *              in the XASL cache key once the views are expanded and the constants made host variables. The second
+ *              query must not use the plan of the first one (it would read the result of one view for both).
+ *              R4: the shared view is executed before the statement. An error of the view body shows even where
+ *              each reference would not have been executed before the fix (here, the outer table is empty).
+ * Coverage: ORDER BY view, parallel subquery execution of a statement that shares a view, XASL cache, error of a
+ *           view executed first
  */
 
 --
@@ -21,11 +22,14 @@
 
 drop view if exists v_27351_ord;
 drop view if exists v_27351_rev;
+drop view if exists v_27351_hv;
+drop view if exists v_27351_hw;
+drop view if exists v_27351_zero;
 drop table if exists t_27351_ord;
 drop table if exists t_27351_li;
 drop table if exists t_27351_su;
-drop view if exists v_27351_px;
-drop table if exists t_27351_px;
+drop table if exists t_27351_hv;
+drop table if exists t_27351_empty;
 
 create table t_27351_ord (a int, b varchar(10));
 insert into t_27351_ord values (1, 'z'), (2, 'y'), (3, 'x');
@@ -45,12 +49,13 @@ create view v_27351_rev (supplier_no, total_revenue) as
   select l_suppkey, sum(l_price * (100 - l_disc)) from t_27351_li
   where l_shipdate >= date'2020-01-01' and l_shipdate < date'2020-04-01' group by l_suppkey;
 
-create table t_27351_px (k int, x int);
-insert into t_27351_px
-  select (rownum - 1) mod 1000, rownum mod 97
-  from (select level from db_root connect by level <= 1000) a, (select level from db_root connect by level <= 300) b;
-create view v_27351_px (k, s, c) as select k, sum(x), count(*) from t_27351_px group by k;
-update statistics on t_27351_px with fullscan;
+create table t_27351_hv (k int, x int);
+insert into t_27351_hv select mod(level, 10), level from db_root connect by level <= 1000;
+create view v_27351_hv (k, s) as select k, sum(x) from t_27351_hv where x > 100 group by k;
+create view v_27351_hw (k, s) as select k, sum(x) from t_27351_hv where x > 900 group by k;
+
+create table t_27351_empty (k int);
+create view v_27351_zero (k, q) as select k, sum(x) / min(x - x) from t_27351_hv group by k;
 
 evaluate 'R1: ORDER BY view, select-list subquery reference and FROM reference (expected 3,2,1)';
 select /*+ recompile */ (select group_concat(s.a) from v_27351_ord s) g1, group_concat(x.b) g2, max(x.a)
@@ -80,23 +85,13 @@ from v_27351_rev a,
         and s2.s_suppkey <= (select count(*) from v_27351_rev r)) x
 where a.supplier_no = x.c;
 
-select /*+ recompile parallel(4) */ count(*), sum(x.c)
-from v_27351_rev a,
-     (select /*+ ordered use_nl */ distinct s1.s_suppkey c
-      from t_27351_su s1, t_27351_su s2
-      where s1.s_suppkey = s2.s_suppkey
-        and s2.s_suppkey <= (select count(*) from v_27351_rev r)) x
-where a.supplier_no = x.c;
+evaluate 'R3: XASL cache, a query sharing a view and then a query reading two views that differ in a constant';
+select count(*), sum(a.s), sum(b.s) from v_27351_hv a, v_27351_hv b where a.k = b.k;
+select count(*), sum(a.s), sum(b.s) from v_27351_hv a, v_27351_hw b where a.k = b.k;
+select count(*), sum(a.s), sum(b.s) from v_27351_hw a, v_27351_hv b where a.k = b.k;
 
-evaluate 'R3: reference in a correlated subquery of a query scanned in parallel (expected 157742, 3943575)';
-select /*+ recompile parallel(4) */ count(*), sum(t.x)
-from v_27351_px a, t_27351_px t
-where a.k = t.k and t.x <= (select max(b.c) - 250 + 0 * t.x from v_27351_px b);
-
-evaluate 'R4: member in an uncorrelated subquery of a query scanned in parallel (expected 300000, 14399278)';
-select /*+ recompile parallel(4) */ count(*), sum(t.x)
-from t_27351_px t, v_27351_px a
-where t.k = a.k and (exists (select 1 from v_27351_px b where 1 = 1) or t.x = -1);
+evaluate 'R4: an error of the shared view body shows although the outer table is empty';
+select /*+ recompile */ (select max(q) from v_27351_zero), (select min(q) from v_27351_zero) from t_27351_empty;
 
 --
 -- clean up test data
@@ -104,8 +99,11 @@ where t.k = a.k and (exists (select 1 from v_27351_px b where 1 = 1) or t.x = -1
 
 drop view v_27351_ord;
 drop view v_27351_rev;
+drop view v_27351_hv;
+drop view v_27351_hw;
+drop view v_27351_zero;
 drop table t_27351_ord;
 drop table t_27351_li;
 drop table t_27351_su;
-drop view v_27351_px;
-drop table t_27351_px;
+drop table t_27351_hv;
+drop table t_27351_empty;

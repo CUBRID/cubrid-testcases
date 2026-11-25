@@ -1,24 +1,24 @@
 /**
  * This test case verifies CBRD-27351: a view referenced more than once in a query is executed once
  * Scenario file: references that share one result of the view
- * Description: When a view is not merged into the query and no predicate is pushed into any of its references, and
- *              one of its references is in the FROM clause of the statement, the view is executed once and every
- *              reference reads that result. The trace shows one execution of the view and the other references
- *              scanning the result list (before the fix: one execution per reference).
- * Coverage: FROM + uncorrelated subquery, 3 references, derived table, UNION ALL / INTERSECT / DIFFERENCE operands,
- *           outer join, hash/merge join, references using a subset of the columns of the representative in a
- *           different order, a select-list subquery generated before the representative, owner name and synonym,
- *           DISTINCT view, ORDER BY view, ALL over a view without subviews
+ * Description: When a view is referenced twice or more in a SELECT statement, outside correlated subqueries, and a
+ *              reference is neither merged into its query nor given a pushed predicate, the view is executed once
+ *              before the statement, as a CTE, and every reference reads that result. The trace shows one execution
+ *              of the view under CTE (before the fix: one execution per reference). The result is unchanged.
+ * Coverage: FROM + uncorrelated subquery (TPC-H Q15 shape), 3 references, derived table, UNION ALL operands,
+ *           references using different columns, IN and HAVING subqueries, nested subqueries, no reference in the
+ *           FROM clause, DISTINCT view, set operation view, a predicate pushed into one of three references,
+ *           references reading no column, ROWNUM view, analytic function in the statement, two share groups
  */
 
 --
 -- test data
 --
 
-drop synonym if exists s_27351_rev;
 drop view if exists v_27351_rev;
 drop view if exists v_27351_dist;
-drop view if exists v_27351_ordv;
+drop view if exists v_27351_union;
+drop view if exists v_27351_rownum;
 drop table if exists t_27351_li;
 drop table if exists t_27351_su;
 
@@ -37,9 +37,8 @@ create view v_27351_rev (supplier_no, total_revenue) as
   where l_shipdate >= date'2020-01-01' and l_shipdate < date'2020-04-01' group by l_suppkey;
 
 create view v_27351_dist (k) as select distinct l_suppkey from t_27351_li;
-create view v_27351_ordv (k, p) as select l_suppkey, sum(l_price) from t_27351_li group by l_suppkey order by 2;
-
-create synonym s_27351_rev for v_27351_rev;
+create view v_27351_union (k) as select l_suppkey from t_27351_li union select s_suppkey from t_27351_su;
+create view v_27351_rownum (k, m) as select l_suppkey, max(l_price) from t_27351_li where rownum <= 1000 group by l_suppkey;
 
 set trace on;
 
@@ -56,15 +55,9 @@ from v_27351_rev a, v_27351_rev b, v_27351_rev c
 where a.supplier_no = b.supplier_no and b.supplier_no = c.supplier_no;
 show trace;
 
-evaluate 'S3: FROM reference + reference in a derived table that follows it';
+evaluate 'S3: FROM reference + reference in a derived table';
 select /*+ recompile parallel(0) */ count(*)
 from v_27351_rev r, (select distinct supplier_no from v_27351_rev) d
-where d.supplier_no = r.supplier_no;
-show trace;
-
-evaluate 'S3b: control, the reference in a derived table before the FROM reference is generated first and does not reuse';
-select /*+ recompile parallel(0) */ count(*)
-from (select distinct supplier_no from v_27351_rev) d, v_27351_rev r
 where d.supplier_no = r.supplier_no;
 show trace;
 
@@ -75,61 +68,69 @@ select min(total_revenue) from v_27351_rev
 order by 1;
 show trace;
 
-evaluate 'S5: INTERSECT and DIFFERENCE operands';
-select /*+ recompile parallel(0) */ supplier_no from v_27351_rev
-intersect
-select supplier_no from v_27351_rev
-order by 1;
-show trace;
-
-select /*+ recompile parallel(0) */ supplier_no from v_27351_rev
-difference
-select supplier_no from v_27351_rev;
-show trace;
-
-evaluate 'S6: left outer join';
-select /*+ recompile parallel(0) */ count(*), count(b.supplier_no)
-from v_27351_rev a left outer join v_27351_rev b on a.supplier_no = b.supplier_no + 10;
-show trace;
-
-evaluate 'S7: hash join and merge join of the references';
-select /*+ recompile parallel(0) use_hash ordered */ count(*), sum(a.total_revenue - b.total_revenue)
-from v_27351_rev a, v_27351_rev b where a.supplier_no = b.supplier_no;
-show trace;
-
-select /*+ recompile parallel(0) use_merge ordered */ count(*), sum(a.total_revenue - b.total_revenue)
-from v_27351_rev a, v_27351_rev b where a.supplier_no = b.supplier_no;
-show trace;
-
-evaluate 'S8: references using different columns in a different order';
+evaluate 'S5: references using different columns';
 select /*+ recompile parallel(0) */ a.total_revenue, b.supplier_no
 from v_27351_rev a, v_27351_rev b
 where a.supplier_no = b.supplier_no and b.supplier_no <= (select count(*) / 4 from v_27351_rev)
 order by 2;
 show trace;
 
-evaluate 'S9: select-list subquery generated before the FROM reference + WHERE subquery';
-select /*+ recompile parallel(0) */ (select count(*) from v_27351_rev), count(*)
-from v_27351_rev a
-where a.total_revenue > (select avg(total_revenue) from v_27351_rev);
+evaluate 'S6: references in IN and HAVING subqueries';
+select /*+ recompile parallel(0) */ count(*) from t_27351_su
+where s_suppkey in (select supplier_no from v_27351_rev where total_revenue > (select avg(total_revenue) from v_27351_rev));
 show trace;
 
-evaluate 'S10: owner name and synonym of the same view';
-select /*+ recompile parallel(0) */ count(*), sum(a.total_revenue - b.total_revenue)
-from dba.v_27351_rev a, s_27351_rev b where a.supplier_no = b.supplier_no;
+select /*+ recompile parallel(0) */ mod(s_suppkey, 3), count(*) from t_27351_su
+group by mod(s_suppkey, 3)
+having count(*) < (select count(*) from v_27351_rev) and max(s_suppkey) <= (select max(supplier_no) from v_27351_rev)
+order by 1;
 show trace;
 
-evaluate 'S11: DISTINCT view';
+evaluate 'S7: references in nested subqueries';
+select /*+ recompile parallel(0) */ count(*) from t_27351_su
+where s_suppkey in (select supplier_no from v_27351_rev
+                    where total_revenue >= (select avg(total_revenue) from v_27351_rev
+                                            where supplier_no <= (select count(*) / 2 from v_27351_rev)));
+show trace;
+
+evaluate 'S8: no reference in the FROM clause of the statement';
+select /*+ recompile parallel(0) */ (select count(*) from v_27351_rev) - (select count(distinct supplier_no) from v_27351_rev)
+from db_root;
+show trace;
+
+evaluate 'S9: DISTINCT view, every column is kept';
 select /*+ recompile parallel(0) */ count(*)
 from v_27351_dist a, v_27351_dist b where a.k = b.k;
 show trace;
 
-evaluate 'S12: ORDER BY view';
-select /*+ recompile parallel(0) */ count(*), sum(a.p) from v_27351_ordv a, v_27351_ordv b where a.k = b.k;
+evaluate 'S10: view defined as a set operation';
+select /*+ recompile parallel(0) */ count(*) from v_27351_union a, v_27351_union b where a.k = b.k;
 show trace;
 
-evaluate 'S13: ALL over a view without subviews';
-select /*+ recompile parallel(0) */ count(*) from all v_27351_rev a, all v_27351_rev b where a.supplier_no = b.supplier_no;
+evaluate 'S11: a predicate pushed into one of three references, the other two share';
+select /*+ recompile parallel(0) */ count(*), sum(c.total_revenue)
+from v_27351_rev a, v_27351_rev b, v_27351_rev c
+where a.supplier_no = b.supplier_no and c.supplier_no = 5 and a.total_revenue >= c.total_revenue;
+show trace;
+
+evaluate 'S12: references reading no column of the view';
+select /*+ recompile parallel(0) */ (select count(*) from v_27351_rev) + (select count(*) from v_27351_rev) from db_root;
+show trace;
+
+evaluate 'S13: ROWNUM view, whose result is fixed within a statement';
+select /*+ recompile parallel(0) */ count(*) from v_27351_rownum a, v_27351_rownum b where a.k = b.k;
+show trace;
+
+evaluate 'S14: analytic function in the statement';
+select /*+ recompile parallel(0) */ a.supplier_no, rank () over (order by a.total_revenue) r
+from v_27351_rev a, v_27351_rev b where a.supplier_no = b.supplier_no
+order by 1 limit 3;
+show trace;
+
+evaluate 'S15: two views each read twice, two share groups';
+select /*+ recompile parallel(0) */ count(*), sum(a.total_revenue), count(d.k)
+from v_27351_rev a, v_27351_rev b, v_27351_dist c, v_27351_dist d
+where a.supplier_no = b.supplier_no and b.supplier_no = c.k and c.k = d.k;
 show trace;
 
 set trace off;
@@ -138,9 +139,9 @@ set trace off;
 -- clean up test data
 --
 
-drop synonym s_27351_rev;
-drop view v_27351_dist;
-drop view v_27351_ordv;
 drop view v_27351_rev;
+drop view v_27351_dist;
+drop view v_27351_union;
+drop view v_27351_rownum;
 drop table t_27351_li;
 drop table t_27351_su;

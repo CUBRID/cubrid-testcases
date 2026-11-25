@@ -15,6 +15,12 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
 3
 ===================================================
 0
@@ -33,7 +39,11 @@
 ===================================================
 0
 ===================================================
-300000
+1000
+===================================================
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
@@ -69,24 +79,24 @@ Query Plan:
   SORT (group by)
     TABLE SCAN (a)
 
-  rewritten query: (select /* shared view ? */ a.l_suppkey from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
+  rewritten query: (select a.l_suppkey from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey)
 
   TABLE SCAN (r)
 
-  rewritten query: (select count(*) from (select /* shared view ? reused */ null from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))
+  rewritten query: (select count(*) from (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))
 
   SORT (distinct)
     NESTED LOOPS (inner join)
       TABLE SCAN (s?)
-      INDEX SCAN (s?.pk_t_?_su_s_suppkey) (key range: s?.s_suppkey=s?.s_suppkey, key filter: (s?.s_suppkey<=(select count(*) from (select /* shared view ? reused */ null from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))), covered: true)
+      INDEX SCAN (s?.pk_t_?_su_s_suppkey) (key range: s?.s_suppkey=s?.s_suppkey, key filter: (s?.s_suppkey<=(select count(*) from (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))), covered: true)
 
-  rewritten query: (select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ distinct s?.s_suppkey from [dba.t_?_su] s?, [dba.t_?_su] s? where s?.s_suppkey=s?.s_suppkey and (s?.s_suppkey<=(select count(*) from (select /* shared view ? reused */ null from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))))
+  rewritten query: (select /*+ ORDERED USE_NL */ distinct s?.s_suppkey from [dba.t_?_su] s?, [dba.t_?_su] s? where s?.s_suppkey=s?.s_suppkey and (s?.s_suppkey<=(select count(*) from (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no))))
 
   NESTED LOOPS (inner join)
     TABLE SCAN (x)
     TABLE SCAN (a)
 
-  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ count(*), sum(x.c) from (select /* shared view ? */ a.l_suppkey from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no), (select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ distinct s?.s_suppkey as [c] from [dba.t_?_su] s?, [dba.t_?_su] s? where s?.s_suppkey=s?.s_suppkey and (s?.s_suppkey<=(select count(*) from (select /* shared view ? reused */ null from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no)))) x (c) where a.supplier_no=x.c
+  rewritten query: select /*+ NO_PARALLEL_SCAN PARALLEL(?) */ count(*), sum(x.c) from (select a.l_suppkey from [dba.t_?_li] a where (a.l_shipdate>= ?:?  and a.l_shipdate< ?:? ) group by a.l_suppkey) a (supplier_no), (select /*+ ORDERED USE_NL */ distinct s?.s_suppkey as [c] from [dba.t_?_su] s?, [dba.t_?_su] s? where s?.s_suppkey=s?.s_suppkey and (s?.s_suppkey<=(select count(*) from (select r.l_suppkey from [dba.t_?_li] r where (r.l_shipdate>= ?:?  and r.l_shipdate< ?:? ) group by r.l_suppkey) r (supplier_no)))) x (c) where a.supplier_no=x.c
 
 
 Trace Statistics:
@@ -94,10 +104,11 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SCAN (hash temp(m), build time: ?, time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+      CTE (non_recursive_part)
+        SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SCAN (table: dba.t_?_li), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+          GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_?_su), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
           SCAN (index: dba.t_?_su.pk_t_?_su_s_suppkey), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
@@ -114,25 +125,33 @@ count(*)    sum(x.c)
 1000     500500     
 
 ===================================================
-count(*)    sum(x.c)    
-1000     500500     
+    
+R3: XASL cache, a query sharing a view and then a query reading two views that differ in a constant     
+
+===================================================
+count(*)    sum(a.s)    sum(b.s)    
+10     495450     495450     
+
+===================================================
+count(*)    sum(a.s)    sum(b.s)    
+10     495450     95050     
+
+===================================================
+count(*)    sum(a.s)    sum(b.s)    
+10     95050     495450     
 
 ===================================================
     
-R3: reference in a correlated subquery of a query scanned in parallel (expected 157742, 3943575)     
+R4: an error of the shared view body shows although the outer table is empty     
 
 ===================================================
-count(*)    sum(t.x)    
-157742     3943575     
-
+Error:-539
 ===================================================
-    
-R4: member in an uncorrelated subquery of a query scanned in parallel (expected 300000, 14399278)     
-
+0
 ===================================================
-count(*)    sum(t.x)    
-300000     14399278     
-
+0
+===================================================
+0
 ===================================================
 0
 ===================================================
