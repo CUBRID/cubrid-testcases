@@ -5,8 +5,9 @@
  *  The rule is that a call whose seed keeps one value for the statement keeps one
  *  generator, so the rows take its sequence, and a call whose seed may change from row
  *  to row reseeds on every evaluation. Before the fix the server decided by the kind of
- *  the seed operand. RAND(y + 0) and a SMALLINT column seed took the sequence of the
- *  seed of the first row, and a subquery that reads no outer row reseeded on every row.
+ *  the seed operand. RAND(y + 0), a SMALLINT column, an assignment to a session variable
+ *  and a stored function call as the seed took the sequence of the seed of the first
+ *  row, and a subquery that reads no outer row reseeded on every row.
  *  The client evaluator reseeded on every evaluation, so RAND(5) on the client path of
  *  INSERT_EXECUTION_MODE(0) or of ON DUPLICATE KEY UPDATE on a table with a trigger gave
  *  one value to all rows. The fix decides on the parse tree, and both paths use it.
@@ -22,7 +23,8 @@
  *    Case 3:  an expression on a column and a SMALLINT column reseed like the column
  *    Case 4:  a correlated subquery seed reseeds on every row
  *    Case 5:  a subquery that reads no outer row runs once - its seed keeps one sequence
- *    Case 6:  an aggregate, GROUPBY_NUM, ROWNUM, a serial and a seeded RAND reseed
+ *    Case 6:  an aggregate, an analytic function, GROUPBY_NUM, ROWNUM, LEVEL, a serial,
+ *             an assignment to a session variable and a seeded RAND reseed
  *    Case 7:  a host variable, a session variable and an unseeded RAND are fixed seeds
  *    Case 8:  a statement executed again starts its sequence again
  *    Case 9:  ON DUPLICATE KEY UPDATE gives the same values on the server and client paths
@@ -30,6 +32,8 @@
  *    Case 11: INSERT SELECT, UPDATE and ON DUPLICATE KEY UPDATE on a table with triggers -
  *             a trigger action run between the rows leaves the sequence of the statement
  *    Case 12: a trigger action is a statement of its own - each firing takes the first value
+ *    Case 13: MERGE follows the rule with and without a trigger on the target
+ *    Case 14: a stored function call may return another value on every row - it reseeds
  */
 
 drop table if exists t_seed, t_odku, t_trg, t_trg_log;
@@ -61,16 +65,21 @@ select a.id, rand(a.y), rand((select b.y from t_seed b where b.id = a.id)), cast
 -- a correlated subquery in ON DUPLICATE KEY UPDATE fails on the server path with CBRD-28146, so this runs only the client path
 insert /*+ INSERT_EXECUTION_MODE(0) */ into t_odku (id) values (1), (2), (3), (4) on duplicate key update w = rand((select b.y from t_seed b where b.id = t_odku.id));
 select id, w from t_odku order by id;
+-- RAND(5) inside such a subquery is out of the scope of CBRD-28082: the client path runs the subquery
+-- as a query of its own for every row, like a trigger action in Case 12, so it takes the first value each time
 
 
 evaluate 'Case 5: a subquery that reads no outer row runs once - its seed keeps one sequence';
 select id, rand(5), rand((select 5 from db_root)), random((select 5 from db_root)), cast(drand((select 5 from db_root)) * 1000000000 as bigint) from t_seed order by id;
 
 
-evaluate 'Case 6: an aggregate, GROUPBY_NUM, ROWNUM, a serial and a seeded RAND reseed';
+evaluate 'Case 6: an aggregate, an analytic function, GROUPBY_NUM, ROWNUM, LEVEL, a serial, an assignment to a session variable and a seeded RAND reseed';
 select rand(1), rand(2), rand(3) from db_root;
 select y, count(*), rand(count(*)), groupby_num(), rand(groupby_num()) from t_seed group by y order by y;
 select id, rand(id), rand(rownum), rand(s_seed.next_value) from t_seed order by id;
+select id, rand(row_number() over (order by id)) from t_seed order by id;
+select level, rand(level) from db_root connect by level <= 4 order by level;
+select id, rand(@w := id) from t_seed order by id;
 select rand(1127084414), rand(585950151), rand(1693504463), rand(425350459) from db_root;
 select id, rand(5), rand(rand(5)) from t_seed order by id;
 
@@ -85,6 +94,8 @@ select count(distinct r), count(distinct u) from (select rand(rand()) r, rand() 
 
 evaluate 'Case 8: a statement executed again starts its sequence again';
 execute q_seed using 5;
+-- the same text runs twice, so the second run takes the XASL cache
+select id, rand(5) from t_seed order by id;
 select id, rand(5) from t_seed order by id;
 deallocate prepare q_seed;
 
@@ -128,6 +139,21 @@ evaluate 'Case 12: a trigger action is a statement of its own - each firing take
 select e, count(*), min(v), max(v) from t_trg_log group by e order by e;
 
 
+evaluate 'Case 13: MERGE follows the rule with and without a trigger on the target';
+merge into t_odku t using t_seed s on (t.id = s.id) when matched then update set t.x = rand(5), t.w = rand(s.y + 0);
+select id, x, w from t_odku order by id;
+-- t_trg has the triggers of Case 11
+merge into t_trg t using t_seed s on (t.id = s.id) when matched then update set t.x = rand(5), t.y = rand(s.y + 0);
+select id, x, y from t_trg order by id;
+
+
+evaluate 'Case 14: a stored function call may return another value on every row - it reseeds';
+create or replace function f_seed () return int as language plcsql begin return 5; end;
+select id, rand(f_seed()), rand(5) from t_seed order by id;
+
+
+drop function f_seed;
+drop variable @v, @w;
 drop trigger tr_trg_ai;
 drop trigger tr_trg_au;
 drop table t_trg, t_trg_log, t_odku, t_seed;
