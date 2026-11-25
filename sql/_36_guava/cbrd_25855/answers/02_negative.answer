@@ -9,7 +9,7 @@
 
 ===================================================
     
-N1: non-string SQL in OPEN FOR     
+Case 1: a non-string SQL expression in OPEN FOR is a compile error     
 
 
 ===================================================
@@ -18,7 +18,7 @@ Stored procedure compile error: SQL in the OPEN-FOR statement must be of a strin
 
 ===================================================
     
-N2: USING sys_refcursor     
+Case 2: a USING value of type SYS_REFCURSOR is a compile error     
 
 
 ===================================================
@@ -27,7 +27,7 @@ Stored procedure compile error: expressions in a USING clause cannot be of Sys_r
 
 ===================================================
     
-N3: USING boolean     
+Case 3: a USING value of type BOOLEAN is a compile error     
 
 
 ===================================================
@@ -36,7 +36,7 @@ Stored procedure compile error: expressions in a USING clause cannot be of Boole
 
 ===================================================
     
-N4: USING cursor     
+Case 4: a USING value of type CURSOR is a compile error     
 
 
 ===================================================
@@ -45,20 +45,20 @@ Stored procedure compile error: expressions in a USING clause cannot be of Curso
 
 ===================================================
     
-N5: USING record (%ROWTYPE)     
+Case 5: a USING value of a RECORD type (%ROWTYPE) is a compile error     
 
 
 ===================================================
 Error:-1360
-Stored procedure compile error: expressions in a USING clause cannot be of EMP0%ROWTYPE type
-
-===================================================
-0
+Stored procedure compile error: expressions in a USING clause cannot be of EMP%ROWTYPE type
 
 ===================================================
     
-N6: DML given to OPEN FOR -> must be a SELECT statement (run time)     
+Case 6: a DML statement given to OPEN FOR fails at run time, only SELECT is allowed     
 
+
+===================================================
+0
 
 ===================================================
 Error:-889
@@ -67,16 +67,11 @@ Stored procedure execute error:
 
 ===================================================
     
-N7-compile: non-existent table -> procedure still compiles     
+Case 7: a missing table in the dynamic SQL compiles and fails only at CALL (Unknown class)     
 
 
 ===================================================
 0
-
-===================================================
-    
-N7-run: fails only at CALL time (Unknown class)     
-
 
 ===================================================
 Error:-889
@@ -84,12 +79,12 @@ Stored procedure execute error:
   (line 5, column 1) Syntax: Unknown class "dba.no_such_table". select id from [dba.no_such_table] where id=1
 
 ===================================================
-0
+    
+Case 8: fewer USING values than placeholders fail at run time     
+
 
 ===================================================
-    
-N8: fewer USING values than placeholders (run time)     
-
+0
 
 ===================================================
 Error:-889
@@ -97,12 +92,12 @@ Stored procedure execute error:
   (line 4, column 1) Attempt to execute the query when not all the parameters are binded
 
 ===================================================
-0
+    
+Case 9: more USING values than placeholders fail at run time with another error than Case 8     
+
 
 ===================================================
-    
-N9: more USING values than placeholders (run time)     
-
+0
 
 ===================================================
 Error:-889
@@ -111,7 +106,7 @@ Stored procedure execute error:
 
 ===================================================
     
-N10: empty dynamic SQL string in OPEN FOR (run time)     
+Case 10: an empty dynamic SQL string in OPEN FOR fails at run time     
 
 
 ===================================================
@@ -121,7 +116,7 @@ Stored procedure execute error:
 
 ===================================================
     
-N11: NULL dynamic SQL string in OPEN FOR (run time)     
+Case 11: a NULL dynamic SQL string in OPEN FOR fails at run time     
 
 
 ===================================================

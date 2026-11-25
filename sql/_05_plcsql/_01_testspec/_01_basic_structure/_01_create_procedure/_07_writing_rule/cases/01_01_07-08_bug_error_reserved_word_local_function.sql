@@ -1,8 +1,101 @@
+/**
+ *  This test case verifies CBRD-25111: a PL/CSQL reserved word cannot be used as a local function name.
+ *
+ *  Each case creates a procedure that declares a local function named after one reserved word,
+ *  and the create fails.
+ *
+ *  Coverage:
+ *    Case 1:   reserved word AND as a local function name fails to compile
+ *    Case 2:   reserved word AS as a local function name fails to compile
+ *    Case 3:   reserved word BETWEEN as a local function name fails to compile
+ *    Case 4:   reserved word BIGINT as a local function name fails to compile
+ *    Case 5:   reserved word BOOLEAN as a local function name fails to compile
+ *    Case 6:   reserved word BY as a local function name fails to compile
+ *    Case 7:   reserved word CHAR as a local function name fails to compile
+ *    Case 8:   reserved word CLOSE as a local function name fails to compile
+ *    Case 9:   reserved word COMMIT as a local function name fails to compile
+ *    Case 10:  reserved word CONSTANT as a local function name fails to compile
+ *    Case 11:  reserved word CONTINUE as a local function name fails to compile
+ *    Case 12:  reserved word CREATE as a local function name fails to compile
+ *    Case 13:  reserved word CURSOR as a local function name fails to compile
+ *    Case 14:  reserved word DATE as a local function name fails to compile
+ *    Case 15:  reserved word DATETIME as a local function name fails to compile
+ *    Case 16:  reserved word DATETIMELTZ as a local function name fails to compile
+ *    Case 17:  reserved word DATETIMETZ as a local function name fails to compile
+ *    Case 18:  reserved word DEC as a local function name fails to compile
+ *    Case 19:  reserved word DECIMAL as a local function name fails to compile
+ *    Case 20:  reserved word DECLARE as a local function name fails to compile
+ *    Case 21:  reserved word DEFAULT as a local function name fails to compile
+ *    Case 22:  reserved word DIV as a local function name fails to compile
+ *    Case 23:  reserved word DOUBLE as a local function name fails to compile
+ *    Case 24:  reserved word ELSE as a local function name fails to compile
+ *    Case 25:  reserved word ELSIF as a local function name fails to compile
+ *    Case 26:  reserved word END as a local function name fails: END closes the routine early and the rest fails as separate statements
+ *    Case 27:  reserved word ESCAPE as a local function name fails to compile
+ *    Case 28:  reserved word EXCEPTION as a local function name fails to compile
+ *    Case 29:  reserved word EXECUTE as a local function name fails to compile
+ *    Case 30:  reserved word EXIT as a local function name fails to compile
+ *    Case 31:  reserved word FALSE as a local function name fails to compile
+ *    Case 32:  reserved word FETCH as a local function name fails to compile
+ *    Case 33:  reserved word FLOAT as a local function name fails to compile
+ *    Case 34:  reserved word FOR as a local function name fails to compile
+ *    Case 35:  reserved word IMMEDIATE as a local function name fails to compile
+ *    Case 36:  reserved word IN as a local function name fails to compile
+ *    Case 37:  reserved word INT as a local function name fails to compile
+ *    Case 38:  reserved word INTEGER as a local function name fails to compile
+ *    Case 39:  reserved word INTO as a local function name fails to compile
+ *    Case 40:  reserved word IS as a local function name fails to compile
+ *    Case 41:  reserved word LIKE as a local function name fails to compile
+ *    Case 42:  reserved word LIST as a local function name fails to compile
+ *    Case 43:  reserved word MOD as a local function name fails to compile
+ *    Case 44:  reserved word MULTISET as a local function name fails to compile
+ *    Case 45:  reserved word NOT as a local function name fails to compile
+ *    Case 46:  reserved word NULL as a local function name fails to compile
+ *    Case 47:  reserved word NUMERIC as a local function name fails to compile
+ *    Case 48:  reserved word OPEN as a local function name fails to compile
+ *    Case 49:  reserved word OR as a local function name fails to compile
+ *    Case 50:  reserved word OUT as a local function name fails to compile
+ *    Case 51:  reserved word PRAGMA as a local function name fails to compile
+ *    Case 52:  reserved word RAISE as a local function name fails to compile
+ *    Case 53:  reserved word REAL as a local function name fails to compile
+ *    Case 54:  reserved word REPLACE as a local function name fails to compile
+ *    Case 55:  reserved word RETURN as a local function name fails to compile
+ *    Case 56:  reserved word REVERSE as a local function name fails to compile
+ *    Case 57:  reserved word ROLLBACK as a local function name fails to compile
+ *    Case 58:  reserved word SEQUENCE as a local function name fails to compile
+ *    Case 59:  reserved word SET as a local function name fails to compile
+ *    Case 60:  reserved word SETEQ as a local function name fails to compile
+ *    Case 61:  reserved word SETNEQ as a local function name fails to compile
+ *    Case 62:  reserved word SHORT as a local function name fails to compile
+ *    Case 63:  reserved word SMALLINT as a local function name fails to compile
+ *    Case 64:  reserved word SQL as a local function name fails to compile
+ *    Case 65:  reserved word STRING as a local function name fails to compile
+ *    Case 66:  reserved word SUBSET as a local function name fails to compile
+ *    Case 67:  reserved word SUBSETEQ as a local function name fails to compile
+ *    Case 68:  reserved word SUPERSET as a local function name fails to compile
+ *    Case 69:  reserved word SUPERSETEQ as a local function name fails to compile
+ *    Case 70:  reserved word SYS_REFCURSOR as a local function name fails to compile
+ *    Case 71:  reserved word THEN as a local function name fails to compile
+ *    Case 72:  reserved word TIME as a local function name fails to compile
+ *    Case 73:  reserved word TIMESTAMP as a local function name fails to compile
+ *    Case 74:  reserved word TIMESTAMPLTZ as a local function name fails to compile
+ *    Case 75:  reserved word TIMESTAMPTZ as a local function name fails to compile
+ *    Case 76:  reserved word TRUE as a local function name fails to compile
+ *    Case 77:  reserved word USING as a local function name fails to compile
+ *    Case 78:  reserved word VARCHAR as a local function name fails to compile
+ *    Case 79:  reserved word WHEN as a local function name fails to compile
+ *    Case 80:  reserved word WHILE as a local function name fails to compile
+ *    Case 81:  reserved word WORK as a local function name fails to compile
+ *    Case 82:  reserved word XOR as a local function name fails to compile
+ *    Case 83:  reserved word INSERT as a local function name fails to compile
+ *    Case 84:  reserved word TRUNCATE as a local function name fails to compile
+ *    Case 85:  reserved word AUTONOMOUS_TRANSACTION as a local function name fails to compile
+ *    Case 86:  reserved word BEGIN as a local function name fails
+ */
+
 --+ server-message on
 
--- Verification for CBRD-25111
-
-select 'AND' ;
+evaluate 'Case 1: reserved word AND as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function AND return int as 
     begin 
@@ -12,7 +105,7 @@ begin
     dbms_output.put_line('call local function =' || [AND]() ); 
 end;
 
-select 'AS' ;
+evaluate 'Case 2: reserved word AS as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function AS return int as 
     begin 
@@ -22,7 +115,7 @@ begin
     dbms_output.put_line('call local function =' || [AS]() ); 
 end;
 
-select 'BETWEEN' ;
+evaluate 'Case 3: reserved word BETWEEN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function BETWEEN return int as 
     begin 
@@ -32,7 +125,7 @@ begin
     dbms_output.put_line('call local function =' || [BETWEEN]() ); 
 end;
 
-select 'BIGINT' ;
+evaluate 'Case 4: reserved word BIGINT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function BIGINT return int as 
     begin 
@@ -42,7 +135,7 @@ begin
     dbms_output.put_line('call local function =' || [BIGINT]() ); 
 end;
 
-select 'BOOLEAN' ;
+evaluate 'Case 5: reserved word BOOLEAN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function BOOLEAN return int as 
     begin 
@@ -52,7 +145,7 @@ begin
     dbms_output.put_line('call local function =' || [BOOLEAN]() ); 
 end;
 
-select 'BY' ;
+evaluate 'Case 6: reserved word BY as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function BY return int as 
     begin 
@@ -62,7 +155,7 @@ begin
     dbms_output.put_line('call local function =' || [BY]() ); 
 end;
 
-select 'CHAR' ;
+evaluate 'Case 7: reserved word CHAR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CHAR return int as 
     begin 
@@ -72,7 +165,7 @@ begin
     dbms_output.put_line('call local function =' || [CHAR]() ); 
 end;
 
-select 'CLOSE' ;
+evaluate 'Case 8: reserved word CLOSE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CLOSE return int as 
     begin 
@@ -82,7 +175,7 @@ begin
     dbms_output.put_line('call local function =' || [CLOSE]() ); 
 end;
 
-select 'COMMIT' ;
+evaluate 'Case 9: reserved word COMMIT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function COMMIT return int as 
     begin 
@@ -92,7 +185,7 @@ begin
     dbms_output.put_line('call local function =' || [COMMIT]() ); 
 end;
 
-select 'CONSTANT' ;
+evaluate 'Case 10: reserved word CONSTANT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CONSTANT return int as 
     begin 
@@ -102,7 +195,7 @@ begin
     dbms_output.put_line('call local function =' || [CONSTANT]() ); 
 end;
 
-select 'CONTINUE' ;
+evaluate 'Case 11: reserved word CONTINUE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CONTINUE return int as 
     begin 
@@ -112,7 +205,7 @@ begin
     dbms_output.put_line('call local function =' || [CONTINUE]() ); 
 end;
 
-select 'CREATE' ;
+evaluate 'Case 12: reserved word CREATE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CREATE return int as 
     begin 
@@ -122,7 +215,7 @@ begin
     dbms_output.put_line('call local function =' || [CREATE]() ); 
 end;
 
-select 'CURSOR' ;
+evaluate 'Case 13: reserved word CURSOR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function CURSOR return int as 
     begin 
@@ -132,7 +225,7 @@ begin
     dbms_output.put_line('call local function =' || [CURSOR]() ); 
 end;
 
-select 'DATE' ;
+evaluate 'Case 14: reserved word DATE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DATE return int as 
     begin 
@@ -142,7 +235,7 @@ begin
     dbms_output.put_line('call local function =' || [DATE]() ); 
 end;
 
-select 'DATETIME' ;
+evaluate 'Case 15: reserved word DATETIME as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DATETIME return int as 
     begin 
@@ -152,7 +245,7 @@ begin
     dbms_output.put_line('call local function =' || [DATETIME]() ); 
 end;
 
-select 'DATETIMELTZ' ;
+evaluate 'Case 16: reserved word DATETIMELTZ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DATETIMELTZ return int as 
     begin 
@@ -162,7 +255,7 @@ begin
     dbms_output.put_line('call local function =' || [DATETIMELTZ]() ); 
 end;
 
-select 'DATETIMETZ' ;
+evaluate 'Case 17: reserved word DATETIMETZ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DATETIMETZ return int as 
     begin 
@@ -172,7 +265,7 @@ begin
     dbms_output.put_line('call local function =' || [DATETIMETZ]() ); 
 end;
 
-select 'DEC' ;
+evaluate 'Case 18: reserved word DEC as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DEC return int as 
     begin 
@@ -182,7 +275,7 @@ begin
     dbms_output.put_line('call local function =' || [DEC]() ); 
 end;
 
-select 'DECIMAL' ;
+evaluate 'Case 19: reserved word DECIMAL as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DECIMAL return int as 
     begin 
@@ -192,7 +285,7 @@ begin
     dbms_output.put_line('call local function =' || [DECIMAL]() ); 
 end;
 
-select 'DECLARE' ;
+evaluate 'Case 20: reserved word DECLARE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DECLARE return int as 
     begin 
@@ -202,7 +295,7 @@ begin
     dbms_output.put_line('call local function =' || [DECLARE]() ); 
 end;
 
-select 'DEFAULT' ;
+evaluate 'Case 21: reserved word DEFAULT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DEFAULT return int as 
     begin 
@@ -212,7 +305,7 @@ begin
     dbms_output.put_line('call local function =' || [DEFAULT]() ); 
 end;
 
-select 'DIV' ;
+evaluate 'Case 22: reserved word DIV as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DIV return int as 
     begin 
@@ -222,7 +315,7 @@ begin
     dbms_output.put_line('call local function =' || [DIV]() ); 
 end;
 
-select 'DOUBLE' ;
+evaluate 'Case 23: reserved word DOUBLE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function DOUBLE return int as 
     begin 
@@ -232,7 +325,7 @@ begin
     dbms_output.put_line('call local function =' || [DOUBLE]() ); 
 end;
 
-select 'ELSE' ;
+evaluate 'Case 24: reserved word ELSE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function ELSE return int as 
     begin 
@@ -242,7 +335,7 @@ begin
     dbms_output.put_line('call local function =' || [ELSE]() ); 
 end;
 
-select 'ELSIF' ;
+evaluate 'Case 25: reserved word ELSIF as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function ELSIF return int as 
     begin 
@@ -252,7 +345,7 @@ begin
     dbms_output.put_line('call local function =' || [ELSIF]() ); 
 end;
 
-select 'END' ;
+evaluate 'Case 26: reserved word END as a local function name fails: END closes the routine early and the rest fails as separate statements; result = Error:-493';
 create or replace procedure p_local() as 
     function END return int as 
     begin 
@@ -262,7 +355,7 @@ begin
     dbms_output.put_line('call local function =' || [END]() ); 
 end;
 
-select 'ESCAPE' ;
+evaluate 'Case 27: reserved word ESCAPE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function ESCAPE return int as 
     begin 
@@ -272,7 +365,7 @@ begin
     dbms_output.put_line('call local function =' || [ESCAPE]() ); 
 end;
 
-select 'EXCEPTION' ;
+evaluate 'Case 28: reserved word EXCEPTION as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function EXCEPTION return int as 
     begin 
@@ -282,7 +375,7 @@ begin
     dbms_output.put_line('call local function =' || [EXCEPTION]() ); 
 end;
 
-select 'EXECUTE' ;
+evaluate 'Case 29: reserved word EXECUTE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function EXECUTE return int as 
     begin 
@@ -292,7 +385,7 @@ begin
     dbms_output.put_line('call local function =' || [EXECUTE]() ); 
 end;
 
-select 'EXIT' ;
+evaluate 'Case 30: reserved word EXIT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function EXIT return int as 
     begin 
@@ -302,7 +395,7 @@ begin
     dbms_output.put_line('call local function =' || [EXIT]() ); 
 end;
 
-select 'FALSE' ;
+evaluate 'Case 31: reserved word FALSE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function FALSE return int as 
     begin 
@@ -312,7 +405,7 @@ begin
     dbms_output.put_line('call local function =' || [FALSE]() ); 
 end;
 
-select 'FETCH' ;
+evaluate 'Case 32: reserved word FETCH as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function FETCH return int as 
     begin 
@@ -322,7 +415,7 @@ begin
     dbms_output.put_line('call local function =' || [FETCH]() ); 
 end;
 
-select 'FLOAT' ;
+evaluate 'Case 33: reserved word FLOAT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function FLOAT return int as 
     begin 
@@ -332,7 +425,7 @@ begin
     dbms_output.put_line('call local function =' || [FLOAT]() ); 
 end;
 
-select 'FOR' ;
+evaluate 'Case 34: reserved word FOR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function FOR return int as 
     begin 
@@ -342,7 +435,7 @@ begin
     dbms_output.put_line('call local function =' || [FOR]() ); 
 end;
 
-select 'IMMEDIATE' ;
+evaluate 'Case 35: reserved word IMMEDIATE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function IMMEDIATE return int as 
     begin 
@@ -352,7 +445,7 @@ begin
     dbms_output.put_line('call local function =' || [IMMEDIATE]() ); 
 end;
 
-select 'IN' ;
+evaluate 'Case 36: reserved word IN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function IN return int as 
     begin 
@@ -362,7 +455,7 @@ begin
     dbms_output.put_line('call local function =' || [IN]() ); 
 end;
 
-select 'INT' ;
+evaluate 'Case 37: reserved word INT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function INT return int as 
     begin 
@@ -372,7 +465,7 @@ begin
     dbms_output.put_line('call local function =' || [INT]() ); 
 end;
 
-select 'INTEGER' ;
+evaluate 'Case 38: reserved word INTEGER as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function INTEGER return int as 
     begin 
@@ -382,7 +475,7 @@ begin
     dbms_output.put_line('call local function =' || [INTEGER]() ); 
 end;
 
-select 'INTO' ;
+evaluate 'Case 39: reserved word INTO as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function INTO return int as 
     begin 
@@ -392,7 +485,7 @@ begin
     dbms_output.put_line('call local function =' || [INTO]() ); 
 end;
 
-select 'IS' ;
+evaluate 'Case 40: reserved word IS as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function IS return int as 
     begin 
@@ -402,7 +495,7 @@ begin
     dbms_output.put_line('call local function =' || [IS]() ); 
 end;
 
-select 'LIKE' ;
+evaluate 'Case 41: reserved word LIKE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function LIKE return int as 
     begin 
@@ -412,7 +505,7 @@ begin
     dbms_output.put_line('call local function =' || [LIKE]() ); 
 end;
 
-select 'LIST' ;
+evaluate 'Case 42: reserved word LIST as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function LIST return int as 
     begin 
@@ -422,7 +515,7 @@ begin
     dbms_output.put_line('call local function =' || [LIST]() ); 
 end;
 
-select 'MOD' ;
+evaluate 'Case 43: reserved word MOD as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function MOD return int as 
     begin 
@@ -432,7 +525,7 @@ begin
     dbms_output.put_line('call local function =' || [MOD]() ); 
 end;
 
-select 'MULTISET' ;
+evaluate 'Case 44: reserved word MULTISET as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function MULTISET return int as 
     begin 
@@ -442,7 +535,7 @@ begin
     dbms_output.put_line('call local function =' || [MULTISET]() ); 
 end;
 
-select 'NOT' ;
+evaluate 'Case 45: reserved word NOT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function NOT return int as 
     begin 
@@ -452,7 +545,7 @@ begin
     dbms_output.put_line('call local function =' || [NOT]() ); 
 end;
 
-select 'NULL' ;
+evaluate 'Case 46: reserved word NULL as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function NULL return int as 
     begin 
@@ -462,7 +555,7 @@ begin
     dbms_output.put_line('call local function =' || [NULL]() ); 
 end;
 
-select 'NUMERIC' ;
+evaluate 'Case 47: reserved word NUMERIC as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function NUMERIC return int as 
     begin 
@@ -472,7 +565,7 @@ begin
     dbms_output.put_line('call local function =' || [NUMERIC]() ); 
 end;
 
-select 'OPEN' ;
+evaluate 'Case 48: reserved word OPEN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function OPEN return int as 
     begin 
@@ -482,7 +575,7 @@ begin
     dbms_output.put_line('call local function =' || [OPEN]() ); 
 end;
 
-select 'OR' ;
+evaluate 'Case 49: reserved word OR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function OR return int as 
     begin 
@@ -492,7 +585,7 @@ begin
     dbms_output.put_line('call local function =' || [OR]() ); 
 end;
 
-select 'OUT' ;
+evaluate 'Case 50: reserved word OUT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function OUT return int as 
     begin 
@@ -502,7 +595,7 @@ begin
     dbms_output.put_line('call local function =' || [OUT]() ); 
 end;
 
-select 'PRAGMA' ;
+evaluate 'Case 51: reserved word PRAGMA as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function PRAGMA return int as 
     begin 
@@ -512,7 +605,7 @@ begin
     dbms_output.put_line('call local function =' || [PRAGMA]() ); 
 end;
 
-select 'RAISE' ;
+evaluate 'Case 52: reserved word RAISE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function RAISE return int as 
     begin 
@@ -522,7 +615,7 @@ begin
     dbms_output.put_line('call local function =' || [RAISE]() ); 
 end;
 
-select 'REAL' ;
+evaluate 'Case 53: reserved word REAL as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function REAL return int as 
     begin 
@@ -532,7 +625,7 @@ begin
     dbms_output.put_line('call local function =' || [REAL]() ); 
 end;
 
-select 'REPLACE' ;
+evaluate 'Case 54: reserved word REPLACE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function REPLACE return int as 
     begin 
@@ -542,7 +635,7 @@ begin
     dbms_output.put_line('call local function =' || [REPLACE]() ); 
 end;
 
-select 'RETURN' ;
+evaluate 'Case 55: reserved word RETURN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function RETURN return int as 
     begin 
@@ -552,7 +645,7 @@ begin
     dbms_output.put_line('call local function =' || [RETURN]() ); 
 end;
 
-select 'REVERSE' ;
+evaluate 'Case 56: reserved word REVERSE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function REVERSE return int as 
     begin 
@@ -562,7 +655,7 @@ begin
     dbms_output.put_line('call local function =' || [REVERSE]() ); 
 end;
 
-select 'ROLLBACK' ;
+evaluate 'Case 57: reserved word ROLLBACK as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function ROLLBACK return int as 
     begin 
@@ -572,7 +665,7 @@ begin
     dbms_output.put_line('call local function =' || [ROLLBACK]() ); 
 end;
 
-select 'SEQUENCE' ;
+evaluate 'Case 58: reserved word SEQUENCE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SEQUENCE return int as 
     begin 
@@ -582,7 +675,7 @@ begin
     dbms_output.put_line('call local function =' || [SEQUENCE]() ); 
 end;
 
-select 'SET' ;
+evaluate 'Case 59: reserved word SET as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SET return int as 
     begin 
@@ -592,7 +685,7 @@ begin
     dbms_output.put_line('call local function =' || [SET]() ); 
 end;
 
-select 'SETEQ' ;
+evaluate 'Case 60: reserved word SETEQ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SETEQ return int as 
     begin 
@@ -602,7 +695,7 @@ begin
     dbms_output.put_line('call local function =' || [SETEQ]() ); 
 end;
 
-select 'SETNEQ' ;
+evaluate 'Case 61: reserved word SETNEQ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SETNEQ return int as 
     begin 
@@ -612,7 +705,7 @@ begin
     dbms_output.put_line('call local function =' || [SETNEQ]() ); 
 end;
 
-select 'SHORT' ;
+evaluate 'Case 62: reserved word SHORT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SHORT return int as 
     begin 
@@ -622,7 +715,7 @@ begin
     dbms_output.put_line('call local function =' || [SHORT]() ); 
 end;
 
-select 'SMALLINT' ;
+evaluate 'Case 63: reserved word SMALLINT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SMALLINT return int as 
     begin 
@@ -632,7 +725,7 @@ begin
     dbms_output.put_line('call local function =' || [SMALLINT]() ); 
 end;
 
-select 'SQL' ;
+evaluate 'Case 64: reserved word SQL as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SQL return int as 
     begin 
@@ -642,7 +735,7 @@ begin
     dbms_output.put_line('call local function =' || [SQL]() ); 
 end;
 
-select 'STRING' ;
+evaluate 'Case 65: reserved word STRING as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function STRING return int as 
     begin 
@@ -652,7 +745,7 @@ begin
     dbms_output.put_line('call local function =' || [STRING]() ); 
 end;
 
-select 'SUBSET' ;
+evaluate 'Case 66: reserved word SUBSET as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SUBSET return int as 
     begin 
@@ -662,7 +755,7 @@ begin
     dbms_output.put_line('call local function =' || [SUBSET]() ); 
 end;
 
-select 'SUBSETEQ' ;
+evaluate 'Case 67: reserved word SUBSETEQ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SUBSETEQ return int as 
     begin 
@@ -672,7 +765,7 @@ begin
     dbms_output.put_line('call local function =' || [SUBSETEQ]() ); 
 end;
 
-select 'SUPERSET' ;
+evaluate 'Case 68: reserved word SUPERSET as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SUPERSET return int as 
     begin 
@@ -682,7 +775,7 @@ begin
     dbms_output.put_line('call local function =' || [SUPERSET]() ); 
 end;
 
-select 'SUPERSETEQ' ;
+evaluate 'Case 69: reserved word SUPERSETEQ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SUPERSETEQ return int as 
     begin 
@@ -692,7 +785,7 @@ begin
     dbms_output.put_line('call local function =' || [SUPERSETEQ]() ); 
 end;
 
-select 'SYS_REFCURSOR' ;
+evaluate 'Case 70: reserved word SYS_REFCURSOR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function SYS_REFCURSOR return int as 
     begin 
@@ -702,7 +795,7 @@ begin
     dbms_output.put_line('call local function =' || [SYS_REFCURSOR]() ); 
 end;
 
-select 'THEN' ;
+evaluate 'Case 71: reserved word THEN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function THEN return int as 
     begin 
@@ -712,7 +805,7 @@ begin
     dbms_output.put_line('call local function =' || [THEN]() ); 
 end;
 
-select 'TIME' ;
+evaluate 'Case 72: reserved word TIME as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function TIME return int as 
     begin 
@@ -722,7 +815,7 @@ begin
     dbms_output.put_line('call local function =' || [TIME]() ); 
 end;
 
-select 'TIMESTAMP' ;
+evaluate 'Case 73: reserved word TIMESTAMP as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function TIMESTAMP return int as 
     begin 
@@ -732,7 +825,7 @@ begin
     dbms_output.put_line('call local function =' || [TIMESTAMP]() ); 
 end;
 
-select 'TIMESTAMPLTZ' ;
+evaluate 'Case 74: reserved word TIMESTAMPLTZ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function TIMESTAMPLTZ return int as 
     begin 
@@ -742,7 +835,7 @@ begin
     dbms_output.put_line('call local function =' || [TIMESTAMPLTZ]() ); 
 end;
 
-select 'TIMESTAMPTZ' ;
+evaluate 'Case 75: reserved word TIMESTAMPTZ as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function TIMESTAMPTZ return int as 
     begin 
@@ -752,7 +845,7 @@ begin
     dbms_output.put_line('call local function =' || [TIMESTAMPTZ]() ); 
 end;
 
-select 'TRUE' ;
+evaluate 'Case 76: reserved word TRUE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function TRUE return int as 
     begin 
@@ -762,7 +855,7 @@ begin
     dbms_output.put_line('call local function =' || [TRUE]() ); 
 end;
 
-select 'USING' ;
+evaluate 'Case 77: reserved word USING as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function USING return int as 
     begin 
@@ -772,7 +865,7 @@ begin
     dbms_output.put_line('call local function =' || [USING]() ); 
 end;
 
-select 'VARCHAR' ;
+evaluate 'Case 78: reserved word VARCHAR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function VARCHAR return int as 
     begin 
@@ -782,7 +875,7 @@ begin
     dbms_output.put_line('call local function =' || [VARCHAR]() ); 
 end;
 
-select 'WHEN' ;
+evaluate 'Case 79: reserved word WHEN as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function WHEN return int as 
     begin 
@@ -792,7 +885,7 @@ begin
     dbms_output.put_line('call local function =' || [WHEN]() ); 
 end;
 
-select 'WHILE' ;
+evaluate 'Case 80: reserved word WHILE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function WHILE return int as 
     begin 
@@ -802,7 +895,7 @@ begin
     dbms_output.put_line('call local function =' || [WHILE]() ); 
 end;
 
-select 'WORK' ;
+evaluate 'Case 81: reserved word WORK as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function WORK return int as 
     begin 
@@ -812,7 +905,7 @@ begin
     dbms_output.put_line('call local function =' || [WORK]() ); 
 end;
 
-select 'XOR' ;
+evaluate 'Case 82: reserved word XOR as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as 
     function XOR return int as 
     begin 
@@ -822,7 +915,7 @@ begin
     dbms_output.put_line('call local function =' || [XOR]() ); 
 end;
 
-select 'INSERT' ;
+evaluate 'Case 83: reserved word INSERT as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as
     function INSERT return int as
     begin
@@ -832,7 +925,7 @@ begin
     dbms_output.put_line('call local function =' || [INSERT]() );
 end;
 
-select 'TRUNCATE' ;
+evaluate 'Case 84: reserved word TRUNCATE as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as
     function TRUNCATE return int as
     begin
@@ -842,7 +935,7 @@ begin
     dbms_output.put_line('call local function =' || [TRUNCATE]() );
 end;
 
-select 'AUTONOMOUS_TRANSACTION' ;
+evaluate 'Case 85: reserved word AUTONOMOUS_TRANSACTION as a local function name fails to compile; result = Error:-1360';
 create or replace procedure p_local() as
     function AUTONOMOUS_TRANSACTION return int as
     begin
@@ -852,7 +945,8 @@ begin
     dbms_output.put_line('call local function =' || [AUTONOMOUS_TRANSACTION]() );
 end;
 
-select 'BEGIN' ;
+-- BEGIN opens a block, so the end lines after this create belong to its statement
+evaluate 'Case 86: reserved word BEGIN as a local function name fails; result = Error:-493';
 create or replace procedure p_local() as
     function BEGIN return int as
     begin
@@ -865,6 +959,7 @@ end;
 end;
 
 
+-- every case fails, so p_local does not exist and this drop fails unless a case created it by mistake
 drop procedure p_local;
 
 

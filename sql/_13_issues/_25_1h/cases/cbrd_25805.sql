@@ -1,17 +1,33 @@
-/*
-Verify to the CBRD-25805
-CBRD-25805: Now the 'change_owner()' same as the work the 'alter ... owner to'
-*/
+/**
+ *  This test case verifies CBRD-25805: change_owner() now does the same work as ALTER ... OWNER TO
+ *
+ *  Each case grants privileges on an object of u1 among u2 to u5, changes the owner of
+ *  the object with change_owner(), and checks db_auth and db_authorization before and after.
+ *  Only dba may change the owner, so the same change by other users fails.
+ *
+ *  Revised for CBRD-26470 (package catalog changes).
+ *
+ *  Coverage:
+ *    Case 1:  changing the owner of u1.tbl to u3 with change_owner() updates db_auth, db_authorization and db_class
+ *    Case 2:  changing the owner of the view u1.v1_tbl to u2 and then to u3 with change_owner() updates db_auth, db_authorization and show create view
+ *    Case 3:  u2 with EXECUTE cannot change the owner of the function u1.hello with change_sp_owner(), and dba can
+ *    Case 4:  users with ALTER on a table, with or without grant option, cannot change its owner with change_owner(), and dba can
+ *    Case 5:  only dba changes the owner of range, hash and list partitioned tables with change_owner()
+ *    Case 6:  changing the owner of a table whose SELECT and INSERT grants chain between u2 and u3 updates db_auth and db_authorization
+ *    Case 7:  changing the owner of a table whose grants reach u4 through u2 and u3 updates db_auth and db_authorization
+ *    Case 8:  after the owner change, the grant options in db_authorization decide what u2 and u4 can grant, insert and select
+ *    Case 9:  SELECT grants among u2 to u5 follow a chain of owner changes from u1 to u5, and a GRANT to the owner fails
+ */
 
 create user u1;
 create user u2;
 create user u3;
 
--- test for 6-2 ~ 6-4
+-- u4 and u5 are used from Case 7 on
 create user u4;
 create user u5;
 
-evaluate '1. change to the table owner';
+evaluate 'Case 1: changing the owner of u1.tbl to u3 with change_owner() updates db_auth, db_authorization and db_class';
 create table u1.tbl (col1 int);
 
 call login('u1','') on class db_user;
@@ -35,8 +51,7 @@ select class_name, owner_name from db_class where class_name = 'tbl';
 drop table u3.tbl;
 
 
-
-evaluate '2. change to the view owner';
+evaluate 'Case 2: changing the owner of the view u1.v1_tbl to u2 and then to u3 with change_owner() updates db_auth, db_authorization and show create view';
 create table u1.tbl (col1 int);
 create view u1.v1_tbl as select * from u1.tbl;
 
@@ -75,8 +90,7 @@ drop table u1.tbl;
 drop view u3.v1_tbl;
 
 
-
-evaluate '3. change to stored procedure owner';
+evaluate 'Case 3: u2 with EXECUTE cannot change the owner of the function u1.hello with change_sp_owner(), and dba can';
 create function u1.hello() return string
 as language java
 name 'SpCubrid.HelloCubrid() return java.lang.String';
@@ -90,12 +104,12 @@ select grantor_name, grantee_name, object_type, object_name, owner_name, auth_ty
 select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 
 call login('u2','') on class db_user;
-evaluate 'check error message';
+-- expected to fail: u2 has EXECUTE but is not dba
 CALL change_sp_owner ('u1.hello', 'u3') ON CLASS db_root;
 CALL change_sp_owner ('u1.hello', 'u3') ON CLASS db_root;
 
 call login('u1','') on class db_user;
-evaluate 'success';
+-- the owner u1 alters the comment of its function
 ALTER FUNCTION u1.hello COMMENT 'aaaa';
 select sp_name, owner, comment from db_stored_procedure;
 
@@ -110,8 +124,7 @@ call login(class db_user,'dba','');
 drop FUNCTION u3.hello;
 
 
-
-evaluate '4. Change the owner of a table to which you have granted ALTER permission';
+evaluate 'Case 4: users with ALTER on a table, with or without grant option, cannot change its owner with change_owner(), and dba can';
 create table u1.tbl (col1 int);
 create table u1.tbl2 (col1 int);
 
@@ -131,13 +144,13 @@ select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 
 
 call login('u3','') on class db_user;
-evaluate 'check error meessage';
+-- expected to fail: u3 has ALTER but is not dba
 CALL change_owner ('u1.tbl', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.tbl2', 'u3') ON CLASS db_root;
 
 
 call login('u2','') on class db_user;
-evaluate 'check error meessage';
+-- expected to fail: u2 has ALTER but is not dba
 CALL change_owner ('u1.tbl', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.tbl2', 'u3') ON CLASS db_root;
 
@@ -155,8 +168,7 @@ drop table u3.tbl;
 drop table u3.tbl2;
 
 
-
-evaluate '5. change to the owner for partition table';
+evaluate 'Case 5: only dba changes the owner of range, hash and list partitioned tables with change_owner()';
 call login ('u1') on class db_user;
 create table t1_r (c1 int) comment 'u1 > t1_r (range)' 
   partition by range (c1) (
@@ -193,21 +205,21 @@ select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 
 
 call login ('u3') on class db_user;
-evaluate 'check error message';
+-- expected to fail: u3 is not dba
 CALL change_owner ('u1.t1_r', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_h', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_l', 'u3') ON CLASS db_root;
 
 
 call login ('u2') on class db_user;
-evaluate 'check error message';
+-- expected to fail: u2 is not dba
 CALL change_owner ('u1.t1_r', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_h', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_l', 'u3') ON CLASS db_root;
 
 
 call login ('dba') on class db_user;
-evaluate 'success';
+-- dba changes the owners
 CALL change_owner ('u1.t1_r', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_h', 'u3') ON CLASS db_root;
 CALL change_owner ('u1.t1_l', 'u3') ON CLASS db_root;
@@ -221,8 +233,7 @@ drop table u3.t1_h;
 drop table u3.t1_l;
 
 
-
-evaluate '6-1. change to owner(u1->u3) when after grant to permission u1.tbl1';
+evaluate 'Case 6: changing the owner of a table whose SELECT and INSERT grants chain between u2 and u3 updates db_auth and db_authorization';
 CREATE TABLE u1.tbl1 (col1 int);
 
 GRANT SELECT ON u1.tbl1 TO U2 WITH GRANT OPTION;
@@ -251,8 +262,7 @@ select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 drop table u3.tbl1;
 
 
-
-evaluate '6-2. change to owner(u1->u3) when after grant to permission u1.tbl1';
+evaluate 'Case 7: changing the owner of a table whose grants reach u4 through u2 and u3 updates db_auth and db_authorization';
 CREATE TABLE u1.tbl1 (col1 int);
 
 GRANT SELECT ON u1.tbl1 TO u2 WITH GRANT OPTION;
@@ -281,8 +291,7 @@ select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 drop table u3.tbl1;
 
 
-
-evaluate '6-3. Check to mask(bit) on db_authorization';
+evaluate 'Case 8: after the owner change, the grant options in db_authorization decide what u2 and u4 can grant, insert and select';
 CREATE TABLE u1.tbl1 (col1 int);
 
 GRANT INSERT ON u1.tbl1 TO U2 WITH GRANT OPTION;
@@ -312,7 +321,7 @@ select owner, grants from db_authorization where owner != 'PUBLIC' order by 1;
 
 call login('u2','') on class db_user;
 GRANT INSERT ON u3.tbl1 TO U1;
-evaluate 'ERROR: SELECT authorization failure';
+-- expected to fail: u2 has SELECT without grant option
 GRANT SELECT ON u3.tbl1 TO u1;
 
 insert into u3.tbl1 values(1);
@@ -320,9 +329,9 @@ select * from u3.tbl1 order by 1;
 
 
 call login('u4','') on class db_user;
-evaluate 'ERROR: INSERT authorization failure';
+-- expected to fail: u4 has INSERT without grant option
 GRANT INSERT ON u3.tbl1 TO U1;
-evaluate 'success';
+-- u4 has SELECT with grant option
 GRANT SELECT ON u3.tbl1 TO u1;
 
 insert into u3.tbl1 values(2);
@@ -333,8 +342,7 @@ call login('dba','') on class db_user;
 drop table u3.tbl1;
 
 
-
-evaluate '6-4. Check to mask(bit) on db_authorization';
+evaluate 'Case 9: SELECT grants among u2 to u5 follow a chain of owner changes from u1 to u5, and a GRANT to the owner fails';
 create table u1.tbl (col1 int);
 
 call login('u1','') on class db_user;
@@ -345,36 +353,36 @@ GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
 
 call login('u2','') on class db_user;
-evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
+-- expected to fail: u1 owns TBL
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
-evaluate 'success';
+-- u2 grants to the other users
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
 
 call login('u3','') on class db_user;
-evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
+-- expected to fail: u1 owns TBL
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
-evaluate 'success';
+-- u3 grants to the other users
 GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
 
 call login('u4','') on class db_user;
-evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
+-- expected to fail: u1 owns TBL
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
-evaluate 'success';
+-- u4 grants to the other users
 GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u5 WITH GRANT OPTION;
 
 
 call login('u5','') on class db_user;
-evaluate 'ERROR: Cannot issue GRANT/REVOKE to owner of a class';
+-- expected to fail: u1 owns TBL
 GRANT SELECT ON u1.TBL TO u1 WITH GRANT OPTION;
-evaluate 'success';
+-- u5 grants to the other users
 GRANT SELECT ON u1.TBL TO u2 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u3 WITH GRANT OPTION;
 GRANT SELECT ON u1.TBL TO u4 WITH GRANT OPTION;
@@ -402,7 +410,7 @@ select grantor_name, grantee_name, object_type, object_name, owner_name, auth_ty
 drop table u5.tbl;
 
 
-evaluate 'Test done';
+-- cleanup
 drop user u5;
 drop user u4;
 drop user u3;

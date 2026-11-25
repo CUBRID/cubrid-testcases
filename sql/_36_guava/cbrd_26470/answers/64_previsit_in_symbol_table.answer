@@ -1,0 +1,101 @@
+===================================================
+    
+Case 1: outer b used, then b declared (visit) -> name B has already been used at line 4 and column 10     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: name B has already been used at line 4 and column 10 in the same declaration block
+
+===================================================
+    
+Case 2: bb used before its declaration -> undeclared identifier BB     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: undeclared identifier 'BB'
+
+===================================================
+    
+Case 3: y x%TYPE of NUMERIC(5,2) -> 2.35     
+
+
+===================================================
+0
+
+===================================================
+t64()    
+2.35     
+
+
+===================================================
+    
+Case 4: outer t used in a parameter type, then t declared (previsit) -> name T has already been used at line 4 and column 15     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: name T has already been used at line 4 and column 15 in the same declaration block
+
+===================================================
+    
+Case 5: outer x used in a cursor SQL, then x declared (previsit) -> name X has already been used at line 4 and column 13     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: name X has already been used at line 4 and column 13 in the same declaration block
+
+===================================================
+    
+Case 6: mutual recursion of local routines -> 5     
+
+
+===================================================
+0
+
+===================================================
+t64()    
+5     
+
+
+===================================================
+    
+Case 7: comment on a local variable -> only package spec items can have a comment     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: only package spec items can have a comment
+
+===================================================
+    
+Case 8: comment on a local cursor -> only package spec items can have a comment     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: only package spec items can have a comment
+
+===================================================
+    
+Case 9: cursor in a PARALLEL_ENABLE function -> PARALLEL_ENABLE cannot use a feature that calls DB server     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Stored functions declared with PARALLEL_ENABLE cannot use a feature that calls DB server
+
+===================================================
+    
+Case 10: local variables of the same name in a declaration block -> V has already been declared in the same scope     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: V has already been declared in the same scope
+
+===================================================
+0
+

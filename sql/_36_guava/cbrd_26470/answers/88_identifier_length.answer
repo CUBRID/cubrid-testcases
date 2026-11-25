@@ -1,0 +1,109 @@
+===================================================
+    
+Case 1: baseline, an ordinary function works -> 42     
+
+
+===================================================
+0
+
+===================================================
+ok88_fn()    
+42     
+
+
+===================================================
+    
+Case 2: PL/CSQL compile, <pkg>.<routine> of 301 bytes -> error, no crash     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Qualified name is too long. it must be shorter than 255 bytes.
+
+===================================================
+    
+Case 3: PL/CSQL compile, <owner>.<pkg>.<routine> too long -> error, no crash     
+
+
+===================================================
+Error:-1360
+Stored procedure compile error: Qualified name is too long. it must be shorter than 255 bytes.
+
+===================================================
+    
+Case 4: CREATE with an over-long qualified name -> error, no crash     
+
+
+===================================================
+Error:-493
+Syntax: before '  RETURN INT AS BEGIN RETURN 1; END; '
+User name [qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq] not allowed. It cannot exceed 32 bytes. create or replace function qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq...
+
+===================================================
+    
+Case 5: SQL call with an over-long qualified name -> error, no crash     
+
+
+===================================================
+Error:-494
+Semantic: before ' .qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq...'
+Attribute "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" was not found. select qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq...
+
+===================================================
+    
+Case 6: qualifier longer than a user name (40 > 31) -> errors, no crash     
+
+
+===================================================
+Error:-494
+Semantic: before ' .ok88_fn() FROM db_root; '
+Attribute "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu" was not found. select uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.ok88_fn() fr...
+
+===================================================
+Error:-493
+Syntax: before '  RETURN INT AS BEGIN RETURN 1; END; '
+User name [uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu] not allowed. It cannot exceed 32 bytes. create or replace function uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu...
+
+===================================================
+    
+Case 7: dbms_output with a long member name (269 bytes as a three-part name) -> errors, no crash     
+
+
+===================================================
+Error:-494
+Semantic: before ' .rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr...'
+Attribute "dbms_output.rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" was not found. select [dbms_output.rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr...
+
+===================================================
+Error:-894
+Stored procedure/function 'public.dbms_output.rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr' does not exist.
+
+===================================================
+    
+Case 8: dbms_output still works     
+
+
+===================================================
+    
+null     
+
+
+===================================================
+    
+null     
+
+
+dbms output alive
+===================================================
+    
+Case 9: the session survived every case above -> 42     
+
+
+===================================================
+ok88_fn()    
+42     
+
+
+===================================================
+0
+

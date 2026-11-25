@@ -1,0 +1,74 @@
+===================================================
+    
+Case 1: a body without its spec and without errors is created; result = 1     
+
+
+===================================================
+0
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+    
+Case 2: a body without its spec and with a syntax error fails; result = 0, 0     
+
+
+===================================================
+Error:-1400
+Package compile error: no viable alternative at input 'create package body pk92b as procedure p as begin null end'
+
+===================================================
+count(*)    
+0     
+
+
+===================================================
+count(*)    
+0     
+
+
+===================================================
+    
+Case 3: CREATE OR REPLACE of the body of Case 1 with a syntax error fails, the old body stays     
+
+
+===================================================
+Error:-1400
+Package compile error: no viable alternative at input 'create or replace package body pk92a as procedure p as begin null end'
+
+===================================================
+pkg_unique_name    scode_spec    scode_body    
+dba.pk92a     null     CREATE OR REPLACE PACKAGE BODY pk92a AS
+procedure p as begin null; end; end     
+
+
+===================================================
+    
+Case 4: the spec and a correct body of pk92b are created after the failure; result = 1, 1     
+
+
+===================================================
+0
+
+===================================================
+0
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+count(*)    
+1     
+
+
+===================================================
+0
+
+===================================================
+0
+

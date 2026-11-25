@@ -11,20 +11,12 @@ create test users
 ===================================================
 0
 ===================================================
-    
-create owner.tbl, owner.hello     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-case 3: compare to "owner" and "dba_member"     
-
-===================================================
-    
-connect to owner & owner.tbl, owner.hello grant to temp_user     
+Case 1: the owner grants SELECT on owner.tbl and EXECUTE on owner.hello to temp_user, grantor OWNER     
 
 ===================================================
     
@@ -41,7 +33,7 @@ OWNER     TEMP_USER     hello     EXECUTE     NO
 
 ===================================================
     
-revoke from temp_user     
+Case 2: the owner revokes both, and the rows are gone     
 
 ===================================================
 0
@@ -52,7 +44,7 @@ grantor_name    grantee_name    object_name    auth_type    is_grantable
 
 ===================================================
     
-connect to dba_member & owner.tbl, owner.hello grant to temp_user     
+Case 3: dba_member grants both to temp_user, and the grantor is OWNER     
 
 ===================================================
     
@@ -64,6 +56,7 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     _db_package     SELECT     NO     
 DBA     INFORMATION_SCHEMA     _db_server     SELECT     NO     
 DBA     INFORMATION_SCHEMA     _db_synonym     SELECT     NO     
 DBA     INFORMATION_SCHEMA     dual     SELECT     NO     
@@ -105,11 +98,7 @@ TEMP_USER     null
 
 ===================================================
     
-Test init     
-
-===================================================
-    
-connect to dba_member & revoke from temp_user     
+Case 4: dba_member revokes both, and the rows are gone     
 
 ===================================================
     
@@ -121,6 +110,7 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_name    auth_type    is_grantable    
+DBA     INFORMATION_SCHEMA     _db_package     SELECT     NO     
 DBA     INFORMATION_SCHEMA     _db_server     SELECT     NO     
 DBA     INFORMATION_SCHEMA     _db_synonym     SELECT     NO     
 DBA     INFORMATION_SCHEMA     dual     SELECT     NO     
@@ -151,11 +141,7 @@ DBA     INFORMATION_SCHEMA     db_root     SELECT     NO
 
 ===================================================
     
-case 4: compare to "owner" and "owner group"     
-
-===================================================
-    
-connect to owner & owner.tbl, owner.hello grant to temp_user     
+Case 5: the owner grants both to temp_user again, grantor OWNER, and revokes them     
 
 ===================================================
     
@@ -171,16 +157,12 @@ OWNER     TEMP_USER     tbl     SELECT     NO
 OWNER     TEMP_USER     hello     EXECUTE     NO     
 
 ===================================================
-    
-revoke from temp_user     
-
-===================================================
 0
 ===================================================
 0
 ===================================================
     
-connect to owner_member & owner.tbl, owner.hello grant to temp_user     
+Case 6: owner_member grants both to temp_user, and the grantor is OWNER     
 
 ===================================================
     
@@ -202,11 +184,7 @@ OWNER_MEMBER
 
 ===================================================
     
-Test init     
-
-===================================================
-    
-connect to owner_member & revoke from temp_user     
+Case 7: owner_member revokes both, and the rows are gone     
 
 ===================================================
     
@@ -218,10 +196,6 @@ null
 0
 ===================================================
 grantor_name    grantee_name    object_name    auth_type    is_grantable    
-
-===================================================
-    
-connect to dba & removed test users & test objects     
 
 ===================================================
     
