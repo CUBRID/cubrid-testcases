@@ -19,7 +19,8 @@ create index idx_t2 on t2(a,b);
 
 select a,disk_size(b.s1),disk_size(b.s2),b.s1,b.s2 from t2 where b.s2>'a' and b.s1>'a' using index idx_t2 order by a;
 
-alter table t1 add column s3 varchar default repeat('a',1000) after s1;
+set @s3_default = repeat('a',1000);
+alter table t1 add column s3 varchar default @s3_default after s1;
 
 select disk_size(b.s3),b.s3 from t2;
 

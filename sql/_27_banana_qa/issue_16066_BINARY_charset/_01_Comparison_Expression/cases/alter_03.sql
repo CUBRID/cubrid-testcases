@@ -50,7 +50,7 @@ select * from t1 order by 1;
 
 set names binary;
 alter table t1 alter column col_binary set default '안녕하세요';
-alter table t1 alter column col_euckr set default cast(_utf8'안녕하세요' as string charset euckr);
+alter table t1 alter column col_euckr set default (cast(_utf8'안녕하세요' as string charset euckr));
 insert into t1(col_utf8,col_iso) values('안녕하세요', 'êüò');
 select * from t1 order by 1;
 

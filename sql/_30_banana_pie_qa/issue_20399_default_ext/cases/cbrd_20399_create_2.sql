@@ -7,7 +7,7 @@ create table t1(s1 varchar(2) default to_char(sysdate,'MM-DD-YYYY'));
 
 create table t1(i1 int,s1 char(3) default 'aaaaaaaaa');
 
-create table t1(i1 int,s1 char(3) default to_char(to_date('2017-05-09','YYYY-MM-DD'),'YYYY-MM-DD'));
+create table t1(i1 int,s1 char(3) default to_char(DATE'2017-05-09','YYYY-MM-DD'));
 
 create table t1(s1 char(3) default to_char(1.234567,'99.999'));
 
@@ -17,7 +17,7 @@ create table t1(a1 varchar(2) default to_char(sysdate));
 
 create table t1(s1 varchar(2) default ('a'+'a'+'a'));
 
-create table t1(s1 varchar(2) default concat('a','aa'));
+create table t1(s1 varchar(2) default (concat('a','aa')));
 
 create table t1(s1 varchar(2) default ('a'||'abc'));
 
@@ -77,7 +77,8 @@ drop table if exists t2_2;
 
 drop table if exists t2_3;
 
-create table t2_1(i1 int,s1 varchar default repeat('a',1000));
+set @t2_1_s1_default = repeat('a',1000);
+create table t2_1(i1 int,s1 varchar default @t2_1_s1_default);
 
 -- bug CBRD-21263
 create table t2_2(i1 int,s1 varchar default to_char(sysdate,repeat('MM-DD-YYYY',1000)));
@@ -85,7 +86,7 @@ create table t2_2(i1 int,s1 varchar default to_char(sysdate,repeat('MM-DD-YYYY',
 -- bug CBRD-21271
 create table t2_2(i1 int,s1 varchar default to_char(sysdate,repeat('MM-DD-YYYY',100)));
 
-create table t2_2(s1 varchar default to_char(systimestamp,concat('MM-DD-YYYY','HH:MM:SS')),s2 varchar);
+create table t2_2(s1 varchar default to_char(systimestamp,'MM-DD-YYYYHH:MM:SS'),s2 varchar);
 
 insert into t2_2(s2) values(to_char(systimestamp,concat('MM-DD-YYYY','HH:MM:SS')));
 

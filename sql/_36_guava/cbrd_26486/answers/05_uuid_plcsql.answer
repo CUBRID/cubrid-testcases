@@ -42,8 +42,8 @@ null
 ===================================================
 sp_of.sp_name    arg_name    mode    default_value    
 uuid_sp     n     1     null     
-uuid_sp     a     1     SYS_GUID()     
-uuid_sp     b     1     SYS_GUID()     
+uuid_sp     a     1     sys_guid()     
+uuid_sp     b     1     sys_guid()     
 
 
 ===================================================
@@ -108,12 +108,11 @@ total    id_uniq    g_uniq    id_is_v7    g_is_hex
 ===================================================
 Error:-494
 Semantic: before ' ) as begin return; end; '
-Cannot coerce  uuid(7)  to type varchar. create or replace procedure [dba.uuid_sp_e1](a  varchar defa...
+Unsupported argument type of stored procedure: bit create or replace procedure [dba.uuid_sp_e1](a  varchar defa...
 
 ===================================================
-Error:-494
-Semantic: before ' )) as begin return; end; '
-Invalid DEFAULT clause. 'uuid ' cannot be used in a nested expression. create or replace procedure [dba.uuid_sp_e2](a  varchar defa...
+Error:-1360
+Stored procedure compile error: unsupported return type (code 23) of the built-in function UUID
 
 ===================================================
 Error:-1360

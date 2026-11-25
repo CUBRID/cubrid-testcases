@@ -334,17 +334,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ PARALLEL(?) */ json_length(json_arrayagg([dba.bvx].colb))), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ PARALLEL(?) */ (json_length(json_arrayagg([dba.bvx].colb))), (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
 
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ json_length(json_arrayagg([dba.bvx].colb))), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ (json_length(json_arrayagg([dba.bvx].colb))), (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? ))
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.al<=>s.al and p.ol<=>s.ol then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_length(json_arrayagg([dba.bvx].colb))) as [al], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) p (al, ol), (select /*+ NO_PARALLEL_SCAN */ json_length(json_arrayagg([dba.bvx].colb))) as [al], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) s (al, ol)
+  rewritten query: select case when p.al<=>s.al and p.ol<=>s.ol then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ (json_length(json_arrayagg([dba.bvx].colb))) as [al], (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) p (al, ol), (select /*+ NO_PARALLEL_SCAN */ (json_length(json_arrayagg([dba.bvx].colb))) as [al], (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx] where ([dba.bvx].id<= ?:? )) s (al, ol)
 
 
 Trace Statistics:
@@ -374,17 +374,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ PARALLEL(?) */ bit_and([dba.bvx].nval), median([dba.bvx].nval), group_concat([dba.bvx].nstr separator ','), json_length(json_arrayagg([dba.bvx].nstr))) from [dba.bvx] [dba.bvx])
+  rewritten query: (select /*+ PARALLEL(?) */ bit_and([dba.bvx].nval), median([dba.bvx].nval), group_concat([dba.bvx].nstr separator ','), (json_length(json_arrayagg([dba.bvx].nstr))) from [dba.bvx] [dba.bvx])
 
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ bit_and([dba.bvx].nval), median([dba.bvx].nval), group_concat([dba.bvx].nstr separator ','), json_length(json_arrayagg([dba.bvx].nstr))) from [dba.bvx] [dba.bvx])
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ bit_and([dba.bvx].nval), median([dba.bvx].nval), group_concat([dba.bvx].nstr separator ','), (json_length(json_arrayagg([dba.bvx].nstr))) from [dba.bvx] [dba.bvx])
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.ba<=>s.ba and p.md<=>s.md and p.gc<=>s.gc and p.jl<=>s.jl then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ bit_and([dba.bvx].nval) as [ba], median([dba.bvx].nval) as [md], group_concat([dba.bvx].nstr separator ',') as [gc], json_length(json_arrayagg([dba.bvx].nstr))) as [jl] from [dba.bvx] [dba.bvx]) p (ba, md, gc, jl), (select /*+ NO_PARALLEL_SCAN */ bit_and([dba.bvx].nval) as [ba], median([dba.bvx].nval) as [md], group_concat([dba.bvx].nstr separator ',') as [gc], json_length(json_arrayagg([dba.bvx].nstr))) as [jl] from [dba.bvx] [dba.bvx]) s (ba, md, gc, jl)
+  rewritten query: select case when p.ba<=>s.ba and p.md<=>s.md and p.gc<=>s.gc and p.jl<=>s.jl then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ bit_and([dba.bvx].nval) as [ba], median([dba.bvx].nval) as [md], group_concat([dba.bvx].nstr separator ',') as [gc], (json_length(json_arrayagg([dba.bvx].nstr))) as [jl] from [dba.bvx] [dba.bvx]) p (ba, md, gc, jl), (select /*+ NO_PARALLEL_SCAN */ bit_and([dba.bvx].nval) as [ba], median([dba.bvx].nval) as [md], group_concat([dba.bvx].nstr separator ',') as [gc], (json_length(json_arrayagg([dba.bvx].nstr))) as [jl] from [dba.bvx] [dba.bvx]) s (ba, md, gc, jl)
 
 
 Trace Statistics:
@@ -414,17 +414,17 @@ trace
 Query Plan:
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola order by ? separator ','), median([dba.bvx].cola), min([dba.bvx].cola), max([dba.bvx].cola), sum([dba.bvx].cola), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx])
+  rewritten query: (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola order by ? separator ','), median([dba.bvx].cola), min([dba.bvx].cola), max([dba.bvx].cola), sum([dba.bvx].cola), (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx])
 
   TABLE SCAN (dba.bvx)
 
-  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola order by ? separator ','), median([dba.bvx].cola), min([dba.bvx].cola), max([dba.bvx].cola), sum([dba.bvx].cola), json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx])
+  rewritten query: (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola order by ? separator ','), median([dba.bvx].cola), min([dba.bvx].cola), max([dba.bvx].cola), sum([dba.bvx].cola), (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) from [dba.bvx] [dba.bvx])
 
   NESTED LOOPS (cross join)
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when p.g<=>s.g and p.md<=>s.md and p.mn<=>s.mn and p.mx<=>s.mx and p.sm<=>s.sm and p.ol<=>s.ol then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola order by ? separator ',') as [g], median([dba.bvx].cola) as [md], min([dba.bvx].cola) as [mn], max([dba.bvx].cola) as [mx], sum([dba.bvx].cola) as [sm], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx]) p (g, md, mn, mx, sm, ol), (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola order by ? separator ',') as [g], median([dba.bvx].cola) as [md], min([dba.bvx].cola) as [mn], max([dba.bvx].cola) as [mx], sum([dba.bvx].cola) as [sm], json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx]) s (g, md, mn, mx, sm, ol)
+  rewritten query: select case when p.g<=>s.g and p.md<=>s.md and p.mn<=>s.mn and p.mx<=>s.mx and p.sm<=>s.sm and p.ol<=>s.ol then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ group_concat(distinct [dba.bvx].cola order by ? separator ',') as [g], median([dba.bvx].cola) as [md], min([dba.bvx].cola) as [mn], max([dba.bvx].cola) as [mx], sum([dba.bvx].cola) as [sm], (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx]) p (g, md, mn, mx, sm, ol), (select /*+ NO_PARALLEL_SCAN */ group_concat(distinct [dba.bvx].cola order by ? separator ',') as [g], median([dba.bvx].cola) as [md], min([dba.bvx].cola) as [mn], max([dba.bvx].cola) as [mx], sum([dba.bvx].cola) as [sm], (json_length(json_objectagg( to_char([dba.bvx].id), [dba.bvx].cola))) as [ol] from [dba.bvx] [dba.bvx]) s (g, md, mn, mx, sm, ol)
 
 
 Trace Statistics:
@@ -464,7 +464,7 @@ Query Plan:
     TABLE SCAN (p)
     TABLE SCAN (s)
 
-  rewritten query: select case when json_length(p.o))<=>json_length(s.o)) and json_type(json_extract(p.o, '$."?"')))<=>json_type(json_extract(s.o, '$."?"'))) and json_type(json_extract(p.o, '$."?"')))<>'JSON_ARRAY' then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) p (o), (select /*+ NO_PARALLEL_SCAN */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) s (o)
+  rewritten query: select case when (json_length(p.o))<=>(json_length(s.o)) and (json_type(json_extract(p.o, '$."?"')))<=>(json_type(json_extract(s.o, '$."?"'))) and (json_type(json_extract(p.o, '$."?"')))<>'JSON_ARRAY' then 'PASS' else 'FAIL' end from (select /*+ PARALLEL(?) */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) p (o), (select /*+ NO_PARALLEL_SCAN */ json_objectagg([dba.bvx].colb, [dba.bvx].cola) as [o] from [dba.bvx] [dba.bvx]) s (o)
 
 
 Trace Statistics:

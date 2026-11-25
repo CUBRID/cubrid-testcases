@@ -8,11 +8,11 @@
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) INVISIBLE DEFAULT UUID(7) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) INVISIBLE DEFAULT (uuid(7)) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
-id     BIT(128)     NO     PRI     UUID(7)     invisible     
+id     BIT(128)     NO     PRI     (uuid(7))     invisible     
 v     INTEGER     YES          null          
 
 ===================================================
@@ -80,11 +80,11 @@ total    uniq    v7_cnt
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) DEFAULT UUID(7) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) DEFAULT (uuid(7)) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 Field    Type    Null    Key    Default    Extra    
-id     BIT(128)     NO     PRI     UUID(7)          
+id     BIT(128)     NO     PRI     (uuid(7))          
 v     INTEGER     YES          null          
 
 ===================================================
@@ -97,7 +97,7 @@ total    uniq
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) INVISIBLE DEFAULT UUID(7) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([id] BIT(128) INVISIBLE DEFAULT (uuid(7)) NOT NULL, [v] INTEGER,  CONSTRAINT [pk_uuid_inv_t_id] PRIMARY KEY  ([id])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 v    
@@ -119,7 +119,7 @@ v
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([g] CHARACTER(32) INVISIBLE DEFAULT SYS_GUID(), [n] INTEGER NOT NULL, [u7] BIT(128) INVISIBLE DEFAULT UUID(7),  CONSTRAINT [pk_uuid_inv_t_n] PRIMARY KEY  ([n])) REUSE_OID, COLLATE utf8_bin     
+dba.uuid_inv_t     CREATE TABLE [uuid_inv_t] ([g] CHARACTER(32) INVISIBLE DEFAULT (sys_guid()), [n] INTEGER NOT NULL, [u7] BIT(128) INVISIBLE DEFAULT (uuid(7)),  CONSTRAINT [pk_uuid_inv_t_n] PRIMARY KEY  ([n])) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 n    
@@ -141,7 +141,7 @@ total    u7_non_null    u7_uniq    v7_cnt    g_non_null    g_uniq    g_hex_cnt
 0
 ===================================================
 attr_name    data_type    prec    default_value    is_invisible    
-id     CHAR     32     SYS_GUID()     YES     
+id     CHAR     32     (sys_guid())     YES     
 v     INTEGER     10     null     NO     
 
 ===================================================
