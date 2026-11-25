@@ -214,194 +214,194 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 3: euckr_bin - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
-SELECT '[]' AS cb,
+SELECT 1 AS ca, '[]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST ('' AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST ('' AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[ ]' AS cb,
+SELECT 2 AS ca, '[ ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[  ]' AS cb,
+SELECT 3 AS ca, '[  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 4 to 7: trailing spaces after a character, and its upper case
-SELECT '[a]' AS cb,
+SELECT 4 AS ca, '[a]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a ]' AS cb,
+SELECT 5 AS ca, '[a ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a  ]' AS cb,
+SELECT 6 AS ca, '[a  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[A]' AS cb,
+SELECT 7 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 8 to 14: a NUL against a space in the middle, at the end and at the start
-SELECT '[a b]' AS cb,
+SELECT 8 AS ca, '[a b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a\0b]' AS cb,
+SELECT 9 AS ca, '[a\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a\0]' AS cb,
+SELECT 10 AS ca, '[a\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[\0]' AS cb,
+SELECT 11 AS ca, '[\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[\0b]' AS cb,
+SELECT 12 AS ca, '[\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[ b]' AS cb,
+SELECT 13 AS ca, '[ b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[b]' AS cb,
+SELECT 14 AS ca, '[b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 15 to 24: the 8-byte chunks of the hash: a space or NUL inside the first chunk, right past it, and past two chunks
-SELECT '[abcdefgh]' AS cb,
+SELECT 15 AS ca, '[abcdefgh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefgh ]' AS cb,
+SELECT 16 AS ca, '[abcdefgh ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefgh\0]' AS cb,
+SELECT 17 AS ca, '[abcdefgh\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefgh \0]' AS cb,
+SELECT 18 AS ca, '[abcdefgh \0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (32 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (32 USING euckr) || CHR (0 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefghi]' AS cb,
+SELECT 19 AS ca, '[abcdefghi]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[ABCDEFGHI]' AS cb,
+SELECT 20 AS ca, '[ABCDEFGHI]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING euckr) || CHR (66 USING euckr) || CHR (67 USING euckr) || CHR (68 USING euckr) || CHR (69 USING euckr) || CHR (70 USING euckr) || CHR (71 USING euckr) || CHR (72 USING euckr) || CHR (73 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING euckr) || CHR (66 USING euckr) || CHR (67 USING euckr) || CHR (68 USING euckr) || CHR (69 USING euckr) || CHR (70 USING euckr) || CHR (71 USING euckr) || CHR (72 USING euckr) || CHR (73 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abc def gh]' AS cb,
+SELECT 21 AS ca, '[abc def gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (32 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (32 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (32 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (32 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abc\0def\0gh]' AS cb,
+SELECT 22 AS ca, '[abc\0def\0gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (0 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (0 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (0 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (0 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefghijklmnop]' AS cb,
+SELECT 23 AS ca, '[abcdefghijklmnop]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) || CHR (106 USING euckr) || CHR (107 USING euckr) || CHR (108 USING euckr) || CHR (109 USING euckr) || CHR (110 USING euckr) || CHR (111 USING euckr) || CHR (112 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) || CHR (106 USING euckr) || CHR (107 USING euckr) || CHR (108 USING euckr) || CHR (109 USING euckr) || CHR (110 USING euckr) || CHR (111 USING euckr) || CHR (112 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[abcdefghijklmnop  ]' AS cb,
+SELECT 24 AS ca, '[abcdefghijklmnop  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) || CHR (106 USING euckr) || CHR (107 USING euckr) || CHR (108 USING euckr) || CHR (109 USING euckr) || CHR (110 USING euckr) || CHR (111 USING euckr) || CHR (112 USING euckr) || CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (98 USING euckr) || CHR (99 USING euckr) || CHR (100 USING euckr) || CHR (101 USING euckr) || CHR (102 USING euckr) || CHR (103 USING euckr) || CHR (104 USING euckr) || CHR (105 USING euckr) || CHR (106 USING euckr) || CHR (107 USING euckr) || CHR (108 USING euckr) || CHR (109 USING euckr) || CHR (110 USING euckr) || CHR (111 USING euckr) || CHR (112 USING euckr) || CHR (32 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 25 to 30: ASCII pairs the case insensitive and expansion collations find equal; a tab, not a space
-SELECT '[i]' AS cb,
+SELECT 25 AS ca, '[i]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (105 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (105 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[I]' AS cb,
+SELECT 26 AS ca, '[I]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (73 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (73 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[ss]' AS cb,
+SELECT 27 AS ca, '[ss]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (115 USING euckr) || CHR (115 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (115 USING euckr) || CHR (115 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[e]' AS cb,
+SELECT 28 AS ca, '[e]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (101 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (101 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[E]' AS cb,
+SELECT 29 AS ca, '[E]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (69 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (69 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a\tb]' AS cb,
+SELECT 30 AS ca, '[a\tb]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (9 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (9 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 31 to 35: the EUC space A1 A1 (U+3000): alone, after 'a', in the middle, and next to a space
-SELECT '[<U+3000>]' AS cb,
+SELECT 31 AS ca, '[<U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a<U+3000>]' AS cb,
+SELECT 32 AS ca, '[a<U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a<U+3000>b]' AS cb,
+SELECT 33 AS ca, '[a<U+3000>b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) || CHR (98 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a<U+3000> ]' AS cb,
+SELECT 34 AS ca, '[a<U+3000> ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (41377 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a <U+3000>]' AS cb,
+SELECT 35 AS ca, '[a <U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (32 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 36 to 41: B0 A1 (U+AC00): its second byte A1 is also the first byte of the EUC space
-SELECT '[<U+AC00>]' AS cb,
+SELECT 36 AS ca, '[<U+AC00>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+AC00><U+3000>]' AS cb,
+SELECT 37 AS ca, '[<U+AC00><U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+3000><U+3000>]' AS cb,
+SELECT 38 AS ca, '[<U+3000><U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+AC00> ]' AS cb,
+SELECT 39 AS ca, '[<U+AC00> ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+AC00><U+3000><U+AC00>]' AS cb,
+SELECT 40 AS ca, '[<U+AC00><U+3000><U+AC00>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (41377 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+AC00><U+AC00>]' AS cb,
+SELECT 41 AS ca, '[<U+AC00><U+AC00>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (45217 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
 -- 42 to 46: more characters whose second byte is A1: A4 A1 (U+3131) and C7 A1 (U+D408), and B0 A1 after 'a'
-SELECT '[<U+3131>]' AS cb,
+SELECT 42 AS ca, '[<U+3131>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+3131><U+3000>]' AS cb,
+SELECT 43 AS ca, '[<U+3131><U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+3131> ]' AS cb,
+SELECT 44 AS ca, '[<U+3131> ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (42145 USING euckr) || CHR (32 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[<U+D408><U+3000><U+3000>]' AS cb,
+SELECT 45 AS ca, '[<U+D408><U+3000><U+3000>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (51105 USING euckr) || CHR (41377 USING euckr) || CHR (41377 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 
-SELECT '[a<U+AC00>]' AS cb,
+SELECT 46 AS ca, '[a<U+AC00>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING euckr) || CHR (45217 USING euckr) AS VARCHAR(40) COLLATE euckr_bin)) AS cnt_part;
 

@@ -140,64 +140,64 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 3: utf8_bin - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a';
 -- 1 to 2: 'A' and its overlong 2-byte form, which intl_utf8_to_cp () reads as 'A'
-SELECT /*+ no_parallel_subquery */ '[A]' AS cb,
+SELECT /*+ no_parallel_subquery */ 1 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('QQ==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('QQ==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC1\x81]' AS cb,
+SELECT /*+ no_parallel_subquery */ 2 AS ca, '[\xC1\x81]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wYE=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wYE=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
 -- 3 to 4: '<U+00E9>' and its lead byte followed by a byte that is not a continuation byte
-SELECT /*+ no_parallel_subquery */ '[<U+00E9>]' AS cb,
+SELECT /*+ no_parallel_subquery */ 3 AS ca, '[<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6k=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6k=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3)]' AS cb,
+SELECT /*+ no_parallel_subquery */ 4 AS ca, '[\xC3)]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyk=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyk=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
 -- 5 to 6: a lone continuation byte
-SELECT /*+ no_parallel_subquery */ '[\x80]' AS cb,
+SELECT /*+ no_parallel_subquery */ 5 AS ca, '[\x80]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('gA==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('gA==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\x81]' AS cb,
+SELECT /*+ no_parallel_subquery */ 6 AS ca, '[\x81]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('gQ==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('gQ==') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
 -- 7 to 8: a lone continuation byte between ASCII characters
-SELECT /*+ no_parallel_subquery */ '[a\x80b]' AS cb,
+SELECT /*+ no_parallel_subquery */ 7 AS ca, '[a\x80b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('YYBi') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('YYBi') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[a\x81b]' AS cb,
+SELECT /*+ no_parallel_subquery */ 8 AS ca, '[a\x81b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('YYFi') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('YYFi') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
 -- 9 to 14: a lead byte followed by spaces, which intl_utf8_to_cp () reads as the lead byte's next bytes,
 -- and the character it reads them as; 11 to 14 end in more spaces
-SELECT /*+ no_parallel_subquery */ '[<U+00E0>]' AS cb,
+SELECT /*+ no_parallel_subquery */ 9 AS ca, '[<U+00E0>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6A=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6A=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3 ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 10 AS ca, '[\xC3 ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyA=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyA=') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[<U+00E0>    ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 11 AS ca, '[<U+00E0>    ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6AgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6AgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3     ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 12 AS ca, '[\xC3     ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyAgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyAgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[<U+20820>  ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 13 AS ca, '[<U+20820>  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('8KCgoCAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8KCgoCAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xF0     ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 14 AS ca, '[\xF0     ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_bin)) AS cnt_part;
 show trace;
@@ -319,64 +319,64 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 7: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a';
 -- 1 to 2: 'A' and its overlong 2-byte form, which intl_utf8_to_cp () reads as 'A'
-SELECT /*+ no_parallel_subquery */ '[A]' AS cb,
+SELECT /*+ no_parallel_subquery */ 1 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('QQ==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('QQ==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC1\x81]' AS cb,
+SELECT /*+ no_parallel_subquery */ 2 AS ca, '[\xC1\x81]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wYE=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wYE=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
 -- 3 to 4: '<U+00E9>' and its lead byte followed by a byte that is not a continuation byte
-SELECT /*+ no_parallel_subquery */ '[<U+00E9>]' AS cb,
+SELECT /*+ no_parallel_subquery */ 3 AS ca, '[<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6k=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6k=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3)]' AS cb,
+SELECT /*+ no_parallel_subquery */ 4 AS ca, '[\xC3)]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyk=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyk=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
 -- 5 to 6: a lone continuation byte
-SELECT /*+ no_parallel_subquery */ '[\x80]' AS cb,
+SELECT /*+ no_parallel_subquery */ 5 AS ca, '[\x80]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('gA==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('gA==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\x81]' AS cb,
+SELECT /*+ no_parallel_subquery */ 6 AS ca, '[\x81]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('gQ==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('gQ==') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
 -- 7 to 8: a lone continuation byte between ASCII characters
-SELECT /*+ no_parallel_subquery */ '[a\x80b]' AS cb,
+SELECT /*+ no_parallel_subquery */ 7 AS ca, '[a\x80b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('YYBi') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('YYBi') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[a\x81b]' AS cb,
+SELECT /*+ no_parallel_subquery */ 8 AS ca, '[a\x81b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('YYFi') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('YYFi') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
 -- 9 to 14: a lead byte followed by spaces, which intl_utf8_to_cp () reads as the lead byte's next bytes,
 -- and the character it reads them as; 11 to 14 end in more spaces
-SELECT /*+ no_parallel_subquery */ '[<U+00E0>]' AS cb,
+SELECT /*+ no_parallel_subquery */ 9 AS ca, '[<U+00E0>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6A=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6A=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3 ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 10 AS ca, '[\xC3 ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyA=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyA=') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[<U+00E0>    ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 11 AS ca, '[<U+00E0>    ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('w6AgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('w6AgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xC3     ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 12 AS ca, '[\xC3     ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('wyAgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('wyAgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[<U+20820>  ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 13 AS ca, '[<U+20820>  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('8KCgoCAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8KCgoCAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 
-SELECT /*+ no_parallel_subquery */ '[\xF0     ]' AS cb,
+SELECT /*+ no_parallel_subquery */ 14 AS ca, '[\xF0     ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (FROM_BASE64 ('8CAgICAg') AS VARCHAR(10) COLLATE utf8_ko_cs)) AS cnt_part;
 show trace;

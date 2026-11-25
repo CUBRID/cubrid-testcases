@@ -122,60 +122,60 @@ PASS
 Case 3: utf8_bin - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[A]     1     1     
+ca    cb    cnt_base    cnt_part    
+1     [A]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC1\x81]     1     1     
+ca    cb    cnt_base    cnt_part    
+2     [\xC1\x81]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E9>]     1     1     
+ca    cb    cnt_base    cnt_part    
+3     [<U+00E9>]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3)]     1     1     
+ca    cb    cnt_base    cnt_part    
+4     [\xC3)]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\x80]     1     1     
+ca    cb    cnt_base    cnt_part    
+5     [\x80]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\x81]     1     1     
+ca    cb    cnt_base    cnt_part    
+6     [\x81]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[a\x80b]     1     1     
+ca    cb    cnt_base    cnt_part    
+7     [a\x80b]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[a\x81b]     1     1     
+ca    cb    cnt_base    cnt_part    
+8     [a\x81b]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E0>]     1     1     
+ca    cb    cnt_base    cnt_part    
+9     [<U+00E0>]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3 ]     1     1     
+ca    cb    cnt_base    cnt_part    
+10     [\xC3 ]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E0>    ]     1     1     
+ca    cb    cnt_base    cnt_part    
+11     [<U+00E0>    ]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3     ]     1     1     
+ca    cb    cnt_base    cnt_part    
+12     [\xC3     ]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+20820>  ]     1     1     
+ca    cb    cnt_base    cnt_part    
+13     [<U+20820>  ]     1     1     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xF0     ]     1     1     
+ca    cb    cnt_base    cnt_part    
+14     [\xF0     ]     1     1     
 
 ===================================================
 trace    
@@ -191,7 +191,7 @@ Query Plan:
 
   TABLE SCAN (dual)
 
-  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ '[\xF?     ]', (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?))), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?))) from dual dual
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ ?, '[\xF?     ]', (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?))), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?))) from dual dual
 
 
 Trace Statistics:
@@ -383,60 +383,60 @@ PASS
 Case 7: utf8_ko_cs - t_varchar_part prune per VARCHAR(10) constant reads one partition and matches t_varchar_a     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[A]     2     2     
+ca    cb    cnt_base    cnt_part    
+1     [A]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC1\x81]     2     2     
+ca    cb    cnt_base    cnt_part    
+2     [\xC1\x81]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E9>]     2     2     
+ca    cb    cnt_base    cnt_part    
+3     [<U+00E9>]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3)]     2     2     
+ca    cb    cnt_base    cnt_part    
+4     [\xC3)]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\x80]     2     2     
+ca    cb    cnt_base    cnt_part    
+5     [\x80]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\x81]     2     2     
+ca    cb    cnt_base    cnt_part    
+6     [\x81]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[a\x80b]     2     2     
+ca    cb    cnt_base    cnt_part    
+7     [a\x80b]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[a\x81b]     2     2     
+ca    cb    cnt_base    cnt_part    
+8     [a\x81b]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E0>]     2     2     
+ca    cb    cnt_base    cnt_part    
+9     [<U+00E0>]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3 ]     2     2     
+ca    cb    cnt_base    cnt_part    
+10     [\xC3 ]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+00E0>    ]     2     2     
+ca    cb    cnt_base    cnt_part    
+11     [<U+00E0>    ]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xC3     ]     2     2     
+ca    cb    cnt_base    cnt_part    
+12     [\xC3     ]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[<U+20820>  ]     2     2     
+ca    cb    cnt_base    cnt_part    
+13     [<U+20820>  ]     2     2     
 
 ===================================================
-cb    cnt_base    cnt_part    
-[\xF0     ]     2     2     
+ca    cb    cnt_base    cnt_part    
+14     [\xF0     ]     2     2     
 
 ===================================================
 trace    
@@ -452,7 +452,7 @@ Query Plan:
 
   TABLE SCAN (dual)
 
-  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ '[\xF?     ]', (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
+  rewritten query: select /*+ NO_PARALLEL_SUBQUERY */ ?, '[\xF?     ]', (select count(*) from [dba.t_varchar_a] [dba.t_varchar_a] where [dba.t_varchar_a].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)), (select count(*) from [dba.t_varchar_part] [dba.t_varchar_part] where [dba.t_varchar_part].cb= cast( from_base?('?CAgICAg') as varchar(?) collate utf?_ko_cs)) from dual dual
 
 
 Trace Statistics:

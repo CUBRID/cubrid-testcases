@@ -57,45 +57,45 @@ UPDATE STATISTICS ON t_varchar_a, t_varchar_part WITH FULLSCAN;
 
 evaluate 'Case 1: utf8_de_exp_ai_ci - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
 -- 1 to 4: an accent, upper case and a soft hyphen of weight 0, all left out at level 1
-SELECT '[cafes]' AS cb,
+SELECT 1 AS ca, '[cafes]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'cafes') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'cafes') AS cnt_part;
 
-SELECT '[caf<U+00E9>s]' AS cb,
+SELECT 2 AS ca, '[caf<U+00E9>s]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'cafés') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'cafés') AS cnt_part;
 
-SELECT '[CAF<U+00C9>S]' AS cb,
+SELECT 3 AS ca, '[CAF<U+00C9>S]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'CAFÉS') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'CAFÉS') AS cnt_part;
 
-SELECT '[caf<U+00AD>es]' AS cb,
+SELECT 4 AS ca, '[caf<U+00AD>es]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'caf' || CHR (49837 USING utf8) || 'es') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'caf' || CHR (49837 USING utf8) || 'es') AS cnt_part;
 
 -- 5 to 7: sharp s (U+00DF) expands to 'ss'
-SELECT '[Strasse]' AS cb,
+SELECT 5 AS ca, '[Strasse]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'Strasse') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'Strasse') AS cnt_part;
 
-SELECT '[Stra<U+00DF>e]' AS cb,
+SELECT 6 AS ca, '[Stra<U+00DF>e]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'Straße') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'Straße') AS cnt_part;
 
-SELECT '[STRASSE]' AS cb,
+SELECT 7 AS ca, '[STRASSE]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'STRASSE') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'STRASSE') AS cnt_part;
 
 -- 8 to 10: ae ligature (U+00E6) expands to 'ae'; 'ab' differs at level 1
-SELECT '[ae]' AS cb,
+SELECT 8 AS ca, '[ae]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'ae') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'ae') AS cnt_part;
 
-SELECT '[<U+00E6>]' AS cb,
+SELECT 9 AS ca, '[<U+00E6>]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'æ') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'æ') AS cnt_part;
 
-SELECT '[ab]' AS cb,
+SELECT 10 AS ca, '[ab]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = 'ab') AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = 'ab') AS cnt_part;
 

@@ -228,116 +228,116 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 6: iso88591_en_cs - t_char_long_part prune per CHAR(5) constant reads one partition and matches t_char_long';
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
-SELECT '[]' AS cb,
+SELECT 1 AS ca, '[]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST ('' AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST ('' AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ ]' AS cb,
+SELECT 2 AS ca, '[ ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[  ]' AS cb,
+SELECT 3 AS ca, '[  ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (32 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (32 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 4 to 7: trailing spaces after a character, and its upper case
-SELECT '[a]' AS cb,
+SELECT 4 AS ca, '[a]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a ]' AS cb,
+SELECT 5 AS ca, '[a ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a  ]' AS cb,
+SELECT 6 AS ca, '[a  ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (32 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[A]' AS cb,
+SELECT 7 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (65 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (65 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 8 to 14: a NUL against a space in the middle, at the end and at the start
-SELECT '[a b]' AS cb,
+SELECT 8 AS ca, '[a b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\0b]' AS cb,
+SELECT 9 AS ca, '[a\0b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (0 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (0 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\0]' AS cb,
+SELECT 10 AS ca, '[a\0]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (0 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (0 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[\0]' AS cb,
+SELECT 11 AS ca, '[\0]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (0 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (0 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[\0b]' AS cb,
+SELECT 12 AS ca, '[\0b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (0 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (0 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ b]' AS cb,
+SELECT 13 AS ca, '[ b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (32 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (32 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[b]' AS cb,
+SELECT 14 AS ca, '[b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 15 to 20: ASCII pairs the case insensitive and expansion collations find equal; a tab, not a space
-SELECT '[i]' AS cb,
+SELECT 15 AS ca, '[i]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (105 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (105 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[I]' AS cb,
+SELECT 16 AS ca, '[I]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (73 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (73 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ss]' AS cb,
+SELECT 17 AS ca, '[ss]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (115 USING iso88591) || CHR (115 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (115 USING iso88591) || CHR (115 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[e]' AS cb,
+SELECT 18 AS ca, '[e]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (101 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (101 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[E]' AS cb,
+SELECT 19 AS ca, '[E]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (69 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (69 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\tb]' AS cb,
+SELECT 20 AS ca, '[a\tb]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (9 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (9 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 21 to 25: 1-byte Latin-1 characters: accents and sharp s, the counterparts of the ASCII pairs above
-SELECT '[<U+00E9>]' AS cb,
+SELECT 21 AS ca, '[<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (233 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (233 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[<U+00C9>]' AS cb,
+SELECT 22 AS ca, '[<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (201 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (201 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[<U+00DF>]' AS cb,
+SELECT 23 AS ca, '[<U+00DF>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (223 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (223 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a<U+00E9>]' AS cb,
+SELECT 24 AS ca, '[a<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (233 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (233 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[A<U+00C9>]' AS cb,
+SELECT 25 AS ca, '[A<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (65 USING iso88591) || CHR (201 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (65 USING iso88591) || CHR (201 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 26 to 27: A0 no-break space: 1 byte that is not the byte 0x20
-SELECT '[<U+00A0>]' AS cb,
+SELECT 26 AS ca, '[<U+00A0>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (160 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (160 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a<U+00A0>b]' AS cb,
+SELECT 27 AS ca, '[a<U+00A0>b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (CHR (97 USING iso88591) || CHR (160 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (CHR (97 USING iso88591) || CHR (160 USING iso88591) || CHR (98 USING iso88591) AS CHAR(5) COLLATE iso88591_en_cs)) AS cnt_part;
 
@@ -348,116 +348,116 @@ evaluate 'Case 7: iso88591_en_cs - t_char_long_part prune per VARCHAR(40) consta
 -- each constant is padded with spaces to the 5 characters that t_char_long.cb holds: with ignore_trailing_space=no
 -- the trailing spaces of a VARCHAR count, and a shorter constant would match no row
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
-SELECT '[]' AS cb,
+SELECT 1 AS ca, '[]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD ('', 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD ('', 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ ]' AS cb,
+SELECT 2 AS ca, '[ ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[  ]' AS cb,
+SELECT 3 AS ca, '[  ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (32 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (32 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 4 to 7: trailing spaces after a character, and its upper case
-SELECT '[a]' AS cb,
+SELECT 4 AS ca, '[a]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a ]' AS cb,
+SELECT 5 AS ca, '[a ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a  ]' AS cb,
+SELECT 6 AS ca, '[a  ]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (32 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[A]' AS cb,
+SELECT 7 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (65 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (65 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 8 to 14: a NUL against a space in the middle, at the end and at the start
-SELECT '[a b]' AS cb,
+SELECT 8 AS ca, '[a b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (32 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\0b]' AS cb,
+SELECT 9 AS ca, '[a\0b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (0 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (0 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\0]' AS cb,
+SELECT 10 AS ca, '[a\0]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (0 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (0 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[\0]' AS cb,
+SELECT 11 AS ca, '[\0]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (0 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (0 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[\0b]' AS cb,
+SELECT 12 AS ca, '[\0b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (0 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (0 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ b]' AS cb,
+SELECT 13 AS ca, '[ b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (32 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (32 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[b]' AS cb,
+SELECT 14 AS ca, '[b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 15 to 20: ASCII pairs the case insensitive and expansion collations find equal; a tab, not a space
-SELECT '[i]' AS cb,
+SELECT 15 AS ca, '[i]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (105 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (105 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[I]' AS cb,
+SELECT 16 AS ca, '[I]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (73 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (73 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[ss]' AS cb,
+SELECT 17 AS ca, '[ss]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (115 USING iso88591) || CHR (115 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (115 USING iso88591) || CHR (115 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[e]' AS cb,
+SELECT 18 AS ca, '[e]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (101 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (101 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[E]' AS cb,
+SELECT 19 AS ca, '[E]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (69 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (69 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a\tb]' AS cb,
+SELECT 20 AS ca, '[a\tb]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (9 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (9 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 21 to 25: 1-byte Latin-1 characters: accents and sharp s, the counterparts of the ASCII pairs above
-SELECT '[<U+00E9>]' AS cb,
+SELECT 21 AS ca, '[<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (233 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (233 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[<U+00C9>]' AS cb,
+SELECT 22 AS ca, '[<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (201 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (201 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[<U+00DF>]' AS cb,
+SELECT 23 AS ca, '[<U+00DF>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (223 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (223 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a<U+00E9>]' AS cb,
+SELECT 24 AS ca, '[a<U+00E9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (233 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (233 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[A<U+00C9>]' AS cb,
+SELECT 25 AS ca, '[A<U+00C9>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (65 USING iso88591) || CHR (201 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (65 USING iso88591) || CHR (201 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
 -- 26 to 27: A0 no-break space: 1 byte that is not the byte 0x20
-SELECT '[<U+00A0>]' AS cb,
+SELECT 26 AS ca, '[<U+00A0>]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (160 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (160 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 
-SELECT '[a<U+00A0>b]' AS cb,
+SELECT 27 AS ca, '[a<U+00A0>b]' AS cb,
   (SELECT COUNT (*) FROM t_char_long WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (160 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_base,
   (SELECT COUNT (*) FROM t_char_long_part WHERE cb = CAST (RPAD (CHR (97 USING iso88591) || CHR (160 USING iso88591) || CHR (98 USING iso88591), 5) AS VARCHAR(40) COLLATE iso88591_en_cs)) AS cnt_part;
 

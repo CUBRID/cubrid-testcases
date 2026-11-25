@@ -184,152 +184,152 @@ select (case when count (*) = 0 then 'PASS' else 'FAIL' end) as result
 
 evaluate 'Case 3: binary - t_varchar_part prune per VARCHAR(40) constant reads one partition and matches t_varchar_a';
 -- 1 to 3: empty string and spaces only: a key with no byte other than spaces
-SELECT '[]' AS cb,
+SELECT 1 AS ca, '[]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST ('' AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST ('' AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[ ]' AS cb,
+SELECT 2 AS ca, '[ ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[  ]' AS cb,
+SELECT 3 AS ca, '[  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
 -- 4 to 7: trailing spaces after a character, and its upper case
-SELECT '[a]' AS cb,
+SELECT 4 AS ca, '[a]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a ]' AS cb,
+SELECT 5 AS ca, '[a ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a  ]' AS cb,
+SELECT 6 AS ca, '[a  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[A]' AS cb,
+SELECT 7 AS ca, '[A]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
 -- 8 to 14: a NUL against a space in the middle, at the end and at the start
-SELECT '[a b]' AS cb,
+SELECT 8 AS ca, '[a b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a\0b]' AS cb,
+SELECT 9 AS ca, '[a\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (0 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (0 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a\0]' AS cb,
+SELECT 10 AS ca, '[a\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[\0]' AS cb,
+SELECT 11 AS ca, '[\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[\0b]' AS cb,
+SELECT 12 AS ca, '[\0b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[ b]' AS cb,
+SELECT 13 AS ca, '[ b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (32 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (32 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[b]' AS cb,
+SELECT 14 AS ca, '[b]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
 -- 15 to 24: the 8-byte chunks of the hash: a space or NUL inside the first chunk, right past it, and past two chunks
-SELECT '[abcdefgh]' AS cb,
+SELECT 15 AS ca, '[abcdefgh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefgh ]' AS cb,
+SELECT 16 AS ca, '[abcdefgh ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefgh\0]' AS cb,
+SELECT 17 AS ca, '[abcdefgh\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefgh \0]' AS cb,
+SELECT 18 AS ca, '[abcdefgh \0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (32 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (32 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefghi]' AS cb,
+SELECT 19 AS ca, '[abcdefghi]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[ABCDEFGHI]' AS cb,
+SELECT 20 AS ca, '[ABCDEFGHI]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (65 USING binary) || CHR (66 USING binary) || CHR (67 USING binary) || CHR (68 USING binary) || CHR (69 USING binary) || CHR (70 USING binary) || CHR (71 USING binary) || CHR (72 USING binary) || CHR (73 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (65 USING binary) || CHR (66 USING binary) || CHR (67 USING binary) || CHR (68 USING binary) || CHR (69 USING binary) || CHR (70 USING binary) || CHR (71 USING binary) || CHR (72 USING binary) || CHR (73 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abc def gh]' AS cb,
+SELECT 21 AS ca, '[abc def gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (32 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (32 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (32 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (32 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abc\0def\0gh]' AS cb,
+SELECT 22 AS ca, '[abc\0def\0gh]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (0 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (0 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (0 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (0 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefghijklmnop]' AS cb,
+SELECT 23 AS ca, '[abcdefghijklmnop]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) || CHR (106 USING binary) || CHR (107 USING binary) || CHR (108 USING binary) || CHR (109 USING binary) || CHR (110 USING binary) || CHR (111 USING binary) || CHR (112 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) || CHR (106 USING binary) || CHR (107 USING binary) || CHR (108 USING binary) || CHR (109 USING binary) || CHR (110 USING binary) || CHR (111 USING binary) || CHR (112 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[abcdefghijklmnop  ]' AS cb,
+SELECT 24 AS ca, '[abcdefghijklmnop  ]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) || CHR (106 USING binary) || CHR (107 USING binary) || CHR (108 USING binary) || CHR (109 USING binary) || CHR (110 USING binary) || CHR (111 USING binary) || CHR (112 USING binary) || CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (98 USING binary) || CHR (99 USING binary) || CHR (100 USING binary) || CHR (101 USING binary) || CHR (102 USING binary) || CHR (103 USING binary) || CHR (104 USING binary) || CHR (105 USING binary) || CHR (106 USING binary) || CHR (107 USING binary) || CHR (108 USING binary) || CHR (109 USING binary) || CHR (110 USING binary) || CHR (111 USING binary) || CHR (112 USING binary) || CHR (32 USING binary) || CHR (32 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
 -- 25 to 30: ASCII pairs the case insensitive and expansion collations find equal; a tab, not a space
-SELECT '[i]' AS cb,
+SELECT 25 AS ca, '[i]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (105 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (105 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[I]' AS cb,
+SELECT 26 AS ca, '[I]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (73 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (73 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[ss]' AS cb,
+SELECT 27 AS ca, '[ss]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (115 USING binary) || CHR (115 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (115 USING binary) || CHR (115 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[e]' AS cb,
+SELECT 28 AS ca, '[e]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (101 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (101 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[E]' AS cb,
+SELECT 29 AS ca, '[E]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (69 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (69 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a\tb]' AS cb,
+SELECT 30 AS ca, '[a\tb]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (9 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (9 USING binary) || CHR (98 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
 -- 31 to 36: bytes 80 and FF, which are not ASCII: alone, after 'a' and a space, and next to a NUL
-SELECT '[\xFF]' AS cb,
+SELECT 31 AS ca, '[\xFF]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a\xFF]' AS cb,
+SELECT 32 AS ca, '[a\xFF]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[a \xFF]' AS cb,
+SELECT 33 AS ca, '[a \xFF]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (97 USING binary) || CHR (32 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[\x80\0]' AS cb,
+SELECT 34 AS ca, '[\x80\0]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (128 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (128 USING binary) || CHR (0 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[\x80]' AS cb,
+SELECT 35 AS ca, '[\x80]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (128 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (128 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
-SELECT '[\0\xFF]' AS cb,
+SELECT 36 AS ca, '[\0\xFF]' AS cb,
   (SELECT COUNT (*) FROM t_varchar_a WHERE cb = CAST (CHR (0 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_base,
   (SELECT COUNT (*) FROM t_varchar_part WHERE cb = CAST (CHR (0 USING binary) || CHR (255 USING binary) AS VARCHAR(40) COLLATE binary)) AS cnt_part;
 
