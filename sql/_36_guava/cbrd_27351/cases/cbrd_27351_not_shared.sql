@@ -61,7 +61,7 @@ create view v_27351_next (k, n) as select l_suppkey, s_27351.next_value from t_2
 create view v_27351_func (k, f) as select l_suppkey, f_27351 (l_suppkey) from t_27351_li group by l_suppkey;
 create view v_27351_bench (k, m) as select l_suppkey, benchmark (1, md5 ('x')) from t_27351_li group by l_suppkey;
 create view v_27351_val (a, b) as values (1, 2), (3, 4);
-create view v_27351_nest (k, t) as select supplier_no, total_revenue from v_27351_rev where supplier_no <= 10;
+create view v_27351_nest (k, t) as select supplier_no, total_revenue from v_27351_rev;
 create view v_27351_wide (k, s, cd) as select l_suppkey, sum(l_price), count(distinct l_disc) from t_27351_li group by l_suppkey;
 
 set trace on;
@@ -123,16 +123,19 @@ evaluate 'N11: the reference with the pushed predicate keeps the column read onl
 select /*+ recompile parallel(0) */ a.cd from v_27351_wide a where a.k = 3 and a.s >= (select min(b.s) from v_27351_wide b);
 show trace;
 
-set trace off;
-
 evaluate 'N9: statements other than SELECT keep executing each reference';
 insert into t_27351_ins
   select a.supplier_no, b.total_revenue from v_27351_rev a, v_27351_rev b where a.supplier_no = b.supplier_no;
+show trace;
 select count(*), sum(b) from t_27351_ins;
 
 update t_27351_ins set b = 0
 where a in (select a.supplier_no from v_27351_rev a, v_27351_rev b
             where a.supplier_no = b.supplier_no and a.total_revenue >= (select avg(total_revenue) from v_27351_rev));
+show trace;
+
+set trace off;
+
 select count(*) from t_27351_ins where b = 0;
 
 --

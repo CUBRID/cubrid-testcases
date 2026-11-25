@@ -115,7 +115,7 @@ select /*+ recompile parallel(0) */ count(*), sum(t.x)
 from t_27351_pt t, v_27351_pv a where t.k = a.k and (t.k in (select b.k from v_27351_pv b) or t.x = -1);
 
 evaluate 'R6: scalar subquery in a condition pushed into the input of a hash join (expected the same as PARALLEL(0))';
-select /*+ recompile */ count(*), sum(t.x)
+select /*+ recompile parallel(4) */ count(*), sum(t.x)
 from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x >= (select min(b.s) / 1000 from v_27351_pv b);
 select /*+ recompile parallel(0) */ count(*), sum(t.x)
 from t_27351_pt t, v_27351_pv a where t.k = a.k and t.x >= (select min(b.s) / 1000 from v_27351_pv b);
