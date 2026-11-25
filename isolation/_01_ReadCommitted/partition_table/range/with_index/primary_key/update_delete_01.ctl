@@ -29,7 +29,8 @@ MC: wait until C1 ready;
 C1: update t set id=1000 where id=1;
 MC: wait until C1 ready;
 C2: delete from t where id=1;
-MC: wait until C2 blocked;
+/* expect: C2 does not wait, the failed UPDATE of C1 gave back its row lock (CBRD-27654) */
+MC: wait until C2 ready;
 C1: commit;
 MC: wait until C2 ready;
 C2: commit;
