@@ -1,0 +1,359 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+100
+===================================================
+1
+===================================================
+2
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: a RIGHT JOIN after a CROSS JOIN, with no view; result = 4     
+
+===================================================
+count(*)    
+4     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: td node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (cross join)
+                            outer: sscan
+                                       class: tc node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: ta node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta cross join tc tc right outer join td td on td.ca=tc.ca
+===================================================
+    
+Case 2: Case 1 with IS NOT NULL in the WHERE on a NOT NULL column of the first table; result = 3     
+
+===================================================
+count(*)    
+3     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: ta node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (inner join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: tc node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: td node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta cross join tc tc, td td where ta.ca is not null  and td.ca=tc.ca
+===================================================
+    
+Case 3: a RIGHT JOIN after a comma-join view and a CROSS JOIN; result = 301, 300     
+
+===================================================
+count(*)    count(vc.ca)    
+301     300     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: vc node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select vc.ca from ta vc, tb tb)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: td node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (cross join)
+                            outer: sscan
+                                       class: tc node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: vc node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(vc.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca
+===================================================
+    
+Case 4: Case 3 with a LEFT JOIN at the end whose ON reads the view; result = 301, 300, 100     
+
+===================================================
+count(*)    count(vc.ca)    count(te.ca)    
+301     300     100     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: vc node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select vc.ca from ta vc, tb tb)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: td node[?]
+                          cost:  ? card ?
+               inner: temp
+                          order: UNORDERED
+                          subplan: nl-join (cross join)
+                                       outer: sscan
+                                                  class: tc node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: vc node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: te node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(vc.ca), count(te.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca left outer join te te on te.cb=td.ca and te.ca=vc.ca
+===================================================
+    
+Case 5: a RIGHT JOIN after a filtered single-table view and a CROSS JOIN; result = 3, 2     
+
+===================================================
+count(*)    count(vd.ca)    
+3     2     
+
+Query plan:
+sscan
+    class: vd node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select vd.ca from ta vd where (vd.ca> ?:? ))
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: sscan
+               class: td node[?]
+               cost:  ? card ?
+    inner: temp
+               order: UNORDERED
+               subplan: nl-join (cross join)
+                            outer: sscan
+                                       class: tc node[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: vd node[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(vd.ca) from (select vd.ca from ta vd where (vd.ca> ?:? )) vd (ca) cross join tc tc right outer join td td on td.ca=tc.ca
+===================================================
+    
+Case 6: Case 4 with the ORDERED hint; result = same counts as Case 4     
+
+===================================================
+count(*)    count(vc.ca)    count(te.ca)    
+301     300     100     
+
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: vc node[?]
+               cost:  ? card ?
+    inner: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select vc.ca from ta vc, tb tb)
+Query plan:
+nl-join (left outer join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: sscan
+                          class: td node[?]
+                          cost:  ? card ?
+               inner: temp
+                          order: UNORDERED
+                          subplan: nl-join (cross join)
+                                       outer: sscan
+                                                  class: vc node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: te node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ count(*), count(vc.ca), count(te.ca) from (select vc.ca from ta vc, tb tb) vc (ca) cross join tc tc right outer join td td on td.ca=tc.ca left outer join te te on te.cb=td.ca and te.ca=vc.ca
+===================================================
+    
+Case 7: Case 1 with a comma in place of the CROSS JOIN; result = 6, 6, 3, 6     
+
+===================================================
+count(*)    count(ta.ca)    count(tc.ca)    count(td.ca)    
+6     6     3     6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+2
+===================================================
+2
+===================================================
+0
+===================================================
+    
+Case 8: a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11); result = 2 rows     
+
+===================================================
+cb    cb    
+1     null     
+1     20     
+
+===================================================
+    
+Case 9: Case 8 with the ORDERED hint, which the planner ignores (scenario 12); result = same rows as Case 8     
+
+===================================================
+cb    cb    
+1     null     
+1     20     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (left outer join)
+                                         outer: sscan
+                                                    class: tb node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: tc node[?]
+                                                    index: pk_tc_ca term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
+===================================================
+    
+Case 10: Case 8 with a LEADING hint, which the planner ignores (scenario 13); result = same rows as Case 8     
+
+===================================================
+cb    cb    
+1     null     
+1     20     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: ta node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (left outer join)
+                                         outer: sscan
+                                                    class: tb node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: tc node[?]
+                                                    index: pk_tc_ca term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt: [Warning: HINT ignored]
+select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
+===================================================
+0
