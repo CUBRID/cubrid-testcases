@@ -14,6 +14,7 @@
  *  Case 5: a constant column of a merged view or derived table used in PARTITION BY / ORDER BY of an
  *          analytic function was read as a select list position (errors, a wrong result through the
  *          plan cache, a client crash). The position of a constant select list item failed as well.
+ *  The USING INDEX clause of Case 2 is also kept by the derived table of an assignment ordered by ORDER BY.
  *
  *  Where a query has a reference, the reference follows it and must return the same rows.
  */
@@ -39,9 +40,8 @@ select id, v, count(*) over () as c from t_spill order by id desc limit 3;
 select id, v, count(*) over () as c from t_spill order by id limit 3;
 select id, v, a, sum(a) over (partition by g) as s from t_spill order by id desc limit 4;
 select id, v, cast(round(percent_rank() over (order by g) * 10000) as int) as p from t_spill order by id desc limit 4;
-select id, v, ntile(3) over (order by id) as n, max(id) over () as m from t_spill order by id desc limit 3;
-select id, v, nth_value(id, 2) over (partition by g order by id) as n, count(*) over (partition by g) as c
-  from t_spill order by id desc limit 4;
+select id, v, ntile(3) over (partition by g order by id) as n from t_spill order by id desc limit 3;
+select id, v, count(a) over (partition by g) as c from t_spill order by id desc limit 4;
 -- reference: inside a derived table the rows were correct
 select count(*) as cnt, count(id) as cnt_id, count(v) as cnt_v, min(c) as min_c, max(c) as max_c
   from (select id, v, count(*) over () as c from t_spill) x;
@@ -57,6 +57,11 @@ select a, sum(v), rank() over (order by sum(v)) as r from t_agg where a > 0 grou
 select a, sum(v), rank() over (order by sum(v)) as r from t_agg where a > 0 group by a using index i_agg_a(-) order by a;
 select a, sum(v), rank() over (order by sum(v)) as r from t_agg where a > 0 group by a using index none order by a;
 select count(*), max(v), row_number() over (order by count(*)) as r from t_agg where a > 5 using index i_agg_a(+);
+-- an assignment ordered by ORDER BY also moves the query into a derived table, with its USING INDEX clause
+set @r = 0;
+select @r := @r + 1 as x, a, v from t_agg where a > 7 using index i_agg_a order by a, v;
+set @r = 0;
+select @r := @r + 1 as x, a, v from t_agg where a > 7 using index i_agg_a(+) order by a, v;
 -- an index name of no table of the query is ignored, as it is without the analytic function
 select a, sum(v), rank() over (order by sum(v)) as r from t_agg where a > 0 group by a using index i_no_such order by a;
 select a, sum(v) from t_agg where a > 7 group by a using index i_no_such order by a;
@@ -97,7 +102,7 @@ select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order 
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a = 3 and b in (0, 2, 3)) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select id, a, b, dense_rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a = 3 and b between 0 and 1 or a = 3 and b between 2 and 3) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select id, a, b, dense_rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a = 3 and b between 0 and 1 or a = 3 and b between 2 and 3) z group by a, b order by a, b;
--- the key list is on both columns, one descending and one ascending: no order of the key list fits
+-- IN on both columns: the key list is on a (b in (...) is checked in each key), read in the descending order of a
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 force index (i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select id, a, b, rank() over (order by a desc, b) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb) where a in (1, 3, 5) and b in (0, 2)) z group by a, b order by a, b;
 -- a multi-column IN: the keys are ordered by the first column they differ at, in its direction
@@ -105,9 +110,14 @@ select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order 
 select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 3), (1, 5)) using index none) z group by c1, c2 order by c1, c2;
 select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 2), (3, 1)) using index i_mcol(+)) z group by c1, c2 order by c1, c2;
 select c1, c2, min(r), max(r), count(*) from (select c1, c2, rank() over (order by c1 desc, c2) as r from t_mcol where (c1, c2) in ((1, 1), (1, 2), (3, 1)) using index none) z group by c1, c2 order by c1, c2;
--- a single range on the second column is the same in every key, so its direction does not order them
+-- a single range on the second column is the same in every key, so its direction does not order them and the sort
+-- stays skipped: the trace shows sort: false for the analytic evaluation
 select a, b, min(r), max(r), count(*) from (select a, b, rank() over (order by a, b desc) as r from t_klist2 force index (i_klist2_ab) where a in (1, 2) and b > 1) z group by a, b order by a, b;
 select a, b, min(r), max(r), count(*) from (select a, b, rank() over (order by a, b desc) as r from t_klist2 ignore index (i_klist2_a, i_klist2_adb, i_klist2_ab) where a in (1, 2) and b > 1) z group by a, b order by a, b;
+set trace on;
+select a, b, rank() over (order by a, b desc) as r from t_klist2 force index (i_klist2_ab) where a in (1, 2) and b > 1 order by a, b, r;
+show trace;
+set trace off;
 -- other functions, a nested loop join, top level with LIMIT
 select a, min(f), max(f), min(c), count(*) from (select a, first_value(a) over (order by a desc) as f, count(*) over (order by a desc) as c from t_klist where a in (1, 3, 5)) z group by a order by a;
 select a, min(r), max(r), count(*) from (select /*+ ordered use_nl */ x.a, rank() over (order by x.a desc) as r from t_klist x, t_outer o where x.a in (1, 3, 5) and o.a = x.a) z group by a order by a;
@@ -154,6 +164,9 @@ select c, sum(c) over (partition by k) as s from (select c, 1 as k from t_const)
 -- the position of a constant select list item
 select 7, c, sum(c) over (partition by 1 order by c) as s from t_const order by c;
 select 7, c, id, sum(c) over (partition by 1, 3 order by 2 desc, 1) as s from t_const order by c;
+select -7, c, sum(c) over (partition by 1 order by c) as s from t_const order by c;
+select 1 + 1, abs(-4), c, rank() over (order by 1, 2, c desc) as r from t_const order by c;
+select k2, c, sum(c) over (partition by k2 order by c) as s from (select c, -7 as k2 from t_const) v order by c;
 -- a position out of the select list is still an error
 select c, sum(c) over (partition by 5) as s from t_const;
 

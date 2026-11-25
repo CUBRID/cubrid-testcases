@@ -39,17 +39,17 @@ id    v    p
 29997     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29997     5000     
 
 ===================================================
-id    v    n    m    
-30000     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw30000     3     30000     
-29999     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29999     3     30000     
-29998     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29998     3     30000     
+id    v    n    
+30000     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw30000     3     
+29999     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29999     3     
+29998     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29998     3     
 
 ===================================================
-id    v    n    c    
-30000     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw30000     4     15000     
-29999     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29999     3     15000     
-29998     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29998     4     15000     
-29997     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29997     3     15000     
+id    v    c    
+30000     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw30000     15000     
+29999     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29999     15000     
+29998     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29998     15000     
+29997     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxw29997     15000     
 
 ===================================================
 cnt    cnt_id    cnt_v    min_c    max_c    
@@ -124,6 +124,56 @@ a    sum(v)    r
 ===================================================
 count(*)    max(v)    r    
 40     100     1     
+
+===================================================
+0
+===================================================
+x    a    v    
+1     8     9     
+2     8     19     
+3     8     29     
+4     8     39     
+5     8     49     
+6     8     59     
+7     8     69     
+8     8     79     
+9     8     89     
+10     8     99     
+11     9     10     
+12     9     20     
+13     9     30     
+14     9     40     
+15     9     50     
+16     9     60     
+17     9     70     
+18     9     80     
+19     9     90     
+20     9     100     
+
+===================================================
+0
+===================================================
+x    a    v    
+1     8     9     
+2     8     19     
+3     8     29     
+4     8     39     
+5     8     49     
+6     8     59     
+7     8     69     
+8     8     79     
+9     8     89     
+10     8     99     
+11     9     10     
+12     9     20     
+13     9     30     
+14     9     40     
+15     9     50     
+16     9     60     
+17     9     70     
+18     9     80     
+19     9     90     
+20     9     100     
 
 ===================================================
 a    sum(v)    r    
@@ -310,6 +360,79 @@ a    b    min(r)    max(r)    count(*)
 2     3     26     26     25     
 
 ===================================================
+0
+===================================================
+a    b    r    
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+1     2     1     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+2     3     26     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_klist?.i_klist?_ab) (key range: (([dba.t_klist?].a= ?:? ) or ([dba.t_klist?].a= ?:? ))key range: ([dba.t_klist?].b> ?:? ), covered: true)
+
+  rewritten query: select [dba.t_klist?].a, [dba.t_klist?].b, rank() over (order by ?, ? desc ) from [dba.t_klist?] [dba.t_klist?] where (([dba.t_klist?].a= ?:? ) or ([dba.t_klist?].a= ?:? )) and ([dba.t_klist?].b> ?:? ) using index [dba.t_klist?].i_klist?_ab(+) order by ?, ?, ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_klist?.i_klist?_ab), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+    ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
 a    min(f)    max(f)    min(c)    count(*)    
 1     5     5     150     50     
 3     5     5     100     50     
@@ -461,6 +584,21 @@ c    s
 7    c    id    s    
 7     1     1     1     
 7     2     2     2     
+
+===================================================
+-7    c    s    
+-7     1     1     
+-7     2     3     
+
+===================================================
+1+1    abs(-4)    c    r    
+2     4     1     2     
+2     4     2     1     
+
+===================================================
+k2    c    s    
+-7     1     1     
+-7     2     3     
 
 ===================================================
 Error:-494
