@@ -205,24 +205,24 @@ ca    ca    ca
 
 Query plan:
 temp(order by)
-    subplan: nl-join (semi join)
-                 outer: nl-join (cross join)
+    subplan: nl-join (cross join)
+                 outer: nl-join (semi join)
                             outer: nl-join (cross join)
                                        outer: sscan
                                                   class: a node[?]
                                                   sargs: term[?]
                                                   cost:  ? card ?
                                        inner: sscan
-                                                  class: b node[?]
+                                                  class: a? node[?]
                                                   cost:  ? card ?
                                        cost:  ? card ?
                             inner: sscan
-                                       class: a? node[?]
+                                       class: i node[?]
+                                       sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?
                  inner: sscan
-                            class: i node[?]
-                            sargs: term[?]
+                            class: b node[?]
                             cost:  ? card ?
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc
@@ -354,11 +354,11 @@ temp(order by)
                                                   sargs: term[?]
                                                   cost:  ? card ?
                                        inner: sscan
-                                                  class: c node[?]
+                                                  class: a node[?]
                                                   cost:  ? card ?
                                        cost:  ? card ?
                             inner: sscan
-                                       class: a node[?]
+                                       class: c node[?]
                                        sargs: term[?]
                                        cost:  ? card ?
                             cost:  ? card ?

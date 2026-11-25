@@ -97,25 +97,25 @@ ca    ca    ca    ca
 
 Query plan:
 temp(order by)
-    subplan: nl-join (left outer join)
-                 outer: nl-join (cross join)
+    subplan: nl-join (cross join)
+                 outer: nl-join (left outer join)
                             outer: nl-join (cross join)
                                        outer: sscan
                                                   class: a node[?]
                                                   cost:  ? card ?
                                        inner: sscan
-                                                  class: b node[?]
+                                                  class: d node[?]
                                                   cost:  ? card ?
                                        cost:  ? card ?
                             inner: sscan
-                                       class: d node[?]
+                                       class: c node[?]
+                                       sargs: term[?] AND term[?]
                                        cost:  ? card ?
+                            during:term[?]
                             cost:  ? card ?
                  inner: sscan
-                            class: c node[?]
-                            sargs: term[?] AND term[?]
+                            class: b node[?]
                             cost:  ? card ?
-                 during:term[?]
                  cost:  ? card ?
     sort:  ? asc, ? asc, ? asc, ? asc
     cost:  ? card ?
