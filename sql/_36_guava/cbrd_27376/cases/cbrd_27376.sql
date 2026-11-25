@@ -30,15 +30,19 @@
  *    Case 7:  ORDERED of the subquery stays inside the derived table and reads tc first
  *    Case 8:  NO_COVERING_IDX and USING INDEX NONE stay inside the derived table and apply there
  *    Case 9:  USING INDEX ... KEYLIMIT keeps the subquery nested. tg holds 1000 rows matching nothing and
- *             th.ca > 0 lets i_th_ca read th, so a derived table would read th first and stop at its first
- *             key 200: no row instead of 3
+ *             th.ca > 0 lets i_th_ca read th, so with the statistics of tg and th a derived table would read
+ *             th first and stop at its first key 200: no row instead of 3
  *    Case 10: a large indexed outer: the derived table is read first with DISTINCT and probes t_big by index
  *    Case 11: NOT EXISTS with a condition on the outer table alone stays nested: an ANTI JOIN would drop ta.ca 1
  *    Case 12: a subquery reading a derived table or a CTE stays nested. The derived table has GROUP BY and the CTE
  *             has MATERIALIZE, so that neither is merged into the subquery as a base table
+ *    Case 13: NOT IN on a NOT NULL column of the NULL-filled side of a LEFT JOIN stays nested: the LEFT JOIN
+ *             gives that column a NULL, so an ANTI JOIN would return ta.ca 2
+ *    Case 14: EXISTS and NOT EXISTS over several tables in one WHERE each become a derived table of its own,
+ *             one the inner of a SEMI JOIN and one of an ANTI JOIN, and only ta.ca 1 is counted
  */
 
-drop table if exists ta, tb, tc, te, tf, tg, th, t_big;
+drop table if exists ta, tb, tc, te, tf, tg, th, t_big, tn;
 
 create table ta (ca int not null);
 insert into ta values (1), (2), (3);
@@ -136,4 +140,16 @@ select /*+ recompile */ count(*) from ta where exists (select 1 from tb, (select
 select /*+ recompile */ count(*) from ta where exists (with w as (select /*+ materialize */ ca from tc) select 1 from tb, w where tb.ca = ta.ca and tb.cb = w.ca);
 
 
-drop table ta, tb, tc, te, tf, tg, th, t_big;
+evaluate 'Case 13: NOT IN on a NOT NULL column of the NULL-filled side of a LEFT JOIN stays nested';
+create table tn (ca int not null);
+insert into tn values (1), (3);
+select /*+ recompile */ count(*) from ta where ta.ca not in (select tn.ca from tb left join tn on tb.ca = tn.ca);
+
+
+evaluate 'Case 14: EXISTS and NOT EXISTS over several tables in one WHERE';
+--@queryplan
+select /*+ recompile */ count(*) from ta where exists (select 1 from tb, tc where tb.ca = ta.ca and tb.cb = tc.ca)
+  and not exists (select 1 from tb, tc where tb.ca = ta.ca and tb.cb = tc.ca and tc.ca = 400);
+
+
+drop table ta, tb, tc, te, tf, tg, th, t_big, tn;

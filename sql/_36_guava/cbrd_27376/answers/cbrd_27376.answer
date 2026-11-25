@@ -584,4 +584,69 @@ sscan
 Query stmt:
 select count(*) from ta ta where  exists (with w(ca) as (select /*+ MATERIALIZE */ tc.ca from tc tc)select ? from tb tb, w w where tb.ca=ta.ca and (tb.cb=w.ca) and inst_num()<= ?:? )
 ===================================================
+    
+Case 13: NOT IN on a NOT NULL column of the NULL-filled side of a LEFT JOIN stays nested     
+
+===================================================
+0
+===================================================
+2
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 14: EXISTS and NOT EXISTS over several tables in one WHERE     
+
+===================================================
+count(*)    
+1     
+
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: tb node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb=tc.ca)
+Query plan:
+nl-join (cross join)
+    outer: sscan
+               class: tb node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: tc node[?]
+               index: i_tc_ca term[?] (covers)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+(select tb.ca from tb tb, tc tc where tb.cb= ?:?  and tc.ca= ?:?  and tb.cb=tc.ca)
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: nl-join (anti join)
+               edge:  term[?]
+               outer: sscan
+                          class: ta node[?]
+                          cost:  ? card ?
+               inner: sscan
+                          class: av?_? node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: av? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*) from ta ta semi join (select tb.ca from tb tb, tc tc where tb.cb=tc.ca) av? (av_?) on av?.av_?=ta.ca anti join (select tb.ca from tb tb, tc tc where tb.cb= ?:?  and tc.ca= ?:?  and tb.cb=tc.ca) av?_? (av_?) on av?_?.av_?=ta.ca
+===================================================
 0
