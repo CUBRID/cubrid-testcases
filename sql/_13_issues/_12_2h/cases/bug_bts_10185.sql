@@ -1,4 +1,5 @@
 
+set @da_default = to_date('2010-01-01');
 create table t (
         i int default 50,
         bi bigint default 9223372036854775807,
@@ -7,7 +8,7 @@ create table t (
         sm smallint default 80,
         m monetary default 12345.6789,
         n numeric(10,4) default 1123.4567,
-        da date default to_date('2010-01-01'),
+        da date default @da_default,
         dt datetime default '12:00:00.000 AM 10/31/2008',
         ti time default '09:00:01',
         ts timestamp default '12:00:00.000 AM 10/31/2008',

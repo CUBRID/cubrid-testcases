@@ -9,7 +9,8 @@ select json_extract('{"bar": "baz", "balance": 7.77, "active":false}' collate ut
 select json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active') = json_extract(json_object('name', 'false' collate utf8_en_ci), '/name');
 select json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '/active') = json_extract(json_object('name', 'FALSE' collate utf8_en_ci), '/name');
 drop table if exists t10;
-create table t10(id int primary key auto_increment, name varchar collate utf8_en_ci, de json default json_array('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci));
+set @de_default = json_array('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci);
+create table t10(id int primary key auto_increment, name varchar collate utf8_en_ci, de json default @de_default);
 show create table t10;
 insert into t10(id, name) values(1, '{"bar": "baz", "balance": 7.77, "active":"false"}');
 select * from t10;

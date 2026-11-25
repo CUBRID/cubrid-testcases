@@ -1,7 +1,8 @@
 --+ holdcas on;
 set names utf8;
 drop table if exists t10;
-create table t10(id int primary key auto_increment, name varchar collate utf8_en_ci, de json default json_array_append('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '$.balance', '{"ratio":"77%"}'));
+set @de_default = json_array_append('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci, '$.balance', '{"ratio":"77%"}');
+create table t10(id int primary key auto_increment, name varchar collate utf8_en_ci, de json default @de_default);
 insert into t10(id, name) values(1, '{"bar": "baz", "balance": 7.77, "active":"false"}'); 
 insert into t10(id) values(2);
 select * from t10 order by id;
