@@ -38,9 +38,10 @@ nm    nm
 Query plan:
 nl-join (left outer join)
     edge:  term[?]
-    outer: nl-join (left outer join)
+    outer: nl-join (inner join)
                edge:  term[?]
-               outer: idx-join (inner join)
+               outer: nl-join (left outer join)
+                          edge:  term[?]
                           outer: nl-join (inner join)
                                      edge:  term[?]
                                      outer: sscan
@@ -52,15 +53,15 @@ nl-join (left outer join)
                                                 sargs: term[?]
                                                 cost:  ? card ?
                                      cost:  ? card ?
-                          inner: iscan
-                                     class: aaa node[?]
-                                     index: pk_aaa_id term[?] (covers)
-                                     filtr: term[?]
+                          inner: sscan
+                                     class: ccc node[?]
+                                     sargs: term[?] AND term[?]
                                      cost:  ? card ?
                           cost:  ? card ?
-               inner: sscan
-                          class: ccc node[?]
-                          sargs: term[?] AND term[?]
+               inner: iscan
+                          class: aaa node[?]
+                          index: pk_aaa_id term[?] (covers)
+                          filtr: term[?]
                           cost:  ? card ?
                cost:  ? card ?
     inner: sscan
