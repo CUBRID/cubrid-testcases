@@ -249,12 +249,10 @@ id    w
 
 Query plan:
 idx-join (left outer join)
-    outer: temp(sort limit)
-               subplan: iscan
-                            class: tc_ja node[?]
-                            index: pk_tc_ja_id term[?]
-                            sargs: term[?]
-                            cost:  ? card ?
+    outer: iscan
+               class: tc_ja node[?]
+               index: pk_tc_ja_id term[?]
+               sargs: term[?]
                cost:  ? card ?
     inner: iscan
                class: tc_jb node[?]
@@ -264,6 +262,7 @@ idx-join (left outer join)
     cost:  ? card ?
 Query stmt:
 select tc_ja.id, tc_jb.w from tc_ja tc_ja left outer join tc_jb tc_jb on tc_ja.fk=tc_jb.k where (tc_ja.id> ?:? ) and (tc_ja.a< ?:? ) order by ? for orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
     
 Case 12: GROUP BY ... LIMIT 3, the last group keeps its groupby_num () (1, 2, 3)     
