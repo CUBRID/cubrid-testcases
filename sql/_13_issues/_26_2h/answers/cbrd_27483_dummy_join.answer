@@ -533,4 +533,58 @@ nl-join (left outer join)
 Query stmt:
 select count(*), count(tc.ca), count(tg.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb right outer join tg tg on tg.cb=tf.cb and tg.ca=tc.cb
 ===================================================
+    
+Case 11: Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE; result = same counts as Case 9     
+
+===================================================
+count(*)    count(tx.ca)    
+4     4     
+
+Query plan:
+nl-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: nl-join (left outer join)
+               edge:  term[?]
+               outer: nl-join (cross join)
+                          outer: nl-join (inner join)
+                                     edge:  term[?]
+                                     outer: nl-join (inner join)
+                                                edge:  term[?]
+                                                outer: nl-join (left outer join)
+                                                           edge:  term[?]
+                                                           outer: sscan
+                                                                      class: ta node[?]
+                                                                      cost:  ? card ?
+                                                           inner: sscan
+                                                                      class: tb node[?]
+                                                                      sargs: term[?]
+                                                                      cost:  ? card ?
+                                                           cost:  ? card ?
+                                                inner: sscan
+                                                           class: tc node[?]
+                                                           sargs: term[?]
+                                                           cost:  ? card ?
+                                                cost:  ? card ?
+                                     inner: sscan
+                                                class: tx node[?]
+                                                sargs: term[?]
+                                                cost:  ? card ?
+                                     cost:  ? card ?
+                          inner: sscan
+                                     class: td node[?]
+                                     cost:  ? card ?
+                          cost:  ? card ?
+               inner: sscan
+                          class: te node[?]
+                          sargs: term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: sscan
+               class: tf node[?]
+               sargs: term[?] AND term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca, td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb where tx.ca=tc.cb
+===================================================
 0

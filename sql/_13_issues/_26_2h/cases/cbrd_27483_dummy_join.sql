@@ -3,9 +3,9 @@
  *  or anti join depends on, so the query fails or returns a wrong result
  *
  *  The cases need a join edge that no condition of the query makes. The fix adds a dummy join term for it: between
- *  the tables that an ON reads when no join edge connects them, and at a CROSS JOIN whose two tables a later join
- *  already connects. A dummy join term stands for no condition, so it must not change the join type of an outer
- *  join.
+ *  the tables that an ON reads when no join edge connects them, and at a CROSS JOIN or a comma whose two tables a
+ *  later join already connects. A dummy join term stands for no condition, so it must not change the join type of an
+ *  outer join.
  *  Each case prints the result that its query defines. A case that repeats another case with a hint or in another
  *  form prints the same result.
  *  The SELECT statements with a join that fail or return a wrong result without the fix also print their plan. The
@@ -27,6 +27,7 @@
  *    Case 8:   two LEFT JOIN chains around a CROSS JOIN, bridged by a later INNER JOIN and a LEFT JOIN
  *    Case 9:   Case 8 without the last LEFT JOIN
  *    Case 10:  Case 8 with a RIGHT JOIN in place of the last LEFT JOIN
+ *    Case 11:  Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE
  */
 -- Cases 1 - 2: no row of tb meets ON tb.ca > tb.cb, and td and tg are empty, so each LEFT JOIN NULL-pads its rows
 -- ta, tb and tc are large and te is small, so the planner joins tb after te, ta and tc
@@ -99,7 +100,7 @@ SELECT COUNT(*), COUNT(tb.ca) FROM ta INNER JOIN tb ON tb.ca = ta.ca CROSS JOIN 
 
 DROP TABLE ta, tb, tc, td, tx;
 
--- Cases 8 - 10 use new data with rows that the LEFT JOINs NULL-pad
+-- Cases 8 - 11 use new data with rows that the LEFT JOINs NULL-pad
 DROP TABLE IF EXISTS ta, tb, tc, td, te, tf, tg, tx;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
@@ -119,7 +120,7 @@ INSERT INTO tg VALUES (1, 1), (2, 2), (2, 1);
 INSERT INTO tx VALUES (1, 1), (2, 2), (1, 2);
 UPDATE STATISTICS ON ta, tb, tc, td, te, tf, tg, tx;
 
--- Cases 8 - 10: ta and td each start a LEFT JOIN chain, and tx joins the two chains
+-- Cases 8 - 11: ta and td each start a LEFT JOIN chain, and tx joins the two chains
 -- a join order starts at one table, so the CROSS JOIN between tc and td needs a dummy join term for td to follow tc
 evaluate 'Case 8: two LEFT JOIN chains around a CROSS JOIN, bridged by a later INNER JOIN and a LEFT JOIN; result = 4, 3';
 --@queryplan
@@ -132,5 +133,12 @@ SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = t
 evaluate 'Case 10: Case 8 with a RIGHT JOIN in place of the last LEFT JOIN; result = 4, 3, 4';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tc.ca), COUNT(tg.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca CROSS JOIN td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.ca = tc.cb AND tx.cb = tf.cb RIGHT JOIN tg ON tg.ca = tc.cb AND tg.cb = tf.cb;
+
+-- a comma allows a cartesian product as a CROSS JOIN does, so it needs the same dummy join term
+-- an ON after the comma cannot read tc, so the condition on tc moves to the WHERE; no outer join follows tx, so the
+-- result stays that of Case 9
+evaluate 'Case 11: Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE; result = same counts as Case 9';
+--@queryplan
+SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca, td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.cb = tf.cb WHERE tx.ca = tc.cb;
 
 DROP TABLE ta, tb, tc, td, te, tf, tg, tx;
