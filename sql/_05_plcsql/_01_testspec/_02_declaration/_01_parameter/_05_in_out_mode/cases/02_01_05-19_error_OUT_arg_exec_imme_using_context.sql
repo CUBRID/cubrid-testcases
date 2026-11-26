@@ -27,6 +27,7 @@ evaluate 'Case 1: the same statement in a loop with a COMMIT each time is refuse
 -- a COMMIT inside a PL/CSQL procedure runs whatever pl_transaction_control is set to
 create or replace procedure t28189_p1 as
     l_j int;
+    l_e varchar (1000);
 begin
     for i in 1 .. 3 loop
         l_j := 3;
@@ -35,13 +36,14 @@ begin
             insert into t28189_log (tag, v) values ('j', l_j);
         exception
             when others then
-                insert into t28189_log (tag, v) values ('caught', i);
+                l_e := SQLERRM;
+                insert into t28189_log (tag, v, msg) values ('caught', i, l_e);
         end;
         commit;
     end loop;
 end;
 call t28189_p1 ();
-select tag, v from t28189_log order by seq;
+select tag, v, msg from t28189_log order by seq;
 
 evaluate 'Case 2: a refusal after an INSERT fails the outer CALL and leaves no row, as a syntax error does';
 delete from t28189_log;
