@@ -43,6 +43,10 @@
 ===================================================
 3
 ===================================================
+0
+===================================================
+10
+===================================================
     
 Case 1: the issue query; result = 0, 15, 15     
 
@@ -261,6 +265,8 @@ n    o    x    result
 Case 15: parallel GROUP BY; result = no_parallel_scan     
 
 ===================================================
+0
+===================================================
 k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor(distinct b)    
 0     0     1023     601     4601     
 1     0     1023     426     44159     
@@ -271,6 +277,25 @@ k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor
 6     0     1023     319     33698     
 
 ===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_par)
+
+  rewritten query: select /*+ PARALLEL(?) */  mod([dba.t_par].id, ?), bit_and(distinct [dba.t_par].a), bit_or(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].b) from [dba.t_par] [dba.t_par] group by  mod([dba.t_par].id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
 k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor(distinct b)    
 0     0     1023     601     4601     
 1     0     1023     426     44159     
@@ -279,6 +304,70 @@ k    bit_and(distinct a)    bit_or(distinct a)    bit_xor(distinct a)    bit_xor
 4     0     1023     29     25972     
 5     0     1023     430     63243     
 6     0     1023     319     33698     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    SORT (group by)
+      TABLE SCAN (dba.t_par)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  mod([dba.t_par].id, ?), bit_and(distinct [dba.t_par].a), bit_or(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].a), bit_xor(distinct [dba.t_par].b) from [dba.t_par] [dba.t_par] group by  mod([dba.t_par].id, ?) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_par), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    GROUPBY (time: ?, hash: false, sort: true, page: ?, ioread: ?, readrows: ?, rows: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 16: correlated subquery, the distinct values folded again for each outer row; result = OK for each row     
+
+===================================================
+k    o    x    ro    r    result    
+0     126     106     126     106     OK     
+1     127     106     127     106     OK     
+2     126     94     126     94     OK     
+3     127     94     127     94     OK     
+4     126     42     126     42     OK     
+5     127     42     127     42     OK     
+6     126     6     126     6     OK     
+7     127     6     127     6     OK     
+8     126     26     126     26     OK     
+9     127     26     127     26     OK     
+
+===================================================
+    
+Case 17: GROUP BY with all-NULL groups and a one-value group; result = OK for each group     
+
+===================================================
+g    n    o    x    p    result    
+1     0     15     15     12     OK     
+2     null     null     null     null     OK     
+3     4     7     3     6     OK     
+4     null     null     null     null     OK     
+5     9     9     9     9     OK     
+
+===================================================
+    
+Case 18: GROUP BY WITH ROLLUP; result = OK for each group row, then every row with the total row     
+
+===================================================
+k    n    o    x    result    
+0     0     126     2     OK     
+1     1     127     2     OK     
+
+===================================================
+k    n    o    x    c    
+null     1     127     2     50     
+0     0     126     2     50     
+1     1     127     2     50     
 
 ===================================================
 0
