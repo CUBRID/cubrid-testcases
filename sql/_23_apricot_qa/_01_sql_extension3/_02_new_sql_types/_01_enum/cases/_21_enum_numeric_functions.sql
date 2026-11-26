@@ -11,6 +11,7 @@ create table func(
 	col5 enum('1998-10-10 12:12:12', '12:12:12 10/10/1998', '2010-08-20 07:20:34', '1654-12:12 12:12:12') default 4,
 	num int
 );
+drop variable @col2_default;
 
 insert into func values(default, 1, 1, 1, 1, 1, 5);
 insert into func values(default, 2, 2, 2, 2, 2, 4);

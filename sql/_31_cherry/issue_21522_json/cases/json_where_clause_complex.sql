@@ -18,6 +18,7 @@ select * from t6 where cast(json_extract(name, '/name') as varchar) ='stuff' ord
 drop table if exists t;
 set @kname_default = json_object('key', 'name');
 create table t(id int primary key auto_increment, name json, kname json default @kname_default);
+drop variable @kname_default;
 insert into t(id, name) values(1, '{ "name":"John", "age":31, "city":"New York" }');
 insert into t(id, name) values(2, '{"id":"??"}');
 insert into t(id, name) values(3, '{"key":"name"}');

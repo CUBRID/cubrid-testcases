@@ -11,6 +11,7 @@ select json_extract('{"bar": "baz", "balance": 7.77, "active":"false"}' collate 
 drop table if exists t10;
 set @de_default = json_array('{"bar": "baz", "balance": 7.77, "active":"false"}' collate utf8_en_ci);
 create table t10(id int primary key auto_increment, name varchar collate utf8_en_ci, de json default @de_default);
+drop variable @de_default;
 show create table t10;
 insert into t10(id, name) values(1, '{"bar": "baz", "balance": 7.77, "active":"false"}');
 select * from t10;

@@ -79,6 +79,7 @@ drop table if exists t2_3;
 
 set @t2_1_s1_default = repeat('a',1000);
 create table t2_1(i1 int,s1 varchar default @t2_1_s1_default);
+drop variable @t2_1_s1_default;
 
 -- bug CBRD-21263
 create table t2_2(i1 int,s1 varchar default to_char(sysdate,repeat('MM-DD-YYYY',1000)));

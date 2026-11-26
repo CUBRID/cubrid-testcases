@@ -16,6 +16,7 @@ create table t (
         vc varchar(10) default 'def',
         b bit(10) default B'1',
         vb bit varying(10) default B'1010');
+drop variable @da_default;
     
 insert into t(i) values(10);
 

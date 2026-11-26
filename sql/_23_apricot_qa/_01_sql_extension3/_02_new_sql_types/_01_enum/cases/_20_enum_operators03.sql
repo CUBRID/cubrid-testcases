@@ -10,6 +10,7 @@ create table oper1(
 	col4 enum('2000-10-10', '1554-09-08', '12/11/1786', '01/01/2001', '1983-15-12') default '12/11/1786',
 	col5 enum('1998-10-10 12:12:12', '12:12:12 10/10/1998', '2010-08-20 07:20:34', '1654-12:12 12:12:12') default 4
 );
+drop variable @col2_default;
 
 insert into oper1 values(default, 1, 1, 1, 1, 1);
 insert into oper1 values(default, 2, 2, 2, 2, 2);

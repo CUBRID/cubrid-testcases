@@ -27,6 +27,7 @@ order by class_name;
 drop table if exists t1;
 set @t1_c2_default = rpad('a', 256, 'a');
 create table t1 (c1 int, c2 varchar(3000) default @t1_c2_default);
+drop variable @t1_c2_default;
 
 evaluate 'Case 2: a 256-char table column DEFAULT round-trips in full through db_attribute.default_value';
 select char_length(default_value) from db_attribute where class_name = 't1' and attr_name = 'c2';
@@ -34,6 +35,7 @@ select char_length(default_value) from db_attribute where class_name = 't1' and 
 drop table if exists t2;
 set @t2_c2_default = rpad('a', 2048, 'a');
 create table t2 (c1 int, c2 varchar(3000) default @t2_c2_default);
+drop variable @t2_c2_default;
 
 evaluate 'Case 3: a 2048-char table column DEFAULT round-trips in full through db_attribute.default_value, and db_attribute/_db_attribute agree on the value';
 select char_length(default_value), default_value from db_attribute where class_name = 't2' and attr_name = 'c2';
@@ -44,6 +46,7 @@ select
 drop table if exists t3;
 set @t3_c2_default = rpad('abcd', 2049, 'abcd');
 create table t3 (c1 int, c2 varchar(3000) default @t3_c2_default);
+drop variable @t3_c2_default;
 
 evaluate 'Case 4: a 2049-char DEFAULT is accepted, but the catalog display truncates to 2048 while the real default value keeps its full length, and db_attribute/_db_attribute agree on the truncated value';
 select char_length(default_value), default_value from db_attribute where class_name = 't3' and attr_name = 'c2';
@@ -75,6 +78,7 @@ drop procedure default_value_proc;
 drop table if exists t4;
 set @t4_c2_default = rpad('가', 2048, '가');
 create table t4 (c1 int, c2 varchar(3000) default @t4_c2_default);
+drop variable @t4_c2_default;
 
 evaluate 'Case 7: the catalog 2048 limit is measured in characters, not bytes - a 2048-char multibyte DEFAULT is not truncated even though it is 6144 bytes';
 select char_length(default_value), octet_length(default_value) from db_attribute where class_name = 't4' and attr_name = 'c2';

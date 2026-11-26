@@ -6,9 +6,11 @@ drop table if exists t2;
 
 set @t1_s1_default = repeat('a',500);
 create table t1(s1 string unique default @t1_s1_default);   
+drop variable @t1_s1_default;
 
 set @t2_s1_default = repeat('b',500);
 create table t2(s1 char(500) unique default @t2_s1_default);
+drop variable @t2_s1_default;
 
 -- test string compression(insert with select/multiple values clause/DEFAULT values/ODUC/REPLACE)
 

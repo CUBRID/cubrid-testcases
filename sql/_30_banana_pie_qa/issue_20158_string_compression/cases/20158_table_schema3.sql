@@ -21,6 +21,7 @@ select a,disk_size(b.s1),disk_size(b.s2),b.s1,b.s2 from t2 where b.s2>'a' and b.
 
 set @s3_default = repeat('a',1000);
 alter table t1 add column s3 varchar default @s3_default after s1;
+drop variable @s3_default;
 
 select disk_size(b.s3),b.s3 from t2;
 
