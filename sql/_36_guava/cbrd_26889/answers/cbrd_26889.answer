@@ -27,7 +27,7 @@ count(pad)
 Query plan:
 iscan
     class: oa_t node[?]
-    index: i_oa_t_k term[?]
+    index: i_oa_t_k term[?] (bitmap heap scan)
     cost:  ? card ?
 Query stmt:
 select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
@@ -50,7 +50,7 @@ select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
 0
 ===================================================
     
-[3] 15% range with cost_heap_fetch_per_oid=20: sscan     
+[3] 15% range with cost_heap_fetch_per_oid=20: no lookup in key order     
 
 ===================================================
 count(pad)    
@@ -58,9 +58,9 @@ count(pad)
 
 Query plan:
 Cost parameters: cost_seq_page ?, cost_random_page ?, cost_cpu_tuples_per_page ?, cost_effective_cache_pages ?, cost_heap_fetch_per_oid ?
-sscan
+iscan
     class: oa_t node[?]
-    sargs: term[?]
+    index: i_oa_t_k term[?] (bitmap heap scan)
     cost:  ? card ?
 Query stmt:
 select count(oa_t.pad) from oa_t oa_t where (oa_t.k>= ?:?  and oa_t.k<= ?:? )
