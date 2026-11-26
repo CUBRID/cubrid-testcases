@@ -82,6 +82,9 @@ select /*+ recompile no_parallel_scan */ md5(group_concat(distinct v order by v 
 show trace;
 
 
+-- v (not the partition key) still scans both partitions, but matches no
+-- rows anywhere - this checks pruning, not the reopen-on-append crash
+-- itself (needs a non-empty parallel side; see empty.sql's Case 9).
 evaluate 'Case 7: Empty input; result = NO_PARALLEL_SCAN';
 select /*+ recompile */ count(*), count(distinct v), sum(distinct v), median(v), length(group_concat(distinct v order by v separator ',')) as concat_length from td where v < 0;
 show trace;
