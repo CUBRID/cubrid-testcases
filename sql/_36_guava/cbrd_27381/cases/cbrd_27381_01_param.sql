@@ -1,17 +1,20 @@
--- CBRD-27381: the index build sorts each in-memory run by radix when the key has a radix key
---
--- index_sort_method picks the in-memory run sorter of an index build, for the session: auto (the
--- default of debug builds) and radix take the radix sorter when the key domain has a radix key,
--- compare (the default of release builds) keeps the merge sort. Whichever sorts the runs, the index
--- must hold the same keys in the same order.
---
--- 6000 rows in four shapes of 1500 (scattered, ascending, descending, few distinct values) and a NULL
--- every 101st row. index_build_buffer_size 64K splits each build into several runs.
---
--- Covers:
---   - the values auto, radix, compare and DEFAULT, a keyword in another case, and bad values
---   - the same rows indexed under auto, radix, compare and DEFAULT: each index reads back the rows of
---     the compare-built index in the same order (0 rows differ) and finds as many rows
+/**
+ *  This test case verifies CBRD-27381: the index build sorts each in-memory run by radix when the key has a radix key
+ *
+ *  index_sort_method picks the in-memory run sorter of an index build, for the session. auto (the
+ *  default of debug builds) and radix take the radix sorter when the key domain has a radix key, and
+ *  compare (the default of release builds) keeps the merge sort. Whichever sorts the runs, the index
+ *  must hold the same keys in the same order.
+ *
+ *  Rows: g is the row generator of 6000 rows in four shapes of 1500 (scattered, ascending, descending,
+ *  few distinct values), with a NULL every 101st row. index_build_buffer_size 64K splits each build into
+ *  several runs.
+ *
+ *  Coverage:
+ *    Case 1:  the values auto, radix, compare, DEFAULT and a keyword in another case are taken, and a bad value fails
+ *    Case 2:  indexes built under auto, radix and DEFAULT read back in the order of the compare-built index
+ *    Case 3:  each index finds the rows whose key is not NULL
+ */
 
 drop table if exists g;
 drop table if exists t_auto;
@@ -19,10 +22,12 @@ drop table if exists t_radix;
 drop table if exists t_compare;
 drop table if exists t_default;
 
+evaluate 'Case 1: the values auto, radix, compare, DEFAULT and a keyword in another case are taken, and a bad value fails';
 set system parameters 'index_sort_method=auto';
 set system parameters 'index_sort_method=radix';
 set system parameters 'index_sort_method=compare';
 set system parameters 'index_sort_method=Radix';
+-- quick and an empty value are not values of index_sort_method: both fail
 set system parameters 'index_sort_method=quick';
 set system parameters 'index_sort_method=';
 set system parameters 'index_sort_method=DEFAULT';
@@ -57,15 +62,16 @@ set system parameters 'index_sort_method=DEFAULT';
 create index i_default on t_default (k);
 set system parameters 'index_build_buffer_size=DEFAULT';
 
--- rows read in index order that differ from the compare-built index: 0 each
-select 'auto', count(*) from ((select rownum, k from t_auto where k >= -3003 using index i_auto)
-  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x;
-select 'radix', count(*) from ((select rownum, k from t_radix where k >= -3003 using index i_radix)
-  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x;
-select 'default', count(*) from ((select rownum, k from t_default where k >= -3003 using index i_default)
-  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x;
+evaluate 'Case 2: indexes built under auto, radix and DEFAULT read back in the order of the compare-built index; result = no rows differ';
+-- each query prints the position and the key of the rows that differ from the compare-built index
+select 'auto' as ix, x.* from ((select rownum, k from t_auto where k >= -3003 using index i_auto)
+  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x order by 2;
+select 'radix' as ix, x.* from ((select rownum, k from t_radix where k >= -3003 using index i_radix)
+  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x order by 2;
+select 'default' as ix, x.* from ((select rownum, k from t_default where k >= -3003 using index i_default)
+  difference (select rownum, k from t_compare where k >= -3003 using index i_compare)) x order by 2;
 
--- rows each index finds: all but the NULL ones
+evaluate 'Case 3: each index finds the rows whose key is not NULL';
 select count(*) from t_auto where k >= -3003 using index i_auto;
 select count(*) from t_radix where k >= -3003 using index i_radix;
 select count(*) from t_compare where k >= -3003 using index i_compare;
