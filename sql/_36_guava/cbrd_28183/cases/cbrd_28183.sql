@@ -1,6 +1,7 @@
--- CBRD-28183: cost-based group-by placement (GROUP BY below joins)
+-- CBRD-28183: group-by placement (GROUP BY below joins)
 -- A joining, aggregating block may group the table holding the aggregate arguments in a derived table before the
--- join, when the planner finds it cheaper. The results must not change, and NO_PUSH_GROUP_BY keeps a block as it is.
+-- join, when the statistics show it surely pays. The results must not change, and NO_PUSH_GROUP_BY keeps a block as
+-- it is.
 
 drop table if exists t_ord, t_cust, t_nat;
 create table t_nat (n_id int primary key, n_name varchar(20));
@@ -38,10 +39,17 @@ group by c_id order by 2 desc, 1 limit 5;
 --@queryplan
 select c_id, count(o_id) from t_cust left outer join t_ord on c_id = o_cust where c_id = 5 group by c_id;
 
--- T3: the aggregates of a customer without order
+-- T3: the aggregates of a customer without order (the 500 over 1500) and with orders, under the derived table
+--@queryplan
+select c_o, c_star, s is null, mn is null, mx is null, a is null, count(*)
+from (select c_id, count(o_id) as c_o, count(*) as c_star, sum(o_amount) as s, min(o_amount) as mn,
+             max(o_amount) as mx, avg(o_amount) as a
+      from t_cust left outer join t_ord on c_id = o_cust
+      group by c_id) x
+group by c_o, c_star, s is null, mn is null, mx is null, a is null order by 1, 2, 3;
 select c_id, count(o_id), count(*), sum(o_amount), min(o_amount), max(o_amount), avg(o_amount)
 from t_cust left outer join t_ord on c_id = o_cust
-where c_id in (1, 7, 1501, 2000) group by c_id order by c_id;
+group by c_id order by c_id limit 3;
 
 -- T4: inner join (TPC-H Q10 shape): the outer GROUP BY is dropped, a customer meeting one row
 --@queryplan
@@ -50,9 +58,11 @@ from t_cust, t_ord, t_nat
 where c_id = o_cust and c_nat = n_id and o_cmt = 'normal'
 group by c_id, c_name, n_name order by rev desc, c_id limit 10;
 
--- T5: no GROUP BY
-select count(o_id), count(*), sum(o_amount), avg(o_amount) from t_cust, t_ord where c_id = o_cust and c_nat = 3;
-select count(o_id), count(*), sum(o_amount), avg(o_amount) from t_cust, t_ord where c_id = o_cust and c_nat = 99;
+-- T5: no GROUP BY, over rows and over no row
+--@queryplan
+select count(o_id), count(*), sum(o_amount), avg(o_amount) from t_cust, t_ord where c_id = o_cust and c_nat <> 3;
+--@queryplan
+select count(o_id), count(*), sum(o_amount), avg(o_amount) from t_cust, t_ord where c_id = o_cust and c_nat <> 3 and o_cmt = 'none';
 
 -- T6: blocks left as they are: DISTINCT aggregate, OR, two aggregates in one item, ROLLUP
 --@queryplan
@@ -64,22 +74,26 @@ select c_nat, sum(o_amount) + count(*) from t_cust, t_ord where c_id = o_cust gr
 select c_nat, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_nat with rollup order by 1;
 
 -- T7: bound values
-prepare q1 from 'select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust and c_id between ? and ? group by c_id order by c_id';
-execute q1 using 1, 3;
-execute q1 using 1495, 1505;
+prepare q1 from 'select c_id, count(*), sum(o_amount) from t_cust, t_ord where c_id = o_cust and o_cmt = ? group by c_id order by 3 desc, 1 limit 5';
+execute q1 using 'normal';
+execute q1 using 'special requests';
+execute q1 using 'none';
 deallocate prepare q1;
 
 -- T8: the same blocks with NO_PUSH_GROUP_BY give the same rows (both EXCEPT empty)
+--@queryplan
 select c_id, count(o_id), count(*), sum(o_amount), avg(o_amount)
 from t_cust left outer join t_ord on c_id = o_cust group by c_id
 except
 select /*+ NO_PUSH_GROUP_BY */ c_id, count(o_id), count(*), sum(o_amount), avg(o_amount)
 from t_cust left outer join t_ord on c_id = o_cust group by c_id;
+--@queryplan
 select /*+ NO_PUSH_GROUP_BY */ c_id, count(o_id), count(*), sum(o_amount), avg(o_amount)
 from t_cust left outer join t_ord on c_id = o_cust group by c_id
 except
 select c_id, count(o_id), count(*), sum(o_amount), avg(o_amount)
 from t_cust left outer join t_ord on c_id = o_cust group by c_id;
+--@queryplan
 select c_nat, max(o_amount), min(o_id), count(o_amount) from t_cust, t_ord where c_id = o_cust group by c_nat
 except
 select /*+ NO_PUSH_GROUP_BY */ c_nat, max(o_amount), min(o_id), count(o_amount) from t_cust, t_ord where c_id = o_cust group by c_nat;
@@ -91,8 +105,10 @@ from (select /*+ NO_PUSH_GROUP_BY */ c_id, count(o_id) as c_count
 group by c_count order by custdist desc, c_count desc;
 
 -- T9: RIGHT OUTER JOIN, and a HAVING over the re-aggregated values
+--@queryplan
 select c_nat, count(o_id), sum(o_amount) from t_ord right outer join t_cust on c_id = o_cust
 group by c_nat having count(o_id) > 0 order by 1;
+--@queryplan
 select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_id having sum(o_amount) > 1680 order by 1;
 
 drop table t_ord, t_cust, t_nat;

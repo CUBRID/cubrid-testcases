@@ -117,11 +117,48 @@ temp(group by)
 Query stmt:
 select t_cust.c_id, count(t_ord.o_id) from t_cust t_cust left outer join t_ord t_ord on t_cust.c_id=t_ord.o_cust and t_ord.o_cust= ?:?  where t_cust.c_id= ?:?  group by t_cust.c_id
 ===================================================
+c_o    c_star    s is null    mn is null    mx is null    a is null    count(*)    
+0     1     1     1     1     1     500     
+40     40     0     0     0     0     1500     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), max(t_ord.o_amount), min(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(group by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: gbp_? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer), min(gbp_?.gbp_a_?), max(gbp_?.gbp_a_?),  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) from t_cust t_cust left outer join (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), max(t_ord.o_amount), min(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id)
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: x node[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select x.c_o, x.c_star, x.s is null , x.mn is null , x.mx is null , x.a is null , count(*) from (select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint) as [c_o],  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint) as [c_star],  cast(sum(gbp_?.gbp_a_?) as integer) as [s], min(gbp_?.gbp_a_?) as [mn], max(gbp_?.gbp_a_?) as [mx],  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) as [a] from t_cust t_cust left outer join (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), max(t_ord.o_amount), min(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id) x (c_o, c_star, s, mn, mx, a) group by x.c_o, x.c_star, x.s is null , x.mn is null , x.mx is null , x.a is null 
+===================================================
 c_id    count(o_id)    count(*)    sum(o_amount)    min(o_amount)    max(o_amount)    avg(o_amount)    
 1     40     40     0     0     0     0.0     
-7     40     40     204     6     6     6.0     
-1501     0     1     null     null     null     null     
-2000     0     1     null     null     null     null     
+2     40     40     34     1     1     1.0     
+3     40     40     70     2     2     2.0     
 
 ===================================================
 c_id    c_name    rev    n_name    
@@ -145,7 +182,7 @@ temp(group by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-(select t_ord.o_cust, sum(t_ord.o_amount) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust)
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust)
 Query plan:
 temp(order by)
     subplan: idx-join (inner join)
@@ -166,15 +203,60 @@ temp(order by)
     sort:  ? desc, ? asc
     cost:  ? card ?
 Query stmt:
-select t_cust.c_id, t_cust.c_name, gbp_?.gbp_a_?, t_nat.n_name from t_cust t_cust, (select t_ord.o_cust, sum(t_ord.o_amount) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?), t_nat t_nat where t_cust.c_id=gbp_?.gbp_a_? and t_cust.c_nat=t_nat.n_id order by ? desc , ? for orderby_num()<= ?:? 
+select t_cust.c_id, t_cust.c_name,  cast(gbp_?.gbp_a_? as integer), t_nat.n_name from t_cust t_cust, (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?), t_nat t_nat where t_cust.c_id=gbp_?.gbp_a_? and t_cust.c_nat=t_nat.n_id order by ? desc , ? for orderby_num()<= ?:? 
 ===================================================
 count(o_id)    count(*)    sum(o_amount)    avg(o_amount)    
-12000     12000     498871     48.5     
+48000     48000     2046787     49.74812240235277     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(*) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: gbp_? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_cust node[?]
+               index: pk_t_cust_c_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer),  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) from t_cust t_cust, (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(*) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) where t_cust.c_id=gbp_?.gbp_a_? and t_cust.c_nat<>?
 ===================================================
 count(o_id)    count(*)    sum(o_amount)    avg(o_amount)    
 0     0     null     null     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(*) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust)
+Query plan:
+idx-join (inner join)
+    outer: sscan
+               class: gbp_? node[?]
+               cost:  ? card ?
+    inner: iscan
+               class: t_cust node[?]
+               index: pk_t_cust_c_id term[?]
+               sargs: term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer),  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) from t_cust t_cust, (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(*) from t_ord t_ord where t_ord.o_cmt= ?:?  group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) where t_cust.c_id=gbp_?.gbp_a_? and t_cust.c_nat<>?
 ===================================================
 c_nat    count(distinct o_amount)    
 1     20     
@@ -258,31 +340,152 @@ null     2545658
 ===================================================
 0
 ===================================================
-c_id    sum(o_amount)    
-1     0     
-2     34     
-3     70     
+c_id    count(*)    sum(o_amount)    
+1300     37     3267     
+299     37     3234     
+200     37     3168     
+500     37     3168     
+600     37     3168     
 
 ===================================================
-c_id    sum(o_amount)    
-1495     3196     
-1496     3325     
-1497     3264     
-1498     3298     
-1499     3332     
-1500     3366     
+c_id    count(*)    sum(o_amount)    
+100     4     396     
+300     4     396     
+800     4     396     
+1000     4     396     
+1200     4     396     
+
+===================================================
+c_id    count(*)    sum(o_amount)    
 
 ===================================================
 0
 ===================================================
 c_id    count(o_id)    count(*)    sum(o_amount)    avg(o_amount)    
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(group by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: gbp_? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id,  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer),  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) from t_cust t_cust left outer join (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id
+Query plan:
+temp(group by)
+    subplan: idx-join (left outer join)
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_ord node[?]
+                            index: fk_t_ord_o_cust term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_PUSH_GROUP_BY */ t_cust.c_id, count(t_ord.o_id), count(*), sum(t_ord.o_amount), avg(t_ord.o_amount) from t_cust t_cust left outer join t_ord t_ord on t_cust.c_id=t_ord.o_cust group by t_cust.c_id
 ===================================================
 c_id    count(o_id)    count(*)    sum(o_amount)    avg(o_amount)    
 
+Query plan:
+temp(group by)
+    subplan: idx-join (left outer join)
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_ord node[?]
+                            index: fk_t_ord_o_cust term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_PUSH_GROUP_BY */ t_cust.c_id, count(t_ord.o_id), count(*), sum(t_ord.o_amount), avg(t_ord.o_amount) from t_cust t_cust left outer join t_ord t_ord on t_cust.c_id=t_ord.o_cust group by t_cust.c_id
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(group by)
+    subplan: hash-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: gbp_? node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id,  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer),  cast(sum(gbp_?.gbp_a_?) as double)/ cast(nullif(sum(gbp_?.gbp_a_?),  cast(? as bigint)) as double) from t_cust t_cust left outer join (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_amount), sum( cast(t_ord.o_amount as bigint)), count(*), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id
 ===================================================
 c_nat    max(o_amount)    min(o_id)    count(o_amount)    
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, count(t_ord.o_amount), min(t_ord.o_id), max(t_ord.o_amount) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: gbp_? node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_cust node[?]
+                            index: pk_t_cust_c_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_nat, max(gbp_?.gbp_a_?), min(gbp_?.gbp_a_?),  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint) from t_cust t_cust, (select t_ord.o_cust, count(t_ord.o_amount), min(t_ord.o_id), max(t_ord.o_amount) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) where t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_nat
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: t_cust node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_ord node[?]
+                            index: fk_t_ord_o_cust term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_PUSH_GROUP_BY */ t_cust.c_nat, max(t_ord.o_amount), min(t_ord.o_id), count(t_ord.o_amount) from t_cust t_cust, t_ord t_ord where t_cust.c_id=t_ord.o_cust group by t_cust.c_nat
 ===================================================
 c_count    custdist    
 36     954     
@@ -325,6 +528,33 @@ c_nat    count(o_id)    sum(o_amount)
 4     12000     509070     
 5     12000     519473     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_id), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: hash-join (right outer join)
+                              edge:  term[?]
+                              outer: sscan
+                                         class: gbp_? node[?]
+                                         cost:  ? card ?
+                              inner: sscan
+                                         class: t_cust node[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_nat,  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint),  cast(sum(gbp_?.gbp_a_?) as integer) from (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), count(t_ord.o_id), count(t_ord.o_id) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?, gbp_a_?) right outer join t_cust t_cust on t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_nat having  cast(nvl(sum(nvl(gbp_?.gbp_a_?, ?)), ?) as bigint)>? order by ?
 ===================================================
 c_id    sum(o_amount)    
 51     1700     
@@ -1082,5 +1312,32 @@ c_id    sum(o_amount)
 1499     3332     
 1500     3366     
 
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: t_ord node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), sum( cast(t_ord.o_amount as bigint)) from t_ord t_ord group by t_ord.o_cust)
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: gbp_? node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t_cust node[?]
+                                         index: pk_t_cust_c_id term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id,  cast(sum(gbp_?.gbp_a_?) as integer) from t_cust t_cust, (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), sum( cast(t_ord.o_amount as bigint)) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?) where t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id having  cast(sum(gbp_?.gbp_a_?) as integer)>? order by ?
 ===================================================
 0
