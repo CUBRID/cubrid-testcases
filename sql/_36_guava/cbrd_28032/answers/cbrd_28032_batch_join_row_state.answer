@@ -1,0 +1,84 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+300
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: the inner key reads a session variable the select list assigns; row n joins k = a + n     
+
+===================================================
+0
+===================================================
+count(*)    sum(x.k)    sum(x.v)    max(@v := @v+1)    
+300     51300     149503     300     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_bj_i) (key range: x.k= mod(o.a+@v, ?)+?)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ count(*), sum(x.k), sum(x.v), max(@v := @v+?) from [dba.bj_o] o, [dba.bj_i] x where x.k= mod(o.a+@v, ?)+?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bj_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.bj_i.i_bj_i), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: the inner key reads a serial the select list advances     
+
+===================================================
+count(*)    sum(x.k)    sum(x.v)    max(serial_next_value(bj_s, 1))    
+300     51301     149540     300     
+
+===================================================
+    
+Case 3: no value that changes from row to row, batched; the rows of Case 1     
+
+===================================================
+count(*)    sum(x.k)    sum(x.v)    
+300     51300     149503     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    TABLE SCAN (o)
+    INDEX SCAN (x.i_bj_i) (key range: x.k=o.a+o.id)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ count(*), sum(x.k), sum(x.v) from [dba.bj_o] o, [dba.bj_i] x where x.k=o.a+o.id
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bj_o), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      SCAN (index: dba.bj_i.i_bj_i), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
