@@ -65,6 +65,14 @@
 ===================================================
 5
 ===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+4
+===================================================
     
 Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)     
 
@@ -330,6 +338,32 @@ null     null     300
 null     null     400     
 null     null     600     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (inner join)
+                                         edge:  term[?]
+                                         outer: sscan
+                                                    class: b node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: a node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, b.id, c.id from t?_a a inner join t?_b b on b.v=a.v right outer join t?_c c on b.f= ?:?  and c.v=b.v order by ?, ?, ?
 ===================================================
     
 Case 26: two LEFT JOINs, RIGHT JOIN ON d.h is null; expected (NULL, NULL, NULL, 100) (2, 20, 2000, 200) (2, 21, 2000, 200) (2, 20, 2000, 201) (2, 21, 2000, 201) (3, NULL, NULL, 300) (4, 40, NULL, 400) (NULL, NULL, NULL, 600)     
@@ -419,6 +453,31 @@ null     null     300
 null     null     400     
 null     null     600     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (inner join)
+                                         outer: sscan
+                                                    class: a node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: b node[?]
+                                                    index: i_t?_bi_v term[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, b.id, c.id from t?_a a inner join t?_bi b on b.v=a.v right outer join t?_c c on b.f= ?:?  and c.v=b.v order by ?, ?, ?
 ===================================================
     
 Case 34: indexed padded table, RIGHT JOIN ON c.v = a.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
@@ -447,6 +506,31 @@ null     null     300
 4     40     400     
 null     null     600     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (inner join)
+                                         edge:  term[?]
+                                         outer: sscan
+                                                    class: b node[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: a node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, b.id, c.id from t?_a a inner join t?_b b on b.v=a.v right outer join t?_c c on c.v=a.v order by ?, ?, ?
 ===================================================
     
 Case 36: two RIGHT JOINs, ON c.v = a.v then ON d.v = b.v; expected (1, 10, 100, 1000) (2, 20, 200, 2000) (2, 21, 200, 2000) (2, 20, 201, 2000) (2, 21, 201, 2000)     
@@ -459,6 +543,38 @@ id    id    id    id
 2     20     201     2000     
 2     21     201     2000     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: d node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (inner join)
+                                         edge:  term[?]
+                                         outer: nl-join (inner join)
+                                                    edge:  term[?]
+                                                    outer: sscan
+                                                               class: b node[?]
+                                                               cost:  ? card ?
+                                                    inner: sscan
+                                                               class: a node[?]
+                                                               sargs: term[?]
+                                                               cost:  ? card ?
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: c node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, b.id, c.id, d.id from t?_a a inner join t?_b b on b.v=a.v inner join t?_c c on c.v=a.v right outer join t?_d d on d.v=b.v order by ?, ?, ?, ?
 ===================================================
     
 Case 37: RIGHT JOIN ON c.v = b.v and b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)     
@@ -472,6 +588,32 @@ null     null     300
 null     null     400     
 null     null     600     
 
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (inner join)
+                                         edge:  term[?]
+                                         outer: sscan
+                                                    class: b node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: a node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, b.id, c.id from t?_a a inner join t?_b b on b.v=a.v right outer join t?_c c on b.id is null  and c.v=b.v order by ?, ?, ?
 ===================================================
     
 Case 38: not rewritten, nothing pads b before c, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)     
@@ -553,6 +695,337 @@ id
 2     
 4     
 5     
+
+===================================================
+    
+Case 44: NOT NULL foreign key, the primary key table in the middle is eliminated; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+null     3     
+null     4     
+null     5     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, c.id from t?_kan a right outer join t?_kc c on c.v=a.id order by ?, ?
+===================================================
+    
+Case 45: the primary key table first, the child ON has the join term only, eliminated; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+null     3     
+null     4     
+null     5     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, c.id from t?_kan a right outer join t?_kc c on c.v=a.id order by ?, ?
+===================================================
+    
+Case 46: a.id <> 2 in the primary key table ON moves to the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+null     2     
+null     3     
+null     4     
+null     5     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: a node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, c.id from t?_kan a right outer join t?_kc c on c.v=a.id and a.id<>? order by ?, ?
+===================================================
+    
+Case 47: the join term in the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+null     2     
+null     3     
+null     4     
+null     5     
+
+===================================================
+    
+Case 48: the primary key table first, a.id <> 2 in the child ON, kept; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+null     2     
+null     3     
+null     4     
+null     5     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: idx-join (inner join)
+                                         outer: sscan
+                                                    class: b node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: a node[?]
+                                                    index: fk_t?_kan_bid term[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, c.id from t?_kb b inner join t?_kan a on a.id<>? and a.bid=b.id right outer join t?_kc c on c.v=a.id order by ?, ?
+===================================================
+    
+Case 49: the primary key table first, the next table is not the child; expected (1, 1, 1) (1, 2, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)     
+
+===================================================
+id    id    id    
+1     1     1     
+1     2     2     
+null     null     3     
+null     null     4     
+null     null     5     
+
+===================================================
+    
+Case 50: the primary key table heads the join chain after a comma; expected (20)     
+
+===================================================
+count(*)    
+20     
+
+===================================================
+    
+Case 51: NOT NULL foreign key table padded by a RIGHT JOIN, then the primary key table; expected (1, 1) (2, 2)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+
+===================================================
+    
+Case 52: the primary key table padded by a RIGHT JOIN, then the foreign key table; expected (1, 1, 1) (1, 1, 2) (1, 1, 4) (2, 2, 1) (2, 2, 2) (2, 2, 4)     
+
+===================================================
+id    id    id    
+1     1     1     
+1     1     2     
+1     1     4     
+2     2     1     
+2     2     2     
+2     2     4     
+
+===================================================
+    
+Case 53: a.id <> 2 in the primary key table ON, LEFT JOIN, then RIGHT JOIN; expected (1, 1, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)     
+
+===================================================
+id    id    id    
+1     1     1     
+null     null     2     
+null     null     3     
+null     null     4     
+null     null     5     
+
+===================================================
+    
+Case 54: b.id = 2 in the RIGHT JOIN ON; expected (NULL, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+null     1     
+null     2     
+null     3     
+null     4     
+null     5     
+
+===================================================
+    
+Case 55: nullable foreign key, the join term in the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)     
+
+===================================================
+id    id    
+1     1     
+null     2     
+null     3     
+null     4     
+null     5     
+
+===================================================
+    
+Case 56: nullable foreign key padded by a RIGHT JOIN, the primary key table last with c.id < 3 in its ON; expected (1, 1) (2, 2)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+
+===================================================
+    
+Case 57: the join term in a LEFT JOIN ON, then RIGHT JOIN; expected (1, NULL, 1) (1, NULL, 1) (1, 1, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)     
+
+===================================================
+id    id    id    
+1     null     1     
+1     null     1     
+1     1     1     
+null     null     2     
+null     null     3     
+null     null     4     
+null     null     5     
+
+===================================================
+    
+Case 58: DELETE with the RIGHT JOIN of Case 48, then the rows left; expected (0)     
+
+===================================================
+0
+===================================================
+5
+===================================================
+count(*)    
+0     
+
+===================================================
+    
+Case 59: nullable foreign key, RIGHT JOIN ON has a.bid is not null, then the primary key table; expected (1, 1) (2, 2)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+
+===================================================
+    
+Case 60: nullable foreign key, a.bid is not null in an INNER JOIN ON before the RIGHT JOIN; expected (1, 1, 1) (2, 2, 2)     
+
+===================================================
+id    id    id    
+1     1     1     
+2     2     2     
+
+===================================================
+    
+Case 61: e.id is null in the primary key table ON reads a LEFT JOIN padded table; expected (NULL, NULL, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (4, NULL, 5)     
+
+===================================================
+id    id    id    
+null     null     1     
+null     null     2     
+null     null     3     
+null     null     4     
+4     null     5     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: c node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (left outer join)
+                                         edge:  term[?]
+                                         outer: sscan
+                                                    class: a node[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: e node[?]
+                                                    sargs: term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, e.id, c.id from t?_kan a left outer join t?_kd e on e.v=a.id right outer join t?_kc c on c.v=a.bid and e.id is null  order by ?, ?, ?
+===================================================
+    
+Case 62: nullable foreign key, WHERE (a.bid is not null or a.id = 3); expected (1) (2) (4)     
+
+===================================================
+id    
+1     
+2     
+4     
+
+===================================================
+    
+Case 63: nullable foreign key padded by a RIGHT JOIN, WHERE (a.bid is not null or c.id > 2); expected (1, 1) (2, 2)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+
+===================================================
+    
+Case 64: nullable foreign key, a.bid is not null in a LEFT JOIN ON; expected (1, 1) (2, 2) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+2     2     
+4     null     
 
 ===================================================
 0

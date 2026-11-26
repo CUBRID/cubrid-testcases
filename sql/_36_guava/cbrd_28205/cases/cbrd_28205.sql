@@ -9,8 +9,10 @@
  *  Fix: the check for a NULL-padded table is done for the ON terms of every join type. When a RIGHT OUTER
  *  JOIN ON has a comparison that rejects NULL of the padded table, the preceding joins that pad that table
  *  become INNER JOINs first, so the comparison stays a scan filter of the table. The join elimination by a
- *  foreign key is not done for a primary key table that a RIGHT OUTER JOIN follows, since the IS NOT NULL
- *  it puts on the foreign key would drop the rows the RIGHT OUTER JOIN keeps.
+ *  foreign key is given up when a RIGHT OUTER JOIN follows and the elimination would move a term past it:
+ *  the IS NOT NULL put on a nullable foreign key goes to WHERE, a leftover ON term goes to WHERE or to an
+ *  outer join ON, or a join term that rejected the NULL-padded rows is dropped. Otherwise the primary key
+ *  table is still eliminated. An IS NOT NULL in an ON or in an OR no longer replaces the one put in WHERE.
  *
  *  The expected result of each query is in its evaluate line. It is the result of the same query with the
  *  preceding join wrapped in a derived table that is not merged.
@@ -37,10 +39,23 @@
  *    Case 38-40: not rewritten: nothing pads b before c, field () and NOT BETWEEN that are TRUE on NULL
  *    Case 41-42: foreign key join elimination with a RIGHT JOIN after the primary key table
  *    Case 43:    DELETE with the RIGHT JOIN of Case 12
+ *    Case 44-47: NOT NULL foreign key, the primary key table is eliminated before a RIGHT JOIN: in the
+ *                middle, first with the join term only, extra ON term, join term in the RIGHT JOIN ON
+ *    Case 48-57: the primary key table is kept: first with an extra child ON term, first before another
+ *                table, heads the chain after a comma, the foreign key table or the primary key table
+ *                padded before the join term, extra ON term before a LEFT JOIN, primary key constant term,
+ *                nullable foreign key with the join term in the RIGHT JOIN ON or last after the padding,
+ *                join term in a LEFT JOIN ON
+ *    Case 58:    DELETE with the RIGHT JOIN of Case 48
+ *    Case 59-60: nullable foreign key padded by a RIGHT JOIN with a.bid is not null in an earlier ON
+ *    Case 61:    eliminated, the extra ON term reads a LEFT JOIN padded table and moves to the RIGHT JOIN ON
+ *    Case 62-63: nullable foreign key eliminated, WHERE has a.bid is not null OR another term: without and
+ *                with a RIGHT JOIN before the primary key table
+ *    Case 64:    nullable foreign key eliminated, a.bid is not null in a LEFT JOIN ON
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kb, t28205_kc;
+drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
 
 create table t28205_m (a int);
 create table t28205_n (a int, b int);
@@ -76,6 +91,10 @@ create table t28205_kc (id int, v int);
 insert into t28205_kb values (1, 7), (2, 7), (3, 0);
 insert into t28205_ka values (1, 1), (2, 2), (3, null), (4, 3);
 insert into t28205_kc values (1, 1), (2, 2), (3, 5), (4, null), (5, 3);
+create table t28205_kan (id int, bid int not null, foreign key (bid) references t28205_kb (id));
+create table t28205_kd (id int, v int);
+insert into t28205_kan values (1, 1), (2, 2), (4, 3);
+insert into t28205_kd values (1, 1), (2, 2), (3, 9), (4, null);
 
 
 evaluate 'Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)';
@@ -151,6 +170,7 @@ evaluate 'Case 24: control, INNER JOIN ON b.id is null; expected (3, NULL, 300)'
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v inner join t28205_c c on c.v = a.v and b.id is null order by 1, 2, 3;
 
 evaluate 'Case 25: RIGHT JOIN ON c.v = b.v and b.f = 1, the LEFT JOIN becomes INNER; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+--@queryplan
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = b.v and b.f = 1 order by 3, 1, 2;
 
 evaluate 'Case 26: two LEFT JOINs, RIGHT JOIN ON d.h is null; expected (NULL, NULL, NULL, 100) (2, 20, 2000, 200) (2, 21, 2000, 200) (2, 20, 2000, 201) (2, 21, 2000, 201) (3, NULL, NULL, 300) (4, 40, NULL, 400) (NULL, NULL, NULL, 600)';
@@ -176,18 +196,22 @@ select count(*), count(a.id), count(b.id) from t28205_a a left join t28205_b b o
 
 
 evaluate 'Case 33: indexed padded table, RIGHT JOIN ON c.v = b.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+--@queryplan
 select a.id, b.id, c.id from t28205_a a left join t28205_bi b on b.v = a.v right join t28205_c c on c.v = b.v and b.f = 1 order by 3, 1, 2;
 
 evaluate 'Case 34: indexed padded table, RIGHT JOIN ON c.v = a.v and b.f = 1; expected (1, 10, 100) (2, 21, 200) (2, 21, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
 select a.id, b.id, c.id from t28205_a a left join t28205_bi b on b.v = a.v right join t28205_c c on c.v = a.v and b.f = 1 order by 3, 1, 2;
 
 evaluate 'Case 35: a padded by a preceding RIGHT JOIN, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (NULL, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
+--@queryplan
 select a.id, b.id, c.id from t28205_a a right join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v order by 3, 2, 1;
 
 evaluate 'Case 36: two RIGHT JOINs, ON c.v = a.v then ON d.v = b.v; expected (1, 10, 100, 1000) (2, 20, 200, 2000) (2, 21, 200, 2000) (2, 20, 201, 2000) (2, 21, 201, 2000)';
+--@queryplan
 select a.id, b.id, c.id, d.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v right join t28205_d d on d.v = b.v order by 4, 3, 1, 2;
 
 evaluate 'Case 37: RIGHT JOIN ON c.v = b.v and b.id is null; expected (NULL, NULL, 100) (NULL, NULL, 200) (NULL, NULL, 201) (NULL, NULL, 300) (NULL, NULL, 400) (NULL, NULL, 600)';
+--@queryplan
 select a.id, b.id, c.id from t28205_a a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = b.v and b.id is null order by 3, 1, 2;
 
 evaluate 'Case 38: not rewritten, nothing pads b before c, RIGHT JOIN ON c.v = a.v; expected (1, 10, 100) (2, 20, 200) (2, 21, 200) (2, 20, 201) (2, 21, 201) (3, NULL, 300) (4, 40, 400) (NULL, NULL, 600)';
@@ -210,5 +234,75 @@ create table t28205_a2 as select * from t28205_a;
 delete a from t28205_a2 a left join t28205_b b on b.v = a.v right join t28205_c c on c.v = a.v and b.id is null;
 select id from t28205_a2 order by 1;
 
+evaluate 'Case 44: NOT NULL foreign key, the primary key table in the middle is eliminated; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+--@queryplan
+select a.id, c.id from t28205_kan a inner join t28205_kb b on b.id = a.bid right join t28205_kc c on c.v = a.id order by 2, 1;
+
+evaluate 'Case 45: the primary key table first, the child ON has the join term only, eliminated; expected (1, 1) (2, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+--@queryplan
+select a.id, c.id from t28205_kb b inner join t28205_kan a on a.bid = b.id right join t28205_kc c on c.v = a.id order by 2, 1;
+
+evaluate 'Case 46: a.id <> 2 in the primary key table ON moves to the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+--@queryplan
+select a.id, c.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 right join t28205_kc c on c.v = a.id order by 2, 1;
+
+evaluate 'Case 47: the join term in the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+select a.id, c.id from t28205_kan a inner join t28205_kb b on a.id <> 2 right join t28205_kc c on c.v = a.id and b.id = a.bid order by 2, 1;
+
+evaluate 'Case 48: the primary key table first, a.id <> 2 in the child ON, kept; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+--@queryplan
+select a.id, c.id from t28205_kb b inner join t28205_kan a on a.bid = b.id and a.id <> 2 right join t28205_kc c on c.v = a.id order by 2, 1;
+
+evaluate 'Case 49: the primary key table first, the next table is not the child; expected (1, 1, 1) (1, 2, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)';
+select d.id, a.id, c.id from t28205_kb b inner join t28205_kd d on d.id = 1 inner join t28205_kan a on a.bid = b.id right join t28205_kc c on c.v = a.id order by 3, 1, 2;
+
+evaluate 'Case 50: the primary key table heads the join chain after a comma; expected (20)';
+select count(*) from t28205_kd d, t28205_kb b inner join t28205_kan a on a.bid = b.id right join t28205_kc c on c.v = a.id;
+
+evaluate 'Case 51: NOT NULL foreign key table padded by a RIGHT JOIN, then the primary key table; expected (1, 1) (2, 2)';
+select a.id, c.id from t28205_kan a right join t28205_kc c on c.v = a.id inner join t28205_kb b on b.id = a.bid order by 2, 1;
+
+evaluate 'Case 52: the primary key table padded by a RIGHT JOIN, then the foreign key table; expected (1, 1, 1) (1, 1, 2) (1, 1, 4) (2, 2, 1) (2, 2, 2) (2, 2, 4)';
+select d.id, c.id, a.id from t28205_kd d inner join t28205_kb b on d.id > 0 right join t28205_kc c on c.v = d.v inner join t28205_kan a on a.bid = b.id order by 1, 2, 3;
+
+evaluate 'Case 53: a.id <> 2 in the primary key table ON, LEFT JOIN, then RIGHT JOIN; expected (1, 1, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)';
+select a.id, d.id, c.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id <> 2 left join t28205_kd d on d.v = a.id right join t28205_kc c on c.v = a.id order by 3, 1, 2;
+
+evaluate 'Case 54: b.id = 2 in the RIGHT JOIN ON; expected (NULL, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+select a.id, c.id from t28205_kan a inner join t28205_kb b on b.id = a.bid and a.id = 1 right join t28205_kc c on c.v = a.id and b.id = 2 order by 2, 1;
+
+evaluate 'Case 55: nullable foreign key, the join term in the RIGHT JOIN ON; expected (1, 1) (NULL, 2) (NULL, 3) (NULL, 4) (NULL, 5)';
+select a.id, c.id from t28205_ka a inner join t28205_kb b on a.id <> 2 right join t28205_kc c on c.v = a.id and b.id = a.bid order by 2, 1;
+
+evaluate 'Case 56: nullable foreign key padded by a RIGHT JOIN, the primary key table last with c.id < 3 in its ON; expected (1, 1) (2, 2)';
+select a.id, c.id from t28205_ka a right join t28205_kc c on c.v = a.id inner join t28205_kb b on b.id = a.bid and c.id < 3 order by 2, 1;
+
+evaluate 'Case 57: the join term in a LEFT JOIN ON, then RIGHT JOIN; expected (1, NULL, 1) (1, NULL, 1) (1, 1, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (NULL, NULL, 5)';
+select a.id, d.id, c.id from t28205_kan a inner join t28205_kb b on a.id <> 2 left join t28205_kd d on d.v = a.id and a.bid = b.id right join t28205_kc c on c.v = a.id order by 3, 1, 2;
+
+evaluate 'Case 58: DELETE with the RIGHT JOIN of Case 48, then the rows left; expected (0)';
+create table t28205_kc2 as select * from t28205_kc;
+delete c from t28205_kb b inner join t28205_kan a on a.bid = b.id and a.id <> 2 right join t28205_kc2 c on c.v = a.id;
+select count(*) from t28205_kc2;
+
+evaluate 'Case 59: nullable foreign key, RIGHT JOIN ON has a.bid is not null, then the primary key table; expected (1, 1) (2, 2)';
+select a.id, c.id from t28205_ka a right join t28205_kc c on c.v = a.id and a.bid is not null inner join t28205_kb b on b.id = a.bid order by 2, 1;
+
+evaluate 'Case 60: nullable foreign key, a.bid is not null in an INNER JOIN ON before the RIGHT JOIN; expected (1, 1, 1) (2, 2, 2)';
+select a.id, d.id, c.id from t28205_ka a inner join t28205_kd d on d.v = a.id and a.bid is not null right join t28205_kc c on c.v = a.id inner join t28205_kb b on b.id = a.bid order by 3, 1, 2;
+
+evaluate 'Case 61: e.id is null in the primary key table ON reads a LEFT JOIN padded table; expected (NULL, NULL, 1) (NULL, NULL, 2) (NULL, NULL, 3) (NULL, NULL, 4) (4, NULL, 5)';
+--@queryplan
+select a.id, e.id, c.id from t28205_kan a left join t28205_kd e on e.v = a.id inner join t28205_kb b on b.id = a.bid and e.id is null right join t28205_kc c on c.v = a.bid order by 3, 1, 2;
+
+evaluate 'Case 62: nullable foreign key, WHERE (a.bid is not null or a.id = 3); expected (1) (2) (4)';
+select a.id from t28205_ka a inner join t28205_kb b on b.id = a.bid where (a.bid is not null or a.id = 3) order by 1;
+
+evaluate 'Case 63: nullable foreign key padded by a RIGHT JOIN, WHERE (a.bid is not null or c.id > 2); expected (1, 1) (2, 2)';
+select a.id, c.id from t28205_ka a right join t28205_kc c on c.v = a.id inner join t28205_kb b on b.id = a.bid where (a.bid is not null or c.id > 2) order by 2, 1;
+
+evaluate 'Case 64: nullable foreign key, a.bid is not null in a LEFT JOIN ON; expected (1, 1) (2, 2) (4, NULL)';
+select a.id, d.id from t28205_ka a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and a.bid is not null order by 1, 2;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kb, t28205_kc;
+drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
