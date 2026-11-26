@@ -34,8 +34,17 @@ select /*+ recompile no_desc_idx */ x.* from x, (select /*+ recompile desc_idx N
 
 select /*+ recompile NO_DESC_IDX  */ * from x force index (pk_x_a) where a > 5 order by a desc;
 
+select /*+ recompile NO_DESC_IDX DESC_IDX */ * from x where a>0 using index pk_x_a order by a asc for orderby_num() between 1 and 3;
+select /*+ recompile DESC_IDX NO_DESC_IDX */ * from x where a>0 using index pk_x_a order by a asc for orderby_num() between 1 and 3;
+select /*+ recompile NO_DESC_IDX DESC_IDX */ * from x where a>0 using index pk_x_a order by a desc for orderby_num() between 6 and 8;
+select /*+ recompile DESC_IDX NO_DESC_IDX */ * from x where a>0 using index pk_x_a order by a desc for orderby_num() between 6 and 8;
+select /*+ recompile DESC_IDX */ * from (select /*+ recompile DESC_IDX NO_DESC_IDX */ * from x where a>0 using index pk_x_a order by a asc for orderby_num() between 1 and 3) t, y where y.a>0 order by y.a desc;
 select /*+ recompile DESC_IDX */ * from y where y.a>0 order by y.a desc;
 
+select /*+ recompile DESC_IDX */ * from (
+(select /*+ recompile DESC_IDX */ * from y where y.a>1 order by y.a desc)
+union all 
+(select /*+ recompile NO_DESC_IDX */ * from x where a>0 using index pk_x_a order by a asc for orderby_num() between 1 and 3)) t;
 
 select /*+ recompile DESC_IDX */ ((select /*+ recompile NO_DESC_IDX */ a,b from y where y.a>1 order by y.a desc limit 1) = (select /*+ recompile NO_DESC_IDX */ a,b from y where y.a>1 order by y.a desc limit 1)) as co from db_root limit 1;
 
@@ -71,6 +80,8 @@ create index i_athlete2_name on athlete2(name);
 select /*+ recompile */ * from athlete2 where name > 'H' order by name desc;
 select /*+ recompile DESC_IDX */ * from athlete2 where name > 'H' order by name desc;
 select /*+ recompile NO_DESC_IDX */ * from athlete2 where name > 'H' order by name desc;
+select /*+ recompile NO_DESC_IDX */ * from athlete2 where name > 'H' using index i_athlete2_name order by name desc;
+select /*+ recompile NO_DESC_IDX */ * from athlete2 where name > 'H' using index i_athlete2_name order by name asc;
 
 drop table athlete2;
 

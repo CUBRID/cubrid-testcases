@@ -222,6 +222,7 @@ drop table t2;
 
 create table t1(a int, b int, index i(a,b));
 insert into t1 values (1,1),(2,2),(3,3);
+delete t1 from t1 inner join (select * from t1 where a>1 using index i_t1_a_b) v1 on t1.a=v1.a;
 select * from t1 order by 1, 2;
 drop table t1;
 

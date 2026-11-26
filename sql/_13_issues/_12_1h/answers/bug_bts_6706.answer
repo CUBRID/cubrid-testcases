@@ -181,6 +181,122 @@ Query stmt:
 select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a(+) order by ? desc 
 ===================================================
 a    b    
+1     1     
+2     1     
+3     1     
+
+Query plan:
+iscan
+    class: x node[?]
+    index: pk_x_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+1     1     
+2     1     
+3     1     
+
+Query plan:
+iscan
+    class: x node[?]
+    index: pk_x_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    b    
+5     1     
+4     1     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: x node[?]
+                 index: pk_x_a term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    
+5     1     
+4     1     
+3     1     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: x node[?]
+                 index: pk_x_a term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? desc  for orderby_num() between  ?:?  and  ?:? 
+===================================================
+a    b    a    b    
+1     1     11     1     
+2     1     11     1     
+3     1     11     1     
+1     1     8     1     
+2     1     8     1     
+3     1     8     1     
+1     1     7     1     
+2     1     7     1     
+3     1     7     1     
+1     1     6     1     
+2     1     6     1     
+3     1     6     1     
+1     1     5     1     
+2     1     5     1     
+3     1     5     1     
+1     1     4     1     
+2     1     4     1     
+3     1     4     1     
+1     1     3     1     
+2     1     3     1     
+3     1     3     1     
+1     1     2     1     
+2     1     2     1     
+3     1     2     1     
+1     1     1     1     
+2     1     1     1     
+3     1     1     1     
+
+Query plan:
+iscan
+    class: x node[?]
+    index: pk_x_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? )
+/* ---> skip ORDER BY */
+Query plan:
+temp(order by)
+    subplan: nl-join (cross join)
+                 outer: sscan
+                            class: t node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: pk_y_a term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b, y.a, y.b from (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? ) t (a, b), y y where (y.a> ?:? ) order by ? desc 
+===================================================
+a    b    
 11     1     
 8     1     
 7     1     
@@ -200,6 +316,44 @@ iscan
 Query stmt:
 select y.a, y.b from y y where (y.a> ?:? ) order by ? desc 
 /* ---> skip ORDER BY */
+===================================================
+a    b    
+11     1     
+8     1     
+7     1     
+6     1     
+5     1     
+4     1     
+3     1     
+2     1     
+1     1     
+2     1     
+3     1     
+
+Query plan:
+iscan
+    class: y node[?]
+    index: pk_y_a term[?] (desc_index)
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+(select y.a, y.b from y y where (y.a> ?:? ) order by ? desc )
+/* ---> skip ORDER BY */
+Query plan:
+iscan
+    class: x node[?]
+    index: pk_x_a term[?]
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? )
+/* ---> skip ORDER BY */
+Query plan:
+sscan
+    class: t node[?]
+    cost:  ? card ?
+Query stmt:
+select t.a, t.b from ((select y.a, y.b from y y where (y.a> ?:? ) order by ? desc ) union all (select /*+ NO_DESC_IDX */ x.a, x.b from x x where (x.a> ?:? ) using index x.pk_x_a order by ? for orderby_num() between  ?:?  and  ?:? )) t (a, b)
 ===================================================
 co    
 1     
@@ -409,6 +563,38 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) order by ? desc 
+===================================================
+name    event    
+Moon Dae-Sung     Taekwondo     
+Lee Seung-Yuop     Baseball     
+Hwang Young-Cho     Athletics     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: athlete? node[?]
+                 index: i_athlete?_name term[?]
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name order by ? desc 
+===================================================
+name    event    
+Hwang Young-Cho     Athletics     
+Lee Seung-Yuop     Baseball     
+Moon Dae-Sung     Taekwondo     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: athlete? node[?]
+                 index: i_athlete?_name term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ NO_DESC_IDX */ athlete?.[name], athlete?.event from athlete? athlete? where (athlete?.[name]> ?:? ) using index athlete?.i_athlete?_name order by ?
 ===================================================
 0
 ===================================================

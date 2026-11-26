@@ -287,12 +287,14 @@ drop table t1;
 CREATE TABLE t1(a enum('Y', 'N'), b int, index i_t1_ab(a,b));
 insert into t1 select rownum%2+1, rownum from db_class s1, db_class s2, db_class s3 limit 10000;
 update statistics on all classes;
+select /*+ recompile index_ss */ * from t1 where b<10 using index i_t1_ab order by b limit 8;
 drop table t1;
 
 
 CREATE TABLE t1(a enum('Y', 'N'), b int, index i_t1_ab(a,b));
 insert into t1 select rownum%2+1, rownum from db_class s1, db_class s2, db_class s3 limit 10000;
 update statistics on all classes;
+select /*+ recompile */ * from t1 where b<10 and a like 'Y' using index i_t1_ab order by b limit 4;
 drop table t1;
 
 
@@ -326,6 +328,9 @@ drop table t1;
 CREATE TABLE t1(a enum('Y', 'N'), b enum('Y', 'N'), c enum('Y', 'N'), index i_all(a,b,c));
 insert into t1 values (1,1,1),(2,1,1),(2,2,1);
 update t1 set a=b;
+select /*+ recompile */ * from t1 where a=1 and b=1 and c=1  using index i_all limit 1;
+select /*+ recompile */ * from t1 where a='Y' and b='Y' and c='Y' using index i_all limit 1;
+select /*+ recompile */ * from t1 where a='Y' and b='Y' and c='Y'  using index i_all limit 1;
 drop table t1;
 
 
@@ -356,6 +361,8 @@ drop table t1;
 CREATE TABLE t1(a enum('Y', 'N'), b double);
 create index i_a on t1(a) where a='Y';
 insert into t1 values (1,0), (2,1), (2,1);
+select * from t1 where a=1 using index i_a limit 0;
+select * from t1 where a='Y' and a=1 using index i_a limit 0;
 drop table t1;
 
 

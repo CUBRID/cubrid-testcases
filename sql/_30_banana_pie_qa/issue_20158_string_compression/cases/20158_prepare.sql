@@ -48,12 +48,15 @@ insert into t values(repeat('abc',200),repeat('def',200));
 
 insert into t values(repeat('f',200),repeat('m',200));
 
+PREPARE stmt FROM 'select b,c from t where b > ? and c > ? using index i_t_c_b order by 1 limit ?,?';
+EXECUTE stmt using 'd','e',0,1;
 PREPARE stmt1 FROM 'select disk_size(b),disk_size(c) from t order by 1;';
 
 EXECUTE stmt1;
 
 drop table t;
 
+DEALLOCATE PREPARE stmt;
 DEALLOCATE PREPARE stmt1;
 
 --+ holdcas off;

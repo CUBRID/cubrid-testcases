@@ -12,6 +12,7 @@ insert into tb values (5,5,'444'),(6,5,'333');
 --TEST
 select /*+ recompile */ * from tb where a between 1 and 5 and b between '1' and '9' order by a desc;
 --TEST
+select /*+ recompile use_desc_idx */ * from tb where a between 1 and 5 and b between '1' and '9' using index i_tb_ab limit 1,3;
 select /*+ recompile */ * from tb where a between 1 and 5 and b between '1' and '9' order by b desc;
 --TEST
 select /*+ recompile use_desc_idx */ * from tb where a between 1 and 5 and b between '1' and '9' using index i_tb_ba; 

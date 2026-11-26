@@ -113,6 +113,7 @@ create index idx_t4 on t4(i1,s1,s2) where i1=1;
 
 select /*+ recompile */* from t4 use index(idx_t4) where s1>'a' and i1=1;
 
+select /*+ recompile */* from t4 where s1>'a' and i1=1 using index idx_t4 limit 1,2;
 select /*+ recompile */* from t4 use index(idx_t4) where i1=1 and s1>'aa' group by s1 desc order by s2; 
 
 drop t4;
