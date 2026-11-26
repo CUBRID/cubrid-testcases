@@ -1,6 +1,6 @@
 ===================================================
     
-1. classes: owner, system class, type     
+Case 1: the four classes are system classes of type CLASS owned by DBA     
 
 ===================================================
 class_name    owner_name    class_type    is_system_class    partitioned    is_reuse_oid_class    
@@ -11,7 +11,7 @@ db_root     DBA     CLASS     YES     NO     NO
 
 ===================================================
     
-2. columns in definition order     
+Case 2: the columns keep their types, precisions, domains and definition order     
 
 ===================================================
 class_name    attr_name    attr_type    def_order    data_type    prec    scale    domain_class_name    default_value    is_nullable    
@@ -38,7 +38,7 @@ db_root     timezone_checksum     INSTANCE     2     STRING     1073741823     0
 
 ===================================================
     
-3. set domains     
+Case 3: the groups and direct_groups set columns of _db_user keep the domain _db_user     
 
 ===================================================
 class_name    attr_name    attr_type    data_type    prec    scale    domain_class_name    
@@ -47,7 +47,7 @@ _db_user     groups     INSTANCE     OBJECT     0     0     _db_user
 
 ===================================================
     
-4. methods and their functions     
+Case 4: the class and instance methods keep their implementing functions     
 
 ===================================================
 class_name    meth_name    meth_type    from_class_name    from_meth_name    func_name    
@@ -74,7 +74,7 @@ db_root     print_authorizations     CLASS     null     null     au_describe_roo
 
 ===================================================
     
-5. method signatures (index 0 = return value)     
+Case 5: the method arguments keep their types, with index 0 as the return value     
 
 ===================================================
 class_name    meth_name    meth_type    index_of    data_type    prec    scale    domain_class_name    
@@ -86,7 +86,7 @@ db_root     find_user     CLASS     0     STRING     1073741823     0     null
 
 ===================================================
     
-6. indexes     
+Case 6: _db_user keeps the unique index on name     
 
 ===================================================
 class_name    index_name    is_unique    is_reverse    is_primary_key    is_foreign_key    key_count    key_attr_name    key_order    
@@ -94,7 +94,7 @@ _db_user     u__db_user_name     YES     NO     NO     NO     1     name     0
 
 ===================================================
     
-7. grants     
+Case 7: DBA keeps the grants to PUBLIC and INFORMATION_SCHEMA on the classes     
 
 ===================================================
 grantor_name    grantee_name    object_type    object_name    auth_type    is_grantable    
@@ -106,7 +106,7 @@ DBA     PUBLIC     CLASS     db_root     SELECT     NO
 
 ===================================================
     
-8. the built-in users are rows of _db_user     
+Case 8: the built-in users DBA, PUBLIC and INFORMATION_SCHEMA are rows of _db_user     
 
 ===================================================
 name    
