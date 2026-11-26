@@ -1,0 +1,650 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+Error:-494
+===================================================
+0
+===================================================
+8001
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: parallel scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.bh_t].v as bigint)), min([dba.bh_t].id), max([dba.bh_t].id) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: buildvalue)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           (parallel workers: ?, heap time: ?..?, pages: ?..?, rows: ?..?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+    
+Case 2: serial scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)), min([dba.bh_t].id), max([dba.bh_t].id) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+    
+Case 3: serial scan with a key filter and a data filter; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+9240     4667194     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_ks) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ), key filter: ([dba.bh_t].s>= ?:?  and [dba.bh_t].s< ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].s>= ?:?  and [dba.bh_t].s< ?:? ) and ([dba.bh_t].grp< ?:? ) using index [dba.bh_t].i_bh_ks(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_ks), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+9240     4667194     
+
+===================================================
+    
+Case 4: serial scan of several key ranges; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+63976     32232735     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: (([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) or ([dba.bh_t].k= ?:? ) or ([dba.bh_t].k= ?:? ) or ([dba.bh_t].k= ?:? )))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)) from [dba.bh_t] [dba.bh_t] where (([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) or ([dba.bh_t].k= ?:? ) or ([dba.bh_t].k= ?:? ) or ([dba.bh_t].k= ?:? )) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+63976     32232735     
+
+===================================================
+    
+Case 5: serial scan of keys with overflow pages; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+80000     40317558     2     199995     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_grp) (key range: ([dba.bh_t].grp>= ?:?  and [dba.bh_t].grp<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)), min([dba.bh_t].id), max([dba.bh_t].id) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].grp>= ?:?  and [dba.bh_t].grp<= ?:? ) using index [dba.bh_t].i_bh_grp(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_grp), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+80000     40317558     2     199995     
+
+===================================================
+    
+Case 6: function index and filtered index; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+60182     30333862     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_f) (key range: ( mod([dba.bh_t].k, ?)>= ?:?  and  mod([dba.bh_t].k, ?)<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)) from [dba.bh_t] [dba.bh_t] where ( mod([dba.bh_t].k, ?)>= ?:?  and  mod([dba.bh_t].k, ?)<= ?:? ) using index [dba.bh_t].i_bh_f(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_f), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+60182     30333862     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+59882     30173601     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.bh_t)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp< ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+59882     30173601     
+
+===================================================
+    
+Case 7: hash join, an index scan below each input; result = heap scan     
+
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+16004     1591851554     1591851554     
+
+===================================================
+trace    
+
+Query Plan:
+  HASH JOIN (inner join)
+    INDEX SCAN (a.i_bh_k) (key range: (a.k>= ?:?  and a.k<= ?:? ))
+    INDEX SCAN (b.i_bh_k) (key range: (b.k>= ?:?  and b.k<= ?:? ))
+
+  rewritten query: select /*+ ORDERED USE_HASH NO_PARALLEL_SCAN */ count(*), sum( cast(a.id as bigint)), sum( cast(b.id as bigint)) from [dba.bh_t] a, [dba.bh_t] b where (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) and a.k=b.k and a.grp=b.grp using index a.i_bh_k(+), b.i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+      HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
+        PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
+              (parallel workers: ?, time: ?..?, readrows: ?..?, readkeys: ?..?, rows: ?..?)
+        SUBQUERY (uncorrelated)
+                 (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+              SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+              SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+16004     1591851554     1591851554     
+
+===================================================
+    
+Case 8: nested loop join, the inner scan looks up in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint))    sum(j.w)    
+8004     794807914     32016     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (j.i_bh_j) (key range: (j.k>= ?:?  and j.k<= ?:? ))
+    INDEX SCAN (t.i_bh_k) (key range: t.k=j.k)
+
+  rewritten query: select /*+ ORDERED USE_NL NO_PARALLEL_SCAN */ count(*), sum( cast(t.id as bigint)), sum(j.w) from [dba.bh_j] j, [dba.bh_t] t where (j.k>= ?:?  and j.k<= ?:? ) and t.k=j.k using index j.i_bh_j(+), t.i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_j.i_bh_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_j), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+      SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(t.id as bigint))    sum(j.w)    
+8004     794807914     32016     
+
+===================================================
+    
+Case 9: LIMIT alone, lookup in key order     
+
+===================================================
+count(*)    
+50     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: (select /*+ NO_MERGE */ [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp< ?:? ) and (inst_num()<= ?:? ) using index [dba.bh_t].i_bh_k(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from (select /*+ NO_MERGE */ [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp< ?:? ) and (inst_num()<= ?:? ) using index [dba.bh_t].i_bh_k(+)) x (id)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+    
+Case 10: ORDER BY with LIMIT; result = heap scan     
+
+===================================================
+id    k    v    
+3     93     51     
+13     403     221     
+23     713     391     
+33     1023     561     
+43     1333     731     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.bh_t].id, [dba.bh_t].k, [dba.bh_t].v from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and [dba.bh_t].grp= ?:?  using index [dba.bh_t].i_bh_k(+) order by ? for orderby_num()<= ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+    ORDERBY (time: ?, topnsort: true)
+     
+
+===================================================
+id    k    v    
+3     93     51     
+13     403     221     
+23     713     391     
+33     1023     561     
+43     1333     731     
+
+===================================================
+    
+Case 11: index MIN/MAX with a predicate on another column; result = heap scan     
+
+===================================================
+min(k)    max(k)    
+61     29998     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ min([dba.bh_t].k), max([dba.bh_t].k) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and [dba.bh_t].grp= ?:?  using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, min_max_only: true) (lookup time: ?, rows: ?)
+     
+
+===================================================
+min(k)    max(k)    
+61     29998     
+
+===================================================
+    
+Case 12: covering scan and COUNT-only scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+119764     60348653     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_kv) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].v as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) using index [dba.bh_t].i_bh_kv(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_kv), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+count(*)    
+119764     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ), covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true, count_only: true)
+     
+
+===================================================
+count(*)    sum( cast(v as bigint))    
+119764     60348653     
+
+===================================================
+    
+Case 13: FOR UPDATE, lookup in key order     
+
+===================================================
+id    k    
+4843     70     
+27433     66     
+50023     62     
+135543     69     
+158133     65     
+180723     61     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.bh_t].id, [dba.bh_t].k from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and [dba.bh_t].grp= ?:?  using index [dba.bh_t].i_bh_k(+) for update of [dba.bh_t] order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+    
+Case 14: EXISTS subquery run for each outer row; result = heap scan     
+
+===================================================
+count(*)    
+201     
+
+===================================================
+count(*)    
+201     
+
+===================================================
+    
+Case 15: correlated subquery, run once an outer row, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum(c)    
+41     229770     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (t.i_bh_k) (key range: (t.k>=j.k and t.k<=j.k+?))
+
+  rewritten query: (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? ))
+
+  INDEX SCAN (j.i_bh_j) (key range: (j.k>= ?:?  and j.k<= ?:? ), covered: true)
+
+  rewritten query: (select /*+ NO_MERGE */ (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? )) from [dba.bh_j] j where (j.k>= ?:?  and j.k<= ?:? ))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum(x.c) from (select /*+ NO_MERGE */ (select count(*) from [dba.bh_t] t where (t.k>=j.k and t.k<=j.k+?) and (t.grp>= ?:? )) as [c] from [dba.bh_j] j where (j.k>= ?:?  and j.k<= ?:? )) x (c)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.bh_j.i_bh_j), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+        SUBQUERY (correlated)
+          SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+            SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum(c)    
+41     229770     
+
+===================================================
+    
+Case 17: analytic function that skips its sort on the key order, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    min(r)    max(r)    
+119764     7171588084     21514524762     1     119761     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: (select rank() over (order by ?), [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+))
+
+  TABLE SCAN (x)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast(x.r as bigint)), sum( cast(x.r as bigint)* cast( mod(x.id, ?) as bigint)), min(x.r), max(x.r) from (select rank() over (order by ?) as [r], [dba.bh_t].id from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+)) x (r, id)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    min(r)    max(r)    
+119764     7171588084     21514524762     1     119761     
+
+===================================================
+    
+Case 18: rownum that stops the scan below an ORDER BY, lookup in key order; the 4 rows of the smallest key     
+
+===================================================
+id    k    
+11297     60     
+61318     60     
+111339     60     
+161360     60     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ [dba.bh_t].id, [dba.bh_t].k from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) and (rownum<= ?:? ) using index [dba.bh_t].i_bh_k(+) order by ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+id    k    
+11297     60     
+61318     60     
+111339     60     
+161360     60     
+
+===================================================
+    
+Case 19: stored function called by the block, lookup in key order; result = heap scan     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(id as bigint))    
+11764     1167964254     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_t].id as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>= ?:?  and [dba.bh_t].k<= ?:? ) and ([dba.bh_t].grp>= ?:? ) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_t), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(bh_f(id) as bigint))    
+11764     1167964254     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_t.i_bh_k) (key range: ([dba.bh_t].k>=? and [dba.bh_t].k<=?))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_f]([dba.bh_t].id) as bigint)) from [dba.bh_t] [dba.bh_t] where ([dba.bh_t].k>=? and [dba.bh_t].k<=?) and ([dba.bh_t].grp>=?) using index [dba.bh_t].i_bh_k(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
+    SCAN (index: dba.bh_t.i_bh_k), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+     
+
+===================================================
+count(*)    sum( cast(id as bigint))    
+11764     1167964254     
+
+===================================================
+0
+===================================================
+    
+Case 16: partitioned table, serial scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.bh_p.i_bh_p) (key range: ([dba.bh_p].k>= ?:?  and [dba.bh_p].k<= ?:? ))
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.bh_p].v as bigint)), min([dba.bh_p].id), max([dba.bh_p].id) from [dba.bh_p] [dba.bh_p] where ([dba.bh_p].k>= ?:?  and [dba.bh_p].k<= ?:? ) using index [dba.bh_p].i_bh_p(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.bh_p.i_bh_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+      SCAN (bitmap heap lookup: dba.bh_p), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           PARTITION (index: dba.bh_p__p__p?.i_bh_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+             SCAN (bitmap heap lookup: dba.bh_p__p__p?), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           PARTITION (index: dba.bh_p__p__p?.i_bh_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+             SCAN (bitmap heap lookup: dba.bh_p__p__p?), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           PARTITION (index: dba.bh_p__p__p?.i_bh_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+             SCAN (bitmap heap lookup: dba.bh_p__p__p?), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           PARTITION (index: dba.bh_p__p__p?.i_bh_p), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+             SCAN (bitmap heap lookup: dba.bh_p__p__p?), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+count(*)    sum( cast(v as bigint))    min(id)    max(id)    
+119764     60348653     2     199438     
+
+===================================================
+0
