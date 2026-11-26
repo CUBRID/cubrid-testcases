@@ -34,7 +34,7 @@ count(*)
 Query plan:
 iscan
     class: os_o node[?]
-    index: idx_os_o_cid term[?]
+    index: idx_os_o_cid term[?] (bitmap heap scan)
     sargs: term[?]
     cost:  ? card ?
 Query stmt:
@@ -246,7 +246,7 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: os_o node[?]
-                 index: idx_os_o_cid term[?]
+                 index: idx_os_o_cid term[?] (bitmap heap scan)
                  sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
@@ -478,7 +478,7 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: os_o node[?]
-                 index: idx_os_o_cid term[?]
+                 index: idx_os_o_cid term[?] (bitmap heap scan)
                  sargs: term[?]
                  cost:  ? card ?
     sort:  ? desc
@@ -945,7 +945,7 @@ temp(order by)
     subplan: idx-join (inner join)
                  outer: iscan
                             class: c node[?]
-                            index: idx_os_c_grp term[?]
+                            index: idx_os_c_grp term[?] (bitmap heap scan)
                             cost:  ? card ?
                  inner: iscan
                             class: o node[?]
@@ -1188,7 +1188,7 @@ Query plan:
 temp(group by)
     subplan: iscan
                  class: os_o node[?]
-                 index: idx_os_o_cid term[?]
+                 index: idx_os_o_cid term[?] (bitmap heap scan)
                  sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
@@ -1446,7 +1446,7 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: os_o node[?]
-                 index: idx_os_o_cid term[?]
+                 index: idx_os_o_cid term[?] (bitmap heap scan)
                  sargs: term[?]
                  cost:  ? card ?
     sort:  ? asc
@@ -1475,7 +1475,7 @@ Query plan:
 temp(order by)
     subplan: iscan
                  class: os_s node[?]
-                 index: idx_os_s_cb term[?]
+                 index: idx_os_s_cb term[?] (bitmap heap scan)
                  cost:  ? card ?
     sort:  ? asc, ? asc
     cost:  ? card ?
@@ -1489,7 +1489,7 @@ Query plan:
 temp(group by)
     subplan: iscan
                  class: os_s node[?]
-                 index: idx_os_s_cb term[?]
+                 index: idx_os_s_cb term[?] (bitmap heap scan)
                  cost:  ? card ?
     sort:  ? asc
     cost:  ? card ?
