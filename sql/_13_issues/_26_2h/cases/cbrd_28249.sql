@@ -6,7 +6,7 @@
  *  Coverage:
  *    Case 1: col LIKE ? over a utf8_bin VARCHAR -- a prefix, a pattern without one, other case, the empty pattern,
  *            NULL, '_', a trailing space
- *    Case 2: the same over a utf8_en_ci VARCHAR and a CHAR column
+ *    Case 2: the same over a utf8_en_ci VARCHAR, and over a CHAR column as a control the page batch does not run
  *    Case 3: literal orders over the three columns, the constant on either side, trailing spaces
  *    Case 4: host-variable orders, a NULL bound value
  *    Case 5: an ESCAPE the bounds reject: the error on a table with rows, none on an empty table, none where an
@@ -17,11 +17,11 @@
  */
 drop table if exists tb, te;
 create table tb (id int, v varchar(20) collate utf8_bin, e varchar(20) collate utf8_en_ci, c char(10));
-insert into tb select rownum,
-  case mod(rownum, 9) when 0 then 'ab' when 1 then 'ab ' when 2 then 'AB' when 3 then 'abc' when 4 then '' when 5 then null when 6 then 'b가나' when 7 then 'a_c' else 'xyz' end,
-  case mod(rownum, 7) when 0 then 'ab' when 1 then 'AB ' when 2 then 'Ab' when 3 then 'abd' when 4 then null when 5 then 'aa' else 'zz' end,
-  case mod(rownum, 5) when 0 then 'ab' when 1 then 'abc' when 2 then null when 3 then 'b' else '' end
-  from db_class a, db_class b limit 6000;
+insert into tb select level,
+  case mod(level, 9) when 0 then 'ab' when 1 then 'ab ' when 2 then 'AB' when 3 then 'abc' when 4 then '' when 5 then null when 6 then 'b가나' when 7 then 'a_c' else 'xyz' end,
+  case mod(level, 7) when 0 then 'ab' when 1 then 'AB ' when 2 then 'Ab' when 3 then 'abd' when 4 then null when 5 then 'aa' else 'zz' end,
+  case mod(level, 5) when 0 then 'ab' when 1 then 'abc' when 2 then null when 3 then 'b' else '' end
+  from dual connect by level <= 6000;
 create table te (id int, v varchar(20) collate utf8_bin);
 evaluate 'Case 1: col LIKE ? over a utf8_bin VARCHAR';
 prepare q from 'select count(*), sum(id) from tb where v like ?';
@@ -36,6 +36,8 @@ evaluate 'Case 2: col LIKE ? over a utf8_en_ci VARCHAR and a CHAR';
 prepare q from 'select count(*), sum(id) from tb where e like ?';
 execute q using 'ab%';
 execute q using '%B%';
+-- a control: the page batch does not run the LIKE of the CHAR column (its data filter is interpreted), so this
+-- result is the row path's
 prepare q from 'select count(*), sum(id) from tb where c like ?';
 execute q using 'ab%';
 execute q using '%b%';
