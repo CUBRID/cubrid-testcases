@@ -267,7 +267,7 @@ temp(order by)
     sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select t.a from t t where ((t.a<>t.b and t.s between  ?:?  ge_lt  ?:? ) or (t.a=t.b and t.s= ?:? )) and (t.s>= ?:?  and t.s<= ?:? ) order by ?
+select t.a from t t where ((t.a<>t.b and t.s between  ?:?  ge_lt  ?:? ) or (t.a=t.b and t.s like  ?:? )) and ((t.s>= ?:?  and t.s< ?:? ) or t.s like  ?:? ) order by ?
 ===================================================
     
 Case 9: a factor that folds to false in an ON condition is kept, so the other terms of the ON condition still drive the index scans     
