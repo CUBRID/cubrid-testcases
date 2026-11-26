@@ -39,6 +39,16 @@ with x as (select /*+ NO_MERGE */ a, b, c from t28207_w1)
 -- two disjuncts before the join term fold away
 select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
   where (x.b = 2 or x.b = 4 or w2.c = x.c) and x.b = 3 order by 2;
+-- operands of other types, and DELETE
+select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, cast (c as varchar (10)) c from t28207_w1) x
+  where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
+select /*+ USE_HASH */ x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, cast (c as double) c from t28207_w1) x
+  where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
+create table t28207_d (a int, b int, c int);
+insert into t28207_d select * from t28207_w2;
+delete d from t28207_d d, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x where (x.b = 2 or d.c = x.c) and x.b = 3;
+select * from t28207_d order by 1;
+drop table t28207_d;
 -- the same query on a table, and an OR that is not folded
 select /*+ USE_HASH */ x.a, w2.a from t28207_w2 w2, t28207_w1 x where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
 select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
@@ -59,8 +69,21 @@ select q1.a, y.c from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c f
   on q1.a = y.a where y.c = q1.a order by 1;
 -- the ON condition of a later join reads the NULL row too
 select q1.a, y.c, z.a from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
+  on q1.a = y.a left join t28207_r z on y.c = y.c order by 1;
+select q1.a, y.c, z.a from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
   on q1.a = y.a left join t28207_r z on z.a = y.c order by 1;
--- its own ON condition and an inner join read real rows only
+-- a RIGHT OUTER after the LEFT OUTER, and UPDATE
+select q1.a, y.c, q3.a from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
+  on q1.a = y.a right join t28207_q1 q3 on q3.a = q1.a where y.c = y.c order by 3;
+create table t28207_u (a int);
+insert into t28207_u select a from t28207_q1;
+update t28207_u u left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y on u.a = y.a
+  set u.a = u.a + 100 where y.c = y.c;
+select a from t28207_u order by 1;
+drop table t28207_u;
+-- its own ON condition, the ON condition of the RIGHT OUTER that pads it and an inner join read real rows only
+select q1.a, y.c from (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y right join t28207_q1 q1
+  on q1.a = y.a and q1.a = y.c order by 1;
 select q1.a, y.c from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
   on q1.a = y.a and y.c = y.c order by 1;
 select q1.a, y.c from t28207_q1 q1, (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
