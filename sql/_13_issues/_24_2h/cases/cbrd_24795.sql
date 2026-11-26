@@ -263,14 +263,16 @@ select /*+ recompile no_parallel_scan ordered */ ta.*
 from tbla ta, tbla tb
 where 1 <= abs (ta.b) and 10 > abs (ta.b) and abs (tb.b) >= 9 and abs (tb.b) < 19
 and ta.a = tb.a
-using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b;
+using index ta.idx_tbla_abs_b_a, tb.idx_tbla_a_abs_b
+order by ta.a;
 show trace;
 
 evaluate 'test case 23';
 select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where abs (ta.b) between 1 and 1000 and 999 <= abs (ta.b)
-using index ta.idx_tbla_abs_b_a;
+using index ta.idx_tbla_abs_b_a
+order by ta.a;
 show trace;
 
 evaluate 'test case 24 (Changed after CBRD-25116)';
@@ -284,7 +286,8 @@ evaluate 'test case 25';
 select /*+ recompile no_parallel_scan */ ta.*
 from tbla ta
 where -ta.b between -1000 and -1 and 999 <= ta.b
-using index ta.idx_tbla_b_a;
+using index ta.idx_tbla_b_a
+order by ta.a;
 show trace;
 
 evaluate 'test case 26';
