@@ -43,3 +43,17 @@ prepare st from 'select count(*) from k3 x where (nvl (x.b, -1) = 3 or x.id = -5
 execute st using 3;
 deallocate prepare st;
 drop table k3;
+
+evaluate 'Case 4: a function index expression after a subquery term keeps its mark and the plan is given up: 1 row, 1 row updated';
+drop table if exists k4;
+create table k4 (id int, a int, b int, d int);
+insert into k4 values (1, 5, 3, 0), (2, 2, 3, 0);
+create index k4_m on k4 (mod (a, b));
+prepare st from 'select id from k4 x where x.id > (select 0 from db_root) and mod (x.a, x.b) = 2 and x.a = ? order by 1';
+execute st using 5;
+deallocate prepare st;
+prepare st from 'update k4 x set x.d = x.d + 1000 where x.id > (select 0 from db_root) and mod (x.a, x.b) = 2 and x.a = ?';
+execute st using 5;
+deallocate prepare st;
+select id from k4 where d >= 1000 order by 1;
+drop table k4;
