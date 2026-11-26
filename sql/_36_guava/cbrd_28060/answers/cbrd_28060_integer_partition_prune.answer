@@ -313,6 +313,92 @@ Trace Statistics:
      
 
 ===================================================
+    
+Case 9: SMALLINT - t_smallint_part prune per INT host variable reads one partition and matches t_smallint     
+
+===================================================
+0
+===================================================
+cnt_base    cnt_part    
+1     1     
+
+===================================================
+cnt_base    cnt_part    
+1     1     
+
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_part)
+
+  rewritten query: (select count(*) from [dba.t_smallint_part] [dba.t_smallint_part] where [dba.t_smallint_part].cb= ?:? )
+
+  TABLE SCAN (dba.t_smallint)
+
+  rewritten query: (select count(*) from [dba.t_smallint] [dba.t_smallint] where [dba.t_smallint].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select (select count(*) from [dba.t_smallint] [dba.t_smallint] where [dba.t_smallint].cb= ?:? ), (select count(*) from [dba.t_smallint_part] [dba.t_smallint_part] where [dba.t_smallint_part].cb= ?:? ) from dual dual
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+    
+Case 10: SMALLINT - t_smallint_range_expression prune per INT constant reads one partition and matches t_smallint     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+1     [1]     1     1     
+
+===================================================
+ca    cb    cnt_base    cnt_part    
+2     [3]     1     1     
+
+===================================================
+count(*)    
+1     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.t_smallint_range_expression)
+
+  rewritten query: (select count(*) from [dba.t_smallint_range_expression] [dba.t_smallint_range_expression] where [dba.t_smallint_range_expression].cb= ?:? )
+
+  TABLE SCAN (dba.t_smallint)
+
+  rewritten query: (select count(*) from [dba.t_smallint] [dba.t_smallint] where [dba.t_smallint].cb= ?:? )
+
+  TABLE SCAN (dual)
+
+  rewritten query: select ?, '[?]', (select count(*) from [dba.t_smallint] [dba.t_smallint] where [dba.t_smallint].cb= ?:? ), (select count(*) from [dba.t_smallint_range_expression] [dba.t_smallint_range_expression] where [dba.t_smallint_range_expression].cb= ?:? ) from dual dual
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_smallint_range_expression), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+           PARTITION (table: dba.t_smallint_range_expression__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
 0
 ===================================================
 0

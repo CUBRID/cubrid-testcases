@@ -7,11 +7,11 @@
  *  key compared as a FLOAT or a BIGINT key compared as a DOUBLE. Before the change, 33554432 as a FLOAT, which equals
  *  the INT keys 33554432 and 33554433, read the partition of 33554432 only. A constant that the type of the key does
  *  not hold has no partition of an expression on the key, so the scan reads every partition. Before the change, it
- *  failed with a data overflow error.
+ *  failed with a data overflow error. A constant that the type holds reads the partition of the expression's value.
  *
- *  A prune case counts the rows of each constant in the partitioned table and in its twin without partitions, and the
- *  two counts must match. SHOW TRACE shows one PARTITION line for each partition that the scan of one constant, traced
- *  after the counts, reads.
+ *  A prune case counts the rows of each constant or bound value in the partitioned table and in its twin without
+ *  partitions, and the two counts must match. SHOW TRACE shows one PARTITION line for each partition that the scan of
+ *  one value, traced after the counts, reads.
  *
  *  Coverage:
  *    Case 1:  SMALLINT - t_smallint_part prune per INT constant reads one partition and matches t_smallint
@@ -24,6 +24,9 @@
  *    Case 6:  INT - t_int_part prune per BIGINT constant reads one partition and matches t_int
  *    Case 7:  INT - t_int_part prune per FLOAT constant reads every partition and matches t_int
  *    Case 8:  BIGINT - t_bigint_part prune per DOUBLE constant reads every partition and matches t_bigint
+ *    Case 9:  SMALLINT - t_smallint_part prune per INT host variable reads one partition and matches t_smallint
+ *    Case 10: SMALLINT - t_smallint_range_expression prune per INT constant reads one partition and matches
+ *             t_smallint
  */
 
 set trace on;
@@ -189,6 +192,29 @@ SELECT 2 AS ca, '[9007199254740992]' AS cb,
   (SELECT COUNT (*) FROM t_bigint_part WHERE cb = CAST (9007199254740992 AS DOUBLE)) AS cnt_part;
 
 SELECT COUNT (*) FROM t_bigint_part WHERE cb = CAST (9007199254740992 AS DOUBLE);
+show trace;
+
+evaluate 'Case 9: SMALLINT - t_smallint_part prune per INT host variable reads one partition and matches t_smallint';
+prepare st_count from 'SELECT (SELECT COUNT (*) FROM t_smallint WHERE ? = cb) AS cnt_base, (SELECT COUNT (*) FROM t_smallint_part WHERE ? = cb) AS cnt_part';
+execute st_count using 1, 1;
+execute st_count using 32767, 32767;
+deallocate prepare st_count;
+
+prepare st_prune from 'SELECT COUNT (*) FROM t_smallint_part WHERE ? = cb';
+execute st_prune using 1;
+show trace;
+deallocate prepare st_prune;
+
+evaluate 'Case 10: SMALLINT - t_smallint_range_expression prune per INT constant reads one partition and matches t_smallint';
+SELECT 1 AS ca, '[1]' AS cb,
+  (SELECT COUNT (*) FROM t_smallint WHERE cb = 1) AS cnt_base,
+  (SELECT COUNT (*) FROM t_smallint_range_expression WHERE cb = 1) AS cnt_part;
+
+SELECT 2 AS ca, '[3]' AS cb,
+  (SELECT COUNT (*) FROM t_smallint WHERE cb = 3) AS cnt_base,
+  (SELECT COUNT (*) FROM t_smallint_range_expression WHERE cb = 3) AS cnt_part;
+
+SELECT COUNT (*) FROM t_smallint_range_expression WHERE cb = 3;
 show trace;
 
 -- cleanup
