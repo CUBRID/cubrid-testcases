@@ -1,26 +1,39 @@
 /**
- *  This test case verifies CBRD-27529 : evaluate the R_EQ lookups of a list subquery filter
- *  (IN, NOT IN, = SOME, <> ALL) through a hash set over the list.
- *  The hash set answers from the first lookup of one execution of the subquery on; a list too large for memory is read.
- *  1. three-valued logic: a list with no NULL, with a NULL, with only NULL, with no row
- *  2. type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive
- *     collation, DATE and DATETIME
- *  3. NUMERIC values an expression makes
- *  4. a list that holds the same values many times
- *  5. a value no conversion reads
- *  6. trace: HASH_LOOKUP with its method (memory, hybrid) when the hash answers, for one outer row as well,
- *     none for a list too large for memory, a correlated subquery, and max_hash_list_scan_size 0
- *     NO_HASH_LOOKUP in a subquery: none for the term of that subquery only, in a view as well
- *  7. strings a collation compares equal: a space and a NUL in a byte collation, the same and an EUC space in
- *     euckr_bin, binary, utf8_ko_cs, utf8_tr_cs and utf8_gen_ci, a character with no weight in an expanding collation
- *  8. long strings stored compressed, negative NUMERIC values of other scales
- *  9. SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, with a NULL in the list
- * 10. PX scan: the hash the leader builds before the workers start, in memory and by tuple positions, with no
- *     outer row, with a NULL in the list
- * 11. uncorrelated subqueries executed in parallel, each holding a term with a hash
+ *  This test case verifies CBRD-27529: evaluate uncorrelated IN and NOT IN subquery filters with a hash lookup
+ *  instead of a list scan per row
+ *
+ *  The R_EQ lookups of a list subquery filter (IN, NOT IN, = SOME, <> ALL) go through a hash over the list from the
+ *  first lookup of one execution of the subquery on, and a list too large for memory is read as before. The cases
+ *  check that the rows are those of the list scan, and the traces show the HASH_LOOKUP line where the hash answers.
+ *
+ *  Coverage:
+ *    Case 1:   three-valued logic: a list with no NULL, with a NULL, with only NULL and with no row gives the rows of
+ *              the list scan
+ *    Case 2:   type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive
+ *              collation, DATE and DATETIME
+ *    Case 3:   NUMERIC values an expression makes
+ *    Case 4:   a list that holds the same values many times
+ *    Case 5:   a value no conversion reads
+ *    Case 6:   trace: HASH_LOOKUP under the subquery when the hash answers
+ *    Case 7:   trace: HASH_LOOKUP for one outer row as well
+ *    Case 8:   trace: no HASH_LOOKUP for a correlated subquery
+ *    Case 9:   trace: HASH_LOOKUP by tuple positions in memory (max_hash_list_scan_size below a page)
+ *    Case 10:  trace: no HASH_LOOKUP for a list too large for memory (max_hash_list_scan_size below the positions), the
+ *              lookups read the list
+ *    Case 11:  trace: max_hash_list_scan_size 0 turns the hash off
+ *    Case 12:  trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery
+ *    Case 13:  strings a byte collation compares equal: a space and a NUL, trailing NULs
+ *    Case 14:  strings the other built-in collations and the collation of a locale compare equal: a space, a NUL and an
+ *              EUC space, trailing ones
+ *    Case 15:  a character an expanding collation gives no weight (U+00AD)
+ *    Case 16:  long compressed strings in the list
+ *    Case 17:  negative NUMERIC values of other scales an expression makes
+ *    Case 18:  SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, give the rows of
+ *              NO_HASH_LOOKUP
+ *    Case 19:  PX scan: the leader builds the hash before the workers start and the workers read through it, in memory
+ *              and by tuple positions, and the counts are those of NO_HASH_LOOKUP
+ *    Case 20:  uncorrelated subqueries executed in parallel, each with a hashed term, free each hash before its list
  */
-
-set @i = 0;
 
 -- PREPARE TEST
 drop table if exists ta, tb, tc, td, te;
@@ -53,8 +66,7 @@ insert into tb values ('bad', 2, 2, 2, 2, 'b', 'b', 'b', 'b', 'x', null, null);
 update statistics on ta, tb with fullscan;
 
 -- START TEST
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. three-valued logic');
+evaluate 'Case 1: three-valued logic: a list with no NULL, with a NULL, with only NULL and with no row gives the rows of the list scan';
 
 select id from ta where ta.ca in (select tb.ca from tb where tb.k = 'plain') order by 1;
 select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain') order by 1;
@@ -72,8 +84,7 @@ select id, case when ta.ca in (select tb.ca from tb where tb.k = 'plain') then '
                 when not (ta.ca in (select tb.ca from tb where tb.k = 'plain')) then 'F' else 'U' end
   from ta order by 1;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. type pairs');
+evaluate 'Case 2: type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive collation, DATE and DATETIME';
 
 select id from ta where ta.ca not in (select tb.cb from tb where tb.k = 'plain') order by 1;
 select id from ta where ta.cb not in (select tb.ca from tb where tb.k = 'plain') order by 1;
@@ -93,14 +104,12 @@ select id from ta where ta.cg not in (select tb.cgb from tb where tb.k = 'plain'
 select id from ta where ta.cj not in (select tb.ci from tb where tb.k = 'plain') order by 1;
 select id from ta where ta.ci not in (select tb.cj from tb where tb.k = 'plain') order by 1;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. NUMERIC values an expression makes');
+evaluate 'Case 3: NUMERIC values an expression makes';
 
 select id from ta where ta.cc not in (select tb.cc / 3 * 3 from tb where tb.k = 'plain') order by 1;
 select id from ta where ta.cc * 1.00 not in (select tb.cc + 0.000 from tb where tb.k = 'plain') order by 1;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. a list that holds the same values many times');
+evaluate 'Case 4: a list that holds the same values many times';
 
 select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain'
                                       union all select tb.ca from tb where tb.k = 'plain'
@@ -108,42 +117,36 @@ select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain'
 select id from ta where ta.cf not in (select tb.cf from tb where tb.k = 'plain'
                                       union all select tb.cf from tb where tb.k = 'plain') order by 1;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. a value no conversion reads');
+evaluate 'Case 5: a value no conversion reads';
 
 select id from ta where ta.ca not in (select tb.ch from tb where tb.k = 'bad') order by 1;
 select id from ta where ta.ch not in (select tb.ca from tb where tb.k = 'plain') order by 1;
 
 set trace on;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: the hash answers');
+evaluate 'Case 6: trace: HASH_LOOKUP under the subquery when the hash answers';
 
 select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain');
 show trace;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: one outer row');
+evaluate 'Case 7: trace: HASH_LOOKUP for one outer row as well';
 
 select /*+ recompile */ count (*) from ta where ta.id = 1 and ta.ca not in (select tb.ca from tb where tb.k = 'plain');
 show trace;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: a correlated subquery');
+evaluate 'Case 8: trace: no HASH_LOOKUP for a correlated subquery';
 
 select /*+ recompile */ count (*) from ta
 where ta.ca not in (select tb.ca from tb where tb.k = 'plain' and tb.cb <> ta.id);
 show trace;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: tuple positions in memory (max_hash_list_scan_size below a page)');
+evaluate 'Case 9: trace: HASH_LOOKUP by tuple positions in memory (max_hash_list_scan_size below a page)';
 
 set system parameters 'max_hash_list_scan_size=1k';
 select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
 show trace;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: none for a list too large for memory (max_hash_list_scan_size below the positions): the lookups read the list');
+evaluate 'Case 10: trace: no HASH_LOOKUP for a list too large for memory (max_hash_list_scan_size below the positions), the lookups read the list';
 
 set system parameters 'max_hash_list_scan_size=100';
 select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
@@ -151,16 +154,14 @@ show trace;
 select id from ta where ta.cg not in (select tb.cgb from tb where tb.k = 'plain') order by 1;
 select id from ta where ta.cc * 1.00 not in (select tb.cc + 0.000 from tb where tb.k = 'plain') order by 1;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: max_hash_list_scan_size 0 turns the hash off');
+evaluate 'Case 11: trace: max_hash_list_scan_size 0 turns the hash off';
 
 set system parameters 'max_hash_list_scan_size=0';
 select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
 show trace;
 set system parameters 'max_hash_list_scan_size=default';
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery');
+evaluate 'Case 12: trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery';
 
 select /*+ recompile */ count (*) from ta
 where ta.ca not in (select /*+ NO_HASH_LOOKUP */ tb.ca from tb where tb.k = 'plain');
@@ -186,8 +187,7 @@ drop view v27529;
 
 set trace off;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. strings a byte collation compares equal: a space and a NUL, trailing NULs');
+evaluate 'Case 13: strings a byte collation compares equal: a space and a NUL, trailing NULs';
 
 create table tc (id int, ca varchar(10), cb varchar(10) collate utf8_en_ci);
 create table td (ca varchar(10), cb varchar(10) collate utf8_en_ci);
@@ -198,8 +198,7 @@ select id from tc where tc.ca <> all (select td.ca from td) order by 1;
 select id from tc where tc.cb not in (select td.cb from td) order by 1;
 drop table tc, td;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. strings the other built-in collations and a locale''s collation compare equal: a space, a NUL and an EUC space, trailing ones');
+evaluate 'Case 14: strings the other built-in collations and the collation of a locale compare equal: a space, a NUL and an EUC space, trailing ones';
 
 create table tv (id int, s varchar(10));
 create table tw (s varchar(10));
@@ -256,8 +255,7 @@ drop table tc, td;
 set trace off;
 drop table tv, tw;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. a character an expanding collation gives no weight (U+00AD)');
+evaluate 'Case 15: a character an expanding collation gives no weight (U+00AD)';
 
 create table tc (id int, ca varchar(10) collate utf8_de_exp_ai_ci);
 create table td (ca varchar(10) collate utf8_de_exp_ai_ci);
@@ -267,8 +265,7 @@ select id from tc where tc.ca not in (select td.ca from td) order by 1;
 select id from tc where tc.ca <> all (select td.ca from td) order by 1;
 drop table tc, td;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. long compressed strings in the list');
+evaluate 'Case 16: long compressed strings in the list';
 
 create table tc (id int, ca varchar(2000));
 create table td (ca varchar(2000));
@@ -277,8 +274,7 @@ insert into tc select rownum, repeat ('x', 1000) || (rownum * 2) from db_class a
 select count (*) from tc where tc.ca not in (select td.ca from td);
 drop table tc, td;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. negative NUMERIC values of other scales an expression makes');
+evaluate 'Case 17: negative NUMERIC values of other scales an expression makes';
 
 create table tc (id int, n numeric(10,1));
 create table td (m numeric(12,4));
@@ -288,8 +284,7 @@ select id from tc where tc.n * 1.00 not in (select td.m * 1.0 from td) order by 
 select id from tc where tc.n * 1.00 in (select td.m + 0.000 from td) order by 1;
 drop table tc, td;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. SMALLINT, FLOAT, TIME and TIMESTAMP, alone and with the types they compare with; NO_HASH_LOOKUP gives the same rows');
+evaluate 'Case 18: SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, give the rows of NO_HASH_LOOKUP';
 
 create table tc (id int, sa smallint, fa float, ta time, tsa timestamp);
 create table td (k varchar(10), sb smallint, ib int, fb float, db double, tb time, tsb timestamp, dtb datetime);
@@ -330,8 +325,7 @@ show trace;
 set trace off;
 drop table tc, td;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. PX scan: the leader executes the subquery and builds the hash before the workers start, and the workers read through it; NO_HASH_LOOKUP gives the same counts');
+evaluate 'Case 19: PX scan: the leader builds the hash before the workers start and the workers read through it, in memory and by tuple positions, and the counts are those of NO_HASH_LOOKUP';
 
 -- 20,000 rows of about 230 bytes: about 300 heap pages, past the parallel heap scan threshold of 32 pages under CTP, so that the scan of tc runs in parallel
 create table tc (id int, ca int, cs varchar(20), pad char(200));
@@ -366,8 +360,7 @@ select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select
 select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td);
 set trace off;
 
-do @i := @i + 1;
-evaluate concat ('####', lpad (@i, 3), '. uncorrelated subqueries executed in parallel: a subquery that holds the term frees its hash before its list');
+evaluate 'Case 20: uncorrelated subqueries executed in parallel, each with a hashed term, free each hash before its list';
 
 set trace on;
 select /*+ recompile */ * from (select count (*) from tc where tc.ca not in (select td.ca from td)) a,
@@ -380,4 +373,3 @@ drop table tc, td, te;
 
 -- CLEAN UP
 drop table ta, tb;
-drop variable @i;

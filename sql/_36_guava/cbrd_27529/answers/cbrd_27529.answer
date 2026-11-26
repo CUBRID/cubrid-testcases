@@ -5,8 +5,6 @@
 ===================================================
 0
 ===================================================
-0
-===================================================
 1
 ===================================================
 1
@@ -34,13 +32,11 @@
 1
 ===================================================
 1
-===================================================
-0
 ===================================================
 0
 ===================================================
     
-####  1. three-valued logic     
+Case 1: three-valued logic: a list with no NULL, with a NULL, with only NULL and with no row gives the rows of the list scan     
 
 ===================================================
 id    
@@ -100,10 +96,8 @@ id    case when ta.ca in (select tb.ca from tb where tb.k='plain') then 'T' when
 5     T     
 
 ===================================================
-0
-===================================================
     
-####  2. type pairs     
+Case 2: type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive collation, DATE and DATETIME     
 
 ===================================================
 id    
@@ -190,10 +184,8 @@ id
 4     
 
 ===================================================
-0
-===================================================
     
-####  3. NUMERIC values an expression makes     
+Case 3: NUMERIC values an expression makes     
 
 ===================================================
 id    
@@ -206,10 +198,8 @@ id
 2     
 
 ===================================================
-0
-===================================================
     
-####  4. a list that holds the same values many times     
+Case 4: a list that holds the same values many times     
 
 ===================================================
 id    
@@ -221,10 +211,8 @@ id
 5     
 
 ===================================================
-0
-===================================================
     
-####  5. a value no conversion reads     
+Case 5: a value no conversion reads     
 
 ===================================================
 Error:-181
@@ -235,10 +223,8 @@ id
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-####  6. trace: the hash answers     
+Case 6: trace: HASH_LOOKUP under the subquery when the hash answers     
 
 ===================================================
 count(*)    
@@ -261,18 +247,16 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
     
-####  7. trace: one outer row     
+Case 7: trace: HASH_LOOKUP for one outer row as well     
 
 ===================================================
 count(*)    
@@ -295,18 +279,16 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
     
-####  8. trace: a correlated subquery     
+Case 8: trace: no HASH_LOOKUP for a correlated subquery     
 
 ===================================================
 count(*)    
@@ -336,10 +318,8 @@ Trace Statistics:
      
 
 ===================================================
-0
-===================================================
     
-####  9. trace: tuple positions in memory (max_hash_list_scan_size below a page)     
+Case 9: trace: HASH_LOOKUP by tuple positions in memory (max_hash_list_scan_size below a page)     
 
 ===================================================
 0
@@ -364,18 +344,16 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(h), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: hybrid, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
 ===================================================
-0
-===================================================
     
-#### 10. trace: none for a list too large for memory (max_hash_list_scan_size below the positions): the lookups read the list     
+Case 10: trace: no HASH_LOOKUP for a list too large for memory (max_hash_list_scan_size below the positions), the lookups read the list     
 
 ===================================================
 0
@@ -415,10 +393,8 @@ id
 2     
 
 ===================================================
-0
-===================================================
     
-#### 11. trace: max_hash_list_scan_size 0 turns the hash off     
+Case 11: trace: max_hash_list_scan_size 0 turns the hash off     
 
 ===================================================
 0
@@ -452,10 +428,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 12. trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery     
+Case 12: trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery     
 
 ===================================================
 count(*)    
@@ -510,13 +484,13 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -541,10 +515,10 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -613,10 +587,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 13. strings a byte collation compares equal: a space and a NUL, trailing NULs     
+Case 13: strings a byte collation compares equal: a space and a NUL, trailing NULs     
 
 ===================================================
 0
@@ -647,10 +619,8 @@ id
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 14. strings the other built-in collations and a locale's collation compare equal: a space, a NUL and an EUC space, trailing ones     
+Case 14: strings the other built-in collations and the collation of a locale compare equal: a space, a NUL and an EUC space, trailing ones     
 
 ===================================================
 0
@@ -920,10 +890,8 @@ id
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 15. a character an expanding collation gives no weight (U+00AD)     
+Case 15: a character an expanding collation gives no weight (U+00AD)     
 
 ===================================================
 0
@@ -948,10 +916,8 @@ id
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 16. long compressed strings in the list     
+Case 16: long compressed strings in the list     
 
 ===================================================
 0
@@ -968,10 +934,8 @@ count(*)
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 17. negative NUMERIC values of other scales an expression makes     
+Case 17: negative NUMERIC values of other scales an expression makes     
 
 ===================================================
 0
@@ -995,10 +959,8 @@ id
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 18. SMALLINT, FLOAT, TIME and TIMESTAMP, alone and with the types they compare with; NO_HASH_LOOKUP gives the same rows     
+Case 18: SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, give the rows of NO_HASH_LOOKUP     
 
 ===================================================
 0
@@ -1134,22 +1096,22 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -1158,10 +1120,8 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 19. PX scan: the leader executes the subquery and builds the hash before the workers start, and the workers read through it; NO_HASH_LOOKUP gives the same counts     
+Case 19: PX scan: the leader builds the hash before the workers start and the workers read through it, in memory and by tuple positions, and the counts are those of NO_HASH_LOOKUP     
 
 ===================================================
 0
@@ -1201,10 +1161,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -1250,10 +1210,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -1281,10 +1241,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    HASH_LOOKUP (hash temp(h), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: hybrid, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1308,10 +1268,8 @@ count(*)
 ===================================================
 0
 ===================================================
-0
-===================================================
     
-#### 20. uncorrelated subqueries executed in parallel: a subquery that holds the term frees its hash before its list     
+Case 20: uncorrelated subqueries executed in parallel, each with a hashed term, free each hash before its list     
 
 ===================================================
 0
@@ -1357,18 +1315,18 @@ Trace Statistics:
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+        HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.td), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tc), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
              (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+        HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
         SUBQUERY (uncorrelated)
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             SCAN (table: dba.te), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-            HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
             ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -1376,8 +1334,6 @@ Trace Statistics:
 count(*)    count(*)    
 0     14534     
 
-===================================================
-0
 ===================================================
 0
 ===================================================
