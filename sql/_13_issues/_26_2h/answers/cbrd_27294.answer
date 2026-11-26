@@ -349,11 +349,11 @@ sum(distinct  cast( ?:0  as integer)) over ()    avg(distinct  cast( ?:1  as int
 Case 10: MEDIAN on a literal or an INT host variable returns DOUBLE like MEDIAN on a column, aggregate and analytic     
 
 ===================================================
-median(10)    typeof(median(10))    median(10)    median(a)    typeof(median(a))    median(a)    
+median(10)    typeof(median(10))    median(distinct 10)    median(a)    typeof(median(a))    median(distinct a)    
 10.0     double     10.0     25.5     double     25.5     
 
 ===================================================
-median(10) over ()    median(10) over ()    typeof(median(10) over ())    median(a) over ()    median(a) over ()    
+median(10) over ()    median(distinct 10) over ()    typeof(median(distinct 10) over ())    median(a) over ()    median(distinct a) over ()    
 10.0     10.0     double     25.5     25.5     
 
 ===================================================
@@ -365,7 +365,7 @@ median( cast(10 as integer))    typeof(median( cast(10 as integer)))
 ===================================================
 0
 ===================================================
-median( ?:0 )    typeof(median( ?:1 ))    median( ?:2 )    typeof(median( ?:3 ))    
+median( ?:0 )    typeof(median( ?:1 ))    median(distinct  ?:2 )    typeof(median(distinct  ?:3 ))    
 10.0     double     10.0     double     
 
 ===================================================
@@ -373,7 +373,7 @@ median( ?:0 )    typeof(median( ?:1 ))    median( ?:2 )    typeof(median( ?:3 ))
 ===================================================
 0
 ===================================================
-median( ?:0 ) over ()    median( ?:1 ) over ()    typeof(median( ?:2 ) over ())    
+median( ?:0 ) over ()    median(distinct  ?:1 ) over ()    typeof(median(distinct  ?:2 ) over ())    
 10.0     10.0     double     
 
 ===================================================
@@ -381,7 +381,7 @@ median( ?:0 ) over ()    median( ?:1 ) over ()    typeof(median( ?:2 ) over ())
 ===================================================
 0
 ===================================================
-g    median( ?:0 )    median( ?:1 )    
+g    median( ?:0 )    median(distinct  ?:1 )    
 0     10.0     10.0     
 1     10.0     10.0     
 2     10.0     10.0     
@@ -391,7 +391,7 @@ g    median( ?:0 )    median( ?:1 )
 ===================================================
 0
 ===================================================
-g    median( ?:0 ) over (partition by a mod 3)    
+g    median(distinct  ?:0 ) over (partition by a mod 3)    
 0     10.0     
 1     10.0     
 2     10.0     
@@ -447,7 +447,7 @@ character (2)     10
 ===================================================
 0
 ===================================================
-median( ?:0 )    median( ?:1 )    percentile_cont( cast(0.5 as double)) within group (order by  ?:2 )    
+median( ?:0 )    median(distinct  ?:1 )    percentile_cont( cast(0.5 as double)) within group (order by  ?:2 )    
 10.0     10.0     10.0     
 
 ===================================================
@@ -463,7 +463,7 @@ median( ?:0 )    typeof(median( ?:1 ))    percentile_cont( cast(0.5 as double)) 
 ===================================================
 0
 ===================================================
-median( ?:0 ) over ()    typeof(median( ?:1 ) over ())    
+median(distinct  ?:0 ) over ()    typeof(median(distinct  ?:1 ) over ())    
 2024-01-01     date     
 
 ===================================================
@@ -586,7 +586,7 @@ character (2)     10
 ===================================================
 0
 ===================================================
-median( ?:0 ) over ()    typeof(median( ?:1 ) over ())    median( ?:2 ) over ()    percentile_cont( cast(0.5 as double)) within group (order by  ?:3 ) over ()    typeof(percentile_cont( cast(0.5 as double)) within group (order by  ?:4 ) over ())    
+median( ?:0 ) over ()    typeof(median( ?:1 ) over ())    median(distinct  ?:2 ) over ()    percentile_cont( cast(0.5 as double)) within group (order by  ?:3 ) over ()    typeof(percentile_cont( cast(0.5 as double)) within group (order by  ?:4 ) over ())    
 10.0     double     10.0     10.0     double     
 
 ===================================================
