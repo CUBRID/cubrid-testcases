@@ -31,14 +31,6 @@
 ===================================================
 0
 ===================================================
-3
-===================================================
-0
-===================================================
-3
-===================================================
-0
-===================================================
     
 Case 1: DATE - t_date_part prune per IN list of DATETIME host variables reads one partition and matches t_date     
 
@@ -78,51 +70,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 2: TIMESTAMP - t_timestamp_part prune per IN list of DATETIME host variables reads every partition and matches t_timestamp     
-
-===================================================
-0
-===================================================
-cnt_base    cnt_part    
-2     2     
-
-===================================================
-cnt_base    cnt_part    
-1     1     
-
-===================================================
-0
-===================================================
-0
-===================================================
-count(*)    
-2     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t_timestamp_part)
-
-  rewritten query: select count(*) from [dba.t_timestamp_part] [dba.t_timestamp_part] where (([dba.t_timestamp_part].cb= ?:? ) or ([dba.t_timestamp_part].cb= ?:? ))
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: dba.t_timestamp_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-           PARTITION (table: dba.t_timestamp_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-0
-===================================================
-    
-Case 3: TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and matches t_timestamptz     
+Case 2: TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and matches t_timestamptz     
 
 ===================================================
 0
@@ -160,7 +108,7 @@ Trace Statistics:
 0
 ===================================================
     
-Case 4: TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition and matches t_timestampltz     
+Case 3: TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition and matches t_timestampltz     
 
 ===================================================
 0

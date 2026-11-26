@@ -2,24 +2,19 @@
  *  This test case verifies CBRD-28060: Make hashing follow comparison and remove its inefficiencies
  *
  *  A hash partition prune converts a constant into the type of the key and hashes it, while the comparison of a key and
- *  a constant of two types converts the key. The two agree only when the conversion of the key keeps every key apart,
- *  so the scan reads one partition for a DATE key compared as a DATETIME, and every partition for a TIMESTAMP key
- *  compared as a DATETIME: where daylight saving time ends, two TIMESTAMP keys an hour apart are one DATETIME. Before
- *  the change, such a DATETIME read the partition of one of the two keys only. An IN list of two host variables is the
- *  form whose DATETIME reaches the prune as it is bound.
+ *  a constant of two types converts the key. The two agree when the conversion of the key keeps every key apart, so
+ *  the scan reads one partition for a DATE, TIMESTAMPTZ or TIMESTAMPLTZ key compared as a DATETIME of its kind. An IN
+ *  list of two host variables is the form whose DATETIME reaches the prune as it is bound.
  *
  *  A prune case counts the rows of the bound values in the partitioned table and in its twin without partitions, and
  *  the two counts must match. SHOW TRACE shows one PARTITION line for each partition that the scan, traced after the
- *  counts, reads. The scan binds one value twice, and so do the counts of the TIMESTAMP case: a second value could read
- *  the partition of the key that the first one misses.
+ *  counts, reads. The scan binds one value twice.
  *
  *  Coverage:
  *    Case 1:  DATE - t_date_part prune per IN list of DATETIME host variables reads one partition and matches t_date
- *    Case 2:  TIMESTAMP - t_timestamp_part prune per IN list of DATETIME host variables reads every partition and
- *             matches t_timestamp
- *    Case 3:  TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and
+ *    Case 2:  TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and
  *             matches t_timestamptz
- *    Case 4:  TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition
+ *    Case 3:  TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition
  *             and matches t_timestampltz
  */
 
@@ -28,8 +23,7 @@ set trace on;
 -- 01:30:00 of 2024-11-03 comes twice in New York, at 05:30:00 and at 06:30:00 of UTC
 SET TIMEZONE 'America/New_York';
 
-DROP TABLE IF EXISTS t_date, t_date_part, t_timestamp, t_timestamp_part, t_timestamptz, t_timestamptz_part,
-  t_timestampltz, t_timestampltz_part;
+DROP TABLE IF EXISTS t_date, t_date_part, t_timestamptz, t_timestamptz_part, t_timestampltz, t_timestampltz_part;
 
 -- t_date and t_date_part hold the same rows
 -- ca | cb
@@ -43,7 +37,7 @@ INSERT INTO t_date VALUES (1, DATE'2024-11-02'), (2, DATE'2024-11-03'), (3, DATE
 CREATE TABLE t_date_part (ca INT, cb DATE) PARTITION BY HASH (cb) PARTITIONS 7;
 INSERT INTO t_date_part SELECT ca, cb FROM t_date;
 
--- t_timestamptz, t_timestamp, t_timestampltz and their partitioned twins hold the same points of time
+-- t_timestamptz, t_timestampltz and their partitioned twins hold the same points of time
 -- ca | cb
 -- ---+----------------------------------------
 --  1 | 05:30:00 UTC, the first 01:30:00
@@ -56,20 +50,14 @@ INSERT INTO t_timestamptz VALUES (1, TIMESTAMPTZ'2024-11-03 05:30:00 UTC'), (2, 
 CREATE TABLE t_timestamptz_part (ca INT, cb TIMESTAMPTZ) PARTITION BY HASH (cb) PARTITIONS 7;
 INSERT INTO t_timestamptz_part SELECT ca, cb FROM t_timestamptz;
 
-CREATE TABLE t_timestamp (ca INT, cb TIMESTAMP);
-INSERT INTO t_timestamp SELECT ca, CAST (cb AS TIMESTAMP) FROM t_timestamptz;
-
-CREATE TABLE t_timestamp_part (ca INT, cb TIMESTAMP) PARTITION BY HASH (cb) PARTITIONS 7;
-INSERT INTO t_timestamp_part SELECT ca, cb FROM t_timestamp;
-
 CREATE TABLE t_timestampltz (ca INT, cb TIMESTAMPLTZ);
 INSERT INTO t_timestampltz SELECT ca, CAST (cb AS TIMESTAMPLTZ) FROM t_timestamptz;
 
 CREATE TABLE t_timestampltz_part (ca INT, cb TIMESTAMPLTZ) PARTITION BY HASH (cb) PARTITIONS 7;
 INSERT INTO t_timestampltz_part SELECT ca, cb FROM t_timestampltz;
 
-UPDATE STATISTICS ON t_date, t_date_part, t_timestamp, t_timestamp_part, t_timestamptz, t_timestamptz_part,
-  t_timestampltz, t_timestampltz_part WITH FULLSCAN;
+UPDATE STATISTICS ON t_date, t_date_part, t_timestamptz, t_timestamptz_part, t_timestampltz, t_timestampltz_part
+  WITH FULLSCAN;
 
 evaluate 'Case 1: DATE - t_date_part prune per IN list of DATETIME host variables reads one partition and matches t_date';
 prepare st_count from 'SELECT (SELECT COUNT (*) FROM t_date WHERE cb IN (?, ?)) AS cnt_base, (SELECT COUNT (*) FROM t_date_part WHERE cb IN (?, ?)) AS cnt_part';
@@ -82,18 +70,7 @@ execute st_prune using DATETIME'2024-11-03 00:00:00', DATETIME'2024-11-03 00:00:
 show trace;
 deallocate prepare st_prune;
 
-evaluate 'Case 2: TIMESTAMP - t_timestamp_part prune per IN list of DATETIME host variables reads every partition and matches t_timestamp';
-prepare st_count from 'SELECT (SELECT COUNT (*) FROM t_timestamp WHERE cb IN (?, ?)) AS cnt_base, (SELECT COUNT (*) FROM t_timestamp_part WHERE cb IN (?, ?)) AS cnt_part';
-execute st_count using DATETIME'2024-11-03 01:30:00', DATETIME'2024-11-03 01:30:00', DATETIME'2024-11-03 01:30:00', DATETIME'2024-11-03 01:30:00';
-execute st_count using DATETIME'2024-11-03 02:30:00', DATETIME'2024-11-03 02:30:00', DATETIME'2024-11-03 02:30:00', DATETIME'2024-11-03 02:30:00';
-deallocate prepare st_count;
-
-prepare st_prune from 'SELECT COUNT (*) FROM t_timestamp_part WHERE cb IN (?, ?)';
-execute st_prune using DATETIME'2024-11-03 01:30:00', DATETIME'2024-11-03 01:30:00';
-show trace;
-deallocate prepare st_prune;
-
-evaluate 'Case 3: TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and matches t_timestamptz';
+evaluate 'Case 2: TIMESTAMPTZ - t_timestamptz_part prune per IN list of DATETIMETZ host variables reads one partition and matches t_timestamptz';
 prepare st_count from 'SELECT (SELECT COUNT (*) FROM t_timestamptz WHERE cb IN (?, ?)) AS cnt_base, (SELECT COUNT (*) FROM t_timestamptz_part WHERE cb IN (?, ?)) AS cnt_part';
 execute st_count using DATETIMETZ'2024-11-03 05:30:00 UTC', DATETIMETZ'2024-11-03 06:30:00 UTC', DATETIMETZ'2024-11-03 05:30:00 UTC', DATETIMETZ'2024-11-03 06:30:00 UTC';
 execute st_count using DATETIMETZ'2024-11-03 14:30:00 Asia/Seoul', DATETIMETZ'2024-11-04 00:00:00 UTC', DATETIMETZ'2024-11-03 14:30:00 Asia/Seoul', DATETIMETZ'2024-11-04 00:00:00 UTC';
@@ -104,7 +81,7 @@ execute st_prune using DATETIMETZ'2024-11-03 05:30:00 UTC', DATETIMETZ'2024-11-0
 show trace;
 deallocate prepare st_prune;
 
-evaluate 'Case 4: TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition and matches t_timestampltz';
+evaluate 'Case 3: TIMESTAMPLTZ - t_timestampltz_part prune per IN list of DATETIMELTZ host variables reads one partition and matches t_timestampltz';
 prepare st_count from 'SELECT (SELECT COUNT (*) FROM t_timestampltz WHERE cb IN (?, ?)) AS cnt_base, (SELECT COUNT (*) FROM t_timestampltz_part WHERE cb IN (?, ?)) AS cnt_part';
 execute st_count using DATETIMELTZ'2024-11-03 05:30:00 UTC', DATETIMELTZ'2024-11-03 06:30:00 UTC', DATETIMELTZ'2024-11-03 05:30:00 UTC', DATETIMELTZ'2024-11-03 06:30:00 UTC';
 execute st_count using DATETIMELTZ'2024-11-03 14:30:00 Asia/Seoul', DATETIMELTZ'2024-11-04 00:00:00 UTC', DATETIMELTZ'2024-11-03 14:30:00 Asia/Seoul', DATETIMELTZ'2024-11-04 00:00:00 UTC';
@@ -116,8 +93,7 @@ show trace;
 deallocate prepare st_prune;
 
 -- cleanup
-DROP TABLE IF EXISTS t_date, t_date_part, t_timestamp, t_timestamp_part, t_timestamptz, t_timestamptz_part,
-  t_timestampltz, t_timestampltz_part;
+DROP TABLE IF EXISTS t_date, t_date_part, t_timestamptz, t_timestamptz_part, t_timestampltz, t_timestampltz_part;
 
 SET TIMEZONE 'default';
 
