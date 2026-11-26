@@ -3,9 +3,9 @@
  *  or anti join depends on, so the query fails or returns a wrong result
  *
  *  The cases need a join edge that no condition of the query makes. The fix adds a dummy join term for it: between
- *  the tables that an ON reads when no join edge connects them, and at a CROSS JOIN or a comma whose two tables a
- *  later join already connects. A dummy join term stands for no condition, so it must not change the join type of an
- *  outer join.
+ *  the tables that an ON reads when no join edge connects them, and at a CROSS JOIN or a comma, between its table
+ *  and the nearest table before it that a later condition already connects to it. A dummy join term stands for no
+ *  condition, so it must not change the join type of an outer join.
  *  Each case prints the result that its query defines. A case that repeats another case with a hint or in another
  *  form prints the same result.
  *  The SELECT statements with a join that fail or return a wrong result without the fix also print their plan. The
@@ -28,6 +28,9 @@
  *    Case 9:   Case 8 without the last LEFT JOIN
  *    Case 10:  Case 8 with a RIGHT JOIN in place of the last LEFT JOIN
  *    Case 11:  Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE
+ *    Case 12:  Case 9 with a table between the two chains that no condition reads
+ *    Case 13:  Case 11 with a table between the two chains that no condition reads
+ *    Case 14:  Case 12 with two such tables
  */
 -- Cases 1 - 2: no row of tb meets ON tb.ca > tb.cb, and td and tg are empty, so each LEFT JOIN NULL-pads its rows
 -- ta, tb and tc are large and te is small, so the planner joins tb after te, ta and tc
@@ -100,7 +103,7 @@ SELECT COUNT(*), COUNT(tb.ca) FROM ta INNER JOIN tb ON tb.ca = ta.ca CROSS JOIN 
 
 DROP TABLE ta, tb, tc, td, tx;
 
--- Cases 8 - 11 use new data with rows that the LEFT JOINs NULL-pad
+-- Cases 8 - 14 use new data: the LEFT JOINs NULL-pad some rows
 DROP TABLE IF EXISTS ta, tb, tc, td, te, tf, tg, tx;
 CREATE TABLE ta (ca INT, cb INT);
 CREATE TABLE tb (ca INT, cb INT);
@@ -140,5 +143,19 @@ SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tc.ca), COUNT(tg.ca) FROM ta LEFT JOIN t
 evaluate 'Case 11: Case 9 with a comma in place of the CROSS JOIN and the condition on tc in the WHERE; result = same counts as Case 9';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca, td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.cb = tf.cb WHERE tx.ca = tc.cb;
+
+-- Cases 12 - 14: tg sits between tc and td, and no condition reads tg, so no dummy join term connects it
+-- the dummy join term for td goes to tc, the nearest table before td that a later condition connects to td
+evaluate 'Case 12: Case 9 with a table between the two chains that no condition reads; result = 12, 12';
+--@queryplan
+SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca CROSS JOIN tg CROSS JOIN td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.ca = tc.cb AND tx.cb = tf.cb;
+
+evaluate 'Case 13: Case 11 with a table between the two chains that no condition reads; result = 12, 12';
+--@queryplan
+SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca, tg, td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.cb = tf.cb WHERE tx.ca = tc.cb;
+
+evaluate 'Case 14: Case 12 with two such tables; result = 36, 36';
+--@queryplan
+SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca CROSS JOIN tg CROSS JOIN tg t2 CROSS JOIN td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.ca = tc.cb AND tx.cb = tf.cb;
 
 DROP TABLE ta, tb, tc, td, te, tf, tg, tx;
