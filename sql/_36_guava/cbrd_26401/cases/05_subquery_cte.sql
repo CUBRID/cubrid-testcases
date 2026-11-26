@@ -65,6 +65,59 @@ evaluate 'err';
 evaluate 'err';
 /* err */ select * from (select * from t1) as sub where sub.c1 = 10;
 
+-- CBRD-26506: (select * from t1) is a dummy select and is collapsed into t1 by the parser,
+-- but the invisible columns of t1 must stay hidden outside of the subquery
+evaluate 'CBRD-26506: dummy select - unqualified name, order by, aggregate';
+evaluate 'err';
+/* err */ select c1 from (select * from t1) as sub;
+evaluate 'err';
+/* err */ select * from (select * from t1) as sub order by sub.c3;
+evaluate 'err';
+/* err */ select count(c1) from (select * from t1) as sub;
+select sub.* from (select * from t1) as sub order by sub.id;
+
+evaluate 'CBRD-26506: nested dummy select';
+select * from (select * from (select * from t1) as s1) as s2 order by id;
+evaluate 'err';
+/* err */ select s2.c1 from (select * from (select * from t1) as s1) as s2;
+-- innermost subquery names the invisible columns, so they are visible outside
+select s2.id, s2.c1, s2.c3 from (select * from (select id, c1, c3 from t1) as s1) as s2 order by s2.id;
+
+evaluate 'CBRD-26506: dummy select in join';
+select s.id, s.c2, t2.c6 from (select * from t1) as s join t2 on s.id = t2.id order by s.id;
+evaluate 'err';
+/* err */ select s.id, t2.c6 from (select * from t1) as s join t2 on s.c1 = t2.c5;
+evaluate 'err';
+/* err */ select t1.id from t1 join (select * from t2) as u on t1.c1 = u.c5;
+select t1.id, t1.c1, u.c6 from t1 join (select * from t2) as u on t1.id = u.id order by t1.id;
+
+evaluate 'CBRD-26506: cte with select *';
+evaluate 'err';
+/* err */ with cte1 as (select * from t1) select c1 from cte1;
+evaluate 'err';
+/* err */ with cte1 as (select * from t1) select * from cte1 where cte1.c3 > 1000;
+evaluate 'err';
+/* err */ select * from (with cte1 as (select * from t1) select * from cte1) as sub where sub.c1 = 10;
+
+evaluate 'CBRD-26506: not dummy select (where, distinct, attr list)';
+select * from (select * from t1 where id > 1) as sub order by id;
+evaluate 'err';
+/* err */ select sub.c1 from (select * from t1 where id > 1) as sub;
+select * from (select distinct * from t1) as sub order by id;
+evaluate 'err';
+/* err */ select sub.c1 from (select distinct * from t1) as sub;
+select * from (select * from t1) as sub(a, b, c) order by a;
+evaluate 'err';
+/* err */ select * from (select * from t1) as sub(a, b, c, d, e);
+
+evaluate 'CBRD-26506: query plan of dummy and not dummy select';
+set trace on;
+select /*+ recompile */ * from (select * from t1) as sub order by id;
+show trace;
+select /*+ recompile */ * from (select distinct * from t1) as sub order by id;
+show trace;
+set trace off;
+
 
 -- ============================================
 -- [3] SCALAR SUBQUERY IN SELECT
