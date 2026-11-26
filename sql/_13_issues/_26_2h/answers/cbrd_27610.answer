@@ -10,7 +10,7 @@ Case 1: MODIFY of a TO_CHAR DEFAULT column to DATE or INT fails
 Error:-176
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_tochar     CREATE TABLE [t_tochar] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+dba.t_tochar     CREATE TABLE [t_tochar] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME , 'YYYY'))) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -24,7 +24,7 @@ id    char_length(a)    a- year( SYS_DATE ) in multiset{0, -1}
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_tochar_nf     CREATE TABLE [t_tochar_nf] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME)) REUSE_OID, COLLATE utf8_bin     
+dba.t_tochar_nf     CREATE TABLE [t_tochar_nf] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME ))) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -42,7 +42,7 @@ Case 2: MODIFY of a UNIX_TIMESTAMP DEFAULT column to SMALLINT fails
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_unix     CREATE TABLE [t_unix] ([id] INTEGER, [a] BIGINT DEFAULT UNIX_TIMESTAMP()) REUSE_OID, COLLATE utf8_bin     
+dba.t_unix     CREATE TABLE [t_unix] ([id] INTEGER, [a] BIGINT DEFAULT (unix_timestamp())) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -60,7 +60,7 @@ Case 3: MODIFY of a SYS_GUID DEFAULT column to INT fails
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_guid     CREATE TABLE [t_guid] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT SYS_GUID()) REUSE_OID, COLLATE utf8_bin     
+dba.t_guid     CREATE TABLE [t_guid] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT (sys_guid())) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -78,7 +78,7 @@ Case 4: MODIFY of a SYS_DATETIME DEFAULT column to VARCHAR fails
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_dt     CREATE TABLE [t_dt] ([id] INTEGER, [a] DATETIME DEFAULT SYS_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_dt     CREATE TABLE [t_dt] ([id] INTEGER, [a] DATETIME DEFAULT (SYS_DATETIME)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -124,13 +124,13 @@ Error:-495
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_chg     CREATE TABLE [t_chg] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [g] CHARACTER VARYING(100) DEFAULT SYS_GUID(), [u] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_chg     CREATE TABLE [t_chg] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME , 'YYYY')), [g] CHARACTER VARYING(100) DEFAULT (sys_guid()), [u] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 attr_name    data_type    prec    default_value    
 id     INTEGER     10     null     
-a     STRING     100     TO_CHAR(SYS_DATETIME, 'YYYY')     
-g     STRING     100     SYS_GUID()     
+a     STRING     100     (to_char( SYS_DATETIME , 'YYYY'))     
+g     STRING     100     (sys_guid())     
 u     DATETIME     23     ON UPDATE CURRENT_DATETIME     
 
 ===================================================
@@ -163,7 +163,7 @@ Case 8: MODIFY of DATETIME to TIMESTAMP keeps the DEFAULT and the ON UPDATE expr
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_both     CREATE TABLE [t_both] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT SYS_DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_both     CREATE TABLE [t_both] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT (SYS_DATETIME) ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -189,7 +189,7 @@ Case 9: MODIFY of a TO_CHAR DEFAULT column to INT keeps the DEFAULT
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_year     CREATE TABLE [t_year] ([id] INTEGER, [a] INTEGER DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+dba.t_year     CREATE TABLE [t_year] ([id] INTEGER, [a] INTEGER DEFAULT (to_char( SYS_DATETIME , 'YYYY'))) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -207,7 +207,7 @@ Case 10: MODIFY with a DEFAULT clause keeps the ON UPDATE expression
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_keep     CREATE TABLE [t_keep] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT SYS_TIMESTAMP ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_keep     CREATE TABLE [t_keep] ([id] INTEGER, [x] INTEGER, [a] TIMESTAMP DEFAULT (SYS_TIMESTAMP) ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -233,7 +233,7 @@ Case 11: CHANGE to a new name and a type that takes the kept DEFAULT succeeds
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_ren     CREATE TABLE [t_ren] ([id] INTEGER, [b] TIMESTAMP DEFAULT SYS_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_ren     CREATE TABLE [t_ren] ([id] INTEGER, [b] TIMESTAMP DEFAULT (SYS_DATETIME)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -255,7 +255,7 @@ Case 12: CHANGE of the name alone and MODIFY to NOT NULL keep the DEFAULT
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_name     CREATE TABLE [t_name] ([id] INTEGER, [b] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [g] CHARACTER VARYING(100) DEFAULT SYS_GUID() NOT NULL, [v] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
+dba.t_name     CREATE TABLE [t_name] ([id] INTEGER, [b] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME , 'YYYY')), [g] CHARACTER VARYING(100) DEFAULT (sys_guid()) NOT NULL, [v] DATETIME ON UPDATE CURRENT_DATETIME) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -343,7 +343,7 @@ Case 16: MODIFY with an ON UPDATE clause still fails on the kept DEFAULT
 Error:-788
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_onu     CREATE TABLE [t_onu] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY')) REUSE_OID, COLLATE utf8_bin     
+dba.t_onu     CREATE TABLE [t_onu] ([id] INTEGER, [a] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME , 'YYYY'))) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -365,7 +365,7 @@ Case 17: MODIFY that only widens the length or the precision keeps the DEFAULT
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_prec     CREATE TABLE [t_prec] ([id] INTEGER, [g] CHARACTER VARYING(200) DEFAULT SYS_GUID(), [a] CHARACTER VARYING(100) DEFAULT TO_CHAR(SYS_DATETIME, 'YYYY'), [n] NUMERIC(15,0) DEFAULT UNIX_TIMESTAMP()) REUSE_OID, COLLATE utf8_bin     
+dba.t_prec     CREATE TABLE [t_prec] ([id] INTEGER, [g] CHARACTER VARYING(200) DEFAULT (sys_guid()), [a] CHARACTER VARYING(100) DEFAULT (to_char( SYS_DATETIME , 'YYYY')), [n] NUMERIC(15,0) DEFAULT (unix_timestamp())) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
@@ -383,13 +383,13 @@ Case 18: MODIFY that shortens a CURRENT_USER DEFAULT column checks the name of t
 Error:-495
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(255) DEFAULT CURRENT_USER) REUSE_OID, COLLATE utf8_bin     
+dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(255) DEFAULT (CURRENT_USER)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 0
 ===================================================
 TABLE    CREATE TABLE    
-dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(3) DEFAULT CURRENT_USER) REUSE_OID, COLLATE utf8_bin     
+dba.t_user     CREATE TABLE [t_user] ([id] INTEGER, [a] CHARACTER VARYING(3) DEFAULT (CURRENT_USER)) REUSE_OID, COLLATE utf8_bin     
 
 ===================================================
 1
