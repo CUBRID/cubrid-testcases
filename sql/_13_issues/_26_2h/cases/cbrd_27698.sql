@@ -30,26 +30,26 @@ alter serial s27698_1 cache 2;
 select serial_next_value (s27698_1, 2147483647) from db_root;
 select s27698_1.next_value from db_root;
 select s27698_1.next_value from db_root;
-select current_val from db_serial where name = 's27698_1';
+select current_val from _db_serial where name = 's27698_1';
 
 evaluate 'Case 2: the install on the first draw of a CACHE 1000000000 serial; result = current_val 3000000001';
 create serial s27698_2 start with 1 cache 1000000000;
 select serial_next_value (s27698_2, 2147483647) from db_root;
 select s27698_2.next_value from db_root;
-select current_val from db_serial where name = 's27698_2';
+select current_val from _db_serial where name = 's27698_2';
 
 evaluate 'Case 3: the refill of a CYCLE serial up to MAXVALUE 2147483649; result = current_val 1';
 create serial s27698_3 start with 1 maxvalue 2147483649 cache 2 cycle;
 select s27698_3.next_value from db_root;
 select s27698_3.next_value from db_root;
 select serial_next_value (s27698_3, 2147483647) from db_root;
-select current_val from db_serial where name = 's27698_3';
+select current_val from _db_serial where name = 's27698_3';
 
 evaluate 'Case 4: the install on the first draw of a CACHE 3 serial (control); result = current_val 2147483650';
 create serial s27698_4 start with 1 cache 3;
 select serial_next_value (s27698_4, 2147483647) from db_root;
 select s27698_4.next_value from db_root;
-select current_val from db_serial where name = 's27698_4';
+select current_val from _db_serial where name = 's27698_4';
 
 drop serial s27698_1;
 drop serial s27698_2;
