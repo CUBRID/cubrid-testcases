@@ -1,15 +1,15 @@
 /*
 Test Case: foreign_key_column/committed_child_update_then_parent_restrict_delete
 Priority: 1
-Reference case: CBRD-27463 (CUBRID/cubrid#8198), CBRD-26664
+Reference case: CBRD-27463 (CUBRID/cubrid#8198), CBRD-26664, CBRD-28025 (CUBRID/cubrid#8652)
 Author: hgryoo
 
 Test Point:
-In REPEATABLE READ a transaction that updated a non-key column of a committed child keeps that row locked to commit, so a parent DELETE (ON DELETE RESTRICT) waits for it. The transaction updates the child again; that UPDATE does not wait for the DELETE, so the two do not deadlock, and once the child's transaction commits the DELETE fails on the foreign key.
+In REPEATABLE READ a transaction that updated a non-key column of a committed child gives that row lock back when the statement ends, as in READ COMMITTED (CBRD-28025). A parent DELETE (ON DELETE RESTRICT) does not wait for it: the child keeps its key whether the transaction commits or not, so the DELETE fails on the foreign key at once. The transaction then updates the child again and commits.
 
 NUM_CLIENTS = 2
 C1: UPDATE t27463_child SET note = 'x' WHERE cid = 10;
-C2: DELETE FROM t27463_parent WHERE id = 1;
+C2: DELETE FROM t27463_parent WHERE id = 1; -- fails on the foreign key at once
 C1: UPDATE t27463_child SET note = 'y' WHERE cid = 10;
 C1: COMMIT;
 C2: COMMIT;
@@ -38,7 +38,7 @@ MC: wait until C1 ready;
 C1: UPDATE t27463_child SET note = 'x' WHERE cid = 10;
 MC: wait until C1 ready;
 C2: DELETE FROM t27463_parent WHERE id = 1;
-MC: wait until C2 blocked;
+MC: wait until C2 ready;
 C1: UPDATE t27463_child SET note = 'y' WHERE cid = 10;
 MC: wait until C1 ready;
 C1: COMMIT;
