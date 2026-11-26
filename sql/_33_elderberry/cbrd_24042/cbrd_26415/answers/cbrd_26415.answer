@@ -65,9 +65,10 @@ idx-join (left outer join)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: idx term[?] (covers)
-               filtr: term[?]
+               index: idx term[?]
+               sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=add_aa(b.colb)
@@ -149,9 +150,10 @@ idx-join (left outer join)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: idx term[?] (covers)
-               filtr: term[?]
+               index: idx term[?]
+               sargs: term[?]
                cost:  ? card ?
+    sargs: term[?]
     cost:  ? card ?
 Query stmt:
 select count(*) from tbl a left outer join tbl b on a.cola=b.cola and a.colb=b.colb+add_aa(b.colb)

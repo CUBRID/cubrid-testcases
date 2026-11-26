@@ -19,7 +19,7 @@
  *    Case 2: the same block, a declared function outside
  *    Case 3: a plain select list over a parallel heap scan
  *    Case 4: a select list over the parallel temp scan of a materialized CTE
- *    Case 5: a select list over a parallel index scan
+ *    Case 5: a select list over an index scan, which a function call keeps serial (CBRD-28426)
  *    Case 6: a select list over a parallel heap scan joined to an inner table
  *    Case 7: a UNION ALL arm that calls a function after the gathered arm
  *    Case 8: no row qualifies, so a function that accepts NULL never runs (no FUNC line)
@@ -75,7 +75,7 @@ show trace;
 with w as (select /*+ materialize no_parallel_scan */ a, b from t_wide) select /*+ recompile no_parallel_scan */ f_pin_jn(d.m), d.c from (select /*+ no_parallel_scan */ max(x) m, count(*) c from (select /*+ no_parallel_scan */ f_pin_jp(b) mod 6 x from w where a <= 3000) z) d;
 
 
-evaluate 'Case 5: a select list over a parallel index scan; result = no_parallel_scan';
+evaluate 'Case 5: a select list over an index scan, which a function call keeps serial; result = no_parallel_scan';
 select /*+ recompile */ f_pin_jn(d.m), d.c from (select max(x) m, count(*) c from (select f_pin_jp(b) mod 6 x from t_wide where a > 0 and b <= 3000 using index i_wide_a) z) d;
 show trace;
 select /*+ recompile no_parallel_scan */ f_pin_jn(d.m), d.c from (select /*+ no_parallel_scan */ max(x) m, count(*) c from (select /*+ no_parallel_scan */ f_pin_jp(b) mod 6 x from t_wide where a > 0 and b <= 3000 using index i_wide_a) z) d;

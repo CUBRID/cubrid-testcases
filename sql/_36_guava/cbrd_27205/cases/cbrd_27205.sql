@@ -43,8 +43,12 @@
  *    Case 12: rownum with the derived table blocks the list merge; in the row-by-row
  *             fallback the non-linked dptr keeps the heap scan of o serial
  *    Case 13: the sort GROUP BY of Case 10 as a correlated derived table
- *  Traces: Case 2, 5 and 13 show the parallel index scan of o (buildvalue gather) with the
- *  correlated subquery below it (Case 5 and 13 with GROUPBY hash: false), Case 11 shows the
+ *  Traces: Case 2, 5 and 13 show the index scan of o with the correlated subquery below it
+ *  (Case 5 and 13 with GROUPBY hash: false) and no parallel line. Since CBRD-28426 an index
+ *  scan whose block holds a correlated subquery runs serially, because a worker of a parallel
+ *  index scan evaluates the rows of a leaf while it holds that leaf. The queries of Case 2 to 9
+ *  that pin the index therefore compare a serial run with a serial run, and the parallel run
+ *  of a correlated subquery is in Case 10 and 11, over a heap scan. Case 11 shows the
  *  parallel heap scan of o (buildvalue gather) whose chain ends at the heap scan of t, Case 7,
  *  8, 9 and 12 show the same plan without a parallel line, and Case 10 shows the parallel heap
  *  scan with the mergeable list gather.

@@ -218,7 +218,7 @@ f_pin_jn(d.m)    c
 
 ===================================================
     
-Case 5: a select list over a parallel index scan; result = no_parallel_scan     
+Case 5: a select list over an index scan, which a function call keeps serial; result = no_parallel_scan     
 
 ===================================================
 f_pin_jn(d.m)    c    
@@ -253,7 +253,6 @@ Trace Statistics:
           SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             FUNC (time: ?, fetch: ?, ioread: ?, calls: ?)
             SCAN (index: dba.t_wide.i_wide_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
-                 (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
      
 
 ===================================================
