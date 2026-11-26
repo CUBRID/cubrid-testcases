@@ -1,0 +1,385 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+    
+Case 1: LEFT OUTER JOIN ON n1.b = 2; expect c = 1, 2     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: iscan
+                            class: n? node[?]
+                            index: i_n? term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  where (n?.a> ?:? ) order by ?, ?
+===================================================
+    
+Case 2: ON k1.b = 2 on the leading index column; expect a = 1, 2     
+
+===================================================
+b    a    
+2     1     
+1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: iscan
+                            class: k? node[?]
+                            index: i_k? term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select k?.b, k?.a from k? k? left outer join m? m? on k?.b= ?:?  where (k?.b> ?:? ) order by ?
+===================================================
+    
+Case 3: case 1 without WHERE; expect c = 1, 2     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: sscan
+                            class: n? node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  order by ?, ?
+===================================================
+    
+Case 4: case 1 behind an inner join on n1; expect c = 1, 2     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: idx-join (inner join)
+                            outer: iscan
+                                       class: n? node[?]
+                                       index: i_n? term[?] (covers)
+                                       cost:  ? card ?
+                            inner: iscan
+                                       class: p? node[?]
+                                       index: i_p? term[?] (covers)
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_NL */ n?.a, n?.b, n?.c from n? n? inner join p? p? on p?.a=n?.a left outer join m? m? on n?.b= ?:?  where (n?.a> ?:? ) order by ?, ?
+===================================================
+    
+Case 5: case 1 with ORDER BY DESC; expect c = 2, 1     
+
+===================================================
+a    b    c    
+1     1     2     
+1     2     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: iscan
+                            class: n? node[?]
+                            index: i_n? term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? desc, ? desc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  where (n?.a> ?:? ) order by ? desc , ? desc 
+===================================================
+    
+Case 6: LIMIT 1 over a LEFT OUTER JOIN whose ON also joins p2; expect (1, 2, 1)     
+
+===================================================
+a    b    c    
+1     2     1     
+
+Query plan:
+temp(order by)
+    subplan: idx-join (left outer join)
+                 outer: temp(sort limit)
+                            subplan: iscan
+                                         class: n? node[?]
+                                         index: i_n? term[?] (covers)
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: iscan
+                            class: p? node[?]
+                            index: i_p? term[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join p? p? on n?.b= ?:?  and p?.a=n?.a where (n?.a> ?:? ) order by ?, ? for orderby_num()<= ?:? 
+===================================================
+    
+Case 7: RIGHT OUTER JOIN with n1 preserved; expect c = 1, 2     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: iscan
+                            class: n? node[?]
+                            index: i_n? term[?] (covers)
+                            cost:  ? card ?
+                 inner: sscan
+                            class: m? node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from m? m? right outer join n? n? on n?.b= ?:?  where (n?.a> ?:? ) order by ?, ?
+===================================================
+    
+Case 8-1: WHERE n1.b = 2 filters n1; the sort may be skipped; expect (1, 2, 1)     
+
+===================================================
+a    b    c    
+1     2     1     
+
+Query plan:
+nl-join (left outer join)
+    edge:  term[?]
+    outer: iscan
+               class: n? node[?]
+               index: i_n? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join m? m? on m?.x=n?.c where (n?.a> ?:? ) and n?.b= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 8-2: INNER JOIN ON n1.b = 2 filters n1; the sort may be skipped; expect (1, 2, 1)     
+
+===================================================
+a    b    c    
+1     2     1     
+
+Query plan:
+nl-join (cross join)
+    outer: iscan
+               class: n? node[?]
+               index: i_n? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m? node[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n?, m? m? where (n?.a> ?:? ) and n?.b= ?:?  order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 8-3: the ON of a semi join (correlated EXISTS) filters n1; the sort may be skipped; expect (1, 2, 1)     
+
+===================================================
+a    b    c    
+1     2     1     
+
+Query plan:
+nl-join (semi join)
+    edge:  term[?]
+    outer: iscan
+               class: n? node[?]
+               index: i_n? term[?] (covers)
+               filtr: term[?]
+               cost:  ? card ?
+    inner: sscan
+               class: m? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? semi join m? m? on n?.b= ?:?  and m?.x=n?.c where (n?.a> ?:? ) order by ?, ?
+/* ---> skip ORDER BY */
+===================================================
+    
+Case 8-4: ON n1.b = 2 and ORDER BY all the index columns, in index order; expect b = 1, 2     
+
+===================================================
+a    b    c    
+1     1     2     
+1     2     1     
+
+Query plan:
+nl-join (left outer join)
+    outer: iscan
+               class: n? node[?]
+               index: i_n? term[?] (covers)
+               cost:  ? card ?
+    inner: sscan
+               class: m? node[?]
+               sargs: term[?]
+               cost:  ? card ?
+    during:term[?]
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  where (n?.a> ?:? ) order by ?, ?, ?
+/* ---> skip ORDER BY */
+===================================================
+0
+===================================================
+    
+Case 9-1: LEFT OUTER JOIN merge, ON n1.b = 2; the sort is kept; expect c = 1, 2     
+
+===================================================
+a    b    c    
+1     2     1     
+1     1     2     
+
+Query plan:
+temp(order by)
+    subplan: temp
+                 order: a[?]
+                 subplan: m-join (left outer join)
+                              edge:  term[?]
+                              outer(sorted): temp
+                                                 order: a[?]
+                                                 subplan: iscan
+                                                              class: n? node[?]
+                                                              index: i_n? term[?] (covers)
+                                                              cost:  ? card ?
+                                                 cost:  ? card ?
+                              inner: temp
+                                         order: x[?]
+                                         subplan: sscan
+                                                      class: m? node[?]
+                                                      cost:  ? card ?
+                                         cost:  ? card ?
+                              during:term[?]
+                              cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  and m?.x=n?.a where (n?.a> ?:? ) order by ?, ?
+===================================================
+    
+Case 9-2: case 9-1 with ORDER BY all the index columns; the sort may be skipped; expect b = 1, 2     
+
+===================================================
+a    b    c    
+1     1     2     
+1     2     1     
+
+Query plan:
+temp
+    order: a[?]
+    subplan: m-join (left outer join)
+                 edge:  term[?]
+                 outer(sorted): temp
+                                    order: a[?]
+                                    subplan: iscan
+                                                 class: n? node[?]
+                                                 index: i_n? term[?] (covers)
+                                                 cost:  ? card ?
+                                    cost:  ? card ?
+                 inner: temp
+                            order: x[?]
+                            subplan: sscan
+                                         class: m? node[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_MERGE */ n?.a, n?.b, n?.c from n? n? left outer join m? m? on n?.b= ?:?  and m?.x=n?.a where (n?.a> ?:? ) order by ?, ?, ?
+===================================================
+0
+===================================================
+0
