@@ -7,8 +7,8 @@ create index i_t_a_b on t (a,b);
 create index i_t_b_a on t (b,a);
 
 select /*+ recompile use_merge */ * from 
-(select * from t where a>0 using index i_t_a_b keylimit 99990,10) x, 
-(select * from t where b>'0' using index i_t_b_a keylimit 99990,10) y
+(select * from t where a>0 using index i_t_a_b limit 99990,10) x, 
+(select * from t where b>'0' using index i_t_b_a limit 99990,10) y
 where x.a=y.a using index none;
 
 drop table t;

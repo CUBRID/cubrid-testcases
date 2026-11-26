@@ -78,15 +78,6 @@ select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1
 where lower(b) >'0'
   order by lower(b) limit 0,1;  
   
-  --TEST: should use index i_t1_a
-select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 
-where lower(b) >'0' using index i_t1_a(+) keylimit 1
-  order by lower(b) limit 0,1;  
-  --TEST: should use index i_t1_a
-select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 
-where lower(b) >'0' using index i_t1_a(+) keylimit 1,2
-  order by lower(b) limit 0,1;  
-
 --TEST: should  use index i_t1_a
 select /*+ RECOMPILE */a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where lower(b) >'0'
   order by a asc,b asc,c asc,d asc,e asc,f asc,g asc,h asc,i asc,j asc,k asc,l asc,m asc,n asc,o asc,p asc,q asc;

@@ -21,16 +21,4 @@ insert into t1 values (10, 'Bli', '011');
 select a,b,c from t1 where a>0 and c='011' and rownum=0 using index idx_t1_abc(+);
 
 
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 0,3;
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 0,2;
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 0,1;
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 0,0;
-
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 1,2;
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 1,0;
-
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 3,2;
-select a,b,c from t1 where a>0 using index idx_t1_abc(+) keylimit 3,0;
-
-
 drop table t1;

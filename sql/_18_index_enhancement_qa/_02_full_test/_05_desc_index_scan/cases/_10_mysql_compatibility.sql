@@ -21,8 +21,6 @@ select /*+ recompile use_desc_idx */ a,b from tb where a between 1 and 8 using i
 --TEST
 select /*+ recompile use_desc_idx */ a,b from tb where a between 1 and 8 and b >= '4' using index i_tb_ab;
 --TEST
-select /*+ recompile use_desc_idx */ a,b from tb where a between 1 and 8 and b >= '4' using index i_tb_ab keylimit 1,4;
---TEST
 select /*+ recompile use_desc_idx */ a,b from tb where a between 1 and 8 and b >= '4' and rownum>1 using index i_tb_ab;
 
 --TEST

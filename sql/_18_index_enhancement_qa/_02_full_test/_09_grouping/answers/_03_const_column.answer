@@ -28,32 +28,6 @@ select /*+ USE_DESC_IDX */ t.c, t.d, max(t.e), count(*) from t t where (t.c>= ?:
 /* ---> skip GROUP BY */
 ===================================================
 c    d    max(e)    count(*)    
-AAAAA     AABBB     -1     1     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ?, ? term[?] (desc_index)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ t.c, t.d, max(t.e), count(*) from t t where (t.c>= ?:?  and t.c< ?:? ) and t.a= ?:?  group by t.b desc , t.c desc , t.d desc  using index t.i_t_abcd keylimit  ?:? , ?:? 
-/* ---> skip GROUP BY */
-===================================================
-c    d    max(e)    count(*)    
-AAAAA     AAAAA     1     1     
-
-Query plan:
-iscan
-    class: t node[?]
-    index: i_t_abcd keylimit ?, ? term[?] (desc_index)
-    filtr: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ USE_DESC_IDX */ t.c, t.d, max(t.e), count(*) from t t where (t.c>= ?:?  and t.c< ?:? ) and t.a= ?:?  group by t.b desc , t.c desc , t.d desc  using index t.i_t_abcd keylimit  ?:? , ?:? 
-/* ---> skip GROUP BY */
-===================================================
-c    d    max(e)    count(*)    
 
 Query plan:
 iscan

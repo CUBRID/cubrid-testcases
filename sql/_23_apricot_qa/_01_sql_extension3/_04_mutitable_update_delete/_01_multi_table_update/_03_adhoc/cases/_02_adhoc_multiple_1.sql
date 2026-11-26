@@ -61,19 +61,6 @@ drop table t2;
 create table t1(a int, b int, c int);
 create table t2(a int, b int ,c int);
 insert into t1 values (1,1,1), (2,2,2);
-insert into t2 values (1,1,1), (2,2,2), (2,2,2);
-create index i_t1_a on t1(a);
-create index i_t2_a on t2(a);
-update /*+ recompile */ t1, t2 set t1.a=t1.a+100, t2.a=t1.a+100  where t1.a=t2.a using index i_t2_a keylimit 0,1;
-select * from t1 order by 1, 2;
-select * from t2 order by 1, 2;
-drop table t1;
-drop table t2;
-
-
-create table t1(a int, b int, c int);
-create table t2(a int, b int ,c int);
-insert into t1 values (1,1,1), (2,2,2);
 insert into t2 values (1,1,1), (2,2,2);
 create index i1 on t1(a);
 create index i2 on t2(a);

@@ -52,29 +52,6 @@ select /*+ recompile */ * from t1 where a>0 and rownum between -3 and 0 using in
 select /*+ recompile */ * from t1 where a>0 and rownum between 1 and -3 using index idx_t1_abc;
 
 
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 2,5;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 1,5;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 0,5;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 5;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit -1,5;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 3,-1;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 3,0;
-select /*+ recompile */ * from t1 where a>0 using index idx_t1_abc(+) keylimit 3,1;
-
-
--- CUBRIDSUS-4546
-select /*+ RECOMPILE */ a from t1 where a>0 group by a asc having groupby_num()<100 using index idx_t1_abc keylimit 5,10;
-
-
--- no result, there are only 5 matching rows
-select a,c from t1 where a>0 and c ='011' using index idx_t1_ac keylimit 5,10;
-
--- last 2 results
-select a,c from t1 where a>0 and c ='011' using index idx_t1_ac keylimit 3,2;
-
--- -> keylimit 2,2 (low = max(lows), cnt = min(cnts));
-select a,c from t1 where a>0 and c ='011' using index idx_t1_ac keylimit 2,10 limit 1,2;
-
 select a,c from t1 where a>0 and c ='011' using index idx_t1_ac limit 1,3;
 
 

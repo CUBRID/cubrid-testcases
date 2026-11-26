@@ -15,10 +15,6 @@ select /*+ recompile */ a from t1 use index (i_t1_a) where a>'A' limit 1,10;
 select /*+ recompile */ a from t1 use index (i_t1_a) where a>'A'  limit 5;
 --test
 select /*+ recompile */ a from t1 use index (i_t1_a) where a>'A' limit 0;
---test: should fail
-select /*+ recompile */ a from t1 use index (i_t1_a) keylimit 5 where a>'A';
---test
-select /*+ recompile */ a from t1 use index (i_t1_a) where a>'A' limit 0;
 --test
 
 select /*+ recompile */ id%10,count(*) from t1 where id>0 group by id%10 using index pk_t1_id;

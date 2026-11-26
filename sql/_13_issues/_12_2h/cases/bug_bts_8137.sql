@@ -8,7 +8,7 @@ insert into t1 values (1,1),(2,2),(3,3);
 insert into t2 values (1,1),(2,2);
 create index i_t1_a on t1(a);
 create index i_t2_a on t2(a);
-create view v2 as select * from t2 where a>0 using index i_t2_a keylimit 1,1 order by 1,2;
+create view v2 as select * from t2 where a>0 using index i_t2_a order by 1,2 limit 1,1;
 
 --below result is good. (1,1), (3,3) were returned.
 select t1.*, v2.* from t1 left join v2 on t1.a=v2.a where v2.a is null order by 1, 2;

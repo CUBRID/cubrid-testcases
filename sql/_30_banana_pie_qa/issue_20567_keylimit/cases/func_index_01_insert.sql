@@ -18,21 +18,4 @@ create table x(col1 int,col2 varchar(20),col3 date);
 insert into x select /*+ recompile */* FROM t
 WHERE year(col3)=2008 and col2='book2' ;
 select * from x order by 1,2,3;
-
-insert into x select * FROM t
-WHERE year(col3)=2008 and col2='book2' using index idx1(+) keylimit 0+0+0+0+0+0+0,1-1+1;
-select * from x order by 1,2,3;
-
-insert into x select *
-FROM t
-WHERE year(col3)=2008 and col2='book2' using index idx2(+) keylimit 2-(2*1),1;
-select * from x order by 1,2,3;
-insert into x select *
-FROM t
-WHERE year(col3)=2008 or col2='book2' using index idx2(+) keylimit 1*(2-2),3;
-select * from x order by 1,2,3;
-insert into x select *
-FROM t
-WHERE year(col3)=2008 or col2='book2' using index idx1(+) keylimit 0,3;
-select * from x order by 1,2,3;
 drop table if exists t,x;

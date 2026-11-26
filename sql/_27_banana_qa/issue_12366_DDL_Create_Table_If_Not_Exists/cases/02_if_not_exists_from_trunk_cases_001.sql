@@ -22,9 +22,9 @@ insert into t1 values (10, 'Bli', '011');
 
 --TEST:
 
-create table if not exists t2 as select * from t1 where a>0 and c='086' using index idx_t1_ac kEyLiMiT 2,4;
+create table if not exists t2 as select * from t1 where a>0 and c='086' using index idx_t1_ac limit 2,4;
 desc t2;
-create table if not exists t2 as select * from t1 where a>0 and c='086' using index idx_t1_ac kEyLiMiT 2,4;
+create table if not exists t2 as select * from t1 where a>0 and c='086' using index idx_t1_ac limit 2,4;
 desc t2;
 
 drop class if exists t1,t2;
@@ -60,13 +60,13 @@ insert into t1 values (
 
 create index idx_t1_all on t1(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q);
 
-insert into t1 select a,b,c,d,e,f,g+10,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all keylimit 1,1;
-insert into t1 select a,b,c,d,e,f,g+100,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all keylimit 1,2;
-insert into t1 select a,b,c,d,e,f,g+1000,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all keylimit 1,4;
+insert into t1 select a,b,c,d,e,f,g+10,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all limit 1;
+insert into t1 select a,b,c,d,e,f,g+100,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all limit 2;
+insert into t1 select a,b,c,d,e,f,g+1000,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all limit 4;
 
-create table if not exists t2 as select a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all keylimit 1,1;
+create table if not exists t2 as select a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all limit 1;
 desc t2;
-create table if not exists t2 as select a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all keylimit 1,1;
+create table if not exists t2 as select a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q from t1 where a is not null using index idx_t1_all limit 1;
 
 
 desc t2;

@@ -85,21 +85,6 @@ drop table t2;
 
 create table t1(a int, b int);
 create table t2(a int, b int);
-create index i_t1_a on t1(a) where a>=40;
-create index i_t2_a on t2(a) where a<60;
-create index i_t1_b on t1(b);
-create index i_t2_b on t2(b);
-insert into t1 select rownum, rownum from db_class x1, db_class x2 limit 100;
-insert into t2 select rownum, rownum from db_class x1, db_class x2 limit 100;
-delete /*+ recompile ordered */ t1.*, t2.* from t1, t2 where t1.a=t2.a and t1.a>0 and t2.a >0 using index i_t1_a keylimit 10,10,i_t2_a keylimit 1, 1;
-delete /*+ recompile ordered */ t1.*, t2.* from t1, t2 where t1.a=t2.a and t1.a>0 and t2.a >0 using index i_t1_a keylimit 10,10,i_t2_a keylimit 10,10;
-select count(*) from t1;
-select count(*) from t2;
-drop table t1;
-drop table t2;
-
-create table t1(a int, b int);
-create table t2(a int, b int);
 create index i_t1_a on t1(a);
 create index i_t2_a on t2(a);
 create index i_t1_b on t1(b);
@@ -224,7 +209,7 @@ drop table t2;
 
 create table t1(a int, b int, index i(a,b));
 insert into t1 values (1,1),(2,2),(3,3);
-delete t1 from t1 inner join (select * from t1 where a>1 using index i_t1_a_b keylimit 1,1) v1 on t1.a=v1.a;
+delete t1 from t1 inner join (select * from t1 where a>1 using index i_t1_a_b) v1 on t1.a=v1.a;
 select * from t1 order by 1, 2;
 drop table t1;
 
@@ -255,16 +240,6 @@ create table t2 like t1;
 insert into t1(a, b) values (2,2), (3,3), (6,6), (7,7), (8,8);
 insert into t2(a,b) values (2,2), (3,3), (4,4),(5,5),(9,9),(10,10), (6,6);
 update t1 join t2 on t1.a=t2.a set t1.a=default, t2.a=default, t1.b=default(t1.b), t2.b=default(t2.b);
-select * from t1 order by 1,2;
-select * from t2 order by 1,2;
-drop table t1;
-drop table t2;
-
-create table t1(a varchar(10) default USER, b varchar(10) default USER, index i_t1_a(a));
-create table t2 like t1;
-insert into t1(a, b) values (2,2), (3,3), (6,6), (7,7), (8,8);
-insert into t2(a,b) values (2,2), (3,3), (4,4),(5,5),(9,9),(10,10), (6,6);
-update /*+ recompile */ t1 join t2 on t1.a=t2.a set t1.a=default, t2.a=default, t1.b=default(t1.b), t2.b=default(t2.b) where t1.a>=0 using index t1.i_t1_a(+) keylimit 1,1, t2.i_t1_a(+) keylimit 0,1;
 select * from t1 order by 1,2;
 select * from t2 order by 1,2;
 drop table t1;

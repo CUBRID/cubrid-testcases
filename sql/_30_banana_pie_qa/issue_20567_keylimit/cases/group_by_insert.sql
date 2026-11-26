@@ -23,66 +23,10 @@ WHERE j > 0
 GROUP BY j,k limit 0-0-0-0-0+2,10*10;
 select * from x order by 1,2;
 
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  0-0-0-0-0+2,10*10;
-select * from x order by 1,2;
-
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  0-0-0-0-0,10*10;
-select * from x order by 1,2;
-
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  1;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  0;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  0,1;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  0,1*6;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  6,1*6;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  6-1,1*6-2;
-select * from x order by 1,2;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j_k keylimit  6-1,1*6/3;
-select * from x order by 1,2;
-
 CREATE INDEX i_tab_j ON tab (j);
 insert into x select j,k
 FROM tab
 WHERE j > 0
 GROUP BY j,k  limit  6-1,1*6/3;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j(+)  keylimit  6-1,1*6/3;
-insert into x select j,k
-FROM tab
-WHERE j > 0
-GROUP BY j,k using index i_tab_j(+)  keylimit  0,6;
 drop if exists tab,x;
 

@@ -14,12 +14,6 @@ insert into t select * from t;
 insert into t select * from t;
 create index idx1  on t(col3) where year(col3)>2008;
 select * from t where year(col3)>2008 order by 1 limit 0,1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 0,1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 0+1,1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 0+1,2-1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 0*1,1*1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 2*1,1*1;
-delete from t where year(col3)>2008 using index idx1(+) keylimit 2/2-1,1*1+1;
 
 delete from t where year(col3)>2008 using index idx1(+) limit 1;
 delete from t where year(col3)>2008 using index idx1(+) limit 0+1;

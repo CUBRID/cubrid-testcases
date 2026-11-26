@@ -25,13 +25,10 @@
  *    Case 6:  the subquery joins with JOIN ... ON: the derived table selects only the column its ON reads
  *    Case 7:  ORDERED of the subquery stays inside the derived table and reads tc first
  *    Case 8:  NO_COVERING_IDX and USING INDEX NONE stay inside the derived table and apply there
- *    Case 9:  USING INDEX ... KEYLIMIT keeps the subquery nested. tg holds 1000 rows matching nothing and
- *             th.ca > 0 lets i_th_ca read th, so a derived table would read th first and stop at its first
- *             key 200: no row instead of 3
  *    Case 10: a large indexed outer: the derived table is read first with DISTINCT and probes t_big by index
  */
 
-drop table if exists ta, tb, tc, te, tf, tg, th, t_big;
+drop table if exists ta, tb, tc, te, t_big;
 
 create table ta (ca int not null);
 insert into ta values (1), (2), (3);
@@ -90,20 +87,6 @@ select /*+ recompile */ count(*) from ta where exists (select /*+ no_covering_id
 select /*+ recompile */ count(*) from ta where exists (select 1 from tb, tc where tb.ca = ta.ca and tb.cb = tc.ca using index none);
 
 
-evaluate 'Case 9: USING INDEX ... KEYLIMIT keeps the subquery nested';
-create table tf (ca int);
-insert into tf values (3);
-create table tg (ca int, cb int);
-insert into tg values (3, 400);
-insert into tg select -level, -level from db_root connect by level <= 1000;
-create index i_tg_ca on tg (ca);
-create table th (ca int);
-insert into th values (200), (400);
-create index i_th_ca on th (ca);
-update statistics on tg, th;
-select /*+ recompile */ ca from tf where exists (select 1 from tg, th where tg.ca = tf.ca and tg.cb = th.ca and th.ca > 0 using index i_th_ca keylimit 1);
-
-
 evaluate 'Case 10: a large indexed outer: the derived table is read first with DISTINCT';
 create table t_big (ca int);
 insert into t_big select mod(rownum, 20) + 1 from db_class a, db_class b, db_class c limit 3000;
@@ -113,4 +96,4 @@ update statistics on t_big with fullscan;
 select /*+ recompile */ count(*) from t_big where exists (select 1 from tb, tc where tb.ca = t_big.ca and tb.cb = tc.ca);
 
 
-drop table ta, tb, tc, te, tf, tg, th, t_big;
+drop table ta, tb, tc, te, t_big;

@@ -81,47 +81,6 @@ order by upper(a.col_a) asc, b.col_a asc
 limit 5;
 
 
-evaluate 'Test 3 Setup';
-
-drop table if exists tbl_keylimit;
-
-create table tbl_keylimit (
-    col_a int,
-    col_b int,
-    col_s varchar(100)
-);
-
-insert into tbl_keylimit values
-(2,8,'two'),
-(1,9,'one'),
-(3,7,'three'),
-(4,6,'four'),
-(5,5,'five'),
-(6,4,'six'),
-(7,3,'seven'),
-(8,2,'eight'),
-(9,1,'nine');
-
-create index idx_keylimit_upper_col_a on tbl_keylimit(upper(col_a));
-
-evaluate '[TEST 3.1] KEYLIMIT -> skip order by';
-select /*+ recompile */
-    *
-from tbl_keylimit
-where upper(col_a) > '0'
-using index idx_keylimit_upper_col_a
-keylimit 2,4
-order by upper(col_a);
-
-evaluate '[TEST 3.2] KEYLIMIT -> skip order by (desc)';
-select /*+ recompile */
-    *
-from tbl_keylimit
-where upper(col_a) > '0'
-using index idx_keylimit_upper_col_a
-keylimit 4,2
-order by upper(col_a);
-
 evaluate 'Test 4 Setup';
 
 drop table if exists tbl_brd_notice;
@@ -299,7 +258,6 @@ evaluate 'Clean up';
 drop table tbl_join_a;
 drop table tbl_join_b;
 drop table tbl_join_c;
-drop table tbl_keylimit;
 drop table tbl_orderby_num;
 drop table tbl_brd_notice;
 drop table tbl_multi_eq;

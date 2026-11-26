@@ -22,10 +22,12 @@ a
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_a keylimit ?, ? term[?] (covers)
+    index: i_tb_a term[?] (covers)
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+select tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    
 2     
@@ -34,10 +36,12 @@ a
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_a keylimit ?, ? term[?] (covers) (desc_index forced)
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a> ?:? ) using index tb.i_tb_a order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    
 4     
@@ -45,10 +49,12 @@ a
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_a keylimit ?, ? term[?] (covers)
+    index: i_tb_a term[?] (covers)
+    sort:  ? asc
     cost:  ? card ?
 Query stmt:
-select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+select tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    
 2     
@@ -56,10 +62,12 @@ a
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_a keylimit ?, ? term[?] (covers) (desc_index forced)
+    index: i_tb_a term[?] (covers) (desc_index)
+    sort:  ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a keylimit  ?:? , ?:? 
+select /*+ USE_DESC_IDX */ tb.a from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) using index tb.i_tb_a order by ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    
 
@@ -69,33 +77,39 @@ a    b
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_ab keylimit ?, ? term[?] (covers)
+    index: i_tb_ab term[?] (covers)
     filtr: term[?]
+    sort:  ? asc, ? asc
     cost:  ? card ?
 Query stmt:
-select tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+select tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab order by ?, ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_ab keylimit ?, ? term[?] (covers) (desc_index forced)
+    index: i_tb_ab term[?] (covers) (desc_index)
     filtr: term[?]
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 a    b    
 
 Query plan:
 iscan
     class: tb node[?]
-    index: i_tb_ab keylimit ?, ? term[?] (covers) (desc_index forced)
+    index: i_tb_ab term[?] (covers) (desc_index)
     filtr: term[?]
+    sort:  ? desc, ? desc
     cost:  ? card ?
 Query stmt:
-select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab keylimit  ?:? , ?:? 
+select /*+ USE_DESC_IDX */ tb.a, tb.b from tb tb where (tb.a>= ?:?  and tb.a<= ?:? ) and (tb.b> ?:? ) using index tb.i_tb_ab order by ? desc , ? desc  for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
 ===================================================
 0
 ===================================================

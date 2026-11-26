@@ -16,19 +16,9 @@ create index i_t_i on t(i);
 
 set system parameters 'xasl_debug_dump=yes';
 
-select /*+ recompile */ t.*,rownum  from t where i>0 and rownum between 2 and 5 using index i_t_i keylimit 1,5 order by i desc;
-
-select /*+ recompile use_desc_idx */ t.*,rownum  from t where i>0 and rownum between 2 and 5 using index i_t_i keylimit 1,5;
-
 select /*+ recompile */ t.*,rownum  from t where i>0 and rownum between 2 and 5 using index i_t_i order by i desc;
 
 select /*+ recompile use_desc_idx */ t.*,rownum  from t where i>0 and rownum between 2 and 5 using index i_t_i;
-
---CUBRIDSUS-4801(IE)
-select /*+ recompile */ t.*  from t where i>0  using index i_t_i keylimit 2,10 order by i desc limit 0,2;
-select /*+ recompile */ t.*  from t where i>0  using index i_t_i keylimit 2,10 order by i desc limit 1,2;
-select /*+ recompile */ t.*  from t where i>0  using index i_t_i keylimit 2,10 order by i desc limit 2,2;
-
 
 set system parameters 'xasl_debug_dump=no';
 

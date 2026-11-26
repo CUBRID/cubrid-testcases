@@ -10,8 +10,6 @@ insert into t1 values (4, 'dbms qa2 part');
 
 --result is good
 select /*+ recompile */ * from t1 where v like 'dbms qa1%' or (v like 'dbms qa2%' and id>3) using index i_t1_v;
---result is incorrect. we expect result is the same as above query.
-select /*+ recompile */ * from t1 where v like 'dbms qa1%' or (v like 'dbms qa2%' and id>3) using index i_t1_v keylimit 1,3;
 
 drop table t1;
 
