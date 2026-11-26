@@ -1,0 +1,333 @@
+===================================================
+0
+===================================================
+0
+===================================================
+200000
+===================================================
+0
+===================================================
+0
+===================================================
+8001
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: range of a few rows, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+12     5710     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx2     
+
+Query plan:
+iscan
+    class: pc_t node[?]
+    index: i_pc_k term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(pc_t.v as bigint)), min(pc_t.pad), max(pc_t.pad) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+12     5710     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx2     
+
+===================================================
+    
+Case 2: range of a tenth of the rows, bitmap heap scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+20004     10070558     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+Query plan:
+iscan
+    class: pc_t node[?]
+    index: i_pc_k term[?] (bitmap heap scan)
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(pc_t.v as bigint)), min(pc_t.pad), max(pc_t.pad) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+20004     10070558     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+===================================================
+    
+Case 3: range of most of the rows, sequential scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+160004     80637485     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+Query plan:
+sscan
+    class: pc_t node[?]
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(pc_t.v as bigint)), min(pc_t.pad), max(pc_t.pad) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+160004     80637485     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+===================================================
+    
+Case 4: the range of Case 2 with a parallel hint, bitmap heap scan; result = heap scan     
+
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+20004     10070558     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+Query plan:
+iscan
+    class: pc_t node[?]
+    index: i_pc_k term[?] (bitmap heap scan)
+    cost:  ? card ?
+Query stmt:
+select /*+ PARALLEL(?) */ count(*), sum( cast(pc_t.v as bigint)), min(pc_t.pad), max(pc_t.pad) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )
+===================================================
+count(*)    sum( cast(v as bigint))    min(pad)    max(pad)    
+20004     10070558     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx100044     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx9     
+
+===================================================
+    
+Case 5: hash join, a bitmap heap scan below each input; result = heap scan     
+
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+4004     397725226     397725226     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: iscan
+               class: a node[?]
+               index: i_pc_k term[?] (bitmap heap scan)
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_pc_k term[?] (bitmap heap scan)
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum( cast(a.id as bigint)), sum( cast(b.id as bigint)) from pc_t a, pc_t b where (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) and a.k=b.k and a.grp=b.grp
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+4004     397725226     397725226     
+
+===================================================
+    
+Case 6: hash join that a LIMIT stops early, lookup in key order below each input; result = 50     
+
+===================================================
+count(*)    
+50     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?] AND term[?]
+    outer: iscan
+               class: a node[?]
+               index: i_pc_k term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: b node[?]
+               index: i_pc_k term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+(select /*+ ORDERED USE_HASH NO_MERGE */ a.id from pc_t a, pc_t b where (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) and a.k=b.k and a.grp=b.grp and (inst_num()<= ?:? ))
+Query plan:
+sscan
+    class: x node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from (select /*+ ORDERED USE_HASH NO_MERGE */ a.id from pc_t a, pc_t b where (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) and a.k=b.k and a.grp=b.grp and (inst_num()<= ?:? )) x (id)
+===================================================
+    
+Case 7: merge join, lookup in key order below each input; result = heap scan     
+
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+4004     397725226     397725226     
+
+Query plan:
+temp
+    order: UNORDERED
+    subplan: m-join (inner join)
+                 edge:  term[?] AND term[?]
+                 outer: temp
+                            order: grp[?]
+                            subplan: iscan
+                                         class: a node[?]
+                                         index: i_pc_k term[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 inner: temp
+                            order: grp[?]
+                            subplan: iscan
+                                         class: b node[?]
+                                         index: i_pc_k term[?]
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_MERGE */ count(*), sum( cast(a.id as bigint)), sum( cast(b.id as bigint)) from pc_t a, pc_t b where (a.k>= ?:?  and a.k<= ?:? ) and (b.k>= ?:?  and b.k<= ?:? ) and a.k=b.k and a.grp=b.grp
+===================================================
+count(*)    sum( cast(a.id as bigint))    sum( cast(b.id as bigint))    
+4004     397725226     397725226     
+
+===================================================
+    
+Case 8: index join, a bitmap heap scan outside and a lookup in key order inside; result = heap scan     
+
+===================================================
+count(*)    sum( cast(t.id as bigint))    sum(j.w)    
+7203     715250245     28812     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t node[?]
+               index: i_pc_k term[?] (bitmap heap scan)
+               sargs: term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: j node[?]
+               index: i_pc_j term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_IDX PARALLEL(?) */ count(*), sum( cast(t.id as bigint)), sum(j.w) from pc_t t, pc_j j where (t.k>= ?:?  and t.k<= ?:? ) and j.k=t.k and (t.grp< ?:? )
+===================================================
+count(*)    sum( cast(t.id as bigint))    sum(j.w)    
+7203     715250245     28812     
+
+===================================================
+    
+Case 9: analytic function, a bitmap heap scan, and with a LIMIT the lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    
+20004     200090010     599880972     
+
+Query plan:
+iscan
+    class: pc_t node[?]
+    index: i_pc_k term[?] (bitmap heap scan)
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: rank partition by () order by (? asc nulls first, ? asc nulls first)
+Query stmt:
+(select rank() over (order by ?, ?), pc_t.id from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? ))
+Query plan:
+sscan
+    class: x node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(x.r as bigint)), sum( cast(x.r as bigint)* cast( mod(x.id, ?) as bigint)) from (select rank() over (order by ?, ?) as [r], pc_t.id from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )) x (r, id)
+===================================================
+count(*)    sum( cast(r as bigint))    sum( cast(r as bigint)* mod(id, 7))    
+20004     200090010     599880972     
+
+===================================================
+id    v    r    
+8072     0     1     
+16144     0     2     
+24216     0     3     
+32288     0     4     
+40360     0     5     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: pc_t node[?]
+                 index: i_pc_k term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: rank partition by () order by (? asc nulls first, ? asc nulls first)
+Query stmt:
+select pc_t.id, pc_t.v, rank() over (order by ?, ?) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? ) order by ?, ? for orderby_num()<= ?:? 
+===================================================
+id    v    r    
+8072     0     1     
+16144     0     2     
+24216     0     3     
+32288     0     4     
+40360     0     5     
+
+===================================================
+    
+Case 10: two analytic functions, the key order saves the sort of one, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(ra as bigint)* mod(id, 7))    sum( cast(rb as bigint)* mod(id, 7))    
+20004     600080003     599880972     
+
+Query plan:
+iscan
+    class: pc_t node[?]
+    index: i_pc_k term[?]
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: rank partition by () order by (? asc nulls first)
+    run[?]: sort with key (? asc nulls first, ? asc nulls first)
+           func[?]: row_number partition by () order by (? asc nulls first, ? asc nulls first)
+Query stmt:
+(select rank() over (order by ?), pc_t.id, row_number() over (order by ?, ?) from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? ))
+Query plan:
+sscan
+    class: x node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(x.ra as bigint)* cast( mod(x.id, ?) as bigint)), sum( cast(x.rb as bigint)* cast( mod(x.id, ?) as bigint)) from (select rank() over (order by ?) as [ra], pc_t.id, row_number() over (order by ?, ?) as [rb] from pc_t pc_t where (pc_t.k>= ?:?  and pc_t.k<= ?:? )) x (ra, id, rb)
+===================================================
+count(*)    sum( cast(ra as bigint)* mod(id, 7))    sum( cast(rb as bigint)* mod(id, 7))    
+20004     600080003     599880972     
+
+===================================================
+    
+Case 11: analytic function over an index join, the key order of the outer scan saves its sort, lookup in key order; result = heap scan     
+
+===================================================
+count(*)    sum( cast(ra as bigint)* mod(id, 7))    sum(w)    
+8004     96071560     32016     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t node[?]
+               index: i_pc_k term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: j node[?]
+               index: i_pc_j term[?]
+               cost:  ? card ?
+    cost:  ? card ?
+Analytic functions:
+    run[?]: sort with key (? asc nulls first)
+           func[?]: rank partition by () order by (? asc nulls first)
+Query stmt:
+(select /*+ ORDERED USE_IDX NO_MERGE PARALLEL(?) */ t.id, t.pad, j.w, rank() over (order by ?) from pc_t t, pc_j j where (t.k>= ?:?  and t.k<= ?:? ) and j.k=t.k)
+Query plan:
+sscan
+    class: x node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*), sum( cast(x.ra as bigint)* cast( mod(x.id, ?) as bigint)), sum(x.w) from (select /*+ ORDERED USE_IDX NO_MERGE PARALLEL(?) */ t.id, t.pad, j.w, rank() over (order by ?) as [ra] from pc_t t, pc_j j where (t.k>= ?:?  and t.k<= ?:? ) and j.k=t.k) x (id, pad, w, ra)
+===================================================
+count(*)    sum( cast(ra as bigint)* mod(id, 7))    sum(w)    
+8004     96071560     32016     
+
+===================================================
+0
