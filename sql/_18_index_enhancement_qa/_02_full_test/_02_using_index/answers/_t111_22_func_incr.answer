@@ -7,6 +7,83 @@
 ===================================================
 0
 ===================================================
+a    a    
+1     1     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    a    
+2     2     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    a    
+3     3     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    a    
+4     4     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    a    
+5     5     
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
+a    a    
+
+Query plan:
+iscan
+    class: t node[?]
+    index: i_t_a term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t.a, t.a,  incr(t.a),  decr(t.a) from t t where (t.a> ?:? ) using index t.i_t_a order by ? for orderby_num()> ?:?  and orderby_num()<= ?:? 
+/* ---> skip ORDER BY */
+===================================================
 a    
 1     
 2     
