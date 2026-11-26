@@ -11,10 +11,14 @@
  *    Case 5: three-level hierarchy, ALL on the middle class, ALL ... (EXCEPT ...)
  *    Case 6: an inner or LEFT join that follows an unnested SEMI/ANTI join, whose inner is ALL superclass
  *    Case 7: DELETE / UPDATE with a SEMI/ANTI subquery over ALL superclass
+ *    Case 8: an index scan on every class (an index of the same name on each class): covering and
+ *            non-covering (a predicate on a column outside the index, NO_COVERING_IDX) SEMI/ANTI inners,
+ *            and joins that follow a SEMI join. The scan of a class that starts again for another outer row
+ *            reads its index from the first key.
  *    Each NL query is compared with the same query by hash join or by a UNION ALL derived table.
  */
 
-drop table if exists sx, hxc, hx, hec, he, h3c, h3b, h3a, hc, hs, hu, hx2, gc, gb, ga, gq, gx, gd;
+drop table if exists sx, hxc, hx, hec, he, h3c, h3b, h3a, hc, hs, hu, hx2, gc, gb, ga, gq, gx, gd, ic, ib, ia, io, ix;
 
 
 evaluate 'Case 1: NL ANTI join over ALL superclass';
@@ -36,7 +40,7 @@ select /*+ recompile USE_NL */ o.k from sx o where o.k in (select i.k from all h
 select /*+ recompile */ o.k from sx o where exists (select 1 from (select k from hx union all select k from hxc) i where o.k = i.k) order by 1;
 
 
-evaluate 'Case 3: index scans on each class of the hierarchy';
+evaluate 'Case 3: an index on each class of the hierarchy (few rows, so the plan may read the heap)';
 create index ix_hx on hx (k);
 create index ix_hxc on hxc (k);
 update statistics on sx, hx, hxc with fullscan;
@@ -124,4 +128,41 @@ update /*+ USE_NL */ gd set kb = 9 where exists (select 1 from all ga i where i.
 select count (*) from gd where kb = 9;
 
 
-drop table if exists sx, hxc, hx, hec, he, h3c, h3b, h3a, hc, hs, hu, hx2, gc, gb, ga, gq, gx, gd;
+evaluate 'Case 8: index scan on every class of the hierarchy, covering and non-covering';
+create table ia (id int, k int, v int);
+create table ib under ia (b int);
+create table ic under ib (c int);
+insert into ia select level, mod (level, 500), mod (level, 7) from db_root connect by level <= 5000;
+insert into ib (id, k, v) select level + 10000, mod (level, 500) + 250, mod (level, 7) from db_root connect by level <= 5000;
+insert into ic (id, k, v) select level + 20000, mod (level, 500) + 600, mod (level, 7) from db_root connect by level <= 5000;
+create index ix_k on ia (k);
+create index ix_k on ib (k);
+create index ix_k on ic (k);
+create table io (id int, k int, kb int);
+insert into io select level, mod (level * 13, 1200), mod (level, 4) from db_root connect by level <= 300;
+create table ix (k2 int);
+insert into ix select mod (level, 3) from db_root connect by level <= 30;
+update statistics on ia, ib, ic, io, ix with fullscan;
+
+--@queryplan
+select /*+ recompile USE_NL */ count (*) from io o where exists (select 1 from all ia i where i.k = o.k and i.k >= 0);
+select /*+ recompile USE_HASH */ count (*) from io o where exists (select 1 from all ia i where i.k = o.k and i.k >= 0);
+--@queryplan
+select /*+ recompile USE_NL */ count (*) from io o where not exists (select 1 from all ia i where i.k = o.k and i.k >= 0);
+select /*+ recompile USE_HASH */ count (*) from io o where not exists (select 1 from all ia i where i.k = o.k and i.k >= 0);
+--@queryplan
+select /*+ recompile USE_NL */ count (*) from io o where exists (select 1 from all ia i where i.k = o.k and i.k >= 0 and i.v = 3 using index i.ix_k(+));
+select /*+ recompile USE_HASH */ count (*) from io o where exists (select 1 from all ia i where i.k = o.k and i.k >= 0 and i.v = 3);
+select /*+ recompile USE_NL */ count (*) from io o where not exists (select 1 from all ia i where i.k = o.k and i.k >= 0 and i.v = 3 using index i.ix_k(+));
+select /*+ recompile USE_HASH */ count (*) from io o where not exists (select 1 from all ia i where i.k = o.k and i.k >= 0 and i.v = 3);
+--@queryplan
+select /*+ recompile USE_NL NO_COVERING_IDX */ count (*) from io o where exists (select 1 from all ia i where i.k = o.k and i.k >= 0 using index i.ix_k(+));
+select /*+ recompile USE_NL NO_COVERING_IDX */ count (*) from io o where not exists (select 1 from all ia i where i.k = o.k and i.k >= 0 using index i.ix_k(+));
+--@queryplan
+select /*+ recompile USE_NL */ count (*) from io t0 inner join all ia t1 on t0.k = t1.k and t1.k >= 0 where t0.kb in (select k2 from ix);
+select /*+ recompile USE_HASH */ count (*) from io t0 inner join all ia t1 on t0.k = t1.k and t1.k >= 0 where t0.kb in (select k2 from ix);
+select /*+ recompile USE_NL */ count (*) from io t0 inner join all ia t1 on t0.k = t1.k and t1.k >= 0 and t1.v = 3 where t0.kb in (select k2 from ix) using index t1.ix_k(+);
+select /*+ recompile USE_HASH */ count (*) from io t0 inner join all ia t1 on t0.k = t1.k and t1.v = 3 where t0.kb in (select k2 from ix);
+
+
+drop table if exists sx, hxc, hx, hec, he, h3c, h3b, h3a, hc, hs, hu, hx2, gc, gb, ga, gq, gx, gd, ic, ib, ia, io, ix;
