@@ -1,0 +1,375 @@
+/**
+ *  This test case verifies CBRD-27529: evaluate uncorrelated IN and NOT IN subquery filters with a hash lookup
+ *  instead of a list scan per row
+ *
+ *  The R_EQ lookups of a list subquery filter (IN, NOT IN, = SOME, <> ALL) go through a hash over the list from the
+ *  first lookup of one execution of the subquery on, and a list too large for memory is read as before. The cases
+ *  check that the rows are those of the list scan, and the traces show the HASH_LOOKUP line where the hash answers.
+ *
+ *  Coverage:
+ *    Case 1:   three-valued logic: a list with no NULL, with a NULL, with only NULL and with no row gives the rows of
+ *              the list scan
+ *    Case 2:   type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive
+ *              collation, DATE and DATETIME
+ *    Case 3:   NUMERIC values an expression makes
+ *    Case 4:   a list that holds the same values many times
+ *    Case 5:   a value no conversion reads
+ *    Case 6:   trace: HASH_LOOKUP under the subquery when the hash answers
+ *    Case 7:   trace: HASH_LOOKUP for one outer row as well
+ *    Case 8:   trace: no HASH_LOOKUP for a correlated subquery
+ *    Case 9:   trace: HASH_LOOKUP by tuple positions in memory (max_hash_list_scan_size below a page)
+ *    Case 10:  trace: no HASH_LOOKUP for a list too large for memory (max_hash_list_scan_size below the positions), the
+ *              lookups read the list
+ *    Case 11:  trace: max_hash_list_scan_size 0 turns the hash off
+ *    Case 12:  trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery
+ *    Case 13:  strings a byte collation compares equal: a space and a NUL, trailing NULs
+ *    Case 14:  strings the other built-in collations and the collation of a locale compare equal: a space, a NUL and an
+ *              EUC space, trailing ones
+ *    Case 15:  a character an expanding collation gives no weight (U+00AD)
+ *    Case 16:  long compressed strings in the list
+ *    Case 17:  negative NUMERIC values of other scales an expression makes
+ *    Case 18:  SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, give the rows of
+ *              NO_HASH_LOOKUP
+ *    Case 19:  PX scan: the leader builds the hash before the workers start and the workers read through it, in memory
+ *              and by tuple positions, and the counts are those of NO_HASH_LOOKUP
+ *    Case 20:  uncorrelated subqueries executed in parallel, each with a hashed term, free each hash before its list
+ */
+
+-- PREPARE TEST
+drop table if exists ta, tb, tc, td, te;
+create table ta (id int, ca int, cb bigint, cc numeric(10,2), cd double, ce char(10), cf varchar(20),
+                 cg varchar(20) collate utf8_en_ci, ch varchar(20), ci datetime, cj date);
+create table tb (k varchar(10), ca int, cb bigint, cc numeric(12,3), cd double, ce char(10), cf varchar(20),
+                 cg varchar(20) collate utf8_en_ci, cgb varchar(20) collate utf8_bin, ch varchar(20), ci datetime,
+                 cj date);
+
+insert into ta values (1, 1, 1, 1.00, 0.0, 'a', 'a', 'A', '1', datetime'2026-01-01 00:00:00', date'2026-01-01');
+insert into ta values (2, 2, 2, 2.50, 2.5, 'b ', 'b', 'b', '2', datetime'2026-01-02 00:00:00', date'2026-01-02');
+insert into ta values (3, null, null, null, null, null, null, null, null, null, null);
+insert into ta values (4, 4, 4, 4.00, 4.0, 'd', 'd ', 'D', '4', datetime'2026-01-04 12:00:00', date'2026-01-04');
+insert into ta values (5, 5, 5, 5.10, 5.1, 'e', 'e', 'e', '5', datetime'2026-01-05 00:00:00', date'2026-01-05');
+
+-- k = 'plain': no NULL
+insert into tb values ('plain', 1, 1, 1.000, -0.0, 'a', 'a', 'a', 'a', '1', datetime'2026-01-01 00:00:00', date'2026-01-01');
+insert into tb values ('plain', 4, 4, 4.000, 4.0, 'd', 'd', 'd', 'd', '4', datetime'2026-01-04 00:00:00', date'2026-01-04');
+insert into tb values ('plain', 6, 6, 6.000, 6.0, 'f', 'f', 'f', 'f', '6', datetime'2026-01-06 00:00:00', date'2026-01-06');
+insert into tb values ('plain', 5, 5, 5.100, 5.1, 'e ', 'e ', 'E', 'E', '5', datetime'2026-01-05 00:00:00', date'2026-01-05');
+-- k = 'null': a NULL among the values
+insert into tb values ('null', 1, 1, 1.000, 0.0, 'a', 'a', 'a', 'a', '1', datetime'2026-01-01 00:00:00', date'2026-01-01');
+insert into tb values ('null', null, null, null, null, null, null, null, null, null, null, null);
+-- k = 'allnull': only NULL
+insert into tb values ('allnull', null, null, null, null, null, null, null, null, null, null, null);
+-- k = 'bad': a string no number reads
+insert into tb values ('bad', 1, 1, 1, 1, 'a', 'a', 'a', 'a', '1', null, null);
+insert into tb values ('bad', 2, 2, 2, 2, 'b', 'b', 'b', 'b', 'x', null, null);
+
+update statistics on ta, tb with fullscan;
+
+-- START TEST
+evaluate 'Case 1: three-valued logic: a list with no NULL, with a NULL, with only NULL and with no row gives the rows of the list scan';
+
+select id from ta where ta.ca in (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca = some (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca <> all (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca in (select tb.ca from tb where tb.k = 'null') order by 1;
+select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null') order by 1;
+select id from ta where ta.ca <> all (select tb.ca from tb where tb.k = 'null') order by 1;
+select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'allnull') order by 1;
+select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'none') order by 1;
+select id, case when ta.ca not in (select tb.ca from tb where tb.k = 'null') then 'T'
+                when not (ta.ca not in (select tb.ca from tb where tb.k = 'null')) then 'F' else 'U' end
+  from ta order by 1;
+select id, case when ta.ca in (select tb.ca from tb where tb.k = 'plain') then 'T'
+                when not (ta.ca in (select tb.ca from tb where tb.k = 'plain')) then 'F' else 'U' end
+  from ta order by 1;
+
+evaluate 'Case 2: type pairs: INT, BIGINT, NUMERIC of other scales, DOUBLE with -0.0, CHAR and VARCHAR, a case-insensitive collation, DATE and DATETIME';
+
+select id from ta where ta.ca not in (select tb.cb from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cb not in (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca not in (select tb.cc from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cc not in (select tb.ca from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cc not in (select tb.cc from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cd not in (select tb.cd from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ca not in (select tb.cd from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ce not in (select tb.ce from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ce not in (select tb.cf from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cf not in (select tb.ce from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cf not in (select tb.cf from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cg not in (select tb.cg from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cf not in (select tb.cg from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cg not in (select tb.cf from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cg not in (select tb.cgb from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cj not in (select tb.ci from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.ci not in (select tb.cj from tb where tb.k = 'plain') order by 1;
+
+evaluate 'Case 3: NUMERIC values an expression makes';
+
+select id from ta where ta.cc not in (select tb.cc / 3 * 3 from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cc * 1.00 not in (select tb.cc + 0.000 from tb where tb.k = 'plain') order by 1;
+
+evaluate 'Case 4: a list that holds the same values many times';
+
+select id from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain'
+                                      union all select tb.ca from tb where tb.k = 'plain'
+                                      union all select tb.ca from tb where tb.k = 'null') order by 1;
+select id from ta where ta.cf not in (select tb.cf from tb where tb.k = 'plain'
+                                      union all select tb.cf from tb where tb.k = 'plain') order by 1;
+
+evaluate 'Case 5: a value no conversion reads';
+
+select id from ta where ta.ca not in (select tb.ch from tb where tb.k = 'bad') order by 1;
+select id from ta where ta.ch not in (select tb.ca from tb where tb.k = 'plain') order by 1;
+
+set trace on;
+
+evaluate 'Case 6: trace: HASH_LOOKUP under the subquery when the hash answers';
+
+select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain');
+show trace;
+
+evaluate 'Case 7: trace: HASH_LOOKUP for one outer row as well';
+
+select /*+ recompile */ count (*) from ta where ta.id = 1 and ta.ca not in (select tb.ca from tb where tb.k = 'plain');
+show trace;
+
+evaluate 'Case 8: trace: no HASH_LOOKUP for a correlated subquery';
+
+select /*+ recompile */ count (*) from ta
+where ta.ca not in (select tb.ca from tb where tb.k = 'plain' and tb.cb <> ta.id);
+show trace;
+
+evaluate 'Case 9: trace: HASH_LOOKUP by tuple positions in memory (max_hash_list_scan_size below a page)';
+
+set system parameters 'max_hash_list_scan_size=1k';
+select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
+show trace;
+
+evaluate 'Case 10: trace: no HASH_LOOKUP for a list too large for memory (max_hash_list_scan_size below the positions), the lookups read the list';
+
+set system parameters 'max_hash_list_scan_size=100';
+select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
+show trace;
+select id from ta where ta.cg not in (select tb.cgb from tb where tb.k = 'plain') order by 1;
+select id from ta where ta.cc * 1.00 not in (select tb.cc + 0.000 from tb where tb.k = 'plain') order by 1;
+
+evaluate 'Case 11: trace: max_hash_list_scan_size 0 turns the hash off';
+
+set system parameters 'max_hash_list_scan_size=0';
+select /*+ recompile */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'null');
+show trace;
+set system parameters 'max_hash_list_scan_size=default';
+
+evaluate 'Case 12: trace: NO_HASH_LOOKUP in a subquery turns the hash off for the term of that subquery';
+
+select /*+ recompile */ count (*) from ta
+where ta.ca not in (select /*+ NO_HASH_LOOKUP */ tb.ca from tb where tb.k = 'plain');
+show trace;
+-- the other term's subquery has no hint: its lookups use the hash
+select /*+ recompile */ count (*) from ta
+where ta.ca not in (select /*+ NO_HASH_LOOKUP */ tb.ca from tb where tb.k = 'plain')
+  and ta.cb not in (select tb.cb from tb where tb.k = 'plain');
+show trace;
+-- in the outer query the hint does not reach the subquery
+select /*+ recompile NO_HASH_LOOKUP */ count (*) from ta where ta.ca not in (select tb.ca from tb where tb.k = 'plain');
+show trace;
+-- IN, left a filter by OR rather than made a join
+select /*+ recompile */ count (*) from ta
+where ta.ca in (select /*+ NO_HASH_LOOKUP */ tb.ca from tb where tb.k = 'plain') or ta.id < 0;
+show trace;
+-- a view keeps the hint
+create view v27529 as select ta.id from ta where ta.ca not in (select /*+ NO_HASH_LOOKUP */ tb.ca from tb where tb.k = 'plain');
+show create view v27529;
+select /*+ recompile */ count (*) from v27529;
+show trace;
+drop view v27529;
+
+set trace off;
+
+evaluate 'Case 13: strings a byte collation compares equal: a space and a NUL, trailing NULs';
+
+create table tc (id int, ca varchar(10), cb varchar(10) collate utf8_en_ci);
+create table td (ca varchar(10), cb varchar(10) collate utf8_en_ci);
+insert into tc values (1, 'x', 'x'), (2, 'a b', 'A B'), (3, 'a', 'a'), (4, 'q', 'Q');
+insert into td values ('a' || chr (0) || 'b', 'a' || chr (0) || 'b'), ('a' || chr (0), 'A' || chr (0));
+select id from tc where tc.ca not in (select td.ca from td) order by 1;
+select id from tc where tc.ca <> all (select td.ca from td) order by 1;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+
+evaluate 'Case 14: strings the other built-in collations and the collation of a locale compare equal: a space, a NUL and an EUC space, trailing ones';
+
+create table tv (id int, s varchar(10));
+create table tw (s varchar(10));
+insert into tv values (1, 'x'), (2, 'a b'), (3, 'a' || chr (0) || 'b'), (4, 'c'), (5, 'c '), (6, 'c' || chr (0)),
+                      (7, '가 나'), (8, 'q');
+insert into tw values ('a' || chr (41377 using euckr) || 'b'), ('c' || chr (41377 using euckr)),
+                      ('가' || chr (0) || '나'), ('c' || chr (0) || chr (0)), ('Q');
+set trace on;
+
+create table tc (id int, ca varchar(10) collate euckr_bin, cb char(10) collate euckr_bin);
+create table td (ca varchar(10) collate euckr_bin, cb char(10) collate euckr_bin);
+insert into tc select id, s, s from tv;
+insert into td select s, s from tw;
+select /*+ recompile */ id from tc where tc.ca not in (select td.ca from td) order by 1;
+show trace;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+
+create table tc (id int, ca varchar(10) collate binary, cb char(10) collate binary);
+create table td (ca varchar(10) collate binary, cb char(10) collate binary);
+insert into tc select id, s, s from tv;
+insert into td select s, s from tw;
+select /*+ recompile */ id from tc where tc.ca not in (select td.ca from td) order by 1;
+show trace;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+
+create table tc (id int, ca varchar(10) collate utf8_ko_cs, cb char(10) collate utf8_ko_cs);
+create table td (ca varchar(10) collate utf8_ko_cs, cb char(10) collate utf8_ko_cs);
+insert into tc select id, s, s from tv;
+insert into td select s, s from tw;
+select /*+ recompile */ id from tc where tc.ca not in (select td.ca from td) order by 1;
+show trace;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+
+create table tc (id int, ca varchar(10) collate utf8_tr_cs, cb char(10) collate utf8_tr_cs);
+create table td (ca varchar(10) collate utf8_tr_cs, cb char(10) collate utf8_tr_cs);
+insert into tc select id, s, s from tv;
+insert into td select s, s from tw;
+select /*+ recompile */ id from tc where tc.ca not in (select td.ca from td) order by 1;
+show trace;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+
+create table tc (id int, ca varchar(10) collate utf8_gen_ci, cb char(10) collate utf8_gen_ci);
+create table td (ca varchar(10) collate utf8_gen_ci, cb char(10) collate utf8_gen_ci);
+insert into tc select id, s, s from tv;
+insert into td select s, s from tw;
+select /*+ recompile */ id from tc where tc.ca not in (select td.ca from td) order by 1;
+show trace;
+select id from tc where tc.cb not in (select td.cb from td) order by 1;
+drop table tc, td;
+set trace off;
+drop table tv, tw;
+
+evaluate 'Case 15: a character an expanding collation gives no weight (U+00AD)';
+
+create table tc (id int, ca varchar(10) collate utf8_de_exp_ai_ci);
+create table td (ca varchar(10) collate utf8_de_exp_ai_ci);
+insert into tc values (1, 'x'), (2, 'café'), (3, 'ca­fe'), (4, 'q');
+insert into td values ('cafe');
+select id from tc where tc.ca not in (select td.ca from td) order by 1;
+select id from tc where tc.ca <> all (select td.ca from td) order by 1;
+drop table tc, td;
+
+evaluate 'Case 16: long compressed strings in the list';
+
+create table tc (id int, ca varchar(2000));
+create table td (ca varchar(2000));
+insert into td select repeat ('x', 1000) || rownum from db_class a, db_class b limit 50;
+insert into tc select rownum, repeat ('x', 1000) || (rownum * 2) from db_class a, db_class b limit 20;
+select count (*) from tc where tc.ca not in (select td.ca from td);
+drop table tc, td;
+
+evaluate 'Case 17: negative NUMERIC values of other scales an expression makes';
+
+create table tc (id int, n numeric(10,1));
+create table td (m numeric(12,4));
+insert into tc values (1, -1.0), (2, -2.5), (3, 1.0), (4, -10.0), (5, -0.5);
+insert into td values (-1.0000), (-2.5000), (1.0000), (-10.0000), (-0.5000);
+select id from tc where tc.n * 1.00 not in (select td.m * 1.0 from td) order by 1;
+select id from tc where tc.n * 1.00 in (select td.m + 0.000 from td) order by 1;
+drop table tc, td;
+
+evaluate 'Case 18: SMALLINT, FLOAT, TIME and TIMESTAMP, alone and against INT, DOUBLE and DATETIME, give the rows of NO_HASH_LOOKUP';
+
+create table tc (id int, sa smallint, fa float, ta time, tsa timestamp);
+create table td (k varchar(10), sb smallint, ib int, fb float, db double, tb time, tsb timestamp, dtb datetime);
+insert into tc values (1, 1, 1.5, time'10:00:00', timestamp'2026-01-01 10:00:00');
+insert into tc values (2, 2, 2.25, time'11:00:00', timestamp'2026-01-02 11:00:00');
+insert into tc values (3, 3, 0.1, time'12:00:00', timestamp'2026-01-03 12:00:00');
+insert into tc values (4, null, null, null, null);
+insert into td values ('plain', 1, 2, 1.5, 2.25, time'10:00:00', timestamp'2026-01-01 10:00:00', datetime'2026-01-02 11:00:00');
+insert into td values ('plain', 3, 3, 0.1, 0.1, time'12:00:00', timestamp'2026-01-03 12:00:00', datetime'2026-01-03 12:00:00');
+insert into td values ('null', null, null, null, null, null, null, null);
+update statistics on tc, td with fullscan;
+
+select id from tc where tc.sa not in (select td.sb from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa not in (select /*+ NO_HASH_LOOKUP */ td.sb from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa in (select /*+ NO_UNNEST */ td.ib from td where td.k = 'plain') order by 1;
+select id from tc where tc.sa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.ib from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa not in (select td.fb from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa not in (select /*+ NO_HASH_LOOKUP */ td.fb from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa in (select /*+ NO_UNNEST */ td.db from td where td.k = 'plain') order by 1;
+select id from tc where tc.fa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.db from td where td.k = 'plain') order by 1;
+select id from tc where tc.ta not in (select td.tb from td where td.k = 'plain') order by 1;
+select id from tc where tc.ta not in (select /*+ NO_HASH_LOOKUP */ td.tb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa not in (select td.tsb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa not in (select /*+ NO_HASH_LOOKUP */ td.tsb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST */ td.dtb from td where td.k = 'plain') order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.dtb from td where td.k = 'plain') order by 1;
+-- the lists below hold the NULL row of td
+select id from tc where tc.sa not in (select td.sb from td) order by 1;
+select id from tc where tc.sa not in (select /*+ NO_HASH_LOOKUP */ td.sb from td) order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST */ td.tsb from td) order by 1;
+select id from tc where tc.tsa in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.tsb from td) order by 1;
+
+set trace on;
+select /*+ recompile */ count (*) from tc
+where tc.sa not in (select td.sb from td where td.k = 'plain') and tc.fa not in (select td.fb from td where td.k = 'plain')
+  and tc.ta not in (select td.tb from td where td.k = 'plain') and tc.tsa not in (select td.tsb from td where td.k = 'plain');
+show trace;
+set trace off;
+drop table tc, td;
+
+evaluate 'Case 19: PX scan: the leader builds the hash before the workers start and the workers read through it, in memory and by tuple positions, and the counts are those of NO_HASH_LOOKUP';
+
+-- 20,000 rows of about 230 bytes: about 300 heap pages, past the parallel heap scan threshold of 32 pages under CTP, so that the scan of tc runs in parallel
+create table tc (id int, ca int, cs varchar(20), pad char(200));
+create table td (ca int);
+create table te (cs varchar(20));
+insert into tc select rownum, rownum mod 5000, 'k' || (rownum mod 3000), 'x' from db_class a, db_class b, db_class c limit 20000;
+insert into td select rownum * 2 from db_class a, db_class b limit 1000;
+insert into te select 'k' || (rownum * 3) from db_class a, db_class b limit 800;
+update statistics on tc, td, te with fullscan;
+
+set trace on;
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select td.ca from td);
+show trace;
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca in (select /*+ NO_UNNEST */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca in (select /*+ NO_UNNEST NO_HASH_LOOKUP */ td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.cs not in (select te.cs from te);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.cs not in (select /*+ NO_HASH_LOOKUP */ te.cs from te);
+-- no outer row reaches the term, and the leader executes the subquery before the workers start all the same
+select /*+ recompile parallel(4) */ count (*) from tc where tc.id < 0 and tc.ca not in (select td.ca from td);
+show trace;
+-- 800 strings of 200 bytes: the list of the subquery takes about 11 pages, so that a hash of its tuples needs about 200 KB and a hash of their positions about 40 KB
+-- max_hash_list_scan_size 100k lies between the two: the hash keeps the positions in memory, and each worker reads the leader's list through a scan of its own
+set system parameters 'max_hash_list_scan_size=100k';
+select /*+ recompile parallel(4) */ count (*) from tc where rpad (tc.cs, 200, '-') not in (select rpad (te.cs, 200, '-') from te);
+show trace;
+select /*+ recompile parallel(4) */ count (*) from tc where rpad (tc.cs, 200, '-') not in (select /*+ NO_HASH_LOOKUP */ rpad (te.cs, 200, '-') from te);
+set system parameters 'max_hash_list_scan_size=default';
+-- td holds a NULL from here on
+insert into td values (null);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select td.ca from td);
+select /*+ recompile parallel(4) */ count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td);
+set trace off;
+
+evaluate 'Case 20: uncorrelated subqueries executed in parallel, each with a hashed term, free each hash before its list';
+
+set trace on;
+select /*+ recompile */ * from (select count (*) from tc where tc.ca not in (select td.ca from td)) a,
+                               (select count (*) from tc where tc.cs not in (select te.cs from te)) b;
+show trace;
+select /*+ recompile */ * from (select count (*) from tc where tc.ca not in (select /*+ NO_HASH_LOOKUP */ td.ca from td)) a,
+                               (select count (*) from tc where tc.cs not in (select /*+ NO_HASH_LOOKUP */ te.cs from te)) b;
+set trace off;
+drop table tc, td, te;
+
+-- CLEAN UP
+drop table ta, tb;
