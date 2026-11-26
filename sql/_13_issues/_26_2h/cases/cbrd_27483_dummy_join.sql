@@ -4,8 +4,9 @@
  *
  *  The cases need a join edge that no condition of the query makes. The fix adds a dummy join term for it: between
  *  the tables that an ON reads when no join edge connects them, and at a CROSS JOIN or a comma, between its table
- *  and the nearest table before it that a later condition already connects to it. A dummy join term stands for no
- *  condition, so it must not change the join type of an outer join.
+ *  and the nearest table before it that a later condition already connects to it, when the planner cannot visit
+ *  every table of the query that the conditions connect without it. A dummy join term stands for no condition, so it
+ *  must not change the join type of an outer join.
  *  Each case prints the result that its query defines. A case that repeats another case with a hint or in another
  *  form prints the same result.
  *  The SELECT statements with a join that fail or return a wrong result without the fix also print their plan. The
@@ -31,6 +32,8 @@
  *    Case 12:  Case 9 with a table between the two chains that no condition reads
  *    Case 13:  Case 11 with a table between the two chains that no condition reads
  *    Case 14:  Case 12 with two such tables
+ *    Case 15:  the ORDERED hint on a table after a CROSS JOIN that no condition joins to the table before it
+ *    Case 16:  a LEFT JOIN after two commas, where the planner visits every table without a dummy join term
  */
 -- Cases 1 - 2: no row of tb meets ON tb.ca > tb.cb, and td and tg are empty, so each LEFT JOIN NULL-pads its rows
 -- ta, tb and tc are large and te is small, so the planner joins tb after te, ta and tc
@@ -158,4 +161,33 @@ evaluate 'Case 14: Case 12 with two such tables; result = 36, 36';
 --@queryplan
 SELECT /*+ RECOMPILE */ COUNT(*), COUNT(tx.ca) FROM ta LEFT JOIN tb ON tb.ca = ta.ca INNER JOIN tc ON tc.ca = tb.ca CROSS JOIN tg CROSS JOIN tg t2 CROSS JOIN td LEFT JOIN te ON te.ca = td.ca INNER JOIN tf ON tf.ca = te.ca INNER JOIN tx ON tx.ca = tc.cb AND tx.cb = tf.cb;
 
+-- the WHERE reads tc, so the rewrite turns the LEFT JOIN into an inner join
+-- the ORDERED hint puts tb right after ta, and no condition joins tb to ta; without the dummy join term at the CROSS
+-- JOIN before tb, no join order follows the hint, and the planner drops the hint and plans the query again
+evaluate 'Case 15: the ORDERED hint on a table after a CROSS JOIN that no condition joins to the table before it; result = (1, 9, 9), (2, 9, 9)';
+--@queryplan
+SELECT /*+ RECOMPILE ORDERED */ ta.ca, COUNT(*), COUNT(tc.ca) FROM ta CROSS JOIN tb LEFT JOIN tc ON tc.ca = ta.ca CROSS JOIN td WHERE tc.cb = ta.cb GROUP BY ta.ca ORDER BY 1;
+
 DROP TABLE ta, tb, tc, td, te, tf, tg, tx;
+
+-- Case 16 uses new data: ta and tb have one row each, and tc and td 200 rows each, so a cartesian product of ta and
+-- tb is the cheapest first join; td starts at 2, so the LEFT JOIN NULL-pads the row 1 of tc
+DROP TABLE IF EXISTS ta, tb, tc, td;
+CREATE TABLE ta (ca INT, cb INT);
+CREATE TABLE tb (ca INT, cb INT);
+CREATE TABLE tc (ca INT, cb INT);
+CREATE TABLE td (ca INT, cb INT);
+INSERT INTO ta VALUES (1, 1);
+INSERT INTO tb VALUES (2, 1);
+INSERT INTO tc SELECT ROWNUM, ROWNUM FROM db_class a, db_class b LIMIT 200;
+INSERT INTO td SELECT ROWNUM + 1, ROWNUM + 1 FROM db_class a, db_class b LIMIT 200;
+UPDATE STATISTICS ON ta, tb, tc, td WITH FULLSCAN;
+
+-- Case 16 is a control of the plan: it returns the same result and plan without the fix
+-- td has to come after tc, and a join order that starts at tc visits every table along the join edges, so the comma
+-- before tb gets no dummy join term; a dummy join term there would let the planner join ta and tb first
+evaluate 'Case 16: a LEFT JOIN after two commas, where the planner visits every table without a dummy join term; result = 1 row';
+--@queryplan
+SELECT /*+ RECOMPILE */ ta.ca, tb.ca, tc.ca, td.ca FROM ta, tb, tc LEFT JOIN td ON td.ca = tc.ca WHERE tb.cb = tc.cb AND ta.ca = tc.ca ORDER BY 1, 2, 3, 4;
+
+DROP TABLE ta, tb, tc, td;

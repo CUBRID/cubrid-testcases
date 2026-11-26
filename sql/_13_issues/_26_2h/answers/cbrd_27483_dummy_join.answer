@@ -769,4 +769,99 @@ nl-join (cross join)
 Query stmt:
 select count(*), count(tx.ca) from ta ta left outer join tb tb on tb.ca=ta.ca inner join tc tc on tc.ca=tb.ca cross join tg tg cross join tg t? cross join td td left outer join te te on te.ca=td.ca inner join tf tf on tf.ca=te.ca inner join tx tx on tx.cb=tf.cb and tx.ca=tc.cb
 ===================================================
+    
+Case 15: the ORDERED hint on a table after a CROSS JOIN that no condition joins to the table before it; result = (1, 9, 9), (2, 9, 9)     
+
+===================================================
+ca    count(*)    count(tc.ca)    
+1     9     9     
+2     9     9     
+
+Query plan:
+temp(group by)
+    subplan: nl-join (cross join)
+                 outer: nl-join (inner join)
+                            edge:  term[?] AND term[?]
+                            outer: nl-join (cross join)
+                                       outer: sscan
+                                                  class: ta node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tb node[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tc node[?]
+                                       sargs: term[?] AND term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED */ ta.ca, count(*), count(tc.ca) from ta ta cross join tb tb inner join tc tc cross join td td where tc.cb=ta.cb and tc.ca=ta.ca group by ta.ca
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+1
+===================================================
+200
+===================================================
+200
+===================================================
+0
+===================================================
+    
+Case 16: a LEFT JOIN after two commas, where the planner visits every table without a dummy join term; result = 1 row     
+
+===================================================
+ca    ca    ca    ca    
+1     2     1     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: nl-join (inner join)
+                            edge:  term[?]
+                            outer: nl-join (inner join)
+                                       edge:  term[?]
+                                       outer: sscan
+                                                  class: ta node[?]
+                                                  cost:  ? card ?
+                                       inner: sscan
+                                                  class: tc node[?]
+                                                  sargs: term[?]
+                                                  cost:  ? card ?
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: tb node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: td node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select ta.ca, tb.ca, tc.ca, td.ca from ta ta, tb tb, tc tc left outer join td td on td.ca=tc.ca where tb.cb=tc.cb and ta.ca=tc.ca order by ?, ?, ?, ?
+===================================================
 0
