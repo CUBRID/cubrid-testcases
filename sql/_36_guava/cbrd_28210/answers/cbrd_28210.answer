@@ -306,6 +306,128 @@ rownum    id
 3     8     
 
 ===================================================
+0
+===================================================
+5
+===================================================
+0
+===================================================
+3
+===================================================
+i    
+3     
+4     
+
+===================================================
+i    
+3     
+4     
+
+===================================================
+rownum    i    
+1     3     
+2     4     
+3     5     
+
+===================================================
+rownum    i    
+1     3     
+2     4     
+3     5     
+
+===================================================
+rownum    i    
+1     3     
+2     4     
+3     5     
+
+===================================================
+rownum    i    
+1     3     
+2     4     
+3     5     
+
+===================================================
+rownum    i    
+1     2     
+2     3     
+
+===================================================
+rownum    i    
+1     2     
+2     3     
+
+===================================================
+0
+===================================================
+rownum    rn    
+1     1     
+2     2     
+3     3     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select rownum, (rownum) from [dba.rt?] x where ((rownum)<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.rt?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+i    
+1     
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: select x.i from [dba.rt?] x where (inst_num()<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.rt?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+k    (select count(*) from (select rownum as [rn] from rt5) x where x.rn<=o.k)    
+1     1     
+2     2     
+4     4     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (x)
+
+  rewritten query: (select count(*) from [dba.rt?] x where (o.k>=(rownum)))
+
+  SORT (order by)
+    TABLE SCAN (o)
+
+  rewritten query: select o.k, (select count(*) from [dba.rt?] x where (o.k>=(rownum))) from [dba.ro?] o order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.ro?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (correlated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.rt?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
     
 Case 5: WITH CHECK OPTION of a view updated through a join     
 

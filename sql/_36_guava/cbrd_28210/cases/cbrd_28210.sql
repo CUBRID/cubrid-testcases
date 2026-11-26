@@ -9,7 +9,9 @@
  *    Case 3: merging a view with an ORDERBY_NUM() column into an aggregate query does not rewrite the
  *            cached view definition (wrong numbers in the same statement, client crash in the next one)
  *    Case 4: a derived table with a numbering column is not merged when the main query reads the column
- *            with DISTINCT/aggregate, a comparison with a column, ROWNUM/LIMIT or GROUP BY
+ *            with DISTINCT/aggregate, a comparison with a column, ROWNUM/LIMIT or GROUP BY, nor a subquery
+ *            which drops its leading rows by its own numbering (LIMIT n, m) under a numbering of the main
+ *            query. An upper bound on the numbering is still merged
  *    Case 5: WITH CHECK OPTION is enforced when the view is updated through a LEFT JOIN, or when the
  *            view is not merged (NO_MERGE, RIGHT JOIN, nested views, renamed columns)
  *    Case 6: a WHERE term on a column which assigns a session variable is not pushed into the derived
@@ -17,7 +19,7 @@
  */
 
 drop view if exists v_in, v_ex, v_ord, v_rn, v_rownum, v_chk, v_chk_as, v_chk_nm, v_chk_nest, v_nochk;
-drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, u1, u2, sv;
+drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, u1, u2, sv;
 
 
 evaluate 'Case 1: SEMI/ANTI JOIN inner view followed by a LEFT JOIN; result = NO_MERGE';
@@ -112,6 +114,32 @@ select id from v_rn where id < 4;
 select rownum, id from (select id from rp order by k) x where rownum <= 3;
 
 
+-- the subquery drops its leading rows by its own numbering and the main query numbers its rows too
+-- result = NO_MERGE
+create table rt5 (i int);
+insert into rt5 values (1), (2), (3), (4), (5);
+create table ro3 (k int);
+insert into ro3 values (1), (2), (4);
+select i from (select i from rt5 limit 2, 3) x limit 2;
+select i from (select /*+ NO_MERGE */ i from rt5 limit 2, 3) x limit 2;
+select rownum, i from (select i from rt5 limit 2, 3) x;
+select rownum, i from (select /*+ NO_MERGE */ i from rt5 limit 2, 3) x;
+select rownum, i from (select i from rt5 where rownum > 2) x;
+select rownum, i from (select /*+ NO_MERGE */ i from rt5 where rownum > 2) x;
+select rownum, i from (select i from rt5 where rownum between 2 and 4) x where rownum <= 2;
+select rownum, i from (select /*+ NO_MERGE */ i from rt5 where rownum between 2 and 4) x where rownum <= 2;
+-- an upper bound keeps the rows from the first one, and a column of an outer query is the same for every row
+-- these are still merged (rewritten query in the trace)
+set trace on;
+select rownum, rn from (select rownum rn from rt5) x where rn <= 3;
+show trace;
+select i from (select i from rt5 limit 3) x limit 2;
+show trace;
+select o.k, (select count(*) from (select rownum rn from rt5) x where x.rn <= o.k) from ro3 o order by 1;
+show trace;
+set trace off;
+
+
 evaluate 'Case 5: WITH CHECK OPTION of a view updated through a join';
 create table u1 (id int primary key, a int, x int) dont_reuse_oid;
 create table u2 (id int primary key, a int, b int) dont_reuse_oid;
@@ -165,5 +193,5 @@ select @c;
 
 
 drop view if exists v_in, v_ex, v_ord, v_rn, v_rownum, v_chk, v_chk_as, v_chk_nm, v_chk_nest, v_nochk;
-drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, u1, u2, sv;
+drop table if exists a1, a2, a3, a4, t_ord, u_ord, w_ord, rp, r1, rt5, ro3, u1, u2, sv;
 drop variable @c;
