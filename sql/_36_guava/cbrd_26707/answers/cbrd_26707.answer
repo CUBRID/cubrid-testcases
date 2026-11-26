@@ -482,10 +482,10 @@ Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
          (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
@@ -510,10 +510,10 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (table: dba.ta), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.tb), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 

@@ -197,6 +197,7 @@ Query Plan:
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    HASH_LOOKUP (hash temp(m), build time: ?, time: ?, lookups: ?, rows: ?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
       UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
             (parallel workers: ?, time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -206,7 +207,6 @@ Trace Statistics:
           SCAN (table: dba.t_hi), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        HASH_LOOKUP (method: memory, builds: ?, lookups: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
           UNION (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
                 (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
