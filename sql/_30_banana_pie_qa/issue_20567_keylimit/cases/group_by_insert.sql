@@ -23,18 +23,6 @@ WHERE j > 0
 GROUP BY j,k limit 0-0-0-0-0+2,10*10;
 select * from x order by 1,2;
 
-select * from x order by 1,2;
-
-select * from x order by 1,2;
-
-select * from x order by 1,2;
-select * from x order by 1,2;
-select * from x order by 1,2;
-select * from x order by 1,2;
-select * from x order by 1,2;
-select * from x order by 1,2;
-select * from x order by 1,2;
-
 CREATE INDEX i_tab_j ON tab (j);
 insert into x select j,k
 FROM tab

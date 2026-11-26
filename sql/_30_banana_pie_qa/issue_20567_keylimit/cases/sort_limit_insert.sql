@@ -29,7 +29,6 @@ insert into x select /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 O
 select * from x order by 1,2,3,4,5,6;
 insert into x select /*+ RECOMPILE */ * FROM u, t WHERE u.i = t.i AND u.j > 10 ORDER BY u.j LIMIT 2-1,10/2;
 select * from x order by 1,2,3,4,5,6;
-select * from x order by 1,2,3,4,5,6;
 select count(*) from x;
 
 drop if exists u,t,x;

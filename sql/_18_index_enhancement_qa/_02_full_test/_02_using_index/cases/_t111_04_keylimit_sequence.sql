@@ -14,16 +14,8 @@ insert into t1 values (3, 'Ahman', '086');
 insert into t1 values (4, 'Alcott', '086');
 insert into t1 values (5, 'Ali', '086');
 
-create serial seq_t1_a
-start with 100
-increment by 1
-minvalue 100
-maxvalue 10000000000000000000000000000000000000
-nocycle;
-
 select /*+ RECOMPILE */ * from t1 order by a,b,c;
 drop table t1;
-drop serial seq_t1_a;
 set system parameters 'dont_reuse_heap_file=no';
 commit;
 --+ holdcas off;

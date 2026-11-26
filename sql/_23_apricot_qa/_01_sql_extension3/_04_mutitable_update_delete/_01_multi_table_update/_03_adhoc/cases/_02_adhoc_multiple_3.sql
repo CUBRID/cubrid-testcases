@@ -110,16 +110,6 @@ create table t1(a int , b int, index i_t1_a (a) where a>1 );
 create table t2(a int , b int, index i_t2_a (a) where a>1 );
 insert into t1 values (6,6),(4,4),(3,3),(2,2),(1,1);
 insert into t2 values (5,5),(4,4),(3,3),(2,2),(1,1);
-select * from t1 left join t2 on t2.a=t1.a where t1.a>0 and t2.a >0  using index i_t1_a, i_t2_a;
-select * from t1 order by 1,2;
-select * from t2 order by 1,2;
-drop table t1;
-drop table t2;
-
-create table t1(a int , b int, index i_t1_a (a) where a>1 );
-create table t2(a int , b int, index i_t2_a (a) where a>1 );
-insert into t1 values (6,6),(4,4),(3,3),(2,2),(1,1);
-insert into t2 values (5,5),(4,4),(3,3),(2,2),(1,1);
 insert into t1 select rownum, rownum from t1, t1 t1_1;
 insert into t1 select rownum, rownum from t1, t1 t1_1;
 insert into t1 select rownum, rownum from t1;

@@ -22,8 +22,6 @@ insert into t1 values (10, 'Bli', '011');
 --TEST: should use cover index idx_t1_abc
 select /*+ RECOMPILE */ a,b,c from t1 order by 1,2,3;
 
---TEST: should use cover index idx_t1_abc
-select /*+ RECOMPILE */ a,b,c from t1 order by 1,2,3;
 
 drop table t1;
 set system parameters 'dont_reuse_heap_file=no';

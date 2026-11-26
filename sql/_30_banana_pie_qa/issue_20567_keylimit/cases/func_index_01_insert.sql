@@ -18,10 +18,4 @@ create table x(col1 int,col2 varchar(20),col3 date);
 insert into x select /*+ recompile */* FROM t
 WHERE year(col3)=2008 and col2='book2' ;
 select * from x order by 1,2,3;
-
-select * from x order by 1,2,3;
-
-select * from x order by 1,2,3;
-select * from x order by 1,2,3;
-select * from x order by 1,2,3;
 drop table if exists t,x;

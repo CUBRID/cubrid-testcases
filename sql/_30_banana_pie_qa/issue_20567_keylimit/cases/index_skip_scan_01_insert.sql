@@ -10,28 +10,9 @@ drop if exists x;
 CREATE TABLE x (id INT , a INT, b INT, c INT,d int ,e int,f int,g int);
 
 select * from x order by 1,2,3,4,5,6,7,8;
-select * from x order by 1,2,3,4,5,6,7,8;
-
-select * from x order by 1,2,3,4,5,6,7,8;
-
-select * from x order by 1,2,3,4,5,6,7,8;
-
-
-select * from x order by 1,2,3,4,5,6,7,8;
- 
-select * from x order by 1,2,3,4,5,6,7,8;
 insert into x select /*+ INDEX_SS */ *
 FROM t1, t2
 WHERE t1.b<5 AND t1.c<5 AND t2.c<5
 USING INDEX i_t1_ac, i_t2_ac limit 0,0+1;
-select * from x order by 1,2,3,4,5,6,7,8;
-
-select * from x order by 1,2,3,4,5,6,7,8;
-
-select * from x order by 1,2,3,4,5,6,7,8;
-select * from x order by 1,2,3,4,5,6,7,8;
-select * from x order by 1,2,3,4,5,6,7,8;
-
-select * from x order by 1,2,3,4,5,6,7,8;
 select * from x order by 1,2,3,4,5,6,7,8;
 drop if exists t1,t2,x;

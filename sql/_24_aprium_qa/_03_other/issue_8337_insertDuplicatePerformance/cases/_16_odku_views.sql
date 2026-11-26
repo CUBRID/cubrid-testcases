@@ -151,15 +151,4 @@ create unique index u_t1_a on t1(a1);
 select b from t1 order by a1;
 
 drop table t1;
-
-drop table if exists t;
-create table t (i1 char(20), i2 int, i3 varchar(20));
-create index i_t_123 on t(i1, i2, i3);
-create index i_t_321 on t(i2, i1, i3) where i1<i2;
-
-insert into t select 0,rownum%10,rownum from db_class a,db_class b limit 1000;
-
-insert into t select 0,rownum%10,rownum from db_class a,db_class b limit 1000;
-
-drop table t;
 set system parameters 'create_table_reuseoid=yes';

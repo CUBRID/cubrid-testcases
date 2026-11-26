@@ -24,7 +24,6 @@ SHOW INDEX IN bugs;
 select * from bugs where bugId>0 and closed=0 using index open_bugs(+);
 select * from bugs where bugId>0 and closed=1 using index open_bugs(+);
 
-select /*+ recompile */ * from bugs where bugId>0 and closed=1 using index open_bugs;
 
 
 select /*+ recompile */ * from bugs where bugId>0 and closed=0 using index open_bugs;

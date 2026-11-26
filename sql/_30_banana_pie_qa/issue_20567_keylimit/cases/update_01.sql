@@ -7,24 +7,5 @@ update tab set k=918
 WHERE j > 0;
 
 select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-select * from tab order by 1,2,3;
-
-CREATE INDEX i_tab_j ON tab (j);
-
 drop if exists tab;
 

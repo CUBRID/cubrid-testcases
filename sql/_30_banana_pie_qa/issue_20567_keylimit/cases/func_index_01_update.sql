@@ -12,7 +12,4 @@ CREATE INDEX idx2 ON t(col2 ,col1);
 CREATE INDEX idx3 ON t(year(col3),col2);
 SELECT /*+ recompile */* FROM t WHERE year(col3)=2008 and col2='book2' order by 1 ;
 select * from t order by 1,2,3;
-select * from t order by 1,2,3;
-select * from t order by 1,2,3;
-select * from t order by 1,2,3;
 drop table if exists t;
