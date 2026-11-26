@@ -21058,10 +21058,9 @@ i    j    k    l    (select /*+ INDEX_SS */ l from t where j between 101 and 199
 4     100     4000     4000     1     
 
 Query plan:
-iscan
+sscan
     class: t node[?]
-    index: idx term[?] (index skip scan)
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
 (select /*+ INDEX_SS */ t.l from t t where (t.j>= ?:?  and t.j<= ?:? ) and (inst_num()<= ?:? ))
