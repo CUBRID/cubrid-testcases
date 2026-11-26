@@ -1,7 +1,7 @@
 -- CBRD-28372: a parse tree walk mode applies to its own node only, and a stop ends the walk.
 -- Before the fix a PT_LIST_WALK set at a subquery (or a type node) skipped the subtrees of the nodes after it, and
 -- the pre function kept being called after a stop, so each query below gave a wrong result or an error that its
--- twin with the operands in the other order did not. Every case runs both orders; they must give the same result.
+-- twin with the operands in the other order did not. Cases 1 to 9 run both orders; they must give the same result.
 
 -- Case 1: outer join reduction folds a term whose unfoldable subquery is followed by the target column
 drop table if exists wa, wb, tt, tv;
@@ -154,5 +154,14 @@ select m from lg;
 select (select count (*) from ia) cnt_a, (select count (*) from ib) cnt_b;
 drop trigger tra;
 
+-- Case 10: a constant DEFAULT expression is folded (its node freed) by the type check; the checks after it
+-- must look at the folded value, in CREATE, ALTER ... ADD and ALTER ... SET DEFAULT
+drop table if exists dc;
+create table dc (i int, f double default exp (3), s varchar (20) default to_char (1.234567, '99.999'));
+alter table dc add column t varchar (20) default to_char (to_time ('02:11:12'), 'HH24:MI:SS');
+alter table dc alter column s set default substr ('abcdef', 2, 3);
+insert into dc (i) values (1);
+select i, round (f, 4) f, s, t from dc;
+
 drop view if exists gv, vc1, vc2;
-drop table if exists wa, wb, tt, tv, k, ta, tc, th, tl, vt, hq, tr, g1, g2, gd1, gd2, gd3, gd4, gd5, gd6, gh, lg, ia, ib, it;
+drop table if exists wa, wb, tt, tv, k, ta, tc, th, tl, vt, hq, tr, g1, g2, gd1, gd2, gd3, gd4, gd5, gd6, gh, lg, ia, ib, it, dc;
