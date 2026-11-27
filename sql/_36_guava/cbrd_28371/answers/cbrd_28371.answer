@@ -1,0 +1,182 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+20000
+===================================================
+20000
+===================================================
+20000
+===================================================
+2000
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+924     
+
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast(@p as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast(@p as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast(@p as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ((select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast(@p as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast(@p as varchar))) union all select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast(@p as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast(@p as varchar)))) union all select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast(@p as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast(@p as varchar)))) kc_v? (user_nm, esntl_id, user_id, user_se)
+===================================================
+count(*)    
+924     
+
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ((select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar))) union all select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)))) union all select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast('%' as varchar)|| cast(@w as varchar)|| cast('%' as varchar)))) kc_v? (user_nm, esntl_id, user_id, user_se)
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+924     
+
+Query plan:
+iscan
+    class: kc_v? node[?]
+    index: i_kc_g_nm term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast(@x as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast(@x as varchar)))
+Query plan:
+iscan
+    class: kc_v? node[?]
+    index: i_kc_e_nm term[?]
+    filtr: term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast(@x as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast(@x as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast(@x as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast(@x as varchar)))
+Query plan:
+sscan
+    class: kc_v? node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ((select kc_v?.mber_nm, kc_v?.esntl_id, kc_v?.mber_id, ( cast('GNR' as varchar(?))) from kc_g kc_v? where kc_v?.mber_nm like  cast(@x as varchar) and (kc_v?.mber_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.mber_nm< like_match_upper_bound( cast(@x as varchar))) union all select kc_v?.cmpny_nm, kc_v?.esntl_id, kc_v?.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v? where kc_v?.cmpny_nm like  cast(@x as varchar) and (kc_v?.cmpny_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.cmpny_nm< like_match_upper_bound( cast(@x as varchar)))) union all select kc_v?.user_nm, kc_v?.esntl_id, kc_v?.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v? where kc_v?.user_nm like  cast(@x as varchar) and (kc_v?.user_nm>= like_match_lower_bound( cast(@x as varchar)) and kc_v?.user_nm< like_match_upper_bound( cast(@x as varchar)))) kc_v? (user_nm, esntl_id, user_id, user_se)
+===================================================
+0
+===================================================
+0
+===================================================
+count(*)    
+924     
+
+Query plan:
+sscan
+    class: kc_v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?))), kc_v.esntl_id, kc_v.mber_id, ( cast('GNR' as varchar(?))) from kc_g? kc_v where ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?))) like  cast(@p as varchar) and (( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?)))>= like_match_lower_bound( cast(@p as varchar)) and ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?)))< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v.cmpny_nm, kc_v.esntl_id, kc_v.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v where kc_v.cmpny_nm like  cast(@p as varchar) and (kc_v.cmpny_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v.cmpny_nm< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v node[?]
+    sargs: term[?] AND term[?]
+    cost:  ? card ?
+Query stmt:
+select kc_v.user_nm, kc_v.esntl_id, kc_v.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v where kc_v.user_nm like  cast(@p as varchar) and (kc_v.user_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v.user_nm< like_match_upper_bound( cast(@p as varchar)))
+Query plan:
+sscan
+    class: kc_v node[?]
+    cost:  ? card ?
+Query stmt:
+select count(*) from ((select ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?))), kc_v.esntl_id, kc_v.mber_id, ( cast('GNR' as varchar(?))) from kc_g? kc_v where ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?))) like  cast(@p as varchar) and (( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?)))>= like_match_lower_bound( cast(@p as varchar)) and ( cast( cast(kc_v.mber_nm as varchar(?)) as varchar(?)))< like_match_upper_bound( cast(@p as varchar))) union all select kc_v.cmpny_nm, kc_v.esntl_id, kc_v.entrprs_mber_id, ( cast('ENT' as varchar(?))) from kc_e kc_v where kc_v.cmpny_nm like  cast(@p as varchar) and (kc_v.cmpny_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v.cmpny_nm< like_match_upper_bound( cast(@p as varchar)))) union all select kc_v.user_nm, kc_v.esntl_id, kc_v.emplyr_id, ( cast('USR' as varchar(?))) from kc_u kc_v where kc_v.user_nm like  cast(@p as varchar) and (kc_v.user_nm>= like_match_lower_bound( cast(@p as varchar)) and kc_v.user_nm< like_match_upper_bound( cast(@p as varchar)))) kc_v (user_nm, esntl_id, user_id, user_se)
+===================================================
+cnt_any    cnt_prefix    
+924     924     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
