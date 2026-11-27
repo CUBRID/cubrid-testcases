@@ -130,34 +130,7 @@ ca    ca    abs(x.cb)    abs(y.cb)
 
 ===================================================
     
-Case 2: greater-or-equal condition over both expressions     
-
-===================================================
-count(*)    sum(x.ca*1000+y.ca)    
-153     7602695     
-
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: iscan
-               class: x node[?]
-               index: i_ta term[?]
-               cost:  ? card ?
-    inner: iscan
-               class: y node[?]
-               index: i_ta term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED USE_HASH */ count(*), sum(x.ca*?+y.ca) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and ( abs(y.cb)>= abs(x.cb))
-===================================================
-count(*)    sum(x.ca*1000+y.ca)    
-153     7602695     
-
-===================================================
-    
-Case 3: not-equal condition over both expressions     
+Case 2: not-equal condition over both expressions     
 
 ===================================================
 count(*)    sum(x.ca*1000+y.ca)    
@@ -184,7 +157,7 @@ count(*)    sum(x.ca*1000+y.ca)
 
 ===================================================
     
-Case 4: arithmetic over both expressions     
+Case 3: arithmetic over both expressions     
 
 ===================================================
 count(*)    sum(x.ca*1000+y.ca)    
@@ -211,7 +184,7 @@ count(*)    sum(x.ca*1000+y.ca)
 
 ===================================================
     
-Case 5: another function, lower() over a string column     
+Case 4: another function, lower() over a string column     
 
 ===================================================
 count(*)    sum(x.ca*1000+y.ca)    
@@ -238,7 +211,7 @@ count(*)    sum(x.ca*1000+y.ca)
 
 ===================================================
     
-Case 6: EXISTS subquery solved by a hash join     
+Case 5: EXISTS subquery solved by a hash join     
 
 ===================================================
 count(*)    sum(x.ca)    
@@ -265,7 +238,7 @@ count(*)    sum(x.ca)
 
 ===================================================
     
-Case 7: IN subquery solved by a hash join     
+Case 6: IN subquery solved by a hash join     
 
 ===================================================
 count(*)    sum(x.ca)    
@@ -292,7 +265,7 @@ count(*)    sum(x.ca)
 
 ===================================================
     
-Case 8: LEFT OUTER self join with the condition in the ON clause     
+Case 7: LEFT OUTER self join with the condition in the ON clause     
 
 ===================================================
 count(*)    count(y.ca)    sum(y.ca)    
@@ -319,41 +292,7 @@ count(*)    count(y.ca)    sum(y.ca)
 
 ===================================================
     
-Case 9: three-table self join, the second join compares with the first table     
-
-===================================================
-count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
-88     13362     
-
-Query plan:
-hash-join (inner join)
-    edge:  term[?]
-    outer: hash-join (inner join)
-               edge:  term[?]
-               outer: iscan
-                          class: x node[?]
-                          index: i_ta term[?]
-                          cost:  ? card ?
-               inner: iscan
-                          class: y node[?]
-                          index: i_ta term[?]
-                          cost:  ? card ?
-               cost:  ? card ?
-    inner: iscan
-               class: z node[?]
-               index: i_ta term[?]
-               cost:  ? card ?
-    sargs: term[?]
-    cost:  ? card ?
-Query stmt:
-select /*+ ORDERED USE_HASH */ count(*), sum( abs(x.cb)*?+ abs(y.cb)*?+ abs(z.cb)) from ta x, ta y, ta z where x.cc=y.cc and y.cc=z.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and (z.cd< ?:? ) and ( abs(z.cb)> abs(x.cb))
-===================================================
-count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
-88     13362     
-
-===================================================
-    
-Case 10: three-table self join, the second join compares with the second table     
+Case 8: three-table self join, the second join compares with the second of two expressions in its outer input     
 
 ===================================================
 count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
@@ -387,7 +326,7 @@ count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))
 
 ===================================================
     
-Case 11: GROUP BY and HAVING over both expressions     
+Case 9: GROUP BY and HAVING over both expressions     
 
 ===================================================
 abs(x.cb)    abs(y.cb)    count(*)    

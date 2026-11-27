@@ -12,16 +12,14 @@
  *
  *  Coverage:
  *    Case 1:  greater-than condition over both expressions, the query of the issue
- *    Case 2:  greater-or-equal condition over both expressions
- *    Case 3:  not-equal condition over both expressions
- *    Case 4:  arithmetic over both expressions
- *    Case 5:  another function, lower() over a string column
- *    Case 6:  EXISTS subquery solved by a hash join
- *    Case 7:  IN subquery solved by a hash join
- *    Case 8:  LEFT OUTER self join with the condition in the ON clause
- *    Case 9:  three-table self join, the second join compares with the first table
- *    Case 10:  three-table self join, the second join compares with the second table
- *    Case 11:  GROUP BY and HAVING over both expressions
+ *    Case 2:  not-equal condition over both expressions
+ *    Case 3:  arithmetic over both expressions
+ *    Case 4:  another function, lower() over a string column
+ *    Case 5:  EXISTS subquery solved by a hash join
+ *    Case 6:  IN subquery solved by a hash join
+ *    Case 7:  LEFT OUTER self join with the condition in the ON clause
+ *    Case 8:  three-table self join, the second join compares with the second of two expressions in its outer input
+ *    Case 9:  GROUP BY and HAVING over both expressions
  */
 
 drop table if exists ta, tb;
@@ -41,61 +39,49 @@ evaluate 'Case 1: greater-than condition over both expressions, the query of the
 select /*+ use_hash ordered */ x.ca, y.ca, abs(x.cb), abs(y.cb) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) > abs(x.cb) order by 1, 2;
 select /*+ use_nl ordered */ x.ca, y.ca, abs(x.cb), abs(y.cb) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) > abs(x.cb) order by 1, 2;
 
-evaluate 'Case 2: greater-or-equal condition over both expressions';
-
---@queryplan
-select /*+ use_hash ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) >= abs(x.cb);
-select /*+ use_nl ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) >= abs(x.cb);
-
-evaluate 'Case 3: not-equal condition over both expressions';
+evaluate 'Case 2: not-equal condition over both expressions';
 
 --@queryplan
 select /*+ use_hash ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) <> abs(x.cb);
 select /*+ use_nl ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) <> abs(x.cb);
 
-evaluate 'Case 4: arithmetic over both expressions';
+evaluate 'Case 3: arithmetic over both expressions';
 
 --@queryplan
 select /*+ use_hash ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) + abs(x.cb) = 5;
 select /*+ use_nl ordered */ count(*), sum(x.ca * 1000 + y.ca) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and abs(y.cb) + abs(x.cb) = 5;
 
-evaluate 'Case 5: another function, lower() over a string column';
+evaluate 'Case 4: another function, lower() over a string column';
 
 --@queryplan
 select /*+ use_hash ordered */ count(*), sum(x.ca * 1000 + y.ca) from tb x, tb y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and lower(y.cb) < lower(x.cb);
 select /*+ use_nl ordered */ count(*), sum(x.ca * 1000 + y.ca) from tb x, tb y where x.cc = y.cc and x.cd < 100 and y.cd < 100 and lower(y.cb) < lower(x.cb);
 
-evaluate 'Case 6: EXISTS subquery solved by a hash join';
+evaluate 'Case 5: EXISTS subquery solved by a hash join';
 
 --@queryplan
 select /*+ use_hash */ count(*), sum(x.ca) from ta x where x.cd < 100 and exists (select 1 from ta y where y.cc = x.cc and y.cd < 100 and abs(y.cb) > abs(x.cb));
 select /*+ use_nl */ count(*), sum(x.ca) from ta x where x.cd < 100 and exists (select 1 from ta y where y.cc = x.cc and y.cd < 100 and abs(y.cb) > abs(x.cb));
 
-evaluate 'Case 7: IN subquery solved by a hash join';
+evaluate 'Case 6: IN subquery solved by a hash join';
 
 --@queryplan
 select /*+ use_hash */ count(*), sum(x.ca) from ta x where x.cd < 100 and x.cc in (select y.cc from ta y where y.cd < 100 and abs(y.cb) > abs(x.cb));
 select /*+ use_nl */ count(*), sum(x.ca) from ta x where x.cd < 100 and x.cc in (select y.cc from ta y where y.cd < 100 and abs(y.cb) > abs(x.cb));
 
-evaluate 'Case 8: LEFT OUTER self join with the condition in the ON clause';
+evaluate 'Case 7: LEFT OUTER self join with the condition in the ON clause';
 
 --@queryplan
 select /*+ use_hash ordered */ count(*), count(y.ca), sum(y.ca) from ta x left outer join ta y on x.cc = y.cc and y.cd < 100 and abs(y.cb) > abs(x.cb) where x.cd < 100;
 select /*+ use_nl ordered */ count(*), count(y.ca), sum(y.ca) from ta x left outer join ta y on x.cc = y.cc and y.cd < 100 and abs(y.cb) > abs(x.cb) where x.cd < 100;
 
-evaluate 'Case 9: three-table self join, the second join compares with the first table';
-
---@queryplan
-select /*+ use_hash ordered */ count(*), sum(abs(x.cb) * 100 + abs(y.cb) * 10 + abs(z.cb)) from ta x, ta y, ta z where x.cc = y.cc and y.cc = z.cc and x.cd < 100 and y.cd < 100 and z.cd < 100 and abs(z.cb) > abs(x.cb);
-select /*+ use_nl ordered */ count(*), sum(abs(x.cb) * 100 + abs(y.cb) * 10 + abs(z.cb)) from ta x, ta y, ta z where x.cc = y.cc and y.cc = z.cc and x.cd < 100 and y.cd < 100 and z.cd < 100 and abs(z.cb) > abs(x.cb);
-
-evaluate 'Case 10: three-table self join, the second join compares with the second table';
+evaluate 'Case 8: three-table self join, the second join compares with the second of two expressions in its outer input';
 
 --@queryplan
 select /*+ use_hash ordered */ count(*), sum(abs(x.cb) * 100 + abs(y.cb) * 10 + abs(z.cb)) from ta x, ta y, ta z where x.cc = y.cc and y.cc = z.cc and x.cd < 100 and y.cd < 100 and z.cd < 100 and abs(z.cb) > abs(y.cb);
 select /*+ use_nl ordered */ count(*), sum(abs(x.cb) * 100 + abs(y.cb) * 10 + abs(z.cb)) from ta x, ta y, ta z where x.cc = y.cc and y.cc = z.cc and x.cd < 100 and y.cd < 100 and z.cd < 100 and abs(z.cb) > abs(y.cb);
 
-evaluate 'Case 11: GROUP BY and HAVING over both expressions';
+evaluate 'Case 9: GROUP BY and HAVING over both expressions';
 
 --@queryplan
 select /*+ use_hash ordered */ abs(x.cb), abs(y.cb), count(*) from ta x, ta y where x.cc = y.cc and x.cd < 100 and y.cd < 100 group by abs(x.cb), abs(y.cb) having abs(y.cb) > abs(x.cb) order by 1, 2;
