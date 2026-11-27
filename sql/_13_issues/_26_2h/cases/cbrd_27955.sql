@@ -6,7 +6,7 @@
  *  A release server never makes that dump, so on it the queries pass with or without the fix.
  *
  *  Coverage:
- *    Case 1: %n in the LIKE and NOT LIKE patterns of the arms of a UNION ALL (the issue's query)
+ *    Case 1: %n in the LIKE and NOT LIKE patterns of the arms of a UNION ALL (the query of the issue plus ORDER BY)
  *    Case 2: %s and %d in a string literal of a select list of a UNION ALL arm
  *    Case 3: a query with no set operation and the same patterns (it never took the dump path)
  */
