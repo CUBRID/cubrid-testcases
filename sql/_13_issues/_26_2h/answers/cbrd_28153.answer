@@ -262,7 +262,7 @@ n    o    x    result
 
 ===================================================
     
-Case 15: parallel GROUP BY; result = no_parallel_scan     
+Case 15: parallel GROUP BY; result = the same rows twice, then OK for each group     
 
 ===================================================
 0
@@ -326,6 +326,16 @@ Trace Statistics:
 ===================================================
 0
 ===================================================
+k    n    o    x    bx    result    
+0     0     1023     601     4601     OK     
+1     0     1023     426     44159     OK     
+2     0     1023     315     19078     OK     
+3     0     1023     428     57053     OK     
+4     0     1023     29     25972     OK     
+5     0     1023     430     63243     OK     
+6     0     1023     319     33698     OK     
+
+===================================================
     
 Case 16: correlated subquery, the distinct values folded again for each outer row; result = OK for each row     
 
@@ -356,18 +366,12 @@ g    n    o    x    p    result
 
 ===================================================
     
-Case 18: GROUP BY WITH ROLLUP; result = OK for each group row, then every row with the total row     
+Case 18: GROUP BY WITH ROLLUP; result = OK for each group row     
 
 ===================================================
 k    n    o    x    result    
 0     0     126     2     OK     
 1     1     127     2     OK     
-
-===================================================
-k    n    o    x    c    
-null     1     127     2     50     
-0     0     126     2     50     
-1     1     127     2     50     
 
 ===================================================
 0

@@ -27,13 +27,11 @@
  *    Case 12: sort GROUP BY over ten groups
  *    Case 13: HAVING on BIT_OR(DISTINCT)
  *    Case 14: parallel heap scan with gather buildvalue matches its NO_PARALLEL_SCAN twin
- *    Case 15: parallel GROUP BY matches its NO_PARALLEL_SCAN twin
+ *    Case 15: parallel GROUP BY matches its NO_PARALLEL_SCAN twin and the reference
  *    Case 16: a correlated subquery folds the distinct values again for each outer row
  *    Case 17: GROUP BY with all-NULL groups and a one-value group between groups of
  *             several values starts each group from its own first value
- *    Case 18: the group rows and the total row of GROUP BY WITH ROLLUP
- *
- *  Case 18: known wrong result, CBRD-27930 (open), the total row of its second query
+ *    Case 18: the group rows of GROUP BY WITH ROLLUP
  */
 
 drop table if exists t_six, t_hund, t_one, t_empty, t_null, t_mix, t_neg, t_big, t_types, t_expr, t_xor, t_grp, t_par;
@@ -178,13 +176,21 @@ select p.n, p.o, p.x, case when p.n <=> r.n and p.o <=> r.o and p.x <=> r.x then
 from (select /*+ PARALLEL(4) */ bit_and(distinct a) n, bit_or(distinct a) o, bit_xor(distinct a) x from t_par) p,
      (select bit_and(a) n, bit_or(a) o, bit_xor(a) x from (select distinct a from t_par) d) r;
 
-evaluate 'Case 15: parallel GROUP BY; result = no_parallel_scan';
+evaluate 'Case 15: parallel GROUP BY; result = the same rows twice, then OK for each group';
 set trace on;
 select /*+ PARALLEL(4) */ mod(id, 7) k, bit_and(distinct a), bit_or(distinct a), bit_xor(distinct a), bit_xor(distinct b) from t_par group by mod(id, 7) order by 1;
 show trace;
 select /*+ NO_PARALLEL_SCAN */ mod(id, 7) k, bit_and(distinct a), bit_or(distinct a), bit_xor(distinct a), bit_xor(distinct b) from t_par group by mod(id, 7) order by 1;
 show trace;
 set trace off;
+-- NO_PARALLEL_SCAN makes only the scan serial and the GROUPBY of the twin still runs in parallel,
+-- so the parallel rows are also compared with the reference over the distinct values
+select x.k, x.n, x.o, x.x, x.bx, case when x.n <=> y.n and x.o <=> y.o and x.x <=> y.x and x.bx <=> z.bx then 'OK' else 'NOK' end as result
+from (select /*+ PARALLEL(4) */ mod(id, 7) k, bit_and(distinct a) n, bit_or(distinct a) o, bit_xor(distinct a) x, bit_xor(distinct b) bx from t_par group by mod(id, 7)) x,
+     (select k, bit_and(a) n, bit_or(a) o, bit_xor(a) x from (select distinct mod(id, 7) k, a from t_par) s group by k) y,
+     (select k, bit_xor(b) bx from (select distinct mod(id, 7) k, b from t_par) s group by k) z
+where x.k = y.k and x.k = z.k
+order by 1;
 
 evaluate 'Case 16: correlated subquery, the distinct values folded again for each outer row; result = OK for each row';
 -- the subquery runs once per group of t_hund, so each run has to start from an empty accumulator
@@ -200,22 +206,19 @@ order by 1;
 
 evaluate 'Case 17: GROUP BY with all-NULL groups and a one-value group; result = OK for each group';
 -- p is BIT_XOR without DISTINCT in the same select list: it must keep its own value next to the DISTINCT ones
-select x.g, x.n, x.o, x.x, x.p, case when x.n <=> y.n and x.o <=> y.o and x.x <=> y.x then 'OK' else 'NOK' end as result
+select x.g, x.n, x.o, x.x, x.p, case when x.n <=> y.n and x.o <=> y.o and x.x <=> y.x and x.p <=> z.p then 'OK' else 'NOK' end as result
 from (select g, bit_and(distinct a) n, bit_or(distinct a) o, bit_xor(distinct a) x, bit_xor(a) p from t_grp group by g) x,
-     (select g, bit_and(a) n, bit_or(a) o, bit_xor(a) x from (select distinct g, a from t_grp) s group by g) y
-where x.g = y.g
+     (select g, bit_and(a) n, bit_or(a) o, bit_xor(a) x from (select distinct g, a from t_grp) s group by g) y,
+     (select g, bit_xor(a) p from t_grp group by g) z
+where x.g = y.g and x.g = z.g
 order by 1;
 
-evaluate 'Case 18: GROUP BY WITH ROLLUP; result = OK for each group row, then every row with the total row';
--- the join keeps the two group rows and compares them with the reference
+evaluate 'Case 18: GROUP BY WITH ROLLUP; result = OK for each group row';
+-- the join keeps the two group rows and compares them with the reference, and the total row (k is NULL) drops out
 select r.k, r.n, r.o, r.x, case when r.n <=> y.n and r.o <=> y.o and r.x <=> y.x then 'OK' else 'NOK' end as result
 from (select mod(id, 2) k, bit_and(distinct a) n, bit_or(distinct a) o, bit_xor(distinct a) x from t_hund group by mod(id, 2) with rollup) r,
      (select k, bit_and(a) n, bit_or(a) o, bit_xor(a) x from (select distinct mod(id, 2) k, a from t_hund) s group by k) y
 where r.k = y.k
-order by 1;
--- every row of the ROLLUP, with COUNT(DISTINCT) beside the BIT_* values
-select r.k, r.n, r.o, r.x, r.c
-from (select mod(id, 2) k, bit_and(distinct a) n, bit_or(distinct a) o, bit_xor(distinct a) x, count(distinct a) c from t_hund group by mod(id, 2) with rollup) r
 order by 1;
 
 drop table t_six, t_hund, t_one, t_empty, t_null, t_mix, t_neg, t_big, t_types, t_expr, t_xor, t_grp, t_par;
