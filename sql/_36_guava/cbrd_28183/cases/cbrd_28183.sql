@@ -111,4 +111,47 @@ group by c_nat having count(o_id) > 0 order by 1;
 --@queryplan
 select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_id having sum(o_amount) > 1680 order by 1;
 
+-- T10: a C of two tables before a LEFT OUTER JOIN: the outer join keeps its ON at its new place
+drop table if exists t_li;
+create table t_li (l_id int primary key, l_ord int, l_qty int);
+insert into t_li select rownum, mod(rownum, 60000) + 1, mod(rownum, 7) from db_root connect by level <= 120000;
+update statistics on t_li with fullscan;
+--@queryplan
+select c_id, n_name, sum(l_qty) from t_li, t_ord, t_cust left outer join t_nat on c_nat = n_id
+where l_ord = o_id and o_cust = c_id group by c_id, n_name order by 3 desc, 1 limit 5;
+select /*+ NO_PUSH_GROUP_BY */ c_id, n_name, sum(l_qty) from t_li, t_ord, t_cust left outer join t_nat on c_nat = n_id
+where l_ord = o_id and o_cust = c_id group by c_id, n_name order by 3 desc, 1 limit 5;
+
+-- T11: arguments that could fail on the rows the join drops are left in the block, and values that compare equal
+-- without being the same keep the block too
+drop table if exists t_val;
+create table t_val (v_id int primary key, v_cust int, v_n numeric(5,2), v_m monetary, v_d double, v_vn numeric, v_f float, v_i int);
+-- customers 1 and 6 are both in c_nat 2, the row with 999.99 meets no customer
+insert into t_val select rownum, decode(rownum, 1, 5000, decode(sign(rownum - 51), -1, 6, 1)), decode(rownum, 1, 999.99, 1.00),
+  decode(sign(rownum - 51), -1, $10, \10), decode(sign(rownum - 51), -1, -0.0, 0.0), decode(sign(rownum - 51), -1, 1.5, 1.50),
+  16777216, decode(sign(rownum - 51), -1, 16777216, 16777217)
+  from db_root connect by level <= 100;
+update statistics on t_val with fullscan;
+--@queryplan
+select c_nat, max(cast(v_n as numeric(4,1))) from t_cust, t_val where c_id = v_cust group by c_nat;
+--@queryplan
+select c_nat, min(v_m), max(v_d), min(v_vn) from t_cust, t_val where c_id = v_cust group by c_nat order by 1;
+
+-- T12: an equality of two columns of different types does not fix the GROUP BY key
+drop table if exists t_key;
+create table t_key (k_id int primary key);
+insert into t_key values (16777216), (16777217);
+update statistics on t_key with fullscan;
+--@queryplan
+select v_f, sum(v_cust) from t_val, t_key where v_f = v_i and v_i = k_id group by v_f order by 2 desc;
+
+-- T13: an ORDERBY_NUM () condition on a column, and a LIMIT over the groups in key order keep the block
+--@queryplan
+select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_id order by 2 desc for orderby_num() <= 5 and c_id > 0;
+--@queryplan
+select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_id order by c_id limit 5;
+--@queryplan
+select c_id, sum(o_amount) from t_cust, t_ord where c_id = o_cust group by c_id limit 5;
+
+drop table t_li, t_val, t_key;
 drop table t_ord, t_cust, t_nat;

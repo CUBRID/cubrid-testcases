@@ -1341,3 +1341,217 @@ Query stmt:
 select t_cust.c_id,  cast(sum(gbp_?.gbp_a_?) as integer) from t_cust t_cust, (select t_ord.o_cust, sum( cast(t_ord.o_amount as bigint)), sum( cast(t_ord.o_amount as bigint)) from t_ord t_ord group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?, gbp_a_?) where t_cust.c_id=gbp_?.gbp_a_? group by t_cust.c_id having  cast(sum(gbp_?.gbp_a_?) as integer)>? order by ?
 ===================================================
 0
+===================================================
+0
+===================================================
+120000
+===================================================
+0
+===================================================
+c_id    n_name    sum(l_qty)    
+2     nat3     243     
+4     nat5     243     
+11     nat2     243     
+18     nat4     243     
+25     nat1     243     
+
+Query plan:
+temp(group by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: parallel sscan
+                            class: t_li node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: t_ord node[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select t_ord.o_cust, sum( cast(t_li.l_qty as bigint)) from t_li t_li, t_ord t_ord where t_li.l_ord=t_ord.o_id group by t_ord.o_cust)
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (left outer join)
+                              outer: idx-join (inner join)
+                                         outer: sscan
+                                                    class: gbp_? node[?]
+                                                    cost:  ? card ?
+                                         inner: iscan
+                                                    class: t_cust node[?]
+                                                    index: pk_t_cust_c_id term[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t_nat node[?]
+                                         index: pk_t_nat_n_id term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? desc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id, t_nat.n_name,  cast(sum(gbp_?.gbp_a_?) as integer) from (select t_ord.o_cust, sum( cast(t_li.l_qty as bigint)) from t_li t_li, t_ord t_ord where t_li.l_ord=t_ord.o_id group by t_ord.o_cust) gbp_? (gbp_a_?, gbp_a_?), t_cust t_cust left outer join t_nat t_nat on t_cust.c_nat=t_nat.n_id where gbp_?.gbp_a_?=t_cust.c_id group by t_cust.c_id, t_nat.n_name order by ? desc , ? for orderby_num()<= ?:? 
+===================================================
+c_id    n_name    sum(l_qty)    
+2     nat3     243     
+4     nat5     243     
+11     nat2     243     
+18     nat4     243     
+25     nat1     243     
+
+===================================================
+0
+===================================================
+0
+===================================================
+100
+===================================================
+0
+===================================================
+c_nat    max( cast(v_n as numeric(4,1)))    
+2     1.0     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: t_val node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_cust node[?]
+                            index: pk_t_cust_c_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_nat, max( cast(t_val.v_n as numeric(?,?))) from t_cust t_cust, t_val t_val where t_cust.c_id=t_val.v_cust group by t_cust.c_nat
+===================================================
+c_nat    min(v_m)    max(v_d)    min(v_vn)    
+2     10.0     0.0     1.5     
+
+Query plan:
+temp(group by)
+    subplan: idx-join (inner join)
+                 outer: sscan
+                            class: t_val node[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: t_cust node[?]
+                            index: pk_t_cust_c_id term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_nat, min(t_val.v_m), max(t_val.v_d), min(t_val.v_vn) from t_cust t_cust, t_val t_val where t_cust.c_id=t_val.v_cust group by t_cust.c_nat
+===================================================
+0
+===================================================
+0
+===================================================
+2
+===================================================
+0
+===================================================
+v_f    sum(v_cust)    
+1.6777216E7     5344     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: t_val node[?]
+                                         sargs: term[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t_key node[?]
+                                         index: pk_t_key_k_id term[?] (covers)
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t_val.v_f, sum(t_val.v_cust) from t_val t_val, t_key t_key where t_val.v_f=t_val.v_i and t_val.v_i=t_key.k_id group by t_val.v_f order by ? desc 
+===================================================
+c_id    sum(o_amount)    
+500     3465     
+600     3465     
+1200     3465     
+1300     3465     
+199     3430     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: idx-join (inner join)
+                              outer: sscan
+                                         class: t_cust node[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: t_ord node[?]
+                                         index: fk_t_ord_o_cust term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  ? asc
+                 cost:  ? card ?
+    sort:  ? desc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id, sum(t_ord.o_amount) from t_cust t_cust, t_ord t_ord where t_cust.c_id=t_ord.o_cust group by t_cust.c_id order by ? desc  for orderby_num()<= ?:?  and t_cust.c_id> ?:? 
+===================================================
+c_id    sum(o_amount)    
+1     0     
+2     34     
+3     70     
+4     102     
+5     140     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_cust node[?]
+               index: pk_t_cust_c_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_ord node[?]
+               index: fk_t_ord_o_cust term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id, sum(t_ord.o_amount) from t_cust t_cust, t_ord t_ord where t_cust.c_id=t_ord.o_cust group by t_cust.c_id having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+c_id    sum(o_amount)    
+1     0     
+2     34     
+3     70     
+4     102     
+5     140     
+
+Query plan:
+idx-join (inner join)
+    outer: iscan
+               class: t_cust node[?]
+               index: pk_t_cust_c_id (covers)
+               cost:  ? card ?
+    inner: iscan
+               class: t_ord node[?]
+               index: fk_t_ord_o_cust term[?]
+               cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t_cust.c_id, sum(t_ord.o_amount) from t_cust t_cust, t_ord t_ord where t_cust.c_id=t_ord.o_cust group by t_cust.c_id having groupby_num()<=?
+/* ---> skip GROUP BY */
+===================================================
+0
+===================================================
+0
