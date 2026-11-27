@@ -291,7 +291,7 @@ Query Plan:
   SORT (order by)
     TABLE SCAN (dba.t_chain)
 
-  rewritten query: select [dba.t_chain].id,  cast([dba.t_chain].v as numeric(?,?)), case when [dba.t_chain].v<? then null else  cast([dba.t_chain].v as varchar(?)) end, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
+  rewritten query: select [dba.t_chain].id,  cast([dba.t_chain].v as numeric(?,?)), case when [dba.t_chain].v<? then  cast(null as varchar(?)) else  cast([dba.t_chain].v as varchar(?)) end, [dba.t_chain].v from [dba.t_chain] [dba.t_chain] order by ?, ? for orderby_num()<= ?:? 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
