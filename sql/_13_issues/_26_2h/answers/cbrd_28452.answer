@@ -1,0 +1,429 @@
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+    
+Case 1: greater-than condition over both expressions, the query of the issue     
+
+===================================================
+ca    ca    abs(x.cb)    abs(y.cb)    
+3     53     2     4     
+4     54     1     5     
+5     55     0     5     
+6     56     1     4     
+7     57     2     3     
+14     64     2     4     
+15     65     1     5     
+16     66     0     5     
+17     67     1     4     
+18     68     2     3     
+25     75     2     4     
+26     76     1     5     
+27     77     0     5     
+28     78     1     4     
+29     79     2     3     
+36     86     2     4     
+37     87     1     5     
+38     88     0     5     
+39     89     1     4     
+40     90     2     3     
+47     97     2     4     
+48     98     1     5     
+49     99     0     5     
+51     1     2     4     
+58     8     2     3     
+59     9     1     4     
+60     10     0     5     
+61     11     1     5     
+62     12     2     4     
+69     19     2     3     
+70     20     1     4     
+71     21     0     5     
+72     22     1     5     
+73     23     2     4     
+80     30     2     3     
+81     31     1     4     
+82     32     0     5     
+83     33     1     5     
+84     34     2     4     
+91     41     2     3     
+92     42     1     4     
+93     43     0     5     
+94     44     1     5     
+95     45     2     4     
+
+Query plan:
+temp(order by)
+    subplan: hash-join (inner join)
+                 edge:  term[?]
+                 outer: iscan
+                            class: x node[?]
+                            index: i_ta term[?]
+                            cost:  ? card ?
+                 inner: iscan
+                            class: y node[?]
+                            index: i_ta term[?]
+                            cost:  ? card ?
+                 sargs: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ x.ca, y.ca,  abs(x.cb),  abs(y.cb) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and ( abs(y.cb)> abs(x.cb)) order by ?, ?
+===================================================
+ca    ca    abs(x.cb)    abs(y.cb)    
+3     53     2     4     
+4     54     1     5     
+5     55     0     5     
+6     56     1     4     
+7     57     2     3     
+14     64     2     4     
+15     65     1     5     
+16     66     0     5     
+17     67     1     4     
+18     68     2     3     
+25     75     2     4     
+26     76     1     5     
+27     77     0     5     
+28     78     1     4     
+29     79     2     3     
+36     86     2     4     
+37     87     1     5     
+38     88     0     5     
+39     89     1     4     
+40     90     2     3     
+47     97     2     4     
+48     98     1     5     
+49     99     0     5     
+51     1     2     4     
+58     8     2     3     
+59     9     1     4     
+60     10     0     5     
+61     11     1     5     
+62     12     2     4     
+69     19     2     3     
+70     20     1     4     
+71     21     0     5     
+72     22     1     5     
+73     23     2     4     
+80     30     2     3     
+81     31     1     4     
+82     32     0     5     
+83     33     1     5     
+84     34     2     4     
+91     41     2     3     
+92     42     1     4     
+93     43     0     5     
+94     44     1     5     
+95     45     2     4     
+
+===================================================
+    
+Case 2: greater-or-equal condition over both expressions     
+
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+153     7602695     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum(x.ca*?+y.ca) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and ( abs(y.cb)>= abs(x.cb))
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+153     7602695     
+
+===================================================
+    
+Case 3: not-equal condition over both expressions     
+
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+88     4414410     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum(x.ca*?+y.ca) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and  abs(y.cb)<> abs(x.cb)
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+88     4414410     
+
+===================================================
+    
+Case 4: arithmetic over both expressions     
+
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+50     2502500     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum(x.ca*?+y.ca) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and  abs(y.cb)+ abs(x.cb)=?
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+50     2502500     
+
+===================================================
+    
+Case 5: another function, lower() over a string column     
+
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+49     3326575     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_tb term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_tb term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum(x.ca*?+y.ca) from tb x, tb y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and ( lower(y.cb)< lower(x.cb))
+===================================================
+count(*)    sum(x.ca*1000+y.ca)    
+49     3326575     
+
+===================================================
+    
+Case 6: EXISTS subquery solved by a hash join     
+
+===================================================
+count(*)    sum(x.ca)    
+44     2155     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(x.ca) from ta x semi join ta y on ( abs(y.cb)> abs(x.cb)) and (y.cd< ?:? ) and y.cc=x.cc where (x.cd< ?:? )
+===================================================
+count(*)    sum(x.ca)    
+44     2155     
+
+===================================================
+    
+Case 7: IN subquery solved by a hash join     
+
+===================================================
+count(*)    sum(x.ca)    
+44     2155     
+
+Query plan:
+hash-join (semi join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ USE_HASH */ count(*), sum(x.ca) from ta x semi join ta y on ( abs(y.cb)> abs(x.cb)) and (y.cd< ?:? ) and x.cc=y.cc where (x.cd< ?:? )
+===================================================
+count(*)    sum(x.ca)    
+44     2155     
+
+===================================================
+    
+Case 8: LEFT OUTER self join with the condition in the ON clause     
+
+===================================================
+count(*)    count(y.ca)    sum(y.ca)    
+99     44     2255     
+
+Query plan:
+hash-join (left outer join)
+    edge:  term[?]
+    outer: iscan
+               class: x node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    inner: iscan
+               class: y node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    during:term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), count(y.ca), sum(y.ca) from ta x left outer join ta y on ( abs(y.cb)> abs(x.cb)) and (y.cd< ?:? ) and x.cc=y.cc where (x.cd< ?:? )
+===================================================
+count(*)    count(y.ca)    sum(y.ca)    
+99     44     2255     
+
+===================================================
+    
+Case 9: three-table self join, the second join compares with the first table     
+
+===================================================
+count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
+88     13362     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: x node[?]
+                          index: i_ta term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: y node[?]
+                          index: i_ta term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: z node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum( abs(x.cb)*?+ abs(y.cb)*?+ abs(z.cb)) from ta x, ta y, ta z where x.cc=y.cc and y.cc=z.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and (z.cd< ?:? ) and ( abs(z.cb)> abs(x.cb))
+===================================================
+count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
+88     13362     
+
+===================================================
+    
+Case 10: three-table self join, the second join compares with the second table     
+
+===================================================
+count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
+88     25332     
+
+Query plan:
+hash-join (inner join)
+    edge:  term[?]
+    outer: hash-join (inner join)
+               edge:  term[?]
+               outer: iscan
+                          class: x node[?]
+                          index: i_ta term[?]
+                          cost:  ? card ?
+               inner: iscan
+                          class: y node[?]
+                          index: i_ta term[?]
+                          cost:  ? card ?
+               cost:  ? card ?
+    inner: iscan
+               class: z node[?]
+               index: i_ta term[?]
+               cost:  ? card ?
+    sargs: term[?]
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */ count(*), sum( abs(x.cb)*?+ abs(y.cb)*?+ abs(z.cb)) from ta x, ta y, ta z where x.cc=y.cc and y.cc=z.cc and (x.cd< ?:? ) and (y.cd< ?:? ) and (z.cd< ?:? ) and ( abs(z.cb)> abs(y.cb))
+===================================================
+count(*)    sum( abs(x.cb)*100+ abs(y.cb)*10+ abs(z.cb))    
+88     25332     
+
+===================================================
+    
+Case 11: GROUP BY and HAVING over both expressions     
+
+===================================================
+abs(x.cb)    abs(y.cb)    count(*)    
+0     5     9     
+1     4     8     
+1     5     9     
+2     3     8     
+2     4     10     
+
+Query plan:
+temp(order by)
+    subplan: temp(group by)
+                 subplan: hash-join (inner join)
+                              edge:  term[?]
+                              outer: iscan
+                                         class: x node[?]
+                                         index: i_ta term[?]
+                                         cost:  ? card ?
+                              inner: iscan
+                                         class: y node[?]
+                                         index: i_ta term[?]
+                                         cost:  ? card ?
+                              cost:  ? card ?
+                 sort:  
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select /*+ ORDERED USE_HASH */  abs(x.cb),  abs(y.cb), count(*) from ta x, ta y where x.cc=y.cc and (x.cd< ?:? ) and (y.cd< ?:? ) group by  abs(x.cb),  abs(y.cb) having ( abs(y.cb)> abs(x.cb)) order by ?, ?
+===================================================
+abs(x.cb)    abs(y.cb)    count(*)    
+0     5     9     
+1     4     8     
+1     5     9     
+2     3     8     
+2     4     10     
+
+===================================================
+0
