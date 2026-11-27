@@ -43,10 +43,11 @@
  *             REPLACE while created_time stays, and dropping that user keeps
  *             the label
  *    Case 17: LIKE, AS SELECT, UNDER and PROMOTE PARTITION copy no label
- *    Case 18: an inherited column is labelled per class, and INHERIT OF and
- *             DROP SUPERCLASS remove its label
- *    Case 19: RENAME COLUMN, MODIFY, OWNER TO, PARTITION BY and REMOVE
- *             PARTITIONING keep the labels
+ *    Case 18: an inherited column is labelled per class, INHERIT OF and DROP
+ *             SUPERCLASS remove its label, and ADD SUPERCLASS brings in no
+ *             label
+ *    Case 19: RENAME COLUMN, CHANGE COLUMN, MODIFY, OWNER TO, RENAME TABLE,
+ *             PARTITION BY and REMOVE PARTITIONING keep the labels
  *    Case 20: DROP COLUMN and DROP TABLE remove the labels with object
  *             privileges only
  *    Case 21: a referenced grade, info_type or source cannot be dropped, and a
@@ -57,11 +58,12 @@
 --+ holdcas on;
 drop table if exists t_create, t_order, t_replace, t_list, t_list2, t_owner, t_dcol, t_dcol2, t_dtab, t_dtab2, t_dtab3, t_dtab4;
 drop table if exists t_dsch, t_none, t_view, t_part, t_reg, t_dup, t_atom, t_atom2, t_atom_log;
-drop table if exists t_by, t_src, t_like, t_as, t_prom, t_prom__p__p0, t_ren, t_mod, t_own19, t_pby, t_rmp, t_rmp_empty;
+drop table if exists t_by, t_src, t_like, t_as, t_prom, t_prom__p__p0, t_ren, t_chg, t_mod, t_own19, t_rtb, t_rtb2, t_pby, t_rmp, t_rmp_empty;
 drop table if exists t_dcol20, t_dtab20, t_pdrop20, t_ref;
+drop table if exists u_other.t_owner, u_other.t_dcol, u_other.t_dtab2, u_sch1.t_dsch, u_sch1.t_dsch2, u_sch2.t_dsch, u_sch3.t_dsch, u_labelled.t_none, u_dup.t_dup, u_priv_owner.t_priv, u_priv_owner.t_priv_tab, u_priv_schema.t_priv, u_table_owner.t_own15, u_own19.t_own19;
 drop view if exists v_label;
 drop synonym if exists s_label;
-drop class if exists x_shared, c_before, c_after, p_src, c_inh, p_inh, q_inh, c_drop_super, p_drop_super;
+drop class if exists x_shared, c_before, c_after, p_src, c_inh, p_inh, q_inh, c_drop_super, p_drop_super, c_add_super, p_add_super;
 
 create sensitivity label grade 'g1' level 1;
 create sensitivity label grade 'g2' level 2;
@@ -186,7 +188,6 @@ select owner_name, class_name, attr_name from db_sensitivity_label where class_n
 
 evaluate 'Case 10: a partition column cannot be labelled or unlabelled, while the partitioned table can, and DROP ON ALL COLUMNS IN TABLE of a partition succeeds and keeps the label of the partitioned table';
 create table t_part (a int, b int) partition by range (a) (partition p0 values less than (10), partition p1 values less than (100));
-insert into t_part values (1, 1), (50, 50);
 -- expected error: a partition
 create sensitivity label on column t_part__p__p0.a (grade = 'g1');
 create sensitivity label on column t_part.b (grade = 'g1');
@@ -334,6 +335,8 @@ create sensitivity label on column t_by.a (grade = 'g1');
 set @create_end = sys_datetime;
 select attr_name, labeled_by, updated_time between @create_start and @create_end from db_sensitivity_label where class_name = 't_by' order by 1;
 call login('u_by', '') on class db_user;
+-- a second apart, so a REPLACE that resets created_time or keeps updated_time prints 0
+select sleep(1);
 set @replace_start = sys_datetime;
 create or replace sensitivity label on column dba.t_by.a (grade = 'g2');
 set @replace_end = sys_datetime;
@@ -357,7 +360,7 @@ create class c_after under p_src;
 alter table t_prom promote partition p0;
 select owner_name, class_name, attr_name from db_sensitivity_label where class_name in ('t_src', 't_like', 't_as', 'p_src', 'c_before', 'c_after', 't_prom', 't_prom__p__p0') order by 1, 2, 3;
 
-evaluate 'Case 18: an inherited column is labelled per class, and INHERIT OF and DROP SUPERCLASS remove its label';
+evaluate 'Case 18: an inherited column is labelled per class, INHERIT OF and DROP SUPERCLASS remove its label, and ADD SUPERCLASS brings in no label';
 create class p_inh (a int);
 create class q_inh (a int);
 create class c_inh under p_inh, q_inh inherit a of p_inh;
@@ -375,28 +378,38 @@ create sensitivity label on column c_drop_super.b (grade = 'g1');
 select owner_name, class_name, attr_name, grade from db_sensitivity_label where class_name in ('p_drop_super', 'c_drop_super') order by 1, 2, 3;
 alter class c_drop_super drop superclass p_drop_super;
 select owner_name, class_name, attr_name, grade from db_sensitivity_label where class_name in ('p_drop_super', 'c_drop_super') order by 1, 2, 3;
+create class p_add_super (b int);
+create class c_add_super (a int);
+create sensitivity label on column p_add_super.b (grade = 'g1');
+alter class c_add_super add superclass p_add_super;
+select owner_name, class_name, attr_name, grade from db_sensitivity_label where class_name in ('p_add_super', 'c_add_super') order by 1, 2, 3;
 
-evaluate 'Case 19: RENAME COLUMN, MODIFY, OWNER TO, PARTITION BY and REMOVE PARTITIONING keep the labels';
+evaluate 'Case 19: RENAME COLUMN, CHANGE COLUMN, MODIFY, OWNER TO, RENAME TABLE, PARTITION BY and REMOVE PARTITIONING keep the labels';
+-- the rows of t_mod, t_pby and t_rmp make MODIFY, PARTITION BY and REMOVE PARTITIONING rewrite data, and t_rmp_empty removes partitioning with none
 create user u_own19;
 create table t_ren (a int);
+create table t_chg (a int);
 create table t_mod (a int);
 insert into t_mod values (1);
 create table t_own19 (a int);
+create table t_rtb (a int);
 create table t_pby (a int);
 insert into t_pby values (1), (2);
 create table t_rmp (a int) partition by hash (a) partitions 2;
 insert into t_rmp values (1), (2);
 create table t_rmp_empty (a int) partition by hash (a) partitions 2;
-create sensitivity label on column t_ren.a, t_mod.a, t_own19.a, t_pby.a, t_rmp.a, t_rmp_empty.a (grade = 'g1');
+create sensitivity label on column t_ren.a, t_chg.a, t_mod.a, t_own19.a, t_rtb.a, t_pby.a, t_rmp.a, t_rmp_empty.a (grade = 'g1');
 alter table t_ren rename column a as c;
+alter table t_chg change a c varchar(10);
 alter table t_mod modify a varchar(10);
 alter table t_own19 owner to u_own19;
+rename table t_rtb as t_rtb2;
 alter table t_pby partition by hash (a) partitions 2;
 alter table t_rmp remove partitioning;
 alter table t_rmp_empty remove partitioning;
 select data_type from db_attribute where class_name = 't_mod' and attr_name = 'a';
 select class_name, count(*) from db_partition where class_name in ('t_pby', 't_rmp', 't_rmp_empty') group by class_name order by 1;
-select owner_name, class_name, attr_name, grade from db_sensitivity_label where class_name in ('t_ren', 't_mod', 't_own19', 't_pby', 't_rmp', 't_rmp_empty') order by 1, 2, 3;
+select owner_name, class_name, attr_name, grade from db_sensitivity_label where class_name in ('t_ren', 't_chg', 't_mod', 't_own19', 't_rtb', 't_rtb2', 't_pby', 't_pby__p__p0', 't_pby__p__p1', 't_rmp', 't_rmp__p__p0', 't_rmp__p__p1', 't_rmp_empty', 't_rmp_empty__p__p0', 't_rmp_empty__p__p1') order by 1, 2, 3;
 
 evaluate 'Case 20: DROP COLUMN and DROP TABLE remove the labels with object privileges only';
 create sensitivity label grade 'g_column' level 3;
@@ -450,11 +463,11 @@ drop table t_create, t_order, t_replace, t_list, t_list2, t_owner, u_other.t_own
 drop table t_dtab, t_dtab2, t_dtab3, t_dtab4, u_other.t_dtab2, t_dsch, u_sch1.t_dsch, u_sch1.t_dsch2, u_sch2.t_dsch, u_sch3.t_dsch;
 drop table t_none, u_labelled.t_none, t_part, t_reg, t_dup, u_dup.t_dup, t_atom, t_atom2, t_atom_log;
 drop table u_priv_owner.t_priv, u_priv_owner.t_priv_tab, u_priv_schema.t_priv, u_table_owner.t_own15, t_by;
-drop table t_src, t_like, t_as, t_prom, t_prom__p__p0, t_ren, t_mod, u_own19.t_own19, t_pby, t_rmp, t_rmp_empty, t_dcol20, t_ref;
+drop table t_src, t_like, t_as, t_prom, t_prom__p__p0, t_ren, t_chg, t_mod, u_own19.t_own19, t_rtb2, t_pby, t_rmp, t_rmp_empty, t_dcol20, t_ref;
 drop view v_label;
 drop synonym s_label;
 drop table t_view;
-drop class x_shared, c_before, c_after, p_src, c_inh, p_inh, q_inh, c_drop_super, p_drop_super;
+drop class x_shared, c_before, c_after, p_src, c_inh, p_inh, q_inh, c_drop_super, p_drop_super, c_add_super, p_add_super;
 select count(*) from db_sensitivity_label where grade in ('g1', 'g2');
 drop sensitivity label grade 'g1';
 drop sensitivity label grade 'g2';
