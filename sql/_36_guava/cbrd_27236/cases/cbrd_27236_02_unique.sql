@@ -4,7 +4,9 @@
 -- at the two ends of the heap, so they go to different runs and meet only in the last pass of the merge, the
 -- one that builds the leaves. A build sorts 256K (fan-in 8: 25 runs to 4, then 4), 512K (fan-in 16: 12 runs in
 -- one pass) or 256K with index_build_merge_fanin 3 (25 runs to 9, to 3, then 3), and each must fail with the
--- unique violation and leave no index. With the last row changed to a k of its own, the same builds succeed
+-- unique violation and leave no index. The same builds fail again when the first and the last row share the
+-- largest k: the last pass meets the pair at its last record, after it has built every leaf before it. With
+-- the two rows changed to a k of their own, the same builds succeed
 -- and read back every row in the order of the 16M build, which sorts the rows in memory with no merge. A pad
 -- of 100 characters keeps the heap at 23 sectors: a sort makes no more run files than its heap holds data
 -- sectors, and two INTs alone would leave 6, below the 8 and 16 of the buffers.
@@ -30,8 +32,21 @@ create unique index u_k on u (k);
 set system parameters 'index_build_merge_fanin=DEFAULT';
 select count (*) from db_index where class_name = 'u';
 
--- positive control: the last row gets a k of its own
-update u set k = 150000 where id = 150000;
+-- the shared k is the largest one, so the last pass finds it at its last record
+update u set k = 150000 where id in (1, 150000);
+set system parameters 'index_build_buffer_size=256K';
+create unique index u_k on u (k);
+alter table u add constraint pk_u primary key (k);
+set system parameters 'index_build_buffer_size=512K';
+create unique index u_k on u (k);
+set system parameters 'index_build_buffer_size=256K';
+set system parameters 'index_build_merge_fanin=3';
+create unique index u_k on u (k);
+set system parameters 'index_build_merge_fanin=DEFAULT';
+select count (*) from db_index where class_name = 'u';
+
+-- positive control: the two rows get a k of their own
+update u set k = id where id in (1, 150000);
 set system parameters 'index_build_buffer_size=16M';
 create unique index u_k on u (k);
 insert into sig select 'k', 'one run', count (*), sum (mod (cast (r as bigint) * id, 1000003)) from (select rownum as r, id from u where k >= 0 using index u_k) x;
