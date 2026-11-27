@@ -39,6 +39,13 @@ with x as (select /*+ NO_MERGE */ a, b, c from t28207_w1)
 -- two disjuncts before the join term fold away
 select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
   where (x.b = 2 or x.b = 4 or w2.c = x.c) and x.b = 3 order by 2;
+-- the range intersection drops the constant range next to the join range
+select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
+  where w2.c in (x.c, 7) and w2.c < 3 order by 2;
+select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
+  where (w2.c = x.c or w2.c = 5) and w2.c < 3 order by 2;
+select x.a, w2.a from t28207_w2 w2 left join (select /*+ NO_MERGE */ a, b, c from t28207_w1) x
+  on w2.c in (x.c, 7) and w2.c < 3 order by 2;
 -- operands of other types, and DELETE
 select x.a, w2.a from t28207_w2 w2, (select /*+ NO_MERGE */ a, b, cast (c as varchar (10)) c from t28207_w1) x
   where (x.b = 2 or w2.c = x.c) and x.b = 3 order by 2;
@@ -67,6 +74,9 @@ select q1.a, y.c from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 'x' as c
   on q1.a = y.a where y.c = y.c order by 1;
 select q1.a, y.c from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
   on q1.a = y.a where y.c = q1.a order by 1;
+-- HAVING without an aggregate goes to WHERE
+select q1.a, y.c from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
+  on q1.a = y.a group by q1.a, y.c having y.c = y.c order by 1;
 -- the ON condition of a later join reads the NULL row too
 select q1.a, y.c, z.a from t28207_q1 q1 left join (select /*+ NO_MERGE */ a, 5 as c from t28207_q2) y
   on q1.a = y.a left join t28207_r z on y.c = y.c order by 1;
