@@ -1,6 +1,6 @@
 -- CBRD-28221: CAST (NULL AS type) keeps its type instead of being folded into an untyped NULL
 
-drop table if exists t28221, c28221_1, c28221_2, c28221_3, c28221_4;
+drop table if exists t28221, c28221_1, c28221_2, c28221_3, c28221_4, c28221_5;
 drop view if exists w28221_1, w28221_2, w28221_3;
 
 create table t28221 (a int, b int);
@@ -50,5 +50,15 @@ select cast(null as int) + 1, coalesce(cast(null as int), 5), nvl(cast(null as d
 -- Case 8: UUID still rejects a typed NULL version
 select uuid(cast(null as int));
 
+-- Case 9: arithmetic on a typed NULL keeps the type, and a predicate over it is still NULL
+create table c28221_5 as select a, cast(null as int) + 1 p, cast(null as date) + 1 q from t28221 where a = 1;
+select attr_name, data_type from db_attribute where class_name = 'c28221_5' order by def_order;
+select a from w28221_3 where z <=> 1;
+select a from w28221_3 where z <=> null order by a;
+select a from w28221_3 where z + 1 = 2;
+select a from w28221_3 where -z = 2;
+select a from w28221_3 where z + 1 is null order by a;
+select uuid(cast(null as int) + 1);
+
 drop view w28221_1, w28221_2, w28221_3;
-drop table t28221, c28221_1, c28221_2, c28221_3, c28221_4;
+drop table t28221, c28221_1, c28221_2, c28221_3, c28221_4, c28221_5;
