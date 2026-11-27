@@ -18,9 +18,10 @@
  *  heap step of a bitmap heap scan evaluated its data filter with the row's heap page held, and
  *  a path expression waited for a class lock with the fetched object's page held. A debug
  *  server checks at those operators that no page is held. Case 9: a scalar subquery that is a
- *  select list item runs when the first row is output, so every worker of a parallel index scan
- *  ran it, under the worker's leaf; no worker reads the index of such a block now. A subquery
- *  that is an operand of an expression runs before the scan opens and keeps the parallel scan.
+ *  select list item ran when the first row was output, so every worker of a parallel scan ran
+ *  it (rows of one result carried different serial values), a worker of a parallel index scan
+ *  under its leaf. It runs once before the scan opens now, as a subquery of a WHERE clause does.
+ *  The 100 rows of b = 999 lie all over t_big, so every worker outputs some of them.
  *
  *  Coverage:
  *    Case 1:  table subquery in a key filter (NOT IN, ALL, SOME, NULL, empty set)
@@ -31,7 +32,7 @@
  *    Case 6:  outer join ON condition with a stored function over a covering inner scan
  *    Case 7:  GROUPBY_NUM, START WITH and CONNECT BY conditions with a stored function
  *    Case 8:  bitmap heap scan whose data filter reads a serial or an index statistic
- *    Case 9:  no worker reads the index of a block whose select list item is a scalar subquery
+ *    Case 9:  a scalar subquery that is a select list item runs once for all workers of a parallel scan
  *    Case 10: path expression with a condition and a subquery on the fetched object
  */
 
@@ -146,16 +147,15 @@ select /*+ no_parallel_scan */ count(*), sum (b) from t_big ignore index (i_big)
 select s_bm.next_value from db_root;
 
 
-evaluate 'Case 9: no worker reads the index of a block whose select list item is a scalar subquery, the same subquery as an operand runs before the scan and stays parallel; the serial gives 2 next; result = no_parallel_scan';
+evaluate 'Case 9: a scalar subquery that is a select list item runs once for all workers of a parallel heap scan (one value, 1) and of a parallel index scan (2); the serial gives 3 next';
 set trace on;
-select /*+ recompile parallel(4) */ a, 0 + (select count(*) from t_key) from t_big where b = 999 and a <= 10000 using index i_big(+) order by 1, 2;
+select /*+ recompile parallel(4) */ distinct (select s_sel.next_value from db_root) from t_big ignore index (i_big) where b = 999 order by 1;
 show trace;
-select /*+ recompile parallel(4) */ a, (select s_sel.next_value from db_root) from t_big where b = 999 and a <= 10000 using index i_big(+) order by 1, 2;
+select /*+ recompile parallel(4) */ distinct (select s_sel.next_value from db_root) from t_big where b = 999 and a > 0 using index i_big(+) order by 1;
 show trace;
--- trace goes off before the queries that no show trace reads
+-- trace goes off before the query that no show trace reads
 set trace off;
 select s_sel.next_value from db_root;
-select /*+ no_parallel_scan */ a, 1 from t_big where b = 999 and a <= 10000 order by 1, 2;
 
 
 evaluate 'Case 10: path expression with a condition and a subquery on the fetched object; result = join';

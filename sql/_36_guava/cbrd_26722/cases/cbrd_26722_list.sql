@@ -20,7 +20,8 @@
  *    Case 7:  the list drives a nested loop join with a heap inner and with a list inner
  *    Case 8:  a materialized CTE and the result of a recursive CTE
  *    Case 9:  rows longer than a page: alone, at the start and end, in the middle of the list
- *    Case 10: serial: a small list, ROWNUM, CONNECT BY, a CTE read by scalar subqueries
+ *    Case 10: serial: a small list, ROWNUM, CONNECT BY; a CTE read by scalar subqueries that are
+ *             select list items is parallel (since CBRD-28426 they run before the scan)
  *    Case 11: the JSON trace names the parallel list scan parallel temp
  */
 
@@ -129,7 +130,7 @@ show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(length(d.w)), sum(d.id) from (select /*+ no_parallel_scan */ id, pad w from t_heap where id <= 3000 union all select /*+ no_parallel_scan */ id, w from t_wide union all select /*+ no_parallel_scan */ id, pad from t_heap where id > 97000) d;
 
 
-evaluate 'Case 10: a small list, ROWNUM, CONNECT BY and a CTE read by scalar subqueries keep the list scan serial; result = no_parallel_scan';
+evaluate 'Case 10: a small list, ROWNUM and CONNECT BY keep the list scan serial, a CTE read by scalar subqueries of the select list is parallel; result = no_parallel_scan';
 select /*+ recompile */ count(*), sum(d.v) from (select /*+ no_merge */ id, v from t_heap where id <= 1000) d;
 show trace;
 select /*+ recompile no_parallel_scan */ count(*), sum(d.v) from (select /*+ no_merge no_parallel_scan */ id, v from t_heap where id <= 1000) d;

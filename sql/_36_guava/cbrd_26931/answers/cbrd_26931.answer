@@ -211,7 +211,7 @@ g    v
 
 ===================================================
     
-Case 6: select-list operand parallel, bare select-list subquery serial; result = no_parallel_scan     
+Case 6: select-list operand parallel, bare select-list subquery parallel; result = no_parallel_scan     
 
 ===================================================
 (select max(v) from t_big)+0    
@@ -262,6 +262,7 @@ Trace Statistics:
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
      
 
 ===================================================

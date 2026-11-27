@@ -683,7 +683,7 @@ count(*)    sum( char_length(d.w))    sum(d.id)
 
 ===================================================
     
-Case 10: a small list, ROWNUM, CONNECT BY and a CTE read by scalar subqueries keep the list scan serial; result = no_parallel_scan     
+Case 10: a small list, ROWNUM and CONNECT BY keep the list scan serial, a CTE read by scalar subqueries of the select list is parallel; result = no_parallel_scan     
 
 ===================================================
 count(*)    sum(d.v)    
@@ -812,8 +812,10 @@ Trace Statistics:
                (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, temp time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
      
 
 ===================================================

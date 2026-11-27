@@ -437,61 +437,13 @@ serial_next_value(s_bm, 1)
 
 ===================================================
     
-Case 9: no worker reads the index of a block whose select list item is a scalar subquery, the same subquery as an operand runs before the scan and stays parallel; the serial gives 2 next; result = no_parallel_scan     
+Case 9: a scalar subquery that is a select list item runs once for all workers of a parallel heap scan (one value, 1) and of a parallel index scan (2); the serial gives 3 next     
 
 ===================================================
 0
 ===================================================
-a    0+(select count(*) from t_key)    
-999     30     
-1999     30     
-2999     30     
-3999     30     
-4999     30     
-5999     30     
-6999     30     
-7999     30     
-8999     30     
-9999     30     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t_key)
-
-  rewritten query: (select count(*) from [dba.t_key] [dba.t_key])
-
-  SORT (order by)
-    INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].a<= ?:? ))
-
-  rewritten query: select /*+ PARALLEL(?) */ [dba.t_big].a,  cast(? as bigint)+(select count(*) from [dba.t_key] [dba.t_key]) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and [dba.t_big].b= ?:?  using index [dba.t_big].i_big(+) order by ?, ?
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
-         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list)
-      SCAN (bitmap heap lookup: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
-           (parallel workers: ?, heap time: ?..?, pages: ?..?, rows: ?..?)
-    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_key), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-     
-
-===================================================
-a    (select serial_next_value(s_sel, 1) from db_root)    
-999     1     
-1999     1     
-2999     1     
-3999     1     
-4999     1     
-5999     1     
-6999     1     
-7999     1     
-8999     1     
-9999     1     
+(select serial_next_value(s_sel, 1) from db_root)    
+1     
 
 ===================================================
 trace    
@@ -501,17 +453,49 @@ Query Plan:
 
   rewritten query: (select serial_next_value([dba.s_sel], ?) from db_root db_root)
 
-  SORT (order by)
-    INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].a<= ?:? ))
+  SORT (distinct)
+    TABLE SCAN (dba.t_big)
 
-  rewritten query: select /*+ PARALLEL(?) */ [dba.t_big].a, (select serial_next_value([dba.s_sel], ?) from db_root db_root) from [dba.t_big] [dba.t_big] where ([dba.t_big].a<= ?:? ) and [dba.t_big].b= ?:?  using index [dba.t_big].i_big(+) order by ?, ?
+  rewritten query: select /*+ PARALLEL(?) */ distinct (select serial_next_value([dba.s_sel], ?) from db_root db_root) from [dba.t_big] [dba.t_big] where [dba.t_big].b= ?:?  using index [dba.t_big].i_big(-) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: mergeable list)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+(select serial_next_value(s_sel, 1) from db_root)    
+2     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (db_root)
+
+  rewritten query: (select serial_next_value([dba.s_sel], ?) from db_root db_root)
+
+  SORT (distinct)
+    INDEX SCAN (dba.t_big.i_big) (key range: ([dba.t_big].a> ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ distinct (select serial_next_value([dba.s_sel], ?) from db_root db_root) from [dba.t_big] [dba.t_big] where ([dba.t_big].a> ?:? ) and [dba.t_big].b= ?:?  using index [dba.t_big].i_big(+) order by ?
 
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
     SCAN (index: dba.t_big.i_big), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list)
       SCAN (bitmap heap lookup: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
+           (parallel workers: ?, heap time: ?..?, pages: ?..?, rows: ?..?)
     ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
@@ -521,20 +505,7 @@ Trace Statistics:
 0
 ===================================================
 serial_next_value(s_sel, 1)    
-2     
-
-===================================================
-a    1    
-999     1     
-1999     1     
-2999     1     
-3999     1     
-4999     1     
-5999     1     
-6999     1     
-7999     1     
-8999     1     
-9999     1     
+3     
 
 ===================================================
     
