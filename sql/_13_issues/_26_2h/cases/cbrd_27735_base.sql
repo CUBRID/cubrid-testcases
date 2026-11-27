@@ -96,9 +96,8 @@ show trace;
 -- its whole accumulated string on every value appended, so a non-DISTINCT
 -- concatenation of all 262,244 rows (about 1 MB of output) ran long enough
 -- to miss the CTP timeout. CBRD-27926 is fixed (develop, 2026-11-09), so
--- this case is added back. Independently computed from the same values
--- (not from this engine): sorting all 262,244 v values and joining them
--- with ',' gives a string of length 1020147, MD5 38afba4a93908d30538aa9baf29839ea.
+-- this case is added back. The length and MD5 in the label were computed
+-- outside this engine, by sorting all v values and joining them with ','.
 evaluate 'Case 8: Complete ordered non-DISTINCT string on the full data; result = 1020147, 38afba4a93908d30538aa9baf29839ea';
 select /*+ recompile */ length(group_concat(v order by v separator ',')) as concat_length, md5(group_concat(v order by v separator ',')) as concat_md5 from td;
 show trace;
