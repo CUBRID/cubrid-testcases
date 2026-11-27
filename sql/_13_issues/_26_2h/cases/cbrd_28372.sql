@@ -4,6 +4,7 @@
 -- twin with the operands in the other order did not. Cases 1 to 9 run both orders; they must give the same result.
 
 -- Case 1: outer join reduction folds a term whose unfoldable subquery is followed by the target column
+evaluate 'Case 1: outer join reduction folds a term whose unfoldable subquery is followed by the target column';
 drop table if exists wa, wb, tt, tv;
 create table wa (a int);
 create table wb (a int, b int, c bigint);
@@ -22,6 +23,7 @@ select wa.a, wb.c from wa left outer join wb on wb.a = wa.a
  where (select count (*) from tt where tt.y = wb.b) + 1 > wb.c - 5 order by 1;
 
 -- Case 2: a function index term after a subquery term (SELECT and UPDATE)
+evaluate 'Case 2: a function index term after a subquery term (SELECT and UPDATE)';
 drop table if exists k;
 create table k (id int, a int, b int, d int);
 insert into k values (1, 5, 3, 0), (2, 2, 3, 0);
@@ -41,6 +43,7 @@ deallocate prepare s3;
 deallocate prepare u1;
 
 -- Case 3: a term on a derived table with an analytic function is pushed into it only on a partition key
+evaluate 'Case 3: a term on a derived table with an analytic function is pushed into it only on a partition key';
 drop table if exists ta, tc, th;
 create table ta (k int, s varchar (10));
 insert into ta values (1, 'a'), (1, 'b'), (2, 'c');
@@ -64,6 +67,7 @@ select v.* from (select g, s, count (*) over (partition by g) cg from th) v
  where v.g = elt (1, trim (v.s), cast (1 as varchar (10))) order by 1, 2;
 
 -- Case 4: loose index scan for an aggregate whose argument reads a column after a subquery
+evaluate 'Case 4: loose index scan for an aggregate whose argument reads a column after a subquery';
 drop table if exists tl;
 create table tl (a int, b int, c int);
 create index i_tl_abc on tl (a, b, c);
@@ -73,6 +77,7 @@ select /*+ index_ls */ a, sum (elt (2, (select 7), b + 0)) s from tl where a > 0
 select /*+ index_ls */ a, sum (elt (1, b + 0, (select 7))) s from tl where a > 0 group by a order by a;
 
 -- Case 5: WITH CHECK OPTION on IN (a, a + 9)
+evaluate 'Case 5: WITH CHECK OPTION on IN (a, a + 9)';
 drop view if exists vc1, vc2;
 drop table if exists vt;
 create table vt (a int, b int) dont_reuse_oid;
@@ -87,6 +92,7 @@ insert into vc2 values (6, 60);
 select a, b from vt order by 1;
 
 -- Case 6: PRIOR after a subquery in an expression
+evaluate 'Case 6: PRIOR after a subquery in an expression';
 drop table if exists hq;
 create table hq (id int, pid int, v int);
 insert into hq values (1, null, 10), (2, 1, 20), (3, 2, 30);
@@ -94,15 +100,18 @@ select id, abs (prior v) + (select 1 from db_root) x from hq start with pid is n
 select id, (select 1 from db_root) + abs (prior v) x from hq start with pid is null connect by prior id = pid order by id;
 
 -- Case 7: ROWNUM, INST_NUM, ORDERBY_NUM, GROUPBY_NUM after another argument or a subquery
+evaluate 'Case 7: ROWNUM, INST_NUM, ORDERBY_NUM, GROUPBY_NUM after another argument or a subquery';
 drop table if exists tr;
 create table tr (a int, b int);
+create index i_tr_ab on tr (a, b);
 insert into tr values (3, 1), (1, 2), (2, 3), (3, 4);
-select json_array (a, rownum) from tr order by 1;
-select json_array (rownum, a) from tr order by 1;
-select a from tr where 2 in (b, rownum) order by 1;
-select a from tr where 2 in (rownum, b) order by 1;
-select a from tr where 1 in ((select 1), inst_num ()) order by a;
-select a from tr where 1 in (inst_num (), (select 1)) order by a;
+-- ROWNUM and INST_NUM follow the read order: the index fixes it to (a, b) order for both orders of the arguments
+select json_array (a, rownum) from tr where a > 0 using index i_tr_ab order by 1;
+select json_array (rownum, a) from tr where a > 0 using index i_tr_ab order by 1;
+select a from tr where a > 0 and 2 in (b, rownum) using index i_tr_ab order by 1;
+select a from tr where a > 0 and 2 in (rownum, b) using index i_tr_ab order by 1;
+select a from tr where a > 0 and 1 in ((select 1), inst_num ()) using index i_tr_ab order by a;
+select a from tr where a > 0 and 1 in (inst_num (), (select 1)) using index i_tr_ab order by a;
 select (select 1) x, orderby_num () o, a from tr group by a order by a;
 select orderby_num () o, (select 1) x, a from tr group by a order by a;
 select a, count (*) from tr group by a with rollup having elt (1, (select 1), groupby_num ()) is not null;
@@ -112,6 +121,7 @@ select a from tr where elt (1, max (a), (select 'x')) = '1';
 
 -- Case 8: what must stay — WITH with uncorrelated subqueries, correlated subqueries in a merged view,
 -- DEFAULT checks, a hierarchical filter, LEVEL in an expression
+evaluate 'Case 8: what must stay the same';
 drop view if exists gv;
 drop table if exists g1, g2, gd1, gd2, gd3, gd4, gd5, gd6, gh;
 create table g1 (a int, b int);
@@ -137,6 +147,7 @@ select id, level + 1 lv, id + level x from gh start with pid is null connect by 
 
 -- Case 9: a nested INSERT that must run on the client (a trigger on its table) decides the whole INSERT,
 -- whatever the order of the nested INSERTs (insert_execution_mode at its default)
+evaluate 'Case 9: a nested INSERT that must run on the client decides the whole INSERT';
 drop table if exists lg, ia, ib, it;
 create table lg (m varchar (20));
 create table ia (x int) dont_reuse_oid;
@@ -156,6 +167,7 @@ drop trigger tra;
 
 -- Case 10: a constant DEFAULT expression is folded (its node freed) by the type check; the checks after it
 -- must look at the folded value, in CREATE, ALTER ... ADD and ALTER ... SET DEFAULT
+evaluate 'Case 10: a constant DEFAULT expression folded by the type check';
 drop table if exists dc;
 create table dc (i int, f double default exp (3), s varchar (20) default to_char (1.234567, '99.999'));
 alter table dc add column t varchar (20) default to_char (to_time ('02:11:12'), 'HH24:MI:SS');
