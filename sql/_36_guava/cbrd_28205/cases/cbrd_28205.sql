@@ -63,10 +63,16 @@
  *    Case 76-79: no RIGHT JOIN, eliminated: extra ON term moves to an INNER JOIN ON, b.id = 1 in a LEFT JOIN
  *                ON with a.bid = 1 in WHERE, b.id = 1 alone in the primary key table ON, nullable foreign key
  *                before a LEFT JOIN
+ *    Case 80-81: a child with a nullable foreign key and another foreign key, b.id = 1 in a LEFT JOIN ON with no
+ *                child term or with a.bid = 1 in another LEFT JOIN ON, kept
+ *    Case 82-83: a second primary key table after a comma, eliminated with the extra ON term of the first one in
+ *                WHERE: before a LEFT JOIN, last
+ *    Case 84:    the join term in an ANTI JOIN ON, kept
+ *    Case 85:    b.id = 1 and a.bid = 1 in the same LEFT JOIN ON, eliminated
  */
 
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
+drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;
 
 create table t28205_m (a int);
 create table t28205_n (a int, b int);
@@ -106,6 +112,10 @@ create table t28205_kan (id int, bid int not null, foreign key (bid) references 
 create table t28205_kd (id int, v int);
 insert into t28205_kan values (1, 1), (2, 2), (4, 3);
 insert into t28205_kd values (1, 1), (2, 2), (3, 9), (4, null);
+create table t28205_kb2 (id int primary key);
+create table t28205_km (id int, bid int, b2id int not null, foreign key (bid) references t28205_kb (id), foreign key (b2id) references t28205_kb2 (id));
+insert into t28205_kb2 values (1), (2), (8);
+insert into t28205_km values (1, 1, 1), (2, 2, 2), (3, null, 1), (4, 3, 2), (5, null, 2);
 
 
 evaluate 'Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)';
@@ -367,5 +377,26 @@ evaluate 'Case 79: nullable foreign key, LEFT JOIN after the primary key table, 
 --@queryplan
 select a.id, d.id from t28205_ka a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id order by 1, 2;
 
+evaluate 'Case 80: nullable foreign key and another foreign key, b.id = 1 in a LEFT JOIN ON with no child term, kept; expected (1, 1) (2, NULL) (4, NULL)';
+select a.id, d.id from t28205_km a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 order by 1, 2;
+
+evaluate 'Case 81: nullable foreign key and another foreign key, b.id = 1 and a.bid = 1 in different LEFT JOIN ONs, kept; expected (1, 1, 1) (2, NULL, NULL) (4, NULL, NULL)';
+select a.id, d.id, c.id from t28205_km a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 left join t28205_kc c on c.v = a.id and a.bid = 1 order by 1, 2, 3;
+
+evaluate 'Case 82: a.id <> 2 in the primary key table ON before a comma, then a second primary key table before a LEFT JOIN, eliminated; expected (1, 1, 1) (4, NULL, 1)';
+--@queryplan
+select a.id, d.id, c.id from t28205_kan a left join t28205_kd d on d.v = a.id inner join t28205_kb b on b.id = a.bid and a.id <> 2, t28205_kb b2 left join t28205_kc c on c.id = 1 where b2.id = a.bid order by 1, 2, 3;
+
+evaluate 'Case 83: a.id <> 2 in the primary key table ON before a comma, then a second primary key table last, eliminated; expected (1, 1) (4, NULL)';
+--@queryplan
+select a.id, d.id from t28205_km a left join t28205_kd d on d.v = a.id inner join t28205_kb2 p on p.id = a.b2id and a.id <> 2, t28205_kb b where b.id = a.bid order by 1, 2;
+
+evaluate 'Case 84: the join term in an ANTI JOIN ON, kept; expected (1) (1) (2) (2) (4) (4) (4)';
+select a.id from t28205_kan a inner join t28205_kb b on a.id <> 9 anti join t28205_kd d on d.v = a.id and b.id = a.bid order by 1;
+
+evaluate 'Case 85: b.id = 1 and a.bid = 1 in the same LEFT JOIN ON, eliminated; expected (1, 1) (2, NULL) (4, NULL)';
+--@queryplan
+select a.id, d.id from t28205_kan a inner join t28205_kb b on b.id = a.bid left join t28205_kd d on d.v = a.id and b.id = 1 and a.bid = 1 order by 1, 2;
+
 drop table if exists t28205_m, t28205_n, t28205_o, t28205_x, t28205_y, t28205_z, t28205_a, t28205_b, t28205_c, t28205_d, t28205_bi;
-drop table if exists t28205_a2, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kc, t28205_kd;
+drop table if exists t28205_a2, t28205_km, t28205_ka, t28205_kan, t28205_kan2, t28205_kc2, t28205_kb, t28205_kb2, t28205_kc, t28205_kd;

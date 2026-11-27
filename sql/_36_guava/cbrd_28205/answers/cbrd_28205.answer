@@ -73,6 +73,14 @@
 ===================================================
 4
 ===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+5
+===================================================
     
 Case 1: issue form, RIGHT JOIN ON n.b > 0; expected (NULL, NULL, 1)     
 
@@ -1243,6 +1251,125 @@ temp(order by)
     cost:  ? card ?
 Query stmt:
 select a.id, d.id from t?_ka a left outer join t?_kd d on d.v=a.id where a.bid is not null  order by ?, ?
+===================================================
+    
+Case 80: nullable foreign key and another foreign key, b.id = 1 in a LEFT JOIN ON with no child term, kept; expected (1, 1) (2, NULL) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+2     null     
+4     null     
+
+===================================================
+    
+Case 81: nullable foreign key and another foreign key, b.id = 1 and a.bid = 1 in different LEFT JOIN ONs, kept; expected (1, 1, 1) (2, NULL, NULL) (4, NULL, NULL)     
+
+===================================================
+id    id    id    
+1     1     1     
+2     null     null     
+4     null     null     
+
+===================================================
+    
+Case 82: a.id <> 2 in the primary key table ON before a comma, then a second primary key table before a LEFT JOIN, eliminated; expected (1, 1, 1) (4, NULL, 1)     
+
+===================================================
+id    id    id    
+1     1     1     
+4     null     1     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 outer: nl-join (left outer join)
+                            edge:  term[?]
+                            outer: sscan
+                                       class: a node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            inner: sscan
+                                       class: d node[?]
+                                       sargs: term[?]
+                                       cost:  ? card ?
+                            cost:  ? card ?
+                 inner: sscan
+                            class: c node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id, c.id from t?_kan a left outer join t?_kd d on d.v=a.id left outer join t?_kc c on c.id= ?:?  where a.id<>? order by ?, ?, ?
+===================================================
+    
+Case 83: a.id <> 2 in the primary key table ON before a comma, then a second primary key table last, eliminated; expected (1, 1) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+4     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?]
+                            cost:  ? card ?
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id from t?_km a left outer join t?_kd d on d.v=a.id where a.id<>? and a.bid is not null  order by ?, ?
+===================================================
+    
+Case 84: the join term in an ANTI JOIN ON, kept; expected (1) (1) (2) (2) (4) (4) (4)     
+
+===================================================
+id    
+1     
+1     
+2     
+2     
+4     
+4     
+4     
+
+===================================================
+    
+Case 85: b.id = 1 and a.bid = 1 in the same LEFT JOIN ON, eliminated; expected (1, 1) (2, NULL) (4, NULL)     
+
+===================================================
+id    id    
+1     1     
+2     null     
+4     null     
+
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: a node[?]
+                            cost:  ? card ?
+                 inner: sscan
+                            class: d node[?]
+                            sargs: term[?] AND term[?]
+                            cost:  ? card ?
+                 during:term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select a.id, d.id from t?_kan a left outer join t?_kd d on a.bid= ?:?  and d.v=a.id order by ?, ?
 ===================================================
 0
 ===================================================
