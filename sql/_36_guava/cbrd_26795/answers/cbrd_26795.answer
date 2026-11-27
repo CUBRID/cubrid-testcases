@@ -666,7 +666,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -698,8 +698,8 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, groups (est.): ?, readrows: ?, rows: ?)
+        SCAN (table: dba.px_sort_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?))
+        GROUPBY (time: ?, hash: true, sort: true, page: ?, ioread: ?, hash merge: no (no leftovers), batch: rows ? (cached ?, row path ?), groups ?, flushes ?, clears ?, time ?, readrows: ?, rows: ?)
      
 
 ===================================================
@@ -792,7 +792,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.px_wide_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch skipped: no vectorizable filter term) (oos time: ?, fetch: ?, ioread: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1070,7 +1070,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, last: record with out-of-row values)) (oos time: ?, fetch: ?, ioread: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
                 (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
      
@@ -1091,7 +1091,7 @@ Trace Statistics:
     SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
     SUBQUERY (uncorrelated)
       SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (oos time: ?, fetch: ?, ioread: ?)
+        SCAN (table: dba.px_rnd_t), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?) (batch pages: ? (row path: ?, last: record with out-of-row values)) (oos time: ?, fetch: ?, ioread: ?)
         ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
      
 
