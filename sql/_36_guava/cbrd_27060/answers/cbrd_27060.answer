@@ -345,6 +345,125 @@ result
 PASS     
 
 ===================================================
+    
+Case 17: covering parallel scan after the UPDATE returns only the rows left in the filter; result = 27000, 400971600     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+27000     400971600     
+
+===================================================
+0
+===================================================
+3000
+===================================================
+0
+===================================================
+1500
+===================================================
+0
+===================================================
+    
+Plan after the filter-enter UPDATE: key range on the covering filtered index is a covered parallel index scan     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+30750     445517250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt_cov) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ), key filter: [dba.ft].del= ?:? , covered: true)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*), sum( cast([dba.ft].grp as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt_cov(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt_cov), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, covered: true, gather: buildvalue)
+     
+
+===================================================
+    
+Plan after the filter-enter UPDATE: its NO_PARALLEL_SCAN twin has no parallel workers line     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+30750     445517250     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.ft.idx_flt_cov) (key range: ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ), key filter: [dba.ft].del= ?:? , covered: true)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ count(*), sum( cast([dba.ft].grp as bigint)) from [dba.ft] [dba.ft] where ([dba.ft].grp>= ?:?  and [dba.ft].grp<= ?:? ) and [dba.ft].del= ?:?  using index [dba.ft].idx_flt_cov(+)
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.ft.idx_flt_cov), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+     
+
+===================================================
+0
+===================================================
+    
+Case 18: key range on the overflow keys, non-covering, vs serial and heap, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 19: key range on the overflow keys, covering, vs serial and heap, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 20: full range, vs serial and heap, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 21: full range, descending filtered index, vs serial and heap, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 22: multi-column filtered index, NULLs in the first key column, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 23: rows through a derived table (mergeable list), vs serial and heap, after the filter-enter UPDATE     
+
+===================================================
+result    
+PASS     
+
+===================================================
+    
+Case 24: covering parallel scan after the filter-enter UPDATE returns the entered rows too; result = 30750, 445517250     
+
+===================================================
+count(*)    sum( cast(grp as bigint))    
+30750     445517250     
+
+===================================================
 0
 ===================================================
 0
