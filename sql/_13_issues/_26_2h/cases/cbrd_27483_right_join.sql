@@ -6,7 +6,8 @@
  *  whole join expression before it. A CROSS JOIN keeps that expression, and a comma closes it. With the fix, the
  *  parser and the planner follow the expression through a CROSS JOIN. The parser then neither merges a view that
  *  the RIGHT JOIN NULL-pads nor folds IS NOT NULL on its columns, and the planner orders the RIGHT JOIN after every
- *  table of the expression.
+ *  table of the expression. The rewriter keeps IS NULL on a derived table that the RIGHT JOIN NULL-pads in the outer
+ *  query, and an UPDATE skips the NULL-padded row.
  *  Each case prints the result that its query defines. A case that repeats another case with a hint or in another
  *  form prints the same result.
  *  A case taken from an attached file names it at the end of its label: scenario N is scenario N of the Jira
@@ -25,9 +26,14 @@
  *    Case 5:   a RIGHT JOIN after a filtered single-table view and a CROSS JOIN
  *    Case 6:   Case 4 with the ORDERED hint
  *    Case 7:   Case 1 with a comma in place of the CROSS JOIN
- *    Case 8:   a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11)
- *    Case 9:   Case 8 with the ORDERED hint, which the planner ignores (scenario 12)
- *    Case 10:  Case 8 with a LEADING hint, which the planner ignores (scenario 13)
+ *    Case 8:   Case 1 with a derived table in place of ta and IS NULL in the WHERE on the derived table
+ *    Case 9:   UPDATE through the join of Case 1, whose assignment fails on the NULL-padded row
+ *    Case 10:  the rows of ta after the UPDATE of Case 9
+ *    Case 11:  UPDATE through the join of Case 1, which assigns NULL to a NOT NULL column on the NULL-padded row
+ *    Case 12:  the rows of ta after the UPDATE of Case 11
+ *    Case 13:  a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11)
+ *    Case 14:  Case 13 with the ORDERED hint, which the planner ignores (scenario 12)
+ *    Case 15:  Case 13 with a LEADING hint, which the planner ignores (scenario 13)
  */
 -- Cases 3, 4 and 6 make hundreds of rows, so Cases 1 - 7 print counts
 -- td.ca 3 matches no row of tc, so each RIGHT JOIN after a CROSS JOIN NULL-pads one row
@@ -84,11 +90,32 @@ SELECT /*+ RECOMPILE ORDERED */ COUNT(*), COUNT(vc.ca), COUNT(te.ca) FROM vc CRO
 evaluate 'Case 7: Case 1 with a comma in place of the CROSS JOIN; result = 6, 6, 3, 6';
 SELECT COUNT(*), COUNT(ta.ca), COUNT(tc.ca), COUNT(td.ca) FROM ta, tc RIGHT OUTER JOIN td ON td.ca = tc.ca;
 
+-- GROUP BY keeps the derived table from being merged, so the rewriter must not copy IS NULL into it
+-- the IS NULL must keep the NULL-padded row of td.ca 3
+evaluate 'Case 8: Case 1 with a derived table in place of ta and IS NULL in the WHERE on the derived table; result = 1 row';
+--@queryplan
+SELECT /*+ RECOMPILE */ v.ca, tc.ca, td.ca FROM (SELECT ca FROM ta GROUP BY ca) v CROSS JOIN tc RIGHT OUTER JOIN td ON td.ca = tc.ca WHERE v.ca IS NULL ORDER BY 1, 2, 3;
+
+-- Cases 9 - 12 change ta, so they run after every case that reads it
+-- the NULL-padded row of td.ca 3 has no row of ta to update, so the UPDATE must not divide by zero for it
+evaluate 'Case 9: UPDATE through the join of Case 1, whose assignment fails on the NULL-padded row; result = 3 rows affected';
+UPDATE ta CROSS JOIN tc RIGHT OUTER JOIN td ON td.ca = tc.ca SET ta.cb = 10 / (td.ca - 3);
+
+evaluate 'Case 10: the rows of ta after the UPDATE of Case 9; result = 3 rows with cb -5';
+SELECT ca, cb FROM ta ORDER BY 1;
+
+-- the NULL-padded row of td.ca 3 has no row of ta to update, so the UPDATE must not check NOT NULL for it
+evaluate 'Case 11: UPDATE through the join of Case 1, which assigns NULL to a NOT NULL column on the NULL-padded row; result = 3 rows affected';
+UPDATE ta CROSS JOIN tc RIGHT OUTER JOIN td ON td.ca = tc.ca SET ta.ca = ta.ca + tc.ca * 10;
+
+evaluate 'Case 12: the rows of ta after the UPDATE of Case 11; result = 3 rows with ca 11, 12, 13';
+SELECT ca, cb FROM ta ORDER BY 1;
+
 DROP VIEW vc, vd;
 DROP TABLE ta, tb, tc, td, te;
 
--- Cases 8 - 10 use new data: a comma joins ta and no ON reads it, and the one row of ta matches every row of tb in
--- the WHERE, so an outer join dependency taken from a hint would NULL-pad ta and the WHERE would drop the rows
+-- Cases 13 - 15 use new data: a comma joins ta and no ON reads it, and the one row of ta matches every row of tb
+-- in the WHERE, so an outer join dependency taken from a hint would NULL-pad ta and the WHERE would drop the rows
 DROP TABLE IF EXISTS ta, tb, tc;
 CREATE TABLE ta (ca INT PRIMARY KEY, cb INT);
 CREATE TABLE tb (ca INT PRIMARY KEY, cb INT);
@@ -98,16 +125,16 @@ INSERT INTO tb VALUES (2, 1), (3, 1);
 INSERT INTO tc VALUES (2, 20), (4, 40);
 UPDATE STATISTICS ON ta, tb, tc;
 
--- Cases 8 - 10 are controls: they return the same result without the fix
+-- Cases 13 - 15 are controls: they return the same result without the fix
 -- a join order hint must not add a join edge that the query does not ask for
-evaluate 'Case 8: a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11); result = 2 rows';
+evaluate 'Case 13: a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11); result = 2 rows';
 SELECT tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
-evaluate 'Case 9: Case 8 with the ORDERED hint, which the planner ignores (scenario 12); result = same rows as Case 8';
+evaluate 'Case 14: Case 13 with the ORDERED hint, which the planner ignores (scenario 12); result = same rows as Case 13';
 --@queryplan
 SELECT /*+ RECOMPILE ORDERED */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 
-evaluate 'Case 10: Case 8 with a LEADING hint, which the planner ignores (scenario 13); result = same rows as Case 8';
+evaluate 'Case 15: Case 13 with a LEADING hint, which the planner ignores (scenario 13); result = same rows as Case 13';
 --@queryplan
 SELECT /*+ RECOMPILE LEADING(ta,tb,tc) */ tb.cb, tc.cb FROM ta, tc RIGHT OUTER JOIN tb ON tc.ca = tb.ca WHERE tb.cb = ta.cb ORDER BY 1, 2;
 

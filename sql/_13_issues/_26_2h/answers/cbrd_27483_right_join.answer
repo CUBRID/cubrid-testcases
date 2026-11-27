@@ -261,6 +261,79 @@ count(*)    count(ta.ca)    count(tc.ca)    count(td.ca)
 6     6     3     6     
 
 ===================================================
+    
+Case 8: Case 1 with a derived table in place of ta and IS NULL in the WHERE on the derived table; result = 1 row     
+
+===================================================
+ca    ca    ca    
+null     null     3     
+
+Query plan:
+temp(group by)
+    subplan: sscan
+                 class: ta node[?]
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+(select ta.ca from ta ta group by ta.ca)
+Query plan:
+temp(order by)
+    subplan: nl-join (left outer join)
+                 edge:  term[?]
+                 outer: sscan
+                            class: td node[?]
+                            cost:  ? card ?
+                 inner: temp
+                            order: UNORDERED
+                            subplan: nl-join (cross join)
+                                         outer: sscan
+                                                    class: tc node[?]
+                                                    cost:  ? card ?
+                                         inner: sscan
+                                                    class: v node[?]
+                                                    cost:  ? card ?
+                                         cost:  ? card ?
+                            cost:  ? card ?
+                 after: term[?]
+                 cost:  ? card ?
+    sort:  ? asc, ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select v.ca, tc.ca, td.ca from (select ta.ca from ta ta group by ta.ca) v (ca) cross join tc tc right outer join td td on td.ca=tc.ca where v.ca is null  order by ?, ?, ?
+===================================================
+    
+Case 9: UPDATE through the join of Case 1, whose assignment fails on the NULL-padded row; result = 3 rows affected     
+
+===================================================
+3
+===================================================
+    
+Case 10: the rows of ta after the UPDATE of Case 9; result = 3 rows with cb -5     
+
+===================================================
+ca    cb    
+1     -5     
+2     -5     
+3     -5     
+
+===================================================
+    
+Case 11: UPDATE through the join of Case 1, which assigns NULL to a NOT NULL column on the NULL-padded row; result = 3 rows affected     
+
+===================================================
+3
+===================================================
+    
+Case 12: the rows of ta after the UPDATE of Case 11; result = 3 rows with ca 11, 12, 13     
+
+===================================================
+ca    cb    
+11     -5     
+12     -5     
+13     -5     
+
+===================================================
 0
 ===================================================
 0
@@ -282,7 +355,7 @@ count(*)    count(ta.ca)    count(tc.ca)    count(td.ca)
 0
 ===================================================
     
-Case 8: a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11); result = 2 rows     
+Case 13: a RIGHT JOIN after a comma, joined to the table before the comma in the WHERE (scenario 11); result = 2 rows     
 
 ===================================================
 cb    cb    
@@ -291,7 +364,7 @@ cb    cb
 
 ===================================================
     
-Case 9: Case 8 with the ORDERED hint, which the planner ignores (scenario 12); result = same rows as Case 8     
+Case 14: Case 13 with the ORDERED hint, which the planner ignores (scenario 12); result = same rows as Case 13     
 
 ===================================================
 cb    cb    
@@ -324,7 +397,7 @@ Query stmt: [Warning: HINT ignored]
 select tb.cb, tc.cb from ta ta, tc tc right outer join tb tb on tc.ca=tb.ca where tb.cb=ta.cb order by ?, ?
 ===================================================
     
-Case 10: Case 8 with a LEADING hint, which the planner ignores (scenario 13); result = same rows as Case 8     
+Case 15: Case 13 with a LEADING hint, which the planner ignores (scenario 13); result = same rows as Case 13     
 
 ===================================================
 cb    cb    
