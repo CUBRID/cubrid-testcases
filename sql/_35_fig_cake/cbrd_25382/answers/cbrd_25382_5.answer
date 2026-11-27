@@ -481,11 +481,11 @@ hash-join (inner join)
     edge:  term[?]
     outer: iscan
                class: a node[?]
-               index: i_a term[?]
+               index: i_a term[?] (bitmap heap scan)
                cost:  ? card ?
     inner: iscan
                class: b node[?]
-               index: i_a term[?]
+               index: i_a term[?] (bitmap heap scan)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
@@ -537,10 +537,12 @@ Trace Statistics:
               RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
               BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                  SCAN (index: dba.tb.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+                    SCAN (bitmap heap lookup: dba.tb), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
               PROBE (time: ?, fetch: ?, ioread: ?, readrows: ?, readkeys: ?, rows: ?)
                 SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-                  SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+                  SCAN (index: dba.ta.i_a), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?)
+                    SCAN (bitmap heap lookup: dba.ta), (heap time: ?, fetch: ?, ioread: ?, pages: ?, rows: ?)
       HASHJOIN (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
         RUNTIME FILTER (keys: ?, rows: ?, dropped: ?)
         BUILD (time: ?, fetch: ?, ioread: ?, rows: ?, method: memory)

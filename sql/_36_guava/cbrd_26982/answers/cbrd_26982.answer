@@ -243,6 +243,256 @@ case9
 PASS     
 
 ===================================================
+    
+Case 10: DISTINCT aggregates combined into columns  (3 aggregates, 2 columns)     
+
+===================================================
+sum(distinct a)*100+count(distinct b)    cast(avg(distinct a)*2 as integer)    
+5510     11     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */  cast(sum(distinct [dba.tg].a)*? as bigint)+count(distinct [dba.tg].b),  cast(avg(distinct [dba.tg].a)* cast(? as double) as integer) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(distinct a)*100+count(distinct b)    cast(avg(distinct a)*2 as integer)    
+5510     11     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */  cast(sum(distinct [dba.tg].a)*? as bigint)+count(distinct [dba.tg].b),  cast(avg(distinct [dba.tg].a)* cast(? as double) as integer) from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+    
+Case 11: HAVING on a DISTINCT aggregate keeps the row  (2 aggregates, 1 column)     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*) from [dba.tg] [dba.tg] having sum(distinct [dba.tg].a)=?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)    
+10000     
+
+===================================================
+    
+Case 12: bound values in the select list and HAVING of a prepared query  (2 aggregates, 1 column)     
+
+===================================================
+0
+===================================================
+0
+===================================================
+sum(a)* ?:0    
+110000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a)* ?:?  from [dba.tg] [dba.tg] having sum([dba.tg].a)> ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)* ?:0    
+110000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ NO_PARALLEL_SCAN */ sum([dba.tg].a)* ?:?  from [dba.tg] [dba.tg] having sum([dba.tg].a)> ?:? 
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+sum(a)* ?:0    
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+sum(a)* ?:0    
+
+===================================================
+trace    
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 13: a non-1:1 aggregate query as a derived table  (2 aggregates, 1 column inside)     
+
+===================================================
+r    'tag'    
+5     tag     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: (select /*+ PARALLEL(?) */ ( cast(sum([dba.tg].a) as bigint)/count(*)) from [dba.tg] [dba.tg])
+
+  TABLE SCAN (v)
+
+  rewritten query: select v.r, 'tag' from (select /*+ PARALLEL(?) */ ( cast(sum([dba.tg].a) as bigint)/count(*)) as [r] from [dba.tg] [dba.tg]) v (r)
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+r    'tag'    
+5     tag     
+
+===================================================
+    
+Case 14: scalar expressions over single aggregates  (2 aggregates, 2 columns)     
+
+===================================================
+count(*)+1    sum(a)*2    
+10001     110000     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*)+ cast(? as bigint), sum([dba.tg].a)*? from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
+     
+
+===================================================
+count(*)+1    sum(a)*2    
+10001     110000     
+
+===================================================
+    
+Case 15: a ROWNUM condition keeps a non-1:1 aggregate query off buildvalue  (1 aggregate, 2 columns)     
+
+===================================================
+count(*)*2    'tag'    
+10000     tag     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ count(*)* cast(? as bigint), 'tag' from [dba.tg] [dba.tg] where (rownum<= ?:? )
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+         (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: row by row)
+     
+
+===================================================
+count(*)*2    'tag'    
+10000     tag     
+
+===================================================
+    
+Case 16: a session variable keeps a non-1:1 aggregate query serial  (1 aggregate, 2 columns)     
+
+===================================================
+0
+===================================================
+sum(a)+@v    'tag'    
+55007     tag     
+
+===================================================
+trace    
+
+Query Plan:
+  TABLE SCAN (dba.tg)
+
+  rewritten query: select /*+ PARALLEL(?) */ sum([dba.tg].a)+@v, 'tag' from [dba.tg] [dba.tg]
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (table: dba.tg), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+     
+
+===================================================
+sum(a)+@v    'tag'    
+55007     tag     
+
+===================================================
+0
+===================================================
 0
 ===================================================
 0

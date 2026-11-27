@@ -118,17 +118,17 @@ c    d    e
 Query plan:
 sscan
     class: tbl_y node[?]
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y where tbl_y.e= ?:? 
+select tbl_y.c, tbl_y.d, tbl_y.e from tbl_y tbl_y where tbl_y.e like  ?:?  and (tbl_y.e>= ?:?  and tbl_y.e< ?:? )
 ===================================================
 trace    
 
 Query Plan:
   TABLE SCAN (dba.tbl_y)
 
-  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y] where [dba.tbl_y].e= ?:? 
+  rewritten query: select [dba.tbl_y].c, [dba.tbl_y].d, [dba.tbl_y].e from [dba.tbl_y] [dba.tbl_y] where [dba.tbl_y].e like  ?:?  and ([dba.tbl_y].e>= ?:?  and [dba.tbl_y].e< ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
@@ -184,17 +184,17 @@ x    y    z
 Query plan:
 sscan
     class: tbl_z node[?]
-    sargs: term[?]
+    sargs: term[?] AND term[?]
     cost:  ? card ?
 Query stmt:
-select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z where tbl_z.z= ?:? 
+select tbl_z.x, tbl_z.y, tbl_z.z from tbl_z tbl_z where tbl_z.z like  ?:?  and (tbl_z.z>= ?:?  and tbl_z.z< ?:? )
 ===================================================
 trace    
 
 Query Plan:
   TABLE SCAN (dba.tbl_z)
 
-  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z] where [dba.tbl_z].z= ?:? 
+  rewritten query: select [dba.tbl_z].x, [dba.tbl_z].y, [dba.tbl_z].z from [dba.tbl_z] [dba.tbl_z] where [dba.tbl_z].z like  ?:?  and ([dba.tbl_z].z>= ?:?  and [dba.tbl_z].z< ?:? )
 
 Trace Statistics:
   SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
