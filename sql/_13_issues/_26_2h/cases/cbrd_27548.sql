@@ -4,13 +4,13 @@
  *
  *  When a driving block has no match in the middle table, the scan block iterator closes
  *  the partitioned inner while it is still on its first partition. The restart then opened
- *  a root block that kept that partition's index, so the partition was read twice and its
- *  rows came back twice (11.5, since CBRD-25759). The fix restarts on the first partition.
+ *  a root block that kept the index of that partition, so the partition was read twice and
+ *  its rows came back twice (11.5, since CBRD-25759). The fix restarts on the first partition.
  *
  *  Every query runs again on non-partitioned copies of the tables with the same indexes,
- *  and the two result blocks must match. The driving table is list partitioned and pruned
- *  with pc IN lists, so the order of its blocks is fixed. CTP masks digits in the trace,
- *  which therefore shows only the plan shape.
+ *  and the two result blocks must match. In Cases 2 to 11 the driving table is list
+ *  partitioned and pruned with pc IN lists, so the order of its blocks is fixed. CTP masks
+ *  digits in the trace, which therefore shows only the plan shape.
  *
  *  Coverage:
  *    Case 1:  issue repro, hash partitioned driving table
