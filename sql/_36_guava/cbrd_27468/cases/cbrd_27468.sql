@@ -19,8 +19,7 @@
  *    Case 5:  HAVING, and ORDER BY over the subtotals
  *    Case 6:  COUNT DISTINCT, GROUP_CONCAT and MEDIAN, which aggregate serially. GROUP_CONCAT takes
  *             a few values, so its result is compared whole, not cut at group_concat_max_len.
- *             Their subtotal and total rows are wrong in both plans (CBRD-27930): this case only
- *             checks that the two plans agree, and its answer changes when CBRD-27930 is fixed.
+ *             Their subtotal and total rows hold the values of all their groups (CBRD-27930).
  *    Case 7:  an empty range, and the range of one key of g
  *    Case 8:  GROUP BY DESC with ROLLUP reads the index backwards, in parallel (CBRD-27728), also
  *             with a LIMIT that stops the scan
