@@ -1,0 +1,564 @@
+===================================================
+0
+===================================================
+0
+===================================================
+4
+===================================================
+1
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+    
+Case 1: CREATE INDEX on (c, id) keeps the whole default value of c in the keys of the rows without c     
+
+===================================================
+0
+===================================================
+id    char_length(c)    md5(c)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+2     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+4     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i?_c_id term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id,  char_length(t?.c),  md?(t?.c) from t? t? where (t?.c> ?:? ) using index t?.i?_c_id(+) order by ?
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+2     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+4     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 2: CREATE INDEX on (c, v, id) keeps it next to 896 bytes of v     
+
+===================================================
+0
+===================================================
+id    md5(c)    md5(v)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+2     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     a9874682dddac3f861fbe91737fc846d     
+4     40bfcb08a67c5285b83d5bc60eb5d4a8     c57e77b6ca8dc52d1b969a8c473bab55     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i?_c_v term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id,  md?(t?.c),  md?(t?.v) from t? t? where (t?.c> ?:? ) using index t?.i?_c_v(+) order by ?
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+2     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+4     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 3: CREATE INDEX on (id, c) WITH ONLINE keeps it     
+
+===================================================
+0
+===================================================
+id    md5(c)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     
+2     40bfcb08a67c5285b83d5bc60eb5d4a8     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+4     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+Query plan:
+iscan
+    class: t? node[?]
+    index: i?_id_c term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id,  md?(t?.c) from t? t? where (t?.id> ?:? ) using index t?.i?_id_c(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+2     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+4     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 4: CREATE INDEX on (c, c2, id) keeps both default values, also for a row of more than 4KB without c2     
+
+===================================================
+0
+===================================================
+id    md5(c)    md5(c2)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+2     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+4     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t? node[?]
+                 index: i?_c_c? term[?] (covers)
+                 cost:  ? card ?
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?.id,  md?(t?.c),  md?(t?.c?) from t? t? where (t?.c> ?:? ) using index t?.i?_c_c?(+) order by ?
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+2     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+4     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 5: UPDATE of rows without c keeps every index equal to the rows     
+
+===================================================
+2
+===================================================
+id    char_length(c)    md5(c)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(v)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     a9874682dddac3f861fbe91737fc846d     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     c57e77b6ca8dc52d1b969a8c473bab55     
+
+===================================================
+id    md5(c)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(c2)    
+1     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+1     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 6: DELETE of a row without c keeps every index equal to the rows     
+
+===================================================
+1
+===================================================
+id    char_length(c)    md5(c)    
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(v)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     a9874682dddac3f861fbe91737fc846d     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     c57e77b6ca8dc52d1b969a8c473bab55     
+
+===================================================
+id    md5(c)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(c2)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+5     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+5     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 7: ADD FOREIGN KEY over child rows without c accepts them     
+
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+index_name    is_foreign_key    
+fk_t28255_cascade     YES     
+i28255_c_c2     NO     
+i28255_c_id     NO     
+i28255_c_v     NO     
+i28255_id_c     NO     
+
+===================================================
+    
+Case 8: DELETE of a parent row ON DELETE CASCADE deletes its child row without c     
+
+===================================================
+1
+===================================================
+id    md5(c)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    char_length(c)    md5(c)    
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(v)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     a9874682dddac3f861fbe91737fc846d     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     c57e77b6ca8dc52d1b969a8c473bab55     
+
+===================================================
+id    md5(c)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(c2)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+6     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+6     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+    
+Case 9: DELETE of a parent row ON DELETE SET NULL sets the key of its child row without c to NULL     
+
+===================================================
+0
+===================================================
+0
+===================================================
+1
+===================================================
+id    md5(c)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    char_length(c)    md5(c)    
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(v)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     a9874682dddac3f861fbe91737fc846d     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     eb5c1399a871211c7e7ed732d15e3a8b     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     c57e77b6ca8dc52d1b969a8c473bab55     
+
+===================================================
+id    md5(c)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     
+
+===================================================
+id    md5(c)    md5(c2)    
+3     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+7     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+12     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+14     40bfcb08a67c5285b83d5bc60eb5d4a8     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+id    char_length(c)    md5(c)    char_length(v)    md5(v)    char_length(c2)    md5(c2)    
+null     null     null     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+3     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     a9874682dddac3f861fbe91737fc846d     300     e4e09518d75ce1f1054e342e77e49dc2     
+7     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+12     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     5     eb5c1399a871211c7e7ed732d15e3a8b     300     e4e09518d75ce1f1054e342e77e49dc2     
+14     4200     40bfcb08a67c5285b83d5bc60eb5d4a8     896     c57e77b6ca8dc52d1b969a8c473bab55     300     e4e09518d75ce1f1054e342e77e49dc2     
+
+===================================================
+0
+===================================================
+71
+===================================================
+    
+Case 10: CREATE INDEX on 60 SMALLINT columns and v keeps the keys that the key header makes longer than 4KB for rows of 4KB or less     
+
+===================================================
+0
+===================================================
+s00    char_length(v)    md5( concat_ws(',', s01, s02, s03, s04, s05, s06, s07, s08, s09, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, v))    
+462     3886     5465f7d6e90cc841bf10ed57fa5c840c     
+923     3924     66306bdaf86783663f1033f01ebdae8f     
+1384     3962     fead0c1e196a167981a020924e9459a1     
+1677     3856     d4d2fea2be3a911945b0893886364b6e     
+2138     3894     e51a3e09d23f710bd8d9e13fea6c8906     
+2599     3932     480364502b874a6c05bae3d80ca415d1     
+3060     3970     bbc367d0baecc65c944610d47cf76b11     
+3353     3864     4bf7e452c2bc4f169d7f147c3bd0c435     
+3814     3902     a4a796c165c8f2ee6dddd46774456c60     
+4275     3940     112523d264691ee0f2e4254d1a45b349     
+4736     3978     b5f78d053563f9c5075ab84f160d4b33     
+5029     3872     e280ba959f991ea000613c95da21d456     
+5490     3910     0099cccb5195305c2caf4f844d614cd7     
+5951     3948     13a8e4f116ad142e390b9e5a2795c229     
+6412     3986     881d36a67a542c6142a36618d2ff8c7d     
+6705     3880     5ed15c3264e568dd81b2b7513d4f355d     
+7166     3918     b1df2c6015becbdbcba64bcd4633f561     
+7627     3956     03baf5d3ae12aa16c06d63f4746c1269     
+7920     3850     351145e2044dbd3a6abde5ff43b761d5     
+8381     3888     57ec1af2d48ab39345444c0c2349e852     
+8842     3926     027c0f9a9de850756f272259002bab00     
+9303     3964     d793947baa7bdd8c6df28bd2792c1e87     
+9596     3858     f172c82de2ce288dc47e495940cdbd1b     
+10057     3896     b3cf5e05083b006906f96c298343a81c     
+10518     3934     eb165eeae95e81a2934431fa9e951b79     
+10979     3972     26c391c123cfd3406bf9a973f382b516     
+11272     3866     b6029640ca76058f4b5df836d8f68dae     
+11733     3904     cb96781d84f0f2a16be111778f02c0e0     
+12194     3942     ecde9c1074e9249344d3f2fc4bccfe0b     
+12655     3980     8f7165f78c09dc23bd0554f2e7791052     
+12948     3874     83178e35961424ef59e9806493e2ccd8     
+13409     3912     baa7de3a93387ed122b2eca062593fe3     
+13870     3950     b79682fa7c171b48d34e444a8f8d705f     
+14331     3988     0e50b50a13b642ffab0a186b9248d358     
+14624     3882     8006bea27590d994868009c78accab79     
+15085     3920     65470d2feaf7d26a4c8384e3e9574159     
+15546     3958     931bd967a1b34877f8cccab604c3d20c     
+15839     3852     e200f5dd54cfc0ac09201fb2e26648bd     
+16300     3890     a537e7c6e93c28e14a4a2fe685f3f487     
+16761     3928     f2fcfe8edcafae09e3cde01178a68c6f     
+17222     3966     27530bf300ccd04048a51f5b6d9043da     
+17515     3860     d4031a64f2f1d934cabf0cda5e785c2f     
+17976     3898     060c8fda1adc321252434b149f1ea979     
+18437     3936     71452a47524b38e2b5c81ec22289ff8a     
+18898     3974     6f3f2b03311f86f366dc8ba5fa7a69ab     
+19191     3868     34894f8af9319fb95b6566db78814412     
+19652     3906     5d68f29d3584bd33717f5c4a33ee851c     
+20113     3944     b5c013e7a4a9c9a9ae27101ffd2f8913     
+20574     3982     a5ef9f15638d4cd786240bbc30b91577     
+20867     3876     463e3f57438468490470bc2ea633fe51     
+21328     3914     ce3fb7a723cb97a4b405bb8cdaa3be9b     
+21789     3952     f433abe757947c2570117351ccded7bc     
+22250     3990     35c20e520ab23eb81de8940caa43eccf     
+22543     3884     af913e74ca82a89dad30e724951c5014     
+23004     3922     3ac77869c847e0408a765b9dfc1b37db     
+23465     3960     6c648b9c03d38d72aeb952cea65801a4     
+23758     3854     94b8c14c1ef5223ebf7bcc5adb37d6e0     
+24219     3892     6f233b2b26c4265bb3c8f6d20b36de7b     
+24680     3930     e581ae9bda81e0b002548bbf7863b363     
+25141     3968     e9087f45407d70e3d0a1777b23bf01a7     
+25434     3862     06c5b81176a6259137d21ed2d097d9cb     
+25895     3900     075bff0aebf39ede78f0dc8ea63d73b5     
+26356     3938     49db3b1eac5f6bde1c547a0e026c3591     
+26817     3976     faf7da525ae6b119040b95b43e7a0d06     
+27110     3870     642bda9a22b53a7e6f1bc312555ea70b     
+27571     3908     8aa9e8c068b5f4339669a1719a2d8e98     
+28032     3946     2493e53ed3a9debf953f9ff6c2299105     
+28493     3984     3739c2361f9fccca2b1770d8d78c50c8     
+28786     3878     6e81a83d082e321288702d313f9758b5     
+29247     3916     f784d3cba9f70a3a9dcf6fb196266abd     
+29708     3954     2fbe6d7d2fe8ec7db4374205231050ee     
+
+Query plan:
+iscan
+    class: t?_wide node[?]
+    index: i?_wide term[?] (covers)
+    sort:  ? asc
+    cost:  ? card ?
+Query stmt:
+select t?_wide.s?,  char_length(t?_wide.v),  md?( concat_ws(',',  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar),  cast(t?_wide.s? as varchar), t?_wide.v)) from t?_wide t?_wide where (t?_wide.s?> ?:? ) using index t?_wide.i?_wide(+) order by ?
+/* ---> skip ORDER BY */
+===================================================
+s00    char_length(v)    md5( concat_ws(',', s01, s02, s03, s04, s05, s06, s07, s08, s09, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, v))    
+462     3886     5465f7d6e90cc841bf10ed57fa5c840c     
+923     3924     66306bdaf86783663f1033f01ebdae8f     
+1384     3962     fead0c1e196a167981a020924e9459a1     
+1677     3856     d4d2fea2be3a911945b0893886364b6e     
+2138     3894     e51a3e09d23f710bd8d9e13fea6c8906     
+2599     3932     480364502b874a6c05bae3d80ca415d1     
+3060     3970     bbc367d0baecc65c944610d47cf76b11     
+3353     3864     4bf7e452c2bc4f169d7f147c3bd0c435     
+3814     3902     a4a796c165c8f2ee6dddd46774456c60     
+4275     3940     112523d264691ee0f2e4254d1a45b349     
+4736     3978     b5f78d053563f9c5075ab84f160d4b33     
+5029     3872     e280ba959f991ea000613c95da21d456     
+5490     3910     0099cccb5195305c2caf4f844d614cd7     
+5951     3948     13a8e4f116ad142e390b9e5a2795c229     
+6412     3986     881d36a67a542c6142a36618d2ff8c7d     
+6705     3880     5ed15c3264e568dd81b2b7513d4f355d     
+7166     3918     b1df2c6015becbdbcba64bcd4633f561     
+7627     3956     03baf5d3ae12aa16c06d63f4746c1269     
+7920     3850     351145e2044dbd3a6abde5ff43b761d5     
+8381     3888     57ec1af2d48ab39345444c0c2349e852     
+8842     3926     027c0f9a9de850756f272259002bab00     
+9303     3964     d793947baa7bdd8c6df28bd2792c1e87     
+9596     3858     f172c82de2ce288dc47e495940cdbd1b     
+10057     3896     b3cf5e05083b006906f96c298343a81c     
+10518     3934     eb165eeae95e81a2934431fa9e951b79     
+10979     3972     26c391c123cfd3406bf9a973f382b516     
+11272     3866     b6029640ca76058f4b5df836d8f68dae     
+11733     3904     cb96781d84f0f2a16be111778f02c0e0     
+12194     3942     ecde9c1074e9249344d3f2fc4bccfe0b     
+12655     3980     8f7165f78c09dc23bd0554f2e7791052     
+12948     3874     83178e35961424ef59e9806493e2ccd8     
+13409     3912     baa7de3a93387ed122b2eca062593fe3     
+13870     3950     b79682fa7c171b48d34e444a8f8d705f     
+14331     3988     0e50b50a13b642ffab0a186b9248d358     
+14624     3882     8006bea27590d994868009c78accab79     
+15085     3920     65470d2feaf7d26a4c8384e3e9574159     
+15546     3958     931bd967a1b34877f8cccab604c3d20c     
+15839     3852     e200f5dd54cfc0ac09201fb2e26648bd     
+16300     3890     a537e7c6e93c28e14a4a2fe685f3f487     
+16761     3928     f2fcfe8edcafae09e3cde01178a68c6f     
+17222     3966     27530bf300ccd04048a51f5b6d9043da     
+17515     3860     d4031a64f2f1d934cabf0cda5e785c2f     
+17976     3898     060c8fda1adc321252434b149f1ea979     
+18437     3936     71452a47524b38e2b5c81ec22289ff8a     
+18898     3974     6f3f2b03311f86f366dc8ba5fa7a69ab     
+19191     3868     34894f8af9319fb95b6566db78814412     
+19652     3906     5d68f29d3584bd33717f5c4a33ee851c     
+20113     3944     b5c013e7a4a9c9a9ae27101ffd2f8913     
+20574     3982     a5ef9f15638d4cd786240bbc30b91577     
+20867     3876     463e3f57438468490470bc2ea633fe51     
+21328     3914     ce3fb7a723cb97a4b405bb8cdaa3be9b     
+21789     3952     f433abe757947c2570117351ccded7bc     
+22250     3990     35c20e520ab23eb81de8940caa43eccf     
+22543     3884     af913e74ca82a89dad30e724951c5014     
+23004     3922     3ac77869c847e0408a765b9dfc1b37db     
+23465     3960     6c648b9c03d38d72aeb952cea65801a4     
+23758     3854     94b8c14c1ef5223ebf7bcc5adb37d6e0     
+24219     3892     6f233b2b26c4265bb3c8f6d20b36de7b     
+24680     3930     e581ae9bda81e0b002548bbf7863b363     
+25141     3968     e9087f45407d70e3d0a1777b23bf01a7     
+25434     3862     06c5b81176a6259137d21ed2d097d9cb     
+25895     3900     075bff0aebf39ede78f0dc8ea63d73b5     
+26356     3938     49db3b1eac5f6bde1c547a0e026c3591     
+26817     3976     faf7da525ae6b119040b95b43e7a0d06     
+27110     3870     642bda9a22b53a7e6f1bc312555ea70b     
+27571     3908     8aa9e8c068b5f4339669a1719a2d8e98     
+28032     3946     2493e53ed3a9debf953f9ff6c2299105     
+28493     3984     3739c2361f9fccca2b1770d8d78c50c8     
+28786     3878     6e81a83d082e321288702d313f9758b5     
+29247     3916     f784d3cba9f70a3a9dcf6fb196266abd     
+29708     3954     2fbe6d7d2fe8ec7db4374205231050ee     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
