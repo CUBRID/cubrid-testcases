@@ -249,3 +249,5 @@ drop procedure p_dml_delete;
 drop procedure p_dml_merge;
 drop function f_union;
 drop table t351, tf, td;
+
+--+ server-message off
