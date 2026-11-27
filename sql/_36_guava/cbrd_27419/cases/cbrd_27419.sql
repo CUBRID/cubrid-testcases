@@ -17,7 +17,8 @@
  *             changes nothing
  *    Case 7:  CREATE or RENAME AS to a registered name fails with -1403
  *    Case 8:  CREATE or ALTER to a level another grade holds fails with -1406
- *    Case 9:  ALTER GRADE with neither LEVEL nor COMMENT fails
+ *    Case 9:  ALTER GRADE with neither LEVEL nor COMMENT, and ALTER INFO_TYPE or
+ *             SOURCE without COMMENT or with LEVEL, fail
  *    Case 10: ALTER, RENAME AS or DROP of a name not registered fails with -1404
  *    Case 11: names are stored in lowercase
  *    Case 12: a name matches whatever its letter case
@@ -84,6 +85,8 @@ create sensitivity label source 'c04_s' comment 's';
 set @grade_time = (select created_time from db_sensitivity_label_grade where name = 'c04_g');
 set @info_type_time = (select created_time from db_sensitivity_label_info_type where name = 'c04_i');
 set @source_time = (select created_time from db_sensitivity_label_source where name = 'c04_s');
+-- a second apart, so a RENAME that resets created_time prints 0
+select sleep(1);
 alter sensitivity label grade 'c04_g' rename as 'c04_g_renamed';
 alter sensitivity label info_type 'c04_i' rename as 'c04_i_renamed';
 alter sensitivity label source 'c04_s' rename as 'c04_s_renamed';
@@ -152,19 +155,35 @@ create sensitivity label grade 'c08_c' level 801;
 alter sensitivity label grade 'c08_b' level 801;
 select name, grade_level from db_sensitivity_label_grade where left (name, 3) = 'c08' order by name;
 
-evaluate 'Case 9: ALTER GRADE with neither LEVEL nor COMMENT fails';
+evaluate 'Case 9: ALTER GRADE with neither LEVEL nor COMMENT, and ALTER INFO_TYPE or SOURCE without COMMENT or with LEVEL, fail';
 create sensitivity label grade 'c09_g' level 901 comment 'g';
+create sensitivity label info_type 'c09_i' comment 'i';
+create sensitivity label source 'c09_s' comment 's';
 alter sensitivity label grade 'c09_g';
-select name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c09' order by name;
+alter sensitivity label info_type 'c09_i';
+alter sensitivity label source 'c09_s';
+alter sensitivity label info_type 'c09_i' level 902;
+alter sensitivity label source 'c09_s' level 903;
+select 'GRADE' kind, name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c09'
+union all select 'INFO_TYPE', name, null, comment from db_sensitivity_label_info_type where left (name, 3) = 'c09'
+union all select 'SOURCE', name, null, comment from db_sensitivity_label_source where left (name, 3) = 'c09'
+order by 1, 2;
 
 evaluate 'Case 10: ALTER, RENAME AS or DROP of a name not registered fails with -1404';
 create sensitivity label grade 'c10_g' level 1001 comment 'g';
 alter sensitivity label grade 'c10_none' comment 'x';
 alter sensitivity label grade 'c10_none' rename as 'c10_new';
+alter sensitivity label info_type 'c10_none' comment 'x';
+alter sensitivity label info_type 'c10_none' rename as 'c10_new';
+alter sensitivity label source 'c10_none' comment 'x';
+alter sensitivity label source 'c10_none' rename as 'c10_new';
 drop sensitivity label grade 'c10_none';
 drop sensitivity label info_type 'c10_none';
 drop sensitivity label source 'c10_none';
-select name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c10' order by name;
+select 'GRADE' kind, name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c10'
+union all select 'INFO_TYPE', name, null, comment from db_sensitivity_label_info_type where left (name, 3) = 'c10'
+union all select 'SOURCE', name, null, comment from db_sensitivity_label_source where left (name, 3) = 'c10'
+order by 1, 2;
 
 evaluate 'Case 11: names are stored in lowercase';
 create sensitivity label grade 'C11_Mixed_G' level 1101;
@@ -267,6 +286,10 @@ order by 1, 2;
 alter sensitivity label grade 'c15_g' level 1502 comment 'g altered';
 alter sensitivity label info_type 'c15_i' rename as 'c15_i_renamed';
 drop sensitivity label source 'c15_s';
+select 'GRADE' kind, name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c15'
+union all select 'INFO_TYPE', name, null, comment from db_sensitivity_label_info_type where left (name, 3) = 'c15'
+union all select 'SOURCE', name, null, comment from db_sensitivity_label_source where left (name, 3) = 'c15'
+order by 1, 2;
 rollback;
 select 'GRADE' kind, name, grade_level, comment from db_sensitivity_label_grade where left (name, 3) = 'c15'
 union all select 'INFO_TYPE', name, null, comment from db_sensitivity_label_info_type where left (name, 3) = 'c15'
@@ -465,6 +488,7 @@ drop sensitivity label info_type 'c04_i_renamed';
 drop sensitivity label info_type 'c05_i2';
 drop sensitivity label info_type 'c07_i1';
 drop sensitivity label info_type 'c07_i2';
+drop sensitivity label info_type 'c09_i';
 drop sensitivity label info_type 'c11_renamed_i';
 drop sensitivity label info_type 'c12_ic';
 drop sensitivity label info_type 'c13_i';
@@ -485,6 +509,7 @@ drop sensitivity label source 'c04_s_renamed';
 drop sensitivity label source 'c05_s2';
 drop sensitivity label source 'c07_s1';
 drop sensitivity label source 'c07_s2';
+drop sensitivity label source 'c09_s';
 drop sensitivity label source 'c11_renamed_s';
 drop sensitivity label source 'c12_sc';
 drop sensitivity label source 'c13_s';
