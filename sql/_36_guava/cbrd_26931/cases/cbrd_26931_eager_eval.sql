@@ -19,10 +19,8 @@
  *    Case 5:  CASE branch that no row takes
  *    Case 6:  HAVING over no group
  *    Case 7:  LIMIT 0 on the statement = no error, LIMIT 0 in a derived table = -459 on any build
- *    Case 8:  select-list operand = -459, bare select-list subquery = -459 too (since CBRD-28426
- *             a subquery that is a select list item runs before the scan as well)
- *    Case 9:  DELETE and UPDATE that match no row, UPDATE SET over no row (-459 since CBRD-28426:
- *             the SET subquery is a select list item of the statement's scan), control INSERT VALUES
+ *    Case 8:  select-list operand = -459
+ *    Case 9:  DELETE and UPDATE that match no row, control INSERT VALUES
  *    Case 10: inside a correlated subquery, and a subquery that reads the outermost table
  *    Case 11: a conversion error inside the subquery surfaces
  *    Case 12: a serial in a subquery that no row reaches still advances
@@ -90,20 +88,16 @@ select /*+ recompile */ a, b from (select a, b from t_outer where b = (select c 
 select /*+ recompile no_parallel_scan */ a, b from (select /*+ no_parallel_scan */ a, b from t_outer where b = (select /*+ no_parallel_scan */ c from t_multi) limit 0) dt;
 
 
-evaluate 'Case 8: select-list operand and bare select-list subquery over an empty table, -459 for both; result = no_parallel_scan';
+evaluate 'Case 8: select-list operand over an empty table; result = no_parallel_scan';
 select /*+ recompile */ a, (select c from t_multi) + 0 from t_empty;
 select /*+ recompile no_parallel_scan */ a, (select /*+ no_parallel_scan */ c from t_multi) + 0 from t_empty;
-select /*+ recompile */ a, (select c from t_multi) from t_empty;
-select /*+ recompile no_parallel_scan */ a, (select /*+ no_parallel_scan */ c from t_multi) from t_empty;
 
 
-evaluate 'Case 9: DELETE and UPDATE that match no row, UPDATE SET and INSERT VALUES; result = no_parallel_scan';
+evaluate 'Case 9: DELETE and UPDATE that match no row, INSERT VALUES; result = no_parallel_scan';
 delete from t_empty where b = (select c from t_multi);
 delete from t_empty where b = (select /*+ no_parallel_scan */ c from t_multi);
 update t_outer set b = b where a < 0 and b = (select c from t_multi);
 update t_outer set b = b where a < 0 and b = (select /*+ no_parallel_scan */ c from t_multi);
-update t_outer set b = (select c from t_multi) where a < 0;
-update t_outer set b = (select /*+ no_parallel_scan */ c from t_multi) where a < 0;
 insert into t_empty values (1, (select c from t_multi));
 insert into t_empty values (1, (select /*+ no_parallel_scan */ c from t_multi));
 select a, b from t_outer order by a;

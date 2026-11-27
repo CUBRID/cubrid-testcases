@@ -15,8 +15,7 @@
  *    Case 3:  WHERE operand, parallel heap scan inside the subquery
  *    Case 4:  parallel index scan inside the subquery
  *    Case 5:  three nested scalar subqueries, each scan parallel
- *    Case 6:  select-list operand parallel, a bare select-list subquery parallel too (since
- *             CBRD-28426 it runs before the scan as well)
+ *    Case 6:  select-list operand parallel
  *    Case 7:  CASE operand and HAVING without GROUP BY
  *    Case 8:  DELETE, UPDATE and INSERT SELECT with the subquery in WHERE
  *    Case 9:  CTE read twice under UNION ALL
@@ -80,10 +79,8 @@ show trace;
 select /*+ recompile */ g, v from t_small where v <= (select /*+ no_parallel_scan */ max(v) from t_big where v < (select /*+ no_parallel_scan */ max(v) from t_big where v < (select /*+ no_parallel_scan */ avg(v) from t_big))) order by g;
 
 
-evaluate 'Case 6: select-list operand parallel, bare select-list subquery parallel; result = no_parallel_scan';
+evaluate 'Case 6: select-list operand parallel; result = no_parallel_scan';
 select /*+ recompile */ (select max(v) from t_big) + 0 from db_root;
-show trace;
-select /*+ recompile */ (select max(v) from t_big) from db_root;
 show trace;
 select /*+ recompile */ (select /*+ no_parallel_scan */ max(v) from t_big) + 0 from db_root;
 

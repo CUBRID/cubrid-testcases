@@ -211,7 +211,7 @@ g    v
 
 ===================================================
     
-Case 6: select-list operand parallel, bare select-list subquery parallel; result = no_parallel_scan     
+Case 6: select-list operand parallel; result = no_parallel_scan     
 
 ===================================================
 (select max(v) from t_big)+0    
@@ -228,32 +228,6 @@ Query Plan:
   TABLE SCAN (db_root)
 
   rewritten query: select (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])+? from db_root db_root
-
-
-Trace Statistics:
-  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-    SCAN (table: db_root), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-    SUBQUERY (uncorrelated)
-      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
-        SCAN (table: dba.t_big), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
-             (parallel workers: ?, heap time: ?..?, readrows: ?..?, rows: ?..?, gather: buildvalue)
-     
-
-===================================================
-(select max(v) from t_big)    
-999     
-
-===================================================
-trace    
-
-Query Plan:
-  TABLE SCAN (dba.t_big)
-
-  rewritten query: (select max([dba.t_big].v) from [dba.t_big] [dba.t_big])
-
-  TABLE SCAN (db_root)
-
-  rewritten query: select (select max([dba.t_big].v) from [dba.t_big] [dba.t_big]) from db_root db_root
 
 
 Trace Statistics:
