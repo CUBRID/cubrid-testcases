@@ -1,0 +1,116 @@
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+    
+Case 1: COUNT(DISTINCT), each subtotal and the grand total count the values of all their groups     
+
+===================================================
+ka    kb    cnt_d    
+null     null     4     
+1     null     2     
+1     1     1     
+1     2     1     
+2     null     2     
+2     1     1     
+2     2     2     
+
+===================================================
+    
+Case 2: MEDIAN, each subtotal and the grand total take the median of all their values     
+
+===================================================
+ka    kb    med    
+null     null     30.0     
+1     null     15.0     
+1     1     10.0     
+1     2     20.0     
+2     null     30.0     
+2     1     30.0     
+2     2     35.0     
+
+===================================================
+    
+Case 3: PERCENTILE_CONT with a fraction other than 0.5, the same as MEDIAN     
+
+===================================================
+ka    kb    pct    
+null     null     20.0     
+1     null     12.5     
+1     1     10.0     
+1     2     20.0     
+2     null     30.0     
+2     1     30.0     
+2     2     32.5     
+
+===================================================
+    
+Case 4: GROUP_CONCAT with ORDER BY, each group row holds its values once and each subtotal and the grand total hold the values of all their groups     
+
+===================================================
+ka    kb    gc    
+null     null     10,20,30,30,40     
+1     null     10,20     
+1     1     10     
+1     2     20     
+2     null     30,30,40     
+2     1     30     
+2     2     30,40     
+
+===================================================
+    
+Case 5: one GROUP BY column, the grand total holds the values of every group     
+
+===================================================
+ka    gc    
+null     10,20,30,30,40     
+1     10,20     
+2     30,30,40     
+
+===================================================
+    
+Case 6: SUM keeps no list file, the same values as before the fix     
+
+===================================================
+ka    kb    sm    
+null     null     130     
+1     null     30     
+1     1     10     
+1     2     20     
+2     null     100     
+2     1     30     
+2     2     70     
+
+===================================================
+    
+Case 7: the query of Case 4 over the index skips the sort of the GROUP BY; result = the rows of Case 4     
+
+===================================================
+ka    kb    gc    
+null     null     10,20,30,30,40     
+1     null     10,20     
+1     1     10     
+1     2     20     
+2     null     30,30,40     
+2     1     30     
+2     2     30,40     
+
+Query plan:
+temp(order by)
+    subplan: iscan
+                 class: t_roll node[?]
+                 index: i_roll term[?] (covers)
+                 sort:  ? asc, ? asc
+                 cost:  ? card ?
+    sort:  ? asc, ? asc
+    cost:  ? card ?
+Query stmt:
+select t_roll.ka, t_roll.kb, group_concat(t_roll.v order by ?) from t_roll t_roll where (t_roll.ka> ?:? ) group by t_roll.ka, t_roll.kb with rollup using index t_roll.i_roll(+) order by ?, ?
+/* ---> skip GROUP BY */
+===================================================
+0

@@ -30,7 +30,7 @@ iscan
     index: idx_a_b_cd_d term[?] AND term[?] (covers)
     cost:  ? card ?
 Query stmt:
-select count(*) from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  for orderby_num() between  ?:?  and  ?:? 
+select count(*) from t t where ((t.a= ?:? ) or (t.a= ?:? )) and t.b= ?:?  having ? <> ?
 ===================================================
 b    
 1     
@@ -160,7 +160,6 @@ select a.id, b.id, a.phone, b.[name] from a_tbl a, b_tbl b where a.id=b.id and (
 /* ---> skip ORDER BY */
 ===================================================
 min(a.id)    
-0     
 
 Query plan:
 idx-join (inner join)
@@ -174,7 +173,7 @@ idx-join (inner join)
                cost:  ? card ?
     cost:  ? card ?
 Query stmt:
-select min(a.id) from a_tbl a, b_tbl b where a.id=b.id and (a.phone>= ?:?  and a.phone< ?:? ) for orderby_num()> ?:?  and orderby_num()< ?:? 
+select min(a.id) from a_tbl a, b_tbl b where a.id=b.id and (a.phone>= ?:?  and a.phone< ?:? ) having cast(? as BIGINT)>? and cast(? as BIGINT)<?
 ===================================================
 id    phone    
 
