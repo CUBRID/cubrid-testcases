@@ -1,21 +1,21 @@
 /**
- *  This test case verifies CBRD-27510: collations decided at the gate keep develop's answers where the collation
- *  comes from outside the statement's own columns.
+ *  This test case verifies CBRD-27510: collations decided at the gate keep the develop answers where the collation
+ *  comes from outside the own columns of the statement.
  *
  *  CBRD-27583: Case 3 no longer checks what it was written for, that a statement prepared before SET NAMES keeps
  *  the collation of PREPARE time. A PREPARE whose statement has a position typed by its value makes no plan, and the
  *  first EXECUTE compiles it, so the statement takes the collation of EXECUTE time. In Case 5 the character sets
  *  that do not match across the rows of VALUES are a compile error, -494, where they were -1150. The other answers
- *  are develop's.
+ *  are the develop answers.
  *
  *  CBRD-27510 decides the collation of every string whose collation the compiler leaves open at the gate
  *  (qexec_resolve_domains, before the first row). This case probes an ENUM sibling, GROUP_CONCAT over NULL and over
  *  string binds, a statement prepared before SET NAMES or before ALTER ... COLLATE and executed after it, and
  *  multi-row VALUES whose binds have different character sets.
  *
- *  Every answer here is the develop answer. The GROUP_CONCAT over NULL binds in Case 2 is where develop's debug
- *  build stops on an assertion (qexec_end_one_iteration), and its release build answers NULL as CBRD-27510 does.
- *  COALESCE(enum_col, ?) keeps a develop defect in an ENUM sibling's collation that CBRD-27510 does not fix, so it
+ *  Every answer here is the develop answer. The GROUP_CONCAT over NULL binds in Case 2 is where the debug
+ *  build of develop stops on an assertion (qexec_end_one_iteration), and its release build answers NULL as CBRD-27510 does.
+ *  COALESCE of an ENUM column and a bind keeps a develop defect in the collation of an ENUM sibling that CBRD-27510 does not fix, so it
  *  stays out of this case.
  *
  *  Coverage:
@@ -24,7 +24,7 @@
  *    Case 3: SET NAMES after PREPARE
  *    Case 4: ALTER ... COLLATE after PREPARE
  *    Case 5: multi-row VALUES with binds of different character sets
- *    Case 6: the session's collation and character set
+ *    Case 6: the collation and character set of the session
  */
 --+ holdcas on;
 drop table if exists dcg_te;

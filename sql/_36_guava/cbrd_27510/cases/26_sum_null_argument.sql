@@ -1,7 +1,7 @@
 /**
  *  This test case verifies CBRD-27510: SUM and AVG over an argument the compiler typed NULL - a NULL constant, a cast
  *  of one, an expression folded to NULL, a CASE whose arms are all NULL - see only NULLs and answer NULL, as develop
- *  did. The function's accumulator is derived from the argument's type before any row; a NULL type derives none, and
+ *  did. The accumulator of the function is derived from the type of the argument before any row; a NULL type derives none, and
  *  the setup refused the function as unresolved before the fix (-1383 at execute, the review of PR 8022).
  *
  *  Coverage:
@@ -9,7 +9,7 @@
  *            NVL, CASE, GROUP BY, an inline view, a UNION ALL branch, a parallel hint, INSERT ... SELECT, no row
  *    Case 2: the functions that answered: MAX, MIN, AVG, COUNT, STDDEV, MEDIAN over NULL, SUM over a NULL bind, the
  *            analytic SUM, a CASE with a column arm, SUM (a) + SUM (NULL)
- *    Case 3: an arithmetic over NULL and a bind, folded to NULL by the compiler (SUM (NULL + ?)), with INT, string and
+ *    Case 3: an arithmetic over NULL and a bind, folded to NULL by the compiler (SUM (NULL + a bind)), with INT, string and
  *            DOUBLE binds, in GROUP BY and in the analytic form
  */
 --+ holdcas on;

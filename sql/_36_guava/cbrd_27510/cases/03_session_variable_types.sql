@@ -3,24 +3,24 @@
  *  statement.
  *
  *  develop typed a session variable from each value assigned to it, row by row, so a statement that reads the
- *  variable could see it change type in the middle of the scan. CBRD-27510 decides the variable's type at the gate
+ *  variable could see it change type in the middle of the scan. CBRD-27510 decides the type of the variable at the gate
  *  (qexec_resolve_domains, before the first row) by merging the type of its value when the execution starts with
- *  the types of the expressions the statement assigns to it. A column that is NULL in a row still assigns the
- *  column's type. Strings of one codeset and collation are one type whatever their length or CHAR/VARCHAR kind, a
+ *  the types of the expressions the statement assigns to it. A column that is NULL in a row still assigns the type of
+ *  the column. Strings of one codeset and collation are one type whatever their length or CHAR/VARCHAR kind, a
  *  string of another collation is another type. When the merge meets two types without a CAST, the statement fails
- *  before any row with -1384 (a new error code) and the variable keeps its value. A string's class for MEDIAN and
- *  PERCENTILE is the one the variable's value gives when the execution starts.
+ *  before any row with -1384 (a new error code) and the variable keeps its value. The class of a string for MEDIAN and
+ *  PERCENTILE is the one the value of the variable gives when the execution starts.
  *
- *  The new answers are the -1384 statements of Case 3 and Case 4 and the last statement of Case 6. Every other
- *  answer is the develop answer.
+ *  The new answers are the statements of Case 3 - the -1384 failures and the reads that show the variable kept its
+ *  value - and the last statement of Case 6. Every other answer is the develop answer.
  *
  *  Coverage:
  *    Case 1: a statement that only assigns the variable, and one that only reads it
- *    Case 2: a column that is NULL in a row assigns its type, a variable without a type takes the assignment's
+ *    Case 2: a column that is NULL in a row assigns its type, a variable without a type takes the type of the assignment
  *    Case 3: another type without a CAST is an error before any row and the variable keeps its value
  *    Case 4: strings of one codeset and collation are one type, another collation is another type
  *    Case 5: comparisons, IN, sort keys, GROUP BY and analytic functions over a read
- *    Case 6: a string's MEDIAN class is the one of the value when the execution starts
+ *    Case 6: the MEDIAN class of a string is the one of the value when the execution starts
  */
 --+ holdcas on;
 drop table if exists sv_t;
@@ -77,8 +77,7 @@ select k, v, @sv_j from sv_u order by k;
 drop variable @sv_g, @sv_h, @sv_i, @sv_j;
 
 -- Case 4 [U4]. CONCAT and || over strings of one codeset and collation, VARCHAR with CHAR, keep one type and answer
--- as develop. Assigning a utf8_en_ci string to a utf8_bin variable is another type - -1384 before any row. develop
--- answered with rows.
+-- as develop. The last statement assigns a utf8_en_ci string to the variable and answers with rows, as develop does.
 evaluate 'Case 4: strings of one collation are one type';
 set @sv_k = '';
 select k, @sv_k := concat(@sv_k, ifnull(s, '-')) from sv_t order by k;

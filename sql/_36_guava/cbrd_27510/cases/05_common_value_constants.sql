@@ -1,20 +1,20 @@
 /**
- *  This test case was written for CBRD-27510: a common value over a constant subtree is decided from the subtree's
- *  value.
+ *  This test case was written for CBRD-27510: a common value over a constant subtree is decided from the value of the
+ *  subtree.
  *
  *  COALESCE, NVL, IFNULL, NVL2, NULLIF, LEAST and GREATEST take a common type over their operands. When an operand
- *  is a constant subtree over binds - CAST(? AS T), or a node inside it whose type the bind decides - the operands'
+ *  is a constant subtree over binds - a CAST of a bind to a type T, or a node inside it whose type the bind decides - the operand
  *  values were folded at the first row, and a NULL without a type dropped out of the fold. CBRD-27510 evaluated the
  *  constant subtree once before the first row and decided the common value from that value in the same way.
  *
  *  CBRD-27583: the case no longer checks a decision from values. The compilation of each bind type signature
- *  decides the common type from the operands' types - a CAST's type and each bind's own type - by the rule a column
+ *  decides the common type from the types of the operands - the type of a CAST and the own type of each bind - by the rule a column
  *  gets (CUBRIDSUS-6231: the type of the highest precedence when the types convert, VARCHAR when they do not), so a
- *  NULL value no longer drops out. COALESCE(CAST(? AS datetime), CAST(? AS datetime), ?) with NULL, NULL, 1 is
+ *  NULL value no longer drops out. COALESCE of two binds cast to datetime and a third bind, with NULL, NULL, 1, is
  *  VARCHAR, as COALESCE(dt, dt, 1) over a datetime column is; the fold of the values made it INTEGER. The answers of
- *  Case 1, 2, 3 and 6 are CBRD-27583's. In Case 5 an operand comes from a row, and the node keeps the plan's domain
+ *  Case 1, 2, 3 and 6 are those of CBRD-27583. In Case 5 an operand comes from a row, and the node keeps the domain of the plan
  *  for every row, so cv_t and cv_r (the same rows in the opposite heap order) answer alike; typing the node by the
- *  first row's value made the answer follow the heap order.
+ *  value of the first row made the answer follow the heap order.
  *
  *  Coverage:
  *    Case 1: NULL CAST operands, the type of the last argument across literal types
@@ -23,9 +23,9 @@
  *    Case 4: a NULL result, an arithmetic NULL, a NULL literal, bare binds, a constant with a value
  *    Case 5: an operand a row gives, in both heap orders
  *    Case 6: a parallel heap scan whose term waits for its constant subtree (131072 rows)
- *    Case 7: a plan reused with a bind of another type keeps nothing of the first execution: NULLIF (a, ?) with
- *            '10' then 10, a GROUP BY key a * ? with 1 then 1.5 (develop kept the first execution's result type:
- *            VARCHAR, and INT rounding -7.5 to -8)
+ *    Case 7: a plan reused with a bind of another type keeps nothing of the first execution: NULLIF of a column and a bind with
+ *            the string 10 then the integer 10, a GROUP BY key of a column times a bind with 1 then 1.5 (develop kept the
+ *            result type of the first execution: VARCHAR, and INT rounding -7.5 to -8)
  */
 --+ holdcas on;
 drop table if exists cv_t;

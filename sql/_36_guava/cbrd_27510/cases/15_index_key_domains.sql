@@ -1,14 +1,14 @@
 /**
- *  This test case verifies CBRD-27510: an index scan carries its B-tree's key domain, and the scan open matches it
- *  with the B-tree's root header.
+ *  This test case verifies CBRD-27510: an index scan carries the key domain of its B-tree, and the scan open matches it
+ *  with the root header of the B-tree.
  *
  *  The key plan of an index scan is made when the plan is loaded, from the key domain the scan carries in the XASL
- *  stream. When the scan opens, CBRD-27510 checks that domain against the B-tree's root header before the key plan
+ *  stream. When the scan opens, CBRD-27510 checks that domain against the root header of the B-tree before the key plan
  *  is used. This case covers the indexes whose root header and key values differ in form or come from other B-trees
- *  - OBJECT keys (the root header keeps OBJECT, the key values are OIDs), partitions (each partition's B-tree has
+ *  - OBJECT keys (the root header keeps OBJECT, the key values are OIDs), partitions (the B-tree of each partition has
  *  its own root header), a superclass index scanned over its subclass, and primary key, unique, function and
  *  descending indexes. Each index scan is paired with the same query on USING INDEX NONE. The DROP TABLE statements
- *  at the end delete the tables' grants through the single-column OBJECT index of the authorization catalog.
+ *  at the end delete the grants of the tables through the single-column OBJECT index of the authorization catalog.
  *
  *  Every answer here is the develop answer.
  *

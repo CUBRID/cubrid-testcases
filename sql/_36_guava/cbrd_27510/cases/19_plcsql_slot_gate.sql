@@ -1,23 +1,25 @@
 /**
- *  This test case verifies CBRD-27510: a ? in PL/CSQL static SQL is a slot like a JDBC ?, typed by the value PL
+ *  This test case verifies CBRD-27510: a question mark in PL/CSQL static SQL is a slot like a JDBC bind, typed by the value PL
  *  sends.
  *
- *  PL/CSQL runs a static SQL statement by replacing each PL variable with a ? and sending the variable's value.
- *  CBRD-27510 treats that ? like a JDBC bind - the gate (qexec_resolve_domains) takes the domain of the value PL
- *  sends, not the variable's declared type. PL sends CHAR as VARCHAR, TIMESTAMP as DATETIME, NUMERIC with the
- *  precision and scale of the value's digits, and NULL without a type. Each procedure prints what its statements
+ *  PL/CSQL runs a static SQL statement by replacing each PL variable with a question mark and sending the value of the variable.
+ *  CBRD-27510 treats that question mark like a JDBC bind - the gate (qexec_resolve_domains) takes the domain of the value PL
+ *  sends, not the declared type of the variable. PL sends CHAR as VARCHAR, TIMESTAMP as DATETIME, NUMERIC with the
+ *  precision and scale of the digits of the value, and NULL without a type. Each procedure prints what its statements
  *  saw through DBMS_OUTPUT.
  *
- *  Every answer here is the develop answer. A slot LIMIT inside a derived table and a slot FIELD argument fail in
- *  develop's PL static SQL with -889 before they reach the server, so they are left out.
+ *  Every answer here is the develop answer, except the message of the -889 that the last union of Case 5 prints (the
+ *  int and varchar slots): develop printed Data type references are incompatible. A slot LIMIT inside a derived table
+ *  and a slot FIELD argument fail in the PL static SQL of develop with -889 before they reach the server, so they are
+ *  left out.
  *
  *  Coverage:
- *    Case 1: the domain the gate sees for a bare ?, for each declared type
+ *    Case 1: the domain the gate sees for a bare slot, for each declared type
  *    Case 2: NULL values, which reach the gate without a type
  *    Case 3: arithmetic, functions and common values over slots
- *    Case 4: a comparison and an assignment next to a column, which keep develop's client cast
+ *    Case 4: a comparison and an assignment next to a column, which keep the client cast of develop
  *    Case 5: aggregates and set operations over slots
- *    Case 6: built-in function calls in PL expressions, run as SQL with ? arguments
+ *    Case 6: built-in function calls in PL expressions, run as SQL with slot arguments
  *    Case 7: LIMIT over a slot at the top level
  */
 --+ server-message on

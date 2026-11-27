@@ -1,7 +1,7 @@
 /**
  *  This test case verifies CBRD-27510: a value INSERT ... VALUES computes from a bind is cast into its column without
  *  truncation on every execution. The compiler wraps a string expression longer than its column in a CAST to the
- *  column's type; the row path marks the inserted values as strict casts just before it fetches them, and the
+ *  type of the column; the row path marks the inserted values as strict casts just before it fetches them, and the
  *  constant expression step of CBRD-27510 fetches a constant value before that. The load marks them now. Before the
  *  fix the first execution of a prepared INSERT stored the truncated value and the second raised the overflow
  *  (-427, ER_IT_DATA_OVERFLOW) develop raised on every execution.

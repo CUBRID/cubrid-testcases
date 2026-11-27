@@ -5,12 +5,12 @@
  *  A filter index keeps its predicate in the catalog as a stream compiled against the column types of the time it
  *  was created. develop recompiled and rebuilt an index when ALTER ... MODIFY changed a column of its key, but not
  *  when the column appeared only in the filter predicate, so the stream kept the old type (the shape of
- *  filtered_index_basicfunction_delete_004). CBRD-27510 plans a predicate stream's comparisons from the domains it
+ *  filtered_index_basicfunction_delete_004). CBRD-27510 plans the comparisons of a predicate stream from the domains it
  *  was compiled with, so ALTER now recompiles the predicate and rebuilds the index in that case too, as it does for
  *  a key column.
  *
  *  The rows the filter index holds are pinned before and after the change, after new rows and after an UPDATE, and
- *  they are the develop answers. The catalog's filter_expression after the ALTER is new. The recompiled predicate
+ *  they are the develop answers. The filter_expression in the catalog after the ALTER is new. The recompiled predicate
  *  reads  cast([dba.fr_t].c as double)+ cast(1 as double)=1  where develop kept the old text [dba.fr_t].c+1=1.
  *
  *  Coverage:

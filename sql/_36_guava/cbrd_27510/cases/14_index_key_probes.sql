@@ -1,24 +1,26 @@
 /**
  *  This test case verifies CBRD-27510: index search keys follow a key plan made before the first row.
  *
- *  develop built an index search key by converting each key value into the index column's domain while it scanned,
+ *  develop built an index search key by converting each key value into the domain of the index column while it scanned,
  *  and chose between a strict conversion and keeping the value from the value itself. CBRD-27510 makes a key plan
- *  before the first row. A multi-column key column of another type is converted strictly into the index column's
- *  domain or else kept under its value's domain. A NUMERIC, CHAR or BIT value of the column's type with other
- *  parameters is kept, and once one column is kept every column is written under its value's domain. A
+ *  before the first row. A multi-column key column of another type is converted strictly into the domain of the index
+ *  column or else kept under the domain of its value. A NUMERIC, CHAR or BIT value of the type of the column with other
+ *  parameters is kept, and once one column is kept every column is written under the domain of its value. A
  *  single-column key takes its value as it is, and the B-tree compares a value it cannot compare directly through
- *  the scan's key comparison table.
+ *  the key comparison table of the scan.
  *
  *  Each index scan is paired with the same query on USING INDEX NONE, whose sequential scan gives the same rows.
- *  Every answer here is the develop answer.
+ *  Every answer here is the develop answer, except two index scans (Case 2 and Case 6) that compare a BIGINT key with a
+ *  double beyond the precision of a double: they return the same rows as the sequential scan, where the index scan of
+ *  develop returned only one row.
  *
  *  Coverage:
  *    Case 1: a single-column INT key against values of other types
- *    Case 2: BIGINT keys beyond a double's precision against a double value
+ *    Case 2: BIGINT keys beyond the precision of a double against a double value
  *    Case 3: NUMERIC keys against integers, doubles and other precisions
  *    Case 4: strings - a CHAR index with VARCHAR values, a collation the index does not have
  *    Case 5: dates and times against other types
- *    Case 6: a multi-column key, converted strictly or kept under the value's domain
+ *    Case 6: a multi-column key, converted strictly or kept under the domain of the value
  *    Case 7: descending columns
  *    Case 8: key lists and range lists whose keys have different types
  *    Case 9: join and correlated keys

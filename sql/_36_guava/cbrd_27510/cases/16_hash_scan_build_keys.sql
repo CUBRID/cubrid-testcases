@@ -2,10 +2,10 @@
  *  This test case verifies CBRD-27510: a hash list scan decides how each build key is copied or converted before
  *  its first build row.
  *
- *  A hash list scan copies each build key of the inner list into its hash table, converted into the probe key's
- *  domain when the two key types differ. develop decided that conversion from each key value it copied. CBRD-27510
- *  decides each key's copy or conversion before the first build row, from the probe key's domain as the scan reads
- *  it and the domain the plan gives the key's values, and the row runs that decision. The build side is an inner
+ *  A hash list scan copies each build key of the inner list into its hash table, converted into the domain of
+ *  the probe key when the two key types differ. develop decided that conversion from each key value it copied. CBRD-27510
+ *  decides the copy or conversion of each key before the first build row, from the domain of the probe key as the scan reads
+ *  it and the domain the plan gives the values of the key, and the row runs that decision. The build side is an inner
  *  derived table kept as a list by NO_MERGE and its WHERE clause, the probe side is the outer table, and the trace
  *  of each query shows the hash list scan.
  *
@@ -17,7 +17,7 @@
  *            collation a bind gives
  *    Case 3: keys over a session variable read
  *    Case 4: the hierarchical hash list scan of CONNECT BY over a join
- *    Case 5: build values the conversion into the probe key's domain refuses
+ *    Case 5: build values the conversion into the domain of the probe key refuses
  */
 --+ holdcas on;
 drop table if exists hk_o;

@@ -1,14 +1,14 @@
 /**
  *  This test case verifies CBRD-27510: comparisons made outside a predicate term are decided before the first row.
  *
- *  Besides WHERE terms, the executor compares values in FIELD, NULLIF, LEAST and GREATEST, against LIMIT's row
- *  count, between a merge join's columns, between a collection's elements, between JSON scalars, against partition
+ *  Besides WHERE terms, the executor compares values in FIELD, NULLIF, LEAST and GREATEST, against the row
+ *  count of LIMIT, between the columns of a merge join, between the elements of a collection, between JSON scalars, against partition
  *  bounds and between the bounds of two ORDERBY_NUM terms. develop decided each of these comparisons from the two
  *  values when it compared them. CBRD-27510 decides them before the first row. FIELD, NULLIF, LEAST, GREATEST,
  *  LIMIT and a merge join read a comparison record made at load time or by the gate (qexec_resolve_domains).
  *  Collection elements, JSON scalars, partition bounds, hash group keys and ORDERBY_NUM bounds read a key pair
  *  table that holds the comparison of every pair of key types a value can have. A filter index predicate and a
- *  function index expression carry the records their stream's load made.
+ *  function index expression carry the records made by the load of their stream.
  *
  *  Every answer here is the develop answer.
  *
@@ -16,7 +16,7 @@
  *    Case 1: heterogeneous collections - element order, comparison, arithmetic, CAST
  *    Case 2: scalars of different JSON types
  *    Case 3: FIELD, NULLIF, LEAST and GREATEST over operands of different types
- *    Case 4: LIMIT's row count against 0, the bounds of two ORDERBY_NUM terms
+ *    Case 4: the row count of LIMIT against 0, the bounds of two ORDERBY_NUM terms
  *    Case 5: partition pruning with constants of other types
  *    Case 6: a merge join over columns of other types
  *    Case 7: a filter index predicate and a function index expression over values of other types

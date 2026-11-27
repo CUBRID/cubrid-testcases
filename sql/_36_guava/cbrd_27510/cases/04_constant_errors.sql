@@ -5,14 +5,14 @@
  *  CBRD-27583: this case no longer checks that. A constant over binds or literals is computed and converted at the
  *  row that reads it, so its error comes at that row, and none comes when no row reaches it. The statements of Case
  *  1, 3, 5, 7, 9 and 11 that run over no row, behind a branch no row takes, or behind an operand no row reads answer
- *  without an error, and those answers are CBRD-27583's. The same statements over rows (Case 2, 4, 6) still fail.
+ *  without an error, and those answers are those of CBRD-27583. The same statements over rows (Case 2, 4, 6) still fail.
  *
  *  A constant here is a literal, a constant subtree over binds, or the CAST the compiler puts over a constant
  *  operand. develop computed and converted such a constant at the first row that needed it, so the same statement
  *  answered with no error when no row reached it - no row at all, a CASE branch no row takes, an operand COALESCE
  *  never reads, a term an AND short-circuits. CBRD-27510 computes and converts constants once per execution at the
  *  gate (qexec_resolve_domains), so the error comes before any row, whatever the data. A bind is wrapped in
- *  CONCAT(?, '') so that the client passes it as a string and the server computes or converts it.
+ *  CONCAT with an empty string so that the client passes it as a string and the server computes or converts it.
  *
  *  A constant condition decides at the gate too. When it keeps every row from the constant - the arm of CASE, IF or
  *  DECODE it does not take, the operand a first constant keeps COALESCE or NVL2 from reading, the rest of AND or OR
@@ -23,12 +23,14 @@
  *  no row takes, Case 9, and the first two statements of Case 11 - they fail before any row where develop answered
  *  without an error. The same statements
  *  over rows (Case 2, Case 4, Case 6) fail in develop too, and the guarded statements (Case 7, Case 8) and the
- *  conversions a row makes (Case 10) keep develop's answers.
+ *  conversions a row makes (Case 10) keep the develop answers.
+ *  Three statements differ from develop: the AND statement of Case 4 and the two statements of Case 7 with a bind as the
+ *  first operand of COALESCE and NVL2. They answer rows where develop raised -181.
  *
  *  Coverage:
  *    Case 1: a constant subtree whose computation fails, over no row or behind a branch no row takes
  *    Case 2: the same statements over rows
- *    Case 3: a term's constant side that does not convert to the comparison
+ *    Case 3: the constant side of a term that does not convert to the comparison
  *    Case 4: the same comparisons over rows
  *    Case 5: a MEDIAN or PERCENTILE value that none of DOUBLE, DATETIME and TIME takes
  *    Case 6: the same MEDIAN and PERCENTILE values over rows

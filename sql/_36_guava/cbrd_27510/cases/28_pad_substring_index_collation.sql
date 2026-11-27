@@ -1,16 +1,16 @@
 /**
  *  This test case verifies CBRD-27510: LPAD, RPAD and SUBSTRING_INDEX over strings whose collations resolve_domains
- *  resolves (session variables) take the source string's collation, as db_string_pad and db_string_substring_index
- *  make their results; SUBSTRING_INDEX rejects a delimiter whose collation does not merge with the source's
- *  (-1150, ER_QSTR_INCOMPATIBLE_COLLATIONS), LPAD and RPAD read the pad string's collation not at all.
+ *  resolves (session variables) take the collation of the source string, as db_string_pad and db_string_substring_index
+ *  make their results; SUBSTRING_INDEX rejects a delimiter whose collation does not merge with that of the source
+ *  (-1150, ER_QSTR_INCOMPATIBLE_COLLATIONS), LPAD and RPAD read the collation of the pad string not at all.
  *
  *  Before the fix the resolved collation was the merge of every argument (the rule of CONCAT and REPLACE): a
- *  comparison of two padded strings used the pad string's case-insensitive collation while the values carried the
- *  source's, and a pad string whose collation does not merge left the node without a domain (-1383).
+ *  comparison of two padded strings used the case-insensitive collation of the pad string while the values carried the
+ *  source collation, and a pad string whose collation does not merge left the node without a domain (-1383).
  *
  *  Coverage:
  *    Case 1: LPAD / RPAD / SUBSTRING_INDEX over session variables: comparison, DISTINCT, COLLATION ()
- *    Case 2: a pad string or delimiter whose collation does not merge with the source's
+ *    Case 2: a pad string or delimiter whose collation does not merge with that of the source
  *    Case 3: the operators that merge (CONCAT, REPLACE, INSERT, TRIM) and a literal source
  */
 --+ holdcas on;

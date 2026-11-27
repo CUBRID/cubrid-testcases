@@ -1,8 +1,8 @@
 /**
- *  This test case verifies CBRD-27510: TO_NUMBER leaves its node's domain as compiled, and each value carries its
+ *  This test case verifies CBRD-27510: TO_NUMBER leaves the domain of its node as compiled, and each value carries its
  *  own precision and scale.
  *
- *  develop wrote the precision and scale of each TO_NUMBER result into the node's domain, which can be a cached
+ *  develop wrote the precision and scale of each TO_NUMBER result into the domain of the node, which can be a cached
  *  domain that other nodes of the plan share. CBRD-27510 plans domains before the first row and keeps them fixed
  *  during the execution, so TO_NUMBER no longer writes into its domain - the value carries its precision and scale
  *  instead. The last case checks that a NUMERIC CAST prepared before a TO_NUMBER still answers the same after it.

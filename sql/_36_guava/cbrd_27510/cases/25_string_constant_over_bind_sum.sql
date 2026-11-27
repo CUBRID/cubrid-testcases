@@ -1,17 +1,17 @@
 /**
  *  This test case verifies CBRD-27510: an addition the compiler typed as a string concatenation over an operand it
- *  could not type - (1 + ?) + '3', where the node over the bind is wrapped in a CAST to a string whose collation is
- *  enforced - resolves the operand coercion of the addition from the wrapped node's resolved type, before any row.
+ *  could not type - (1 + a bind) + the string 3, where the node over the bind is wrapped in a CAST to a string whose collation is
+ *  enforced - resolves the operand coercion of the addition from the resolved type of the wrapped node, before any row.
  *
  *  The wrapper leaves a value of any other type as it is (tp_value_cast_internal): with a numeric bind the addition
- *  adds the numbers (1 + 2 and '3' as a number: 6.0) and the sum does not fit the string domain the compiler gave the
+ *  adds the numbers (1 + 2 and the string 3 as a number: 6.0) and the sum does not fit the string domain the compiler gave the
  *  node, -181 (ER_TP_CANT_COERCE) - the error develop raised at the first row from its plan-cached statement.
- *  CBRD-27510 raises it before any row; a string the number does not read ('x') fails its conversion the same way.
- *  Before the fix the addition read the wrapped node's compiled string type at load, planned no conversion and
+ *  CBRD-27510 raises it before any row; a string the number does not read (the string x) fails its conversion the same way.
+ *  Before the fix the addition read the compiled string type of the wrapped node at load, planned no conversion and
  *  answered NULL without an error.
  *
- *  The statements the compiler types stand: the literal (1 + 2 + '3', folded to 6.0), a bind next to the string
- *  (? + '3': the bind is typed as a number), a column, and the other operators (the compiler types (1 + ?) * '3' as a
+ *  The statements the compiler types stand: the literal (1 + 2 + the string 3, folded to 6.0), a bind next to the string
+ *  (a bind + the string 3: the bind is typed as a number), a column, and the other operators (the compiler types (1 + a bind) * the string 3 as a
  *  number).
  *
  *  Coverage:

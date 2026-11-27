@@ -2,8 +2,8 @@
  *  This test case verifies CBRD-27510: SUM and AVG over an argument resolve_domains types as a date or time fail
  *  before any row with the error the rows raised, -454 (ER_QPROC_INVALID_DATATYPE).
  *
- *  The compiler rejects SUM (d) over a date column. A NULL bind lets a date through - NVL (?, d) is typed at
- *  execution from the bind, and with a NULL bind its type is the column's. develop added such values at the rows: a
+ *  The compiler rejects SUM (d) over a date column. A NULL bind lets a date through - NVL of a bind and d is typed at
+ *  execution from the bind, and with a NULL bind its type is that of the column. develop added such values at the rows: a
  *  second value raised -454, a single value went out as it was (SUM of one date = the date), and the analytic SUM
  *  carried a single partition value out of the window as a DOUBLE (release: no row at all; optdebug: an assert).
  *  CBRD-27510 raises -454 before any row in both the aggregate and the analytic form. The new answers are the
@@ -11,7 +11,7 @@
  *  statements over two values (-454) and over a non-NULL bind keep their answers.
  *
  *  Coverage:
- *    Case 1: aggregate SUM / AVG over NVL (?, date), DATETIME, TIME, TIMESTAMP with a NULL bind, one row and two
+ *    Case 1: aggregate SUM / AVG over NVL of a bind and a DATE, DATETIME, TIME or TIMESTAMP column, with a NULL bind, one row and two
  *    Case 2: the analytic SUM / AVG, one value in the partition and two
  *    Case 3: a non-NULL bind (a number) - the argument is numeric and the sum answers
  */

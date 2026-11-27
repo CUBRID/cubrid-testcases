@@ -3,19 +3,20 @@
  *  row.
  *
  *  develop decided how to compare each element of an IN, SOME or ALL list when a row compared it, from the
- *  element's value. CBRD-27510 decides it before the first row. A subquery's list column and a right side that is
+ *  value of the element. CBRD-27510 decides it before the first row. The list column of a subquery and a right side that is
  *  not a collection use a comparison record made at load time or by the gate (qexec_resolve_domains). The gate
  *  decides and converts each element of a constant set once per execution. A collection the row computes uses a
- *  table of its element keys - a set function's operands, a set attribute's element domains, every key otherwise.
+ *  table of its element keys - the operands of a set function, the element domains of a set attribute, every key otherwise.
  *
- *  Every answer here is the develop answer.
+ *  Every answer here is the develop answer, except the second EXECUTE of Case 2 (the string x in an IN list over an INT
+ *  column), which is -494 where develop raised -181.
  *
  *  Coverage:
  *    Case 1: a constant set, each element decided and converted once
  *    Case 2: bind elements and a bind item
  *    Case 3: a set function over row values
- *    Case 4: a set attribute's element domains, a multiset without element domains
- *    Case 5: a subquery's list column
+ *    Case 4: the element domains of a set attribute, a multiset without element domains
+ *    Case 5: the list column of a subquery
  */
 --+ holdcas on;
 drop table if exists ce_t;
