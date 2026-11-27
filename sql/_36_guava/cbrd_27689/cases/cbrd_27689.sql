@@ -8,8 +8,8 @@
  *
  *  The name prefix groups (Char000 .. Char009) have different sizes, so ORDER BY count DESC and ASC give different
  *  orders. CTP masks digits, so the proof of a parallel scan is the parallel workers line under the index SCAN line of
- *  the trace. Each parallel query of Case 1, 3, 4 and 8 is followed by its twin with NO_PARALLEL_SCAN, and the two
- *  result blocks must match.
+ *  the trace. Each parallel query of Case 1, 3, 4, 8, 9 and 10 is followed by its twin with NO_PARALLEL_SCAN, and the
+ *  two result blocks must match.
  *
  *  Coverage:
  *    Case 1: GROUP BY expression with ORDER BY aggregate DESC, not skipped, runs a parallel index scan
@@ -20,6 +20,9 @@
  *    Case 6: GROUP BY skipped by a descending index scan runs in parallel since CBRD-27728, groups in descending order
  *    Case 7: ORDER BY skipped by an ascending index scan stays serial even with a PARALLEL hint, rows in ascending order (control)
  *    Case 8: a query without GROUP BY, ORDER BY first column DESC, not skipped, runs a parallel index scan
+ *    Case 9: ORDER BY the index key DESC and then a column outside the index, so the index cannot skip the sort,
+ *            runs a parallel index scan
+ *    Case 10: Case 8 over the whole index range without a PARALLEL hint: the optimizer itself chooses a parallel index scan
  */
 
 drop table if exists t_27689;
@@ -81,6 +84,21 @@ evaluate 'Case 8: no GROUP BY, ORDER BY first column DESC, not skipped -> parall
 select /*+ recompile PARALLEL(4) */ name, v from t_27689 where name > 'Char009_0000149990' order by v desc, name;
 show trace;
 select /*+ recompile NO_PARALLEL_SCAN */ name, v from t_27689 where name > 'Char009_0000149990' order by v desc, name;
+
+-- the first ORDER BY column is the index key in descending order, but v is not in the index, so the plan keeps a SORT
+-- and no skip order by: this is the flag that the parallel scan check used to refuse on its own
+evaluate 'Case 9: ORDER BY the index key DESC and then a column outside the index, not skipped -> parallel index scan';
+select /*+ recompile PARALLEL(4) */ name, v from t_27689 where name > 'Char009_0000149990' order by name desc, v;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ name, v from t_27689 where name > 'Char009_0000149990' order by name desc, v;
+
+-- the key range covers the whole index, so the optimizer estimate of the pages to read passes
+-- parallel_index_scan_page_threshold without a PARALLEL hint, and v >= 997 with id > 148000 keeps the output to 6 rows.
+-- v takes a range, not one value: with an equality on v the optimizer drops v from the ORDER BY, and the index then skips the sort
+evaluate 'Case 10: ORDER BY first column DESC over the whole index without a PARALLEL hint -> parallel index scan';
+select /*+ recompile */ name, v from t_27689 use index (i_27689_name) where name like 'Char%' and v >= 997 and id > 148000 order by v desc, name;
+show trace;
+select /*+ recompile NO_PARALLEL_SCAN */ name, v from t_27689 use index (i_27689_name) where name like 'Char%' and v >= 997 and id > 148000 order by v desc, name;
 
 set trace off;
 drop table t_27689;

@@ -314,6 +314,91 @@ Char009_0000149991     991
 Char009_0000150000     0     
 
 ===================================================
+    
+Case 9: ORDER BY the index key DESC and then a column outside the index, not skipped -> parallel index scan     
+
+===================================================
+name    v    
+Char009_0000150000     0     
+Char009_0000149999     999     
+Char009_0000149998     998     
+Char009_0000149997     997     
+Char009_0000149996     996     
+Char009_0000149995     995     
+Char009_0000149994     994     
+Char009_0000149993     993     
+Char009_0000149992     992     
+Char009_0000149991     991     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]> ?:? ))
+
+  rewritten query: select /*+ PARALLEL(?) */ [dba.t_?].[name], [dba.t_?].v from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]> ?:? ) order by ? desc , ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+     
+
+===================================================
+name    v    
+Char009_0000150000     0     
+Char009_0000149999     999     
+Char009_0000149998     998     
+Char009_0000149997     997     
+Char009_0000149996     996     
+Char009_0000149995     995     
+Char009_0000149994     994     
+Char009_0000149993     993     
+Char009_0000149992     992     
+Char009_0000149991     991     
+
+===================================================
+    
+Case 10: ORDER BY first column DESC over the whole index without a PARALLEL hint -> parallel index scan     
+
+===================================================
+name    v    
+Char009_0000148999     999     
+Char009_0000149999     999     
+Char009_0000148998     998     
+Char009_0000149998     998     
+Char009_0000148997     997     
+Char009_0000149997     997     
+
+===================================================
+trace    
+
+Query Plan:
+  SORT (order by)
+    INDEX SCAN (dba.t_?.i_?_name) (key range: ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ))
+
+  rewritten query: select [dba.t_?].[name], [dba.t_?].v from [dba.t_?] [dba.t_?] where ([dba.t_?].[name]>= ?:?  and [dba.t_?].[name]< ?:? ) and ([dba.t_?].v>= ?:? ) and ([dba.t_?].id> ?:? ) using index [dba.t_?].i_?_name order by ? desc , ?
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (index: dba.t_?.i_?_name), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+         (parallel workers: ?, index time: ?..?, readkeys: ?..?, filteredkeys: ?..?, rows: ?..?, gather: mergeable list) (lookup time: ?..?, rows: ?..?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+            (parallel workers: ?, time: ?..?, page: ?..?, ioread: ?..?)
+     
+
+===================================================
+name    v    
+Char009_0000148999     999     
+Char009_0000149999     999     
+Char009_0000148998     998     
+Char009_0000149998     998     
+Char009_0000148997     997     
+Char009_0000149997     997     
+
+===================================================
 0
 ===================================================
 0
