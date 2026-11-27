@@ -1,0 +1,306 @@
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+3
+===================================================
+3
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+6
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+    
+Case 1: an index scan of a partitioned table - the analytic sort runs; result = rn follows v     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_part.i_part_v) (key range: ([dba.t_part].v> ?:? ))
+
+  rewritten query: (select [dba.t_part].id, [dba.t_part].v, row_number() over (order by ?) from [dba.t_part] [dba.t_part] where ([dba.t_part].v> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select [dba.t_part].id, [dba.t_part].v, row_number() over (order by ?) as [rn] from [dba.t_part] [dba.t_part] where ([dba.t_part].v> ?:? )) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_part.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part__p__p?.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part__p__p?.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_plain.i_plain_v) (key range: ([dba.t_plain].v> ?:? ))
+
+  rewritten query: (select [dba.t_plain].id, [dba.t_plain].v, row_number() over (order by ?) from [dba.t_plain] [dba.t_plain] where ([dba.t_plain].v> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select [dba.t_plain].id, [dba.t_plain].v, row_number() over (order by ?) as [rn] from [dba.t_plain] [dba.t_plain] where ([dba.t_plain].v> ?:? )) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_plain.i_plain_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+    
+Case 2: the analytic LIMIT optimization over a partitioned table - the sort runs before the LIMIT; result = v 10 to 30 with rn 1 to 3     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_part.i_part_v) (key range: ([dba.t_part].v> ?:? ))
+
+  rewritten query: (select [dba.t_part].id, [dba.t_part].v, row_number() over (order by ?) from [dba.t_part] [dba.t_part] where ([dba.t_part].v> ?:? ) and (inst_num()<= ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select [dba.t_part].id, [dba.t_part].v, row_number() over (order by ?) as [rn] from [dba.t_part] [dba.t_part] where ([dba.t_part].v> ?:? ) and (inst_num()<= ?:? )) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_part.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part__p__p?.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+               PARTITION (index: dba.t_part__p__p?.i_part_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+
+===================================================
+    
+Case 3: an index scan of a class hierarchy - the analytic sort runs; result = rn follows v     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+trace    
+
+Query Plan:
+  INDEX SCAN (dba.t_parent.i_parent_v) (key range: ([dba.t_parent].v> ?:? ))
+
+  rewritten query: (select [dba.t_parent].id, [dba.t_parent].v, row_number() over (order by ?) from  all [dba.t_parent] [dba.t_parent] where ([dba.t_parent].v> ?:? ))
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select [dba.t_parent].id, [dba.t_parent].v, row_number() over (order by ?) as [rn] from  all [dba.t_parent] [dba.t_parent] where ([dba.t_parent].v> ?:? )) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_child.i_parent_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+             (index: dba.t_parent.i_parent_v), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?) (lookup time: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+    
+Case 4: an NL join whose inner reads a class hierarchy class by class - the analytic sort runs; result = rn follows id     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (o.i_outer_id) (key range: (o.id> ?:? ), covered: true)
+    TABLE SCAN (p)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ o.id, p.v, row_number() over (order by ?) from [dba.t_outer] o,  all [dba.t_parent] p where (o.id> ?:? ) and p.id=o.id)
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select /*+ ORDERED USE_NL */ o.id, p.v, row_number() over (order by ?) as [rn] from [dba.t_outer] o,  all [dba.t_parent] p where (o.id> ?:? ) and p.id=o.id) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_outer.i_outer_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (table: dba.t_child), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+               (table: dba.t_parent), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: true, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+    
+Case 5: an NL join whose inner is a partitioned table walked per outer row - the analytic sort stays skipped; result = rn follows id     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+trace    
+
+Query Plan:
+  NESTED LOOPS (inner join)
+    INDEX SCAN (o.i_outer_id) (key range: (o.id> ?:? ), covered: true)
+    TABLE SCAN (p)
+
+  rewritten query: (select /*+ ORDERED USE_NL */ o.id, p.v, row_number() over (order by ?) from [dba.t_outer] o, [dba.t_part] p where (o.id> ?:? ) and p.id=o.id)
+
+  SORT (order by)
+    TABLE SCAN (x)
+
+  rewritten query: select x.id, x.v, x.rn from (select /*+ ORDERED USE_NL */ o.id, p.v, row_number() over (order by ?) as [rn] from [dba.t_outer] o, [dba.t_part] p where (o.id> ?:? ) and p.id=o.id) x (id, v, rn) order by ?
+
+
+Trace Statistics:
+  SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+    SCAN (temp time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+    ORDERBY (time: ?, sort: true, page: ?, ioread: ?)
+    SUBQUERY (uncorrelated)
+      SELECT (time: ?, fetch: ?, fetch_time: ?, ioread: ?)
+        SCAN (index: dba.t_outer.i_outer_id), (btree time: ?, fetch: ?, ioread: ?, readkeys: ?, filteredkeys: ?, rows: ?, covered: true)
+          SCAN (table: dba.t_part), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+                 PARTITION (table: dba.t_part__p__p?), (heap time: ?, fetch: ?, ioread: ?, readrows: ?, rows: ?)
+        ANALYTIC #? (time: ?, sort: false, page: ?, ioread: ?, rows: ?)
+     
+
+===================================================
+id    v    rn    
+1     10     1     
+2     20     2     
+3     30     3     
+4     40     4     
+5     50     5     
+6     60     6     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
