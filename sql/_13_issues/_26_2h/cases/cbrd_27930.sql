@@ -18,6 +18,10 @@
  *    Case 6:  SUM, which keeps no list file - the same values as before the fix
  *    Case 7:  the query of Case 4 over the index, which skips the sort of the GROUP BY (the issue
  *             comment) - the plan skips the GROUP BY and the rows are those of Case 4
+ *    Case 8:  BIT_AND with DISTINCT (an issue comment) - each subtotal and the grand total combine the
+ *             distinct values of all their groups
+ *    Case 9:  BIT_OR with DISTINCT - the same as Case 8
+ *    Case 10: BIT_XOR with DISTINCT - the same as Case 8
  */
 
 drop table if exists t_roll;
@@ -53,5 +57,17 @@ select ka, kb, sum(v) as sm from t_roll ignore index (i_roll) where ka > 0 group
 evaluate 'Case 7: the query of Case 4 over the index skips the sort of the GROUP BY; result = the rows of Case 4';
 --@queryplan
 select ka, kb, group_concat(v order by v) as gc from t_roll force index (i_roll) where ka > 0 group by ka, kb with rollup order by ka, kb;
+
+
+evaluate 'Case 8: BIT_AND with DISTINCT, each subtotal and the grand total combine the distinct values of all their groups';
+select ka, kb, bit_and(distinct v) as ba from t_roll ignore index (i_roll) where ka > 0 group by ka, kb with rollup order by ka, kb;
+
+
+evaluate 'Case 9: BIT_OR with DISTINCT, the same as Case 8';
+select ka, kb, bit_or(distinct v) as bo from t_roll ignore index (i_roll) where ka > 0 group by ka, kb with rollup order by ka, kb;
+
+
+evaluate 'Case 10: BIT_XOR with DISTINCT, the same as Case 8';
+select ka, kb, bit_xor(distinct v) as bx from t_roll ignore index (i_roll) where ka > 0 group by ka, kb with rollup order by ka, kb;
 
 drop table t_roll;
