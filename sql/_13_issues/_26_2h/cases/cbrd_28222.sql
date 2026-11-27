@@ -4,8 +4,8 @@
  *
  *  CREATE VIEW stores the query printed after its type checking, which folds constants. A CTE definition or
  *  a derived table that returns no row is folded to a NULL value, and it was printed as (null), which the
- *  grammar does not take in place of a query. It is now printed as an empty query of as many columns. The
- *  cases check the stored definition of each view and that the view returns the rows of the same query
+ *  grammar does not take in place of a query. It is now printed as the query it was folded from, which keeps
+ *  the types of its columns. The cases check the stored definition of each view and that the view returns the rows of the same query
  *  run without it.
  *
  *  Coverage:
@@ -17,17 +17,24 @@
  *    Case 5: CREATE OR REPLACE VIEW and ALTER VIEW with a folded CTE
  *    Case 6: a user other than the owner reads the views
  *    Case 7: the queries of Case 1 to Case 4 return the same rows without a view
+ *    Case 8: a folded CTE or derived table keeps the types of its columns: a path expression over an object
+ *            column, a function over a date column and a collection column
  */
 
 drop view if exists v28222_01, v28222_02, v28222_03, v28222_04, v28222_05, v28222_06, v28222_07;
 drop view if exists v28222_08, v28222_09, v28222_10, v28222_11;
-drop table if exists t28222_a, t28222_b;
+drop view if exists v28222_12, v28222_13, v28222_14, v28222_15;
+drop table if exists t28222_a, t28222_b, t28222_o, t28222_r;
 drop user u28222;
 
 create table t28222_a (s varchar(10), n int);
 insert into t28222_a values ('a', 1);
 create table t28222_b (s varchar(10));
 insert into t28222_b values ('b'), ('b'), ('c');
+create table t28222_r (a int) dont_reuse_oid;
+insert into t28222_r values (1);
+create table t28222_o (o t28222_r, st set (int), d date);
+insert into t28222_o select t28222_r, {1, 2}, date '2020-01-31' from t28222_r;
 
 evaluate 'Case 1: a CTE folded by a false WHERE, read by the view query or by one operand of a UNION ALL';
 create view v28222_01 as with c as (select s from t28222_a where 1 = 0) select s from c;
@@ -87,7 +94,21 @@ select (with c as (select s from t28222_a where 1 = 0) select max(s) from c) m f
 with c as (select s from t28222_a where 1 = 0) select coalesce ((select s from c), 'k') k from db_root;
 select t28222_b.s, x.s xs from (select s from t28222_a where 1 = 0) x, t28222_b;
 
+evaluate 'Case 8: a folded CTE or derived table keeps the types of its columns';
+create view v28222_12 as with c (o) as (select o from t28222_o where 1 = 0) select count(*) cnt from c where c.o.a = 1;
+create view v28222_13 as select count(*) cnt from (select o from t28222_o where 1 = 0) x where x.o.a = 1;
+create view v28222_14 as with c (d) as (select d from t28222_o where 1 = 0) select add_months (c.d, 1) m from c;
+create view v28222_15 as select x.st from (select st from t28222_o where 1 = 0) x union all select st from t28222_o;
+select vclass_name, vclass_def from db_vclass where vclass_name in ('v28222_12', 'v28222_13', 'v28222_14', 'v28222_15') order by 1;
+select cnt from v28222_12;
+select cnt from v28222_13;
+select m from v28222_14;
+select st from v28222_15;
+with c (o) as (select o from t28222_o where 1 = 0) select count(*) cnt from c where c.o.a = 1;
+select count(*) cnt from (select o from t28222_o where 1 = 0) x where x.o.a = 1;
+
 drop user u28222;
 drop view v28222_01, v28222_02, v28222_03, v28222_04, v28222_05, v28222_06, v28222_07;
 drop view v28222_08, v28222_09, v28222_10, v28222_11;
-drop table t28222_a, t28222_b;
+drop view v28222_12, v28222_13, v28222_14, v28222_15;
+drop table t28222_a, t28222_b, t28222_o, t28222_r;

@@ -5,6 +5,8 @@
 ===================================================
 0
 ===================================================
+0
+===================================================
 Error:-165
 ===================================================
 0
@@ -15,6 +17,14 @@ Error:-165
 ===================================================
 3
 ===================================================
+0
+===================================================
+1
+===================================================
+0
+===================================================
+1
+===================================================
     
 Case 1: a CTE folded by a false WHERE, read by the view query or by one operand of a UNION ALL     
 
@@ -24,8 +34,8 @@ Case 1: a CTE folded by a false WHERE, read by the view query or by one operand 
 0
 ===================================================
 vclass_name    vclass_def    
-v28222_01     with [c]([s]) as (select null from db_root where 0 <> 0)select [dba.c].[s] from [dba.c] [dba.c]     
-v28222_02     (with [c]([s]) as (select null from db_root where 0 <> 0)select [dba.t28222_b].[s] from [dba.t28222_b] [dba.t28222_b])     
+v28222_01     with [c]([s]) as (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0)select [dba.c].[s] from [dba.c] [dba.c]     
+v28222_02     (with [c]([s]) as (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0)select [dba.t28222_b].[s] from [dba.t28222_b] [dba.t28222_b])     
 
 ===================================================
 count(*)    
@@ -52,9 +62,9 @@ Case 2: a CTE of several columns folded by a false WHERE or HAVING, and a folded
 0
 ===================================================
 vclass_name    vclass_def    
-v28222_03     with [c]([s], [n], [m]) as (select null, null, null from db_root where 0 <> 0)select [dba.c].[s], [dba.c].[n], [dba.c].[m] from [dba.c] [dba.c]     
-v28222_04     with [c]([n], [k]) as (select null, null from db_root where 0 <> 0)select [dba.c].[n], [dba.c].[k] from [dba.c] [dba.c]     
-v28222_05     with recursive [c]([k]) as (select null from db_root where 0 <> 0)select [dba.c].[k] from [dba.c] [dba.c]     
+v28222_03     with [c]([s], [n], [m]) as (select [dba.t28222_a].[s], [dba.t28222_a].[n], [dba.t28222_a].[n]+1 from [dba.t28222_a] [dba.t28222_a] where 1=0)select [dba.c].[s], [dba.c].[n], [dba.c].[m] from [dba.c] [dba.c]     
+v28222_04     with [c]([n], [k]) as (select [dba.t28222_a].[n], count(*) from [dba.t28222_a] [dba.t28222_a] group by [dba.t28222_a].[n] having 1=0)select [dba.c].[n], [dba.c].[k] from [dba.c] [dba.c]     
+v28222_05     with recursive [c]([k]) as (select [dba.t28222_a].[n] from [dba.t28222_a] [dba.t28222_a] where 1=0)select [dba.c].[k] from [dba.c] [dba.c]     
 
 ===================================================
 s    n    m    
@@ -75,8 +85,8 @@ Case 3: a folded CTE inside a scalar subquery and a folded CTE read by a scalar 
 0
 ===================================================
 vclass_name    vclass_def    
-v28222_06     select (with [c]([s]) as (select null from db_root where 0 <> 0)select max([dba.c].[s]) from [dba.c] [dba.c]) from [db_root] [db_root]     
-v28222_07     with [c]([s]) as (select null from db_root where 0 <> 0)select _utf8'k' collate utf8_bin from [db_root] [db_root]     
+v28222_06     select (with [c]([s]) as (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0)select max([dba.c].[s]) from [dba.c] [dba.c]) from [db_root] [db_root]     
+v28222_07     with [c]([s]) as (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0)select _utf8'k' collate utf8_bin from [db_root] [db_root]     
 
 ===================================================
 m    
@@ -98,9 +108,9 @@ Case 4: a derived table folded alone, with several columns and ORDER BY, and joi
 0
 ===================================================
 vclass_name    vclass_def    
-v28222_08     select [x].[s] from (select null from db_root where 0 <> 0) [x] ([s])     
-v28222_09     select [x].[a], [x].[b] from (select null, null from db_root where 0 <> 0) [x] ([a], [b])     
-v28222_10     select [dba.t28222_b].[s], [x].[s] from (select null from db_root where 0 <> 0) [x] ([s]), [dba.t28222_b] [dba.t28222_b]     
+v28222_08     select [x].[s] from (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0) [x] ([s])     
+v28222_09     select [x].[a], [x].[b] from (select [dba.t28222_a].[s] as [a], [dba.t28222_a].[n] as [b] from [dba.t28222_a] [dba.t28222_a] where 1=0 order by 1) [x] ([a], [b])     
+v28222_10     select [dba.t28222_b].[s], [x].[s] from (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 1=0) [x] ([s]), [dba.t28222_b] [dba.t28222_b]     
 
 ===================================================
 count(*)    
@@ -130,7 +140,7 @@ c
 0
 ===================================================
 vclass_name    vclass_def    
-v28222_11     with [c]([s]) as (select null from db_root where 0 <> 0)select [dba.c].[s] from [dba.c] [dba.c]     
+v28222_11     with [c]([s]) as (select [dba.t28222_a].[s] from [dba.t28222_a] [dba.t28222_a] where 0<>0)select [dba.c].[s] from [dba.c] [dba.c]     
 
 ===================================================
 count(*)    
@@ -189,6 +199,50 @@ k
 ===================================================
 s    xs    
 
+===================================================
+    
+Case 8: a folded CTE or derived table keeps the types of its columns     
+
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+0
+===================================================
+vclass_name    vclass_def    
+v28222_12     with [c]([o]) as (select [dba.t28222_o].[o] from [dba.t28222_o] [dba.t28222_o] where 1=0)select count(*) from [dba.c] [dba.c] where [dba.c].[o].[a]=1     
+v28222_13     select count(*) from (select [dba.t28222_o].[o] from [dba.t28222_o] [dba.t28222_o] where 1=0) [x] ([o]) where [x].[o].[a]=1     
+v28222_14     with [c]([d]) as (select [dba.t28222_o].[d] from [dba.t28222_o] [dba.t28222_o] where 1=0)select  add_months([dba.c].[d], 1) from [dba.c] [dba.c]     
+v28222_15     select [dba.t28222_o].[st] from [dba.t28222_o] [dba.t28222_o]     
+
+===================================================
+cnt    
+0     
+
+===================================================
+cnt    
+0     
+
+===================================================
+m    
+
+===================================================
+st    
+1,2,     
+
+===================================================
+cnt    
+0     
+
+===================================================
+cnt    
+0     
+
+===================================================
+0
 ===================================================
 0
 ===================================================
